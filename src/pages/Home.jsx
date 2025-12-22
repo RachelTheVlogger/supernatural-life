@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import TutorialSystem from '@/components/nightbound/TutorialSystem';
 
 export default function Home() {
   const navigate = useNavigate();
   const [vampireName, setVampireName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -59,7 +61,7 @@ export default function Home() {
       game_start_date: new Date().toISOString()
     });
     
-    navigate(createPageUrl('OpeningScene'));
+    setShowTutorial(true);
   };
   
   const handleContinue = () => {
@@ -166,6 +168,21 @@ export default function Home() {
           Every choice echoes through eternity
         </motion.p>
       </div>
+
+      {/* Tutorial */}
+      {showTutorial && (
+        <TutorialSystem
+          tutorialId="welcome"
+          onComplete={() => {
+            setShowTutorial(false);
+            navigate(createPageUrl('OpeningScene'));
+          }}
+          onSkip={() => {
+            setShowTutorial(false);
+            navigate(createPageUrl('OpeningScene'));
+          }}
+        />
+      )}
     </div>
   );
 }
