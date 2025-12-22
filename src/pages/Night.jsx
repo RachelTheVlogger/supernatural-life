@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import FeedingModal from '@/components/nightbound/FeedingModal';
@@ -12,11 +12,13 @@ import HuntingModal from '@/components/nightbound/HuntingModal';
 import PowersModal from '@/components/nightbound/PowersModal';
 import AdvanceNight from '@/components/nightbound/AdvanceNight';
 import NPCInteraction from '@/components/nightbound/NPCInteraction';
+import TutorialSystem from '@/components/nightbound/TutorialSystem';
 
 export default function Night() {
   const queryClient = useQueryClient();
   const [activeModal, setActiveModal] = useState(null);
   const [selectedServant, setSelectedServant] = useState(null);
+  const [showTutorial, setShowTutorial] = useState(null);
   
   // Fetch vampire state
   const { data: vampireStates = [] } = useQuery({
@@ -267,9 +269,18 @@ export default function Night() {
           <NPCInteraction
             onClose={() => setActiveModal(null)}
             viewMode="vampire"
-          />
-        )}
-        </AnimatePresence>
-    </div>
-  );
-}
+            />
+            )}
+            </AnimatePresence>
+
+            {/* Tutorial */}
+            {showTutorial && (
+            <TutorialSystem
+            tutorialId={showTutorial}
+            onComplete={() => setShowTutorial(null)}
+            onSkip={() => setShowTutorial(null)}
+            />
+            )}
+            </div>
+            );
+            }

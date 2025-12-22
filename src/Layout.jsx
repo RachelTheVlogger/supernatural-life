@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, MessageCircle } from 'lucide-react';
+import { Home, Moon, User, MessageCircle, BookOpen } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -17,15 +17,16 @@ export default function Layout({ children, currentPageName }) {
   });
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'Codex'].includes(currentPageName);
   
   const firstServantId = servants.length > 0 ? servants[0].id : null;
   
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
-    { name: 'Sanctuary', icon: Home, path: 'VampireHome' },
+    { name: 'House', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, disabled: !firstServantId },
-    { name: 'Messages', icon: MessageCircle, path: `Messages?servant=${firstServantId}`, disabled: !firstServantId }
+    { name: 'Messages', icon: MessageCircle, path: `Messages?servant=${firstServantId}`, disabled: !firstServantId },
+    { name: 'Codex', icon: BookOpen, path: 'Codex' }
   ];
   
   return (
