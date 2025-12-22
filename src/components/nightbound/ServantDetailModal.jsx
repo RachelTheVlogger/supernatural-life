@@ -114,7 +114,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
       }
       
       await base44.entities.NightLog.create({
-        entry: `You taught ${servant.name} about ${topic.toLowerCase()}.`,
+        entry: `You taught them about ${topic.toLowerCase()}. Your fingers brushed their skin as you demonstrated. They watched you intently.`,
         category: 'teaching',
         intensity: 'moderate'
       });
@@ -151,7 +151,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
       });
       
       await base44.entities.NightLog.create({
-        entry: `${servant.name} has been turned. They are bound to you forever.`,
+        entry: `You turned them. Your blood on their lips. Their last breath as a mortal, gasping against your neck. Bound forever.`,
         category: 'interaction',
         intensity: 'significant'
       });
@@ -179,13 +179,13 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
     
     await updateQuestProgress('feed');
     
-    let feedingText = `You fed on ${servant.name}. They trembled but did not pull away.`;
+    let feedingText = `You fed. They trembled but did not pull away, breath catching in their throat.`;
     if (newRel >= 80) {
-      feedingText = `You fed on ${servant.name}. They offered themselves willingly, eagerly.`;
+      feedingText = `You fed. They offered themselves willingly, pressing closer, a soft sound escaping their lips.`;
     } else if (newRel >= 60) {
-      feedingText = `You fed on ${servant.name}. They leaned into you, trusting completely.`;
+      feedingText = `You fed. They leaned into your touch, fingers curling against your skin, trusting completely.`;
     } else if (newRel >= 40) {
-      feedingText = `You fed on ${servant.name}. They stayed still, accepting.`;
+      feedingText = `You fed. They stayed still, accepting, their heartbeat quickening beneath your lips.`;
     }
     
     await base44.entities.NightLog.create({
@@ -415,14 +415,14 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
                 className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
               >
                 <Heart className="w-5 h-5" />
-                <span>Feed on {servant.name}</span>
+                <span>Feed on them</span>
               </button>
             )}
             
             {servant.is_turned && (
               <div className="bg-red-900/30 border border-red-800/50 rounded-xl p-4 mb-2">
                 <p className="text-red-300 text-sm text-center">
-                  {servant.name} is now vampire. They hunt with you as an equal.
+                  They are vampire now. Cold skin against yours. They hunt beside you as an equal.
                 </p>
               </div>
             )}
