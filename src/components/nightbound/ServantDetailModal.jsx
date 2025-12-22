@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, BookOpen, Zap, Users, Heart, MapPin } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import LocationVisit from './LocationVisit';
 
 const TEACHING_TOPICS = [
   'Explaining restraint',
@@ -25,6 +26,8 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [turning, setTurning] = useState(false);
   const [goingOut, setGoingOut] = useState(false);
   const [showLocations, setShowLocations] = useState(false);
+  const [visitingLocation, setVisitingLocation] = useState(null);
+  const [locationOutcome, setLocationOutcome] = useState('');
   const queryClient = useQueryClient();
   
   const handleTeach = async () => {
@@ -128,12 +131,13 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   };
   
   const handleGoOut = async (location) => {
-    setGoingOut(true);
+    const outcome = location.outcomes[Math.floor(Math.random() * location.outcomes.length)];
+    setLocationOutcome(outcome);
+    setVisitingLocation(location);
     setShowLocations(false);
     
+    // Log and update in background
     setTimeout(async () => {
-      const outcome = location.outcomes[Math.floor(Math.random() * location.outcomes.length)];
-      
       await base44.entities.NightLog.create({
         entry: `${location.name}: ${outcome}`,
         category: 'interaction',
@@ -153,19 +157,35 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
       }
       
       queryClient.invalidateQueries();
-      setGoingOut(false);
-      onClose();
-    }, 2500);
+    }, 3000);
+  };
+  
+  const handleCloseLocation = () => {
+    setVisitingLocation(null);
+    onClose();
   };
   
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
-      onClick={onClose}
-    >
+    <>
+      <AnimatePresence>
+        {visitingLocation && (
+          <LocationVisit
+            location={visitingLocation}
+            servantName={servant.name}
+            outcome={locationOutcome}
+            onClose={handleCloseLocation}
+          />
+        )}
+      </AnimatePresence>
+      
+      {!visitingLocation && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={onClose}
+        >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -260,6 +280,8 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           </div>
         )}
       </motion.div>
-    </motion.div>
+        </motion.div>
+      )}
+    </>
   );
 }

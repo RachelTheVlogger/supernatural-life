@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droplets, Users, BookOpen, Eye, Zap } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap, Home } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import FeedingModal from '@/components/nightbound/FeedingModal';
 import ServantsList from '@/components/nightbound/ServantsList';
 import NightLogView from '@/components/nightbound/NightLogView';
@@ -77,6 +79,8 @@ export default function Night() {
     restless: 'rgba(200, 0, 0, 0.9)'
   }[vampireState.hunger_state];
   
+  const navigate = useNavigate();
+  
   const actions = [
     { icon: Droplets, label: 'Feed', modal: 'feeding' },
     { icon: Users, label: 'Servants', modal: 'servants' },
@@ -100,6 +104,14 @@ export default function Night() {
         <p className="text-sm text-gray-400">
           Night {vampireState.nights_passed}
         </p>
+        
+        <button
+          onClick={() => navigate(createPageUrl('VampireHome'))}
+          className="mt-4 text-purple-400 hover:text-purple-300 transition-colors text-sm flex items-center gap-2 mx-auto"
+        >
+          <Home className="w-4 h-4" />
+          Return to your sanctuary
+        </button>
       </motion.div>
       
       {/* Action buttons - Bitlife style */}
