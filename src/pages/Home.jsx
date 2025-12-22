@@ -49,16 +49,13 @@ export default function Home() {
     // Create new vampire state
     await base44.entities.VampireState.create({
       vampire_name: vampireName.trim(),
+      job: 'Night Shift Nurse',
       hunger_state: 'calm',
       emotional_mode: 'feeling',
-      humanity_on: true,
-      ripper_mode: false,
       unlocked_powers: [],
       nights_passed: 0,
       humanity: 50,
-      moral_path: 'balanced',
-      game_started: false,
-      game_start_date: new Date().toISOString()
+      moral_path: 'balanced'
     });
     
     setShowTutorial(true);
@@ -132,7 +129,7 @@ export default function Home() {
             </button>
           ) : (
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-purple-900/30">
-              <h3 className="text-white text-lg font-bold mb-4">Name Your Vampire</h3>
+              <h3 className="text-white text-lg font-bold mb-4">Create Your Vampire</h3>
               <input
                 type="text"
                 value={vampireName}
@@ -141,6 +138,10 @@ export default function Home() {
                 className="w-full bg-gray-900 border border-purple-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-4 focus:outline-none focus:border-purple-500"
                 autoFocus
               />
+              <div className="bg-gray-900/60 rounded-lg p-4 mb-4 border border-red-900/30">
+                <p className="text-red-300 text-sm mb-1">🏥 Night Shift Nurse</p>
+                <p className="text-gray-400 text-xs italic">Working at the hospital... surrounded by blood. Forever tempted.</p>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowNameInput(false)}
@@ -175,11 +176,11 @@ export default function Home() {
           tutorialId="welcome"
           onComplete={() => {
             setShowTutorial(false);
-            navigate(createPageUrl('OpeningScene'));
+            navigate(createPageUrl('Night'));
           }}
           onSkip={() => {
             setShowTutorial(false);
-            navigate(createPageUrl('OpeningScene'));
+            navigate(createPageUrl('Night'));
           }}
         />
       )}

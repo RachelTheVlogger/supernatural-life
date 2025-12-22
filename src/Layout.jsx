@@ -17,7 +17,7 @@ export default function Layout({ children, currentPageName }) {
   });
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'Codex'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName);
   
   const firstServantId = servants.length > 0 ? servants[0].id : null;
   
@@ -26,7 +26,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'House', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, disabled: !firstServantId },
     { name: 'Messages', icon: MessageCircle, path: `Messages?servant=${firstServantId}`, disabled: !firstServantId },
-    { name: 'Codex', icon: BookOpen, path: 'Codex' }
+  
   ];
   
   return (
