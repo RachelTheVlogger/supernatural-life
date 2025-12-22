@@ -1,21 +1,33 @@
 import React from 'react';
 
+import React from 'react';
 import { Home, Moon, User, MessageCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
 
 export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Fetch servants for navigation
+  const { data: servants = [] } = useQuery({
+    queryKey: ['servants'],
+    queryFn: () => base44.entities.Servant.list(),
+    enabled: ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName)
+  });
+  
   // Show nav on main game pages only
   const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName);
+  
+  const firstServantId = servants.length > 0 ? servants[0].id : null;
   
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Sanctuary', icon: Home, path: 'VampireHome' },
-    { name: 'Servant', icon: User, path: 'ServantHome' },
-    { name: 'Messages', icon: MessageCircle, path: 'Messages' }
+    { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, disabled: !firstServantId },
+    { name: 'Messages', icon: MessageCircle, path: `Messages?id=${firstServantId}`, disabled: !firstServantId }
   ];
   
   return (
@@ -64,9 +76,10 @@ export default function Layout({ children, currentPageName }) {
               return (
                 <button
                   key={item.name}
-                  onClick={() => navigate(createPageUrl(item.path))}
+                  onClick={() => !item.disabled && navigate(createPageUrl(item.path))}
+                  disabled={item.disabled}
                   className={`flex flex-col items-center gap-1 transition-colors ${
-                    isActive ? 'text-purple-400' : 'text-gray-400 hover:text-white'
+                    isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 hover:text-white'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
