@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, MessageCircle, Eye, Hand, Sparkles, Zap, Coffee, Music, Book, Utensils, Wine, Flame, Moon, Droplets, Wind, Smile } from 'lucide-react';
+import { X, Heart, MessageCircle, Eye, Hand, Sparkles, Zap, Coffee, Music, Book, Utensils, Wine, Flame, Moon, Droplets, Wind, Smile, Lock, Star } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import PowerUsage from './PowerUsage';
 
 const getVariantModifier = (variant, category) => {
@@ -42,6 +42,7 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Droplets,
     label: 'Feed together',
     category: 'vampire',
+    tier: 1,
     gains: [20, 35],
     outcomes: {
       mid: ['You hunted together. Blood shared. Primal connection.', 'Two vampires. One prey. Intimate violence.', 'You fed side by side. Their hunger matched yours.'],
@@ -52,6 +53,7 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Flame,
     label: 'Vampire intimacy',
     category: 'vampire',
+    tier: 1,
     minRelationship: 50,
     gains: [25, 40],
     outcomes: {
@@ -63,6 +65,7 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Moon,
     label: 'Hunt together',
     category: 'vampire',
+    tier: 1,
     gains: [15, 25],
     outcomes: {
       mid: ['You stalked prey together. Teaching them your ways.', 'Two predators in the night. Perfectly synchronized.', 'They moved like you now. Supernatural. Deadly.'],
@@ -72,11 +75,12 @@ const TURNED_VAMPIRE_INTERACTIONS = {
 };
 
 const INTERACTIONS = {
-  // Physical - Intimate
+  // Physical - Tier 1 (Always available)
   touch: {
     icon: Hand,
     label: 'Touch them',
     category: 'physical',
+    tier: 1,
     gains: [5, 10],
     outcomes: {
       low: ['You brushed their hand. They flinched but didn\'t pull away.', 'Your fingers traced their jaw. Their breath caught.', 'You held their face. They closed their eyes.'],
@@ -88,6 +92,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Kiss them',
     category: 'physical',
+    tier: 1,
     gains: [8, 15],
     outcomes: {
       low: ['A soft kiss. Hesitant. They stayed still.', 'You kissed them gently. They tensed, then relaxed.', 'Your lips on theirs. Brief. Careful.'],
@@ -99,6 +104,7 @@ const INTERACTIONS = {
     icon: Smile,
     label: 'Cuddle',
     category: 'physical',
+    tier: 1,
     gains: [6, 12],
     outcomes: {
       low: ['You held them carefully. They were stiff at first.', 'They leaned against you hesitantly.', 'Awkward closeness. Slowly relaxing.'],
@@ -110,6 +116,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Make out',
     category: 'physical',
+    tier: 2,
     minRelationship: 30,
     gains: [12, 20],
     outcomes: {
@@ -121,6 +128,7 @@ const INTERACTIONS = {
     icon: Sparkles,
     label: 'Be intimate',
     category: 'physical',
+    tier: 2,
     minRelationship: 40,
     gains: [15, 25],
     outcomes: {
@@ -132,6 +140,7 @@ const INTERACTIONS = {
     icon: Droplets,
     label: 'Bite (feed)',
     category: 'physical',
+    tier: 2,
     minRelationship: 20,
     gains: [10, 18],
     outcomes: {
@@ -140,12 +149,37 @@ const INTERACTIONS = {
       high: ['They begged you to bite. You obliged. Ecstasy.', 'You fed. They came undone beneath you.', 'Feeding became intimacy. They craved your bite.']
     }
   },
+  roughSex: {
+    icon: Flame,
+    label: 'Rough intimacy',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 60,
+    gains: [20, 30],
+    outcomes: {
+      mid: ['Rough. Intense. They wanted it harder.', 'You pinned them down. They begged for more.', 'Wild. Animalistic. Perfect.'],
+      high: ['You fucked them savagely. They loved every second.', 'Marks. Bruises. Screaming. Ecstasy.', 'Complete domination. They surrendered utterly.']
+    }
+  },
+  worship: {
+    icon: Star,
+    label: 'Let them worship you',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 70,
+    gains: [25, 35],
+    outcomes: {
+      mid: ['They worshipped your body. Every inch. Devoted.', 'On their knees. Serving you. Perfect submission.', 'They treated you like a god. You allowed it.'],
+      high: ['Hours of worship. They existed only to please you.', 'Complete devotion. Your pleasure was their religion.', 'They served you endlessly. You took everything.']
+    }
+  },
   
-  // Social - Connection
+  // Social - Tier 1
   talk: {
     icon: MessageCircle,
     label: 'Talk deeply',
     category: 'social',
+    tier: 1,
     gains: [10, 18],
     outcomes: {
       low: ['You asked about their life before. They spoke quietly.', 'They told you about their fears. You listened.', 'Conversation in low voices. Building trust.'],
@@ -157,6 +191,7 @@ const INTERACTIONS = {
     icon: Smile,
     label: 'Joke around',
     category: 'social',
+    tier: 1,
     gains: [5, 10],
     outcomes: {
       low: ['You made them smile. Small victory.', 'They laughed softly. Walls lowering.', 'Playful banter. They relaxed.'],
@@ -168,6 +203,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Compliment',
     category: 'social',
+    tier: 1,
     gains: [4, 8],
     outcomes: {
       low: ['You praised them. They looked away, uncertain.', 'They didn\'t believe you. Yet.', 'Your words made them blush slightly.'],
@@ -179,6 +215,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Confess feelings',
     category: 'social',
+    tier: 2,
     minRelationship: 50,
     gains: [20, 30],
     outcomes: {
@@ -186,12 +223,37 @@ const INTERACTIONS = {
       high: ['I love you. They already knew. They feel it too.', 'You laid your heart bare. They held it carefully.', 'Forever pledged. Bonds deepened.']
     }
   },
+  shareSecret: {
+    icon: MessageCircle,
+    label: 'Share a secret',
+    category: 'social',
+    tier: 3,
+    minRelationship: 60,
+    gains: [15, 25],
+    outcomes: {
+      mid: ['You told them something you never tell anyone.', 'A secret shared. The bond deepened.', 'They held your secret carefully. Sacred.'],
+      high: ['Complete honesty. No more walls between you.', 'You told them everything. They understood.', 'Secrets exchanged. Total trust.']
+    }
+  },
+  promise: {
+    icon: Heart,
+    label: 'Make a promise',
+    category: 'social',
+    tier: 4,
+    minRelationship: 70,
+    gains: [20, 35],
+    outcomes: {
+      mid: ['You promised them forever. You meant it.', 'A vow made. Unbreakable.', 'Your promise hung in the air. Sacred.'],
+      high: ['Forever pledged. Nothing could break this.', 'You swore eternity. They believed you.', 'An eternal promise. Binding.']
+    }
+  },
   
-  // Activities - Shared experiences
+  // Activity - Tier 1
   observe: {
     icon: Eye,
     label: 'Watch them',
     category: 'activity',
+    tier: 1,
     gains: [3, 7],
     outcomes: {
       low: ['You watched them move. They noticed. Looked away.', 'They tried not to meet your eyes. Failed.', 'You studied them. They pretended not to notice.'],
@@ -203,6 +265,7 @@ const INTERACTIONS = {
     icon: Coffee,
     label: 'Share a drink',
     category: 'activity',
+    tier: 1,
     gains: [5, 10],
     outcomes: {
       low: ['You poured them wine. They sipped carefully.', 'Drinks together. Comfortable silence.', 'They watched you over the rim of their glass.'],
@@ -214,6 +277,7 @@ const INTERACTIONS = {
     icon: Music,
     label: 'Listen to music',
     category: 'activity',
+    tier: 1,
     gains: [6, 11],
     outcomes: {
       low: ['Music played. You sat together. Peaceful.', 'They hummed along softly.', 'Shared silence. Shared sound.'],
@@ -225,6 +289,7 @@ const INTERACTIONS = {
     icon: Book,
     label: 'Read together',
     category: 'activity',
+    tier: 2,
     gains: [7, 13],
     outcomes: {
       low: ['You read aloud. They listened.', 'Books between you. Safe distance.', 'They watched you read. Mesmerized.'],
@@ -236,6 +301,7 @@ const INTERACTIONS = {
     icon: Utensils,
     label: 'Cook for them',
     category: 'activity',
+    tier: 2,
     gains: [8, 14],
     outcomes: {
       low: ['You prepared food. They ate quietly.', 'Your effort showed. They appreciated it.', 'Care expressed through cooking.'],
@@ -247,11 +313,36 @@ const INTERACTIONS = {
     icon: Moon,
     label: 'Stargaze',
     category: 'activity',
+    tier: 2,
     gains: [9, 16],
     outcomes: {
       low: ['You looked at stars together. Quiet companionship.', 'They pointed out constellations.', 'Night sky. Shared wonder.'],
       mid: ['They moved closer. Stars reflected in their eyes.', 'You talked about infinity. They held your hand.', 'Under the stars, barriers dissolved.'],
       high: ['They said the stars were nothing compared to you.', 'You kissed under moonlight. Perfect moment.', 'The universe witnessed your connection.']
+    }
+  },
+  travel: {
+    icon: Wind,
+    label: 'Travel together',
+    category: 'activity',
+    tier: 3,
+    minRelationship: 50,
+    gains: [12, 20],
+    outcomes: {
+      mid: ['You explored the city together. New places. New memories.', 'Adventure shared. The bond grew.', 'Traveling side by side. The world felt smaller.'],
+      high: ['You disappeared together for days. Just the two of you.', 'The world became your playground together.', 'Every journey brought you closer.']
+    }
+  },
+  ritual: {
+    icon: Moon,
+    label: 'Perform a ritual',
+    category: 'activity',
+    tier: 4,
+    minRelationship: 65,
+    gains: [15, 25],
+    outcomes: {
+      mid: ['An ancient ritual performed together. Sacred.', 'Blood and moonlight. The ritual bonded you.', 'Magic flowed between you. Powerful.'],
+      high: ['The ritual completed. You became one.', 'Eternal binding through ancient magic.', 'Power surged. The bond became supernatural.']
     }
   },
   
@@ -260,6 +351,7 @@ const INTERACTIONS = {
     icon: Zap,
     label: 'Use Power',
     category: 'power',
+    tier: 1,
     special: true,
     gains: [0, 0]
   },
@@ -269,6 +361,7 @@ const INTERACTIONS = {
     icon: Skull,
     label: 'Kill them',
     category: 'power',
+    tier: 1,
     minRelationship: 0,
     gains: [0, 0],
     outcomes: {
@@ -284,6 +377,11 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [showPowers, setShowPowers] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const queryClient = useQueryClient();
+  
+  const { data: interactionProgress = [] } = useQuery({
+    queryKey: ['interactionProgress'],
+    queryFn: () => base44.entities.InteractionProgress.list()
+  });
   
   const getRelationshipTier = (rel) => {
     if (rel >= 60) return 'high';
@@ -370,6 +468,26 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         intensity: ['intimate', 'makeout', 'bite'].includes(type) ? 'significant' : 'moderate'
       });
       
+      // Update interaction progress for unlocking new tiers
+      const category = interaction.category;
+      if (category !== 'power') {
+        const categoryProgress = interactionProgress.find(p => p.category === category);
+        if (categoryProgress) {
+          const newTimesUsed = categoryProgress.times_used + 1;
+          const newTier = Math.floor(newTimesUsed / 5) + 1; // Unlock new tier every 5 uses
+          await base44.entities.InteractionProgress.update(categoryProgress.id, {
+            times_used: newTimesUsed,
+            unlocked_tier: newTier
+          });
+        } else {
+          await base44.entities.InteractionProgress.create({
+            category: category,
+            times_used: 1,
+            unlocked_tier: 1
+          });
+        }
+      }
+
       // Update quest progress
       const quests = await base44.entities.Quest.filter({ servant_id: servant.id });
       const activeQuest = quests.find(q => !q.completed);
@@ -380,7 +498,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           progress: { ...progress, interact: newCount }
         });
       }
-      
+
       queryClient.invalidateQueries();
 
       // If killed, delete the servant
@@ -402,6 +520,12 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   
   const rel = servant.relationship || 0;
 
+  // Get unlocked tiers for each category
+  const getUnlockedTier = (category) => {
+    const progress = interactionProgress.find(p => p.category === category);
+    return progress?.unlocked_tier || 1;
+  };
+
   // Combine interactions - add vampire interactions if servant is turned
   const allInteractions = servant.is_turned 
     ? { ...INTERACTIONS, ...TURNED_VAMPIRE_INTERACTIONS }
@@ -411,9 +535,20 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     ? ['all', 'vampire', 'physical', 'social', 'activity', 'power']
     : ['all', 'physical', 'social', 'activity', 'power'];
 
+  // Filter by category and tier
   const filteredInteractions = Object.entries(allInteractions).filter(([key, interaction]) => {
-    if (selectedCategory === 'all') return true;
-    return interaction.category === selectedCategory;
+    // Category filter
+    if (selectedCategory !== 'all' && interaction.category !== selectedCategory) {
+      return false;
+    }
+
+    // Tier filter - check if unlocked
+    const unlockedTier = getUnlockedTier(interaction.category);
+    if (interaction.tier && interaction.tier > unlockedTier) {
+      return false;
+    }
+
+    return true;
   });
   
   return (
@@ -460,22 +595,43 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           They're here with you. What will you do?
         </p>
         
-        {/* Category filter */}
+        {/* Category filter with tier display */}
         {!outcome && !processing && (
-          <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1 rounded-lg text-xs whitespace-nowrap transition-colors ${
-                  selectedCategory === cat 
-                    ? 'bg-purple-600 text-white' 
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                }`}
-              >
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </button>
-            ))}
+          <div className="mb-4">
+            <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
+              {categories.map(cat => {
+                const unlockedTier = getUnlockedTier(cat);
+                const progress = interactionProgress.find(p => p.category === cat);
+                const timesUsed = progress?.times_used || 0;
+                const nextTierAt = unlockedTier * 5;
+
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-colors relative ${
+                      selectedCategory === cat 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span>{cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+                      {cat !== 'all' && cat !== 'power' && (
+                        <span className="bg-black/30 px-1.5 py-0.5 rounded text-[10px]">
+                          T{unlockedTier}
+                        </span>
+                      )}
+                    </div>
+                    {cat !== 'all' && cat !== 'power' && selectedCategory === cat && (
+                      <div className="mt-1 text-[10px] text-purple-200">
+                        {timesUsed}/{nextTierAt} to T{unlockedTier + 1}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
         
@@ -628,17 +784,26 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             {filteredInteractions.map(([key, interaction]) => {
               const disabled = interaction.minRelationship && rel < interaction.minRelationship;
               const Icon = interaction.icon;
-              
+              const isNew = interaction.tier && interaction.tier === getUnlockedTier(interaction.category);
+
               return (
                 <button
                   key={key}
                   onClick={() => handleInteraction(key)}
                   disabled={disabled}
-                  className="bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm"
+                  className={`bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm relative ${
+                    isNew ? 'ring-2 ring-yellow-400' : ''
+                  }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{interaction.label}</span>
+                  {isNew && <span className="text-xs text-yellow-400 ml-auto">NEW!</span>}
                   {disabled && <span className="text-xs ml-auto">({interaction.minRelationship}+)</span>}
+                  {interaction.tier && (
+                    <span className="text-[10px] text-gray-500 absolute bottom-1 right-2">
+                      Tier {interaction.tier}
+                    </span>
+                  )}
                 </button>
               );
             })}
