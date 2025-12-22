@@ -54,14 +54,31 @@ export default function Night() {
     }
   }, [vampireStates.length]);
   
-  // Random name generator
-  const generateRandomName = () => {
+  // Random name generator with duplicate checking
+  const generateRandomName = (existingNames = []) => {
     const names = [
       'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
       'Alex', 'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
-      'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren'
+      'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren',
+      'Ash', 'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar'
     ];
-    return names[Math.floor(Math.random() * names.length)];
+    
+    // Filter out already used names
+    const availableNames = names.filter(name => !existingNames.includes(name));
+    
+    // If all names are taken, add a number suffix
+    if (availableNames.length === 0) {
+      const baseName = names[Math.floor(Math.random() * names.length)];
+      let counter = 2;
+      let newName = `${baseName} ${counter}`;
+      while (existingNames.includes(newName)) {
+        counter++;
+        newName = `${baseName} ${counter}`;
+      }
+      return newName;
+    }
+    
+    return availableNames[Math.floor(Math.random() * availableNames.length)];
   };
   
   // Create initial servants if none exist
@@ -75,8 +92,10 @@ export default function Night() {
       const randomVariant = variants[Math.floor(Math.random() * variants.length)];
       const randomState = emotionalStates[Math.floor(Math.random() * emotionalStates.length)];
       
+      const existingNames = servants.map(s => s.name);
+      
       base44.entities.Servant.create({
-        name: generateRandomName(),
+        name: generateRandomName(existingNames),
         variant: randomVariant,
         obsession_stage: 1,
         emotional_state: randomState
