@@ -8,25 +8,25 @@ import { createPageUrl } from '@/utils';
 
 const DIALOGUE_BANKS = {
   devoted: {
-    1: ['I waited where you left me.', 'You don't have to ask.', 'I feel steadier when you're near.'],
-    2: ['I think about you constantly.', 'Tell me what you need.', 'I'm here. Always.'],
-    3: ['I can't imagine life without you.', 'You're all I see.', 'Take whatever you want from me.'],
+    1: ['I waited where you left me.', 'You do not have to ask.', 'I feel steadier when you are near.'],
+    2: ['I think about you constantly.', 'Tell me what you need.', 'I am here. Always.'],
+    3: ['I cannot imagine life without you.', 'You are all I see.', 'Take whatever you want from me.'],
     4: ['I exist for this.', 'You are everything.', 'I belong to you.'],
     5: ['We are bound.', 'I feel you in my blood.', 'Forever.']
   },
   defiant: {
-    1: ['I shouldn't want this.', 'You're dangerous. I came anyway.', 'Tell me what you expect of me.'],
-    2: ['I hate how much I need you.', 'This isn't normal.', 'Why do I keep coming back?'],
-    3: ['I've stopped fighting it.', 'You've won.', 'I don't recognize myself anymore.'],
-    4: ['Take me. I'm tired of resisting.', 'You were right about me.', 'I surrender.'],
+    1: ['I should not want this.', 'You are dangerous. I came anyway.', 'Tell me what you expect of me.'],
+    2: ['I hate how much I need you.', 'This is not normal.', 'Why do I keep coming back?'],
+    3: ['I have stopped fighting it.', 'You have won.', 'I do not recognize myself anymore.'],
+    4: ['Take me. I am tired of resisting.', 'You were right about me.', 'I surrender.'],
     5: ['I am yours completely.', 'Resistance was pointless.', 'Command me.']
   },
   dreamer: {
-    1: ['I dreamed of your voice again.', 'The night feels thinner lately.', 'I don't feel like myself anymore.'],
-    2: ['Reality feels distant now.', 'Are you real?', 'I'm drifting.'],
-    3: ['I see you even when you're not here.', 'I'm losing time.', 'Nothing else matters.'],
-    4: ['I'm more with you than without.', 'I barely remember daylight.', 'Keep me here.'],
-    5: ['I'm gone.', 'I live in your shadow.', 'The world dissolved.']
+    1: ['I dreamed of your voice again.', 'The night feels thinner lately.', 'I do not feel like myself anymore.'],
+    2: ['Reality feels distant now.', 'Are you real?', 'I am drifting.'],
+    3: ['I see you even when you are not here.', 'I am losing time.', 'Nothing else matters.'],
+    4: ['I am more with you than without.', 'I barely remember daylight.', 'Keep me here.'],
+    5: ['I am gone.', 'I live in your shadow.', 'The world dissolved.']
   }
 };
 
