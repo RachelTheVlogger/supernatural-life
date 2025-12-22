@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droplets, Users, BookOpen, Eye, Zap, Heart, MessageSquare } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap } from 'lucide-react';
 import FeedingModal from '@/components/nightbound/FeedingModal';
 import ServantsList from '@/components/nightbound/ServantsList';
 import NightLogView from '@/components/nightbound/NightLogView';
@@ -79,7 +79,6 @@ export default function Night() {
     { icon: Users, label: 'Servants', modal: 'servants' },
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
     { icon: Zap, label: 'Powers', modal: 'powers' },
-    { icon: MessageSquare, label: 'Messages', modal: 'messages' },
     { icon: BookOpen, label: 'Night Log', modal: 'log' }
   ];
   
