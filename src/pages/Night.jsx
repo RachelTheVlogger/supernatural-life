@@ -13,6 +13,7 @@ import PowersModal from '@/components/nightbound/PowersModal';
 import AdvanceNight from '@/components/nightbound/AdvanceNight';
 import NPCInteraction from '@/components/nightbound/NPCInteraction';
 import TutorialSystem from '@/components/nightbound/TutorialSystem';
+import HospitalJob from '@/components/nightbound/HospitalJob';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -141,6 +142,7 @@ export default function Night() {
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
     { icon: Zap, label: 'Powers', modal: 'powers' },
     { icon: Users, label: 'Town People', modal: 'npcs' },
+    { icon: Home, label: 'Hospital Shift', modal: 'hospital' },
     { icon: BookOpen, label: 'Night Log', modal: 'log' },
     { icon: Moon, label: 'Advance Night', modal: 'advance' }
   ];
@@ -283,9 +285,15 @@ export default function Night() {
           <NPCInteraction
             onClose={() => setActiveModal(null)}
             viewMode="vampire"
-            />
-            )}
-            </AnimatePresence>
+          />
+        )}
+        {activeModal === 'hospital' && (
+          <HospitalJob
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        </AnimatePresence>
 
             {/* Tutorial */}
             {showTutorial && (

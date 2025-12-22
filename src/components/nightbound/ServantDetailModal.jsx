@@ -8,6 +8,7 @@ import RelationshipEvent from './RelationshipEvent';
 import QuestSystem from './QuestSystem';
 import DirectInteraction from './DirectInteraction';
 import FriendsSystem from './FriendsSystem';
+import NPCInteraction from './NPCInteraction';
 
 const TEACHING_TOPICS = [
   'Explaining restraint',
