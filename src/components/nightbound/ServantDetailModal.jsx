@@ -30,15 +30,15 @@ const getRelationshipLevel = (value) => {
 const getRelationshipDialogue = (servant) => {
   const rel = servant.relationship || 0;
   if (rel < 20) {
-    return `${servant.name} watches you with uncertain eyes.`;
+    return `They watch you with uncertain eyes.`;
   } else if (rel < 40) {
-    return `${servant.name} is beginning to understand you.`;
+    return `They are beginning to understand you.`;
   } else if (rel < 60) {
-    return `${servant.name} trusts you completely.`;
+    return `They trust you completely.`;
   } else if (rel < 80) {
-    return `${servant.name} would do anything for you.`;
+    return `They would do anything for you.`;
   } else {
-    return `${servant.name}'s soul is bound to yours.`;
+    return `Their soul is bound to yours.`;
   }
 };
 
