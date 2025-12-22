@@ -57,7 +57,7 @@ export default function ServantsList({ onClose, servants, vampireState }) {
           </h2>
           
           <div className="space-y-3">
-            {servants.map((servant, i) => (
+            {servants.slice(0, 1).map((servant, i) => (
               <motion.button
                 key={servant.id}
                 initial={{ opacity: 0, x: -20 }}
