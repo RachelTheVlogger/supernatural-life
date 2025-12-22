@@ -6,27 +6,27 @@ import { ArrowLeft, Send, Trash2, Package, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
-const DIALOGUE_BANKS = {
+const INTERNAL_COMMENTARY = {
   devoted: {
-    1: ['I waited where you left me.', 'You do not have to ask.', 'I feel steadier when you are near.'],
-    2: ['I think about you constantly.', 'Tell me what you need.', 'I am here. Always.'],
-    3: ['I cannot imagine life without you.', 'You are all I see.', 'Take whatever you want from me.'],
-    4: ['I exist for this.', 'You are everything.', 'I belong to you.'],
-    5: ['We are bound.', 'I feel you in my blood.', 'Forever.']
+    1: ['You sense their nervous anticipation. They wonder if you approve.', 'Their thoughts circle back to you. Always you.', 'You feel their heartbeat quicken when they think of you.'],
+    2: ['Devotion radiates from them like heat. Comforting. Constant.', 'They crave your attention like air.', 'You sense their mind reaching for yours.'],
+    3: ['Complete focus. You are their entire world now.', 'Their thoughts have no room for anything but you.', 'You feel their soul bending toward yours.'],
+    4: ['Pure worship flows through the bond. Overwhelming.', 'They exist in a state of reverence.', 'You sense their identity dissolving into yours.'],
+    5: ['The bond pulses. You are one entity now.', 'No separation exists between your minds anymore.', 'You feel what they feel. Complete union.']
   },
   defiant: {
-    1: ['I should not want this.', 'You are dangerous. I came anyway.', 'Tell me what you expect of me.'],
-    2: ['I hate how much I need you.', 'This is not normal.', 'Why do I keep coming back?'],
-    3: ['I have stopped fighting it.', 'You have won.', 'I do not recognize myself anymore.'],
-    4: ['Take me. I am tired of resisting.', 'You were right about me.', 'I surrender.'],
-    5: ['I am yours completely.', 'Resistance was pointless.', 'Command me.']
+    1: ['Resistance wars with attraction. They hate wanting you.', 'You sense their inner conflict. Sharp. Bitter.', 'Pride battles desire in their mind.'],
+    2: ['The fight weakens. You feel their resolve cracking.', 'Anger at themselves. Hunger for you.', 'They resent how much they need this.'],
+    3: ['Surrender tastes like defeat in their thoughts.', 'You sense acceptance replacing resistance.', 'The war is over. You won.'],
+    4: ['Submission flows freely now. No more fighting.', 'They have given up. Given in. Given everything.', 'You feel their defiance transform into devotion.'],
+    5: ['Complete capitulation. They are yours.', 'No walls remain. Total openness.', 'You sense their relief at finally letting go.']
   },
   dreamer: {
-    1: ['I dreamed of your voice again.', 'The night feels thinner lately.', 'I do not feel like myself anymore.'],
-    2: ['Reality feels distant now.', 'Are you real?', 'I am drifting.'],
-    3: ['I see you even when you are not here.', 'I am losing time.', 'Nothing else matters.'],
-    4: ['I am more with you than without.', 'I barely remember daylight.', 'Keep me here.'],
-    5: ['I am gone.', 'I live in your shadow.', 'The world dissolved.']
+    1: ['Their thoughts drift. Ethereal. Distant.', 'You sense them slipping between worlds.', 'Reality feels thin around them.'],
+    2: ['They exist half in dreams now. Fading.', 'You feel them floating. Untethered.', 'Their mind reaches across dimensions.'],
+    3: ['Barely present. More shadow than substance.', 'You sense them dissolving into the night.', 'They drift in your orbit. Dreamlike.'],
+    4: ['Almost gone. A ghost in your presence.', 'You feel them existing only through you now.', 'Their reality is whatever you make it.'],
+    5: ['Completely dissolved. Only echoes remain.', 'You sense nothing but your own reflection in them.', 'They are a dream you\'re having.']
   }
 };
 
@@ -105,16 +105,16 @@ export default function Messages() {
                                     rel >= 40 ? 'beginning to trust' :
                                     rel >= 20 ? 'curious but cautious' : 'wary and uncertain';
 
-          const prompt = `You are ${servant.name}, a human who has become a servant to a vampire. ${variantTraits[servant.variant]}
+          const prompt = `You are narrating the vampire's internal perception of ${servant.name}'s thoughts and feelings. ${variantTraits[servant.variant]}
 
-      Your current emotional state: ${relationshipContext}
+      Current bond: ${relationshipContext}
       Obsession stage: ${servant.obsession_stage}/5
 
-      Recent conversation:
+      Recent exchanges:
       ${recentMessages}
-      You: ${input}
+      Vampire's message: ${input}
 
-      Respond as ${servant.name} in 1-2 short sentences. Be emotional and stay in character, but keep things subtle and not overly explicit. Keep it brief and natural.`;
+      Write 1-2 short sentences describing what the vampire senses/feels from ${servant.name}'s mind in response. Use third person (e.g., "They feel...", "Their thoughts drift to...", "You sense their..."). Make it atmospheric, varied, and never repetitive. Focus on emotions, sensations, unspoken desires - not just direct responses.`;
 
           try {
             const response = await base44.integrations.Core.InvokeLLM({
@@ -127,8 +127,8 @@ export default function Messages() {
               sender: 'servant'
             });
           } catch (error) {
-            // Fallback to dialogue bank if LLM fails
-            const responses = DIALOGUE_BANKS[servant.variant]?.[servant.obsession_stage] || ['...'];
+            // Fallback to internal commentary if LLM fails
+            const responses = INTERNAL_COMMENTARY[servant.variant]?.[servant.obsession_stage] || ['You sense... something. Faint.'];
             const response = responses[Math.floor(Math.random() * responses.length)];
 
             await base44.entities.Message.create({
@@ -204,8 +204,8 @@ export default function Messages() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <h2 className="text-white font-medium">{servant.name}</h2>
-            <p className="text-gray-400 text-xs capitalize">{servant.variant}</p>
+            <h2 className="text-white font-medium">🌙 {servant.name}'s Thoughts</h2>
+            <p className="text-gray-400 text-xs">What you sense through the bond</p>
           </div>
           <button
             onClick={handleClearMessages}
@@ -268,7 +268,7 @@ export default function Messages() {
               className={`max-w-[70%] rounded-2xl px-4 py-2 ${
                 msg.sender === 'vampire'
                   ? 'bg-purple-600 text-white'
-                  : 'bg-gray-800 text-gray-200'
+                  : 'bg-gray-800/50 text-gray-300 italic border border-purple-900/30'
               }`}
             >
               <p className="text-sm">{msg.content}</p>
@@ -368,7 +368,7 @@ export default function Messages() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Send a message..."
+            placeholder="Reach out through the bond..."
             className="flex-1 bg-gray-800 text-white rounded-xl px-4 py-3 outline-none"
           />
           <button
