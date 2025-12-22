@@ -69,15 +69,17 @@ export default function Night() {
   useEffect(() => {
     if (servants.length === 0 && !servantsInitialized) {
       setServantsInitialized(true);
-      const initialServants = [
-        { name: generateRandomName(), variant: 'devoted', obsession_stage: 1, emotional_state: 'curious' },
-        { name: generateRandomName(), variant: 'defiant', obsession_stage: 1, emotional_state: 'wary' },
-        { name: generateRandomName(), variant: 'dreamer', obsession_stage: 1, emotional_state: 'distant' }
-      ];
+      const variants = ['devoted', 'defiant', 'dreamer'];
+      const emotionalStates = ['curious', 'wary', 'distant'];
+      const randomVariant = variants[Math.floor(Math.random() * variants.length)];
+      const randomState = emotionalStates[Math.floor(Math.random() * emotionalStates.length)];
       
-      Promise.all(
-        initialServants.map(s => base44.entities.Servant.create(s))
-      ).then(() => queryClient.invalidateQueries(['servants']));
+      base44.entities.Servant.create({
+        name: generateRandomName(),
+        variant: randomVariant,
+        obsession_stage: 1,
+        emotional_state: randomState
+      }).then(() => queryClient.invalidateQueries(['servants']));
     }
   }, [servants.length, servantsInitialized]);
   
