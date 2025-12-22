@@ -20,6 +20,19 @@ export default function Night() {
   const [selectedServant, setSelectedServant] = useState(null);
   const [showTutorial, setShowTutorial] = useState(null);
   
+  // Check if first time playing
+  const { data: completedTutorials = [] } = useQuery({
+    queryKey: ['tutorials'],
+    queryFn: () => base44.entities.Tutorial.list()
+  });
+  
+  useEffect(() => {
+    // Show welcome tutorial if no tutorials have been completed
+    if (completedTutorials.length === 0 && vampireState) {
+      setShowTutorial('welcome');
+    }
+  }, [completedTutorials.length, vampireState]);
+  
   // Fetch vampire state
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
