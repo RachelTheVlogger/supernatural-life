@@ -1,82 +1,110 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Flame, Skull } from 'lucide-react';
+import { Heart, Skull, Scale, Flame } from 'lucide-react';
 
 const MORALITY_PATHS = {
   humane: {
     label: 'Humane',
-    color: 'from-blue-500 to-green-500',
+    color: 'from-blue-600 to-cyan-500',
     icon: Heart,
-    description: 'You cling to your humanity'
+    description: 'You retain your humanity'
   },
   balanced: {
     label: 'Balanced',
-    color: 'from-purple-500 to-blue-500',
-    icon: Heart,
-    description: 'You walk the line between human and monster'
+    color: 'from-purple-600 to-pink-500',
+    icon: Scale,
+    description: 'Walking the line'
   },
   ruthless: {
     label: 'Ruthless',
-    color: 'from-red-500 to-purple-500',
+    color: 'from-red-600 to-orange-500',
     icon: Flame,
-    description: 'You embrace the beast within'
+    description: 'The beast grows stronger'
   },
   monster: {
     label: 'Monster',
-    color: 'from-red-600 to-black',
+    color: 'from-gray-900 to-red-900',
     icon: Skull,
-    description: 'Humanity is a distant memory'
+    description: 'Humanity lost'
   }
 };
 
 export default function MoralityDisplay({ vampireState, compact = false }) {
   const humanity = vampireState.humanity ?? 50;
-  const path = vampireState.moral_path || 'balanced';
-  const pathData = MORALITY_PATHS[path];
+  const moralPath = vampireState.moral_path || 'balanced';
+  const pathData = MORALITY_PATHS[moralPath];
   const Icon = pathData.icon;
-
+  
   if (compact) {
     return (
-      <div className="flex items-center gap-2">
-        <Icon className="w-4 h-4 text-gray-400" />
-        <div className="flex-1 bg-gray-800 rounded-full h-2 w-24">
-          <motion.div
+      <div className="bg-black/40 backdrop-blur-sm rounded-xl p-3 border border-purple-900/30">
+        <div className="flex items-center gap-2 mb-2">
+          <Icon className="w-4 h-4 text-purple-400" />
+          <span className="text-white text-sm font-medium">{pathData.label}</span>
+          <span className="text-gray-400 text-xs ml-auto">{humanity}/100</span>
+        </div>
+        <div className="w-full bg-gray-700 rounded-full h-2">
+          <motion.div 
             initial={{ width: 0 }}
             animate={{ width: `${humanity}%` }}
-            className={`h-2 rounded-full bg-gradient-to-r ${pathData.color}`}
+            transition={{ duration: 0.5 }}
+            className={`h-2 bg-gradient-to-r ${pathData.color} rounded-full`}
           />
         </div>
-        <span className="text-xs text-gray-400">{Math.round(humanity)}</span>
       </div>
     );
   }
-
+  
   return (
-    <div className="bg-black/40 rounded-xl p-4 border border-gray-800">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <Icon className={`w-5 h-5 bg-gradient-to-r ${pathData.color} bg-clip-text text-transparent`} />
-          <span className="text-white font-medium">{pathData.label}</span>
+    <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30">
+      <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+        <Icon className="w-5 h-5" />
+        Humanity
+      </h3>
+      
+      <div className="space-y-4">
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-purple-300 font-medium">{pathData.label}</span>
+            <span className="text-gray-400 text-sm">{humanity}/100</span>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-3 relative overflow-hidden">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${humanity}%` }}
+              transition={{ duration: 0.5 }}
+              className={`h-3 bg-gradient-to-r ${pathData.color} rounded-full`}
+            />
+            
+            {/* Threshold markers */}
+            <div className="absolute inset-0 flex justify-between px-1">
+              <div className="w-0.5 h-full bg-white/20" style={{ marginLeft: '10%' }} />
+              <div className="w-0.5 h-full bg-white/20" style={{ marginLeft: '25%' }} />
+              <div className="w-0.5 h-full bg-white/20" style={{ marginLeft: '75%' }} />
+            </div>
+          </div>
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>Monster</span>
+            <span>Ruthless</span>
+            <span>Balanced</span>
+            <span>Humane</span>
+          </div>
         </div>
-        <span className="text-gray-400 text-sm">{Math.round(humanity)}/100</span>
-      </div>
-      
-      <div className="w-full bg-gray-800 rounded-full h-3 mb-2 overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${humanity}%` }}
-          transition={{ duration: 0.5 }}
-          className={`h-3 bg-gradient-to-r ${pathData.color}`}
-        />
-      </div>
-      
-      <p className="text-gray-400 text-xs italic">{pathData.description}</p>
-      
-      {/* Threshold indicators */}
-      <div className="flex justify-between mt-3 text-xs">
-        <span className={humanity >= 75 ? 'text-green-400' : 'text-gray-600'}>Humane</span>
-        <span className={humanity >= 25 && humanity < 75 ? 'text-purple-400' : 'text-gray-600'}>Balanced</span>
-        <span className={humanity < 25 ? 'text-red-400' : 'text-gray-600'}>Monster</span>
+        
+        <p className="text-gray-400 text-sm italic">{pathData.description}</p>
+        
+        {/* Power availability hint */}
+        <div className="bg-purple-950/20 border border-purple-800/30 rounded-lg p-3">
+          <p className="text-xs text-purple-300">
+            Your morality unlocks different powers:
+          </p>
+          <ul className="text-xs text-gray-400 mt-1 space-y-0.5">
+            {humanity >= 60 && <li>• Humane powers available</li>}
+            {humanity >= 25 && humanity <= 75 && <li>• Balanced powers available</li>}
+            {humanity <= 40 && <li>• Ruthless powers available</li>}
+            {humanity <= 15 && <li>• Monster powers available</li>}
+          </ul>
+        </div>
       </div>
     </div>
   );

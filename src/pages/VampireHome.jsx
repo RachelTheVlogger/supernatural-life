@@ -35,6 +35,11 @@ export default function VampireHome() {
     queryKey: ['logs'],
     queryFn: () => base44.entities.NightLog.list()
   });
+
+  const { data: powerProgress = [] } = useQuery({
+    queryKey: ['powerProgress'],
+    queryFn: () => base44.entities.PowerProgress.list()
+  });
   
   const vampireState = vampireStates[0] || {
     hunger_state: 'calm',
@@ -351,39 +356,8 @@ export default function VampireHome() {
             transition={{ delay: 0.4 }}
             className="grid md:grid-cols-2 gap-6 mb-8"
           >
-            {/* Current State */}
-            <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30">
-              <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                <Moon className="w-5 h-5" />
-                Current State
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">Hunger</span>
-                  <span className="text-white text-sm capitalize font-medium">{vampireState.hunger_state}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">Emotional Mode</span>
-                  <button
-                    onClick={async () => {
-                      if (vampireState.id) {
-                        await base44.entities.VampireState.update(vampireState.id, {
-                          emotional_mode: vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling'
-                        });
-                        queryClient.invalidateQueries(['vampireState']);
-                      }
-                    }}
-                    className="text-purple-400 hover:text-purple-300 text-sm capitalize font-medium transition-colors"
-                  >
-                    {vampireState.emotional_mode} ⚡
-                  </button>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">Turned Servants</span>
-                  <span className="text-white text-sm font-medium">{turnedServants.length}</span>
-                </div>
-              </div>
-            </div>
+            {/* Morality Display */}
+            <MoralityDisplay vampireState={vampireState} />
             
             {/* Relationships */}
             <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30">
@@ -424,7 +398,7 @@ export default function VampireHome() {
             </div>
           </motion.div>
           
-          {/* Unlocked Powers Display */}
+          {/* Unlocked Powers Display with Levels */}
           {vampireState.unlocked_powers?.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -434,17 +408,42 @@ export default function VampireHome() {
             >
               <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
                 <Zap className="w-5 h-5" />
-                Mastered Abilities
+                Vampire Powers
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {vampireState.unlocked_powers.map((power, i) => (
-                  <div
-                    key={i}
-                    className="bg-purple-950/20 border border-purple-800/30 rounded-lg px-3 py-2 text-sm text-purple-300"
-                  >
-                    {power}
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {vampireState.unlocked_powers.map((power, i) => {
+                  const progress = powerProgress.find(p => p.power_name === power);
+                  const level = progress?.upgrade_level || 1;
+                  const mastery = progress?.mastery || 0;
+                  const timesUsed = progress?.times_used || 0;
+
+                  return (
+                    <div
+                      key={i}
+                      className="bg-purple-950/20 border border-purple-800/30 rounded-lg p-3"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-purple-300 font-medium text-sm">{power}</span>
+                        <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-0.5 rounded">
+                          Lvl {level}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-gray-400">
+                          <span>Mastery</span>
+                          <span>{mastery}%</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-1.5">
+                          <div 
+                            style={{ width: `${mastery}%` }}
+                            className="h-1.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-full"
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">Used {timesUsed} times</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
           )}
