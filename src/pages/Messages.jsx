@@ -57,15 +57,46 @@ export default function Messages() {
   
   const sendMessageMutation = useMutation({
     mutationFn: (data) => base44.entities.Message.create(data),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries(['messages', servantId]);
       setInput('');
+      
+      // Small relationship gain from messaging
+      const relationshipGain = Math.floor(Math.random() * 3) + 2; // 2-4
+      const oldRel = servant.relationship || 0;
+      await base44.entities.Servant.update(servantId, {
+        relationship: Math.min(oldRel + relationshipGain, 100)
+      });
+      queryClient.invalidateQueries(['servant', servantId]);
       
       // Simulate servant response after delay
       setTimeout(() => {
         setIsTyping(true);
         setTimeout(async () => {
-          const responses = DIALOGUE_BANKS[servant.variant]?.[servant.obsession_stage] || ['...'];
+          const rel = servant.relationship || 0;
+          let responses = DIALOGUE_BANKS[servant.variant]?.[servant.obsession_stage] || ['...'];
+          
+          // High relationship unlocks special dialogue
+          if (rel >= 80) {
+            const highRelDialogue = {
+              devoted: ['I would follow you anywhere. Forever.', 'You are all I think about. All I need.', 'I belong to you. Completely.'],
+              defiant: ['Hate how much I need you. And I do need you.', 'You broke me. And I\'m glad you did.', 'I\'m yours. Even if it terrifies me.'],
+              dreamer: ['You\'re in my dreams. You are my dreams.', 'I see you in everything.', 'Reality bends around you. Around us.']
+            };
+            if (Math.random() < 0.4) {
+              responses = highRelDialogue[servant.variant] || responses;
+            }
+          } else if (rel >= 60) {
+            const midRelDialogue = {
+              devoted: ['I trust you completely.', 'Being near you feels right.', 'Tell me what you need. I\'ll do it.'],
+              defiant: ['I... I think I understand you now.', 'This is getting complicated.', 'Why do I keep coming back to you?'],
+              dreamer: ['There\'s something different about you.', 'I feel like I\'m waking up. Or falling asleep. I can\'t tell.', 'Time feels strange when you\'re here.']
+            };
+            if (Math.random() < 0.3) {
+              responses = midRelDialogue[servant.variant] || responses;
+            }
+          }
+          
           const response = responses[Math.floor(Math.random() * responses.length)];
           
           await base44.entities.Message.create({
