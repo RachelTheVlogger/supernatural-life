@@ -349,6 +349,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           <NPCInteraction
             onClose={() => setShowTownPeople(false)}
             viewMode="servant"
+            servant={servant}
           />
         )}
       </AnimatePresence>
