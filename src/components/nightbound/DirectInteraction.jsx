@@ -535,16 +535,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     ? ['all', 'vampire', 'physical', 'social', 'activity', 'power']
     : ['all', 'physical', 'social', 'activity', 'power'];
 
-  // Filter by category and tier
+  // Filter by category only (show locked interactions too)
   const filteredInteractions = Object.entries(allInteractions).filter(([key, interaction]) => {
     // Category filter
     if (selectedCategory !== 'all' && interaction.category !== selectedCategory) {
-      return false;
-    }
-
-    // Tier filter - check if unlocked
-    const unlockedTier = getUnlockedTier(interaction.category);
-    if (interaction.tier && interaction.tier > unlockedTier) {
       return false;
     }
 
@@ -782,26 +776,32 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         ) : (
           <div className="space-y-2 max-h-[50vh] overflow-y-auto">
             {filteredInteractions.map(([key, interaction]) => {
-              const disabled = interaction.minRelationship && rel < interaction.minRelationship;
+              const unlockedTier = getUnlockedTier(interaction.category);
+              const isLocked = interaction.tier && interaction.tier > unlockedTier;
+              const relDisabled = interaction.minRelationship && rel < interaction.minRelationship;
+              const disabled = isLocked || relDisabled;
               const Icon = interaction.icon;
-              const isNew = interaction.tier && interaction.tier === getUnlockedTier(interaction.category);
+              const isNew = interaction.tier && interaction.tier === unlockedTier;
 
               return (
                 <button
                   key={key}
-                  onClick={() => handleInteraction(key)}
+                  onClick={() => !disabled && handleInteraction(key)}
                   disabled={disabled}
                   className={`bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm relative ${
                     isNew ? 'ring-2 ring-yellow-400' : ''
-                  }`}
+                  } ${isLocked ? 'bg-gray-800 hover:bg-gray-800' : ''}`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{interaction.label}</span>
                   {isNew && <span className="text-xs text-yellow-400 ml-auto">NEW!</span>}
-                  {disabled && <span className="text-xs ml-auto">({interaction.minRelationship}+)</span>}
-                  {interaction.tier && (
+                  {isLocked && <span className="text-xs text-gray-500 ml-auto flex items-center gap-1">
+                    <Lock className="w-3 h-3" /> Tier {interaction.tier}
+                  </span>}
+                  {!isLocked && relDisabled && <span className="text-xs ml-auto">({interaction.minRelationship}+)</span>}
+                  {!isLocked && interaction.tier && (
                     <span className="text-[10px] text-gray-500 absolute bottom-1 right-2">
-                      Tier {interaction.tier}
+                      T{interaction.tier}
                     </span>
                   )}
                 </button>
