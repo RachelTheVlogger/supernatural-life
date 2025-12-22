@@ -168,7 +168,7 @@ export default function Night() {
           className="mt-4 text-purple-400 hover:text-purple-300 transition-colors text-sm flex items-center gap-2 mx-auto"
         >
           <Home className="w-4 h-4" />
-          Return to your sanctuary
+          Return to your house
         </button>
       </motion.div>
       

@@ -223,7 +223,7 @@ export default function Messages() {
             className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
               tab === 'messages' 
                 ? 'bg-purple-600 text-white' 
-                : 'bg-gray-800 text-gray-300 hover:text-white'
+                : 'bg-gray-800 text-white hover:text-white'
             }`}
           >
             Messages
@@ -233,7 +233,7 @@ export default function Messages() {
             className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
               tab === 'business' 
                 ? 'bg-purple-600 text-white' 
-                : 'bg-gray-800 text-gray-300 hover:text-white'
+                : 'bg-gray-800 text-white hover:text-white'
             }`}
           >
             <Package className="w-4 h-4" />
@@ -244,7 +244,7 @@ export default function Messages() {
             className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
               tab === 'reviews' 
                 ? 'bg-purple-600 text-white' 
-                : 'bg-gray-800 text-gray-300 hover:text-white'
+                : 'bg-gray-800 text-white hover:text-white'
             }`}
           >
             <Star className="w-4 h-4" />
