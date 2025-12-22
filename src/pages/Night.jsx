@@ -34,16 +34,12 @@ export default function Night() {
   }, [completedTutorials.length, vampireState]);
   
   // Fetch vampire state
-  const { data: vampireStates = [] } = useQuery({
+  const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
     queryFn: () => base44.entities.VampireState.list()
   });
   
   const vampireState = vampireStates[0];
-  
-  if (!vampireState) {
-    return null; // Will redirect via useEffect
-  }
   
   // Fetch servants
   const { data: servants = [] } = useQuery({
@@ -59,10 +55,22 @@ export default function Night() {
   
   // Redirect to home if no vampire exists
   useEffect(() => {
-    if (vampireStates.length === 0) {
+    if (!vampireLoading && vampireStates.length === 0) {
       navigate(createPageUrl('Home'));
     }
-  }, [vampireStates.length, navigate]);
+  }, [vampireStates.length, vampireLoading, navigate]);
+  
+  if (vampireLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+  
+  if (!vampireState) {
+    return null;
+  }
   
   // Random name generator with duplicate checking
   const generateRandomName = (existingNames = []) => {
