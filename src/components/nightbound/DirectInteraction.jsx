@@ -5,6 +5,38 @@ import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import PowerUsage from './PowerUsage';
 
+const getVariantModifier = (variant, category) => {
+  const modifiers = {
+    devoted: { physical: 1.2, social: 1.3, activity: 1.1, power: 1.0 },
+    defiant: { physical: 0.8, social: 0.9, activity: 1.0, power: 0.7 },
+    dreamer: { physical: 1.0, social: 1.1, activity: 1.3, power: 1.2 }
+  };
+  return modifiers[variant]?.[category] || 1.0;
+};
+
+const getVariantFlavor = (variant, tier, obsessionStage) => {
+  const flavors = {
+    devoted: {
+      low: [' Their eyes never leave you.', ' They look at you with pure devotion.', ' Every moment with you is sacred to them.'],
+      mid: [' They exist to please you.', ' Your happiness is their purpose.', ' They worship you.'],
+      high: [' They are utterly yours.', ' Complete surrender. Complete devotion.', ' Nothing exists but you.']
+    },
+    defiant: {
+      low: [' They hate how much they want this.', ' Conflicted. Resistant. Yet here.', ' Their pride wars with their desire.'],
+      mid: [' The fight is leaving them.', ' Resistance crumbling.', ' They\'re losing themselves in you.'],
+      high: [' All defiance gone. Only need remains.', ' They have surrendered completely.', ' You broke them. They thank you for it.']
+    },
+    dreamer: {
+      low: [' They seem distant, somewhere else.', ' Reality blurs around them.', ' Lost in their own world.'],
+      mid: [' Time doesn\'t work right around you.', ' They drift between worlds.', ' You\'re the only real thing.'],
+      high: [' They exist in your shadow now.', ' Reality is just a dream. You are truth.', ' Completely untethered. Floating.']
+    }
+  };
+  
+  const flavorSet = flavors[variant]?.[tier] || flavors.devoted.low;
+  return flavorSet[Math.floor(Math.random() * flavorSet.length)];
+};
+
 const INTERACTIONS = {
   // Physical - Intimate
   touch: {
@@ -227,18 +259,37 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     const tier = getRelationshipTier(rel);
     
     const outcomes = interaction.outcomes[tier] || interaction.outcomes.low;
-    const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+    const baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+    
+    // Add variant-specific flavor
+    const variantFlavor = getVariantFlavor(servant.variant, tier, servant.obsession_stage);
+    const outcome = baseOutcome + variantFlavor;
     
     setOutcome(outcome);
     
     setTimeout(async () => {
       const [min, max] = interaction.gains;
-      const relationshipGain = Math.floor(Math.random() * (max - min + 1)) + min;
+      const baseGain = Math.floor(Math.random() * (max - min + 1)) + min;
+      
+      // Apply variant modifier
+      const modifier = getVariantModifier(servant.variant, interaction.category);
+      const relationshipGain = Math.round(baseGain * modifier);
       const newRel = Math.min((servant.relationship || 0) + relationshipGain, 100);
+      
+      // Update emotional state based on variant and new relationship
+      const emotionalStates = {
+        devoted: ['shy', 'longing', 'devoted', 'worshipful', 'transcendent'],
+        defiant: ['conflicted', 'resistant', 'surrendering', 'accepting', 'bound'],
+        dreamer: ['distant', 'drifting', 'fading', 'ethereal', 'dissolved']
+      };
+      const stateIndex = Math.min(Math.floor(newRel / 20), 4);
+      const newEmotionalState = emotionalStates[servant.variant][stateIndex];
       
       await base44.entities.Servant.update(servant.id, {
         relationship: newRel,
-        obsession_stage: Math.min(Math.floor(newRel / 20) + 1, 5)
+        obsession_stage: Math.min(Math.floor(newRel / 20) + 1, 5),
+        emotional_state: newEmotionalState,
+        last_interaction: new Date().toISOString()
       });
       
       await base44.entities.NightLog.create({
