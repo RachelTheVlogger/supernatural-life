@@ -1,34 +1,56 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Heart, Zap, Flame } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
-const FEEDING_OUTCOMES = [
-  { state: 'sated', log: 'The hunger dissolved. Everything felt distant and calm.' },
-  { state: 'calm', log: 'You fed with restraint. Control held steady.' },
-  { state: 'lingering', log: 'Hunger lingered longer than expected.' },
-  { state: 'heightened', log: 'Your senses sharpened. The night became clearer.' },
-  { state: 'restless', log: 'Something unsettled remained. You noticed it hours later.' }
-];
+const FEEDING_OUTCOMES = {
+  ethical: [
+    { state: 'sated', log: 'You fed carefully. They survived. Control maintained.', humanity: 2 },
+    { state: 'sated', log: 'You took only what you needed. Restraint is power.', humanity: 3 },
+    { state: 'calm', log: 'You fed with care. They will recover.', humanity: 1 }
+  ],
+  neutral: [
+    { state: 'sated', log: 'You fed. They barely noticed.', humanity: 0 },
+    { state: 'calm', log: 'Blood. Relief. The deed is done.', humanity: 0 },
+    { state: 'lingering', log: 'You fed quickly. Efficient.', humanity: -1 }
+  ],
+  brutal: [
+    { state: 'sated', log: 'You fed ravenously. They screamed. You didn\'t stop.', humanity: -4 },
+    { state: 'calm', log: 'You drained them nearly dry. The beast was satisfied.', humanity: -3 },
+    { state: 'lingering', log: 'You took more than you should. Their fear was intoxicating.', humanity: -2 }
+  ]
+};
 
 export default function FeedingModal({ onClose, vampireState }) {
   const [feeding, setFeeding] = useState(false);
+  const [selectingMethod, setSelectingMethod] = useState(true);
   const [outcome, setOutcome] = useState(null);
   const queryClient = useQueryClient();
   
-  const handleFeed = async () => {
+  const handleFeedingChoice = (method) => {
+    setSelectingMethod(false);
     setFeeding(true);
     
     setTimeout(async () => {
-      const randomOutcome = FEEDING_OUTCOMES[Math.floor(Math.random() * FEEDING_OUTCOMES.length)];
+      const outcomes = FEEDING_OUTCOMES[method];
+      const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
       setOutcome(randomOutcome);
       
-      // Update vampire state
+      // Update vampire state with humanity
       if (vampireState.id) {
+        const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + randomOutcome.humanity));
+        let moral_path = 'balanced';
+        if (newHumanity >= 75) moral_path = 'humane';
+        else if (newHumanity >= 25) moral_path = 'balanced';
+        else if (newHumanity >= 10) moral_path = 'ruthless';
+        else moral_path = 'monster';
+        
         await base44.entities.VampireState.update(vampireState.id, {
           hunger_state: randomOutcome.state,
-          last_feed: new Date().toISOString()
+          last_feed: new Date().toISOString(),
+          humanity: newHumanity,
+          moral_path: moral_path
         });
       }
       
@@ -36,7 +58,7 @@ export default function FeedingModal({ onClose, vampireState }) {
       await base44.entities.NightLog.create({
         entry: randomOutcome.log,
         category: 'feeding',
-        intensity: randomOutcome.state === 'restless' ? 'significant' : 'moderate'
+        intensity: method === 'brutal' ? 'significant' : 'moderate'
       });
       
       queryClient.invalidateQueries(['vampireState']);
@@ -77,17 +99,49 @@ export default function FeedingModal({ onClose, vampireState }) {
           Feed
         </h2>
         
-        {!feeding && !outcome && (
-          <div className="space-y-6">
-            <p className="text-red-100/60 text-sm leading-relaxed text-center italic">
-              The night offers many choices. You move toward one.
+        {!feeding && !outcome && selectingMethod && (
+          <div className="space-y-4">
+            <p className="text-red-100/60 text-sm leading-relaxed text-center italic mb-6">
+              The hunger calls. How will you feed?
             </p>
             
             <button
-              onClick={handleFeed}
-              className="w-full glass rounded-xl py-4 text-red-100/70 text-sm tracking-widest uppercase hover:bg-red-950/30 transition-slow"
+              onClick={() => handleFeedingChoice('ethical')}
+              className="w-full glass rounded-xl p-4 text-left hover:bg-blue-950/30 transition-slow border border-blue-500/20"
             >
-              Feed
+              <div className="flex items-start gap-3">
+                <Heart className="w-5 h-5 text-blue-400 mt-1" />
+                <div>
+                  <p className="text-white font-medium mb-1">Feed Carefully</p>
+                  <p className="text-gray-400 text-sm">Take only what you need. Leave them alive. <span className="text-green-400">+Humanity</span></p>
+                </div>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => handleFeedingChoice('neutral')}
+              className="w-full glass rounded-xl p-4 text-left hover:bg-purple-950/30 transition-slow border border-purple-500/20"
+            >
+              <div className="flex items-start gap-3">
+                <Zap className="w-5 h-5 text-purple-400 mt-1" />
+                <div>
+                  <p className="text-white font-medium mb-1">Feed Efficiently</p>
+                  <p className="text-gray-400 text-sm">Take what you need. Nothing more, nothing less. <span className="text-gray-400">Neutral</span></p>
+                </div>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => handleFeedingChoice('brutal')}
+              className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/30 transition-slow border border-red-500/20"
+            >
+              <div className="flex items-start gap-3">
+                <Flame className="w-5 h-5 text-red-400 mt-1" />
+                <div>
+                  <p className="text-white font-medium mb-1">Feed Brutally</p>
+                  <p className="text-gray-400 text-sm">Take everything. The beast demands satisfaction. <span className="text-red-400">-Humanity</span></p>
+                </div>
+              </div>
             </button>
           </div>
         )}
@@ -103,7 +157,7 @@ export default function FeedingModal({ onClose, vampireState }) {
               transition={{ duration: 2, repeat: Infinity }}
               className="text-red-100/60 text-sm italic"
             >
-              ...
+              Feeding...
             </motion.div>
           </motion.div>
         )}
