@@ -255,7 +255,7 @@ export default function Messages() {
       
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {tab === 'messages' ? (
+        {tab === 'messages' && (
           <>
             {messages.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)).map((msg) => (
           <motion.div
@@ -290,7 +290,9 @@ export default function Messages() {
             
             <div ref={messagesEndRef} />
           </>
-        ) : (
+        )}
+
+        {tab === 'business' && (
           <>
             {orders.length === 0 ? (
               <p className="text-gray-400 text-center py-8">No orders yet...</p>
@@ -323,7 +325,9 @@ export default function Messages() {
               ))
             )}
           </>
-        ) : tab === 'reviews' ? (
+        )}
+
+        {tab === 'reviews' && (
           <>
             {reviews.length === 0 ? (
               <p className="text-gray-400 text-center py-8">No reviews yet...</p>
@@ -353,7 +357,7 @@ export default function Messages() {
               ))
             )}
           </>
-        ) : null}
+        )}
       </div>
       
       {/* Input */}
