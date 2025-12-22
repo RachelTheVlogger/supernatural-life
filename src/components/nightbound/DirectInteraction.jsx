@@ -55,6 +55,7 @@ const INTERACTIONS = {
 export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [interactionType, setInteractionType] = useState('');
   const queryClient = useQueryClient();
   
   const getRelationshipTier = (rel) => {
@@ -65,6 +66,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   
   const handleInteraction = async (type) => {
     setProcessing(true);
+    setInteractionType(type);
     
     const interaction = INTERACTIONS[type];
     const rel = servant.relationship || 0;
@@ -116,8 +118,9 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       setTimeout(() => {
         setProcessing(false);
         setOutcome('');
+        setInteractionType('');
         onClose();
-      }, 3000);
+      }, 5000);
     }, 2000);
   };
   
@@ -153,11 +156,135 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         </p>
         
         {outcome ? (
-          <div className="text-center py-12">
+          <div className="text-center py-12 relative overflow-hidden">
+            {/* Animated particles based on interaction type */}
+            {interactionType === 'kiss' && [...Array(15)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-2xl"
+                initial={{ 
+                  x: '50%', 
+                  y: '50%',
+                  opacity: 1,
+                  scale: 0 
+                }}
+                animate={{ 
+                  x: `${Math.random() * 100}%`,
+                  y: `${Math.random() * 100 - 50}%`,
+                  opacity: 0,
+                  scale: 1.5
+                }}
+                transition={{ 
+                  duration: 2 + Math.random(),
+                  delay: Math.random() * 0.5,
+                  ease: 'easeOut'
+                }}
+              >
+                ❤️
+              </motion.div>
+            ))}
+            
+            {interactionType === 'intimate' && [...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-xl"
+                initial={{ 
+                  x: '50%', 
+                  y: '100%',
+                  opacity: 1 
+                }}
+                animate={{ 
+                  x: `${Math.random() * 100}%`,
+                  y: '-20%',
+                  opacity: 0
+                }}
+                transition={{ 
+                  duration: 3 + Math.random() * 2,
+                  delay: Math.random(),
+                  ease: 'easeOut'
+                }}
+              >
+                {['🔥', '💋', '✨'][Math.floor(Math.random() * 3)]}
+              </motion.div>
+            ))}
+            
+            {interactionType === 'touch' && [...Array(10)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-xl"
+                initial={{ 
+                  x: `${Math.random() * 100}%`,
+                  y: `${Math.random() * 100}%`,
+                  opacity: 0,
+                  scale: 0
+                }}
+                animate={{ 
+                  opacity: [0, 1, 0],
+                  scale: [0, 1, 0]
+                }}
+                transition={{ 
+                  duration: 2,
+                  delay: Math.random() * 2,
+                  repeat: Infinity
+                }}
+              >
+                ✨
+              </motion.div>
+            ))}
+            
+            {interactionType === 'observe' && [...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-xl"
+                initial={{ 
+                  x: '50%',
+                  y: '50%',
+                  opacity: 1,
+                  scale: 0.5
+                }}
+                animate={{ 
+                  x: `${50 + Math.cos(i * Math.PI / 4) * 40}%`,
+                  y: `${50 + Math.sin(i * Math.PI / 4) * 40}%`,
+                  opacity: 0,
+                  scale: 1
+                }}
+                transition={{ 
+                  duration: 1.5,
+                  delay: i * 0.1,
+                  ease: 'easeOut'
+                }}
+              >
+                👁️
+              </motion.div>
+            ))}
+            
+            {interactionType === 'talk' && [...Array(12)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-sm"
+                initial={{ 
+                  x: `${20 + Math.random() * 60}%`,
+                  y: '100%',
+                  opacity: 0
+                }}
+                animate={{ 
+                  y: '-10%',
+                  opacity: [0, 1, 0]
+                }}
+                transition={{ 
+                  duration: 3,
+                  delay: Math.random() * 2,
+                  ease: 'linear'
+                }}
+              >
+                💬
+              </motion.div>
+            ))}
+            
             <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-gray-300 text-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-gray-300 text-lg relative z-10"
             >
               {outcome}
             </motion.p>

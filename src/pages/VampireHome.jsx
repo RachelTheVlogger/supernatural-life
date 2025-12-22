@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import EvolutionTree from '@/components/nightbound/EvolutionTree';
 import DirectInteraction from '@/components/nightbound/DirectInteraction';
+import TemptationModal from '@/components/nightbound/TemptationModal';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function VampireHome() {
   const [meditating, setMeditating] = useState(false);
   const [showEvolutionTree, setShowEvolutionTree] = useState(false);
   const [selectedServantForInteraction, setSelectedServantForInteraction] = useState(null);
+  const [showTemptation, setShowTemptation] = useState(false);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -243,6 +245,34 @@ export default function VampireHome() {
             </div>
           </motion.div>
           
+          {/* Temptation System */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mb-8"
+          >
+            <button
+              onClick={() => setShowTemptation(true)}
+              className="w-full bg-gradient-to-r from-red-950/40 to-purple-950/40 hover:from-red-950/60 hover:to-purple-950/60 border-2 border-red-500/50 rounded-2xl p-6 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    🔥
+                  </motion.div>
+                  <div className="text-left">
+                    <h3 className="text-white text-xl font-bold mb-1">Face a Temptation</h3>
+                    <p className="text-gray-300 text-sm">Risk and reward. Choose wisely.</p>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </motion.div>
+          
           {/* Room sections */}
           <div className="grid md:grid-cols-2 gap-6">
             {/* Main chamber */}
@@ -423,6 +453,13 @@ export default function VampireHome() {
             servant={selectedServantForInteraction}
             vampireState={vampireState}
             onClose={() => setSelectedServantForInteraction(null)}
+          />
+        )}
+        {showTemptation && (
+          <TemptationModal
+            vampireState={vampireState}
+            servants={servants}
+            onClose={() => setShowTemptation(false)}
           />
         )}
         {meditating && (
