@@ -59,6 +59,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [locationOutcome, setLocationOutcome] = useState('');
   const [relationshipMilestone, setRelationshipMilestone] = useState(null);
   const [showQuestModal, setShowQuestModal] = useState(false);
+  const [feeding, setFeeding] = useState(false);
   const queryClient = useQueryClient();
   
   // Fetch quests for this servant
@@ -173,53 +174,61 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   };
   
   const handleFeedOn = async () => {
-    const relationshipGain = Math.floor(Math.random() * 8) + 7; // 7-14
-    const oldRel = servant.relationship || 0;
-    const newRel = Math.min(oldRel + relationshipGain, 100);
+    setFeeding(true);
     
-    await updateQuestProgress('feed');
-    
-    let feedingText = `You fed. They trembled but did not pull away, breath catching in their throat.`;
-    if (newRel >= 80) {
-      feedingText = `You fed. They offered themselves willingly, pressing closer, a soft sound escaping their lips.`;
-    } else if (newRel >= 60) {
-      feedingText = `You fed. They leaned into your touch, fingers curling against your skin, trusting completely.`;
-    } else if (newRel >= 40) {
-      feedingText = `You fed. They stayed still, accepting, their heartbeat quickening beneath your lips.`;
-    }
-    
-    await base44.entities.NightLog.create({
-      entry: feedingText,
-      category: 'feeding',
-      intensity: 'moderate'
-    });
-    
-    await base44.entities.Servant.update(servant.id, {
-      obsession_stage: Math.min(servant.obsession_stage + 1, 5),
-      relationship: newRel
-    });
-    
-    const milestone = checkRelationshipMilestone(oldRel, newRel);
-    if (milestone) {
-      setRelationshipMilestone(milestone);
-    }
-    
-    // Update hunger state
-    await base44.entities.VampireState.update(vampireState.id, {
-      hunger_state: 'sated',
-      last_feed: new Date().toISOString()
-    });
-    
-    // Chance to unlock feeding power
-    if (Math.random() < 0.25 && !vampireState.unlocked_powers?.includes('Gentle Touch')) {
-      const updatedPowers = [...(vampireState.unlocked_powers || []), 'Gentle Touch'];
-      await base44.entities.VampireState.update(vampireState.id, {
-        unlocked_powers: updatedPowers
+    setTimeout(async () => {
+      const relationshipGain = Math.floor(Math.random() * 8) + 7; // 7-14
+      const oldRel = servant.relationship || 0;
+      const newRel = Math.min(oldRel + relationshipGain, 100);
+      
+      await updateQuestProgress('feed');
+      
+      let feedingText = `You fed. They trembled but did not pull away, breath catching in their throat.`;
+      if (newRel >= 80) {
+        feedingText = `You fed. They offered themselves willingly, pressing closer, a soft sound escaping their lips.`;
+      } else if (newRel >= 60) {
+        feedingText = `You fed. They leaned into your touch, fingers curling against your skin, trusting completely.`;
+      } else if (newRel >= 40) {
+        feedingText = `You fed. They stayed still, accepting, their heartbeat quickening beneath your lips.`;
+      }
+      
+      await base44.entities.NightLog.create({
+        entry: feedingText,
+        category: 'feeding',
+        intensity: 'moderate'
       });
-    }
-    
-    queryClient.invalidateQueries();
-    onClose();
+      
+      await base44.entities.Servant.update(servant.id, {
+        obsession_stage: Math.min(servant.obsession_stage + 1, 5),
+        relationship: newRel
+      });
+      
+      const milestone = checkRelationshipMilestone(oldRel, newRel);
+      if (milestone) {
+        setRelationshipMilestone(milestone);
+      }
+      
+      // Update hunger state
+      await base44.entities.VampireState.update(vampireState.id, {
+        hunger_state: 'sated',
+        last_feed: new Date().toISOString()
+      });
+      
+      // Chance to unlock feeding power
+      if (Math.random() < 0.25 && !vampireState.unlocked_powers?.includes('Gentle Touch')) {
+        const updatedPowers = [...(vampireState.unlocked_powers || []), 'Gentle Touch'];
+        await base44.entities.VampireState.update(vampireState.id, {
+          unlocked_powers: updatedPowers
+        });
+      }
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setFeeding(false);
+        onClose();
+      }, 4000);
+    }, 1500);
   };
   
   const handleGoOut = async (location) => {
@@ -368,7 +377,66 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           </p>
         </div>
         
-        {teaching || turning || goingOut ? (
+        {feeding ? (
+          <div className="text-center py-12 relative overflow-hidden">
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-3xl"
+                initial={{ 
+                  x: '50%', 
+                  y: '50%',
+                  opacity: 1,
+                  scale: 0 
+                }}
+                animate={{ 
+                  x: `${Math.random() * 100}%`,
+                  y: `${Math.random() * 100 - 50}%`,
+                  opacity: 0,
+                  scale: 2
+                }}
+                transition={{ 
+                  duration: 2 + Math.random(),
+                  delay: Math.random() * 0.5,
+                  ease: 'easeOut'
+                }}
+              >
+                ❤️
+              </motion.div>
+            ))}
+            
+            {[...Array(15)].map((_, i) => (
+              <motion.div
+                key={`drop-${i}`}
+                className="absolute text-2xl"
+                initial={{ 
+                  x: `${Math.random() * 100}%`, 
+                  y: '0%',
+                  opacity: 1 
+                }}
+                animate={{ 
+                  y: '100%',
+                  opacity: 0
+                }}
+                transition={{ 
+                  duration: 2 + Math.random(),
+                  delay: Math.random() * 0.8,
+                  ease: 'linear'
+                }}
+              >
+                💧
+              </motion.div>
+            ))}
+            
+            <motion.p
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-red-400 relative z-10"
+            >
+              Feeding...
+            </motion.p>
+          </div>
+        ) : teaching || turning || goingOut ? (
           <div className="text-center py-12">
             <motion.p
               animate={{ opacity: [0.5, 1, 0.5] }}
