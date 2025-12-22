@@ -15,6 +15,18 @@ const VARIANT_DESCRIPTIONS = {
 
 const STAGE_NAMES = ['Curious', 'Devoted', 'Dependent', 'Reverent', 'Bound'];
 
+const RELATIONSHIP_LEVELS = [
+  { min: 0, max: 20, label: 'Wary', color: 'bg-gray-700' },
+  { min: 21, max: 40, label: 'Curious', color: 'bg-blue-900/50' },
+  { min: 41, max: 60, label: 'Trusting', color: 'bg-green-900/50' },
+  { min: 61, max: 80, label: 'Devoted', color: 'bg-purple-900/50' },
+  { min: 81, max: 100, label: 'Bound', color: 'bg-red-900/50' }
+];
+
+const getRelationshipLevel = (value) => {
+  return RELATIONSHIP_LEVELS.find(level => value >= level.min && value <= level.max) || RELATIONSHIP_LEVELS[0];
+};
+
 export default function ServantsList({ onClose, servants, vampireState }) {
   const [selectedServant, setSelectedServant] = useState(null);
   return (
@@ -54,14 +66,27 @@ export default function ServantsList({ onClose, servants, vampireState }) {
                 onClick={() => setSelectedServant(servant)}
                 className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 transition-colors text-left"
               >
-                <div className="flex justify-between items-start mb-2">
-                  <div>
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
                     <h3 className="text-white font-medium text-lg">
                       {servant.name}
                     </h3>
                     <p className="text-gray-400 text-sm capitalize">
                       {servant.variant} · {STAGE_NAMES[servant.obsession_stage - 1]}
                     </p>
+
+                    {/* Relationship mini bar */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <div className="flex-1 bg-gray-700 rounded-full h-1.5 max-w-[120px]">
+                        <div
+                          style={{ width: `${servant.relationship || 0}%` }}
+                          className="h-1.5 rounded-full bg-gradient-to-r from-purple-600 to-red-500"
+                        />
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {getRelationshipLevel(servant.relationship || 0).label}
+                      </span>
+                    </div>
                   </div>
                   
                   <Link 

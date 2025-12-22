@@ -4,6 +4,7 @@ import { X, BookOpen, Zap, Users, Heart, MapPin } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import LocationVisit from './LocationVisit';
+import RelationshipEvent from './RelationshipEvent';
 
 const TEACHING_TOPICS = [
   'Explaining restraint',
@@ -12,6 +13,33 @@ const TEACHING_TOPICS = [
   'Allowing them to observe feeding',
   'Practicing control together'
 ];
+
+const RELATIONSHIP_LEVELS = [
+  { min: 0, max: 20, label: 'Wary', color: 'text-gray-400' },
+  { min: 21, max: 40, label: 'Curious', color: 'text-blue-400' },
+  { min: 41, max: 60, label: 'Trusting', color: 'text-green-400' },
+  { min: 61, max: 80, label: 'Devoted', color: 'text-purple-400' },
+  { min: 81, max: 100, label: 'Bound', color: 'text-red-400' }
+];
+
+const getRelationshipLevel = (value) => {
+  return RELATIONSHIP_LEVELS.find(level => value >= level.min && value <= level.max) || RELATIONSHIP_LEVELS[0];
+};
+
+const getRelationshipDialogue = (servant) => {
+  const rel = servant.relationship || 0;
+  if (rel < 20) {
+    return `${servant.name} watches you with uncertain eyes.`;
+  } else if (rel < 40) {
+    return `${servant.name} is beginning to understand you.`;
+  } else if (rel < 60) {
+    return `${servant.name} trusts you completely.`;
+  } else if (rel < 80) {
+    return `${servant.name} would do anything for you.`;
+  } else {
+    return `${servant.name}'s soul is bound to yours.`;
+  }
+};
 
 const LOCATIONS = [
   { name: 'Night walk through the city', outcomes: ['You walked together in silence.', 'They stayed close to you.', 'The night felt different with them beside you.'] },
@@ -28,7 +56,18 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [showLocations, setShowLocations] = useState(false);
   const [visitingLocation, setVisitingLocation] = useState(null);
   const [locationOutcome, setLocationOutcome] = useState('');
+  const [relationshipMilestone, setRelationshipMilestone] = useState(null);
   const queryClient = useQueryClient();
+  
+  const checkRelationshipMilestone = (oldRel, newRel) => {
+    const milestones = [20, 40, 60, 80, 100];
+    for (const milestone of milestones) {
+      if (oldRel < milestone && newRel >= milestone) {
+        return milestone;
+      }
+    }
+    return null;
+  };
   
   const handleTeach = async () => {
     setTeaching(true);
@@ -36,11 +75,20 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
     setTimeout(async () => {
       const topic = TEACHING_TOPICS[Math.floor(Math.random() * TEACHING_TOPICS.length)];
       const newProgress = (servant.teaching_progress || 0) + 1;
+      const relationshipGain = Math.floor(Math.random() * 5) + 5; // 5-9
+      const oldRel = servant.relationship || 0;
+      const newRel = Math.min(oldRel + relationshipGain, 100);
       
       await base44.entities.Servant.update(servant.id, {
         teaching_progress: newProgress,
-        obsession_stage: Math.min(servant.obsession_stage + (newProgress % 3 === 0 ? 1 : 0), 5)
+        obsession_stage: Math.min(servant.obsession_stage + (newProgress % 3 === 0 ? 1 : 0), 5),
+        relationship: newRel
       });
+      
+      const milestone = checkRelationshipMilestone(oldRel, newRel);
+      if (milestone) {
+        setRelationshipMilestone(milestone);
+      }
       
       await base44.entities.NightLog.create({
         entry: `You taught ${servant.name} about ${topic.toLowerCase()}.`,
@@ -102,15 +150,34 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   };
   
   const handleFeedOn = async () => {
+    const relationshipGain = Math.floor(Math.random() * 8) + 7; // 7-14
+    const oldRel = servant.relationship || 0;
+    const newRel = Math.min(oldRel + relationshipGain, 100);
+    
+    let feedingText = `You fed on ${servant.name}. They trembled but did not pull away.`;
+    if (newRel >= 80) {
+      feedingText = `You fed on ${servant.name}. They offered themselves willingly, eagerly.`;
+    } else if (newRel >= 60) {
+      feedingText = `You fed on ${servant.name}. They leaned into you, trusting completely.`;
+    } else if (newRel >= 40) {
+      feedingText = `You fed on ${servant.name}. They stayed still, accepting.`;
+    }
+    
     await base44.entities.NightLog.create({
-      entry: `You fed on ${servant.name}. They trembled but did not pull away.`,
+      entry: feedingText,
       category: 'feeding',
       intensity: 'moderate'
     });
     
     await base44.entities.Servant.update(servant.id, {
-      obsession_stage: Math.min(servant.obsession_stage + 1, 5)
+      obsession_stage: Math.min(servant.obsession_stage + 1, 5),
+      relationship: newRel
     });
+    
+    const milestone = checkRelationshipMilestone(oldRel, newRel);
+    if (milestone) {
+      setRelationshipMilestone(milestone);
+    }
     
     // Update hunger state
     await base44.entities.VampireState.update(vampireState.id, {
@@ -138,6 +205,8 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
     
     // Log and update in background
     setTimeout(async () => {
+      const relationshipGain = Math.floor(Math.random() * 7) + 8; // 8-14
+      
       await base44.entities.NightLog.create({
         entry: `${location.name}: ${outcome}`,
         category: 'interaction',
@@ -145,7 +214,8 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
       });
       
       await base44.entities.Servant.update(servant.id, {
-        obsession_stage: Math.min(servant.obsession_stage + 1, 5)
+        obsession_stage: Math.min(servant.obsession_stage + 1, 5),
+        relationship: Math.min((servant.relationship || 0) + relationshipGain, 100)
       });
       
       // Chance to unlock exploration power
@@ -168,6 +238,17 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   return (
     <>
       <AnimatePresence>
+        {relationshipMilestone && (
+          <RelationshipEvent
+            milestone={relationshipMilestone}
+            servantName={servant.name}
+            onClose={() => {
+              setRelationshipMilestone(null);
+              queryClient.invalidateQueries(['servants']);
+            }}
+          />
+        )}
+        
         {visitingLocation && (
           <LocationVisit
             location={visitingLocation}
@@ -203,9 +284,30 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
         <h2 className="text-2xl font-bold text-white mb-2">
           {servant.name}
         </h2>
-        <p className="text-gray-400 text-sm mb-6 capitalize">
+        <p className="text-gray-400 text-sm capitalize">
           {servant.variant} · Stage {servant.obsession_stage}
         </p>
+        
+        {/* Relationship display */}
+        <div className="mt-3 mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-gray-400">Bond</span>
+            <span className={`text-sm font-medium ${getRelationshipLevel(servant.relationship || 0).color}`}>
+              {getRelationshipLevel(servant.relationship || 0).label}
+            </span>
+          </div>
+          <div className="w-full bg-gray-800 rounded-full h-2">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${servant.relationship || 0}%` }}
+              transition={{ duration: 0.5 }}
+              className="h-2 rounded-full bg-gradient-to-r from-purple-600 to-red-500"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-2 italic">
+            {getRelationshipDialogue(servant)}
+          </p>
+        </div>
         
         {teaching || turning || goingOut ? (
           <div className="text-center py-12">
