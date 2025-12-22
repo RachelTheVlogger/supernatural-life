@@ -8,7 +8,7 @@ import { base44 } from '@/api/base44Client';
 import EvolutionTree from '@/components/nightbound/EvolutionTree';
 import DirectInteraction from '@/components/nightbound/DirectInteraction';
 import TemptationModal from '@/components/nightbound/TemptationModal';
-import ServantInitiative from '@/components/nightbound/ServantInitiative';
+
 import MoralityDisplay from '@/components/nightbound/MoralityDisplay';
 
 export default function VampireHome() {
@@ -19,7 +19,7 @@ export default function VampireHome() {
   const [showEvolutionTree, setShowEvolutionTree] = useState(false);
   const [selectedServantForInteraction, setSelectedServantForInteraction] = useState(null);
   const [showTemptation, setShowTemptation] = useState(false);
-  const [initiativeAction, setInitiativeAction] = useState(null);
+
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -95,14 +95,7 @@ export default function VampireHome() {
   const totalRelationship = servants.reduce((sum, s) => sum + (s.relationship || 0), 0);
   const avgRelationship = servants.length > 0 ? Math.round(totalRelationship / servants.length) : 0;
 
-  const handleInitiativeAction = (servant, action) => {
-    setInitiativeAction({ servant, action });
-    // Navigate to appropriate action
-    if (action === 'feed' || action === 'teach' || action === 'goout' || action === 'turn') {
-      // Set the servant for interaction
-      setSelectedServantForInteraction(servant);
-    }
-  };
+
   
   return (
     <div className="min-h-screen relative overflow-hidden"
@@ -465,12 +458,7 @@ export default function VampireHome() {
         </div>
       </div>
       
-      {/* Servant Initiative System */}
-      <ServantInitiative
-        servants={servants}
-        vampireState={vampireState}
-        onAction={handleInitiativeAction}
-      />
+
 
       {/* Action Modals */}
       <AnimatePresence>
