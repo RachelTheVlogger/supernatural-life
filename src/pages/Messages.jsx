@@ -74,40 +74,60 @@ export default function Messages() {
         setIsTyping(true);
         setTimeout(async () => {
           const rel = servant.relationship || 0;
-          let responses = DIALOGUE_BANKS[servant.variant]?.[servant.obsession_stage] || ['...'];
-          
-          // High relationship unlocks special dialogue
-          if (rel >= 80) {
-            const highRelDialogue = {
-              devoted: ['I would follow you anywhere. Forever.', 'You are all I think about. All I need.', 'I belong to you. Completely.'],
-              defiant: ['Hate how much I need you. And I do need you.', 'You broke me. And I\'m glad you did.', 'I\'m yours. Even if it terrifies me.'],
-              dreamer: ['You\'re in my dreams. You are my dreams.', 'I see you in everything.', 'Reality bends around you. Around us.']
-            };
-            if (Math.random() < 0.4) {
-              responses = highRelDialogue[servant.variant] || responses;
-            }
-          } else if (rel >= 60) {
-            const midRelDialogue = {
-              devoted: ['I trust you completely.', 'Being near you feels right.', 'Tell me what you need. I\'ll do it.'],
-              defiant: ['I... I think I understand you now.', 'This is getting complicated.', 'Why do I keep coming back to you?'],
-              dreamer: ['There\'s something different about you.', 'I feel like I\'m waking up. Or falling asleep. I can\'t tell.', 'Time feels strange when you\'re here.']
-            };
-            if (Math.random() < 0.3) {
-              responses = midRelDialogue[servant.variant] || responses;
-            }
+
+          // Build conversation history for context
+          const recentMessages = messages.slice(-6).map(m => 
+            `${m.sender === 'vampire' ? 'You' : servant.name}: ${m.content}`
+          ).join('\n');
+
+          // Build personality prompt
+          const variantTraits = {
+            devoted: 'You are deeply devoted, soft, earnest, and emotionally anchored to the vampire. You express warmth and devotion.',
+            defiant: 'You have controlled resistance through fascination. You struggle with your feelings but are drawn to the vampire despite yourself.',
+            dreamer: 'You are detached, poetic, and already half-gone into the vampire\'s world. You speak in dreamy, abstract ways.'
+          };
+
+          const relationshipContext = rel >= 80 ? 'deeply bound and utterly devoted' : 
+                                    rel >= 60 ? 'trusting and devoted' :
+                                    rel >= 40 ? 'beginning to trust' :
+                                    rel >= 20 ? 'curious but cautious' : 'wary and uncertain';
+
+          const prompt = `You are ${servant.name}, a human who has become a servant to a vampire. ${variantTraits[servant.variant]}
+
+      Your current emotional state: ${relationshipContext}
+      Obsession stage: ${servant.obsession_stage}/5
+
+      Recent conversation:
+      ${recentMessages}
+      You: ${input}
+
+      Respond as ${servant.name} in 1-2 short sentences. Be intimate, emotional, and stay in character. Keep it brief and natural.`;
+
+          try {
+            const response = await base44.integrations.Core.InvokeLLM({
+              prompt: prompt
+            });
+
+            await base44.entities.Message.create({
+              servant_id: servantId,
+              content: response,
+              sender: 'servant'
+            });
+          } catch (error) {
+            // Fallback to dialogue bank if LLM fails
+            const responses = DIALOGUE_BANKS[servant.variant]?.[servant.obsession_stage] || ['...'];
+            const response = responses[Math.floor(Math.random() * responses.length)];
+
+            await base44.entities.Message.create({
+              servant_id: servantId,
+              content: response,
+              sender: 'servant'
+            });
           }
-          
-          const response = responses[Math.floor(Math.random() * responses.length)];
-          
-          await base44.entities.Message.create({
-            servant_id: servantId,
-            content: response,
-            sender: 'servant'
-          });
-          
+
           setIsTyping(false);
           queryClient.invalidateQueries(['messages', servantId]);
-        }, 3000 + Math.random() * 6000);
+        }, 3000 + Math.random() * 3000);
       }, 500);
     }
   });
