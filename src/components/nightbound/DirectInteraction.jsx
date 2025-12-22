@@ -609,9 +609,31 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
       queryClient.invalidateQueries();
 
-      // If killed, delete the servant
+      // If killed, delete the servant and create a new one
       if (type === 'kill') {
         await base44.entities.Servant.delete(servant.id);
+
+        // Create a new servant after a delay
+        setTimeout(async () => {
+          const names = [
+            'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
+            'Alex', 'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
+            'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren',
+            'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar'
+          ];
+          const variants = ['devoted', 'defiant', 'dreamer'];
+          const emotionalStates = ['curious', 'wary', 'distant'];
+
+          await base44.entities.Servant.create({
+            name: names[Math.floor(Math.random() * names.length)],
+            variant: variants[Math.floor(Math.random() * variants.length)],
+            obsession_stage: 1,
+            emotional_state: emotionalStates[Math.floor(Math.random() * emotionalStates.length)]
+          });
+
+          queryClient.invalidateQueries();
+        }, 2000);
+
         setTimeout(() => {
           onClose();
         }, 3000);
