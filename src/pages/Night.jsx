@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droplets, Users, BookOpen, Eye, Zap, Home } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import FeedingModal from '@/components/nightbound/FeedingModal';
@@ -10,6 +10,7 @@ import ServantsList from '@/components/nightbound/ServantsList';
 import NightLogView from '@/components/nightbound/NightLogView';
 import HuntingModal from '@/components/nightbound/HuntingModal';
 import PowersModal from '@/components/nightbound/PowersModal';
+import AdvanceNight from '@/components/nightbound/AdvanceNight';
 
 export default function Night() {
   const queryClient = useQueryClient();
@@ -98,7 +99,8 @@ export default function Night() {
     { icon: Users, label: 'Servants', modal: 'servants' },
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
     { icon: Zap, label: 'Powers', modal: 'powers' },
-    { icon: BookOpen, label: 'Night Log', modal: 'log' }
+    { icon: BookOpen, label: 'Night Log', modal: 'log' },
+    { icon: Moon, label: 'Advance Night', modal: 'advance' }
   ];
   
   return (
@@ -227,6 +229,12 @@ export default function Night() {
           <NightLogView
             onClose={() => setActiveModal(null)}
             logs={logs}
+          />
+        )}
+        {activeModal === 'advance' && (
+          <AdvanceNight
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
           />
         )}
       </AnimatePresence>

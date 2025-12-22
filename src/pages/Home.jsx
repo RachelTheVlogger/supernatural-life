@@ -55,7 +55,8 @@ export default function Home() {
       nights_passed: 0,
       humanity: 50,
       moral_path: 'balanced',
-      game_started: false
+      game_started: false,
+      game_start_date: new Date().toISOString()
     });
     
     navigate(createPageUrl('OpeningScene'));
