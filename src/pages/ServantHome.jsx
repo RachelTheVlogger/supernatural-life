@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, ShoppingBag } from 'lucide-react';
+import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, ShoppingBag, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import BusinessManagement from '@/components/nightbound/BusinessManagement';
 import NPCInteraction from '@/components/nightbound/NPCInteraction';
+import ServantAutomationSettings from '@/components/nightbound/ServantAutomationSettings';
+import ServantProactiveActions from '@/components/nightbound/ServantProactiveActions';
 
 const CHORES = [
   { id: 'clean', label: 'Clean the rooms', icon: Sparkles, duration: 2000, outcomes: ['You tidied the bedroom. Everything feels peaceful.', 'You dusted the shelves. The space feels lighter.', 'You organized their belongings with care.'] },
@@ -42,6 +44,7 @@ export default function ServantHome() {
   const [choreOutcome, setChoreOutcome] = useState('');
   const [showBusinessModal, setShowBusinessModal] = useState(false);
   const [showNPCModal, setShowNPCModal] = useState(false);
+  const [showAutomationSettings, setShowAutomationSettings] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -231,6 +234,13 @@ export default function ServantHome() {
         
         <div className="flex gap-3 justify-center mt-4 flex-wrap">
           <button
+            onClick={() => setShowAutomationSettings(true)}
+            className="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-1"
+          >
+            <Settings className="w-4 h-4" />
+            Automation
+          </button>
+          <button
             onClick={() => setShowNPCModal(true)}
             className="text-gray-400 hover:text-white text-sm transition-colors"
           >
@@ -318,6 +328,9 @@ export default function ServantHome() {
         )}
       </AnimatePresence>
 
+      {/* Proactive Actions */}
+      <ServantProactiveActions servant={servant} />
+
       {/* Modals */}
       <AnimatePresence>
         {showBusinessModal && (
@@ -330,6 +343,12 @@ export default function ServantHome() {
           <NPCInteraction
             onClose={() => setShowNPCModal(false)}
             viewMode="servant"
+          />
+        )}
+        {showAutomationSettings && (
+          <ServantAutomationSettings
+            servant={servant}
+            onClose={() => setShowAutomationSettings(false)}
           />
         )}
       </AnimatePresence>
