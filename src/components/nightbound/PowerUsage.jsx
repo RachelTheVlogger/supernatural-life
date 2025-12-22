@@ -28,11 +28,10 @@ const POWER_LIBRARY = {
       return outcomes[Math.floor(Math.random() * outcomes.length)];
     },
     visualEffect: 'healing',
-    upgradeEffects: {
-      1: { relationshipBonus: 12, description: 'Basic calming effect' },
-      2: { relationshipBonus: 18, description: 'Deep peace and healing' },
-      3: { relationshipBonus: 25, description: 'Complete emotional restoration' }
-    }
+    upgradeEffects: (level) => ({
+      relationshipBonus: 12 + (level * 6),
+      description: level <= 3 ? ['Basic calming effect', 'Deep peace and healing', 'Complete emotional restoration'][level - 1] : `Master level ${level} - Divine tranquility`
+    })
   },
   
   'Empathic Bond': {
@@ -54,11 +53,10 @@ const POWER_LIBRARY = {
       return outcomes[Math.floor(Math.random() * outcomes.length)];
     },
     visualEffect: 'connection',
-    upgradeEffects: {
-      1: { relationshipBonus: 10, description: 'Surface emotions' },
-      2: { relationshipBonus: 15, description: 'Deep emotional insight' },
-      3: { relationshipBonus: 22, description: 'Complete emotional fusion' }
-    }
+    upgradeEffects: (level) => ({
+      relationshipBonus: 10 + (level * 5),
+      description: level <= 3 ? ['Surface emotions', 'Deep emotional insight', 'Complete emotional fusion'][level - 1] : `Master level ${level} - Soul reading`
+    })
   },
   
   // Balanced powers (Humanity 25-75)
@@ -82,11 +80,10 @@ const POWER_LIBRARY = {
       return outcomes[Math.floor(Math.random() * outcomes.length)];
     },
     visualEffect: 'charm',
-    upgradeEffects: {
-      1: { relationshipBonus: 15, description: 'Basic attraction' },
-      2: { relationshipBonus: 20, description: 'Intense desire' },
-      3: { relationshipBonus: 28, description: 'Irresistible allure' }
-    }
+    upgradeEffects: (level) => ({
+      relationshipBonus: 15 + (level * 5),
+      description: level <= 3 ? ['Basic attraction', 'Intense desire', 'Irresistible allure'][level - 1] : `Master level ${level} - Overwhelming magnetism`
+    })
   },
   
   'Shadow Step': {
@@ -109,11 +106,10 @@ const POWER_LIBRARY = {
       return outcomes[Math.floor(Math.random() * outcomes.length)];
     },
     visualEffect: 'shadow',
-    upgradeEffects: {
-      1: { relationshipBonus: 8, description: 'Quick movement' },
-      2: { relationshipBonus: 12, description: 'Teleportation-like speed' },
-      3: { relationshipBonus: 15, description: 'Instant translocation' }
-    }
+    upgradeEffects: (level) => ({
+      relationshipBonus: 8 + (level * 4),
+      description: level <= 3 ? ['Quick movement', 'Teleportation-like speed', 'Instant translocation'][level - 1] : `Master level ${level} - Reality bending`
+    })
   },
   
   // Ruthless powers (Humanity <= 40)
@@ -137,11 +133,10 @@ const POWER_LIBRARY = {
       return outcomes[Math.floor(Math.random() * outcomes.length)];
     },
     visualEffect: 'domination',
-    upgradeEffects: {
-      1: { relationshipCost: 5, description: 'Basic commands' },
-      2: { relationshipCost: 3, description: 'Complex instructions' },
-      3: { relationshipCost: 1, description: 'Total mental domination' }
-    }
+    upgradeEffects: (level) => ({
+      relationshipCost: Math.max(1, 5 - level),
+      description: level <= 3 ? ['Basic commands', 'Complex instructions', 'Total mental domination'][level - 1] : `Master level ${level} - Absolute control`
+    })
   },
   
   'Invoke Fear': {
@@ -165,11 +160,10 @@ const POWER_LIBRARY = {
       return outcomes[Math.floor(Math.random() * outcomes.length)];
     },
     visualEffect: 'fear',
-    upgradeEffects: {
-      1: { relationshipCost: 15, description: 'Mild terror' },
-      2: { relationshipCost: 10, description: 'Paralyzing fear' },
-      3: { relationshipCost: 5, description: 'Existential dread' }
-    }
+    upgradeEffects: (level) => ({
+      relationshipCost: Math.max(2, 15 - (level * 3)),
+      description: level <= 3 ? ['Mild terror', 'Paralyzing fear', 'Existential dread'][level - 1] : `Master level ${level} - Pure horror`
+    })
   },
   
   // Monster powers (Humanity <= 15)
@@ -194,11 +188,9 @@ const POWER_LIBRARY = {
       return outcomes[Math.floor(Math.random() * outcomes.length)];
     },
     visualEffect: 'destruction',
-    upgradeEffects: {
-      1: { description: 'Basic domination' },
-      2: { description: 'Complete mental control' },
-      3: { description: 'Soul binding' }
-    }
+    upgradeEffects: (level) => ({
+      description: level <= 3 ? ['Basic domination', 'Complete mental control', 'Soul binding'][level - 1] : `Master level ${level} - Reality erasure`
+    })
   },
   
   // Universal powers (always available)
@@ -221,11 +213,10 @@ const POWER_LIBRARY = {
       return desires[Math.floor(Math.random() * desires.length)];
     },
     visualEffect: 'perception',
-    upgradeEffects: {
-      1: { relationshipBonus: 5, description: 'Surface thoughts' },
-      2: { relationshipBonus: 8, description: 'Hidden desires' },
-      3: { relationshipBonus: 12, description: 'Complete mind reading' }
-    }
+    upgradeEffects: (level) => ({
+      relationshipBonus: 5 + (level * 3),
+      description: level <= 3 ? ['Surface thoughts', 'Hidden desires', 'Complete mind reading'][level - 1] : `Master level ${level} - Soul perception`
+    })
   },
   
   'Blood Bond': {
@@ -248,11 +239,10 @@ const POWER_LIBRARY = {
       return outcomes[Math.floor(Math.random() * outcomes.length)];
     },
     visualEffect: 'bond',
-    upgradeEffects: {
-      1: { relationshipBonus: 30, description: 'Basic blood bond' },
-      2: { relationshipBonus: 40, description: 'Deep vampiric connection' },
-      3: { relationshipBonus: 50, description: 'Eternal soul binding' }
-    }
+    upgradeEffects: (level) => ({
+      relationshipBonus: 30 + (level * 10),
+      description: level <= 3 ? ['Basic blood bond', 'Deep vampiric connection', 'Eternal soul binding'][level - 1] : `Master level ${level} - Cosmic unity`
+    })
   }
 };
 
@@ -335,18 +325,18 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
       const result = await powerData.effects(servant, vampireState);
       setOutcome(result);
       
-      // Update power progress
+      // Update power progress - INFINITE LEVELS
       const existingProgress = powerProgress.find(p => p.power_name === powerName);
       if (existingProgress) {
         const newTimesUsed = existingProgress.times_used + 1;
-        const newMastery = Math.min(existingProgress.mastery + 5, 100);
-        const newLevel = newMastery >= 100 && existingProgress.upgrade_level < 3 
-          ? existingProgress.upgrade_level + 1 
-          : existingProgress.upgrade_level;
+        const masteryGain = 5;
+        const newMastery = Math.min(existingProgress.mastery + masteryGain, 100);
+        const shouldLevelUp = newMastery >= 100;
+        const newLevel = shouldLevelUp ? existingProgress.upgrade_level + 1 : existingProgress.upgrade_level;
         
         await base44.entities.PowerProgress.update(existingProgress.id, {
           times_used: newTimesUsed,
-          mastery: newMastery >= 100 && newLevel > existingProgress.upgrade_level ? 0 : newMastery,
+          mastery: shouldLevelUp ? 0 : newMastery,
           upgrade_level: newLevel
         });
       } else {

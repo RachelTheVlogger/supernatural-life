@@ -37,6 +37,40 @@ const getVariantFlavor = (variant, tier, obsessionStage) => {
   return flavorSet[Math.floor(Math.random() * flavorSet.length)];
 };
 
+const TURNED_VAMPIRE_INTERACTIONS = {
+  vampireFeed: {
+    icon: Droplets,
+    label: 'Feed together',
+    category: 'vampire',
+    gains: [20, 35],
+    outcomes: {
+      mid: ['You hunted together. Blood shared. Primal connection.', 'Two vampires. One prey. Intimate violence.', 'You fed side by side. Their hunger matched yours.'],
+      high: ['You bit them while they fed. Ecstasy doubled. Perfect.', 'Feeding became foreplay. Blood and lust intertwined.', 'You shared the kill. The bond deepened impossibly.']
+    }
+  },
+  vampireSex: {
+    icon: Flame,
+    label: 'Vampire intimacy',
+    category: 'vampire',
+    minRelationship: 50,
+    gains: [25, 40],
+    outcomes: {
+      mid: ['Vampire bodies. Supernatural stamina. Hours passed like moments.', 'They felt everything deeper now. Every touch electric.', 'Turned. Heightened senses. The pleasure was overwhelming.'],
+      high: ['Two immortals. Endless night. Consuming passion.', 'You fucked like vampires. Wild. Dangerous. Perfect.', 'Supernatural pleasure. You broke furniture. Neither noticed.', 'They felt everything infinitely more. Screamed your name for hours.']
+    }
+  },
+  vampireHunt: {
+    icon: Moon,
+    label: 'Hunt together',
+    category: 'vampire',
+    gains: [15, 25],
+    outcomes: {
+      mid: ['You stalked prey together. Teaching them your ways.', 'Two predators in the night. Perfectly synchronized.', 'They moved like you now. Supernatural. Deadly.'],
+      high: ['You hunted as one. No words needed. Perfect unity.', 'Twin shadows. The city was yours together.', 'They\'ve become your perfect hunting companion.']
+    }
+  }
+};
+
 const INTERACTIONS = {
   // Physical - Intimate
   touch: {
@@ -228,6 +262,18 @@ const INTERACTIONS = {
     category: 'power',
     special: true,
     gains: [0, 0]
+  },
+  
+  // Dark option
+  kill: {
+    icon: Skull,
+    label: 'Kill them',
+    category: 'power',
+    minRelationship: 0,
+    gains: [0, 0],
+    outcomes: {
+      low: ['You drained them completely. They collapsed. Dead.', 'Their life ended in your arms. Quick. Final.', 'You killed them. No hesitation. No remorse.']
+    }
   }
 };
 
@@ -249,6 +295,12 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     if (type === 'usePower') {
       setShowPowers(true);
       return;
+    }
+    
+    if (type === 'kill') {
+      if (!confirm(`Kill ${servant.name}? This cannot be undone.`)) {
+        return;
+      }
     }
     
     setProcessing(true);
@@ -330,19 +382,36 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       }
       
       queryClient.invalidateQueries();
-      
+
+      // If killed, delete the servant
+      if (type === 'kill') {
+        await base44.entities.Servant.delete(servant.id);
+        setTimeout(() => {
+          onClose();
+        }, 3000);
+        return;
+      }
+
       setTimeout(() => {
         setProcessing(false);
         setOutcome('');
         setInteractionType('');
       }, 5000);
-    }, 2000);
-  };
+      }, 2000);
+      };
   
   const rel = servant.relationship || 0;
-  
-  const categories = ['all', 'physical', 'social', 'activity', 'power'];
-  const filteredInteractions = Object.entries(INTERACTIONS).filter(([key, interaction]) => {
+
+  // Combine interactions - add vampire interactions if servant is turned
+  const allInteractions = servant.is_turned 
+    ? { ...INTERACTIONS, ...TURNED_VAMPIRE_INTERACTIONS }
+    : INTERACTIONS;
+
+  const categories = servant.is_turned 
+    ? ['all', 'vampire', 'physical', 'social', 'activity', 'power']
+    : ['all', 'physical', 'social', 'activity', 'power'];
+
+  const filteredInteractions = Object.entries(allInteractions).filter(([key, interaction]) => {
     if (selectedCategory === 'all') return true;
     return interaction.category === selectedCategory;
   });
