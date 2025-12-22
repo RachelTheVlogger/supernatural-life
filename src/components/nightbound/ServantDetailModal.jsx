@@ -159,13 +159,26 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
         intensity: 'significant'
       });
       
+      // Turning is a major decision - humanity impact
+      const humanityChange = servant.relationship >= 80 ? -5 : -10; // Less impact if they truly wanted it
+      const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + humanityChange));
+      let moral_path = 'balanced';
+      if (newHumanity >= 75) moral_path = 'humane';
+      else if (newHumanity >= 25) moral_path = 'balanced';
+      else if (newHumanity >= 10) moral_path = 'ruthless';
+      else moral_path = 'monster';
+      
       // Unlock turning power
-      if (!vampireState.unlocked_powers?.includes('The Gift')) {
-        const updatedPowers = [...(vampireState.unlocked_powers || []), 'The Gift'];
-        await base44.entities.VampireState.update(vampireState.id, {
-          unlocked_powers: updatedPowers
-        });
+      const updatedPowers = [...(vampireState.unlocked_powers || [])];
+      if (!updatedPowers.includes('The Gift')) {
+        updatedPowers.push('The Gift');
       }
+      
+      await base44.entities.VampireState.update(vampireState.id, {
+        unlocked_powers: updatedPowers,
+        humanity: newHumanity,
+        moral_path: moral_path
+      });
       
       queryClient.invalidateQueries(['servants']);
       queryClient.invalidateQueries(['vampireState']);

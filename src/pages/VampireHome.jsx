@@ -9,6 +9,7 @@ import EvolutionTree from '@/components/nightbound/EvolutionTree';
 import DirectInteraction from '@/components/nightbound/DirectInteraction';
 import TemptationModal from '@/components/nightbound/TemptationModal';
 import ServantInitiative from '@/components/nightbound/ServantInitiative';
+import MoralityDisplay from '@/components/nightbound/MoralityDisplay';
 
 export default function VampireHome() {
   const navigate = useNavigate();

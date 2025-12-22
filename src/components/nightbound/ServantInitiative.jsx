@@ -166,6 +166,25 @@ export default function ServantInitiative({ servants, vampireState, onAction }) 
       category: 'interaction',
       intensity: 'moderate'
     });
+    
+    // Humanity impact - responding to servants is compassionate
+    if (accept) {
+      const vampireStates = await base44.entities.VampireState.list();
+      const vampireState = vampireStates[0];
+      if (vampireState) {
+        const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + 2));
+        let moral_path = 'balanced';
+        if (newHumanity >= 75) moral_path = 'humane';
+        else if (newHumanity >= 25) moral_path = 'balanced';
+        else if (newHumanity >= 10) moral_path = 'ruthless';
+        else moral_path = 'monster';
+        
+        await base44.entities.VampireState.update(vampireState.id, {
+          humanity: newHumanity,
+          moral_path: moral_path
+        });
+      }
+    }
 
     // Update relationship based on response
     const relationshipChange = accept ? Math.floor(Math.random() * 3) + 2 : -5;

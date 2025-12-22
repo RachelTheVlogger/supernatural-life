@@ -292,6 +292,26 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         last_interaction: new Date().toISOString()
       });
       
+      // Determine humanity impact of interaction
+      let humanityChange = 0;
+      if (interaction.category === 'social') humanityChange = 1; // Positive interactions
+      else if (['bite', 'intimate'].includes(type) && rel < 40) humanityChange = -2; // Forcing intimacy
+      
+      // Update vampire state with humanity
+      if (humanityChange !== 0 && vampireState.id) {
+        const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + humanityChange));
+        let moral_path = 'balanced';
+        if (newHumanity >= 75) moral_path = 'humane';
+        else if (newHumanity >= 25) moral_path = 'balanced';
+        else if (newHumanity >= 10) moral_path = 'ruthless';
+        else moral_path = 'monster';
+        
+        await base44.entities.VampireState.update(vampireState.id, {
+          humanity: newHumanity,
+          moral_path: moral_path
+        });
+      }
+      
       await base44.entities.NightLog.create({
         entry: `With ${servant.name}: ${outcome}`,
         category: 'interaction',
