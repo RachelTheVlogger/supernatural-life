@@ -4,7 +4,6 @@ import MinimalistFlower from '@/components/garden/styles/MinimalistFlower';
 import PixelFlower from '@/components/garden/styles/PixelFlower';
 import EmojiFlower from '@/components/garden/styles/EmojiFlower';
 import HandDrawnFlower from '@/components/garden/styles/HandDrawnFlower';
-import ThreeDFlower from '@/components/garden/styles/ThreeDFlower';
 
 export default function StyleComparison() {
   const [interactingIndex, setInteractingIndex] = useState(null);
@@ -40,11 +39,6 @@ export default function StyleComparison() {
       name: 'Hand-Drawn / Sketchy',
       description: 'Imperfect lines, textured, warm',
       Component: HandDrawnFlower 
-    },
-    { 
-      name: '3D Rendered',
-      description: 'Dimensional, soft lighting, spatial',
-      Component: ThreeDFlower 
     }
   ];
   

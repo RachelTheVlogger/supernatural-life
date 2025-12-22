@@ -53,9 +53,10 @@ export default function GardenBackground() {
     <div className="fixed inset-0 -z-10 overflow-hidden">
       {/* Base gradient */}
       <div 
-        className="absolute inset-0 transition-colors duration-[3000ms]"
+        className="absolute inset-0 transition-colors"
         style={{
-          background: `linear-gradient(180deg, ${timeGradient.from} 0%, ${timeGradient.via} 50%, ${timeGradient.to} 100%)`
+          background: `linear-gradient(180deg, ${timeGradient.from} 0%, ${timeGradient.via} 50%, ${timeGradient.to} 100%)`,
+          transitionDuration: '3000ms'
         }}
       />
       
