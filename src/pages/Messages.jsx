@@ -124,9 +124,21 @@ export default function Messages() {
       content: input,
       sender: 'vampire'
     });
-  };
-  
-  if (!servant) {
+
+    // Update quest progress
+    base44.entities.Quest.filter({ servant_id: servantId }).then(quests => {
+      const activeQuest = quests.find(q => !q.completed);
+      if (activeQuest) {
+        const progress = activeQuest.progress || {};
+        const newCount = (progress.message || 0) + 1;
+        base44.entities.Quest.update(activeQuest.id, {
+          progress: { ...progress, message: newCount }
+        });
+      }
+    });
+    };
+
+    if (!servant) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-400">Loading...</p>
