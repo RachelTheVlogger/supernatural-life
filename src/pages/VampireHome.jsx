@@ -371,27 +371,25 @@ export default function VampireHome() {
                   <span className="text-white text-sm font-medium">{avgRelationship}/100</span>
                 </div>
                 {servants.slice(0, 3).map(servant => (
-                  <div key={servant.id} className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
+                  <div key={servant.id}>
+                    <div className="flex justify-between items-center mb-1">
                       <span className="text-gray-400 text-sm">{servant.name}</span>
-                      {servant.obsession_stage >= 2 && (
-                        <button
-                          onClick={() => setSelectedServantForInteraction(servant)}
-                          className="text-xs text-pink-400 hover:text-pink-300 transition-colors"
-                        >
-                          <Heart className="w-3 h-3 inline" />
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-gray-700 rounded-full h-1.5">
-                        <div
-                          style={{ width: `${servant.relationship || 0}%` }}
-                          className="h-1.5 rounded-full bg-gradient-to-r from-purple-600 to-red-500"
-                        />
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-700 rounded-full h-1.5">
+                          <div
+                            style={{ width: `${servant.relationship || 0}%` }}
+                            className="h-1.5 rounded-full bg-gradient-to-r from-purple-600 to-red-500"
+                          />
+                        </div>
+                        <span className="text-white text-xs w-8">{servant.relationship || 0}</span>
                       </div>
-                      <span className="text-white text-xs w-8">{servant.relationship || 0}</span>
                     </div>
+                    <button
+                      onClick={() => setSelectedServantForInteraction(servant)}
+                      className="w-full bg-pink-950/30 hover:bg-pink-950/50 border border-pink-800/30 rounded-lg py-1.5 text-xs text-pink-300 transition-colors"
+                    >
+                      Interact
+                    </button>
                   </div>
                 ))}
               </div>
