@@ -2,50 +2,51 @@ import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 export default function GardenBackground() {
-  // Get time-based gradient
+  // Get time-based gradient - darker mystical theme
   const timeGradient = useMemo(() => {
     const hour = new Date().getHours();
     
     if (hour >= 5 && hour < 8) {
-      // Dawn - soft pink/orange
+      // Dawn - soft twilight
       return {
-        from: '#fef3e3',
-        via: '#fce7d6',
-        to: '#f5e6d3'
+        from: '#2d2438',
+        via: '#3a2f4a',
+        to: '#1a1625'
       };
     } else if (hour >= 8 && hour < 17) {
-      // Day - warm cream/sage
+      // Day - deep forest
       return {
-        from: '#f8f6f0',
-        via: '#f0ebe3',
-        to: '#e8e4dc'
+        from: '#1f2937',
+        via: '#374151',
+        to: '#1f2937'
       };
     } else if (hour >= 17 && hour < 20) {
-      // Dusk - lavender/rose
+      // Dusk - purple twilight
       return {
-        from: '#f0ebe8',
-        via: '#ebe4e1',
-        to: '#e5ddd8'
+        from: '#312e40',
+        via: '#433d5a',
+        to: '#1e1b2e'
       };
     } else {
-      // Night - deep blue/purple tints
+      // Night - deep cosmic
       return {
-        from: '#e8e6ed',
-        via: '#e0dde6',
-        to: '#d8d4df'
+        from: '#0f0a1e',
+        via: '#1a1335',
+        to: '#050308'
       };
     }
   }, []);
   
-  // Subtle floating particles
+  // Mystical floating particles
   const particles = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => ({
+    return Array.from({ length: 25 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: 2 + Math.random() * 4,
-      duration: 15 + Math.random() * 20,
-      delay: Math.random() * 10
+      size: 1 + Math.random() * 3,
+      duration: 10 + Math.random() * 15,
+      delay: Math.random() * 10,
+      opacity: 0.3 + Math.random() * 0.4
     }));
   }, []);
   
@@ -100,20 +101,25 @@ export default function GardenBackground() {
         />
       </svg>
       
-      {/* Floating particles */}
+      {/* Mystical floating particles */}
       {particles.map(particle => (
         <motion.div
           key={particle.id}
-          className="absolute rounded-full bg-white/20"
+          className="absolute rounded-full"
           style={{
             width: particle.size,
             height: particle.size,
             left: `${particle.x}%`,
-            top: `${particle.y}%`
+            top: `${particle.y}%`,
+            background: particle.id % 3 === 0 ? 'rgba(150, 200, 255, 0.5)' :
+                       particle.id % 3 === 1 ? 'rgba(200, 150, 255, 0.5)' :
+                       'rgba(255, 200, 200, 0.4)',
+            boxShadow: `0 0 ${particle.size * 2}px rgba(255, 255, 255, 0.3)`
           }}
           animate={{
-            y: [0, -30, 0],
-            opacity: [0.2, 0.5, 0.2]
+            y: [0, -40, 0],
+            x: [0, Math.sin(particle.id) * 10, 0],
+            opacity: [particle.opacity * 0.3, particle.opacity, particle.opacity * 0.3]
           }}
           transition={{
             duration: particle.duration,
@@ -124,11 +130,12 @@ export default function GardenBackground() {
         />
       ))}
       
-      {/* Bottom ground gradient */}
+      {/* Bottom ground gradient - mystical fog */}
       <div 
-        className="absolute bottom-0 left-0 right-0 h-32"
+        className="absolute bottom-0 left-0 right-0 h-48"
         style={{
-          background: 'linear-gradient(180deg, transparent 0%, rgba(139, 125, 107, 0.1) 100%)'
+          background: 'linear-gradient(180deg, transparent 0%, rgba(100, 80, 120, 0.3) 100%)',
+          backdropFilter: 'blur(1px)'
         }}
       />
     </div>

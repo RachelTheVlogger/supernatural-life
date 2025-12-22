@@ -30,9 +30,6 @@ function generateFlowerData() {
     personality = 'alien';
   }
   
-  const traits = TRAITS_BY_PERSONALITY[personality]
-    .filter(() => Math.random() > 0.6);
-  
   return {
     personality,
     position_x: 10 + Math.random() * 80,
@@ -40,11 +37,7 @@ function generateFlowerData() {
     seed: Math.floor(Math.random() * 1000000),
     growth_stage: 0,
     interaction_count: 0,
-    dormant: false,
-    traits,
-    color_hue: Math.random() * 360,
-    petal_count: 5 + Math.floor(Math.random() * 7),
-    stem_curve: -20 + Math.random() * 40
+    dormant: false
   };
 }
 

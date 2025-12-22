@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import FlowerRenderer from './FlowerRenderer';
+import FantasyFlowerRenderer from './FantasyFlowerRenderer';
 
 export default function FlowerInteraction({ 
   flower, 
@@ -112,7 +112,7 @@ export default function FlowerInteraction({
       whileHover={{ scale: 1.02 }}
       transition={{ type: 'spring', stiffness: 300 }}
     >
-      <FlowerRenderer
+      <FantasyFlowerRenderer
         flower={flower}
         isInteracting={isInteracting}
         interactionType={interactionType}
