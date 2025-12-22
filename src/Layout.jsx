@@ -1,8 +1,25 @@
 import React from 'react';
 
-export default function Layout({ children }) {
+import { Home, Moon, User, MessageCircle } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+
+export default function Layout({ children, currentPageName }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Show nav on main game pages only
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName);
+  
+  const navItems = [
+    { name: 'Night', icon: Moon, path: 'Night' },
+    { name: 'Sanctuary', icon: Home, path: 'VampireHome' },
+    { name: 'Servant', icon: User, path: 'ServantHome' },
+    { name: 'Messages', icon: MessageCircle, path: 'Messages' }
+  ];
+  
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-black relative overflow-hidden pb-20">
       <style>{`
         * {
           -webkit-tap-highlight-color: transparent;
@@ -37,6 +54,29 @@ export default function Layout({ children }) {
       `}</style>
       
       {children}
-    </div>
-  );
-}
+
+      {showNav && (
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-purple-900/30 z-50">
+          <div className="flex justify-around items-center px-4 py-3">
+            {navItems.map(item => {
+              const Icon = item.icon;
+              const isActive = currentPageName === item.name;
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => navigate(createPageUrl(item.path))}
+                  className={`flex flex-col items-center gap-1 transition-colors ${
+                    isActive ? 'text-purple-400' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="text-xs">{item.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      </div>
+      );
+      }

@@ -133,6 +133,36 @@ const INTERACTIONS = {
       high: ['Tangled together. No separation. Pure comfort.', 'They nuzzled into your neck. Utterly at peace.', 'Hours passed. Neither of you noticed.']
     }
   },
+  tease: {
+    icon: Flame,
+    label: 'Tease them',
+    category: 'physical',
+    tier: 1,
+    gains: [7, 13],
+    outcomes: {
+      low: [
+        'Your hand on their thigh under the table. They froze.',
+        'You traced your fingers up their leg. Slowly. They trembled.',
+        'A whisper in their ear. Dirty. They blushed deep.',
+        'Your hand crept higher. They gripped the table.',
+        'You touched them where no one could see. They gasped softly.'
+      ],
+      mid: [
+        'Your hand slid between their thighs. They bit their lip.',
+        'You teased them in public. They tried not to moan.',
+        'Your fingers traced patterns. Higher. They were shaking.',
+        'You whispered exactly what you\'d do to them later. They whimpered.',
+        'Touching them under the table. They spread their legs slightly.'
+      ],
+      high: [
+        'You made them come at dinner. No one noticed but you.',
+        'Your hand in their pants. Public place. They loved the danger.',
+        'You teased them until they begged you to leave. Now.',
+        'Fingers working. They came silently, gripping your wrist.',
+        'You made them wet in public. They hated you. They loved it.'
+      ]
+    }
+  },
   makeout: {
     icon: Flame,
     label: 'Make out',
