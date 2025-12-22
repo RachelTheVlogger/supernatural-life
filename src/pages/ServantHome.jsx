@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon } from 'lucide-react';
+import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import BusinessManagement from '@/components/nightbound/BusinessManagement';
+import NPCInteraction from '@/components/nightbound/NPCInteraction';
 
 const CHORES = [
   { id: 'clean', label: 'Clean the rooms', icon: Sparkles, duration: 2000, outcomes: ['You tidied the bedroom. Everything feels peaceful.', 'You dusted the shelves. The space feels lighter.', 'You organized their belongings with care.'] },
@@ -38,6 +40,8 @@ export default function ServantHome() {
   const queryClient = useQueryClient();
   const [doingChore, setDoingChore] = useState(null);
   const [choreOutcome, setChoreOutcome] = useState('');
+  const [showBusinessModal, setShowBusinessModal] = useState(false);
+  const [showNPCModal, setShowNPCModal] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -60,6 +64,34 @@ export default function ServantHome() {
   const unreadMessages = messages.filter(m => !m.read && m.sender === 'vampire').length;
   
   const handleChore = async (chore) => {
+    if (chore.isModal) {
+      if (chore.id === 'manage') {
+        setShowBusinessModal(true);
+      }
+      return;
+    }
+
+    if (chore.id === 'restock') {
+      const materials = ['silver', 'moonstone', 'onyx', 'obsidian', 'garnet', 'amethyst', 'chain', 'wire'];
+      const toBuy = materials[Math.floor(Math.random() * materials.length)];
+      const amount = Math.floor(Math.random() * 3) + 2;
+
+      const inventory = await base44.entities.Inventory.filter({ servant_id: servantId });
+      const existing = inventory.find(i => i.material === toBuy);
+      
+      if (existing) {
+        await base44.entities.Inventory.update(existing.id, {
+          quantity: existing.quantity + amount
+        });
+      } else {
+        await base44.entities.Inventory.create({
+          servant_id: servantId,
+          material: toBuy,
+          quantity: amount
+        });
+      }
+    }
+
     setDoingChore(chore.id);
     
     setTimeout(async () => {
@@ -79,6 +111,35 @@ export default function ServantHome() {
         category: 'interaction',
         intensity: 'subtle'
       });
+
+      // Random chance for new review after shipping
+      if (chore.id === 'ship' && Math.random() > 0.5) {
+        const orders = await base44.entities.BusinessOrder.filter({ 
+          servant_id: servantId, 
+          status: 'completed' 
+        });
+        if (orders.length > 0) {
+          const order = orders[Math.floor(Math.random() * orders.length)];
+          const rating = Math.random() > 0.2 ? 5 : Math.floor(Math.random() * 2) + 4;
+          const comments = {
+            5: ['Absolutely stunning! Best Etsy purchase ever.', 'The craftsmanship is incredible. Will order again!', 'Perfect gothic aesthetic. Exceeded expectations.'],
+            4: ['Beautiful piece. Took a bit longer but worth it.', 'Love it! Exactly as described.', 'Great quality. Very happy with this.'],
+            3: ['It\'s okay. Not quite what I expected.', 'Decent but could be better.', 'Average. Does the job.']
+          };
+          
+          await base44.entities.Review.create({
+            servant_id: servantId,
+            customer_name: order.customer_name,
+            rating: rating,
+            comment: comments[rating][Math.floor(Math.random() * comments[rating].length)],
+            order_id: order.id
+          });
+
+          await base44.entities.BusinessOrder.update(order.id, {
+            status: 'shipped'
+          });
+        }
+      }
       
       queryClient.invalidateQueries();
       
@@ -168,7 +229,13 @@ export default function ServantHome() {
           </motion.p>
         )}
         
-        <div className="flex gap-3 justify-center mt-4">
+        <div className="flex gap-3 justify-center mt-4 flex-wrap">
+          <button
+            onClick={() => setShowNPCModal(true)}
+            className="text-gray-400 hover:text-white text-sm transition-colors"
+          >
+            Town People
+          </button>
           <button
             onClick={() => navigate(createPageUrl('VampireHome'))}
             className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
@@ -248,6 +315,22 @@ export default function ServantHome() {
               <p className="text-gray-300 text-lg">{choreOutcome}</p>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modals */}
+      <AnimatePresence>
+        {showBusinessModal && (
+          <BusinessManagement
+            servant={servant}
+            onClose={() => setShowBusinessModal(false)}
+          />
+        )}
+        {showNPCModal && (
+          <NPCInteraction
+            onClose={() => setShowNPCModal(false)}
+            viewMode="servant"
+          />
         )}
       </AnimatePresence>
     </div>
