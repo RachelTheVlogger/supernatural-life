@@ -135,8 +135,6 @@ export default function Night() {
     restless: 'rgba(200, 0, 0, 0.9)'
   }[vampireState.hunger_state];
   
-  const navigate = useNavigate();
-  
   const actions = [
     { icon: Droplets, label: 'Feed', modal: 'feeding' },
     { icon: Users, label: 'Servants', modal: 'servants' },
