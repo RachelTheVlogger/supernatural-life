@@ -238,13 +238,23 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           </div>
         ) : (
           <div className="space-y-3">
-            <button
-              onClick={handleFeedOn}
-              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
-            >
-              <Heart className="w-5 h-5" />
-              <span>Feed on {servant.name}</span>
-            </button>
+            {!servant.is_turned && (
+              <button
+                onClick={handleFeedOn}
+                className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
+              >
+                <Heart className="w-5 h-5" />
+                <span>Feed on {servant.name}</span>
+              </button>
+            )}
+            
+            {servant.is_turned && (
+              <div className="bg-red-900/30 border border-red-800/50 rounded-xl p-4 mb-2">
+                <p className="text-red-300 text-sm text-center">
+                  {servant.name} is now vampire. They hunt with you as an equal.
+                </p>
+              </div>
+            )}
             
             <button
               onClick={handleTeach}
