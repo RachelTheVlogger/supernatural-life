@@ -36,6 +36,7 @@ export default function Messages() {
   const messagesEndRef = useRef(null);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [tab, setTab] = useState('messages');
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('servant');
@@ -177,7 +178,7 @@ export default function Messages() {
     queryClient.invalidateQueries(['messages', servantId]);
   };
 
-    if (!servant) {
+  if (!servant) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-400">Loading...</p>
@@ -185,8 +186,6 @@ export default function Messages() {
     );
   }
   
-  const [tab, setTab] = React.useState('messages');
-
   return (
     <div className="min-h-screen flex flex-col bg-black">
       {/* Header */}
