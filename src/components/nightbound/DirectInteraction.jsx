@@ -142,24 +142,24 @@ const INTERACTIONS = {
     outcomes: {
       low: [
         'Your hand on their thigh under the table. They froze.',
-        'You traced your fingers up their leg. Slowly. They trembled.',
-        'A whisper in their ear. Dirty. They blushed deep.',
-        'Your hand crept higher. They gripped the table.',
+        'You traced your fingers up their leg. Nobody else noticed.',
+        'A whisper in their ear. Something dangerous. They blushed.',
+        'Your hand moved slowly. They gripped the table.',
         'You touched them where no one could see. They gasped softly.'
       ],
       mid: [
-        'Your hand slid between their thighs. They bit their lip.',
-        'You teased them in public. They tried not to moan.',
-        'Your fingers traced patterns. Higher. They were shaking.',
-        'You whispered exactly what you\'d do to them later. They whimpered.',
-        'Touching them under the table. They spread their legs slightly.'
+        'Your hand moved higher. They bit their lip.',
+        'You teased them in public. They tried to stay composed.',
+        'Your fingers traced patterns. They were shaking.',
+        'You whispered exactly what you\'d do later. They shivered.',
+        'Touching them where others can\'t see. They leaned closer.'
       ],
       high: [
-        'You made them come at dinner. No one noticed but you.',
-        'Your hand in their pants. Public place. They loved the danger.',
-        'You teased them until they begged you to leave. Now.',
-        'Fingers working. They came silently, gripping your wrist.',
-        'You made them wet in public. They hated you. They loved it.'
+        'The danger of it thrilled them. Nobody noticed but you.',
+        'Public place. Secret touch. They loved the risk.',
+        'You teased them until they begged to leave. Now.',
+        'Your touch worked its magic. Silent. Intense.',
+        'The thrill of secrecy. They couldn\'t get enough.'
       ]
     }
   },
