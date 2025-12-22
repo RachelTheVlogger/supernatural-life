@@ -1,15 +1,15 @@
-import StyleComparison from './pages/StyleComparison';
 import Night from './pages/Night';
+import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "StyleComparison": StyleComparison,
     "Night": Night,
+    "Home": Home,
 }
 
 export const pagesConfig = {
-    mainPage: "StyleComparison",
+    mainPage: "Night",
     Pages: PAGES,
     Layout: __Layout,
 };
