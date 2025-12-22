@@ -28,7 +28,7 @@ const INITIATIVE_TEMPLATES = {
     ],
     5: [
       { type: 'message', text: 'I am bound to you. Nothing else matters.', emotion: 'transcendent' },
-      { type: 'offering', text: 'I feel empty when you\'re not inside me.', action: 'feed' }
+      { type: 'offering', text: 'I feel incomplete without you.', action: 'feed' }
     ]
   },
   defiant: {
@@ -70,7 +70,7 @@ const INITIATIVE_TEMPLATES = {
     ],
     3: [
       { type: 'message', text: 'I\'m more here with you than anywhere else.', emotion: 'fading' },
-      { type: 'offering', text: 'I want to feel you inside me. It\'s the only thing that feels real.', action: 'feed' },
+      { type: 'offering', text: 'I need to be near you. It\'s the only thing that feels real.', action: 'feed' },
       { type: 'confession', text: 'I\'m losing pieces of myself. I don\'t mind.', emotion: 'dissolving' }
     ],
     4: [

@@ -101,7 +101,7 @@ export default function Messages() {
       ${recentMessages}
       You: ${input}
 
-      Respond as ${servant.name} in 1-2 short sentences. Be intimate, emotional, and stay in character. Keep it brief and natural.`;
+      Respond as ${servant.name} in 1-2 short sentences. Be emotional and stay in character, but keep things subtle and not overly explicit. Keep it brief and natural.`;
 
           try {
             const response = await base44.integrations.Core.InvokeLLM({

@@ -25,7 +25,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Sanctuary', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, disabled: !firstServantId },
-    { name: 'Messages', icon: MessageCircle, path: `Messages?id=${firstServantId}`, disabled: !firstServantId }
+    { name: 'Messages', icon: MessageCircle, path: `Messages?servant=${firstServantId}`, disabled: !firstServantId }
   ];
   
   return (
