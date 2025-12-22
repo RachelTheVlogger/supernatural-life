@@ -65,6 +65,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [feeding, setFeeding] = useState(false);
   const [showInteractions, setShowInteractions] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
+  const [showTownPeople, setShowTownPeople] = useState(false);
   const queryClient = useQueryClient();
   
   // Fetch quests for this servant
@@ -343,6 +344,13 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             }}
           />
         )}
+        
+        {showTownPeople && (
+          <NPCInteraction
+            onClose={() => setShowTownPeople(false)}
+            viewMode="servant"
+          />
+        )}
       </AnimatePresence>
       
       {!visitingLocation && (
@@ -564,6 +572,14 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             >
               <MapPin className="w-5 h-5" />
               <span>Go somewhere together</span>
+            </button>
+            
+            <button
+              onClick={() => setShowTownPeople(true)}
+              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
+            >
+              <Users className="w-5 h-5" />
+              <span>Introduce to Town People</span>
             </button>
             
             {!servant.is_turned && servant.obsession_stage >= 4 && (
