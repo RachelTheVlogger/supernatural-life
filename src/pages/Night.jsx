@@ -52,8 +52,11 @@ export default function Night() {
   }, [vampireStates.length]);
   
   // Create initial servants if none exist
+  const [servantsInitialized, setServantsInitialized] = useState(false);
+  
   useEffect(() => {
-    if (servants.length === 0) {
+    if (servants.length === 0 && !servantsInitialized) {
+      setServantsInitialized(true);
       const initialServants = [
         { name: 'Elena', variant: 'devoted', obsession_stage: 1, emotional_state: 'curious' },
         { name: 'Marcus', variant: 'defiant', obsession_stage: 1, emotional_state: 'wary' },
@@ -64,7 +67,7 @@ export default function Night() {
         initialServants.map(s => base44.entities.Servant.create(s))
       ).then(() => queryClient.invalidateQueries(['servants']));
     }
-  }, [servants.length]);
+  }, [servants.length, servantsInitialized]);
   
   const hungerColor = {
     sated: 'rgba(60, 20, 20, 0.6)',
