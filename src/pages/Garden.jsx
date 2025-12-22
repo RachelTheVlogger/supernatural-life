@@ -151,55 +151,64 @@ export default function Garden() {
     return Math.max(baseSize * densityFactor, 80);
   }, [flowers.length]);
   
-  // Limit visible flowers on smaller screens
-  const visibleFlowers = useMemo(() => {
-    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 400;
-    const maxFlowers = screenWidth < 640 ? 6 : screenWidth < 1024 ? 10 : 20;
+  // Organize flowers into shelves
+  const shelvesData = useMemo(() => {
+    const shelves = [[], [], [], []]; // 4 shelves
+    const sortedFlowers = [...flowers].sort((a, b) => a.created_date - b.created_date);
     
-    // Sort by interaction count (most interacted first) and take visible amount
-    return [...flowers]
-      .sort((a, b) => (b.interaction_count || 0) - (a.interaction_count || 0))
-      .slice(0, maxFlowers);
+    sortedFlowers.forEach((flower, i) => {
+      const shelfIndex = i % 4;
+      shelves[shelfIndex].push(flower);
+    });
+    
+    return shelves;
   }, [flowers]);
   
   return (
     <div className="min-h-screen relative overflow-hidden">
       <GardenBackground />
       
-      {/* Garden space */}
-      <div className="relative w-full min-h-screen">
-        <AnimatePresence>
-          {visibleFlowers.map((flower, index) => (
-            <motion.div
-              key={flower.id}
-              className="absolute"
+      {/* Shelves container */}
+      <div className="relative min-h-screen p-4 md:p-8 flex flex-col justify-between">
+        {shelvesData.map((shelfFlowers, shelfIndex) => (
+          <div key={shelfIndex} className="relative">
+            {/* Shelf board */}
+            <div 
+              className="absolute bottom-0 left-0 right-0 h-3 rounded-sm shadow-md"
               style={{
-                left: `${flower.position_x}%`,
-                top: `${flower.position_y}%`,
-                transform: 'translate(-50%, -50%)',
-                zIndex: Math.floor(flower.position_y)
+                background: 'linear-gradient(180deg, #8b7355 0%, #6d5a45 100%)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
               }}
-              initial={{ opacity: 0, scale: 0, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ 
-                duration: 1.2,
-                delay: index * 0.1,
-                ease: [0.23, 1, 0.32, 1]
-              }}
-            >
-              <FlowerInteraction
-                flower={flower}
-                size={flowerSize}
-                onWater={handleWater}
-                onTouch={handleTouch}
-                onHold={handleHold}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+            />
+            
+            {/* Plants on shelf */}
+            <div className="flex flex-wrap gap-2 md:gap-6 justify-start items-end pb-3 min-h-[120px] md:min-h-[180px]">
+              {shelfFlowers.map((flower, flowerIndex) => (
+                <motion.div
+                  key={flower.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ 
+                    duration: 0.8, 
+                    delay: flowerIndex * 0.2,
+                    type: 'spring'
+                  }}
+                >
+                  <FlowerInteraction
+                    flower={flower}
+                    size={flowerSize}
+                    onWater={handleWater}
+                    onTouch={handleTouch}
+                    onHold={handleHold}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
       
-      {/* Interaction hint - only show briefly on first visit */}
+      {/* Interaction hint */}
       <motion.div
         className="fixed bottom-6 left-0 right-0 flex flex-col items-center gap-1 pointer-events-none"
         initial={{ opacity: 0 }}
