@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, BookOpen, Zap, Users, Heart } from 'lucide-react';
+import { X, BookOpen, Zap, Users, Heart, MapPin } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -12,9 +12,19 @@ const TEACHING_TOPICS = [
   'Practicing control together'
 ];
 
+const LOCATIONS = [
+  { name: 'Night walk through the city', outcomes: ['You walked together in silence.', 'They stayed close to you.', 'The night felt different with them beside you.'] },
+  { name: 'Visit an abandoned building', outcomes: ['You explored together. They trusted you completely.', 'They followed you without question.', 'You shared the darkness.'] },
+  { name: 'Go to a rooftop', outcomes: ['You watched the city together.', 'They leaned against you.', 'Time passed differently up there.'] },
+  { name: 'Walk through the forest', outcomes: ['You moved between trees together.', 'They felt safer with you.', 'The forest accepted you both.'] },
+  { name: 'Visit a cemetery', outcomes: ['You stood among the graves together.', 'They understood you better now.', 'Death felt less foreign to them.'] }
+];
+
 export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [teaching, setTeaching] = useState(false);
   const [turning, setTurning] = useState(false);
+  const [goingOut, setGoingOut] = useState(false);
+  const [showLocations, setShowLocations] = useState(false);
   const queryClient = useQueryClient();
   
   const handleTeach = async () => {
@@ -117,6 +127,37 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
     onClose();
   };
   
+  const handleGoOut = async (location) => {
+    setGoingOut(true);
+    setShowLocations(false);
+    
+    setTimeout(async () => {
+      const outcome = location.outcomes[Math.floor(Math.random() * location.outcomes.length)];
+      
+      await base44.entities.NightLog.create({
+        entry: `${location.name}: ${outcome}`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
+      await base44.entities.Servant.update(servant.id, {
+        obsession_stage: Math.min(servant.obsession_stage + 1, 5)
+      });
+      
+      // Chance to unlock exploration power
+      if (Math.random() < 0.2 && !vampireState.unlocked_powers?.includes('Shared Journey')) {
+        const updatedPowers = [...(vampireState.unlocked_powers || []), 'Shared Journey'];
+        await base44.entities.VampireState.update(vampireState.id, {
+          unlocked_powers: updatedPowers
+        });
+      }
+      
+      queryClient.invalidateQueries();
+      setGoingOut(false);
+      onClose();
+    }, 2500);
+  };
+  
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -146,15 +187,34 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           {servant.variant} · Stage {servant.obsession_stage}
         </p>
         
-        {teaching || turning ? (
+        {teaching || turning || goingOut ? (
           <div className="text-center py-12">
             <motion.p
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity }}
               className="text-gray-400"
             >
-              {teaching ? 'Teaching...' : 'Turning...'}
+              {teaching ? 'Teaching...' : turning ? 'Turning...' : '...'}
             </motion.p>
+          </div>
+        ) : showLocations ? (
+          <div className="space-y-3">
+            <p className="text-gray-400 text-sm mb-4">Where will you go?</p>
+            {LOCATIONS.map((location, i) => (
+              <button
+                key={i}
+                onClick={() => handleGoOut(location)}
+                className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+              >
+                <p className="text-white text-sm">{location.name}</p>
+              </button>
+            ))}
+            <button
+              onClick={() => setShowLocations(false)}
+              className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl py-3 text-gray-400 transition-colors"
+            >
+              Back
+            </button>
           </div>
         ) : (
           <div className="space-y-3">
@@ -172,6 +232,14 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             >
               <BookOpen className="w-5 h-5" />
               <span>Teach them</span>
+            </button>
+            
+            <button
+              onClick={() => setShowLocations(true)}
+              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
+            >
+              <MapPin className="w-5 h-5" />
+              <span>Go somewhere together</span>
             </button>
             
             {!servant.is_turned && servant.obsession_stage >= 4 && (
