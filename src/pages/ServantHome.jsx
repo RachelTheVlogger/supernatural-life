@@ -25,10 +25,12 @@ const VAMPIRE_ACTIVITIES = [
 ];
 
 const BUSINESS_ACTIVITIES = [
-  { id: 'craft', label: 'Craft jewelry', icon: Sparkles, duration: 3000, outcomes: ['You shaped silver into something beautiful. Gothic. Intricate.', 'Your hands worked the metal. Each piece tells a story.', 'Another piece finished. Dark beauty in your hands.'] },
+  { id: 'manage', label: 'Manage business', icon: Sparkles, duration: 0, isModal: true },
   { id: 'design', label: 'Design new pieces', icon: BookOpen, duration: 2500, outcomes: ['You sketched new designs. Moon phases. Ravens. Thorns.', 'Inspiration struck. You drew late into the night.', 'New designs flow from you. Darker. More beautiful.'] },
-  { id: 'orders', label: 'Check orders', icon: MessageCircle, duration: 1500, outcomes: ['New orders came in. People want what you make.', 'You reviewed the requests. So many souls drawn to darkness.', 'Orders waiting. Your work calls to those who understand.'] },
-  { id: 'ship', label: 'Package orders', icon: Home, duration: 2000, outcomes: ['You wrapped each piece with care. Sent into the world.', 'Packages ready. Your creations leaving your hands.', 'Orders shipped. They\'ll find their way to those who need them.'] }
+  { id: 'photograph', label: 'Photograph jewelry', icon: Camera, duration: 2000, outcomes: ['You captured the perfect shot. Light and shadow dancing.', 'Each angle tells a story. Your work deserves to be seen.', 'The photos turned out hauntingly beautiful.'] },
+  { id: 'social', label: 'Post on social media', icon: MessageCircle, duration: 1500, outcomes: ['Posted your latest piece. Comments already rolling in.', 'Your followers love the new design. Engagement up.', 'The goth community is obsessed with your work.'] },
+  { id: 'ship', label: 'Package orders', icon: Home, duration: 2000, outcomes: ['You wrapped each piece with care. Sent into the world.', 'Packages ready. Your creations leaving your hands.', 'Orders shipped. They\'ll find their way to those who need them.'] },
+  { id: 'restock', label: 'Buy materials', icon: ShoppingBag, duration: 2500, outcomes: ['Restocked materials. Silver, stones, chains.', 'New supplies arrived. Time to create.', 'Materials acquired. Your workshop is ready.'] }
 ];
 
 export default function ServantHome() {

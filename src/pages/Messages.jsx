@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, Trash2, Package } from 'lucide-react';
+import { ArrowLeft, Send, Trash2, Package, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -59,6 +59,12 @@ export default function Messages() {
   const { data: orders = [] } = useQuery({
     queryKey: ['orders', servantId],
     queryFn: () => base44.entities.BusinessOrder.filter({ servant_id: servantId }, '-created_date'),
+    enabled: !!servantId
+  });
+
+  const { data: reviews = [] } = useQuery({
+    queryKey: ['reviews', servantId],
+    queryFn: () => base44.entities.Review.filter({ servant_id: servantId }, '-created_date'),
     enabled: !!servantId
   });
   
@@ -231,7 +237,18 @@ export default function Messages() {
             }`}
           >
             <Package className="w-4 h-4" />
-            Business {orders.length > 0 && `(${orders.length})`}
+            Orders {orders.length > 0 && `(${orders.length})`}
+          </button>
+          <button
+            onClick={() => setTab('reviews')}
+            className={`flex-1 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-1 ${
+              tab === 'reviews' 
+                ? 'bg-purple-600 text-white' 
+                : 'bg-gray-800 text-gray-400'
+            }`}
+          >
+            <Star className="w-4 h-4" />
+            Reviews {reviews.length > 0 && `(${reviews.length})`}
           </button>
         </div>
       </div>
@@ -306,7 +323,37 @@ export default function Messages() {
               ))
             )}
           </>
-        )}
+        ) : tab === 'reviews' ? (
+          <>
+            {reviews.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No reviews yet...</p>
+            ) : (
+              reviews.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).map((review) => (
+                <motion.div
+                  key={review.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gray-800 rounded-xl p-4"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-white font-medium">{review.customer_name}</h3>
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-gray-300 text-sm italic">"{review.comment}"</p>
+                </motion.div>
+              ))
+            )}
+          </>
+        ) : null}
       </div>
       
       {/* Input */}
