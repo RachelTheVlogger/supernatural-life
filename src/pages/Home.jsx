@@ -16,7 +16,7 @@ export default function Home() {
     queryFn: () => base44.entities.VampireState.list()
   });
   
-  const existingGame = vampireStates.length > 0 && vampireStates[0].game_started;
+  const existingGame = vampireStates.length > 0;
   
   const handleNewGame = async () => {
     if (!vampireName.trim()) {
