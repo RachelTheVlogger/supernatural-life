@@ -85,7 +85,14 @@ export default function Night() {
   const [servantsInitialized, setServantsInitialized] = useState(false);
   
   useEffect(() => {
-    if (servants.length === 0 && !servantsInitialized) {
+    // Delete extra servants if more than one exists
+    if (servants.length > 1 && !servantsInitialized) {
+      setServantsInitialized(true);
+      // Keep the first one, delete the rest
+      const toDelete = servants.slice(1);
+      Promise.all(toDelete.map(s => base44.entities.Servant.delete(s.id)))
+        .then(() => queryClient.invalidateQueries(['servants']));
+    } else if (servants.length === 0 && !servantsInitialized) {
       setServantsInitialized(true);
       const variants = ['devoted', 'defiant', 'dreamer'];
       const emotionalStates = ['curious', 'wary', 'distant'];
