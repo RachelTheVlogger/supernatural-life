@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, Trash2 } from 'lucide-react';
+import { ArrowLeft, Send, Trash2, Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -52,6 +52,12 @@ export default function Messages() {
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', servantId],
     queryFn: () => base44.entities.Message.filter({ servant_id: servantId }, '-created_date'),
+    enabled: !!servantId
+  });
+
+  const { data: orders = [] } = useQuery({
+    queryKey: ['orders', servantId],
+    queryFn: () => base44.entities.BusinessOrder.filter({ servant_id: servantId }, '-created_date'),
     enabled: !!servantId
   });
   
@@ -179,32 +185,63 @@ export default function Messages() {
     );
   }
   
+  const [tab, setTab] = React.useState('messages');
+
   return (
     <div className="min-h-screen flex flex-col bg-black">
       {/* Header */}
-      <div className="bg-gray-900 p-4 flex items-center gap-3 border-b border-gray-800">
-        <button
-          onClick={() => navigate(createPageUrl('Night'))}
-          className="text-gray-400 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div className="flex-1">
-          <h2 className="text-white font-medium">{servant.name}</h2>
-          <p className="text-gray-400 text-xs capitalize">{servant.variant}</p>
+      <div className="bg-gray-900 p-4 border-b border-gray-800">
+        <div className="flex items-center gap-3 mb-3">
+          <button
+            onClick={() => navigate(createPageUrl('Night'))}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="flex-1">
+            <h2 className="text-white font-medium">{servant.name}</h2>
+            <p className="text-gray-400 text-xs capitalize">{servant.variant}</p>
+          </div>
+          <button
+            onClick={handleClearMessages}
+            className="text-gray-400 hover:text-red-400 transition-colors"
+            title="Clear messages"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
         </div>
-        <button
-          onClick={handleClearMessages}
-          className="text-gray-400 hover:text-red-400 transition-colors"
-          title="Clear messages"
-        >
-          <Trash2 className="w-5 h-5" />
-        </button>
+        
+        {/* Tabs */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setTab('messages')}
+            className={`flex-1 py-2 rounded-lg text-sm transition-colors ${
+              tab === 'messages' 
+                ? 'bg-purple-600 text-white' 
+                : 'bg-gray-800 text-gray-400'
+            }`}
+          >
+            Messages
+          </button>
+          <button
+            onClick={() => setTab('business')}
+            className={`flex-1 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-1 ${
+              tab === 'business' 
+                ? 'bg-purple-600 text-white' 
+                : 'bg-gray-800 text-gray-400'
+            }`}
+          >
+            <Package className="w-4 h-4" />
+            Business {orders.length > 0 && `(${orders.length})`}
+          </button>
+        </div>
       </div>
       
-      {/* Messages */}
+      {/* Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)).map((msg) => (
+        {tab === 'messages' ? (
+          <>
+            {messages.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)).map((msg) => (
           <motion.div
             key={msg.id}
             initial={{ opacity: 0, y: 10 }}
@@ -221,21 +258,56 @@ export default function Messages() {
               <p className="text-sm">{msg.content}</p>
             </div>
           </motion.div>
-        ))}
-        
-        {isTyping && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex justify-start"
-          >
-            <div className="bg-gray-800 text-gray-400 rounded-2xl px-4 py-2">
-              <p className="text-sm">typing...</p>
-            </div>
-          </motion.div>
+            ))}
+            
+            {isTyping && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex justify-start"
+              >
+                <div className="bg-gray-800 text-gray-400 rounded-2xl px-4 py-2">
+                  <p className="text-sm">typing...</p>
+                </div>
+              </motion.div>
+            )}
+            
+            <div ref={messagesEndRef} />
+          </>
+        ) : (
+          <>
+            {orders.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No orders yet...</p>
+            ) : (
+              orders.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).map((order) => (
+                <motion.div
+                  key={order.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gray-800 rounded-xl p-4"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="text-white font-medium">{order.customer_name}</h3>
+                      <p className="text-gray-400 text-sm">{order.item}</p>
+                    </div>
+                    <p className="text-purple-400 font-medium">${order.price}</p>
+                  </div>
+                  {order.message && (
+                    <p className="text-gray-300 text-sm italic mb-2">"{order.message}"</p>
+                  )}
+                  <span className={`inline-block px-2 py-1 rounded text-xs ${
+                    order.status === 'completed' ? 'bg-green-900/30 text-green-400' :
+                    order.status === 'crafting' ? 'bg-purple-900/30 text-purple-400' :
+                    'bg-gray-700 text-gray-400'
+                  }`}>
+                    {order.status}
+                  </span>
+                </motion.div>
+              ))
+            )}
+          </>
         )}
-        
-        <div ref={messagesEndRef} />
       </div>
       
       {/* Input */}

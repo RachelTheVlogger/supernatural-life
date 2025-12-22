@@ -11,6 +11,7 @@ import NightLogView from '@/components/nightbound/NightLogView';
 import HuntingModal from '@/components/nightbound/HuntingModal';
 import PowersModal from '@/components/nightbound/PowersModal';
 import AdvanceNight from '@/components/nightbound/AdvanceNight';
+import NPCInteraction from '@/components/nightbound/NPCInteraction';
 
 export default function Night() {
   const queryClient = useQueryClient();
@@ -123,6 +124,7 @@ export default function Night() {
     { icon: Users, label: 'Servants', modal: 'servants' },
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
     { icon: Zap, label: 'Powers', modal: 'powers' },
+    { icon: Users, label: 'Town People', modal: 'npcs' },
     { icon: BookOpen, label: 'Night Log', modal: 'log' },
     { icon: Moon, label: 'Advance Night', modal: 'advance' }
   ];
@@ -261,7 +263,13 @@ export default function Night() {
             onClose={() => setActiveModal(null)}
           />
         )}
-      </AnimatePresence>
+        {activeModal === 'npcs' && (
+          <NPCInteraction
+            onClose={() => setActiveModal(null)}
+            viewMode="vampire"
+          />
+        )}
+        </AnimatePresence>
     </div>
   );
 }

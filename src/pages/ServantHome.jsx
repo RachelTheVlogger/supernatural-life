@@ -24,6 +24,13 @@ const VAMPIRE_ACTIVITIES = [
   { id: 'explore', label: 'Explore the night', icon: Home, duration: 3500, outcomes: ['The city at night. Your domain now. Everything has changed.', 'You moved through darkness like you were born to it. Maybe you were.', 'The night embraced you. You embraced it back.'] }
 ];
 
+const BUSINESS_ACTIVITIES = [
+  { id: 'craft', label: 'Craft jewelry', icon: Sparkles, duration: 3000, outcomes: ['You shaped silver into something beautiful. Gothic. Intricate.', 'Your hands worked the metal. Each piece tells a story.', 'Another piece finished. Dark beauty in your hands.'] },
+  { id: 'design', label: 'Design new pieces', icon: BookOpen, duration: 2500, outcomes: ['You sketched new designs. Moon phases. Ravens. Thorns.', 'Inspiration struck. You drew late into the night.', 'New designs flow from you. Darker. More beautiful.'] },
+  { id: 'orders', label: 'Check orders', icon: MessageCircle, duration: 1500, outcomes: ['New orders came in. People want what you make.', 'You reviewed the requests. So many souls drawn to darkness.', 'Orders waiting. Your work calls to those who understand.'] },
+  { id: 'ship', label: 'Package orders', icon: Home, duration: 2000, outcomes: ['You wrapped each piece with care. Sent into the world.', 'Packages ready. Your creations leaving your hands.', 'Orders shipped. They\'ll find their way to those who need them.'] }
+];
+
 export default function ServantHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -88,7 +95,7 @@ export default function ServantHome() {
     );
   }
   
-  const activities = servant.is_turned ? VAMPIRE_ACTIVITIES : CHORES;
+  const activities = servant.is_turned ? VAMPIRE_ACTIVITIES : [...CHORES, ...BUSINESS_ACTIVITIES];
   
   return (
     <div className="min-h-screen p-4 md:p-6 relative overflow-hidden">
