@@ -39,12 +39,11 @@ export default function Night() {
     queryFn: () => base44.entities.VampireState.list()
   });
   
-  const vampireState = vampireStates[0] || {
-    hunger_state: 'calm',
-    emotional_mode: 'feeling',
-    unlocked_powers: [],
-    nights_passed: 0
-  };
+  const vampireState = vampireStates[0];
+  
+  if (!vampireState) {
+    return null; // Will redirect via useEffect
+  }
   
   // Fetch servants
   const { data: servants = [] } = useQuery({
@@ -58,17 +57,12 @@ export default function Night() {
     queryFn: () => base44.entities.NightLog.list('-created_date', 10)
   });
   
-  // Initialize vampire state if doesn't exist
+  // Redirect to home if no vampire exists
   useEffect(() => {
     if (vampireStates.length === 0) {
-      base44.entities.VampireState.create({
-        hunger_state: 'calm',
-        emotional_mode: 'feeling',
-        unlocked_powers: [],
-        nights_passed: 0
-      }).then(() => queryClient.invalidateQueries(['vampireState']));
+      navigate(createPageUrl('Home'));
     }
-  }, [vampireStates.length]);
+  }, [vampireStates.length, navigate]);
   
   // Random name generator with duplicate checking
   const generateRandomName = (existingNames = []) => {
