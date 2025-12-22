@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, AlertTriangle, CheckCircle } from 'lucide-react';
+import { X, Heart, AlertTriangle, CheckCircle, MessageCircle, Send } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const HOSPITAL_SCENES = [
   {
@@ -52,6 +52,32 @@ export default function HospitalJob({ vampireState, onClose }) {
   const [scene, setScene] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState(null);
+  const [showMessages, setShowMessages] = useState(false);
+  const [messageInput, setMessageInput] = useState('');
+
+  const { data: servants = [] } = useQuery({
+    queryKey: ['servants'],
+    queryFn: () => base44.entities.Servant.list()
+  });
+
+  const { data: messages = [] } = useQuery({
+    queryKey: ['messages', servants[0]?.id],
+    queryFn: () => base44.entities.Message.filter({ servant_id: servants[0]?.id }, '-created_date'),
+    enabled: servants.length > 0 && showMessages
+  });
+
+  const handleSendMessage = async () => {
+    if (!messageInput.trim() || servants.length === 0) return;
+
+    await base44.entities.Message.create({
+      servant_id: servants[0].id,
+      content: messageInput,
+      sender: 'vampire'
+    });
+
+    queryClient.invalidateQueries(['messages']);
+    setMessageInput('');
+  };
 
   const startShift = () => {
     const randomScene = HOSPITAL_SCENES[Math.floor(Math.random() * HOSPITAL_SCENES.length)];
@@ -130,12 +156,77 @@ export default function HospitalJob({ vampireState, onClose }) {
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-          <Heart className="w-6 h-6 text-red-400" />
-          Night Shift at the Hospital
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            <Heart className="w-6 h-6 text-red-400" />
+            Night Shift at the Hospital
+          </h2>
+          {servants.length > 0 && (
+            <button
+              onClick={() => setShowMessages(!showMessages)}
+              className="text-purple-400 hover:text-purple-300 transition-colors relative"
+            >
+              <MessageCircle className="w-6 h-6" />
+              {messages.filter(m => m.sender === 'servant' && !m.read).length > 0 && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
+              )}
+            </button>
+          )}
+        </div>
 
-        {!scene ? (
+        {showMessages ? (
+          <div className="space-y-4">
+            <div className="bg-gray-800 rounded-xl p-4 max-h-64 overflow-y-auto space-y-2">
+              {messages.length === 0 ? (
+                <p className="text-gray-500 text-sm text-center">No messages yet...</p>
+              ) : (
+                messages.slice(-10).reverse().map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`${
+                      msg.sender === 'vampire' 
+                        ? 'text-right' 
+                        : 'text-left'
+                    }`}
+                  >
+                    <div
+                      className={`inline-block px-3 py-2 rounded-xl text-sm ${
+                        msg.sender === 'vampire'
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-700 text-gray-200 italic'
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder="Text them during your shift..."
+                className="flex-1 bg-gray-800 text-white rounded-xl px-4 py-2 text-sm outline-none"
+              />
+              <button
+                onClick={handleSendMessage}
+                disabled={!messageInput.trim()}
+                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-xl px-4 py-2 transition-colors"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+            <button
+              onClick={() => setShowMessages(false)}
+              className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2 rounded-xl text-sm transition-colors"
+            >
+              Back to Shift
+            </button>
+          </div>
+        ) : !scene ? (
           <div className="space-y-4">
             <p className="text-gray-300">
               You work the night shift. Empty halls. Unconscious patients. Blood everywhere.

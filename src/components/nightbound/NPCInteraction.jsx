@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Users, MessageCircle, Gift, Coffee, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Users, MessageCircle, Gift, Coffee, Heart, Droplets, AlertTriangle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -11,16 +11,45 @@ const INTERACTION_OPTIONS = {
   coffee: { icon: Coffee, label: 'Get coffee', relGain: [4, 9] }
 };
 
-export default function NPCInteraction({ onClose, viewMode }) {
+export default function NPCInteraction({ onClose, viewMode, servant = null }) {
   const queryClient = useQueryClient();
   const [selectedNPC, setSelectedNPC] = useState(null);
   const [outcome, setOutcome] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [temptation, setTemptation] = useState(0);
+  const [showFeedPrompt, setShowFeedPrompt] = useState(false);
 
   const { data: npcs = [] } = useQuery({
     queryKey: ['npcs'],
     queryFn: () => base44.entities.NPC.list()
   });
+
+  const { data: vampireStates = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list(),
+    enabled: viewMode === 'vampire'
+  });
+
+  const vampireState = vampireStates[0];
+  const isVampire = viewMode === 'vampire' || servant?.is_turned;
+  const hungerLevel = vampireState?.hunger_state || 'calm';
+
+  // Calculate temptation based on hunger state
+  useEffect(() => {
+    if (selectedNPC && isVampire) {
+      const hungerTemptation = {
+        sated: 10,
+        calm: 25,
+        lingering: 45,
+        heightened: 70,
+        restless: 95
+      }[hungerLevel] || 25;
+      
+      setTemptation(hungerTemptation);
+    } else {
+      setTemptation(0);
+    }
+  }, [selectedNPC, isVampire, hungerLevel]);
 
   const handleInteract = async (npc, actionKey) => {
     setProcessing(true);
@@ -63,6 +92,64 @@ export default function NPCInteraction({ onClose, viewMode }) {
     }, 1500);
   };
 
+  const handleFeed = async (npc, resist) => {
+    setProcessing(true);
+    setShowFeedPrompt(false);
+    
+    setTimeout(async () => {
+      if (resist) {
+        setOutcome(`You resisted. ${npc.name} noticed nothing. But god, it was hard.`);
+        
+        if (vampireState?.id) {
+          const newHumanity = Math.min((vampireState.humanity || 50) + 5, 100);
+          await base44.entities.VampireState.update(vampireState.id, {
+            humanity: newHumanity
+          });
+        }
+      } else {
+        const feedOutcomes = [
+          `You fed on ${npc.name}. Quick. Discreet. They won't remember. But you will.`,
+          `${npc.name}'s blood. Sweet. Forbidden. You took just enough. They stumbled, confused.`,
+          `You couldn't resist. Fed on ${npc.name}. They're alive. Changed. Marked by you.`
+        ];
+        setOutcome(feedOutcomes[Math.floor(Math.random() * feedOutcomes.length)]);
+        
+        const relationshipKey = viewMode === 'vampire' ? 'relationship_vampire' : 'relationship_servant';
+        await base44.entities.NPC.update(npc.id, {
+          [relationshipKey]: Math.max((npc[relationshipKey] || 50) - 20, 0)
+        });
+        
+        if (vampireState?.id) {
+          const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
+          const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
+          const newHungerState = hungerStates[Math.max(0, currentIndex - 2)];
+          const newHumanity = Math.max((vampireState.humanity || 50) - 15, 0);
+          
+          await base44.entities.VampireState.update(vampireState.id, {
+            hunger_state: newHungerState,
+            humanity: newHumanity,
+            last_feed: new Date().toISOString()
+          });
+        }
+        
+        await base44.entities.NightLog.create({
+          entry: `Fed on ${npc.name}. The hunger demanded it.`,
+          category: 'feeding',
+          intensity: 'significant'
+        });
+      }
+      
+      queryClient.invalidateQueries(['npcs']);
+      queryClient.invalidateQueries(['vampireState']);
+      
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+        setSelectedNPC(null);
+      }, 3000);
+    }, 2000);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -96,8 +183,38 @@ export default function NPCInteraction({ onClose, viewMode }) {
             {npcs.map((npc) => (
               <div
                 key={npc.id}
-                className="bg-gray-800 rounded-xl p-4"
+                className="bg-gray-800 rounded-xl p-4 relative overflow-hidden"
               >
+                {/* Temptation indicator */}
+                {selectedNPC?.id === npc.id && isVampire && !outcome && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="absolute top-2 right-2 flex items-center gap-2"
+                  >
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.2, 1],
+                        opacity: [0.5, 1, 0.5]
+                      }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <Droplets className={`w-5 h-5 ${
+                        temptation > 70 ? 'text-red-500' :
+                        temptation > 40 ? 'text-orange-500' :
+                        'text-yellow-500'
+                      }`} />
+                    </motion.div>
+                    <span className={`text-xs font-medium ${
+                      temptation > 70 ? 'text-red-400' :
+                      temptation > 40 ? 'text-orange-400' :
+                      'text-yellow-400'
+                    }`}>
+                      {temptation}%
+                    </span>
+                  </motion.div>
+                )}
+
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="text-white font-medium">{npc.name}</h3>
@@ -115,6 +232,32 @@ export default function NPCInteraction({ onClose, viewMode }) {
                   <p className="text-gray-300 text-sm italic">{outcome}</p>
                 ) : processing && selectedNPC?.id === npc.id ? (
                   <p className="text-gray-400 text-sm">...</p>
+                ) : showFeedPrompt && selectedNPC?.id === npc.id ? (
+                  <div className="space-y-3">
+                    <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <AlertTriangle className="w-4 h-4 text-red-400" />
+                        <p className="text-red-300 text-sm font-medium">Temptation</p>
+                      </div>
+                      <p className="text-gray-300 text-xs">
+                        Their pulse. Right there. You could take just a little. They'd never know.
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleFeed(npc, true)}
+                        className="flex-1 bg-green-950/40 hover:bg-green-950/60 border border-green-800/50 text-green-300 py-2 rounded-lg text-xs transition-colors"
+                      >
+                        Resist
+                      </button>
+                      <button
+                        onClick={() => handleFeed(npc, false)}
+                        className="flex-1 bg-red-950/40 hover:bg-red-950/60 border border-red-800/50 text-red-300 py-2 rounded-lg text-xs transition-colors"
+                      >
+                        Feed
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <div className="flex gap-2 flex-wrap">
                     {Object.entries(INTERACTION_OPTIONS).map(([key, action]) => (
@@ -131,6 +274,19 @@ export default function NPCInteraction({ onClose, viewMode }) {
                         {action.label}
                       </button>
                     ))}
+                    {isVampire && (
+                      <button
+                        onClick={() => {
+                          setSelectedNPC(npc);
+                          setShowFeedPrompt(true);
+                        }}
+                        disabled={processing}
+                        className="bg-red-950/30 hover:bg-red-950/50 text-red-300 text-xs px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1"
+                      >
+                        <Droplets className="w-3 h-3" />
+                        Feed
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
