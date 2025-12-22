@@ -83,6 +83,34 @@ export default function Night() {
   
   // Create initial servants if none exist
   const [servantsInitialized, setServantsInitialized] = useState(false);
+  const [duplicatesFixed, setDuplicatesFixed] = useState(false);
+  
+  // Fix duplicate names on load
+  useEffect(() => {
+    if (servants.length > 0 && !duplicatesFixed) {
+      const nameCount = {};
+      const duplicates = [];
+      
+      servants.forEach(servant => {
+        if (nameCount[servant.name]) {
+          duplicates.push(servant);
+        } else {
+          nameCount[servant.name] = true;
+        }
+      });
+      
+      if (duplicates.length > 0) {
+        const existingNames = servants.map(s => s.name);
+        duplicates.forEach(async (servant) => {
+          const newName = generateRandomName(existingNames);
+          existingNames.push(newName);
+          await base44.entities.Servant.update(servant.id, { name: newName });
+        });
+        setTimeout(() => queryClient.invalidateQueries(['servants']), 500);
+      }
+      setDuplicatesFixed(true);
+    }
+  }, [servants, duplicatesFixed]);
   
   useEffect(() => {
     if (servants.length === 0 && !servantsInitialized) {
