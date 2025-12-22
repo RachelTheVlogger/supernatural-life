@@ -15,23 +15,11 @@ import NPCInteraction from '@/components/nightbound/NPCInteraction';
 import TutorialSystem from '@/components/nightbound/TutorialSystem';
 
 export default function Night() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeModal, setActiveModal] = useState(null);
   const [selectedServant, setSelectedServant] = useState(null);
   const [showTutorial, setShowTutorial] = useState(null);
-  
-  // Check if first time playing
-  const { data: completedTutorials = [] } = useQuery({
-    queryKey: ['tutorials'],
-    queryFn: () => base44.entities.Tutorial.list()
-  });
-  
-  useEffect(() => {
-    // Show welcome tutorial if no tutorials have been completed
-    if (completedTutorials.length === 0 && vampireState) {
-      setShowTutorial('welcome');
-    }
-  }, [completedTutorials.length, vampireState]);
   
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
@@ -53,12 +41,25 @@ export default function Night() {
     queryFn: () => base44.entities.NightLog.list('-created_date', 10)
   });
   
+  // Check if first time playing
+  const { data: completedTutorials = [] } = useQuery({
+    queryKey: ['tutorials'],
+    queryFn: () => base44.entities.Tutorial.list()
+  });
+  
   // Redirect to home if no vampire exists
   useEffect(() => {
     if (!vampireLoading && vampireStates.length === 0) {
       navigate(createPageUrl('Home'));
     }
   }, [vampireStates.length, vampireLoading, navigate]);
+  
+  useEffect(() => {
+    // Show welcome tutorial if no tutorials have been completed
+    if (completedTutorials.length === 0 && vampireState) {
+      setShowTutorial('welcome');
+    }
+  }, [completedTutorials.length, vampireState]);
   
   if (vampireLoading) {
     return (
