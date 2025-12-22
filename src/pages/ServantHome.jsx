@@ -161,7 +161,9 @@ export default function ServantHome() {
     );
   }
   
-  const activities = servant.is_turned ? VAMPIRE_ACTIVITIES : [...CHORES, ...BUSINESS_ACTIVITIES];
+  const activities = servant.is_turned 
+    ? [...VAMPIRE_ACTIVITIES, ...BUSINESS_ACTIVITIES] 
+    : [...CHORES, ...BUSINESS_ACTIVITIES];
   
   return (
     <div className="min-h-screen p-4 md:p-6 relative overflow-hidden">
