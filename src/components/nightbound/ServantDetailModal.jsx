@@ -7,6 +7,7 @@ import LocationVisit from './LocationVisit';
 import RelationshipEvent from './RelationshipEvent';
 import QuestSystem from './QuestSystem';
 import DirectInteraction from './DirectInteraction';
+import FriendsSystem from './FriendsSystem';
 
 const TEACHING_TOPICS = [
   'Explaining restraint',
@@ -62,6 +63,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [showQuestModal, setShowQuestModal] = useState(false);
   const [feeding, setFeeding] = useState(false);
   const [showInteractions, setShowInteractions] = useState(false);
+  const [showFriends, setShowFriends] = useState(false);
   const queryClient = useQueryClient();
   
   // Fetch quests for this servant
@@ -330,6 +332,16 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             }}
           />
         )}
+        
+        {showFriends && (
+          <FriendsSystem
+            servant={servant}
+            onClose={() => {
+              setShowFriends(false);
+              queryClient.invalidateQueries(['servants']);
+            }}
+          />
+        )}
       </AnimatePresence>
       
       {!visitingLocation && (
@@ -499,6 +511,14 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             >
               <Heart className="w-5 h-5 text-pink-400" />
               <span className="text-white font-medium">Interact with {servant.name}</span>
+            </button>
+            
+            <button
+              onClick={() => setShowFriends(true)}
+              className="w-full bg-gradient-to-r from-blue-900/40 to-cyan-900/40 hover:from-blue-900/60 hover:to-cyan-900/60 border-2 border-blue-500/50 rounded-xl py-4 flex items-center justify-center gap-2 transition-all"
+            >
+              <Users className="w-5 h-5 text-blue-400" />
+              <span className="text-white font-medium">{servant.name}'s Friends</span>
             </button>
             
             {!activeQuest && (

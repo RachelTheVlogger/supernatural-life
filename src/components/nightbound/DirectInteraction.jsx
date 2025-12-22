@@ -95,9 +95,30 @@ const INTERACTIONS = {
     tier: 1,
     gains: [8, 15],
     outcomes: {
-      low: ['A soft kiss. Hesitant. They stayed still.', 'You kissed them gently. They tensed, then relaxed.', 'Your lips on theirs. Brief. Careful.'],
-      mid: ['You kissed them deeply. They responded eagerly.', 'They kissed you back with need.', 'Long, slow kiss. They didn\'t want it to end.'],
-      high: ['Desperate kisses. Hands everywhere. Breathless.', 'You devoured them. They surrendered completely.', 'They kissed you like drowning, like breathing.']
+      low: [
+        'A soft kiss. Hesitant. They stayed still.', 
+        'You kissed them gently. They tensed, then relaxed.', 
+        'Your lips on theirs. Brief. Careful.',
+        'You leaned in slowly. They closed their eyes. A moment.',
+        'Soft pressure. Their lips parted slightly. Testing.',
+        'You pulled back. They followed. Wanting more.'
+      ],
+      mid: [
+        'You kissed them deeply. They responded eagerly.', 
+        'They kissed you back with need.', 
+        'Long, slow kiss. They didn\'t want it to end.',
+        'Your tongue traced their lips. They gasped softly.',
+        'Deeper. Hungrier. They pressed against you.',
+        'You tasted them. Sweet. Wanting. Yours.'
+      ],
+      high: [
+        'Desperate kisses. Hands everywhere. Breathless.', 
+        'You devoured them. They surrendered completely.', 
+        'They kissed you like drowning, like breathing.',
+        'Consuming. You bit their lip. They moaned.',
+        'Your hand in their hair, pulling. They whimpered.',
+        'You kissed down their neck. They trembled.'
+      ]
     }
   },
   cuddle: {
@@ -132,8 +153,28 @@ const INTERACTIONS = {
     minRelationship: 40,
     gains: [15, 25],
     outcomes: {
-      mid: ['Skin on skin. Careful. Tender. They trusted you completely.', 'You undressed them slowly. They watched you with dark eyes.', 'Bodies intertwined. Time disappeared.'],
-      high: ['Wild. Consuming. You took everything they offered.', 'They begged. You obliged. Perfect surrender.', 'Afterwards, they stayed in your arms. Utterly content.']
+      mid: [
+        'Skin on skin. Careful. Tender. They trusted you completely.', 
+        'You undressed them slowly. They watched you with dark eyes.', 
+        'Bodies intertwined. Time disappeared.',
+        'Your hands explored. They arched into your touch.',
+        'Clothes discarded. Bare skin against yours. Warm.',
+        'You laid them down gently. They pulled you closer.',
+        'Fingers tracing every curve. They shivered.',
+        'You kissed down their body. Soft sounds escaping them.'
+      ],
+      high: [
+        'Wild. Consuming. You took everything they offered.', 
+        'They begged. You obliged. Perfect surrender.', 
+        'Afterwards, they stayed in your arms. Utterly content.',
+        'You fucked them slowly, deeply. They moaned your name.',
+        'They came undone beneath you, trembling, gasping.',
+        'Your name on their lips. Over and over.',
+        'You made them beg for more. They did. Eagerly.',
+        'Intense. Raw. Primal. They loved every second.',
+        'You took them hard. They screamed. Perfect.',
+        'Bodies slick with sweat. Breathless. Satisfied.'
+      ]
     }
   },
   bite: {
@@ -157,8 +198,27 @@ const INTERACTIONS = {
     minRelationship: 60,
     gains: [20, 30],
     outcomes: {
-      mid: ['Rough. Intense. They wanted it harder.', 'You pinned them down. They begged for more.', 'Wild. Animalistic. Perfect.'],
-      high: ['You fucked them savagely. They loved every second.', 'Marks. Bruises. Screaming. Ecstasy.', 'Complete domination. They surrendered utterly.']
+      mid: [
+        'Rough. Intense. They wanted it harder.', 
+        'You pinned them down. They begged for more.', 
+        'Wild. Animalistic. Perfect.',
+        'You grabbed their hips hard. They cried out.',
+        'Teeth. Nails. Marks. They loved it.',
+        'You pushed them against the wall. Took them there.'
+      ],
+      high: [
+        'You fucked them savagely. They loved every second.', 
+        'Marks. Bruises. Screaming. Ecstasy.', 
+        'Complete domination. They surrendered utterly.',
+        'You pounded into them relentlessly. They screamed.',
+        'Hair pulled. Throat exposed. Vulnerable. Yours.',
+        'You spanked them. They begged you not to stop.',
+        'Rough. Hard. Fast. They came screaming your name.',
+        'You choked them lightly. Their eyes rolled back.',
+        'Completely at your mercy. They trusted you with everything.',
+        'Bruises bloomed on their skin. Beautiful.',
+        'You used them. They thanked you for it.'
+      ]
     }
   },
   worship: {
@@ -169,8 +229,26 @@ const INTERACTIONS = {
     minRelationship: 70,
     gains: [25, 35],
     outcomes: {
-      mid: ['They worshipped your body. Every inch. Devoted.', 'On their knees. Serving you. Perfect submission.', 'They treated you like a god. You allowed it.'],
-      high: ['Hours of worship. They existed only to please you.', 'Complete devotion. Your pleasure was their religion.', 'They served you endlessly. You took everything.']
+      mid: [
+        'They worshipped your body. Every inch. Devoted.', 
+        'On their knees. Serving you. Perfect submission.', 
+        'They treated you like a god. You allowed it.',
+        'Their mouth on you. Eager. Worshipful.',
+        'They kissed every part of you. Reverently.',
+        'You sat back. They served. Perfect.'
+      ],
+      high: [
+        'Hours of worship. They existed only to please you.', 
+        'Complete devotion. Your pleasure was their religion.', 
+        'They served you endlessly. You took everything.',
+        'Their tongue worked tirelessly. Only your pleasure mattered.',
+        'You came in their mouth. They swallowed gratefully.',
+        'They begged to please you again. And again.',
+        'You used their mouth for your pleasure. They loved it.',
+        'On their knees for hours. Never complaining.',
+        'Your pleasure was everything. They lived for it.',
+        'You finished on them. They wore it proudly.'
+      ]
     }
   },
   
