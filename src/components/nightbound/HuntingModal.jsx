@@ -43,33 +43,57 @@ const HUNTING_SCENES = [
   }
 ];
 
-export default function HuntingModal({ onClose, vampireState }) {
+export default function HuntingModal({ onClose, vampireState, servants }) {
   const [selectedScene, setSelectedScene] = useState(null);
   const [hunting, setHunting] = useState(false);
   const [outcome, setOutcome] = useState(null);
+  const [selectedServant, setSelectedServant] = useState(null);
+  const [showServantSelect, setShowServantSelect] = useState(false);
   const queryClient = useQueryClient();
   
-  const handleHunt = async (scene) => {
+  const handleHunt = async (scene, withServant = false) => {
     setSelectedScene(scene);
     setHunting(true);
+    setShowServantSelect(false);
     
     setTimeout(async () => {
-      const randomOutcome = scene.outcomes[Math.floor(Math.random() * scene.outcomes.length)];
+      let randomOutcome = scene.outcomes[Math.floor(Math.random() * scene.outcomes.length)];
+      
+      if (withServant && selectedServant) {
+        randomOutcome = `You hunted with ${selectedServant.name}. ${randomOutcome} Your bond deepened.`;
+        
+        // Update servant obsession
+        await base44.entities.Servant.update(selectedServant.id, {
+          obsession_stage: Math.min(selectedServant.obsession_stage + 1, 5)
+        });
+        
+        // Unlock joint hunting power
+        if (!vampireState.unlocked_powers?.includes('Pack Bond')) {
+          const updatedPowers = [...(vampireState.unlocked_powers || []), 'Pack Bond'];
+          await base44.entities.VampireState.update(vampireState.id, {
+            unlocked_powers: updatedPowers
+          });
+        }
+      }
+      
       setOutcome(randomOutcome);
       
       // Create log entry
       await base44.entities.NightLog.create({
         entry: randomOutcome,
         category: 'hunting',
-        intensity: 'moderate'
+        intensity: withServant ? 'significant' : 'moderate'
       });
       
       queryClient.invalidateQueries(['logs']);
+      queryClient.invalidateQueries(['servants']);
+      queryClient.invalidateQueries(['vampireState']);
       
       setTimeout(() => {
         setHunting(false);
         setOutcome(null);
         setSelectedScene(null);
+        setSelectedServant(null);
         onClose();
       }, 3000);
     }, 2500);
@@ -80,77 +104,106 @@ export default function HuntingModal({ onClose, vampireState }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        transition={{ duration: 0.5 }}
+        exit={{ opacity: 0, scale: 0.95 }}
         onClick={(e) => e.stopPropagation()}
-        className="glass rounded-2xl p-8 md:p-12 max-w-2xl w-full relative max-h-[80vh] overflow-y-auto"
+        className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full relative max-h-[80vh] overflow-y-auto"
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-red-100/40 hover:text-red-100/80 transition-slow"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
         
-        <h2 className="text-2xl text-red-100/80 font-light tracking-widest mb-6 text-center">
+        <h2 className="text-2xl font-bold text-white mb-6">
           Hunt
         </h2>
         
-        {!hunting && !outcome && (
-          <div className="space-y-4">
+        {!hunting && !outcome && !showServantSelect && (
+          <div className="space-y-3">
             {HUNTING_SCENES.map((scene, i) => (
               <motion.button
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
                 onClick={() => handleHunt(scene)}
-                className="w-full glass rounded-xl p-6 text-left hover:bg-red-950/20 transition-slow"
+                className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
               >
-                <h3 className="text-red-100/70 text-sm tracking-wider uppercase mb-2">
+                <h3 className="text-white font-medium mb-1">
                   {scene.title}
                 </h3>
-                <p className="text-red-100/50 text-xs italic leading-relaxed">
+                <p className="text-gray-400 text-sm">
                   {scene.description}
                 </p>
               </motion.button>
             ))}
+            
+            {servants.length > 0 && (
+              <button
+                onClick={() => setShowServantSelect(true)}
+                className="w-full bitlife-btn rounded-xl py-4 mt-4"
+              >
+                Hunt with a Servant
+              </button>
+            )}
+          </div>
+        )}
+        
+        {showServantSelect && (
+          <div className="space-y-3">
+            <p className="text-gray-400 text-sm mb-4">Choose a servant to hunt with:</p>
+            {servants.map((servant) => (
+              <button
+                key={servant.id}
+                onClick={() => {
+                  setSelectedServant(servant);
+                  const scene = HUNTING_SCENES[Math.floor(Math.random() * HUNTING_SCENES.length)];
+                  handleHunt(scene, true);
+                }}
+                className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+              >
+                <p className="text-white font-medium">{servant.name}</p>
+                <p className="text-gray-400 text-sm capitalize">{servant.variant}</p>
+              </button>
+            ))}
+            <button
+              onClick={() => setShowServantSelect(false)}
+              className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl py-3 text-gray-400 transition-colors"
+            >
+              Back
+            </button>
           </div>
         )}
         
         {hunting && !outcome && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-12"
-          >
-            <p className="text-red-100/60 text-sm italic mb-6">
+          <div className="text-center py-12">
+            <p className="text-gray-400 text-sm mb-6">
               {selectedScene?.description}
             </p>
-            <motion.div
-              animate={{ opacity: [0.3, 0.8, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="text-red-100/60 text-sm italic"
+            <motion.p
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-gray-400"
             >
               ...
-            </motion.div>
-          </motion.div>
+            </motion.p>
+          </div>
         )}
         
         {outcome && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
             className="text-center py-8"
           >
-            <p className="text-red-100/70 text-sm leading-relaxed italic">
+            <p className="text-white leading-relaxed">
               {outcome}
             </p>
           </motion.div>

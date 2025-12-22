@@ -1,0 +1,180 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tantml:react-query';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Send } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+
+const DIALOGUE_BANKS = {
+  devoted: {
+    1: ['I waited where you left me.', 'You don't have to ask.', 'I feel steadier when you're near.'],
+    2: ['I think about you constantly.', 'Tell me what you need.', 'I'm here. Always.'],
+    3: ['I can't imagine life without you.', 'You're all I see.', 'Take whatever you want from me.'],
+    4: ['I exist for this.', 'You are everything.', 'I belong to you.'],
+    5: ['We are bound.', 'I feel you in my blood.', 'Forever.']
+  },
+  defiant: {
+    1: ['I shouldn't want this.', 'You're dangerous. I came anyway.', 'Tell me what you expect of me.'],
+    2: ['I hate how much I need you.', 'This isn't normal.', 'Why do I keep coming back?'],
+    3: ['I've stopped fighting it.', 'You've won.', 'I don't recognize myself anymore.'],
+    4: ['Take me. I'm tired of resisting.', 'You were right about me.', 'I surrender.'],
+    5: ['I am yours completely.', 'Resistance was pointless.', 'Command me.']
+  },
+  dreamer: {
+    1: ['I dreamed of your voice again.', 'The night feels thinner lately.', 'I don't feel like myself anymore.'],
+    2: ['Reality feels distant now.', 'Are you real?', 'I'm drifting.'],
+    3: ['I see you even when you're not here.', 'I'm losing time.', 'Nothing else matters.'],
+    4: ['I'm more with you than without.', 'I barely remember daylight.', 'Keep me here.'],
+    5: ['I'm gone.', 'I live in your shadow.', 'The world dissolved.']
+  }
+};
+
+export default function Messages() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const messagesEndRef = useRef(null);
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const servantId = urlParams.get('servant');
+  
+  const { data: servant } = useQuery({
+    queryKey: ['servant', servantId],
+    queryFn: async () => {
+      const servants = await base44.entities.Servant.list();
+      return servants.find(s => s.id === servantId);
+    },
+    enabled: !!servantId
+  });
+  
+  const { data: messages = [] } = useQuery({
+    queryKey: ['messages', servantId],
+    queryFn: () => base44.entities.Message.filter({ servant_id: servantId }, '-created_date'),
+    enabled: !!servantId
+  });
+  
+  const sendMessageMutation = useMutation({
+    mutationFn: (data) => base44.entities.Message.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['messages', servantId]);
+      setInput('');
+      
+      // Simulate servant response after delay
+      setTimeout(() => {
+        setIsTyping(true);
+        setTimeout(async () => {
+          const responses = DIALOGUE_BANKS[servant.variant]?.[servant.obsession_stage] || ['...'];
+          const response = responses[Math.floor(Math.random() * responses.length)];
+          
+          await base44.entities.Message.create({
+            servant_id: servantId,
+            content: response,
+            sender: 'servant'
+          });
+          
+          setIsTyping(false);
+          queryClient.invalidateQueries(['messages', servantId]);
+        }, 3000 + Math.random() * 6000);
+      }, 500);
+    }
+  });
+  
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping]);
+  
+  const handleSend = () => {
+    if (!input.trim()) return;
+    
+    sendMessageMutation.mutate({
+      servant_id: servantId,
+      content: input,
+      sender: 'vampire'
+    });
+  };
+  
+  if (!servant) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="min-h-screen flex flex-col bg-black">
+      {/* Header */}
+      <div className="bg-gray-900 p-4 flex items-center gap-3 border-b border-gray-800">
+        <button
+          onClick={() => navigate(createPageUrl('Night'))}
+          className="text-gray-400 hover:text-white transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h2 className="text-white font-medium">{servant.name}</h2>
+          <p className="text-gray-400 text-xs capitalize">{servant.variant}</p>
+        </div>
+      </div>
+      
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {messages.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)).map((msg) => (
+          <motion.div
+            key={msg.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`flex ${msg.sender === 'vampire' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[70%] rounded-2xl px-4 py-2 ${
+                msg.sender === 'vampire'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-800 text-gray-200'
+              }`}
+            >
+              <p className="text-sm">{msg.content}</p>
+            </div>
+          </motion.div>
+        ))}
+        
+        {isTyping && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex justify-start"
+          >
+            <div className="bg-gray-800 text-gray-400 rounded-2xl px-4 py-2">
+              <p className="text-sm">typing...</p>
+            </div>
+          </motion.div>
+        )}
+        
+        <div ref={messagesEndRef} />
+      </div>
+      
+      {/* Input */}
+      <div className="bg-gray-900 p-4 border-t border-gray-800">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            placeholder="Send a message..."
+            className="flex-1 bg-gray-800 text-white rounded-xl px-4 py-3 outline-none"
+          />
+          <button
+            onClick={handleSend}
+            disabled={!input.trim()}
+            className="bitlife-btn rounded-xl px-6 py-3 disabled:opacity-50"
+          >
+            <Send className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

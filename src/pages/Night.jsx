@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Droplets, Users, BookOpen, Eye } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap, Heart, MessageSquare } from 'lucide-react';
 import FeedingModal from '@/components/nightbound/FeedingModal';
 import ServantsList from '@/components/nightbound/ServantsList';
 import NightLogView from '@/components/nightbound/NightLogView';
 import HuntingModal from '@/components/nightbound/HuntingModal';
+import PowersModal from '@/components/nightbound/PowersModal';
 
 export default function Night() {
   const queryClient = useQueryClient();
@@ -77,106 +78,96 @@ export default function Night() {
     { icon: Droplets, label: 'Feed', modal: 'feeding' },
     { icon: Users, label: 'Servants', modal: 'servants' },
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
+    { icon: Zap, label: 'Powers', modal: 'powers' },
+    { icon: MessageSquare, label: 'Messages', modal: 'messages' },
     { icon: BookOpen, label: 'Night Log', modal: 'log' }
   ];
   
   return (
-    <div className="min-h-screen relative p-6 md:p-12">
+    <div className="min-h-screen relative p-4 md:p-6">
       {/* Title */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="text-center mb-12"
+        transition={{ duration: 0.6 }}
+        className="text-center mb-8"
       >
-        <h1 
-          className="text-4xl md:text-6xl font-light tracking-widest text-red-100/80 mb-2"
-          style={{ fontFamily: 'Georgia, serif' }}
-        >
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-1">
           NIGHTBOUND
         </h1>
-        <p className="text-sm tracking-wider text-red-200/40 uppercase">
+        <p className="text-sm text-gray-400">
           Night {vampireState.nights_passed}
         </p>
       </motion.div>
       
-      {/* Hunger ambiance */}
-      <motion.div
-        className="fixed inset-0 pointer-events-none -z-10"
-        animate={{
-          background: `radial-gradient(circle at 50% 50%, ${hungerColor} 0%, transparent 70%)`
-        }}
-        transition={{ duration: 2 }}
-      />
-      
-      {/* Action circles */}
-      <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-12">
+      {/* Action buttons - Bitlife style */}
+      <div className="max-w-2xl mx-auto space-y-3 mb-8">
         {actions.map((action, i) => (
           <motion.button
             key={action.label}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: i * 0.1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: i * 0.05 }}
             onClick={() => setActiveModal(action.modal)}
-            className="glass rounded-2xl p-8 transition-slow hover:bg-red-950/30 flex flex-col items-center gap-3"
+            className="bitlife-btn w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg"
           >
-            <action.icon className="w-8 h-8 text-red-100/60" strokeWidth={1} />
-            <span className="text-red-100/70 text-sm tracking-widest uppercase">
-              {action.label}
-            </span>
+            <action.icon className="w-5 h-5" />
+            <span className="text-base font-medium">{action.label}</span>
           </motion.button>
         ))}
       </div>
       
-      {/* Recent log entries */}
+      {/* Stats bar */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 1 }}
-        className="max-w-2xl mx-auto glass rounded-xl p-6"
+        transition={{ delay: 0.4 }}
+        className="max-w-2xl mx-auto bg-gray-900 rounded-xl p-4 space-y-2"
       >
-        <h3 className="text-red-100/50 text-xs tracking-widest uppercase mb-4">
-          Recent Moments
-        </h3>
-        <div className="space-y-3">
-          {logs.slice(0, 3).map((log, i) => (
-            <motion.p
-              key={log.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 + i * 0.2 }}
-              className="text-red-100/70 text-sm leading-relaxed italic"
-            >
-              {log.entry}
-            </motion.p>
-          ))}
-          {logs.length === 0 && (
-            <p className="text-red-100/40 text-sm italic">
-              The night is still young.
-            </p>
-          )}
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-400">Hunger:</span>
+          <span className="text-white capitalize">{vampireState.hunger_state}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-400">Mode:</span>
+          <button
+            onClick={async () => {
+              if (vampireState.id) {
+                await base44.entities.VampireState.update(vampireState.id, {
+                  emotional_mode: vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling'
+                });
+                queryClient.invalidateQueries(['vampireState']);
+              }
+            }}
+            className="text-purple-400 hover:text-purple-300 transition-colors capitalize"
+          >
+            {vampireState.emotional_mode} ⚡
+          </button>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-400">Powers:</span>
+          <span className="text-white">{vampireState.unlocked_powers?.length || 0}</span>
         </div>
       </motion.div>
       
-      {/* Emotional mode toggle */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
-        whileHover={{ opacity: 0.8 }}
-        className="fixed bottom-6 right-6 text-xs tracking-widest text-red-100/40 uppercase transition-slow"
-        onClick={async () => {
-          if (vampireState.id) {
-            await base44.entities.VampireState.update(vampireState.id, {
-              emotional_mode: vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling'
-            });
-            queryClient.invalidateQueries(['vampireState']);
-          }
-        }}
-      >
-        {vampireState.emotional_mode === 'feeling' ? 'Feeling' : 'Ruthless'}
-      </motion.button>
+      {/* Recent log entries */}
+      {logs.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="max-w-2xl mx-auto mt-6 bg-gray-900 rounded-xl p-4"
+        >
+          <h3 className="text-gray-400 text-xs uppercase mb-3">Recent Events</h3>
+          <div className="space-y-2">
+            {logs.slice(0, 3).map((log) => (
+              <p key={log.id} className="text-gray-300 text-sm">
+                {log.entry}
+              </p>
+            ))}
+          </div>
+        </motion.div>
+      )}
       
       {/* Modals */}
       <AnimatePresence>
@@ -190,10 +181,18 @@ export default function Night() {
           <ServantsList
             onClose={() => setActiveModal(null)}
             servants={servants}
+            vampireState={vampireState}
           />
         )}
         {activeModal === 'hunting' && (
           <HuntingModal
+            onClose={() => setActiveModal(null)}
+            vampireState={vampireState}
+            servants={servants}
+          />
+        )}
+        {activeModal === 'powers' && (
+          <PowersModal
             onClose={() => setActiveModal(null)}
             vampireState={vampireState}
           />
