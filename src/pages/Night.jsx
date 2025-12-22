@@ -53,6 +53,16 @@ export default function Night() {
     }
   }, [vampireStates.length]);
   
+  // Random name generator
+  const generateRandomName = () => {
+    const names = [
+      'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
+      'Alex', 'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
+      'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren'
+    ];
+    return names[Math.floor(Math.random() * names.length)];
+  };
+  
   // Create initial servants if none exist
   const [servantsInitialized, setServantsInitialized] = useState(false);
   
@@ -60,9 +70,9 @@ export default function Night() {
     if (servants.length === 0 && !servantsInitialized) {
       setServantsInitialized(true);
       const initialServants = [
-        { name: 'Elena', variant: 'devoted', obsession_stage: 1, emotional_state: 'curious' },
-        { name: 'Marcus', variant: 'defiant', obsession_stage: 1, emotional_state: 'wary' },
-        { name: 'Iris', variant: 'dreamer', obsession_stage: 1, emotional_state: 'distant' }
+        { name: generateRandomName(), variant: 'devoted', obsession_stage: 1, emotional_state: 'curious' },
+        { name: generateRandomName(), variant: 'defiant', obsession_stage: 1, emotional_state: 'wary' },
+        { name: generateRandomName(), variant: 'dreamer', obsession_stage: 1, emotional_state: 'distant' }
       ];
       
       Promise.all(
