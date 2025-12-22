@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -156,7 +156,20 @@ export default function Messages() {
         });
       }
     });
-    };
+  };
+  
+  const handleClearMessages = async () => {
+    if (messages.length === 0) return;
+    if (!confirm('Clear all messages with this servant?')) return;
+    
+    await base44.entities.Message.filter({ servant_id: servantId }).then(async (msgs) => {
+      for (const msg of msgs) {
+        await base44.entities.Message.delete(msg.id);
+      }
+    });
+    
+    queryClient.invalidateQueries(['messages', servantId]);
+  };
 
     if (!servant) {
     return (
@@ -176,10 +189,17 @@ export default function Messages() {
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <div>
+        <div className="flex-1">
           <h2 className="text-white font-medium">{servant.name}</h2>
           <p className="text-gray-400 text-xs capitalize">{servant.variant}</p>
         </div>
+        <button
+          onClick={handleClearMessages}
+          className="text-gray-400 hover:text-red-400 transition-colors"
+          title="Clear messages"
+        >
+          <Trash2 className="w-5 h-5" />
+        </button>
       </div>
       
       {/* Messages */}
