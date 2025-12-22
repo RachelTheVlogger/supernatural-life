@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Moon, Calendar } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@tantml:react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { format, addDays } from 'date-fns';
 
 export default function AdvanceNight({ vampireState, onClose }) {
