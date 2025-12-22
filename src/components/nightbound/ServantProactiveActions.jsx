@@ -31,7 +31,7 @@ export default function ServantProactiveActions({ servant }) {
 
   useEffect(() => {
     if (!automation || automation.autonomy_level === 'low') return;
-    if (servant.relationship < automation.min_relationship_for_auto) return;
+    if ((servant.relationship || 0) < automation.min_relationship_for_auto) return;
 
     // Check for suggestions every 30 seconds
     const interval = setInterval(() => {

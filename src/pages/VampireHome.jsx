@@ -156,7 +156,7 @@ export default function VampireHome() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <h1 className="text-4xl font-bold text-white mb-2">Your Sanctuary</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">Your House</h1>
             <p className="text-gray-400">Where the night begins and ends</p>
           </motion.div>
           
@@ -219,47 +219,60 @@ export default function VampireHome() {
             </button>
           </motion.div>
           
-          {/* Vampire Actions */}
+          {/* Vampire Mode Toggle */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.15 }}
             className="mb-8"
           >
-            <h2 className="text-white text-xl font-bold mb-4 flex items-center gap-2">
-              <Moon className="w-5 h-5" />
-              Vampire Practices
-            </h2>
-            <div className="grid md:grid-cols-3 gap-4">
-              <button
-                onClick={handleMeditate}
-                disabled={meditating}
-                className="bg-purple-950/30 hover:bg-purple-950/50 border border-purple-800/50 rounded-xl p-4 text-left transition-all disabled:opacity-50"
-              >
-                <Brain className="w-6 h-6 text-purple-400 mb-2" />
-                <h3 className="text-white font-medium mb-1">Meditate</h3>
-                <p className="text-gray-400 text-sm">Calm the hunger. Center yourself.</p>
-              </button>
-              
-              <button
-                onClick={handleReadLore}
-                className="bg-blue-950/30 hover:bg-blue-950/50 border border-blue-800/50 rounded-xl p-4 text-left transition-all"
-              >
-                <Scroll className="w-6 h-6 text-blue-400 mb-2" />
-                <h3 className="text-white font-medium mb-1">Ancient Texts</h3>
-                <p className="text-gray-400 text-sm">Read fragments of vampire lore.</p>
-              </button>
-              
-              <button
-                onClick={handlePracticePower}
-                disabled={!vampireState.unlocked_powers?.length}
-                className="bg-red-950/30 hover:bg-red-950/50 border border-red-800/50 rounded-xl p-4 text-left transition-all disabled:opacity-50"
-              >
-                <Zap className="w-6 h-6 text-red-400 mb-2" />
-                <h3 className="text-white font-medium mb-1">Practice Powers</h3>
-                <p className="text-gray-400 text-sm">Hone your abilities in solitude.</p>
-              </button>
-            </div>
+            <button
+              onClick={async () => {
+                if (vampireState.id) {
+                  const newMode = vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling';
+                  await base44.entities.VampireState.update(vampireState.id, {
+                    emotional_mode: newMode
+                  });
+                  queryClient.invalidateQueries(['vampireState']);
+                }
+              }}
+              className={`w-full rounded-2xl p-6 transition-all border-2 ${
+                vampireState.emotional_mode === 'ruthless'
+                  ? 'bg-red-950/40 border-red-500/50 hover:bg-red-950/60'
+                  : 'bg-purple-950/40 border-purple-500/50 hover:bg-purple-950/60'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    animate={{ scale: vampireState.emotional_mode === 'ruthless' ? [1, 1.2, 1] : 1 }}
+                    transition={{ duration: 1, repeat: vampireState.emotional_mode === 'ruthless' ? Infinity : 0 }}
+                    className="text-4xl"
+                  >
+                    {vampireState.emotional_mode === 'ruthless' ? '🩸' : '🌙'}
+                  </motion.div>
+                  <div className="text-left">
+                    <h3 className={`text-xl font-bold mb-1 ${
+                      vampireState.emotional_mode === 'ruthless' ? 'text-red-400' : 'text-purple-400'
+                    }`}>
+                      {vampireState.emotional_mode === 'ruthless' ? 'RIPPER MODE' : 'Controlled'}
+                    </h3>
+                    <p className="text-gray-300 text-sm">
+                      {vampireState.emotional_mode === 'ruthless' 
+                        ? 'Out of control. Hunger unleashed. No mercy.' 
+                        : 'Emotions intact. Humanity preserved. Click to let go.'}
+                    </p>
+                  </div>
+                </div>
+                <div className={`text-xs uppercase font-bold px-4 py-2 rounded-lg ${
+                  vampireState.emotional_mode === 'ruthless'
+                    ? 'bg-red-500 text-white'
+                    : 'bg-purple-500 text-white'
+                }`}>
+                  {vampireState.emotional_mode === 'ruthless' ? 'ACTIVE' : 'Toggle'}
+                </div>
+              </div>
+            </button>
           </motion.div>
           
           {/* Temptation System */}
@@ -290,63 +303,67 @@ export default function VampireHome() {
             </button>
           </motion.div>
           
-          {/* Room sections */}
+          {/* Room sections - Interactive */}
           <div className="grid md:grid-cols-2 gap-6">
             {/* Main chamber */}
-            <motion.div
+            <motion.button
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30"
+              onClick={handleMeditate}
+              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left"
             >
               <div className="text-6xl mb-4">🕯️</div>
               <h3 className="text-white text-xl font-bold mb-2">Main Chamber</h3>
               <p className="text-gray-400 text-sm">
-                Velvet curtains drawn. Candles cast long shadows. The air holds centuries.
+                Velvet curtains drawn. Candles cast long shadows. Click to meditate.
               </p>
-            </motion.div>
-            
+            </motion.button>
+
             {/* Library */}
-            <motion.div
+            <motion.button
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30"
+              onClick={handleReadLore}
+              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left"
             >
               <div className="text-6xl mb-4">📚</div>
               <h3 className="text-white text-xl font-bold mb-2">Library</h3>
               <p className="text-gray-400 text-sm">
-                Books older than memory. Knowledge accumulated through endless nights.
+                Books older than memory. Click to read ancient texts.
               </p>
-            </motion.div>
-            
+            </motion.button>
+
             {/* Windows */}
-            <motion.div
+            <motion.button
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30"
+              onClick={() => setActiveAction('view')}
+              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left"
             >
               <div className="text-6xl mb-4">🌙</div>
               <h3 className="text-white text-xl font-bold mb-2">The View</h3>
               <p className="text-gray-400 text-sm">
-                Floor to ceiling windows. The city sleeps below. You do not.
+                Floor to ceiling windows. Click to observe the city.
               </p>
-            </motion.div>
-            
+            </motion.button>
+
             {/* Resting place */}
-            <motion.div
+            <motion.button
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30"
+              onClick={() => setActiveAction('rest')}
+              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left"
             >
               <div className="text-6xl mb-4">🛏️</div>
               <h3 className="text-white text-xl font-bold mb-2">Resting Place</h3>
               <p className="text-gray-400 text-sm">
-                Where dawn finds you. Silk sheets, darkness absolute. Safety.
+                Where dawn finds you. Click to rest.
               </p>
-            </motion.div>
+            </motion.button>
           </div>
           
           {/* Progress & Relationships */}
@@ -553,7 +570,71 @@ export default function VampireHome() {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+
+        {activeAction === 'view' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setActiveAction(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full border border-purple-900/30"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">The City Below</h2>
+              <div className="space-y-4 text-gray-300 leading-relaxed">
+                <p>You stand at the window. The city sprawls beneath you, a tapestry of light and shadow.</p>
+                <p>Each light is a life. A heartbeat. A potential meal.</p>
+                <p>They move through their nights, unaware. You watch. You wait.</p>
+                <p className="text-purple-400 italic">The city is yours. They just don't know it yet.</p>
+              </div>
+              <button
+                onClick={() => setActiveAction(null)}
+                className="mt-6 w-full bitlife-btn py-3 rounded-xl"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {activeAction === 'rest' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setActiveAction(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full border border-purple-900/30"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">Rest</h2>
+              <div className="space-y-4 text-gray-300 leading-relaxed">
+                <p>You lie down. The darkness is complete. Comforting.</p>
+                <p>No dreams. Only the void between this night and the next.</p>
+                <p>When you wake, the hunger will return. It always does.</p>
+                <p className="text-purple-400 italic">But for now, peace. Absolute stillness.</p>
+              </div>
+              <button
+                onClick={() => setActiveAction(null)}
+                className="mt-6 w-full bitlife-btn py-3 rounded-xl"
+              >
+                Rise
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+        </AnimatePresence>
     </div>
   );
 }
