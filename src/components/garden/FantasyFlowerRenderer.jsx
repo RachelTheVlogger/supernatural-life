@@ -96,32 +96,94 @@ export default function FantasyFlowerRenderer({
   if (!imageUrl) return null;
   
   return (
-    <div className="relative w-full h-full">
-      {/* Main flower image */}
+    <div className="relative w-full h-full flex flex-col items-center justify-end">
+      {/* Plant in pot */}
       <motion.div
-        className="absolute inset-0 rounded-lg overflow-hidden"
+        className="relative flex flex-col items-center"
         animate={{ 
           scale: isInteracting ? 1.05 : 1,
-          filter: `brightness(${isInteracting ? 1.2 : 1})`
+          y: isInteracting ? -4 : 0
         }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       >
-        <img 
-          src={imageUrl} 
-          alt="Fantasy flower"
-          className="w-full h-full object-cover"
+        {/* Plant image */}
+        <div 
+          className="relative w-16 h-16 md:w-24 md:h-24 rounded-xl overflow-hidden mb-1"
           style={{
             filter: flower.dormant ? 'grayscale(0.5) brightness(0.7)' : 'none'
           }}
-        />
+        >
+          <img 
+            src={imageUrl} 
+            alt="Fantasy plant"
+            className="w-full h-full object-cover"
+          />
+          
+          {/* Subtle glow */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(circle at 50% 70%, ${glowColor}, transparent)`,
+              mixBlendMode: 'screen',
+              opacity: glowIntensity * 0.4
+            }}
+            animate={{
+              opacity: [glowIntensity * 0.3, glowIntensity * 0.5, glowIntensity * 0.3]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut'
+            }}
+          />
+        </div>
         
-        {/* Vignette effect */}
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.4) 100%)'
-          }}
-        />
+        {/* Pot */}
+        <div className="relative">
+          <svg width="50" height="32" viewBox="0 0 50 32" className="md:w-[70px] md:h-[45px]">
+            <defs>
+              <linearGradient id={`potGrad-${flower.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor={
+                  personality === 'alien' ? '#4a5568' :
+                  personality === 'poisonous' ? '#6b4e71' :
+                  '#c17855'
+                } />
+                <stop offset="100%" stopColor={
+                  personality === 'alien' ? '#2d3748' :
+                  personality === 'poisonous' ? '#4a3550' :
+                  '#8b5a3c'
+                } />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 8 2 L 12 28 L 38 28 L 42 2 Z"
+              fill={`url(#potGrad-${flower.id})`}
+              stroke="rgba(0,0,0,0.2)"
+              strokeWidth="1"
+            />
+            <ellipse
+              cx="25"
+              cy="2"
+              rx="17"
+              ry="3"
+              fill={
+                personality === 'alien' ? '#5a6778' :
+                personality === 'poisonous' ? '#7b5e81' :
+                '#d18865'
+              }
+              stroke="rgba(0,0,0,0.15)"
+              strokeWidth="0.5"
+            />
+            <rect
+              x="10"
+              y="26"
+              width="30"
+              height="6"
+              rx="2"
+              fill="rgba(0,0,0,0.1)"
+            />
+          </svg>
+        </div>
       </motion.div>
       
       {/* Center glow pulse */}

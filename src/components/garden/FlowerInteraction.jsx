@@ -96,8 +96,8 @@ export default function FlowerInteraction({
     <motion.div
       className="relative cursor-pointer select-none"
       style={{ 
-        width: size, 
-        height: size * 1.4,
+        width: size * 0.8, 
+        height: size * 1.2,
         touchAction: 'none'
       }}
       onTouchStart={handleTouchStart}
