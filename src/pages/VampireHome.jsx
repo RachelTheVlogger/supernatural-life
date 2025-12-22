@@ -6,6 +6,7 @@ import { createPageUrl } from '@/utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import EvolutionTree from '@/components/nightbound/EvolutionTree';
+import DirectInteraction from '@/components/nightbound/DirectInteraction';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function VampireHome() {
   const [activeAction, setActiveAction] = useState(null);
   const [meditating, setMeditating] = useState(false);
   const [showEvolutionTree, setShowEvolutionTree] = useState(false);
+  const [selectedServantForInteraction, setSelectedServantForInteraction] = useState(null);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -111,12 +113,22 @@ export default function VampireHome() {
       </div>
       
       <div className="relative z-10 p-6">
-        <button
-          onClick={() => navigate(createPageUrl('Night'))}
-          className="text-white/60 hover:text-white transition-colors mb-8"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </button>
+        <div className="flex justify-between items-center mb-8">
+          <button
+            onClick={() => navigate(createPageUrl('Night'))}
+            className="text-white/60 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+          {servants.length > 0 && (
+            <button
+              onClick={() => navigate(createPageUrl(`ServantHome?id=${servants[0].id}`))}
+              className="text-purple-400 hover:text-purple-300 transition-colors text-sm"
+            >
+              Switch to Servant →
+            </button>
+          )}
+        </div>
         
         <div className="max-w-4xl mx-auto">
           {/* Title */}
@@ -344,7 +356,17 @@ export default function VampireHome() {
                 </div>
                 {servants.slice(0, 3).map(servant => (
                   <div key={servant.id} className="flex justify-between items-center">
-                    <span className="text-gray-400 text-sm">{servant.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400 text-sm">{servant.name}</span>
+                      {servant.obsession_stage >= 2 && (
+                        <button
+                          onClick={() => setSelectedServantForInteraction(servant)}
+                          className="text-xs text-pink-400 hover:text-pink-300 transition-colors"
+                        >
+                          <Heart className="w-3 h-3 inline" />
+                        </button>
+                      )}
+                    </div>
                     <div className="flex items-center gap-2">
                       <div className="w-20 bg-gray-700 rounded-full h-1.5">
                         <div
@@ -394,6 +416,13 @@ export default function VampireHome() {
             vampireState={vampireState}
             servants={servants}
             onClose={() => setShowEvolutionTree(false)}
+          />
+        )}
+        {selectedServantForInteraction && (
+          <DirectInteraction
+            servant={selectedServantForInteraction}
+            vampireState={vampireState}
+            onClose={() => setSelectedServantForInteraction(null)}
           />
         )}
         {meditating && (
