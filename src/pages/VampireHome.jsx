@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Moon, Book, Clock, Zap, Heart, Brain, Eye, Scroll } from 'lucide-react';
+import { ArrowLeft, Moon, Book, Clock, Zap, Heart, Brain, Eye, Scroll, TreePine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import EvolutionTree from '@/components/nightbound/EvolutionTree';
 
 export default function VampireHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeAction, setActiveAction] = useState(null);
   const [meditating, setMeditating] = useState(false);
+  const [showEvolutionTree, setShowEvolutionTree] = useState(false);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -157,6 +159,33 @@ export default function VampireHome() {
               <p className="text-2xl font-bold text-white">{logs.length}</p>
               <p className="text-xs text-gray-400">Events Witnessed</p>
             </div>
+          </motion.div>
+          
+          {/* Evolution Tree Access */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="mb-8"
+          >
+            <button
+              onClick={() => setShowEvolutionTree(true)}
+              className="w-full bg-gradient-to-r from-purple-900/40 to-red-900/40 hover:from-purple-900/60 hover:to-red-900/60 border-2 border-purple-500/50 rounded-2xl p-6 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <TreePine className="w-10 h-10 text-purple-400" />
+                  <div className="text-left">
+                    <h3 className="text-white text-xl font-bold mb-1">Evolution Paths</h3>
+                    <p className="text-gray-300 text-sm">Unlock new powers and specialize your abilities</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-purple-400 text-2xl font-bold">{vampireState.unlocked_powers?.length || 0}</p>
+                  <p className="text-gray-400 text-xs">Powers</p>
+                </div>
+              </div>
+            </button>
           </motion.div>
           
           {/* Vampire Actions */}
@@ -360,6 +389,13 @@ export default function VampireHome() {
       
       {/* Action Modals */}
       <AnimatePresence>
+        {showEvolutionTree && (
+          <EvolutionTree
+            vampireState={vampireState}
+            servants={servants}
+            onClose={() => setShowEvolutionTree(false)}
+          />
+        )}
         {meditating && (
           <motion.div
             initial={{ opacity: 0 }}
