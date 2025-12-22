@@ -16,6 +16,14 @@ const CHORES = [
   { id: 'wait', label: 'Wait by the window', icon: Moon, duration: 3000, outcomes: ['You watched the night. Waiting. Always waiting.', 'Every shadow could be them returning.', 'The hours pass differently when they\'re gone.'] }
 ];
 
+const VAMPIRE_ACTIVITIES = [
+  { id: 'hunt', label: 'Practice hunting', icon: Moon, duration: 3000, outcomes: ['You stalked through shadows. Instinct taking over. Natural.', 'The hunt came easily. Too easily. This is who you are now.', 'Predator instincts sharpened. The night is yours.'] },
+  { id: 'powers', label: 'Test new abilities', icon: Sparkles, duration: 2500, outcomes: ['Your abilities grow stronger. Supernatural. Intoxicating.', 'Testing your limits. There seem to be none.', 'Power surges through you. You\'re becoming something more.'] },
+  { id: 'feed', label: 'Feed (hunger management)', icon: Droplets, duration: 2000, outcomes: ['The hunger quiets. For now. It always returns.', 'Blood. Life. You took what you needed. No guilt.', 'Fed. Sated. The world feels sharper now.'] },
+  { id: 'meditate', label: 'Control the bloodlust', icon: BookOpen, duration: 3000, outcomes: ['You centered yourself. The beast quiets. Control maintained.', 'Bloodlust contained. Barely. This is your new reality.', 'You find peace in the darkness. It\'s easier each time.'] },
+  { id: 'explore', label: 'Explore the night', icon: Home, duration: 3500, outcomes: ['The city at night. Your domain now. Everything has changed.', 'You moved through darkness like you were born to it. Maybe you were.', 'The night embraced you. You embraced it back.'] }
+];
+
 export default function ServantHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -80,19 +88,76 @@ export default function ServantHome() {
     );
   }
   
+  const activities = servant.is_turned ? VAMPIRE_ACTIVITIES : CHORES;
+  
   return (
-    <div className="min-h-screen p-4 md:p-6">
+    <div className="min-h-screen p-4 md:p-6 relative overflow-hidden">
+      {/* Blood drop animation for turned vampires */}
+      {servant.is_turned && (
+        <>
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-2xl"
+                style={{
+                  left: `${10 + i * 12}%`,
+                  top: '-5%'
+                }}
+                animate={{
+                  y: ['0vh', '110vh'],
+                  opacity: [0, 0.6, 0.6, 0],
+                  rotate: [0, 360]
+                }}
+                transition={{
+                  duration: 8 + Math.random() * 4,
+                  repeat: Infinity,
+                  delay: i * 1.2,
+                  ease: 'linear'
+                }}
+              >
+                🩸
+              </motion.div>
+            ))}
+          </div>
+          
+          {/* Red glow effect */}
+          <div className="absolute inset-0 pointer-events-none">
+            <motion.div
+              className="absolute inset-0 bg-red-900/10"
+              animate={{
+                opacity: [0.1, 0.2, 0.1]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: 'easeInOut'
+              }}
+            />
+          </div>
+        </>
+      )}
+      
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-8"
+        className="text-center mb-8 relative z-10"
       >
         <h1 className="text-3xl md:text-4xl font-bold text-white mb-1">
           {servant.name}
         </h1>
-        <p className="text-sm text-gray-400 capitalize">
-          {servant.variant} servant
+        <p className={`text-sm capitalize ${servant.is_turned ? 'text-red-400' : 'text-gray-400'}`}>
+          {servant.is_turned ? '🦇 Vampire' : `${servant.variant} servant`}
         </p>
+        {servant.is_turned && (
+          <motion.p
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-red-400 text-xs mt-2"
+          >
+            ⚡ Heightened senses. Eternal hunger. ⚡
+          </motion.p>
+        )}
         
         <div className="flex gap-3 justify-center mt-4">
           <button
@@ -116,22 +181,32 @@ export default function ServantHome() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="max-w-2xl mx-auto bg-gray-900 rounded-xl p-4 mb-6"
+        className={`max-w-2xl mx-auto rounded-xl p-4 mb-6 relative z-10 ${
+          servant.is_turned 
+            ? 'bg-red-950/40 border border-red-900/30' 
+            : 'bg-gray-900'
+        }`}
       >
         <p className="text-gray-300 text-sm italic text-center">
-          They're out hunting. You wait for them to return.
+          {servant.is_turned 
+            ? 'The night is yours. The hunger never truly leaves. But you are no longer prey.'
+            : "They're out hunting. You wait for them to return."}
         </p>
         <div className="mt-3 flex justify-between text-xs">
           <span className="text-gray-400">Bond with them:</span>
-          <span className="text-purple-400">{servant.relationship || 0}%</span>
+          <span className={servant.is_turned ? 'text-red-400' : 'text-purple-400'}>
+            {servant.relationship || 0}%
+          </span>
         </div>
       </motion.div>
       
-      {/* Chores */}
-      <div className="max-w-2xl mx-auto space-y-3 mb-8">
-        <h2 className="text-gray-400 text-sm uppercase mb-4">What will you do?</h2>
+      {/* Activities */}
+      <div className="max-w-2xl mx-auto space-y-3 mb-8 relative z-10">
+        <h2 className={`text-sm uppercase mb-4 ${servant.is_turned ? 'text-red-400' : 'text-gray-400'}`}>
+          {servant.is_turned ? 'What will you do tonight?' : 'What will you do?'}
+        </h2>
         
-        {CHORES.map((chore, i) => (
+        {activities.map((chore, i) => (
           <motion.button
             key={chore.id}
             initial={{ opacity: 0, x: -20 }}
@@ -139,7 +214,11 @@ export default function ServantHome() {
             transition={{ duration: 0.4, delay: i * 0.05 }}
             onClick={() => handleChore(chore)}
             disabled={!!doingChore}
-            className="bitlife-btn w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg disabled:opacity-50"
+            className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg disabled:opacity-50 transition-all ${
+              servant.is_turned
+                ? 'bg-red-950/40 hover:bg-red-950/60 border border-red-900/30'
+                : 'bitlife-btn'
+            }`}
           >
             <chore.icon className="w-5 h-5" />
             <span className="text-base font-medium">{chore.label}</span>
