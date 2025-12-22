@@ -1,36 +1,74 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Package, DollarSign, ShoppingCart, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Sparkles, ShoppingCart, Star, TrendingUp, Zap, Package, Award } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-const JEWELRY_ITEMS = [
-  { name: 'Moon Phase Necklace', materials: { silver: 2, moonstone: 1, chain: 1 }, basePrice: 45 },
-  { name: 'Raven Skull Ring', materials: { silver: 3, onyx: 1 }, basePrice: 55 },
-  { name: 'Gothic Cross Pendant', materials: { silver: 2, chain: 1 }, basePrice: 40 },
-  { name: 'Blood Moon Earrings', materials: { silver: 1, garnet: 2, wire: 1 }, basePrice: 35 },
-  { name: 'Obsidian Choker', materials: { obsidian: 3, chain: 2 }, basePrice: 60 },
-  { name: 'Vampire Bite Necklace', materials: { silver: 2, garnet: 1, chain: 1 }, basePrice: 50 },
-  { name: 'Thorn Ring', materials: { silver: 2, onyx: 1 }, basePrice: 42 },
-  { name: 'Crescent Bracelet', materials: { silver: 3, moonstone: 1, chain: 1 }, basePrice: 48 }
-];
+const JEWELRY_DESIGNS = {
+  common: [
+    { name: 'Simple Moon Pendant', materials: { silver: 2, moonstone: 1 }, basePrice: 25, time: 3000 },
+    { name: 'Raven Charm', materials: { silver: 1, onyx: 1 }, basePrice: 20, time: 2500 },
+    { name: 'Thorn Ring', materials: { silver: 2, chain: 1 }, basePrice: 22, time: 2500 }
+  ],
+  uncommon: [
+    { name: 'Crescent Moon Choker', materials: { silver: 3, moonstone: 2, velvet: 1 }, basePrice: 45, time: 4000 },
+    { name: 'Blood Drop Earrings', materials: { silver: 2, garnet: 2, chain: 1 }, basePrice: 50, time: 4000 },
+    { name: 'Shadow Raven Necklace', materials: { silver: 3, onyx: 2, feather: 1 }, basePrice: 48, time: 4500 }
+  ],
+  rare: [
+    { name: 'Vampire Kiss Choker', materials: { gold: 2, ruby: 2, velvet: 2, chain: 2 }, basePrice: 120, time: 6000 },
+    { name: 'Lunar Eclipse Pendant', materials: { silver: 4, moonstone: 3, obsidian: 2, crystal: 1 }, basePrice: 110, time: 5500 },
+    { name: 'Bone & Thorn Crown', materials: { silver: 3, bone: 3, amethyst: 2 }, basePrice: 125, time: 6000 }
+  ],
+  legendary: [
+    { name: 'Eternal Night Collar', materials: { platinum: 3, bloodstone: 3, ruby: 2, velvet: 3, chain: 2 }, basePrice: 300, time: 9000 },
+    { name: 'Deathless Beauty Ring', materials: { platinum: 2, sapphire: 3, moonstone: 3, crystal: 2 }, basePrice: 280, time: 8500 },
+    { name: 'Immortal Devotion Set', materials: { gold: 4, ruby: 3, amethyst: 3, bone: 2, leather: 2 }, basePrice: 350, time: 10000 }
+  ]
+};
 
-const MATERIAL_NAMES = {
-  silver: 'Silver',
-  moonstone: 'Moonstone',
-  onyx: 'Onyx',
-  obsidian: 'Obsidian',
-  garnet: 'Garnet',
-  amethyst: 'Amethyst',
-  chain: 'Chain',
-  wire: 'Wire'
+const MATERIAL_INFO = {
+  silver: { name: 'Silver', cost: 10, icon: '🪙' },
+  gold: { name: 'Gold', cost: 25, icon: '💰' },
+  platinum: { name: 'Platinum', cost: 50, icon: '💎' },
+  moonstone: { name: 'Moonstone', cost: 15, icon: '🌙' },
+  onyx: { name: 'Onyx', cost: 12, icon: '⚫' },
+  obsidian: { name: 'Obsidian', cost: 18, icon: '🖤' },
+  garnet: { name: 'Garnet', cost: 20, icon: '🔴' },
+  amethyst: { name: 'Amethyst', cost: 22, icon: '💜' },
+  ruby: { name: 'Ruby', cost: 40, icon: '❤️' },
+  sapphire: { name: 'Sapphire', cost: 45, icon: '💙' },
+  bloodstone: { name: 'Bloodstone', cost: 60, icon: '🩸' },
+  chain: { name: 'Chain', cost: 8, icon: '⛓️' },
+  wire: { name: 'Wire', cost: 5, icon: '〰️' },
+  leather: { name: 'Leather', cost: 12, icon: '🟤' },
+  velvet: { name: 'Velvet', cost: 15, icon: '🎀' },
+  bone: { name: 'Bone', cost: 30, icon: '🦴' },
+  feather: { name: 'Feather', cost: 10, icon: '🪶' },
+  crystal: { name: 'Crystal', cost: 35, icon: '💠' }
+};
+
+const WORKSHOP_UPGRADES = {
+  quality_tools: { name: 'Quality Tools', icon: '🔨', maxLevel: 3, baseCost: 200, description: 'Increase item quality and price' },
+  speed_bench: { name: 'Speed Bench', icon: '⚡', maxLevel: 3, baseCost: 250, description: 'Reduce crafting time by 25% per level' },
+  rare_materials: { name: 'Rare Material Access', icon: '💎', maxLevel: 3, baseCost: 300, description: 'Unlock rare material orders' },
+  display_case: { name: 'Display Case', icon: '✨', maxLevel: 3, baseCost: 180, description: 'Increase reputation gain by 20% per level' },
+  marketing: { name: 'Marketing', icon: '📢', maxLevel: 3, baseCost: 220, description: 'Generate more orders automatically' }
+};
+
+const RARITY_COLORS = {
+  common: 'text-gray-400',
+  uncommon: 'text-green-400',
+  rare: 'text-blue-400',
+  legendary: 'text-purple-400'
 };
 
 export default function BusinessManagement({ servant, onClose }) {
   const queryClient = useQueryClient();
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [customPrice, setCustomPrice] = useState('');
-  const [crafting, setCrafting] = useState(false);
+  const [tab, setTab] = useState('orders');
+  const [crafting, setCrafting] = useState(null);
+  const [buying, setBuying] = useState(null);
+  const [collectingPassive, setCollectingPassive] = useState(false);
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['inventory', servant.id],
@@ -39,94 +77,202 @@ export default function BusinessManagement({ servant, onClose }) {
 
   const { data: orders = [] } = useQuery({
     queryKey: ['orders', servant.id],
-    queryFn: () => base44.entities.BusinessOrder.filter({ servant_id: servant.id })
+    queryFn: () => base44.entities.BusinessOrder.filter({ servant_id: servant.id }, '-created_date')
   });
 
-  const getInventoryAmount = (material) => {
-    const item = inventory.find(i => i.material === material);
-    return item?.quantity || 0;
+  const { data: reviews = [] } = useQuery({
+    queryKey: ['reviews', servant.id],
+    queryFn: () => base44.entities.Review.filter({ servant_id: servant.id })
+  });
+
+  const { data: upgrades = [] } = useQuery({
+    queryKey: ['upgrades', servant.id],
+    queryFn: () => base44.entities.WorkshopUpgrade.filter({ servant_id: servant.id })
+  });
+
+  const { data: stats = [] } = useQuery({
+    queryKey: ['stats', servant.id],
+    queryFn: async () => {
+      const existing = await base44.entities.BusinessStats.filter({ servant_id: servant.id });
+      if (existing.length === 0) {
+        const newStats = await base44.entities.BusinessStats.create({
+          servant_id: servant.id,
+          reputation: 50,
+          total_sales: 0,
+          revenue: 0,
+          average_rating: 0,
+          passive_income_rate: 0,
+          last_passive_collection: new Date().toISOString()
+        });
+        return [newStats];
+      }
+      return existing;
+    }
+  });
+
+  const businessStats = stats[0] || { reputation: 50, total_sales: 0, revenue: 0, average_rating: 0, passive_income_rate: 0 };
+
+  // Calculate passive income
+  const calculatePassiveIncome = () => {
+    if (!businessStats.last_passive_collection) return 0;
+    const hoursPassed = (Date.now() - new Date(businessStats.last_passive_collection).getTime()) / (1000 * 60 * 60);
+    return Math.floor(hoursPassed * businessStats.passive_income_rate);
   };
 
-  const canCraft = (item) => {
-    return Object.entries(item.materials).every(
-      ([material, needed]) => getInventoryAmount(material) >= needed
-    );
+  const passiveIncome = calculatePassiveIncome();
+
+  const handleCollectPassive = async () => {
+    if (passiveIncome === 0) return;
+    setCollectingPassive(true);
+    
+    setTimeout(async () => {
+      await base44.entities.BusinessStats.update(businessStats.id, {
+        revenue: businessStats.revenue + passiveIncome,
+        last_passive_collection: new Date().toISOString()
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: `${servant.name}'s business earned $${passiveIncome} while you were away.`,
+        category: 'interaction',
+        intensity: 'subtle'
+      });
+      
+      queryClient.invalidateQueries(['stats']);
+      queryClient.invalidateQueries(['logs']);
+      setCollectingPassive(false);
+    }, 1500);
   };
 
-  const handleCraft = async (item) => {
-    if (!canCraft(item)) return;
+  const getUpgradeLevel = (type) => {
+    const upgrade = upgrades.find(u => u.upgrade_type === type);
+    return upgrade?.level || 0;
+  };
+
+  const canCraft = (design) => {
+    return Object.entries(design.materials).every(([material, needed]) => {
+      const inv = inventory.find(i => i.material === material);
+      return inv && inv.quantity >= needed;
+    });
+  };
+
+  const handleCraft = async (design, rarity, orderId) => {
+    setCrafting(orderId);
     
-    setCrafting(true);
-    
-    // Deduct materials
-    for (const [material, amount] of Object.entries(item.materials)) {
-      const invItem = inventory.find(i => i.material === material);
-      if (invItem) {
-        await base44.entities.Inventory.update(invItem.id, {
-          quantity: invItem.quantity - amount
+    // Consume materials
+    for (const [material, amount] of Object.entries(design.materials)) {
+      const inv = inventory.find(i => i.material === material);
+      if (inv) {
+        await base44.entities.Inventory.update(inv.id, {
+          quantity: inv.quantity - amount
         });
       }
     }
 
-    // Create order
-    const price = customPrice ? parseInt(customPrice) : item.basePrice;
-    const customerNames = ['Luna Shadow', 'Raven Night', 'Ash Darkwell', 'Salem Moon', 'Echo Void'];
-    const messages = [
-      'This is exactly what I was looking for!',
-      'Can you make it extra dark?',
-      'I love your work, been following for months',
-      'Perfect for my collection',
-      'Adding this to my altar'
-    ];
+    // Apply speed upgrade
+    const speedLevel = getUpgradeLevel('speed_bench');
+    const craftTime = design.time * (1 - (speedLevel * 0.25));
 
-    await base44.entities.BusinessOrder.create({
-      servant_id: servant.id,
-      customer_name: customerNames[Math.floor(Math.random() * customerNames.length)],
-      item: item.name,
-      price: price,
-      status: 'crafting',
-      message: messages[Math.floor(Math.random() * messages.length)]
-    });
+    setTimeout(async () => {
+      await base44.entities.BusinessOrder.update(orderId, {
+        status: 'completed'
+      });
 
-    await base44.entities.NightLog.create({
-      entry: `Crafted ${item.name}. New order ready to ship.`,
-      category: 'activity',
-      intensity: 'moderate'
-    });
+      // Apply quality upgrade to price
+      const qualityLevel = getUpgradeLevel('quality_tools');
+      const priceBonus = 1 + (qualityLevel * 0.15);
+      const finalPrice = Math.floor(design.basePrice * priceBonus);
 
-    queryClient.invalidateQueries(['inventory']);
-    queryClient.invalidateQueries(['orders']);
-    
-    setTimeout(() => {
-      setCrafting(false);
-      setSelectedItem(null);
-      setCustomPrice('');
-    }, 2000);
+      // Update stats
+      const displayLevel = getUpgradeLevel('display_case');
+      const repGain = Math.floor((5 + (rarity === 'legendary' ? 10 : rarity === 'rare' ? 5 : 0)) * (1 + displayLevel * 0.2));
+      
+      await base44.entities.BusinessStats.update(businessStats.id, {
+        total_sales: businessStats.total_sales + 1,
+        revenue: businessStats.revenue + finalPrice,
+        reputation: Math.min(100, businessStats.reputation + repGain)
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} crafted ${design.name}. Sold for $${finalPrice}.`,
+        category: 'interaction',
+        intensity: 'subtle'
+      });
+
+      queryClient.invalidateQueries();
+      setCrafting(null);
+    }, craftTime);
   };
 
-  const handleBuyMaterials = async () => {
-    // Buy random materials
-    const materials = ['silver', 'moonstone', 'onyx', 'obsidian', 'garnet', 'amethyst', 'chain', 'wire'];
-    const toBuy = materials[Math.floor(Math.random() * materials.length)];
-    const amount = Math.floor(Math.random() * 3) + 2;
+  const handleBuyMaterial = async (materialKey, amount) => {
+    setBuying(materialKey);
+    const material = MATERIAL_INFO[materialKey];
+    
+    setTimeout(async () => {
+      const existing = inventory.find(i => i.material === materialKey);
+      
+      if (existing) {
+        await base44.entities.Inventory.update(existing.id, {
+          quantity: existing.quantity + amount
+        });
+      } else {
+        await base44.entities.Inventory.create({
+          servant_id: servant.id,
+          material: materialKey,
+          quantity: amount
+        });
+      }
 
-    const existing = inventory.find(i => i.material === toBuy);
+      queryClient.invalidateQueries(['inventory']);
+      setBuying(null);
+    }, 1000);
+  };
+
+  const handlePurchaseUpgrade = async (upgradeType) => {
+    const upgradeInfo = WORKSHOP_UPGRADES[upgradeType];
+    const currentLevel = getUpgradeLevel(upgradeType);
+    
+    if (currentLevel >= upgradeInfo.maxLevel) return;
+    
+    const cost = upgradeInfo.baseCost * (currentLevel + 1);
+    const existing = upgrades.find(u => u.upgrade_type === upgradeType);
+    
     if (existing) {
-      await base44.entities.Inventory.update(existing.id, {
-        quantity: existing.quantity + amount
+      await base44.entities.WorkshopUpgrade.update(existing.id, {
+        level: currentLevel + 1,
+        cost: cost
       });
     } else {
-      await base44.entities.Inventory.create({
+      await base44.entities.WorkshopUpgrade.create({
         servant_id: servant.id,
-        material: toBuy,
-        quantity: amount
+        upgrade_type: upgradeType,
+        level: 1,
+        cost: cost
       });
     }
 
-    queryClient.invalidateQueries(['inventory']);
+    // Marketing upgrade increases passive income
+    if (upgradeType === 'marketing') {
+      const newRate = businessStats.passive_income_rate + 10;
+      await base44.entities.BusinessStats.update(businessStats.id, {
+        passive_income_rate: newRate
+      });
+    }
+
+    await base44.entities.NightLog.create({
+      entry: `${servant.name} upgraded the workshop: ${upgradeInfo.name} Level ${currentLevel + 1}.`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+
+    queryClient.invalidateQueries();
   };
 
-  const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'crafting');
+  const getInventory = (material) => {
+    return inventory.find(i => i.material === material)?.quantity || 0;
+  };
+
+  const pendingOrders = orders.filter(o => o.status === 'pending');
+  const completedOrders = orders.filter(o => o.status === 'completed');
 
   return (
     <motion.div
@@ -139,122 +285,255 @@ export default function BusinessManagement({ servant, onClose }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 rounded-2xl p-6 max-w-4xl w-full max-h-[85vh] overflow-y-auto"
+        className="bg-gray-900 rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-          <Package className="w-6 h-6" />
-          Gothic Jewelry Business
-        </h2>
+        <h2 className="text-2xl font-bold text-white mb-2">Gothic Jewelry Business</h2>
+        <p className="text-gray-400 text-sm mb-6">Crafting darkness into beauty</p>
 
-        {/* Inventory Section */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-white font-medium">Inventory</h3>
-            <button
-              onClick={handleBuyMaterials}
-              className="bg-purple-600 hover:bg-purple-700 text-white text-sm px-4 py-2 rounded-lg transition-colors"
-            >
-              Buy Materials
-            </button>
+        {/* Stats Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div className="bg-purple-950/30 rounded-lg p-3 border border-purple-800/30">
+            <p className="text-purple-400 text-xs">Reputation</p>
+            <p className="text-white text-xl font-bold">{businessStats.reputation}/100</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {Object.entries(MATERIAL_NAMES).map(([key, name]) => (
-              <div key={key} className="bg-gray-800 rounded-lg p-3">
-                <p className="text-gray-400 text-sm">{name}</p>
-                <p className="text-white text-lg font-bold">{getInventoryAmount(key)}</p>
-              </div>
-            ))}
+          <div className="bg-green-950/30 rounded-lg p-3 border border-green-800/30">
+            <p className="text-green-400 text-xs">Total Sales</p>
+            <p className="text-white text-xl font-bold">{businessStats.total_sales}</p>
+          </div>
+          <div className="bg-blue-950/30 rounded-lg p-3 border border-blue-800/30">
+            <p className="text-blue-400 text-xs">Revenue</p>
+            <p className="text-white text-xl font-bold">${businessStats.revenue}</p>
+          </div>
+          <div className="bg-yellow-950/30 rounded-lg p-3 border border-yellow-800/30">
+            <p className="text-yellow-400 text-xs">Avg Rating</p>
+            <p className="text-white text-xl font-bold">{businessStats.average_rating.toFixed(1)} ⭐</p>
           </div>
         </div>
 
-        {/* Pending Orders */}
-        {pendingOrders.length > 0 && (
-          <div className="mb-6">
-            <h3 className="text-white font-medium mb-3">Pending Orders ({pendingOrders.length})</h3>
-            <div className="space-y-2">
-              {pendingOrders.map(order => (
-                <div key={order.id} className="bg-gray-800 rounded-lg p-3 flex justify-between items-center">
-                  <div>
-                    <p className="text-white text-sm">{order.item}</p>
-                    <p className="text-gray-400 text-xs">{order.customer_name}</p>
-                  </div>
-                  <span className="text-purple-400">${order.price}</span>
+        {/* Passive Income Collection */}
+        {passiveIncome > 0 && (
+          <motion.button
+            onClick={handleCollectPassive}
+            disabled={collectingPassive}
+            className="w-full bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border-2 border-green-500/50 rounded-xl p-4 mb-6 transition-all disabled:opacity-50"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <TrendingUp className="w-6 h-6 text-green-400" />
+                <div className="text-left">
+                  <p className="text-white font-medium">Collect Passive Income</p>
+                  <p className="text-gray-400 text-sm">${businessStats.passive_income_rate}/hour</p>
                 </div>
-              ))}
+              </div>
+              <p className="text-green-400 text-2xl font-bold">+${passiveIncome}</p>
             </div>
-          </div>
+          </motion.button>
         )}
 
-        {/* Craftable Items */}
-        <div>
-          <h3 className="text-white font-medium mb-3">Craft New Jewelry</h3>
-          <div className="grid md:grid-cols-2 gap-4">
-            {JEWELRY_ITEMS.map((item) => {
-              const craftable = canCraft(item);
-              return (
-                <div
-                  key={item.name}
-                  className={`bg-gray-800 rounded-xl p-4 ${craftable ? 'border-2 border-purple-500/30' : 'opacity-60'}`}
-                >
-                  <h4 className="text-white font-medium mb-2">{item.name}</h4>
-                  <div className="text-gray-400 text-xs mb-2">
-                    {Object.entries(item.materials).map(([material, amount]) => (
-                      <span key={material} className="mr-2">
-                        {MATERIAL_NAMES[material]}: {amount}
-                        <span className={getInventoryAmount(material) >= amount ? 'text-green-400' : 'text-red-400'}>
-                          {' '}({getInventoryAmount(material)})
-                        </span>
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-purple-400 text-sm mb-3">Base: ${item.basePrice}</p>
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6 overflow-x-auto">
+          {[
+            { id: 'orders', label: 'Orders', icon: Package },
+            { id: 'craft', label: 'Craft', icon: Sparkles },
+            { id: 'materials', label: 'Materials', icon: ShoppingCart },
+            { id: 'upgrades', label: 'Upgrades', icon: Zap },
+            { id: 'reviews', label: 'Reviews', icon: Star }
+          ].map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setTab(id)}
+              className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors flex items-center gap-2 ${
+                tab === id ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="space-y-3">
+          {tab === 'orders' && (
+            <>
+              <h3 className="text-white font-bold mb-3">Pending Orders ({pendingOrders.length})</h3>
+              {pendingOrders.length === 0 ? (
+                <p className="text-gray-400 text-center py-8">No pending orders</p>
+              ) : (
+                pendingOrders.map(order => {
+                  const designs = JEWELRY_DESIGNS[order.rarity] || [];
+                  const design = designs.find(d => d.name === order.item);
+                  if (!design) return null;
                   
-                  {selectedItem === item.name ? (
-                    <div className="space-y-2">
-                      <input
-                        type="number"
-                        value={customPrice}
-                        onChange={(e) => setCustomPrice(e.target.value)}
-                        placeholder={`Custom price (default: $${item.basePrice})`}
-                        className="w-full bg-gray-700 text-white rounded px-3 py-2 text-sm"
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleCraft(item)}
-                          disabled={crafting}
-                          className="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm px-3 py-2 rounded-lg transition-colors disabled:opacity-50"
-                        >
-                          {crafting ? 'Crafting...' : 'Craft'}
-                        </button>
-                        <button
-                          onClick={() => setSelectedItem(null)}
-                          className="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-sm px-3 py-2 rounded-lg transition-colors"
-                        >
-                          Cancel
-                        </button>
+                  const canMake = canCraft(design);
+                  const isCrafting = crafting === order.id;
+                  
+                  return (
+                    <div key={order.id} className="bg-gray-800 rounded-xl p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className={`text-white font-medium ${RARITY_COLORS[order.rarity]}`}>
+                            {order.item}
+                          </h4>
+                          <p className="text-gray-400 text-sm">{order.customer_name}</p>
+                          <p className="text-gray-500 text-xs capitalize">{order.rarity} quality</p>
+                        </div>
+                        <p className="text-green-400 font-bold">${order.price}</p>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {Object.entries(design.materials).map(([mat, amt]) => {
+                          const have = getInventory(mat);
+                          const hasEnough = have >= amt;
+                          return (
+                            <span key={mat} className={`text-xs px-2 py-1 rounded ${
+                              hasEnough ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'
+                            }`}>
+                              {MATERIAL_INFO[mat]?.icon} {amt}/{have}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      
+                      <button
+                        onClick={() => handleCraft(design, order.rarity, order.id)}
+                        disabled={!canMake || isCrafting}
+                        className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white rounded-lg py-2 transition-colors disabled:opacity-50"
+                      >
+                        {isCrafting ? 'Crafting...' : canMake ? 'Craft Item' : 'Missing Materials'}
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </>
+          )}
+
+          {tab === 'craft' && (
+            <>
+              {Object.entries(JEWELRY_DESIGNS).map(([rarity, designs]) => (
+                <div key={rarity} className="mb-6">
+                  <h3 className={`font-bold mb-3 capitalize ${RARITY_COLORS[rarity]}`}>{rarity} Designs</h3>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {designs.map(design => {
+                      const canMake = canCraft(design);
+                      return (
+                        <div key={design.name} className="bg-gray-800 rounded-xl p-4">
+                          <h4 className={`font-medium mb-2 ${RARITY_COLORS[rarity]}`}>{design.name}</h4>
+                          <p className="text-green-400 text-sm mb-2">${design.basePrice}</p>
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {Object.entries(design.materials).map(([mat, amt]) => (
+                              <span key={mat} className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">
+                                {MATERIAL_INFO[mat]?.icon} {amt}
+                              </span>
+                            ))}
+                          </div>
+                          <p className={`text-xs ${canMake ? 'text-green-400' : 'text-red-400'}`}>
+                            {canMake ? '✓ Can craft' : '✗ Missing materials'}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+
+          {tab === 'materials' && (
+            <div className="grid md:grid-cols-3 gap-3">
+              {Object.entries(MATERIAL_INFO).map(([key, info]) => {
+                const current = getInventory(key);
+                const isBuying = buying === key;
+                
+                return (
+                  <div key={key} className="bg-gray-800 rounded-xl p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-2xl">{info.icon}</span>
+                      <div className="flex-1">
+                        <h4 className="text-white text-sm font-medium">{info.name}</h4>
+                        <p className="text-gray-400 text-xs">${info.cost} each</p>
                       </div>
                     </div>
-                  ) : (
+                    <p className="text-purple-400 text-sm mb-2">Stock: {current}</p>
                     <button
-                      onClick={() => setSelectedItem(item.name)}
-                      disabled={!craftable}
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm px-3 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => handleBuyMaterial(key, 5)}
+                      disabled={isBuying}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg py-2 transition-colors disabled:opacity-50"
                     >
-                      {craftable ? 'Select' : 'Not enough materials'}
+                      {isBuying ? 'Buying...' : `Buy 5 ($${info.cost * 5})`}
                     </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {tab === 'upgrades' && (
+            <div className="space-y-3">
+              {Object.entries(WORKSHOP_UPGRADES).map(([key, upgrade]) => {
+                const level = getUpgradeLevel(key);
+                const cost = upgrade.baseCost * (level + 1);
+                const maxed = level >= upgrade.maxLevel;
+                
+                return (
+                  <div key={key} className="bg-gray-800 rounded-xl p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{upgrade.icon}</span>
+                        <div>
+                          <h4 className="text-white font-medium">{upgrade.name}</h4>
+                          <p className="text-gray-400 text-sm">{upgrade.description}</p>
+                          <p className="text-purple-400 text-xs mt-1">Level {level}/{upgrade.maxLevel}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handlePurchaseUpgrade(key)}
+                      disabled={maxed}
+                      className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white rounded-lg py-2 transition-colors disabled:opacity-50"
+                    >
+                      {maxed ? 'Max Level' : `Upgrade ($${cost})`}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {tab === 'reviews' && (
+            <>
+              {reviews.length === 0 ? (
+                <p className="text-gray-400 text-center py-8">No reviews yet</p>
+              ) : (
+                reviews.map(review => (
+                  <div key={review.id} className="bg-gray-800 rounded-xl p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-white font-medium">{review.customer_name}</h4>
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-gray-300 text-sm italic">"{review.comment}"</p>
+                  </div>
+                ))
+              )}
+            </>
+          )}
         </div>
       </motion.div>
     </motion.div>
