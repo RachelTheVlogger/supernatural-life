@@ -6,6 +6,7 @@ import { useQueryClient, useQuery } from '@tanstack/react-query';
 import LocationVisit from './LocationVisit';
 import RelationshipEvent from './RelationshipEvent';
 import QuestSystem from './QuestSystem';
+import DirectInteraction from './DirectInteraction';
 
 const TEACHING_TOPICS = [
   'Explaining restraint',
@@ -60,6 +61,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [relationshipMilestone, setRelationshipMilestone] = useState(null);
   const [showQuestModal, setShowQuestModal] = useState(false);
   const [feeding, setFeeding] = useState(false);
+  const [showInteractions, setShowInteractions] = useState(false);
   const queryClient = useQueryClient();
   
   // Fetch quests for this servant
@@ -304,6 +306,17 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             }}
           />
         )}
+        
+        {showInteractions && (
+          <DirectInteraction
+            servant={servant}
+            vampireState={vampireState}
+            onClose={() => {
+              setShowInteractions(false);
+              queryClient.invalidateQueries(['servants']);
+            }}
+          />
+        )}
       </AnimatePresence>
       
       {!visitingLocation && (
@@ -467,6 +480,14 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           </div>
         ) : (
           <div className="space-y-3">
+            <button
+              onClick={() => setShowInteractions(true)}
+              className="w-full bg-gradient-to-r from-pink-900/40 to-purple-900/40 hover:from-pink-900/60 hover:to-purple-900/60 border-2 border-pink-500/50 rounded-xl py-4 flex items-center justify-center gap-2 transition-all"
+            >
+              <Heart className="w-5 h-5 text-pink-400" />
+              <span className="text-white font-medium">Interact with {servant.name}</span>
+            </button>
+            
             {!activeQuest && (
               <button
                 onClick={() => setShowQuestModal(true)}
