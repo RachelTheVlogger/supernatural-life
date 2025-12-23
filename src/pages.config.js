@@ -19,7 +19,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "Night",
+    mainPage: "VampireHome",
     Pages: PAGES,
     Layout: __Layout,
 };
