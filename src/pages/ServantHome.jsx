@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -50,6 +50,17 @@ export default function ServantHome() {
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
+
+  // Redirect to Home if no vampire state exists
+  useEffect(() => {
+    const checkGameState = async () => {
+      const states = await base44.entities.VampireState.list();
+      if (states.length === 0) {
+        navigate(createPageUrl('Home'));
+      }
+    };
+    checkGameState();
+  }, [navigate]);
   
   const { data: servant } = useQuery({
     queryKey: ['servant', servantId],
