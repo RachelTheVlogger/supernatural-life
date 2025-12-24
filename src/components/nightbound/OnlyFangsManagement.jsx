@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Video, DollarSign, Users, TrendingUp, Eye, Star, Camera, Lock, Unlock, Percent, MessageCircle, Gift, Award, BarChart3, Package, Zap } from 'lucide-react';
+import { X, Video, DollarSign, Users, TrendingUp, Eye, Star, Camera, Lock, Unlock, Percent, MessageCircle, Gift, Award, BarChart3, Package, Zap, ShoppingBag, UserPlus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import OnlyFangsMerch from './OnlyFangsMerch';
 
 const VIDEO_CATEGORIES = {
   couple: { label: 'Couple', icon: '💑', examples: ['Making love together', 'Vampire takes their servant', 'Riding my vampire', 'Getting bred on camera', 'Passionate fucking', 'Shower sex'], minRep: 0 },
@@ -74,6 +75,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [creatingPost, setCreatingPost] = useState(false);
   const [newPost, setNewPost] = useState({ caption: '', content: '', is_ppv: false, price: 0 });
   const [viewingComments, setViewingComments] = useState(null);
+  const [showMerch, setShowMerch] = useState(false);
+  const [collabing, setCollabing] = useState(false);
+  const [collabOutcome, setCollabOutcome] = useState('');
 
   const { data: profile = [], isLoading: profileLoading } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -773,6 +777,63 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     setBrainstormIdea(null);
   };
 
+  const handleCollab = async () => {
+    setCollabing(true);
+    
+    const creators = [
+      { name: 'MidnightMuse', followers: 50000, type: 'Solo creator' },
+      { name: 'DarkDesires', followers: 120000, type: 'Couple account' },
+      { name: 'ShadowPlay', followers: 80000, type: 'Fetish specialist' },
+      { name: 'NightQueen', followers: 200000, type: 'Top creator' }
+    ];
+    
+    const creator = creators[Math.floor(Math.random() * creators.length)];
+    
+    setTimeout(async () => {
+      const collab = await base44.entities.OnlyFangsCollab.create({
+        servant_id: servant.id,
+        creator_name: creator.name,
+        creator_followers: creator.followers,
+        collab_type: 'video',
+        earnings: 0,
+        new_subs: 0,
+        completed: false
+      });
+      
+      // Collaboration results
+      const crossoverSubs = Math.floor(creator.followers * (Math.random() * 0.05 + 0.02));
+      const earnings = Math.floor(Math.random() * 800) + 400;
+      
+      await base44.entities.OnlyFangsCollab.update(collab.id, {
+        earnings: earnings,
+        new_subs: crossoverSubs,
+        completed: true
+      });
+      
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: servantProfile.revenue + earnings,
+        subscriber_count: servantProfile.subscriber_count + crossoverSubs,
+        reputation: Math.min(100, servantProfile.reputation + 15)
+      });
+      
+      const outcome = `Collaboration with ${creator.name} (${creator.followers.toLocaleString()} followers) complete! Gained ${crossoverSubs} new subscribers. Earned $${earnings}. Your reputation skyrocketed.`;
+      setCollabOutcome(outcome);
+      
+      await base44.entities.NightLog.create({
+        entry: outcome,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setCollabing(false);
+        setCollabOutcome('');
+      }, 5000);
+    }, 3000);
+  };
+
   const handleCreatePost = async () => {
     if (!newPost.content || !newPost.caption) return;
     setCreatingPost(true);
@@ -1049,6 +1110,12 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </button>
           <button onClick={() => setTab('brainstorm')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'brainstorm' ? 'bg-gradient-to-r from-pink-600 to-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             💡 Ideas
+          </button>
+          <button onClick={() => setTab('merch')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'merch' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            <ShoppingBag className="w-3 h-3" /> Merch
+          </button>
+          <button onClick={() => setTab('collab')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'collab' ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            <UserPlus className="w-3 h-3" /> Collab
           </button>
         </div>
 
@@ -1855,6 +1922,75 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {tab === 'merch' && (
+          <OnlyFangsMerch
+            servant={servant}
+            profile={servantProfile}
+            onClose={() => setTab('profile')}
+          />
+        )}
+
+        {tab === 'collab' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            {collabOutcome ? (
+              <div className="text-center py-12">
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-gray-300 text-lg"
+                >
+                  {collabOutcome}
+                </motion.p>
+              </div>
+            ) : collabing ? (
+              <div className="text-center py-12">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  className="text-6xl mb-4"
+                >
+                  🎥
+                </motion.div>
+                <motion.p
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-gray-400"
+                >
+                  Filming collaboration...
+                </motion.p>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-br from-pink-950/40 to-purple-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
+                <h3 className="text-white text-2xl font-bold mb-2">Creator Collaborations</h3>
+                <p className="text-gray-400 mb-6">
+                  Team up with other OnlyFangs creators. Massive exposure. Cross-promotion. Big earnings.
+                </p>
+
+                <div className="space-y-3 mb-6">
+                  <div className="bg-gray-800/50 rounded-lg p-3">
+                    <h4 className="text-white font-medium mb-2">Benefits</h4>
+                    <ul className="text-gray-400 text-sm space-y-1">
+                      <li>✓ Access to their subscriber base</li>
+                      <li>✓ 2-5x normal earnings per video</li>
+                      <li>✓ Huge reputation boost</li>
+                      <li>✓ Crossover fans</li>
+                      <li>✓ Elite content opportunities</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleCollab}
+                  disabled={collabing || servantProfile.reputation < 40}
+                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50"
+                >
+                  {servantProfile.reputation < 40 ? 'Need 40+ Reputation' : 'Find Collaboration Partner'}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </motion.div>
