@@ -351,8 +351,8 @@ export default function BusinessManagement({ servant, onClose }) {
             <button
               key={id}
               onClick={() => setTab(id)}
-              className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors flex items-center gap-2 ${
-                tab === id ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              className={`px-4 py-2 rounded-lg whitespace-nowrap touch-manipulation flex items-center gap-2 ${
+                tab === id ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 active:bg-gray-700'
               }`}
             >
               <Icon className="w-4 h-4" />

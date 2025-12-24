@@ -77,8 +77,8 @@ export default function Layout({ children, currentPageName }) {
                   key={item.name}
                   onClick={() => !item.disabled && navigate(createPageUrl(item.path))}
                   disabled={item.disabled}
-                  className={`flex flex-col items-center gap-1 transition-colors ${
-                    isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 hover:text-white'
+                  className={`flex flex-col items-center gap-1 touch-manipulation ${
+                    isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-white'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
