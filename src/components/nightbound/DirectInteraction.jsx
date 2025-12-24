@@ -167,7 +167,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Kiss their neck from behind',
     category: 'physical',
-    minRelationship: 0,
     gains: [12, 20],
     outcomes: {
       mid: [
@@ -191,7 +190,6 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Whisper dirty things',
     category: 'physical',
-    minRelationship: 0,
     gains: [14, 22],
     outcomes: {
       mid: [
@@ -217,7 +215,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Seduce from behind',
     category: 'physical',
-    minRelationship: 0,
     gains: [18, 28],
     outcomes: {
       mid: [
@@ -242,7 +239,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Take them from behind (rough)',
     category: 'physical',
-    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -298,7 +294,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Make out',
     category: 'physical',
-    minRelationship: 0,
     gains: [12, 20],
     outcomes: {
       mid: ['Heated kisses. Exploring hands. Growing intensity.', 'You pushed them against the wall. They gasped.', 'Breathless. Flushed. Wanting more.'],
@@ -309,7 +304,6 @@ const INTERACTIONS = {
     icon: Sparkles,
     label: 'Be intimate',
     category: 'physical',
-    minRelationship: 0,
     gains: [15, 25],
     outcomes: {
       mid: [
@@ -343,7 +337,6 @@ const INTERACTIONS = {
     icon: Droplets,
     label: 'Bite (feed)',
     category: 'physical',
-    minRelationship: 0,
     gains: [10, 18],
     outcomes: {
       low: ['You bit carefully. They whimpered but stayed still.', 'Your fangs pierced skin. They trembled.', 'You fed. They gasped. Fear mixed with something else.'],
@@ -458,7 +451,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Breed them',
     category: 'physical',
-    minRelationship: 0,
     gains: [30, 40],
     outcomes: {
       mid: [
@@ -492,7 +484,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Use them publicly',
     category: 'physical',
-    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -605,7 +596,6 @@ const INTERACTIONS = {
     icon: Star,
     label: 'Praise them',
     category: 'bdsm',
-    minRelationship: 0,
     gains: [15, 25],
     getDynamicOutcomes: (servantName) => {
       const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion', 'cedar'];
@@ -640,7 +630,6 @@ const INTERACTIONS = {
     icon: Eye,
     label: 'Make them perform',
     category: 'physical',
-    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -761,7 +750,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Make them service you',
     category: 'physical',
-    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -786,7 +774,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Make them cum multiple times',
     category: 'physical',
-    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -811,7 +798,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'All night session',
     category: 'physical',
-    minRelationship: 0,
     gains: [35, 45],
     outcomes: {
       mid: [
@@ -860,7 +846,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Establish safe word',
     category: 'bdsm',
-    minRelationship: 0,
     gains: [15, 20],
     outcomes: {
       mid: [
@@ -883,7 +868,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Aftercare',
     category: 'bdsm',
-    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: [
@@ -908,7 +892,6 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Negotiate scene',
     category: 'bdsm',
-    minRelationship: 0,
     gains: [12, 18],
     outcomes: {
       mid: [
@@ -933,7 +916,6 @@ const INTERACTIONS = {
     icon: Coffee,
     label: 'Morning routine (dom)',
     category: 'activity',
-    minRelationship: 0,
     gains: [10, 15],
     outcomes: {
       mid: [
@@ -956,7 +938,6 @@ const INTERACTIONS = {
     icon: Hand,
     label: 'Position training',
     category: 'activity',
-    minRelationship: 0,
     gains: [15, 20],
     outcomes: {
       mid: [
@@ -979,7 +960,6 @@ const INTERACTIONS = {
     icon: Eye,
     label: 'Daily inspection',
     category: 'activity',
-    minRelationship: 0,
     gains: [12, 18],
     outcomes: {
       mid: [
@@ -1002,7 +982,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Casual use',
     category: 'physical',
-    minRelationship: 0,
     gains: [18, 25],
     outcomes: {
       mid: [
@@ -1026,7 +1005,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Service position (kneel)',
     category: 'activity',
-    minRelationship: 0,
     gains: [10, 15],
     outcomes: {
       mid: [
@@ -1051,7 +1029,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Make them worship you',
     category: 'physical',
-    minRelationship: 0,
     gains: [20, 28],
     outcomes: {
       mid: [
@@ -1074,7 +1051,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Receive oral service',
     category: 'physical',
-    minRelationship: 0,
     gains: [22, 30],
     outcomes: {
       mid: [
@@ -1099,7 +1075,6 @@ const INTERACTIONS = {
     icon: Hand,
     label: 'Demand massage',
     category: 'activity',
-    minRelationship: 0,
     gains: [10, 15],
     outcomes: {
       mid: [
@@ -1122,7 +1097,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Make them ride you',
     category: 'physical',
-    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -1147,7 +1121,6 @@ const INTERACTIONS = {
     icon: Sparkles,
     label: 'Make them dress for you',
     category: 'activity',
-    minRelationship: 0,
     gains: [12, 18],
     outcomes: {
       mid: [
@@ -1170,7 +1143,6 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Make them beg',
     category: 'physical',
-    minRelationship: 0,
     gains: [18, 25],
     outcomes: {
       mid: [
@@ -1229,7 +1201,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Confess feelings',
     category: 'social',
-    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: ['You told them what they mean to you. They cried.', 'Your confession changed everything. They said it back.', 'Words hung between you. Sacred.'],
@@ -1240,7 +1211,6 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Share a secret',
     category: 'social',
-    minRelationship: 0,
     gains: [15, 25],
     outcomes: {
       mid: ['You told them something you never tell anyone.', 'A secret shared. The bond deepened.', 'They held your secret carefully. Sacred.'],
@@ -1251,7 +1221,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Make a promise',
     category: 'social',
-    minRelationship: 0,
     gains: [20, 35],
     outcomes: {
       mid: ['You promised them forever. You meant it.', 'A vow made. Unbreakable.', 'Your promise hung in the air. Sacred.'],
@@ -1330,7 +1299,6 @@ const INTERACTIONS = {
     icon: Wind,
     label: 'Travel together',
     category: 'activity',
-    minRelationship: 0,
     gains: [12, 20],
     outcomes: {
       mid: ['You explored the city together. New places. New memories.', 'Adventure shared. The bond grew.', 'Traveling side by side. The world felt smaller.'],
@@ -1341,7 +1309,6 @@ const INTERACTIONS = {
     icon: Moon,
     label: 'Perform a ritual',
     category: 'activity',
-    minRelationship: 0,
     gains: [15, 25],
     outcomes: {
       mid: ['An ancient ritual performed together. Sacred.', 'Blood and moonlight. The ritual bonded you.', 'Magic flowed between you. Powerful.'],
@@ -1826,7 +1793,6 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         ) : (
           <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-2">
             {filteredInteractions.map(([key, interaction]) => {
-              const relDisabled = interaction.minRelationship && rel < interaction.minRelationship;
               const Icon = interaction.icon;
 
               return (
@@ -1834,14 +1800,12 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                   key={key}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (!relDisabled) handleInteraction(key);
+                    handleInteraction(key);
                   }}
-                  disabled={relDisabled}
-                  className="bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm"
+                  className="bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 text-sm"
                 >
                   <Icon className="w-4 h-4" />
                   <span>{interaction.label}</span>
-                  {relDisabled && <span className="text-xs ml-auto">({interaction.minRelationship}+)</span>}
                 </button>
               );
             })}
