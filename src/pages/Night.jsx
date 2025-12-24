@@ -166,14 +166,23 @@ export default function Night() {
         <p className="text-sm text-gray-400">
           Night {vampireState.nights_passed}
         </p>
-        
-        <button
-          onClick={() => navigate(createPageUrl('VampireHome'))}
-          className="mt-4 text-purple-400 hover:text-purple-300 transition-colors text-sm flex items-center gap-2 mx-auto"
-        >
-          <Home className="w-4 h-4" />
-          Return to your house
-        </button>
+
+        <div className="flex gap-4 justify-center mt-4">
+          <button
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-2"
+          >
+            <Moon className="w-4 h-4" />
+            Main Menu
+          </button>
+          <button
+            onClick={() => navigate(createPageUrl('VampireHome'))}
+            className="text-purple-400 hover:text-purple-300 transition-colors text-sm flex items-center gap-2"
+          >
+            <Home className="w-4 h-4" />
+            Your House
+          </button>
+        </div>
       </motion.div>
       
       {/* Action buttons - Bitlife style */}
