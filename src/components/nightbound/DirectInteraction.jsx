@@ -1863,13 +1863,12 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                 >
                   <Icon className="w-4 h-4" />
                   <span>{interaction.label}</span>
-                  {isNew && <span className="text-xs text-yellow-400 ml-auto">NEW!</span>}
-                  {isLocked && <span className="text-xs text-gray-500 ml-auto flex items-center gap-1">
+                  {isLocked && <span className="text-xs text-gray-400 ml-auto flex items-center gap-1">
                     <Lock className="w-3 h-3" /> Tier {interaction.tier}
                   </span>}
                   {!isLocked && relDisabled && <span className="text-xs ml-auto">({interaction.minRelationship}+)</span>}
-                  {!isLocked && interaction.tier && (
-                    <span className="text-[10px] text-gray-500 absolute bottom-1 right-2">
+                  {!isLocked && !relDisabled && interaction.tier && (
+                    <span className="text-xs text-purple-300 ml-auto">
                       T{interaction.tier}
                     </span>
                   )}
