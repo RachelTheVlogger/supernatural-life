@@ -252,7 +252,7 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
       
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {tab === 'messages' && (
+        {tab === 'messages' ? (
           <>
             {messages.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)).map((msg) => (
           <motion.div
@@ -287,9 +287,7 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
             
             <div ref={messagesEndRef} />
           </>
-        )}
-
-        {tab === 'business' && (
+        ) : tab === 'business' ? (
           <>
             {orders.length === 0 ? (
               <p className="text-gray-400 text-center py-8">No orders yet...</p>
@@ -322,9 +320,7 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
               ))
             )}
           </>
-        )}
-
-        {tab === 'reviews' && (
+        ) : tab === 'reviews' ? (
           <>
             {reviews.length === 0 ? (
               <p className="text-gray-400 text-center py-8">No reviews yet...</p>
@@ -354,7 +350,7 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
               ))
             )}
           </>
-        )}
+        ) : null}
       </div>
       
       {/* Input */}
