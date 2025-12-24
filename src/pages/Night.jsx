@@ -48,6 +48,9 @@ export default function Night() {
     queryFn: () => base44.entities.Tutorial.list()
   });
   
+  // Ensure only one servant exists at a time
+  const [servantsInitialized, setServantsInitialized] = useState(false);
+  
   // Redirect to home if no vampire exists
   useEffect(() => {
     if (!vampireLoading && vampireStates.length === 0) {
@@ -100,9 +103,6 @@ export default function Night() {
     
     return availableNames[Math.floor(Math.random() * availableNames.length)];
   };
-  
-  // Ensure only one servant exists at a time
-  const [servantsInitialized, setServantsInitialized] = useState(false);
   
   useEffect(() => {
     // Delete extra servants if more than one exists
