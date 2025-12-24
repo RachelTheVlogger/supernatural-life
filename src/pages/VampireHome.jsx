@@ -10,6 +10,7 @@ import DirectInteraction from '@/components/nightbound/DirectInteraction';
 import TemptationModal from '@/components/nightbound/TemptationModal';
 import OnlyFangsManagement from '@/components/nightbound/OnlyFangsManagement';
 import MoralityDisplay from '@/components/nightbound/MoralityDisplay';
+import FriendInteraction from '@/components/nightbound/FriendInteraction';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export default function VampireHome() {
   const [selectedServantForInteraction, setSelectedServantForInteraction] = useState(null);
   const [showTemptation, setShowTemptation] = useState(false);
   const [showOnlyFangs, setShowOnlyFangs] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [showAllFriends, setShowAllFriends] = useState(false);
 
   
   const { data: vampireStates = [] } = useQuery({
@@ -35,6 +38,11 @@ export default function VampireHome() {
   const { data: logs = [] } = useQuery({
     queryKey: ['logs'],
     queryFn: () => base44.entities.NightLog.list()
+  });
+
+  const { data: allFriends = [] } = useQuery({
+    queryKey: ['allFriends'],
+    queryFn: () => base44.entities.PotentialServant.list()
   });
 
   const { data: powerProgress = [] } = useQuery({
@@ -291,10 +299,39 @@ export default function VampireHome() {
                   </div>
                 </div>
               </button>
-            </motion.div>
-          )}
+              </motion.div>
+              )}
 
-          {/* Temptation System */}
+              {/* Friends System */}
+              {allFriends.length > 0 && (
+              <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.22 }}
+              className="mb-8"
+              >
+              <button
+                onClick={() => setShowAllFriends(true)}
+                className="w-full bg-gradient-to-r from-blue-950/40 to-cyan-950/40 hover:from-blue-950/60 hover:to-cyan-950/60 border-2 border-blue-500/50 rounded-2xl p-6 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Users className="w-10 h-10 text-blue-400" />
+                    <div className="text-left">
+                      <h3 className="text-white text-xl font-bold mb-1">Friends of Your Servants</h3>
+                      <p className="text-gray-300 text-sm">Curious souls. Potential recruits.</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-blue-400 text-2xl font-bold">{allFriends.length}</p>
+                    <p className="text-gray-400 text-xs">People</p>
+                  </div>
+                </div>
+              </button>
+              </motion.div>
+              )}
+
+              {/* Temptation System */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -515,6 +552,70 @@ export default function VampireHome() {
             vampireState={vampireState}
             onClose={() => setShowOnlyFangs(false)}
           />
+        )}
+        {selectedFriend && (
+          <FriendInteraction
+            friend={selectedFriend}
+            servant={servants.find(s => s.id === selectedFriend.met_through_servant_id)}
+            vampireState={vampireState}
+            onClose={() => setSelectedFriend(null)}
+          />
+        )}
+        {showAllFriends && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowAllFriends(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <button
+                onClick={() => setShowAllFriends(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-2xl font-bold text-white mb-4">Friends</h2>
+
+              <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+                {allFriends.map(friend => (
+                  <button
+                    key={friend.id}
+                    onClick={() => {
+                      setShowAllFriends(false);
+                      setSelectedFriend(friend);
+                    }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="text-white font-medium">{friend.name}</h3>
+                        <p className="text-gray-400 text-xs capitalize">{friend.personality}</p>
+                      </div>
+                      {friend.knows_about_vampires && (
+                        <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
+                          Knows
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2 text-xs">
+                      <span className="text-blue-400">Curiosity: {friend.curiosity_level}</span>
+                      <span className="text-purple-400">Friendship: {friend.friendship_level}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
         )}
         {meditating && (
           <motion.div

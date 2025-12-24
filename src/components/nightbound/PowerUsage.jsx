@@ -442,7 +442,7 @@ const VISUAL_EFFECTS = {
 };
 
 export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed }) {
-  const [selectedPower, setSelectedPower] = useState(null);
+  const [selectedPowers, setSelectedPowers] = useState([]);
   const [using, setUsing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [visualEffect, setVisualEffect] = useState(null);
@@ -501,53 +501,81 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
     return progress?.upgrade_level || 1;
   };
   
-  const handleUsePower = async (powerName, powerData) => {
+  const togglePower = (powerName) => {
+    if (selectedPowers.includes(powerName)) {
+      setSelectedPowers(selectedPowers.filter(p => p !== powerName));
+    } else {
+      setSelectedPowers([...selectedPowers, powerName]);
+    }
+  };
+  
+  const handleUsePowers = async () => {
+    if (selectedPowers.length === 0) return;
+    
     setUsing(true);
-    setSelectedPower(powerName);
-    setVisualEffect(powerData.visualEffect);
     
     setTimeout(async () => {
-      const level = getPowerLevel(powerName);
-      const result = await powerData.effects(servant, vampireState);
-      setOutcome(result);
+      let combinedOutcome = '';
+      const effects = [];
       
-      // Update power progress - INFINITE LEVELS
-      const existingProgress = powerProgress.find(p => p.power_name === powerName);
-      if (existingProgress) {
-        const newTimesUsed = existingProgress.times_used + 1;
-        const masteryGain = 5;
-        const newMastery = Math.min(existingProgress.mastery + masteryGain, 100);
-        const shouldLevelUp = newMastery >= 100;
-        const newLevel = shouldLevelUp ? existingProgress.upgrade_level + 1 : existingProgress.upgrade_level;
+      for (const powerName of selectedPowers) {
+        const powerData = POWER_LIBRARY[powerName];
+        const level = getPowerLevel(powerName);
+        const result = await powerData.effects(servant, vampireState);
+        effects.push({ name: powerName, result, visualEffect: powerData.visualEffect });
+      
+        // Update power progress - INFINITE LEVELS
+        const existingProgress = powerProgress.find(p => p.power_name === powerName);
+        if (existingProgress) {
+          const newTimesUsed = existingProgress.times_used + 1;
+          const masteryGain = 5;
+          const newMastery = Math.min(existingProgress.mastery + masteryGain, 100);
+          const shouldLevelUp = newMastery >= 100;
+          const newLevel = shouldLevelUp ? existingProgress.upgrade_level + 1 : existingProgress.upgrade_level;
+          
+          await base44.entities.PowerProgress.update(existingProgress.id, {
+            times_used: newTimesUsed,
+            mastery: shouldLevelUp ? 0 : newMastery,
+            upgrade_level: newLevel
+          });
+        } else {
+          await base44.entities.PowerProgress.create({
+            power_name: powerName,
+            times_used: 1,
+            mastery: 5,
+            upgrade_level: 1
+          });
+        }
         
-        await base44.entities.PowerProgress.update(existingProgress.id, {
-          times_used: newTimesUsed,
-          mastery: shouldLevelUp ? 0 : newMastery,
-          upgrade_level: newLevel
-        });
-      } else {
-        await base44.entities.PowerProgress.create({
-          power_name: powerName,
-          times_used: 1,
-          mastery: 5,
-          upgrade_level: 1
-        });
+        // Update hunger
+        const powerData = POWER_LIBRARY[powerName];
+        if (powerData.hungerCost > 0) {
+          const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
+          const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
+          const newIndex = Math.min(currentIndex + powerData.hungerCost, hungerStates.length - 1);
+          await base44.entities.VampireState.update(vampireState.id, {
+            hunger_state: hungerStates[newIndex]
+          });
+        }
       }
       
-      // Update hunger
-      if (powerData.hungerCost > 0) {
-        const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
-        const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
-        const newIndex = Math.min(currentIndex + powerData.hungerCost, hungerStates.length - 1);
-        await base44.entities.VampireState.update(vampireState.id, {
-          hunger_state: hungerStates[newIndex]
-        });
-      }
+      // Combined outcome
+      combinedOutcome = selectedPowers.length === 1 
+        ? effects[0].result
+        : effects.map(e => `${e.name}: ${e.result}`).join('\n\n');
       
-      // Humanity impact
-      const humanityChange = powerData.moralityRequirement?.path === 'ruthless' ? -2 : 
-                            powerData.moralityRequirement?.path === 'humane' ? 1 : -1;
-      const newHumanity = Math.max(0, Math.min(100, humanity + humanityChange));
+      setOutcome(combinedOutcome);
+      setVisualEffect(effects[0].visualEffect);
+      
+      // Total humanity impact
+      const totalHumanityChange = selectedPowers.reduce((sum, powerName) => {
+        const powerData = POWER_LIBRARY[powerName];
+        const change = powerData.moralityRequirement?.path === 'ruthless' ? -2 : 
+                      powerData.moralityRequirement?.path === 'humane' ? 1 : -1;
+        return sum + change;
+      }, 0);
+      
+      const newHumanity = Math.max(0, Math.min(100, humanity + totalHumanityChange));
       let moral_path = 'balanced';
       if (newHumanity >= 75) moral_path = 'humane';
       else if (newHumanity >= 25) moral_path = 'balanced';
@@ -560,7 +588,9 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
       });
       
       await base44.entities.NightLog.create({
-        entry: `Used ${powerName} (Lvl ${level}) on ${servant.name}: ${result}`,
+        entry: selectedPowers.length === 1 
+          ? `Used ${selectedPowers[0]} on ${servant.name}: ${effects[0].result}`
+          : `Used multiple powers on ${servant.name}: ${selectedPowers.join(', ')}`,
         category: 'power',
         intensity: 'significant'
       });
@@ -664,21 +694,24 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
               Every power has consequences. Current time: {timeOfNight}
             </p>
             
-            <div className="space-y-3">
+            <div className="space-y-3 mb-4">
               {availablePowers.map(([name, power]) => {
                 const Icon = power.icon;
                 const usable = canUsePower(power);
                 const level = getPowerLevel(name);
                 const progress = powerProgress.find(p => p.power_name === name);
                 const mastery = progress?.mastery || 0;
+                const isSelected = selectedPowers.includes(name);
                 
                 return (
                   <button
                     key={name}
-                    onClick={() => usable && handleUsePower(name, power)}
+                    onClick={() => usable && togglePower(name)}
                     disabled={!usable}
                     className={`w-full rounded-xl p-4 text-left transition-colors ${
-                      usable 
+                      isSelected 
+                        ? 'bg-purple-700 border-2 border-purple-400' 
+                        : usable 
                         ? 'bg-gray-800 hover:bg-gray-700' 
                         : 'bg-gray-800/50 opacity-50 cursor-not-allowed'
                     }`}
@@ -724,9 +757,18 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
               })}
             </div>
             
+            {selectedPowers.length > 0 && (
+              <button
+                onClick={handleUsePowers}
+                className="w-full mb-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-xl py-3 transition-colors"
+              >
+                Use {selectedPowers.length} Power{selectedPowers.length > 1 ? 's' : ''} Together
+              </button>
+            )}
+            
             <button
               onClick={onClose}
-              className="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-xl py-3 transition-colors"
+              className="w-full bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-xl py-3 transition-colors"
             >
               Cancel
             </button>
