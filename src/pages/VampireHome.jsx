@@ -24,22 +24,17 @@ export default function VampireHome() {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [showAllFriends, setShowAllFriends] = useState(false);
 
-  // Redirect to Home if no vampire state exists
-  useEffect(() => {
-    const checkGameState = async () => {
-      const states = await base44.entities.VampireState.list();
-      if (states.length === 0) {
-        navigate(createPageUrl('Home'), { replace: true });
-      }
-    };
-    checkGameState();
-  }, [navigate]);
-
-  
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
     queryFn: () => base44.entities.VampireState.list()
   });
+
+  // Redirect to Home if no vampire state exists - do this immediately
+  useEffect(() => {
+    if (vampireStates.length === 0) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [vampireStates, navigate]);
   
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
@@ -61,12 +56,12 @@ export default function VampireHome() {
     queryFn: () => base44.entities.PowerProgress.list()
   });
   
-  const vampireState = vampireStates[0] || {
-    hunger_state: 'calm',
-    emotional_mode: 'feeling',
-    unlocked_powers: [],
-    nights_passed: 0
-  };
+  // Don't render anything if no vampire state
+  if (vampireStates.length === 0) {
+    return null;
+  }
+
+  const vampireState = vampireStates[0];
   
   const handleMeditate = async () => {
     setMeditating(true);
