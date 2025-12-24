@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, BookOpen, Zap, Users, Briefcase, Scroll, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -106,6 +106,17 @@ export default function Codex() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('lore');
   const [selectedEntry, setSelectedEntry] = useState(null);
+
+  // Redirect to Home if no vampire state exists
+  useEffect(() => {
+    const checkGameState = async () => {
+      const states = await base44.entities.VampireState.list();
+      if (states.length === 0) {
+        navigate(createPageUrl('Home'));
+      }
+    };
+    checkGameState();
+  }, [navigate]);
 
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
