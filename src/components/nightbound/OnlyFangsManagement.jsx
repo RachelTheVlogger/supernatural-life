@@ -32,7 +32,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [filmWithVampire, setFilmWithVampire] = useState(null);
   const [newVideo, setNewVideo] = useState({ title: '', content_type: '', price: 15 });
   const [editingProfile, setEditingProfile] = useState(false);
-  const [profileData, setProfileData] = useState({ username: '', bio: '', profile_pic: '🦇' });
+  const [profileData, setProfileData] = useState({ username: '', bio: '', profile_pic: '🦇', is_couple: true });
+  const [livestreaming, setLivestreaming] = useState(false);
+  const [livestreamOutcome, setLivestreamOutcome] = useState('');
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -51,9 +53,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     await base44.entities.OnlyFangsProfile.create({
       servant_id: servant.id,
       username: profileData.username || `${servant.name}_vamp`,
-      bio: profileData.bio || `Vampire and their devoted servant. Watch us together. 🌙🦇`,
+      bio: profileData.bio || (profileData.is_couple ? `Vampire and their devoted servant. Watch us together. 🌙🦇` : `Solo content creator. Dark, sensual, yours. 🌙`),
       profile_pic: profileData.profile_pic,
-      is_couple_account: true,
+      is_couple_account: profileData.is_couple,
       subscriber_count: 0,
       revenue: 0,
       reputation: 0
@@ -308,10 +310,10 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             <X className="w-5 h-5" />
           </button>
 
-          <div className="text-6xl mb-4">💑</div>
-          <h2 className="text-2xl font-bold text-white mb-2">OnlyFangs - Couples Account</h2>
+          <div className="text-6xl mb-4">🔥</div>
+          <h2 className="text-2xl font-bold text-white mb-2">OnlyFangs</h2>
           <p className="text-gray-400 mb-6">
-            Create adult content together. Film each other. Build an audience. The night is yours.
+            Create adult content. Build an audience. Earn while you sleep. The night is yours.
           </p>
 
           <button
@@ -366,6 +368,24 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 placeholder="Tell them what makes you special..."
                 className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1 h-20"
               />
+            </div>
+
+            <div>
+              <label className="text-gray-400 text-sm">Account Type</label>
+              <div className="flex gap-2 mt-1">
+                <button
+                  onClick={() => setProfileData({...profileData, is_couple: true})}
+                  className={`flex-1 py-3 rounded-lg transition-colors ${profileData.is_couple ? 'bg-gradient-to-r from-pink-600 to-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+                >
+                  💑 Couple Account
+                </button>
+                <button
+                  onClick={() => setProfileData({...profileData, is_couple: false})}
+                  className={`flex-1 py-3 rounded-lg transition-colors ${!profileData.is_couple ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+                >
+                  💋 Solo Account
+                </button>
+              </div>
             </div>
 
             <div>
@@ -446,22 +466,28 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 overflow-x-auto">
           <button
             onClick={() => setTab('profile')}
-            className={`px-4 py-2 rounded-lg ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             Profile
           </button>
           <button
+            onClick={() => setTab('livestream')}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 ${tab === 'livestream' ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            <span className="text-red-400">🔴</span> Go Live
+          </button>
+          <button
             onClick={() => setTab('create')}
-            className={`px-4 py-2 rounded-lg ${tab === 'create' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'create' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             Create Content
           </button>
           <button
             onClick={() => setTab('videos')}
-            className={`px-4 py-2 rounded-lg ${tab === 'videos' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'videos' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             My Videos
           </button>
@@ -470,6 +496,11 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         {/* Tab Content */}
         {tab === 'profile' && (
           <div className="space-y-4">
+            <div className="bg-gray-800 rounded-xl p-4">
+              <h3 className="text-white font-medium mb-2">Account Type</h3>
+              <p className="text-gray-300">{servantProfile.is_couple_account ? '💑 Couple Account' : '💋 Solo Account'}</p>
+            </div>
+            
             <div className="bg-gray-800 rounded-xl p-4">
               <h3 className="text-white font-medium mb-2">Bio</h3>
               <p className="text-gray-300">{servantProfile.bio}</p>
@@ -481,6 +512,57 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             >
               Quit OnlyFangs
             </button>
+          </div>
+        )}
+
+        {tab === 'livestream' && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-red-950/40 to-pink-950/40 border-2 border-red-500/30 rounded-2xl p-6 text-center">
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-6xl mb-4"
+              >
+                🔴
+              </motion.div>
+              <h3 className="text-white text-2xl font-bold mb-2">Start Livestream</h3>
+              <p className="text-gray-300 mb-6">
+                Live. Unscripted. Raw. Your audience watching in real-time.
+              </p>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleLivestream(false)}
+                  disabled={livestreaming}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50"
+                >
+                  {livestreaming ? 'Live...' : 'Go Live Solo 💋'}
+                </button>
+                {servantProfile.is_couple_account && (
+                  <button
+                    onClick={() => handleLivestream(true)}
+                    disabled={livestreaming}
+                    className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50"
+                  >
+                    {livestreaming ? 'Live...' : 'Go Live Together 💑'}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-gray-800/50 rounded-xl p-4 border border-purple-500/20">
+              <h4 className="text-purple-400 font-medium mb-2 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" />
+                Livestream Tips
+              </h4>
+              <ul className="text-gray-400 text-sm space-y-1">
+                <li>• Higher earnings than regular videos</li>
+                <li>• Direct interaction with fans</li>
+                <li>• Tips pour in during the stream</li>
+                <li>• Couple streams earn 2x more</li>
+                <li>• Massive subscriber growth</li>
+              </ul>
+            </div>
           </div>
         )}
 
@@ -692,6 +774,32 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             >
               <div className="text-5xl mb-4">🎥</div>
               <p className="text-gray-300 text-lg leading-relaxed">{filmingOutcome}</p>
+            </motion.div>
+          </motion.div>
+        )}
+        
+        {livestreamOutcome && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-gradient-to-br from-red-950/80 to-pink-950/80 rounded-2xl p-6 max-w-md w-full text-center border-2 border-red-500/50"
+            >
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+                className="text-5xl mb-4"
+              >
+                🔴
+              </motion.div>
+              <p className="text-white text-lg leading-relaxed font-medium mb-2">LIVE</p>
+              <p className="text-gray-300 text-lg leading-relaxed">{livestreamOutcome}</p>
             </motion.div>
           </motion.div>
         )}

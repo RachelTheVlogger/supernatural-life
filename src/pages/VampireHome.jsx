@@ -285,8 +285,8 @@ export default function VampireHome() {
                   <div className="flex items-center gap-4">
                     <div className="text-4xl">💑</div>
                     <div className="text-left">
-                      <h3 className="text-white text-xl font-bold mb-1">OnlyFangs (Couples)</h3>
-                      <p className="text-gray-300 text-sm">Film content together. Intimate. Profitable.</p>
+                      <h3 className="text-white text-xl font-bold mb-1">OnlyFangs</h3>
+                      <p className="text-gray-300 text-sm">Create content. Livestream. Build your empire.</p>
                     </div>
                   </div>
                 </div>
