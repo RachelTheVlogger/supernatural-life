@@ -129,11 +129,13 @@ export default function Home() {
             </button>
           ) : (
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-purple-900/30">
-              <h3 className="text-white text-lg font-bold mb-4">Create Your Vampire</h3>
+              <h3 className="text-white text-lg font-bold mb-2">Create Your Vampire</h3>
+              <p className="text-purple-300 text-sm mb-4">You are a male vampire</p>
               <input
                 type="text"
                 value={vampireName}
                 onChange={(e) => setVampireName(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && vampireName.trim() && handleNewGame()}
                 placeholder="Enter your eternal name..."
                 className="w-full bg-gray-900 border border-purple-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-4 focus:outline-none focus:border-purple-500"
                 autoFocus
@@ -151,7 +153,8 @@ export default function Home() {
                 </button>
                 <button
                   onClick={handleNewGame}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-700 hover:to-red-700 rounded-lg py-3 text-white font-medium transition-all"
+                  disabled={!vampireName.trim()}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-700 hover:to-red-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg py-3 text-white font-medium transition-all disabled:opacity-50"
                 >
                   Begin
                 </button>
