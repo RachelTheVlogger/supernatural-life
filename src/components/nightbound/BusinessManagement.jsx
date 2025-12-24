@@ -421,7 +421,7 @@ export default function BusinessManagement({ servant, onClose }) {
                   const isCrafting = crafting === order.id;
                   
                   return (
-                    <div key={order.id} className="bg-gray-800 rounded-xl p-4">
+                    <div key={order.id} className="bg-gray-800 rounded-xl p-4 mb-3">
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <h4 className={`text-white font-medium ${RARITY_COLORS[order.rarity]}`}>
@@ -461,7 +461,68 @@ export default function BusinessManagement({ servant, onClose }) {
                       </button>
                     </div>
                   );
-                })
+                })}
+              
+              {completedOrders.length > 0 && (
+                <>
+                  <h3 className="text-white font-bold mb-3 mt-6">Completed Orders ({completedOrders.length})</h3>
+                  {completedOrders.map(order => (
+                    <div key={order.id} className="bg-gray-800 rounded-xl p-4 mb-3">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="text-white font-medium">{order.item}</h4>
+                          <p className="text-gray-400 text-sm">{order.customer_name}</p>
+                        </div>
+                        <p className="text-green-400 font-bold">${order.price}</p>
+                      </div>
+                      
+                      {showShippingOptions === order.id ? (
+                        <div className="space-y-2 mt-3">
+                          <button
+                            onClick={() => {
+                              handleShipOrder(order, 'standard');
+                              setShowShippingOptions(null);
+                            }}
+                            className="w-full bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-sm text-left touch-manipulation active:scale-95"
+                          >
+                            📦 Standard (5-7 days)
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleShipOrder(order, 'express');
+                              setShowShippingOptions(null);
+                            }}
+                            className="w-full bg-blue-700 hover:bg-blue-600 px-3 py-2 rounded text-sm text-left touch-manipulation active:scale-95"
+                          >
+                            ⚡ Express (2-3 days) +5 relationship
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleShipOrder(order, 'handDeliver');
+                              setShowShippingOptions(null);
+                            }}
+                            className="w-full bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded text-sm text-left touch-manipulation active:scale-95"
+                          >
+                            🚶 Hand Deliver +15 relationship
+                          </button>
+                          <button
+                            onClick={() => setShowShippingOptions(null)}
+                            className="w-full bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded text-xs touch-manipulation active:scale-95"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setShowShippingOptions(order.id)}
+                          className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-2 mt-2 transition-colors touch-manipulation active:scale-95"
+                        >
+                          Ship Order
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </>
               )}
             </>
           )}
