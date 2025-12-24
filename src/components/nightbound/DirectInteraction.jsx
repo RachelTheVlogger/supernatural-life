@@ -134,6 +134,139 @@ const INTERACTIONS = {
       high: ['Tangled together. No separation. Pure comfort.', 'They nuzzled into your neck. Utterly at peace.', 'Hours passed. Neither of you noticed.']
     }
   },
+  approachBehind: {
+    icon: Wind,
+    label: 'Approach from behind',
+    category: 'physical',
+    tier: 1,
+    gains: [8, 14],
+    outcomes: {
+      low: [
+        'You stepped behind them silently. They gasped when you touched their shoulders.',
+        'Your arms wrapped around them from behind. They froze, then relaxed.',
+        'You pressed against their back. They leaned into you hesitantly.',
+        'Behind them suddenly. Your breath on their neck. They shivered.'
+      ],
+      mid: [
+        'You came up behind them. Arms around their waist. They melted back against you.',
+        'Your chest pressed to their back. They sighed contentedly, fitting perfectly.',
+        'Behind them without warning. Your hands on their hips. They pressed back.',
+        'You pulled them back against you. They tilted their head, exposing their neck.'
+      ],
+      high: [
+        'You appeared behind them. Arms tight around their waist. They moaned softly, grinding back.',
+        'Your body pressed flush against their back. They arched, wanting more contact.',
+        'Behind them. Your hands roaming. They leaned back, giving you everything.',
+        'You pulled them hard against you. They felt your desire. Ground back eagerly.'
+      ]
+    }
+  },
+  neckKissBehind: {
+    icon: Heart,
+    label: 'Kiss their neck from behind',
+    category: 'physical',
+    tier: 2,
+    minRelationship: 30,
+    gains: [12, 20],
+    outcomes: {
+      mid: [
+        'Behind them. Your lips on their neck. They gasped, head tilting.',
+        'You kissed their neck softly from behind. They shivered, leaning back into you.',
+        'Neck kisses from behind. Slow. Deliberate. They moaned softly.',
+        'Your mouth on their neck. Behind them. They trembled, exposing more skin.',
+        'You pressed kisses up their neck from behind. They went weak in your arms.'
+      ],
+      high: [
+        'Behind them. Lips on their neck. Teeth grazing. They moaned loudly, grinding back against you.',
+        'You bit their neck gently from behind. They gasped "Yes" and pressed harder back.',
+        'Kissing their neck. Behind them. Your hands wandering. They begged "Don\'t stop."',
+        'Your teeth scraped their neck. Behind them. They whimpered, completely yours.',
+        'Neck kisses became bites. Behind them. They came undone, moaning your name.',
+        'You kissed and bit their neck while pressed against their back. They trembled, overwhelmed.'
+      ]
+    }
+  },
+  whisperDirty: {
+    icon: MessageCircle,
+    label: 'Whisper dirty things',
+    category: 'physical',
+    tier: 2,
+    minRelationship: 35,
+    gains: [14, 22],
+    outcomes: {
+      mid: [
+        'You whispered what you wanted to do to them. They shivered.',
+        'Behind them. Your mouth at their ear. "You\'re mine." They whimpered.',
+        'You described exactly how you\'d take them. They trembled.',
+        'Dirty words whispered. They blushed, breathing harder.',
+        'Your voice in their ear. Filthy promises. They pressed back against you.'
+      ],
+      high: [
+        'Behind them. You whispered "I\'m going to fuck you so hard." They moaned, grinding back.',
+        'Your mouth at their ear. "You\'re going to take every inch." They whimpered "Please."',
+        'You described exactly how you\'d use them. Filthy detail. They were trembling, wet.',
+        '"I want to bend you over right here." They gasped "Yes, please, yes."',
+        'Whispered all the dirty things you\'d do. They came just from your words.',
+        'Behind them. "You\'re my perfect little slut." They moaned "Yours. Only yours."',
+        '"I\'m going to fill you up completely." They begged "Please, I need it."',
+        'Filthy promises in their ear. They were shaking, desperate, begging.'
+      ]
+    }
+  },
+  behindSeduction: {
+    icon: Flame,
+    label: 'Seduce from behind',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 50,
+    gains: [18, 28],
+    outcomes: {
+      mid: [
+        'Behind them. Hands roaming. Lips on their neck. Dirty words whispered. They melted.',
+        'You pressed against them from behind. Kissing. Touching. Whispering. Perfect.',
+        'Your body against theirs. Neck kisses. Wandering hands. They surrendered completely.',
+        'Behind them. Every touch deliberate. Every word filthy. They were yours.'
+      ],
+      high: [
+        'Behind them. One hand in their hair, pulling their head back. The other between their legs. "You\'re so wet for me." They moaned loudly.',
+        'Pressed against their back. Kissing their neck. Hand sliding down. "I can feel how much you want this." They ground back desperately.',
+        'You pulled them against you from behind. Neck bites. Roaming hands. "You\'re going to cum for me right here." They did.',
+        'Behind them. Your hand cupping them through their clothes. "So fucking wet." They whimpered, legs shaking.',
+        'Neck kisses. Dirty whispers. Your hand between their thighs. "Such a good girl, so wet for me." They came.',
+        'You pinned them forward from behind. Hand down their pants. Filthy words in their ear. They came hard, crying out.',
+        'Behind them. Biting their neck. Fingers inside them. "Cum for me." They obeyed immediately, shaking.',
+        'Pressed flush behind them. One hand on their throat, the other working between their legs. They came sobbing your name.'
+      ]
+    }
+  },
+  roughBehind: {
+    icon: Flame,
+    label: 'Take them from behind (rough)',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 65,
+    gains: [25, 35],
+    outcomes: {
+      mid: [
+        'Bent them forward from behind. Rough. Urgent. They took it eagerly.',
+        'You grabbed their hips from behind. Pulled them back. They moaned.',
+        'From behind. Hard and fast. They braced themselves, loving it.',
+        'Rough taking from behind. They pushed back, meeting every thrust.'
+      ],
+      high: [
+        'Bent them over. From behind. Your hand in their hair, pulling. Fucked them hard. They screamed.',
+        'You pushed them forward. Entered from behind. Rough. Deep. They begged for more.',
+        'From behind. One hand on their hip, one hand around their throat. Pounded into them. Perfect.',
+        'Bent them over the counter. Fucked them from behind. Rough and desperate. They loved every second.',
+        'Behind them. Your hand gripping their hair. Pulling them back onto your cock. They moaned with each thrust.',
+        'You took them from behind. Hard. Spanking them. They cried out "Yes! Harder!"',
+        'From behind. Deep and rough. Your hand between their shoulder blades, holding them down. Claimed completely.',
+        'Bent forward. From behind. Brutal pace. They came screaming, clenching around you.',
+        'You grabbed their hips. Pulled them back onto you. From behind. They took you so deep, moaning.',
+        'Behind them. Rough fucking. Spanking their ass. Dirty words in their ear. They came hard.'
+      ]
+    }
+  },
   tease: {
     icon: Flame,
     label: 'Tease them',
