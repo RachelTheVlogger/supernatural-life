@@ -15,25 +15,25 @@ const POWER_PATHS = {
       {
         name: 'Blood Frenzy',
         description: 'Feed on multiple victims in one night without sating',
-        requirements: { nights: 5, ripperKills: 3 },
+        requirements: {},
         tier: 1
       },
       {
         name: 'Brutal Efficiency',
         description: 'Kills restore more hunger and grant temporary strength',
-        requirements: { nights: 10, ripperKills: 8, prerequisite: 'Blood Frenzy' },
+        requirements: { prerequisite: 'Blood Frenzy' },
         tier: 2
       },
       {
         name: 'Terror Aura',
         description: 'Victims freeze in fear, making hunting effortless',
-        requirements: { nights: 18, ripperKills: 15, prerequisite: 'Brutal Efficiency' },
+        requirements: { prerequisite: 'Brutal Efficiency' },
         tier: 3
       },
       {
         name: 'The Ripper Ascendant',
         description: 'Complete loss of control. Maximum power. Pure monster.',
-        requirements: { nights: 30, ripperKills: 30, humanity: 10, prerequisite: 'Terror Aura' },
+        requirements: { prerequisite: 'Terror Aura' },
         tier: 4
       }
     ]
@@ -47,55 +47,55 @@ const POWER_PATHS = {
       {
         name: 'Enhanced Senses',
         description: 'Perceive heartbeats from across a room',
-        requirements: { nights: 1 },
+        requirements: {},
         tier: 1
       },
       {
         name: 'Subtle Influence',
         description: 'Plant thoughts that feel like their own',
-        requirements: { nights: 3, relationship: 15 },
+        requirements: {},
         tier: 1
       },
       {
         name: 'Feral Rage',
         description: 'Unleash primal vampire fury',
-        requirements: { nights: 4, relationship: 20, prerequisite: 'Enhanced Senses' },
+        requirements: { prerequisite: 'Enhanced Senses' },
         tier: 1
       },
       {
         name: 'Dream Walking',
         description: 'Enter and control their dreams',
-        requirements: { nights: 6, relationship: 30, prerequisite: 'Enhanced Senses' },
+        requirements: { prerequisite: 'Enhanced Senses' },
         tier: 1
       },
       {
         name: 'Soul Gaze',
         description: 'See into their very essence',
-        requirements: { nights: 8, relationship: 35, prerequisite: 'Enhanced Senses' },
+        requirements: { prerequisite: 'Enhanced Senses' },
         tier: 2
       },
       {
         name: 'Commanding Presence',
         description: 'Your words carry unnatural weight',
-        requirements: { nights: 8, relationship: 30, prerequisite: 'Subtle Influence' },
+        requirements: { prerequisite: 'Subtle Influence' },
         tier: 2
       },
       {
         name: 'Time Dilation',
         description: 'Slow their perception of time',
-        requirements: { nights: 10, powers: 3, relationship: 40, prerequisite: 'Dream Walking' },
+        requirements: { prerequisite: 'Dream Walking' },
         tier: 2
       },
       {
         name: 'Mass Compulsion',
         description: 'Bend multiple minds at once',
-        requirements: { nights: 15, relationship: 50, servants: 2, prerequisite: 'Commanding Presence' },
+        requirements: { prerequisite: 'Commanding Presence' },
         tier: 3
       },
       {
         name: 'Perfect Thrall',
         description: 'Create servants who cannot disobey',
-        requirements: { nights: 25, relationship: 70, turned: 1, prerequisite: 'Mass Compulsion' },
+        requirements: { prerequisite: 'Mass Compulsion' },
         tier: 4
       }
     ]
@@ -109,25 +109,25 @@ const POWER_PATHS = {
       {
         name: 'Mist Form',
         description: 'Dissolve into fog',
-        requirements: { nights: 4 },
+        requirements: {},
         tier: 1
       },
       {
         name: 'Silent Movement',
         description: 'Your footsteps make no sound',
-        requirements: { nights: 9, prerequisite: 'Mist Form' },
+        requirements: { prerequisite: 'Mist Form' },
         tier: 2
       },
       {
         name: 'Veil of Darkness',
         description: 'Bend shadows around yourself',
-        requirements: { nights: 17, prerequisite: 'Silent Movement' },
+        requirements: { prerequisite: 'Silent Movement' },
         tier: 3
       },
       {
         name: 'Phantom Walk',
         description: 'Phase through solid matter',
-        requirements: { nights: 30, powers: 5, prerequisite: 'Veil of Darkness' },
+        requirements: { prerequisite: 'Veil of Darkness' },
         tier: 4
       }
     ]
@@ -141,25 +141,25 @@ const POWER_PATHS = {
       {
         name: 'Blood Bond',
         description: 'Create unbreakable loyalty through feeding',
-        requirements: { nights: 5, relationship: 20 },
+        requirements: {},
         tier: 1
       },
       {
         name: 'Servant Network',
         description: 'Your servants can sense each other',
-        requirements: { nights: 12, servants: 2, prerequisite: 'Blood Bond' },
+        requirements: { prerequisite: 'Blood Bond' },
         tier: 2
       },
       {
         name: 'Shared Senses',
         description: 'See through your servants\' eyes',
-        requirements: { nights: 20, servants: 2, relationship: 50, prerequisite: 'Servant Network' },
+        requirements: { prerequisite: 'Servant Network' },
         tier: 3
       },
       {
         name: 'Hive Mind',
         description: 'All your servants act as one',
-        requirements: { nights: 35, turned: 1, relationship: 70, prerequisite: 'Shared Senses' },
+        requirements: { prerequisite: 'Shared Senses' },
         tier: 4
       }
     ]
@@ -173,25 +173,25 @@ const POWER_PATHS = {
       {
         name: 'Heightened Reflexes',
         description: 'Move faster than mortal eyes can follow',
-        requirements: { nights: 3 },
+        requirements: {},
         tier: 1
       },
       {
         name: 'Supernatural Strength',
         description: 'Bend steel with your hands',
-        requirements: { nights: 10, prerequisite: 'Heightened Reflexes' },
+        requirements: { prerequisite: 'Heightened Reflexes' },
         tier: 2
       },
       {
         name: 'Regeneration',
         description: 'Wounds close in moments',
-        requirements: { nights: 22, prerequisite: 'Supernatural Strength' },
+        requirements: { prerequisite: 'Supernatural Strength' },
         tier: 3
       },
       {
         name: 'Ancient Form',
         description: 'Transform into a creature of nightmare',
-        requirements: { nights: 40, turned: 2, powers: 8, prerequisite: 'Regeneration' },
+        requirements: { prerequisite: 'Regeneration' },
         tier: 4
       }
     ]
