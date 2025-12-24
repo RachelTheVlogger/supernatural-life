@@ -217,20 +217,20 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
         <div className="flex gap-2">
           <button
             onClick={() => setTab('messages')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors touch-manipulation ${
               tab === 'messages' 
                 ? 'bg-purple-600 text-white' 
-                : 'bg-gray-800 text-white hover:text-white'
+                : 'bg-gray-800 text-white active:bg-gray-700'
             }`}
           >
             Messages
           </button>
           <button
             onClick={() => setTab('business')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors touch-manipulation flex items-center justify-center gap-1 ${
               tab === 'business' 
                 ? 'bg-purple-600 text-white' 
-                : 'bg-gray-800 text-white hover:text-white'
+                : 'bg-gray-800 text-white active:bg-gray-700'
             }`}
           >
             <Package className="w-4 h-4" />
@@ -238,10 +238,10 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
           </button>
           <button
             onClick={() => setTab('reviews')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors touch-manipulation flex items-center justify-center gap-1 ${
               tab === 'reviews' 
                 ? 'bg-purple-600 text-white' 
-                : 'bg-gray-800 text-white hover:text-white'
+                : 'bg-gray-800 text-white active:bg-gray-700'
             }`}
           >
             <Star className="w-4 h-4" />
