@@ -1467,6 +1467,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const queryClient = useQueryClient();
   
+  // Always call hooks in the same order - never conditionally
   const { data: interactionProgress = [] } = useQuery({
     queryKey: ['interactionProgress'],
     queryFn: () => base44.entities.InteractionProgress.list()
@@ -1526,11 +1527,16 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     setProcessing(true);
     setInteractionType(type);
     
-    const interaction = INTERACTIONS[type];
+    // Get interaction from combined interactions (handles turned vampires)
+    const allInteractions = servant.is_turned 
+      ? { ...INTERACTIONS, ...TURNED_VAMPIRE_INTERACTIONS }
+      : INTERACTIONS;
+    
+    const interaction = allInteractions[type];
     const rel = servant.relationship || 0;
     const tier = getRelationshipTier(rel);
     
-    // Handle dynamic outcomes for praise
+    // Handle dynamic outcomes for praise/degradation
     const outcomes = interaction.getDynamicOutcomes 
       ? interaction.getDynamicOutcomes(servant.name)[tier]
       : (interaction.outcomes[tier] || interaction.outcomes.low);
