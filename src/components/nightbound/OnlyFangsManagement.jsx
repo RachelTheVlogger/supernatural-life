@@ -1994,16 +1994,127 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 overflow-hidden"
           >
+            {/* Sexy animated background effects */}
+            {[...Array(30)].map((_, i) => (
+              <motion.div
+                key={`heart-${i}`}
+                className="absolute text-4xl"
+                initial={{ 
+                  x: `${Math.random() * 100}%`,
+                  y: '110%',
+                  opacity: 0,
+                  rotate: 0
+                }}
+                animate={{ 
+                  y: '-10%',
+                  opacity: [0, 0.8, 0],
+                  rotate: 360
+                }}
+                transition={{ 
+                  duration: 4 + Math.random() * 2,
+                  delay: Math.random() * 3,
+                  ease: 'easeOut'
+                }}
+              >
+                {['❤️', '💋', '🔥', '💦'][Math.floor(Math.random() * 4)]}
+              </motion.div>
+            ))}
+
+            {/* Camera flash effects */}
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={`flash-${i}`}
+                className="absolute inset-0 bg-white pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ 
+                  opacity: [0, 0.3, 0]
+                }}
+                transition={{ 
+                  duration: 0.2,
+                  delay: i * 0.5,
+                  repeat: 2
+                }}
+              />
+            ))}
+
+            {/* Sparkle effects */}
+            {[...Array(40)].map((_, i) => (
+              <motion.div
+                key={`sparkle-${i}`}
+                className="absolute text-2xl"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                initial={{ 
+                  opacity: 0,
+                  scale: 0
+                }}
+                animate={{ 
+                  opacity: [0, 1, 0],
+                  scale: [0, 1.5, 0],
+                  rotate: [0, 180, 360]
+                }}
+                transition={{ 
+                  duration: 1.5,
+                  delay: Math.random() * 4,
+                  repeat: Infinity
+                }}
+              >
+                ✨
+              </motion.div>
+            ))}
+
+            {/* Heat wave effect */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle at 50% 50%, rgba(255, 50, 100, 0.2) 0%, transparent 70%)'
+              }}
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.6, 0.3]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: 'easeInOut'
+              }}
+            />
+
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center border border-red-500/30"
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center border border-red-500/30 relative z-10"
             >
-              <div className="text-5xl mb-4">🎥</div>
-              <p className="text-gray-300 text-lg leading-relaxed">{filmingOutcome}</p>
+              <motion.div 
+                className="text-5xl mb-4"
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  rotate: [0, -10, 10, 0]
+                }}
+                transition={{ 
+                  duration: 1,
+                  repeat: Infinity
+                }}
+              >
+                🎥
+              </motion.div>
+              <motion.p 
+                className="text-gray-300 text-lg leading-relaxed"
+                animate={{ 
+                  opacity: [0.7, 1, 0.7]
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity
+                }}
+              >
+                {filmingOutcome}
+              </motion.p>
             </motion.div>
           </motion.div>
         )}
