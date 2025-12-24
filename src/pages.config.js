@@ -4,6 +4,7 @@ import Messages from './pages/Messages';
 import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
 import VampireHome from './pages/VampireHome';
+import Index from './pages/Index';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +15,7 @@ export const PAGES = {
     "Night": Night,
     "ServantHome": ServantHome,
     "VampireHome": VampireHome,
+    "Index": Index,
 }
 
 export const pagesConfig = {
