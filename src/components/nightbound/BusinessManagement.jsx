@@ -431,20 +431,74 @@ export default function BusinessManagement({ servant, onClose }) {
                   <div className="grid md:grid-cols-2 gap-3">
                     {designs.map(design => {
                       const canMake = canCraft(design);
+                      const isCrafting = crafting === design.name;
                       return (
                         <div key={design.name} className="bg-gray-800 rounded-xl p-4">
                           <h4 className={`font-medium mb-2 ${RARITY_COLORS[rarity]}`}>{design.name}</h4>
                           <p className="text-green-400 text-sm mb-2">${design.basePrice}</p>
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            {Object.entries(design.materials).map(([mat, amt]) => (
-                              <span key={mat} className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">
-                                {MATERIAL_INFO[mat]?.icon} {amt}
-                              </span>
-                            ))}
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {Object.entries(design.materials).map(([mat, amt]) => {
+                              const have = getInventory(mat);
+                              const hasEnough = have >= amt;
+                              return (
+                                <span key={mat} className={`text-xs px-2 py-1 rounded ${
+                                  hasEnough ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'
+                                }`}>
+                                  {MATERIAL_INFO[mat]?.icon} {amt}/{have}
+                                </span>
+                              );
+                            })}
                           </div>
-                          <p className={`text-xs ${canMake ? 'text-green-400' : 'text-red-400'}`}>
-                            {canMake ? '✓ Can craft' : '✗ Missing materials'}
-                          </p>
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (!canMake || isCrafting) return;
+                              
+                              setCrafting(design.name);
+                              
+                              // Consume materials
+                              for (const [material, amount] of Object.entries(design.materials)) {
+                                const inv = inventory.find(i => i.material === material);
+                                if (inv) {
+                                  await base44.entities.Inventory.update(inv.id, {
+                                    quantity: inv.quantity - amount
+                                  });
+                                }
+                              }
+                              
+                              // Apply speed upgrade
+                              const speedLevel = getUpgradeLevel('speed_bench');
+                              const craftTime = design.time * (1 - (speedLevel * 0.25));
+                              
+                              setTimeout(async () => {
+                                // Apply quality upgrade
+                                const qualityLevel = getUpgradeLevel('quality_tools');
+                                const priceBonus = 1 + (qualityLevel * 0.15);
+                                const finalPrice = Math.floor(design.basePrice * priceBonus);
+                                
+                                // Add to inventory as finished piece (we can store it)
+                                await base44.entities.NightLog.create({
+                                  entry: `${servant.name} crafted ${design.name} for practice. Worth $${finalPrice}.`,
+                                  category: 'interaction',
+                                  intensity: 'subtle'
+                                });
+                                
+                                const displayLevel = getUpgradeLevel('display_case');
+                                const repGain = Math.floor(2 * (1 + displayLevel * 0.2));
+                                
+                                await base44.entities.BusinessStats.update(businessStats.id, {
+                                  reputation: Math.min(100, businessStats.reputation + repGain)
+                                });
+                                
+                                queryClient.invalidateQueries();
+                                setCrafting(null);
+                              }, craftTime);
+                            }}
+                            disabled={!canMake || isCrafting}
+                            className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white text-sm rounded-lg py-2 transition-colors disabled:opacity-50"
+                          >
+                            {isCrafting ? 'Crafting...' : canMake ? 'Craft Now' : 'Missing Materials'}
+                          </button>
                         </div>
                       );
                     })}
