@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Users, MessageCircle, Eye, UserPlus } from 'lucide-react';
+import { X, Users, MessageCircle, Eye, UserPlus, Home } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -8,30 +8,81 @@ const CONVERSATION_TOPICS = {
   cautious: [
     { q: "So... you really live with them? A vampire?", a: "Yes. Every night. It's... complicated." },
     { q: "Aren't you scared? Don't they want to... you know?", a: "Sometimes. But there's more to it than fear." },
-    { q: "Why would you choose this?", a: "I didn't choose it. It chose me." }
+    { q: "Why would you choose this?", a: "I didn't choose it. It chose me." },
+    { q: "What do they look like? Are they... attractive?", a: "Beautiful. Terrifying. Both at once." },
+    { q: "Do you sleep in the same house?", a: "Yes. I hear them moving at night." },
+    { q: "Have they ever hurt you?", a: "Not in the way you'd think." },
+    { q: "Can you leave? If you wanted to?", a: "I... I don't know if I want to anymore." },
+    { q: "What happens if you disobey them?", a: "I haven't tried. I don't want to find out." }
   ],
   curious: [
     { q: "What's it like? Being with a vampire?", a: "Like nothing else. Every moment feels electric." },
     { q: "Do they really have powers? Can they read minds?", a: "Some can. Mine can do things you wouldn't believe." },
-    { q: "Have you ever seen them feed?", a: "Yes. It's... intimate. More than you'd think." }
+    { q: "Have you ever seen them feed?", a: "Yes. It's... intimate. More than you'd think." },
+    { q: "Could they turn you into one? Do you want that?", a: "Maybe. The thought crosses my mind more than it should." },
+    { q: "What do they smell like?", a: "Like old books. Night air. Something ancient." },
+    { q: "Do they age? Will you grow old while they stay the same?", a: "That's... something I try not to think about." },
+    { q: "Have you met other vampires?", a: "No. Just mine. That's enough." },
+    { q: "What's the most supernatural thing you've witnessed?", a: "I watched them move through shadows like liquid darkness." }
   ],
   'thrill-seeking': [
     { q: "That sounds incredible. I want to meet them.", a: "Be careful what you wish for." },
     { q: "Do they ever let you watch them hunt?", a: "Sometimes. It's dangerous. Exhilarating." },
-    { q: "Could I become like you? A servant?", a: "Maybe. If they choose you." }
+    { q: "Could I become like you? A servant?", a: "Maybe. If they choose you." },
+    { q: "Have you ever been in danger because of them?", a: "Every single day. That's part of the thrill." },
+    { q: "Do you ever go hunting with them?", a: "Once. I'll never forget it. The adrenaline, the power..." },
+    { q: "Would they bite me? If I asked?", a: "You'd have to earn that. It's not a game." },
+    { q: "What's the darkest thing you've seen them do?", a: "Things I can't unsee. Things that should horrify me. But don't." },
+    { q: "Can you introduce me? Please?", a: "If you're serious... I could ask them." }
   ],
   lonely: [
     { q: "You're never alone, are you?", a: "No. Never. They're always there." },
     { q: "What's it feel like? Being wanted like that?", a: "Like being seen. Really seen. For the first time." },
-    { q: "Do you think... they could want someone like me?", a: "They might. If you're willing." }
+    { q: "Do you think... they could want someone like me?", a: "They might. If you're willing." },
+    { q: "Do they hold you? Touch you?", a: "Yes. Cold hands. But gentle." },
+    { q: "Are you in love with them?", a: "I... I don't know what this is. But it's everything." },
+    { q: "Do they need you? Really need you?", a: "More than they'd admit. I'm theirs. They're mine." },
+    { q: "What would you do if they left you?", a: "I can't imagine it. I don't want to." },
+    { q: "Have they said they love you?", a: "Not in those words. But I feel it. Every night." }
   ]
 };
+
+const VISIT_SCENARIOS = [
+  {
+    intro: "{friend} came over. They sat in your living room, eyes darting nervously around.",
+    questions: [
+      "Can I... look around? See where you actually live with them?",
+      "Do you have any of their things here? Their belongings?",
+      "Where do they sleep? Can I see?",
+      "What's it like waking up every day knowing they're... here?"
+    ]
+  },
+  {
+    intro: "{friend} wanted to stay for dinner. They keep glancing at the shadows.",
+    questions: [
+      "Do you ever cook for them? Do they eat regular food?",
+      "What time do they usually come home?",
+      "Have you ever accidentally walked in on them feeding?",
+      "Do you dream about them?"
+    ]
+  },
+  {
+    intro: "{friend} arrived late at night. They said they couldn't sleep. Thinking about your life.",
+    questions: [
+      "Are you happy? Really happy?",
+      "Do you ever wish you could go back? Before them?",
+      "What happens if you fall in love with someone else?",
+      "Would they let me stay the night? Here?"
+    ]
+  }
+];
 
 export default function FriendsSystem({ servant, onClose }) {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [conversing, setConversing] = useState(false);
   const [meetingNew, setMeetingNew] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [visiting, setVisiting] = useState(false);
   const queryClient = useQueryClient();
   
   const { data: potentialServants = [] } = useQuery({
@@ -112,6 +163,48 @@ export default function FriendsSystem({ servant, onClose }) {
         setSelectedFriend(null);
       }, 5000);
     }, 1500);
+  };
+
+  const handleVisit = async (friend, e) => {
+    if (e) e.stopPropagation();
+    setSelectedFriend(friend);
+    setVisiting(true);
+    
+    setTimeout(async () => {
+      const scenario = VISIT_SCENARIOS[Math.floor(Math.random() * VISIT_SCENARIOS.length)];
+      const question = scenario.questions[Math.floor(Math.random() * scenario.questions.length)];
+      
+      const friendshipGain = Math.floor(Math.random() * 12) + 10;
+      const curiosityGain = Math.floor(Math.random() * 15) + 12;
+      
+      const newFriendship = Math.min(friend.friendship_level + friendshipGain, 100);
+      const newCuriosity = Math.min(friend.curiosity_level + curiosityGain, 100);
+      
+      await base44.entities.PotentialServant.update(friend.id, {
+        friendship_level: newFriendship,
+        curiosity_level: newCuriosity,
+        last_conversation: new Date().toISOString(),
+        knows_about_vampires: newCuriosity >= 60
+      });
+      
+      const intro = scenario.intro.replace('{friend}', friend.name);
+      setOutcome(`${intro}\n\n"${question}"\n\nThey see your world now. The line between curiosity and obsession blurs.`);
+      
+      await base44.entities.NightLog.create({
+        entry: `${friend.name} visited ${servant.name}'s home. Saw where the vampire lives. Questions multiply.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+      
+      queryClient.invalidateQueries(['potentialServants']);
+      queryClient.invalidateQueries(['logs']);
+      
+      setTimeout(() => {
+        setVisiting(false);
+        setOutcome('');
+        setSelectedFriend(null);
+      }, 6000);
+    }, 2000);
   };
   
   const handleRevealTruth = async (friend, e) => {
@@ -237,14 +330,14 @@ export default function FriendsSystem({ servant, onClose }) {
               {outcome}
             </motion.p>
           </div>
-        ) : conversing || meetingNew ? (
+        ) : conversing || meetingNew || visiting ? (
           <div className="text-center py-12">
             <motion.p
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity }}
               className="text-gray-400"
             >
-              {conversing ? 'Talking...' : 'Meeting...'}
+              {conversing ? 'Talking...' : visiting ? 'Visiting...' : 'Meeting...'}
             </motion.p>
           </div>
         ) : (
@@ -308,19 +401,29 @@ export default function FriendsSystem({ servant, onClose }) {
                       </div>
                     </div>
                     
-                    <div className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         onClick={(e) => handleConversation(friend, e)}
-                        className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
+                        className="bg-blue-900/40 hover:bg-blue-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
                       >
                         <MessageCircle className="w-3 h-3" />
                         Talk
                       </button>
                       
+                      {friend.friendship_level >= 30 && (
+                        <button
+                          onClick={(e) => handleVisit(friend, e)}
+                          className="bg-purple-900/40 hover:bg-purple-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
+                        >
+                          <Home className="w-3 h-3" />
+                          Visit
+                        </button>
+                      )}
+                      
                       {!friend.knows_about_vampires && friend.curiosity_level >= 50 && (
                         <button
                           onClick={(e) => handleRevealTruth(friend, e)}
-                          className="flex-1 bg-yellow-900/40 hover:bg-yellow-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
+                          className="bg-yellow-900/40 hover:bg-yellow-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
                         >
                           <Eye className="w-3 h-3" />
                           Reveal
@@ -330,7 +433,7 @@ export default function FriendsSystem({ servant, onClose }) {
                       {friend.knows_about_vampires && friend.curiosity_level >= 80 && (
                         <button
                           onClick={(e) => handleRecruitAsServant(friend, e)}
-                          className="flex-1 bg-red-900/40 hover:bg-red-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
+                          className="bg-red-900/40 hover:bg-red-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
                         >
                           <Users className="w-3 h-3" />
                           Recruit
