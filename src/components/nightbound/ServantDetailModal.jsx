@@ -524,7 +524,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[50vh] overflow-y-auto">
             <button
               onClick={(e) => {
                 e.stopPropagation();

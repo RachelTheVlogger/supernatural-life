@@ -1949,7 +1949,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             </motion.p>
           </div>
         ) : (
-          <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+          <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-2">
             {filteredInteractions.map(([key, interaction]) => {
               const unlockedTier = getUnlockedTier(interaction.category);
               const isLocked = interaction.tier && interaction.tier > unlockedTier;
