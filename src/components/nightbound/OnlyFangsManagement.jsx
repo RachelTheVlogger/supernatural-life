@@ -71,6 +71,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [bundleData, setBundleData] = useState({ name: '', videoIds: [], discount: 0.3 });
   const [brainstorming, setBrainstorming] = useState(false);
   const [brainstormIdea, setBrainstormIdea] = useState(null);
+  const [creatingPost, setCreatingPost] = useState(false);
+  const [newPost, setNewPost] = useState({ caption: '', content: '', is_ppv: false, price: 0 });
+  const [viewingComments, setViewingComments] = useState(null);
 
   const { data: profile = [], isLoading: profileLoading } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -84,9 +87,22 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     staleTime: 3000
   });
 
+  const { data: posts = [], isLoading: postsLoading } = useQuery({
+    queryKey: ['onlyfangs-posts', servant.id],
+    queryFn: () => base44.entities.OnlyFangsPost.filter({ servant_id: servant.id }, '-created_date'),
+    staleTime: 3000
+  });
+
+  const { data: allComments = [] } = useQuery({
+    queryKey: ['onlyfangs-comments', servant.id],
+    queryFn: () => base44.entities.OnlyFangsComment.filter({ servant_id: servant.id }, '-created_date'),
+    staleTime: 3000
+  });
+
   const isTabLoading = (tabName) => {
     if (tabName === 'videos') return videosLoading;
     if (tabName === 'create') return videosLoading;
+    if (tabName === 'posts') return postsLoading;
     return false;
   };
 
@@ -757,6 +773,77 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     setBrainstormIdea(null);
   };
 
+  const handleCreatePost = async () => {
+    if (!newPost.content || !newPost.caption) return;
+    setCreatingPost(true);
+    
+    setTimeout(async () => {
+      const post = await base44.entities.OnlyFangsPost.create({
+        servant_id: servant.id,
+        caption: newPost.caption,
+        content: newPost.content,
+        is_ppv: newPost.is_ppv,
+        price: newPost.price,
+        likes: 0,
+        earnings: 0
+      });
+
+      const baseLikes = Math.floor(Math.random() * 100) + 50;
+      let earnings = 0;
+      
+      if (newPost.is_ppv) {
+        const unlocks = Math.floor(servantProfile.subscriber_count * (Math.random() * 0.3 + 0.2));
+        earnings = unlocks * newPost.price;
+      }
+
+      await base44.entities.OnlyFangsPost.update(post.id, {
+        likes: baseLikes,
+        earnings: earnings
+      });
+
+      // Generate 3-8 comments
+      const numComments = Math.floor(Math.random() * 6) + 3;
+      const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire'];
+      const comments = [
+        'So fucking hot 🔥', 'Damn you look amazing', 'I need more of you', 'Perfect body',
+        'This is everything', 'You\'re so sexy', 'Can\'t stop looking at this', 'Wow just wow',
+        'Please post more like this', 'Absolutely stunning', 'My favorite creator', 'So beautiful',
+        'This made my night', 'I\'m obsessed with you', 'Best content ever', 'You\'re incredible'
+      ];
+      
+      for (let i = 0; i < numComments; i++) {
+        await base44.entities.OnlyFangsComment.create({
+          servant_id: servant.id,
+          post_id: post.id,
+          username: usernames[Math.floor(Math.random() * usernames.length)],
+          comment: comments[Math.floor(Math.random() * comments.length)],
+          tip: Math.random() > 0.7 ? Math.floor(Math.random() * 20) + 5 : 0
+        });
+      }
+
+      const newRevenue = servantProfile.revenue + earnings;
+      const newSubs = servantProfile.subscriber_count + Math.floor(Math.random() * 8) + 2;
+      const newRep = Math.min(100, servantProfile.reputation + Math.floor(Math.random() * 5) + 2);
+
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: newRevenue,
+        subscriber_count: newSubs,
+        reputation: newRep
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} posted: "${newPost.caption}". ${baseLikes} likes. ${numComments} comments.${newPost.is_ppv ? ` Earned $${earnings}.` : ''}`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+
+      queryClient.invalidateQueries();
+      setCreatingPost(false);
+      setNewPost({ caption: '', content: '', is_ppv: false, price: 0 });
+      setTab('posts');
+    }, 2000);
+  };
+
   if (!hasProfile && !editingProfile) {
     return (
       <motion.div
@@ -944,6 +1031,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </button>
           <button onClick={() => setTab('videos')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'videos' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             Videos
+          </button>
+          <button onClick={() => setTab('posts')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'posts' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            Pictures
           </button>
           <button onClick={() => setTab('ppv')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'ppv' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <MessageCircle className="w-3 h-3" /> PPV
@@ -1326,6 +1416,12 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                           </button>
                         </>
                       )}
+                      <button
+                        onClick={() => setViewingComments({ type: 'video', id: video.id, title: video.title })}
+                        className="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-xs py-2 rounded"
+                      >
+                        💬 {allComments.filter(c => c.video_id === video.id).length} Comments
+                      </button>
                     </div>
                   </div>
                 );
@@ -1655,6 +1751,51 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </div>
         )}
 
+        {tab === 'posts' && (
+          <div className="space-y-3 max-h-[55vh] overflow-y-auto">
+            <button
+              onClick={() => setCreatingPost(true)}
+              className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-medium py-3 rounded-xl transition-all"
+            >
+              + Post New Picture
+            </button>
+
+            {posts.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No posts yet. Share your first picture!</p>
+            ) : (
+              posts.map(post => {
+                const postComments = allComments.filter(c => c.post_id === post.id);
+                return (
+                  <div key={post.id} className="bg-gray-800 rounded-xl p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                      <span className="text-4xl">📷</span>
+                      <div className="flex-1">
+                        <p className="text-white font-medium mb-1">{post.caption}</p>
+                        <p className="text-gray-400 text-sm mb-2">{post.content}</p>
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                          <span>❤️ {post.likes} likes</span>
+                          <span>💬 {postComments.length} comments</span>
+                          {post.is_ppv && <span className="text-green-400">💰 ${post.earnings} earned</span>}
+                        </div>
+                      </div>
+                      {post.is_ppv && (
+                        <span className="text-green-400 font-bold">${post.price}</span>
+                      )}
+                    </div>
+                    
+                    <button
+                      onClick={() => setViewingComments({ type: 'post', id: post.id, title: post.caption })}
+                      className="w-full bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm py-2 rounded-lg transition-colors"
+                    >
+                      View {postComments.length} Comments
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+
         {tab === 'brainstorm' && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
@@ -1719,6 +1860,135 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
       </motion.div>
       
       <AnimatePresence>
+        {creatingPost && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
+            onClick={() => setCreatingPost(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <h3 className="text-white text-xl font-bold mb-4">Post New Picture</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-gray-400 text-sm">Caption</label>
+                  <input
+                    type="text"
+                    value={newPost.caption}
+                    onChange={(e) => setNewPost({...newPost, caption: e.target.value})}
+                    placeholder="Your caption..."
+                    className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-gray-400 text-sm">What's in the picture?</label>
+                  <textarea
+                    value={newPost.content}
+                    onChange={(e) => setNewPost({...newPost, content: e.target.value})}
+                    placeholder="Describe what you're showing... Be explicit."
+                    className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1 h-24"
+                  />
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                    <input
+                      type="checkbox"
+                      checked={newPost.is_ppv}
+                      onChange={(e) => setNewPost({...newPost, is_ppv: e.target.checked})}
+                      className="rounded"
+                    />
+                    Lock as PPV (pay to view)
+                  </label>
+                  
+                  {newPost.is_ppv && (
+                    <div className="flex gap-2">
+                      {[5, 10, 15, 20, 30].map(price => (
+                        <button
+                          key={price}
+                          onClick={() => setNewPost({...newPost, price})}
+                          className={`px-4 py-2 rounded-lg ${newPost.price === price ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+                        >
+                          ${price}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCreatingPost(false)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleCreatePost}
+                    disabled={!newPost.caption || !newPost.content}
+                    className="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white py-3 rounded-xl transition-all disabled:opacity-50"
+                  >
+                    Post
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {viewingComments && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setViewingComments(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+            >
+              <h3 className="text-white text-xl font-bold mb-2">{viewingComments.title}</h3>
+              <p className="text-gray-400 text-sm mb-4">Comments</p>
+              
+              <div className="space-y-3">
+                {allComments
+                  .filter(c => viewingComments.type === 'video' ? c.video_id === viewingComments.id : c.post_id === viewingComments.id)
+                  .map(comment => (
+                    <div key={comment.id} className="bg-gray-800 rounded-lg p-3">
+                      <div className="flex items-start justify-between mb-1">
+                        <span className="text-purple-400 font-medium text-sm">{comment.username}</span>
+                        {comment.tip > 0 && (
+                          <span className="text-green-400 text-xs">💵 ${comment.tip}</span>
+                        )}
+                      </div>
+                      <p className="text-gray-300 text-sm">{comment.comment}</p>
+                    </div>
+                  ))}
+              </div>
+              
+              <button
+                onClick={() => setViewingComments(null)}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl mt-4 transition-colors"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+
         {filmingOutcome && (
           <motion.div
             initial={{ opacity: 0 }}
