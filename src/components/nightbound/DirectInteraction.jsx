@@ -1656,10 +1656,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-colors relative ${
+                    className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-colors relative touch-manipulation ${
                       selectedCategory === cat 
                         ? 'bg-purple-600 text-white' 
-                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                        : 'bg-gray-800 text-gray-400 active:bg-gray-700'
                     }`}
                   >
                     <div className="flex items-center gap-1.5">
