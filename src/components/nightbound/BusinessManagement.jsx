@@ -149,6 +149,39 @@ export default function BusinessManagement({ servant, onClose }) {
 
   const businessStats = stats[0] || { reputation: 50, total_sales: 0, revenue: 0, average_rating: 0, passive_income_rate: 0 };
 
+  // Auto-generate orders
+  React.useEffect(() => {
+    const generateOrder = async () => {
+      if (orders.length < 5) {
+        const rarities = ['common', 'common', 'common', 'uncommon', 'uncommon', 'rare'];
+        const rarity = rarities[Math.floor(Math.random() * rarities.length)];
+        const designs = JEWELRY_DESIGNS[rarity];
+        const design = designs[Math.floor(Math.random() * designs.length)];
+        
+        const names = ['Luna', 'Raven', 'Ash', 'Salem', 'Morticia', 'Wednesday', 'Elvira', 'Lilith'];
+        const customerName = names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random() * 100);
+        
+        await base44.entities.BusinessOrder.create({
+          servant_id: servant.id,
+          customer_name: customerName,
+          item: design.name,
+          rarity: rarity,
+          price: design.basePrice,
+          crafting_time: design.time,
+          status: 'pending',
+          message: 'Looking forward to receiving this!'
+        });
+        
+        queryClient.invalidateQueries(['orders']);
+      }
+    };
+    
+    const interval = setInterval(generateOrder, 30000); // Every 30 seconds
+    generateOrder(); // Initial order
+    
+    return () => clearInterval(interval);
+  }, [orders.length]);
+
   // Calculate passive income
   const calculatePassiveIncome = () => {
     if (!businessStats.last_passive_collection) return 0;
