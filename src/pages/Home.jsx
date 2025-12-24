@@ -26,26 +26,32 @@ export default function Home() {
       return;
     }
     
-    // Only delete vampire states - game will handle cleanup
-    if (vampireStates.length > 0) {
-      for (const v of vampireStates) {
-        await base44.entities.VampireState.delete(v.id);
+    try {
+      // Only delete vampire states - game will handle cleanup
+      if (vampireStates.length > 0) {
+        for (const v of vampireStates) {
+          await base44.entities.VampireState.delete(v.id);
+        }
       }
+      
+      // Create new vampire state
+      await base44.entities.VampireState.create({
+        vampire_name: vampireName.trim(),
+        job: 'Night Shift Nurse',
+        hunger_state: 'calm',
+        emotional_mode: 'feeling',
+        unlocked_powers: [],
+        nights_passed: 0,
+        humanity: 50,
+        moral_path: 'balanced'
+      });
+      
+      // Navigate directly to the game
+      navigate(createPageUrl('Night'));
+    } catch (error) {
+      alert('Error starting game. Please try again.');
+      console.error(error);
     }
-    
-    // Create new vampire state
-    await base44.entities.VampireState.create({
-      vampire_name: vampireName.trim(),
-      job: 'Night Shift Nurse',
-      hunger_state: 'calm',
-      emotional_mode: 'feeling',
-      unlocked_powers: [],
-      nights_passed: 0,
-      humanity: 50,
-      moral_path: 'balanced'
-    });
-    
-    setShowTutorial(true);
   };
   
   const handleContinue = () => {
