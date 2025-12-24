@@ -8,11 +8,11 @@ const PRESET_TITLES = [
   { value: 'Sir', label: 'Sir' },
   { value: 'Master', label: 'Master' },
   { value: 'Daddy', label: 'Daddy' },
-  { value: 'Mistress', label: 'Mistress' },
-  { value: 'Goddess', label: 'Goddess' },
   { value: 'Lord', label: 'Lord' },
   { value: 'My Lord', label: 'My Lord' },
-  { value: 'Owner', label: 'Owner' }
+  { value: 'Owner', label: 'Owner' },
+  { value: 'King', label: 'King' },
+  { value: 'Boss', label: 'Boss' }
 ];
 
 export default function TitleSelection({ vampireState, servant, onClose }) {

@@ -1847,7 +1847,6 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
               const relDisabled = interaction.minRelationship && rel < interaction.minRelationship;
               const disabled = isLocked || relDisabled;
               const Icon = interaction.icon;
-              const isNew = interaction.tier && interaction.tier === unlockedTier;
 
               return (
                 <button
@@ -1857,9 +1856,9 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                     if (!disabled) handleInteraction(key);
                   }}
                   disabled={disabled}
-                  className={`bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm relative ${
-                    isNew ? 'ring-2 ring-yellow-400' : ''
-                  } ${isLocked ? 'bg-gray-800 hover:bg-gray-800' : ''}`}
+                  className={`bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm ${
+                    isLocked ? 'bg-gray-800 hover:bg-gray-800' : ''
+                  }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{interaction.label}</span>
