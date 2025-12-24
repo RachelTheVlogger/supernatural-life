@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, MessageCircle, Eye, Hand, Sparkles, Zap, Coffee, Music, Book, Utensils, Wine, Flame, Moon, Droplets, Wind, Smile, Lock, Star, Skull } from 'lucide-react';
+import { X, Heart, MessageCircle, Eye, Hand, Sparkles, Zap, Coffee, Music, Book, Utensils, Wine, Flame, Moon, Droplets, Wind, Smile, Lock, Star, Skull, Crown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import PowerUsage from './PowerUsage';
+import TitleSelection from './TitleSelection';
 
 const getVariantModifier = (variant, category) => {
   const modifiers = {
@@ -526,6 +527,188 @@ const INTERACTIONS = {
       ]
     }
   },
+  collar: {
+    icon: Heart,
+    label: 'Put a collar on them',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 80,
+    gains: [30, 40],
+    outcomes: {
+      mid: [
+        'You fastened the collar. They wore it proudly.',
+        'Leather around their neck. Your mark.',
+        'The collar was beautiful. So were they.',
+        'They touched it reverently. Your claim.'
+      ],
+      high: [
+        'Collared. Owned. They belonged to you completely.',
+        'The collar never comes off. Ever.',
+        'They traced the collar. Your property.',
+        'Everyone would know they were taken. Yours.',
+        'Permanent collar. Permanent ownership.',
+        'They kissed your hand after you collared them.',
+        'Your name engraved on the collar. Perfect.',
+        'Collared and claimed. Absolutely yours.'
+      ]
+    }
+  },
+  train: {
+    icon: Zap,
+    label: 'Train them',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 65,
+    gains: [20, 30],
+    outcomes: {
+      mid: [
+        'Training session. They learned quickly.',
+        'You taught them how you like it. They obeyed.',
+        'Position training. They held it perfectly.',
+        'Obedience training. Getting better each time.'
+      ],
+      high: [
+        'Fully trained. They anticipated your needs.',
+        'Perfect obedience. Perfect submission.',
+        'They knew exactly how to please you now.',
+        'Training complete. Your perfect servant.',
+        'Pavlovian response. They got wet at your command.',
+        'You could control them with a look now.',
+        'Trained to orgasm on command. Incredible.',
+        'They were perfectly conditioned. Yours.'
+      ]
+    }
+  },
+  punish: {
+    icon: Flame,
+    label: 'Punish them',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 60,
+    gains: [18, 28],
+    outcomes: {
+      mid: [
+        'They misbehaved. Punishment required.',
+        'Spanking. Counting. Apologizing.',
+        'Punishment earned. Punishment given.',
+        'They took it well. Learned their lesson.'
+      ],
+      high: [
+        'Severe punishment. They needed it.',
+        'Tears. Apologies. Forgiveness. Complete.',
+        'You punished them thoroughly. They thanked you.',
+        'Bruises as reminders. Beautiful.',
+        'Punishment was intense. They came anyway.',
+        'They loved being punished by you.',
+        'Discipline maintained. Order restored.',
+        'The punishment was the reward.'
+      ]
+    }
+  },
+  service: {
+    icon: Heart,
+    label: 'Make them service you',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 75,
+    gains: [25, 35],
+    outcomes: {
+      mid: [
+        'They serviced you eagerly. Devoted.',
+        'Their mouth. Your pleasure. Perfect service.',
+        'Service rendered. Excellently.',
+        'They existed to serve. They did it well.'
+      ],
+      high: [
+        'Hours of service. No complaints. Perfect.',
+        'They serviced you until you couldn\'t take more.',
+        'Expert service. Trained well. Rewarded.',
+        'Their purpose was your pleasure. They fulfilled it.',
+        'Service was worship. Worship was love.',
+        'They begged to serve you more. Insatiable.',
+        'Perfect service deserved rewards. You gave them.',
+        'They were born to serve you. Natural.'
+      ]
+    }
+  },
+  multiple: {
+    icon: Flame,
+    label: 'Make them cum multiple times',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 70,
+    gains: [25, 35],
+    outcomes: {
+      mid: [
+        'Once. Twice. Three times. They lost count.',
+        'Multiple orgasms. They were shaking.',
+        'You didn\'t stop. Kept going. Overwhelming.',
+        'So many orgasms they could barely speak.'
+      ],
+      high: [
+        'Orgasm after orgasm. Endless. Perfect.',
+        'They begged you to stop. You didn\'t.',
+        'Multiple orgasms until they broke. Beautiful.',
+        'Overstimulated. Crying. Still cumming.',
+        'You made them cum until they passed out.',
+        'Record broken. New personal best.',
+        'Their body was yours to use endlessly.',
+        'Multiple orgasms were just the beginning.'
+      ]
+    }
+  },
+  Marathon: {
+    icon: Flame,
+    label: 'All night session',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 80,
+    gains: [35, 45],
+    outcomes: {
+      mid: [
+        'Hours passed. Still going. Tireless.',
+        'All night. Every position. Exhausting.',
+        'Marathon session. Endurance tested.',
+        'Dawn approached. Neither stopped.'
+      ],
+      high: [
+        'All night. Relentless. Insatiable. Perfect.',
+        'The sun rose. You were still fucking them.',
+        'Hours blurred together. Pure sensation.',
+        'Marathon sex. They couldn\'t walk after.',
+        'All night session. They passed out twice.',
+        'Supernatural stamina. Human limits exceeded.',
+        'The night belonged to you both. Completely.',
+        'When you finally stopped, they couldn\'t move.'
+      ]
+    }
+  },
+  bondage: {
+    icon: Lock,
+    label: 'Bind them',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 75,
+    gains: [22, 32],
+    outcomes: {
+      mid: [
+        'Ropes. Knots. Helpless. Beautiful.',
+        'Bound tight. Couldn\'t move. Trusted you.',
+        'Bondage art. They were the canvas.',
+        'Tied up. Vulnerable. Yours.'
+      ],
+      high: [
+        'Complex bondage. Shibari. Art and restraint.',
+        'Bound completely. Helpless. Loving it.',
+        'You tied them up and used them for hours.',
+        'Bondage so tight they couldn\'t even squirm.',
+        'Rope marks stayed for days. Reminders.',
+        'They floated in the restraints. Subspace.',
+        'Bound. Helpless. Perfectly safe with you.',
+        'The bondage was meditation. Beautiful surrender.'
+      ]
+    }
+  },
   
   // Social - Tier 1
   talk: {
@@ -709,6 +892,15 @@ const INTERACTIONS = {
     gains: [0, 0]
   },
   
+  setTitle: {
+    icon: Crown,
+    label: 'Set your title',
+    category: 'power',
+    tier: 1,
+    special: true,
+    gains: [0, 0]
+  },
+  
   // Dark option
   kill: {
     icon: Skull,
@@ -728,6 +920,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [outcome, setOutcome] = useState('');
   const [interactionType, setInteractionType] = useState('');
   const [showPowers, setShowPowers] = useState(false);
+  const [showTitleSelection, setShowTitleSelection] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const queryClient = useQueryClient();
   
@@ -741,10 +934,35 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     if (rel >= 30) return 'mid';
     return 'low';
   };
+
+  const addTitleToOutcome = (outcome) => {
+    const title = vampireState.preferred_title;
+    if (!title) return outcome;
+    
+    const titleVariations = [
+      `, ${title}`,
+      `, ${title}.`,
+      ` ${title}.`,
+      ` Yes, ${title}.`,
+      ` ${title}...`,
+      ` Please, ${title}.`
+    ];
+    
+    // Add title to some sentences
+    if (Math.random() > 0.5) {
+      return outcome + titleVariations[Math.floor(Math.random() * titleVariations.length)];
+    }
+    return outcome;
+  };
   
   const handleInteraction = async (type) => {
     if (type === 'usePower') {
       setShowPowers(true);
+      return;
+    }
+    
+    if (type === 'setTitle') {
+      setShowTitleSelection(true);
       return;
     }
     
@@ -766,7 +984,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     
     // Add variant-specific flavor
     const variantFlavor = getVariantFlavor(servant.variant, tier, servant.obsession_stage);
-    const outcome = baseOutcome + variantFlavor;
+    let outcome = baseOutcome + variantFlavor;
+    
+    // Add title if set
+    outcome = addTitleToOutcome(outcome);
     
     setOutcome(outcome);
     
@@ -932,6 +1153,16 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
               setShowPowers(false);
               queryClient.invalidateQueries();
               onClose();
+            }}
+          />
+        )}
+        {showTitleSelection && (
+          <TitleSelection
+            vampireState={vampireState}
+            servant={servant}
+            onClose={() => {
+              setShowTitleSelection(false);
+              queryClient.invalidateQueries(['vampireState']);
             }}
           />
         )}
