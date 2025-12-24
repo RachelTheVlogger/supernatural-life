@@ -1398,6 +1398,14 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     return outcome;
   };
   
+  const generateNewInteractions = async (category, tier) => {
+    await base44.entities.NightLog.create({
+      entry: `Your ${category} interactions evolved. New possibilities unlocked at Tier ${tier}.`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+  };
+  
   const handleInteraction = async (type) => {
     if (type === 'usePower') {
       setShowPowers(true);
@@ -1492,6 +1500,11 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             times_used: newTimesUsed,
             unlocked_tier: newTier
           });
+          
+          // Generate new interactions when reaching tier 5, 10, 15, etc
+          if (newTier >= 5 && newTier % 5 === 0) {
+            await generateNewInteractions(category, newTier);
+          }
         } else {
           await base44.entities.InteractionProgress.create({
             category: category,

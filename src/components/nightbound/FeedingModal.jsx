@@ -142,8 +142,8 @@ export default function FeedingModal({ onClose, vampireState }) {
               <div className="flex items-start gap-3">
                 <Droplets className="w-5 h-5 text-red-400 mt-1" />
                 <div>
-                  <p className="text-white font-medium mb-1">Human Blood</p>
-                  <p className="text-gray-400 text-sm">Fresh. Warm. Satisfying.</p>
+                  <p className="text-white font-medium mb-1">Human Blood - Direct</p>
+                  <p className="text-gray-400 text-sm">Fresh from the vein. Warm. Alive. Satisfying.</p>
                 </div>
               </div>
             </button>
@@ -156,7 +156,7 @@ export default function FeedingModal({ onClose, vampireState }) {
                 <Heart className="w-5 h-5 text-purple-400 mt-1" />
                 <div>
                   <p className="text-white font-medium mb-1">Blood Bag</p>
-                  <p className="text-gray-400 text-sm">Safe. Ethical. Less fulfilling. <span className="text-green-400">++Humanity</span></p>
+                  <p className="text-gray-400 text-sm">Hospital supply. Safe. Ethical. Less fulfilling. <span className="text-green-400">++Humanity</span></p>
                 </div>
               </div>
             </button>
@@ -169,10 +169,40 @@ export default function FeedingModal({ onClose, vampireState }) {
                 <Heart className="w-5 h-5 text-green-400 mt-1" />
                 <div>
                   <p className="text-white font-medium mb-1">Animal Blood</p>
-                  <p className="text-gray-400 text-sm">Sustains life. Barely. <span className="text-green-400">+Humanity</span></p>
+                  <p className="text-gray-400 text-sm">Wild prey. Sustains life. Barely. <span className="text-green-400">+Humanity</span></p>
                 </div>
               </div>
             </button>
+            
+            {(vampireState.nights_passed >= 10) && (
+              <button
+                onClick={() => handleBloodTypeChoice('synthetic')}
+                className="w-full glass rounded-xl p-4 text-left hover:bg-blue-950/30 transition-slow border border-blue-500/20 touch-manipulation"
+              >
+                <div className="flex items-start gap-3">
+                  <Zap className="w-5 h-5 text-blue-400 mt-1" />
+                  <div>
+                    <p className="text-white font-medium mb-1">Synthetic Blood</p>
+                    <p className="text-gray-400 text-sm">Lab-created. Perfect nutrition. No guilt. <span className="text-green-400">+++Humanity</span></p>
+                  </div>
+                </div>
+              </button>
+            )}
+            
+            {(vampireState.humanity <= 20) && (
+              <button
+                onClick={() => handleBloodTypeChoice('vampire')}
+                className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/50 transition-slow border border-red-500/30 touch-manipulation"
+              >
+                <div className="flex items-start gap-3">
+                  <Flame className="w-5 h-5 text-red-500 mt-1" />
+                  <div>
+                    <p className="text-white font-medium mb-1">Vampire Blood</p>
+                    <p className="text-gray-400 text-sm">Forbidden. Powerful. Addictive. <span className="text-red-400">---Humanity</span></p>
+                  </div>
+                </div>
+              </button>
+            )}
           </div>
         )}
         

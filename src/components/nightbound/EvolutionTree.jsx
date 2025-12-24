@@ -459,7 +459,42 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
       queryClient.invalidateQueries(['vampireState']);
       queryClient.invalidateQueries(['logs']);
       setUnlocking(null);
+      
+      // Generate new powers when reaching milestones
+      if (updatedPowers.length % 10 === 0) {
+        await generateNewPowers(updatedPowers.length);
+      }
     }, 2000);
+  };
+  
+  const generateNewPowers = async (currentCount) => {
+    const newPowerIdeas = await base44.integrations.Core.InvokeLLM({
+      prompt: `Generate 3 new vampire powers for a vampire who has already unlocked ${currentCount} powers. Make them unique, creative, and more powerful than basic vampire abilities. Return as JSON array with objects containing: name (string), description (string), tier (number 1-5).`,
+      response_json_schema: {
+        type: 'object',
+        properties: {
+          powers: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                description: { type: 'string' },
+                tier: { type: 'number' }
+              }
+            }
+          }
+        }
+      }
+    }).catch(() => null);
+    
+    if (newPowerIdeas?.powers) {
+      await base44.entities.NightLog.create({
+        entry: `New powers discovered: ${newPowerIdeas.powers.map(p => p.name).join(', ')}. The evolution continues.`,
+        category: 'power',
+        intensity: 'significant'
+      });
+    }
   };
   
   const getTierColor = (tier) => {
