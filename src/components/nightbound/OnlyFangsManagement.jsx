@@ -114,8 +114,8 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     await base44.entities.OnlyFangsProfile.create({
       servant_id: servant.id,
       username: profileData.username || `${servant.name}_vamp`,
-      bio: profileData.bio || (profileData.is_couple ? `Vampire and their devoted servant. Watch us together. 🌙🦇` : `Solo content creator. Dark, sensual, yours. 🌙`),
-      profile_pic: profileData.profile_pic,
+      bio: profileData.bio || (profileData.is_couple ? `Two souls bound by darkness. Watch our nights together. 🌙💕` : `Solo content creator. Dark, sensual, yours. 🌙`),
+      profile_pic: profileData.profile_pic || '💕',
       is_couple_account: profileData.is_couple,
       subscriber_count: 0,
       revenue: 0,
@@ -752,7 +752,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             <div>
               <label className="text-gray-400 text-sm">Profile Picture (emoji)</label>
               <div className="flex gap-2 mt-1 flex-wrap">
-                {['🦇', '💋', '🌙', '🔥', '💜'].map(emoji => (
+                {['💕', '🦇', '💋', '🌙', '🔥'].map(emoji => (
                   <button
                     key={emoji}
                     onClick={() => setProfileData({...profileData, profile_pic: emoji})}
