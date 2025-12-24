@@ -10,6 +10,7 @@ import DirectInteraction from './DirectInteraction';
 import FriendsSystem from './FriendsSystem';
 import NPCInteraction from './NPCInteraction';
 import DateOutingModal from './DateOutingModal';
+import ServantTraining from './ServantTraining';
 
 const TEACHING_TOPICS = [
   'Explaining restraint',
@@ -68,6 +69,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [showFriends, setShowFriends] = useState(false);
   const [showTownPeople, setShowTownPeople] = useState(false);
   const [showDate, setShowDate] = useState(false);
+  const [showTraining, setShowTraining] = useState(false);
   const queryClient = useQueryClient();
   
   // Fetch quests for this servant
@@ -372,6 +374,13 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             onClose={() => setShowDate(false)}
           />
         )}
+        
+        {showTraining && (
+          <ServantTraining
+            servant={servant}
+            onClose={() => setShowTraining(false)}
+          />
+        )}
       </AnimatePresence>
       
       {!visitingLocation && (
@@ -589,6 +598,27 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
                   They are vampire now. Cold skin against yours. They hunt beside you as an equal.
                 </p>
               </div>
+            )}
+
+            {servant.training_specialization && servant.training_specialization !== 'none' && (
+              <div className="bg-purple-900/30 border border-purple-800/50 rounded-xl p-3 mb-2">
+                <p className="text-purple-300 text-sm text-center capitalize">
+                  Specialized in: {servant.training_specialization}
+                </p>
+              </div>
+            )}
+
+            {(!servant.training_specialization || servant.training_specialization === 'none') && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowTraining(true);
+                }}
+                className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
+              >
+                <Zap className="w-5 h-5" />
+                <span>Specialize their training</span>
+              </button>
             )}
             
             <button

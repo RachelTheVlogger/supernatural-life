@@ -21,6 +21,7 @@ import HunterThreatModal from '@/components/nightbound/HunterThreatModal';
 import BloodTypeSystem from '@/components/nightbound/BloodTypeSystem';
 import VampireWeaknessModal from '@/components/nightbound/VampireWeaknessModal';
 import MilestonesDisplay from '@/components/nightbound/MilestonesDisplay';
+import CovenManagement from '@/components/nightbound/CovenManagement';
 
 export default function Night() {
   const navigate = useNavigate();
