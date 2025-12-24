@@ -173,30 +173,7 @@ export default function Night() {
       </motion.div>
       
       {/* Action buttons - Bitlife style */}
-      <div className="max-w-2xl mx-auto space-y-3 mb-8 relative">
-        {/* Loading Overlay */}
-        <AnimatePresence>
-          {activeModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-xl pointer-events-none"
-            >
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.2, 1],
-                  rotate: [0, 360]
-                }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="text-6xl"
-              >
-                🌙
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
+      <div className="max-w-2xl mx-auto space-y-3 mb-8">
         {actions.map((action, i) => (
           <motion.button
             key={action.label}
