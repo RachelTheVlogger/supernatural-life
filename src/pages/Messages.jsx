@@ -105,16 +105,13 @@ export default function Messages() {
                                     rel >= 40 ? 'beginning to trust' :
                                     rel >= 20 ? 'curious but cautious' : 'wary and uncertain';
 
-          const prompt = `You are narrating the vampire's internal perception of ${servant.name}'s thoughts and feelings. ${variantTraits[servant.variant]}
+          const prompt = `You are ${servant.name}, deeply connected to a vampire through a supernatural bond. Personality: ${variantTraits[servant.variant]}. Bond level: ${relationshipContext}. Obsession: ${servant.obsession_stage}/5.
 
-      Current bond: ${relationshipContext}
-      Obsession stage: ${servant.obsession_stage}/5
+Recent conversation:
+${recentMessages}
+Vampire: ${input}
 
-      Recent exchanges:
-      ${recentMessages}
-      Vampire's message: ${input}
-
-      Write 1-2 short sentences describing what the vampire senses/feels from ${servant.name}'s mind in response. Use third person (e.g., "They feel...", "Their thoughts drift to...", "You sense their..."). Make it atmospheric, varied, and never repetitive. Focus on emotions, sensations, unspoken desires - not just direct responses.`;
+Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 sentences. React to explicit/sexual messages based on your bond level - respond in kind if close enough, be shy/hesitant if not. Show your personality and feelings.`;
 
           try {
             const response = await base44.integrations.Core.InvokeLLM({
