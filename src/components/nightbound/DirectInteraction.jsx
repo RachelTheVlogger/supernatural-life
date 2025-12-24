@@ -372,7 +372,7 @@ const INTERACTIONS = {
   dominate: {
     icon: Flame,
     label: 'Dominate them',
-    category: 'physical',
+    category: 'bdsm',
     tier: 3,
     minRelationship: 60,
     gains: [20, 30],
@@ -408,7 +408,7 @@ const INTERACTIONS = {
   submit: {
     icon: Heart,
     label: 'Let them dominate',
-    category: 'physical',
+    category: 'bdsm',
     tier: 3,
     minRelationship: 60,
     gains: [20, 30],
@@ -444,7 +444,7 @@ const INTERACTIONS = {
   worship: {
     icon: Star,
     label: 'Let them worship you',
-    category: 'physical',
+    category: 'bdsm',
     tier: 4,
     minRelationship: 70,
     gains: [25, 35],
@@ -541,7 +541,7 @@ const INTERACTIONS = {
   edging: {
     icon: Heart,
     label: 'Edge them',
-    category: 'physical',
+    category: 'bdsm',
     tier: 3,
     minRelationship: 65,
     gains: [18, 28],
@@ -567,7 +567,7 @@ const INTERACTIONS = {
   bdsm: {
     icon: Flame,
     label: 'BDSM scene',
-    category: 'physical',
+    category: 'bdsm',
     tier: 4,
     minRelationship: 70,
     gains: [30, 40],
@@ -595,41 +595,48 @@ const INTERACTIONS = {
   degradation: {
     icon: Skull,
     label: 'Degrade them (verbal)',
-    category: 'physical',
+    category: 'bdsm',
     tier: 3,
     minRelationship: 70,
     gains: [20, 30],
-    outcomes: {
-      mid: [
-        'You called them your slut. They moaned.',
-        'Degrading words. They got wetter.',
-        'You made them say what they are. They obeyed.',
-        'Humiliation kink satisfied.',
-        '"You\'re such a whore for me." They nodded eagerly.',
-        '"My little fucktoy." They whimpered with need.'
-      ],
-      high: [
-        'You degraded them thoroughly. They thanked you.',
-        'Called them your whore. Your toy. Your pet.',
-        'They came from the degradation alone.',
-        'You spit in their mouth. They swallowed.',
-        'Treated like an object. They loved it.',
-        'Verbal degradation. Physical use. Perfect.',
-        'You made them beg to be degraded more.',
-        'Your filthy slut. They wore the title proudly.',
-        'Degraded and used. Exactly what they needed.',
-        'They knew their place. Beneath you.',
-        '"Beg like the desperate slut you are." They did.',
-        '"You\'re nothing but a hole for me." They came.',
-        'Called them a cum dump. They thanked you.',
-        '"My dirty little whore." Perfect obedience.'
-      ]
-    }
-  },
+    getDynamicOutcomes: (servantName) => {
+      const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion', 'cedar'];
+      const isMale = maleNames.some(name => servantName?.toLowerCase().includes(name));
+      const term = isMale ? 'slut' : 'slut';
+      const toy = isMale ? 'toy' : 'toy';
+
+      return {
+        mid: [
+          'You called them your slut. They moaned.',
+          'Degrading words. They got wetter.',
+          'You made them say what they are. They obeyed.',
+          'Humiliation kink satisfied.',
+          '"You\'re such a whore for me." They nodded eagerly.',
+          '"My little fucktoy." They whimpered with need.'
+        ],
+        high: [
+          'You degraded them thoroughly. They thanked you.',
+          'Called them your whore. Your toy. Your pet.',
+          'They came from the degradation alone.',
+          'You spit in their mouth. They swallowed.',
+          'Treated like an object. They loved it.',
+          'Verbal degradation. Physical use. Perfect.',
+          'You made them beg to be degraded more.',
+          'Your filthy slut. They wore the title proudly.',
+          'Degraded and used. Exactly what they needed.',
+          'They knew their place. Beneath you.',
+          '"Beg like the desperate slut you are." They did.',
+          '"You\'re nothing but a hole for me." They came.',
+          'Called them a cum dump. They thanked you.',
+          '"My dirty little whore." Perfect obedience.'
+        ]
+      };
+    },
+    },
   praise: {
     icon: Star,
     label: 'Praise them',
-    category: 'social',
+    category: 'bdsm',
     tier: 2,
     minRelationship: 40,
     gains: [15, 25],
@@ -638,7 +645,7 @@ const INTERACTIONS = {
       const isMale = maleNames.some(name => servantName?.toLowerCase().includes(name));
       const term = isMale ? 'boy' : 'girl';
       const Term = isMale ? 'Boy' : 'Girl';
-      
+
       return {
         mid: [
           `"Good ${term}." They melted at your words.`,
@@ -691,7 +698,7 @@ const INTERACTIONS = {
   orgasmControl: {
     icon: Zap,
     label: 'Control their orgasms',
-    category: 'physical',
+    category: 'bdsm',
     tier: 3,
     minRelationship: 68,
     gains: [22, 32],
@@ -717,7 +724,7 @@ const INTERACTIONS = {
   collar: {
     icon: Heart,
     label: 'Put a collar on them',
-    category: 'physical',
+    category: 'bdsm',
     tier: 4,
     minRelationship: 80,
     gains: [30, 40],
@@ -743,7 +750,7 @@ const INTERACTIONS = {
   train: {
     icon: Zap,
     label: 'Train them',
-    category: 'physical',
+    category: 'bdsm',
     tier: 3,
     minRelationship: 65,
     gains: [20, 30],
@@ -769,7 +776,7 @@ const INTERACTIONS = {
   punish: {
     icon: Flame,
     label: 'Punish them',
-    category: 'physical',
+    category: 'bdsm',
     tier: 3,
     minRelationship: 60,
     gains: [18, 28],
@@ -873,7 +880,7 @@ const INTERACTIONS = {
   bondage: {
     icon: Lock,
     label: 'Bind them',
-    category: 'physical',
+    category: 'bdsm',
     tier: 4,
     minRelationship: 75,
     gains: [22, 32],
@@ -1610,8 +1617,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     : INTERACTIONS;
 
   const categories = servant.is_turned 
-    ? ['all', 'vampire', 'physical', 'social', 'activity', 'power']
-    : ['all', 'physical', 'social', 'activity', 'power'];
+    ? ['all', 'vampire', 'physical', 'bdsm', 'social', 'activity', 'power']
+    : ['all', 'physical', 'bdsm', 'social', 'activity', 'power'];
 
   // Filter by category only (show locked interactions too)
   const filteredInteractions = Object.entries(allInteractions).filter(([key, interaction]) => {
