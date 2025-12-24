@@ -13,6 +13,7 @@ import MoralityDisplay from '@/components/nightbound/MoralityDisplay';
 import FriendInteraction from '@/components/nightbound/FriendInteraction';
 import DateOutingModal from '@/components/nightbound/DateOutingModal';
 import ServantJealousyEvent from '@/components/nightbound/ServantJealousyEvent';
+import CrimsonBlissLab from '@/components/nightbound/CrimsonBlissLab';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function VampireHome() {
   const [showAllFriends, setShowAllFriends] = useState(false);
   const [dateServant, setDateServant] = useState(null);
   const [jealousyEvent, setJealousyEvent] = useState(null);
+  const [showCrimsonBliss, setShowCrimsonBliss] = useState(false);
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -322,6 +324,29 @@ export default function VampireHome() {
               </motion.div>
               )}
 
+              {/* Crimson Bliss Lab */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.21 }}
+                className="mb-8"
+              >
+                <button
+                  onClick={() => setShowCrimsonBliss(true)}
+                  className="w-full bg-gradient-to-r from-red-950/40 to-purple-950/40 hover:from-red-950/60 hover:to-purple-950/60 border-2 border-red-500/50 rounded-2xl p-6 transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl">🧪</div>
+                      <div className="text-left">
+                        <h3 className="text-white text-xl font-bold mb-1">Crimson Bliss Lab</h3>
+                        <p className="text-gray-300 text-sm">Blood drugs. Addictive. Trippy. Profitable.</p>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </motion.div>
+
               {/* Friends System */}
               {allFriends.length > 0 && (
               <motion.div
@@ -601,6 +626,12 @@ export default function VampireHome() {
             servant1={jealousyEvent.s1}
             servant2={jealousyEvent.s2}
             onClose={() => setJealousyEvent(null)}
+          />
+        )}
+        {showCrimsonBliss && (
+          <CrimsonBlissLab
+            vampireState={vampireState}
+            onClose={() => setShowCrimsonBliss(false)}
           />
         )}
         {showAllFriends && (
