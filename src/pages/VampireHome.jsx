@@ -11,6 +11,8 @@ import TemptationModal from '@/components/nightbound/TemptationModal';
 import OnlyFangsManagement from '@/components/nightbound/OnlyFangsManagement';
 import MoralityDisplay from '@/components/nightbound/MoralityDisplay';
 import FriendInteraction from '@/components/nightbound/FriendInteraction';
+import DateOutingModal from '@/components/nightbound/DateOutingModal';
+import ServantJealousyEvent from '@/components/nightbound/ServantJealousyEvent';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -23,6 +25,8 @@ export default function VampireHome() {
   const [showOnlyFangs, setShowOnlyFangs] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [showAllFriends, setShowAllFriends] = useState(false);
+  const [dateServant, setDateServant] = useState(null);
+  const [jealousyEvent, setJealousyEvent] = useState(null);
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -109,6 +113,16 @@ export default function VampireHome() {
   const turnedServants = servants.filter(s => s.is_turned);
   const totalRelationship = servants.reduce((sum, s) => sum + (s.relationship || 0), 0);
   const avgRelationship = servants.length > 0 ? Math.round(totalRelationship / servants.length) : 0;
+
+  // Check for jealousy events
+  React.useEffect(() => {
+    if (servants.length >= 2) {
+      const highJealousy = servants.filter(s => (s.jealousy_level || 0) > 60);
+      if (highJealousy.length >= 2 && !jealousyEvent && Math.random() > 0.7) {
+        setJealousyEvent({ s1: highJealousy[0], s2: highJealousy[1] });
+      }
+    }
+  }, [servants]);
 
 
   
@@ -463,12 +477,20 @@ export default function VampireHome() {
                         <span className="text-white text-xs w-8">{servant.relationship || 0}</span>
                       </div>
                     </div>
-                    <button
-                      onClick={() => setSelectedServantForInteraction(servant)}
-                      className="w-full bg-pink-950/30 hover:bg-pink-950/50 border border-pink-800/30 rounded-lg py-1.5 text-xs text-pink-300 transition-colors"
-                    >
-                      Interact
-                    </button>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => setSelectedServantForInteraction(servant)}
+                        className="flex-1 bg-pink-950/30 hover:bg-pink-950/50 border border-pink-800/30 rounded-lg py-1.5 text-xs text-pink-300 transition-colors"
+                      >
+                        Interact
+                      </button>
+                      <button
+                        onClick={() => setDateServant(servant)}
+                        className="flex-1 bg-purple-950/30 hover:bg-purple-950/50 border border-purple-800/30 rounded-lg py-1.5 text-xs text-purple-300 transition-colors"
+                      >
+                        Date
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -565,6 +587,20 @@ export default function VampireHome() {
             servant={servants.find(s => s.id === selectedFriend.met_through_servant_id) || servants[0]}
             vampireState={vampireState}
             onClose={() => setSelectedFriend(null)}
+          />
+        )}
+        {dateServant && (
+          <DateOutingModal
+            servant={dateServant}
+            vampireState={vampireState}
+            onClose={() => setDateServant(null)}
+          />
+        )}
+        {jealousyEvent && (
+          <ServantJealousyEvent
+            servant1={jealousyEvent.s1}
+            servant2={jealousyEvent.s2}
+            onClose={() => setJealousyEvent(null)}
           />
         )}
         {showAllFriends && (

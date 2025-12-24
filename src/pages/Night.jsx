@@ -14,6 +14,13 @@ import AdvanceNight from '@/components/nightbound/AdvanceNight';
 import NPCInteraction from '@/components/nightbound/NPCInteraction';
 
 import HospitalJob from '@/components/nightbound/HospitalJob';
+import RivalVampireModal from '@/components/nightbound/RivalVampireModal';
+import VampireCouncilModal from '@/components/nightbound/VampireCouncilModal';
+import TerritoryMap from '@/components/nightbound/TerritoryMap';
+import HunterThreatModal from '@/components/nightbound/HunterThreatModal';
+import BloodTypeSystem from '@/components/nightbound/BloodTypeSystem';
+import VampireWeaknessModal from '@/components/nightbound/VampireWeaknessModal';
+import MilestonesDisplay from '@/components/nightbound/MilestonesDisplay';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -220,7 +227,78 @@ export default function Night() {
           <span className="text-gray-400">Powers:</span>
           <span className="text-white">{vampireState.unlocked_powers?.length || 0}</span>
         </div>
-      </motion.div>
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-400">Exposure:</span>
+          <span className={`${(vampireState.exposure_level || 0) > 50 ? 'text-red-400' : 'text-green-400'}`}>
+            {vampireState.exposure_level || 0}%
+          </span>
+        </div>
+        </motion.div>
+
+        {/* New Systems Access */}
+        <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="max-w-2xl mx-auto mt-4 grid grid-cols-2 md:grid-cols-4 gap-2"
+        >
+        <button
+          onClick={() => setActiveModal('rivals')}
+          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">⚔️</span>
+          <p className="text-white text-xs mt-1">Rivals</p>
+        </button>
+        <button
+          onClick={() => setActiveModal('council')}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">👑</span>
+          <p className="text-white text-xs mt-1">Council</p>
+        </button>
+        <button
+          onClick={() => setActiveModal('territory')}
+          className="bg-yellow-950/40 hover:bg-yellow-950/60 border border-yellow-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🗺️</span>
+          <p className="text-white text-xs mt-1">Territory</p>
+        </button>
+        <button
+          onClick={() => setActiveModal('hunters')}
+          className="bg-orange-950/40 hover:bg-orange-950/60 border border-orange-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🎯</span>
+          <p className="text-white text-xs mt-1">Hunters</p>
+        </button>
+        <button
+          onClick={() => setActiveModal('blood')}
+          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🩸</span>
+          <p className="text-white text-xs mt-1">Blood</p>
+        </button>
+        <button
+          onClick={() => setActiveModal('weakness')}
+          className="bg-gray-950/40 hover:bg-gray-950/60 border border-gray-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">☀️</span>
+          <p className="text-white text-xs mt-1">Weakness</p>
+        </button>
+        <button
+          onClick={() => setActiveModal('milestones')}
+          className="bg-blue-950/40 hover:bg-blue-950/60 border border-blue-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🏆</span>
+          <p className="text-white text-xs mt-1">Milestones</p>
+        </button>
+        <button
+          onClick={() => setActiveModal('coven')}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">👥</span>
+          <p className="text-white text-xs mt-1">Coven</p>
+        </button>
+        </motion.div>
       
       {/* Recent log entries */}
       {logs.length > 0 && (
@@ -290,6 +368,56 @@ export default function Night() {
         {activeModal === 'hospital' && (
           <HospitalJob
             vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'rivals' && (
+          <RivalVampireModal
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'council' && (
+          <VampireCouncilModal
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'territory' && (
+          <TerritoryMap
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'hunters' && (
+          <HunterThreatModal
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'blood' && (
+          <BloodTypeSystem
+            vampireState={vampireState}
+            servants={servants}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'weakness' && (
+          <VampireWeaknessModal
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'milestones' && (
+          <MilestonesDisplay
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'coven' && (
+          <CovenManagement
+            vampireState={vampireState}
+            servants={servants}
             onClose={() => setActiveModal(null)}
           />
         )}
