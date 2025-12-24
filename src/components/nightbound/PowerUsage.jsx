@@ -297,6 +297,84 @@ const POWER_LIBRARY = {
       description: level <= 3 ? ['Surface soul', 'Deep essence', 'Cosmic truth'][level - 1] : `Master level ${level} - See all that was and will be`
     })
   },
+
+  // Vampire-to-Vampire Powers
+  'Eternal Bond': {
+    icon: Moon,
+    description: 'Create unbreakable connection between vampires',
+    cost: 'Both vampires bound forever.',
+    hungerCost: 0,
+    requiresTurned: true,
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'Your blood called to theirs. The bond formed. Eternal. Unbreakable.',
+        'Vampire to vampire. The connection snapped into place. Forever bound.',
+        'You felt their immortal soul link to yours. Eternal bond complete.',
+        'Two vampires. One bond. Nothing can break this now.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: 100,
+        emotional_state: 'eternally_bound'
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'bond',
+    upgradeEffects: (level) => ({
+      description: level <= 3 ? ['Basic vampire bond', 'Deep immortal connection', 'Soul fusion'][level - 1] : `Master level ${level} - One being, two bodies`
+    })
+  },
+
+  'Blood Exchange': {
+    icon: Droplets,
+    description: 'Share power through intimate feeding',
+    cost: 'Intensely intimate. Both changed.',
+    hungerCost: 1,
+    requiresTurned: true,
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'You fed from them. They fed from you. Power flowed both ways. Intoxicating.',
+        'Blood exchange. Your fangs in their neck. Theirs in yours. Pleasure overwhelming.',
+        'You tasted immortal blood. They tasted yours. The world dissolved.',
+        'Vampire feeding on vampire. Taboo. Ecstatic. Perfect.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 30, 100),
+        emotional_state: 'euphoric'
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'bond',
+    upgradeEffects: (level) => ({
+      relationshipBonus: 30 + (level * 12),
+      description: level <= 3 ? ['Shared feeding', 'Power exchange', 'Essence fusion'][level - 1] : `Master level ${level} - Infinite pleasure loop`
+    })
+  },
+
+  'Immortal Passion': {
+    icon: Heart,
+    description: 'Supernatural intensity in every touch',
+    cost: 'Addictive. Overwhelming.',
+    hungerCost: 0,
+    requiresTurned: true,
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'Your touch ignited them. Vampire skin on vampire skin. Electric. Burning.',
+        'Every kiss supernatural. Every caress overwhelming. Immortal passion.',
+        'You moved together. Vampire speed. Vampire strength. Endless stamina.',
+        'They gasped. You grinned. Vampire-to-vampire intimacy hits different.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 25, 100),
+        emotional_state: 'passionate'
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'charm',
+    upgradeEffects: (level) => ({
+      relationshipBonus: 25 + (level * 10),
+      description: level <= 3 ? ['Intense touch', 'Overwhelming pleasure', 'Transcendent ecstasy'][level - 1] : `Master level ${level} - Reality-breaking intimacy`
+    })
+  },
   
   // Universal powers (always available)
   'Enhanced Senses': {
@@ -393,6 +471,9 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
   // Filter available powers based on morality and conditions
   const availablePowers = Object.entries(POWER_LIBRARY).filter(([name, power]) => {
     if (!unlockedPowers.includes(name)) return false;
+    
+    // Check if servant is turned for vampire-to-vampire powers
+    if (power.requiresTurned && !servant.is_turned) return false;
     
     const req = power.moralityRequirement;
     if (req) {

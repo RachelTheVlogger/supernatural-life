@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, Check, Zap, Eye, Brain, Shield, ChevronRight, Clock } from 'lucide-react';
+import { X, Lock, Check, Zap, Eye, Brain, Shield, ChevronRight, Clock, Heart, Droplets, Sun, Moon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -193,6 +193,207 @@ const POWER_PATHS = {
         description: 'Transform into a creature of nightmare',
         requirements: { prerequisite: 'Regeneration' },
         tier: 4
+      },
+      {
+        name: 'Predator\'s Instinct',
+        description: 'Sense prey from miles away',
+        requirements: { prerequisite: 'Heightened Reflexes' },
+        tier: 2
+      },
+      {
+        name: 'Blood Rush',
+        description: 'Superhuman speed bursts',
+        requirements: { prerequisite: 'Predator\'s Instinct' },
+        tier: 3
+      }
+    ]
+  },
+  seduction: {
+    name: 'Path of Seduction',
+    icon: Heart,
+    color: 'pink',
+    description: 'Master desire and pleasure',
+    powers: [
+      {
+        name: 'Intoxicating Presence',
+        description: 'Your scent becomes irresistible',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Euphoric Touch',
+        description: 'Your touch brings overwhelming pleasure',
+        requirements: { prerequisite: 'Intoxicating Presence' },
+        tier: 2
+      },
+      {
+        name: 'Vampiric Glamour',
+        description: 'Appear as their deepest fantasy',
+        requirements: { prerequisite: 'Euphoric Touch' },
+        tier: 3
+      },
+      {
+        name: 'Ecstasy Bond',
+        description: 'Link pleasure directly to obedience',
+        requirements: { prerequisite: 'Vampiric Glamour' },
+        tier: 4
+      },
+      {
+        name: 'Sensual Thrall',
+        description: 'Make them addicted to your presence',
+        requirements: { prerequisite: 'Intoxicating Presence' },
+        tier: 2
+      },
+      {
+        name: 'Desire Manipulation',
+        description: 'Control what they crave',
+        requirements: { prerequisite: 'Sensual Thrall' },
+        tier: 3
+      }
+    ]
+  },
+  blood: {
+    name: 'Path of Blood',
+    icon: Droplets,
+    color: 'crimson',
+    description: 'Master blood magic and rituals',
+    powers: [
+      {
+        name: 'Blood Scrying',
+        description: 'See through blood connections',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Crimson Chains',
+        description: 'Create binding contracts in blood',
+        requirements: { prerequisite: 'Blood Scrying' },
+        tier: 2
+      },
+      {
+        name: 'Blood Puppetry',
+        description: 'Control bodies through their blood',
+        requirements: { prerequisite: 'Crimson Chains' },
+        tier: 3
+      },
+      {
+        name: 'Hemomancy',
+        description: 'Shape blood into weapons',
+        requirements: { prerequisite: 'Blood Puppetry' },
+        tier: 4
+      },
+      {
+        name: 'Blood Memory',
+        description: 'Extract memories from blood',
+        requirements: { prerequisite: 'Blood Scrying' },
+        tier: 2
+      },
+      {
+        name: 'Sanguine Restoration',
+        description: 'Heal using consumed blood',
+        requirements: { prerequisite: 'Blood Memory' },
+        tier: 3
+      }
+    ]
+  },
+  immortal: {
+    name: 'Path of Eternity',
+    icon: Sun,
+    color: 'gold',
+    description: 'Transcend vampire limitations',
+    powers: [
+      {
+        name: 'Twilight Resistance',
+        description: 'Endure dawn and dusk',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Daywalker',
+        description: 'Move freely in sunlight',
+        requirements: { prerequisite: 'Twilight Resistance' },
+        tier: 2
+      },
+      {
+        name: 'Ageless',
+        description: 'Time cannot touch you',
+        requirements: { prerequisite: 'Daywalker' },
+        tier: 3
+      },
+      {
+        name: 'Immortal Ascension',
+        description: 'Become truly deathless',
+        requirements: { prerequisite: 'Ageless' },
+        tier: 4
+      },
+      {
+        name: 'Elder\'s Wisdom',
+        description: 'Access ancient knowledge',
+        requirements: { prerequisite: 'Twilight Resistance' },
+        tier: 2
+      },
+      {
+        name: 'Reality Anchoring',
+        description: 'Cannot be erased from existence',
+        requirements: { prerequisite: 'Elder\'s Wisdom' },
+        tier: 3
+      }
+    ]
+  },
+  vampiric: {
+    name: 'Vampire Intimacy',
+    icon: Moon,
+    color: 'violet',
+    description: 'Powers for vampire-to-vampire bonding',
+    requiresTurned: true,
+    powers: [
+      {
+        name: 'Eternal Bond',
+        description: 'Create unbreakable connection between vampires',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Blood Exchange',
+        description: 'Share power through intimate feeding',
+        requirements: { prerequisite: 'Eternal Bond' },
+        tier: 2
+      },
+      {
+        name: 'Merged Consciousness',
+        description: 'Experience everything they feel during intimacy',
+        requirements: { prerequisite: 'Blood Exchange' },
+        tier: 3
+      },
+      {
+        name: 'Primal Union',
+        description: 'Vampire mating ritual - complete soul binding',
+        requirements: { prerequisite: 'Merged Consciousness' },
+        tier: 4
+      },
+      {
+        name: 'Shared Hunger',
+        description: 'Hunt together, feed together, pleasure together',
+        requirements: { prerequisite: 'Eternal Bond' },
+        tier: 2
+      },
+      {
+        name: 'Immortal Passion',
+        description: 'Supernatural intensity in every touch',
+        requirements: { prerequisite: 'Shared Hunger' },
+        tier: 3
+      },
+      {
+        name: 'Blood Ecstasy',
+        description: 'Feed from each other for overwhelming pleasure',
+        requirements: { prerequisite: 'Blood Exchange' },
+        tier: 3
+      },
+      {
+        name: 'Twin Souls',
+        description: 'Become one being in two bodies',
+        requirements: { prerequisite: 'Primal Union' },
+        tier: 5
       }
     ]
   }
@@ -324,13 +525,14 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
         </div>
         
         {!selectedPath ? (
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-3 gap-4">
             {Object.entries(POWER_PATHS).map(([key, path]) => {
               const Icon = path.icon;
               const pathPowers = path.powers.filter(p => unlockedPowers.includes(p.name));
               const progress = (pathPowers.length / path.powers.length) * 100;
               const isRipperMode = vampireState.emotional_mode === 'ruthless';
-              const isLocked = path.requiresRipper && !isRipperMode;
+              const hasTurnedServant = servants.some(s => s.is_turned);
+              const isLocked = (path.requiresRipper && !isRipperMode) || (path.requiresTurned && !hasTurnedServant);
               
               return (
                 <motion.button
@@ -354,6 +556,9 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
                       <p className="text-gray-400 text-sm mb-3">{path.description}</p>
                       {path.requiresRipper && (
                         <p className="text-red-400 text-xs mb-2">⚠️ Requires Ripper Mode</p>
+                      )}
+                      {path.requiresTurned && (
+                        <p className="text-violet-400 text-xs mb-2">⚠️ Requires Turned Servant</p>
                       )}
                       
                       <div className="flex items-center gap-2 mb-2">
