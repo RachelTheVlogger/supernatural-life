@@ -178,7 +178,7 @@ export default function VampireHome() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <h1 className="text-4xl font-bold text-white mb-2">Your House</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">{vampireState.vampire_name}</h1>
             <p className="text-gray-400">Where the night begins and ends</p>
           </motion.div>
           
