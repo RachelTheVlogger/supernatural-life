@@ -39,9 +39,21 @@ const getVariantFlavor = (variant, tier, obsessionStage) => {
 };
 
 const TURNED_VAMPIRE_INTERACTIONS = {
+  feedOnEachOther: {
+    icon: Droplets,
+    label: 'Feed on each other',
+    category: 'vampire',
+    tier: 1,
+    minRelationship: 40,
+    gains: [25, 40],
+    outcomes: {
+      mid: ['You bit them. They bit you back. Vampire blood. Electric. Intimate.', 'Feeding on another vampire. The taste was different. Ancient. Powerful.', 'You drank from each other. Twin ecstasy. The bond deepened.'],
+      high: ['Vampire on vampire. You fed from each other simultaneously. Pure intimacy. Overwhelming.', 'You bit their neck while they bit yours. Feeding loop. Pleasure infinite.', 'Trading blood. Ancient ritual. You became one being for a moment.', 'Feeding on each other until you both collapsed. Entwined. Sated. Perfect.']
+    }
+  },
   vampireFeed: {
     icon: Droplets,
-    label: 'Feed together',
+    label: 'Feed together (hunt)',
     category: 'vampire',
     tier: 1,
     gains: [20, 35],
