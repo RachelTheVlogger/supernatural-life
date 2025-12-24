@@ -11,8 +11,8 @@ export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [vampireName, setVampireName] = useState('');
-  const [showNameInput, setShowNameInput] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
+  const [introStep, setIntroStep] = useState(0);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -21,39 +21,31 @@ export default function Home() {
   
   const existingGame = vampireStates.length > 0;
   
-  const handleNewGame = async () => {
+  const startNewGame = async () => {
     if (!vampireName.trim()) {
       alert('Please enter a name for your vampire');
       return;
     }
     
-    try {
-      // Only delete vampire states - game will handle cleanup
-      if (vampireStates.length > 0) {
-        for (const v of vampireStates) {
-          await base44.entities.VampireState.delete(v.id);
-        }
-      }
-      
-      // Create new vampire state
-      await base44.entities.VampireState.create({
-        vampire_name: vampireName.trim(),
-        job: 'Night Shift Nurse',
-        hunger_state: 'calm',
-        emotional_mode: 'feeling',
-        unlocked_powers: [],
-        nights_passed: 0,
-        humanity: 50,
-        moral_path: 'balanced'
-      });
-      
-      // Invalidate queries and navigate
-      await queryClient.invalidateQueries();
-      navigate(createPageUrl('Night'));
-    } catch (error) {
-      alert('Error starting game. Please try again.');
-      console.error(error);
+    // Delete old vampire state
+    if (vampireStates.length > 0) {
+      await base44.entities.VampireState.delete(vampireStates[0].id);
     }
+    
+    // Create new vampire
+    await base44.entities.VampireState.create({
+      vampire_name: vampireName.trim(),
+      job: 'Night Shift Nurse',
+      hunger_state: 'calm',
+      emotional_mode: 'feeling',
+      unlocked_powers: [],
+      nights_passed: 0,
+      humanity: 50,
+      moral_path: 'balanced'
+    });
+    
+    queryClient.invalidateQueries();
+    navigate(createPageUrl('Night'));
   };
   
   const handleContinue = () => {
@@ -114,48 +106,13 @@ export default function Home() {
             </button>
           )}
           
-          {!showNameInput ? (
-            <button
-              onClick={() => setShowNameInput(true)}
-              className="w-full bg-gradient-to-r from-purple-900/60 to-red-900/60 hover:from-purple-900/80 hover:to-red-900/80 border-2 border-purple-500/50 rounded-xl py-4 text-white font-medium text-lg transition-all flex items-center justify-center gap-3"
-            >
-              <Moon className="w-5 h-5" />
-              New Game
-            </button>
-          ) : (
-            <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-purple-900/30">
-              <h3 className="text-white text-lg font-bold mb-2">Create Your Vampire</h3>
-              <p className="text-purple-300 text-sm mb-4">You are a male vampire</p>
-              <input
-                type="text"
-                value={vampireName}
-                onChange={(e) => setVampireName(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && vampireName.trim() && handleNewGame()}
-                placeholder="Enter your eternal name..."
-                className="w-full bg-gray-900 border border-purple-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-4 focus:outline-none focus:border-purple-500"
-                autoFocus
-              />
-              <div className="bg-gray-900/60 rounded-lg p-4 mb-4 border border-red-900/30">
-                <p className="text-red-300 text-sm mb-1">🏥 Night Shift Nurse</p>
-                <p className="text-gray-400 text-xs italic">Working at the hospital... surrounded by blood. Forever tempted.</p>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowNameInput(false)}
-                  className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleNewGame}
-                  disabled={!vampireName.trim()}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-700 hover:to-red-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg py-3 text-white font-medium transition-all disabled:opacity-50"
-                >
-                  Begin
-                </button>
-              </div>
-            </div>
-          )}
+          <button
+            onClick={() => setShowIntro(true)}
+            className="w-full bg-gradient-to-r from-purple-900/60 to-red-900/60 hover:from-purple-900/80 hover:to-red-900/80 border-2 border-purple-500/50 rounded-xl py-4 text-white font-medium text-lg transition-all flex items-center justify-center gap-3"
+          >
+            <Moon className="w-5 h-5" />
+            New Game
+          </button>
         </motion.div>
         
         <motion.p
@@ -168,19 +125,65 @@ export default function Home() {
         </motion.p>
       </div>
 
-      {/* Tutorial */}
-      {showTutorial && (
-        <TutorialSystem
-          tutorialId="welcome"
-          onComplete={() => {
-            setShowTutorial(false);
-            navigate(createPageUrl('Night'));
-          }}
-          onSkip={() => {
-            setShowTutorial(false);
-            navigate(createPageUrl('Night'));
-          }}
-        />
+      {/* Intro Popup */}
+      {showIntro && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-gradient-to-b from-gray-900 to-black rounded-2xl p-8 max-w-lg w-full border-2 border-red-900/50"
+          >
+            {introStep === 0 && (
+              <>
+                <h2 className="text-3xl font-bold text-red-400 mb-4">You died.</h2>
+                <p className="text-gray-300 mb-4">Three nights ago. Car accident. Quick. Painless.</p>
+                <p className="text-gray-300 mb-4">But you didn't stay dead.</p>
+                <p className="text-gray-300 mb-6">Something ancient woke you. Changed you. Now the nights stretch endlessly ahead.</p>
+                <button
+                  onClick={() => setIntroStep(1)}
+                  className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
+                >
+                  Continue
+                </button>
+              </>
+            )}
+            
+            {introStep === 1 && (
+              <>
+                <h2 className="text-2xl font-bold text-white mb-4">What is your name?</h2>
+                <p className="text-purple-300 text-sm mb-4">The name you'll carry through eternity</p>
+                <input
+                  type="text"
+                  value={vampireName}
+                  onChange={(e) => setVampireName(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && vampireName.trim() && startNewGame()}
+                  placeholder="Your eternal name..."
+                  className="w-full bg-gray-900 border border-red-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-6 focus:outline-none focus:border-red-500"
+                  autoFocus
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { setShowIntro(false); setIntroStep(0); }}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={startNewGame}
+                    disabled={!vampireName.trim()}
+                    className="flex-1 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg py-3 text-white font-medium transition-all disabled:opacity-50"
+                  >
+                    Begin
+                  </button>
+                </div>
+              </>
+            )}
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );
