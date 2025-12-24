@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, BookOpen, Zap, Users, Heart, MapPin, Sparkles } from 'lucide-react';
+import { X, BookOpen, Zap, Users, Heart, MapPin, Sparkles, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import LocationVisit from './LocationVisit';

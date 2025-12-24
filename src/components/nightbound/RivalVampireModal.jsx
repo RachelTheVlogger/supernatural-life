@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sword, MessageCircle, Heart, Skull, Zap, Crown, Users } from 'lucide-react';
+import { X, Sword, Heart, Skull, Zap, Crown, Users, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
