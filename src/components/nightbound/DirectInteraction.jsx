@@ -903,6 +903,80 @@ const INTERACTIONS = {
       ]
     }
   },
+  safeword: {
+    icon: Heart,
+    label: 'Establish safe word',
+    category: 'bdsm',
+    tier: 2,
+    minRelationship: 50,
+    gains: [15, 20],
+    outcomes: {
+      mid: [
+        'You discussed boundaries. Safe word chosen. Trust established.',
+        '"Red means stop. Always." They nodded, grateful.',
+        'Communication. Consent. The foundation of everything.',
+        'Safe word in place. Now you could explore safely.'
+      ],
+      high: [
+        'Safe word established. Complete trust. They knew you\'d always stop.',
+        '"You\'ll always listen to my safe word?" "Always." Relief flooded them.',
+        'Boundaries clear. Safe word ready. Now the real play could begin.',
+        'They felt safer knowing they had control. Paradoxically more willing to surrender.',
+        'Safe word discussion deepened trust immeasurably.',
+        'Communication made everything possible. Safe. Consensual. Perfect.'
+      ]
+    }
+  },
+  aftercare: {
+    icon: Heart,
+    label: 'Aftercare',
+    category: 'bdsm',
+    tier: 2,
+    minRelationship: 40,
+    gains: [20, 30],
+    outcomes: {
+      mid: [
+        'You held them close. Soft words. Water. Blankets.',
+        'Aftercare was sacred. You tended to them carefully.',
+        'They came down slowly in your arms. Safe.',
+        'You checked in. "Are you okay?" They nodded, content.'
+      ],
+      high: [
+        'Aftercare was essential. You held them for hours. Praised them. Loved them.',
+        'Gentle touches. Water. Chocolate. Blankets. Everything they needed.',
+        'You cared for them completely. The scene wasn\'t over until aftercare was done.',
+        'They curled into you. Coming down. Grounded by your presence.',
+        'Aftercare made them feel treasured. Valued. More than just play.',
+        'You cleaned them. Fed them. Held them. Perfect care.',
+        'The vulnerability after. You protected it. Honored it.',
+        'Aftercare was when they felt most loved. You never rushed it.'
+      ]
+    }
+  },
+  negotiate: {
+    icon: MessageCircle,
+    label: 'Negotiate scene',
+    category: 'bdsm',
+    tier: 2,
+    minRelationship: 45,
+    gains: [12, 18],
+    outcomes: {
+      mid: [
+        'You discussed what you both wanted. Limits. Desires.',
+        'Negotiation made everything explicit. Clear. Safe.',
+        'Hard limits identified. Fantasies shared. Ready to play.',
+        'Communication before play. Responsible. Necessary.'
+      ],
+      high: [
+        'Thorough negotiation. Every detail discussed. Consent enthusiastic.',
+        'They told you their deepest fantasies. You listened carefully.',
+        'Limits respected. Desires honored. Communication perfect.',
+        'Negotiation was foreplay. Anticipation building.',
+        'You planned the scene together. Collaborative. Exciting.',
+        'Clear consent given for everything. Now you could explore freely.'
+      ]
+    }
+  },
   
   // CASUAL DOMINANCE - Live-in dom/sub dynamics
   morningRoutine: {
