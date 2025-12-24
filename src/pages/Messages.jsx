@@ -40,6 +40,17 @@ export default function Messages() {
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('servant');
+
+  // Redirect to Home if no vampire state exists
+  useEffect(() => {
+    const checkGameState = async () => {
+      const states = await base44.entities.VampireState.list();
+      if (states.length === 0) {
+        navigate(createPageUrl('Home'));
+      }
+    };
+    checkGameState();
+  }, [navigate]);
   
   const { data: servant } = useQuery({
     queryKey: ['servant', servantId],
