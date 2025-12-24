@@ -559,10 +559,10 @@ export default function VampireHome() {
             onClose={() => setShowOnlyFangs(false)}
           />
         )}
-        {selectedFriend && servants.find(s => s.id === selectedFriend.met_through_servant_id) && (
+        {selectedFriend && servants.length > 0 && (
           <FriendInteraction
             friend={selectedFriend}
-            servant={servants.find(s => s.id === selectedFriend.met_through_servant_id)}
+            servant={servants.find(s => s.id === selectedFriend.met_through_servant_id) || servants[0]}
             vampireState={vampireState}
             onClose={() => setSelectedFriend(null)}
           />
