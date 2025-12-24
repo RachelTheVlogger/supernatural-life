@@ -5,22 +5,29 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const VIDEO_CATEGORIES = {
-  couple: { label: 'Couple', icon: '💑', examples: ['Making love together', 'Vampire takes their servant', 'Riding my vampire', 'Getting bred on camera', 'Passionate fucking', 'Shower sex'] },
-  filmed: { label: 'Filmed by Partner', icon: '🎥', examples: ['They film me masturbating', 'Stripping and touching myself', 'Using toys while they watch', 'Fingering myself for them', 'Moaning for the camera'] },
-  vampiresolo: { label: 'Vampire Solo', icon: '🦇', examples: ['Vampire masturbating', 'Vampire stripping and teasing', 'Dominant vampire jerking off', 'Vampire using toys', 'Vampire showing everything'] },
-  solo: { label: 'Solo', icon: '💋', examples: ['Masturbating thinking of you', 'Undressing and fingering myself', 'Playing with toys and moaning', 'Multiple orgasms on camera', 'Edging and cumming'] },
-  pov: { label: 'POV', icon: '👁️', examples: ['Your view while I ride you', 'On my knees for you', 'Waking up together', 'Between my legs', 'Facesitting POV'] },
-  roleplay: { label: 'Roleplay', icon: '🎭', examples: ['Vampire seduction', 'Your obedient servant', 'Master and pet', 'Forbidden encounter', 'Dark ritual'] },
-  teasing: { label: 'Teasing', icon: '😈', examples: ['Strip tease', 'Almost showing everything', 'Teasing touches', 'Denial game', 'Edge play'] },
-  intimate: { label: 'Intimate', icon: '💖', examples: ['Making love to camera', 'Passionate moaning', 'Multiple orgasms', 'Intimate closeups', 'Sensual touches'] },
-  dominant: { label: 'Dominant', icon: '👑', examples: ['Ordering you around', 'Making you beg', 'Degradation', 'You\'re mine', 'Punishment time'] },
-  submissive: { label: 'Submissive', icon: '🙇', examples: ['On my knees', 'Please use me', 'Your obedient toy', 'Taking orders', 'Begging for you'] },
-  cosplay: { label: 'Cosplay', icon: '🦇', examples: ['Gothic vampire', 'Dark angel', 'Succubus', 'Witch', 'Leather & lace'] },
-  shower: { label: 'Shower', icon: '🚿', examples: ['Wet and soapy', 'Shower masturbation', 'Getting clean, getting dirty', 'Under the water', 'Steamy shower'] },
-  bedroom: { label: 'Bedroom', icon: '🛏️', examples: ['Morning in bed', 'Pillow humping', 'Sheets and moans', 'Late night session', 'Bedroom secrets'] },
-  public: { label: 'Public Risk', icon: '🌙', examples: ['In the car', 'Risky location', 'Almost caught', 'Public teasing', 'Outdoor adventure'] },
-  fetish: { label: 'Fetish', icon: '⛓️', examples: ['Feet worship', 'Bondage', 'Latex & leather', 'Worship me', 'Collar & leash'] },
-  artistic: { label: 'Artistic', icon: '🎨', examples: ['Sensual dance', 'Body art', 'Shadow play', 'Aesthetic nudity', 'Artistic poses'] }
+  couple: { label: 'Couple', icon: '💑', examples: ['Making love together', 'Vampire takes their servant', 'Riding my vampire', 'Getting bred on camera', 'Passionate fucking', 'Shower sex'], minRep: 0 },
+  filmed: { label: 'Filmed by Partner', icon: '🎥', examples: ['They film me masturbating', 'Stripping and touching myself', 'Using toys while they watch', 'Fingering myself for them', 'Moaning for the camera'], minRep: 0 },
+  vampiresolo: { label: 'Vampire Solo', icon: '🦇', examples: ['Vampire masturbating', 'Vampire stripping and teasing', 'Dominant vampire jerking off', 'Vampire using toys', 'Vampire showing everything'], minRep: 0 },
+  solo: { label: 'Solo', icon: '💋', examples: ['Masturbating thinking of you', 'Undressing and fingering myself', 'Playing with toys and moaning', 'Multiple orgasms on camera', 'Edging and cumming'], minRep: 0 },
+  pov: { label: 'POV', icon: '👁️', examples: ['Your view while I ride you', 'On my knees for you', 'Waking up together', 'Between my legs', 'Facesitting POV'], minRep: 0 },
+  roleplay: { label: 'Roleplay', icon: '🎭', examples: ['Vampire seduction', 'Your obedient servant', 'Master and pet', 'Forbidden encounter', 'Dark ritual'], minRep: 0 },
+  teasing: { label: 'Teasing', icon: '😈', examples: ['Strip tease', 'Almost showing everything', 'Teasing touches', 'Denial game', 'Edge play'], minRep: 0 },
+  intimate: { label: 'Intimate', icon: '💖', examples: ['Making love to camera', 'Passionate moaning', 'Multiple orgasms', 'Intimate closeups', 'Sensual touches'], minRep: 0 },
+  dominant: { label: 'Dominant', icon: '👑', examples: ['Ordering you around', 'Making you beg', 'Degradation', 'You\'re mine', 'Punishment time'], minRep: 20 },
+  submissive: { label: 'Submissive', icon: '🙇', examples: ['On my knees', 'Please use me', 'Your obedient toy', 'Taking orders', 'Begging for you'], minRep: 20 },
+  cosplay: { label: 'Cosplay', icon: '🦇', examples: ['Gothic vampire', 'Dark angel', 'Succubus', 'Witch', 'Leather & lace'], minRep: 30 },
+  shower: { label: 'Shower', icon: '🚿', examples: ['Wet and soapy', 'Shower masturbation', 'Getting clean, getting dirty', 'Under the water', 'Steamy shower'], minRep: 30 },
+  bedroom: { label: 'Bedroom', icon: '🛏️', examples: ['Morning in bed', 'Pillow humping', 'Sheets and moans', 'Late night session', 'Bedroom secrets'], minRep: 40 },
+  public: { label: 'Public Risk', icon: '🌙', examples: ['In the car', 'Risky location', 'Almost caught', 'Public teasing', 'Outdoor adventure'], minRep: 50 },
+  fetish: { label: 'Fetish', icon: '⛓️', examples: ['Feet worship', 'Bondage', 'Latex & leather', 'Worship me', 'Collar & leash'], minRep: 60 },
+  artistic: { label: 'Artistic', icon: '🎨', examples: ['Sensual dance', 'Body art', 'Shadow play', 'Aesthetic nudity', 'Artistic poses'], minRep: 40 },
+  // ADVANCED CATEGORIES - Unlock as you grow
+  threesome: { label: 'Threesome', icon: '👥', examples: ['Adding a third person', 'Group fun on camera', 'Sharing with another', 'Double pleasure', 'Three-way passion'], minRep: 70 },
+  extreme: { label: 'Extreme', icon: '💥', examples: ['Pushing all limits', 'Extreme insertion', 'Pain and pleasure', 'Going all out', 'No limits content'], minRep: 80 },
+  celebrity: { label: 'Celebrity Collab', icon: '⭐', examples: ['Collab with top creator', 'Celebrity guest appearance', 'Famous partnership', 'Star crossover', 'VIP collaboration'], minRep: 85 },
+  custom: { label: 'Custom Requests', icon: '✨', examples: ['Fan custom video', 'Personalized content', 'Specific fantasy fulfillment', 'Commissioned piece', 'Special request'], minRep: 75 },
+  marathon: { label: 'Marathon Sessions', icon: '⏱️', examples: ['12-hour livestream', 'All-day content', 'Marathon fucking', 'Endurance challenge', 'Non-stop session'], minRep: 90 },
+  exclusive: { label: 'Exclusive Elite', icon: '💎', examples: ['VIP-only content', 'Elite tier exclusive', 'Premium ultra-rare', 'Top-tier only', 'Highest bidder'], minRep: 95 }
 };
 
 const SUBSCRIPTION_TIERS = [
@@ -1113,16 +1120,34 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               <>
                 <h3 className="text-white font-bold mb-3">Choose Content Category</h3>
                 <div className="grid md:grid-cols-3 gap-3">
-                  {Object.entries(VIDEO_CATEGORIES).map(([key, cat]) => (
-                    <button
-                      key={key}
-                      onClick={() => setSelectedCategory(key)}
-                      className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
-                    >
-                      <div className="text-3xl mb-2">{cat.icon}</div>
-                      <h4 className="text-white font-medium">{cat.label}</h4>
-                    </button>
-                  ))}
+                  {Object.entries(VIDEO_CATEGORIES).map(([key, cat]) => {
+                    const isLocked = cat.minRep > servantProfile.reputation;
+                    const isNew = cat.minRep > 0 && cat.minRep <= servantProfile.reputation && cat.minRep > (servantProfile.reputation - 20);
+
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => !isLocked && setSelectedCategory(key)}
+                        disabled={isLocked}
+                        className={`bg-gray-800 rounded-xl p-4 text-left transition-colors relative ${
+                          isLocked ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-700'
+                        } ${isNew ? 'ring-2 ring-yellow-400' : ''}`}
+                      >
+                        <div className="text-3xl mb-2">{cat.icon}</div>
+                        <h4 className="text-white font-medium">{cat.label}</h4>
+                        {isLocked && (
+                          <span className="absolute top-2 right-2 text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
+                            Rep {cat.minRep}
+                          </span>
+                        )}
+                        {isNew && (
+                          <span className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded font-bold">
+                            NEW!
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </>
             ) : (
