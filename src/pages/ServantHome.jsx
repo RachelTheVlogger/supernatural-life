@@ -249,7 +249,7 @@ export default function ServantHome() {
               handleChore(chore);
             }}
             disabled={!!doingChore}
-            className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all touch-manipulation ${
+            className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg touch-manipulation active:scale-95 active:opacity-90 ${
               doingChore === chore.id ? 'opacity-70 scale-95' : 'bitlife-btn'
             } ${!!doingChore && doingChore !== chore.id ? 'opacity-30' : ''}`}
           >
