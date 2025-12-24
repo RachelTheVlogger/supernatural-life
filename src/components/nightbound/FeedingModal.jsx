@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Heart, Zap, Flame } from 'lucide-react';
+import { X, Heart, Zap, Flame, Droplets } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -25,16 +25,38 @@ const FEEDING_OUTCOMES = {
 export default function FeedingModal({ onClose, vampireState }) {
   const [feeding, setFeeding] = useState(false);
   const [selectingMethod, setSelectingMethod] = useState(true);
+  const [selectingBloodType, setSelectingBloodType] = useState(false);
+  const [bloodType, setBloodType] = useState(null);
   const [outcome, setOutcome] = useState(null);
   const queryClient = useQueryClient();
   
+  const handleBloodTypeChoice = (type) => {
+    setBloodType(type);
+    setSelectingBloodType(false);
+    setSelectingMethod(true);
+  };
+
   const handleFeedingChoice = (method) => {
     setSelectingMethod(false);
     setFeeding(true);
     
     setTimeout(async () => {
       const outcomes = FEEDING_OUTCOMES[method];
-      const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+      let randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+      
+      // Modify based on blood type
+      const bloodTypeMods = {
+        bloodbag: { humanity: 2, text: ' (Blood bag. Safe, sterile, unsatisfying.)' },
+        animal: { humanity: 1, text: ' (Animal blood. It sustains, but barely.)' },
+        human: { humanity: 0, text: '' }
+      };
+      const mod = bloodTypeMods[bloodType];
+      randomOutcome = {
+        ...randomOutcome,
+        humanity: randomOutcome.humanity + mod.humanity,
+        log: randomOutcome.log + mod.text
+      };
+      
       setOutcome(randomOutcome);
       
       // Update vampire state with humanity
@@ -72,6 +94,14 @@ export default function FeedingModal({ onClose, vampireState }) {
     }, 2000);
   };
   
+  // Start with blood type selection
+  React.useEffect(() => {
+    if (!bloodType) {
+      setSelectingBloodType(true);
+      setSelectingMethod(false);
+    }
+  }, [bloodType]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -99,7 +129,54 @@ export default function FeedingModal({ onClose, vampireState }) {
           Feed
         </h2>
         
-        {!feeding && !outcome && selectingMethod && (
+        {!feeding && !outcome && !selectingMethod && selectingBloodType && (
+          <div className="space-y-4">
+            <p className="text-red-100/60 text-sm leading-relaxed text-center italic mb-6">
+              Choose your source.
+            </p>
+            
+            <button
+              onClick={() => handleBloodTypeChoice('human')}
+              className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/30 transition-slow border border-red-500/20 touch-manipulation"
+            >
+              <div className="flex items-start gap-3">
+                <Droplets className="w-5 h-5 text-red-400 mt-1" />
+                <div>
+                  <p className="text-white font-medium mb-1">Human Blood</p>
+                  <p className="text-gray-400 text-sm">Fresh. Warm. Satisfying.</p>
+                </div>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => handleBloodTypeChoice('bloodbag')}
+              className="w-full glass rounded-xl p-4 text-left hover:bg-purple-950/30 transition-slow border border-purple-500/20 touch-manipulation"
+            >
+              <div className="flex items-start gap-3">
+                <Heart className="w-5 h-5 text-purple-400 mt-1" />
+                <div>
+                  <p className="text-white font-medium mb-1">Blood Bag</p>
+                  <p className="text-gray-400 text-sm">Safe. Ethical. Less fulfilling. <span className="text-green-400">++Humanity</span></p>
+                </div>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => handleBloodTypeChoice('animal')}
+              className="w-full glass rounded-xl p-4 text-left hover:bg-green-950/30 transition-slow border border-green-500/20 touch-manipulation"
+            >
+              <div className="flex items-start gap-3">
+                <Heart className="w-5 h-5 text-green-400 mt-1" />
+                <div>
+                  <p className="text-white font-medium mb-1">Animal Blood</p>
+                  <p className="text-gray-400 text-sm">Sustains life. Barely. <span className="text-green-400">+Humanity</span></p>
+                </div>
+              </div>
+            </button>
+          </div>
+        )}
+        
+        {!feeding && !outcome && selectingMethod && bloodType && (
           <div className="space-y-4">
             <p className="text-red-100/60 text-sm leading-relaxed text-center italic mb-6">
               The hunger calls. How will you feed?
@@ -107,7 +184,7 @@ export default function FeedingModal({ onClose, vampireState }) {
             
             <button
               onClick={() => handleFeedingChoice('ethical')}
-              className="w-full glass rounded-xl p-4 text-left hover:bg-blue-950/30 transition-slow border border-blue-500/20"
+              className="w-full glass rounded-xl p-4 text-left hover:bg-blue-950/30 transition-slow border border-blue-500/20 touch-manipulation"
             >
               <div className="flex items-start gap-3">
                 <Heart className="w-5 h-5 text-blue-400 mt-1" />
@@ -120,7 +197,7 @@ export default function FeedingModal({ onClose, vampireState }) {
             
             <button
               onClick={() => handleFeedingChoice('neutral')}
-              className="w-full glass rounded-xl p-4 text-left hover:bg-purple-950/30 transition-slow border border-purple-500/20"
+              className="w-full glass rounded-xl p-4 text-left hover:bg-purple-950/30 transition-slow border border-purple-500/20 touch-manipulation"
             >
               <div className="flex items-start gap-3">
                 <Zap className="w-5 h-5 text-purple-400 mt-1" />
@@ -133,7 +210,7 @@ export default function FeedingModal({ onClose, vampireState }) {
             
             <button
               onClick={() => handleFeedingChoice('brutal')}
-              className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/30 transition-slow border border-red-500/20"
+              className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/30 transition-slow border border-red-500/20 touch-manipulation"
             >
               <div className="flex items-start gap-3">
                 <Flame className="w-5 h-5 text-red-400 mt-1" />
@@ -142,6 +219,17 @@ export default function FeedingModal({ onClose, vampireState }) {
                   <p className="text-gray-400 text-sm">Take everything. The beast demands satisfaction. <span className="text-red-400">-Humanity</span></p>
                 </div>
               </div>
+            </button>
+            
+            <button
+              onClick={() => {
+                setBloodType(null);
+                setSelectingMethod(false);
+                setSelectingBloodType(true);
+              }}
+              className="w-full glass rounded-xl p-2 text-center hover:bg-gray-800/50 transition-slow text-gray-400 text-sm touch-manipulation"
+            >
+              ← Change Blood Source
             </button>
           </div>
         )}

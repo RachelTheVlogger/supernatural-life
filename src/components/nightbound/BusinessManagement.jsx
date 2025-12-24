@@ -69,6 +69,8 @@ export default function BusinessManagement({ servant, onClose }) {
   const [crafting, setCrafting] = useState(null);
   const [buying, setBuying] = useState(null);
   const [collectingPassive, setCollectingPassive] = useState(false);
+  const [showShippingOptions, setShowShippingOptions] = useState(null);
+  const [shippingOrder, setShippingOrder] = useState(null);
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['inventory', servant.id],
@@ -271,6 +273,46 @@ export default function BusinessManagement({ servant, onClose }) {
     return inventory.find(i => i.material === material)?.quantity || 0;
   };
 
+  const handleShipOrder = async (order, method = 'standard') => {
+    const methods = {
+      standard: { time: 0, bonus: 0, log: 'Standard shipping. 5-7 days.' },
+      express: { time: 0, bonus: 5, log: 'Express shipping. Customer loves the speed!' },
+      handDeliver: { time: 2000, bonus: 15, log: 'You delivered it personally. They were touched by the gesture.' }
+    };
+    
+    const methodData = methods[method];
+    
+    if (method === 'handDeliver') {
+      setShippingOrder(order.id);
+      setTimeout(async () => {
+        await base44.entities.BusinessOrder.update(order.id, { status: 'shipped' });
+        
+        if (methodData.bonus > 0) {
+          const newRel = Math.min((servant.relationship || 0) + methodData.bonus, 100);
+          await base44.entities.Servant.update(servant.id, { relationship: newRel });
+        }
+        
+        await base44.entities.NightLog.create({
+          entry: `${servant.name}: ${methodData.log}`,
+          category: 'interaction',
+          intensity: 'moderate'
+        });
+        
+        queryClient.invalidateQueries();
+        setShippingOrder(null);
+      }, methodData.time);
+    } else {
+      await base44.entities.BusinessOrder.update(order.id, { status: 'shipped' });
+      
+      if (methodData.bonus > 0) {
+        const newRel = Math.min((servant.relationship || 0) + methodData.bonus, 100);
+        await base44.entities.Servant.update(servant.id, { relationship: newRel });
+      }
+      
+      queryClient.invalidateQueries();
+    }
+  };
+
   const pendingOrders = orders.filter(o => o.status === 'pending');
   const completedOrders = orders.filter(o => o.status === 'completed');
 
@@ -366,10 +408,11 @@ export default function BusinessManagement({ servant, onClose }) {
           {tab === 'orders' && (
             <>
               <h3 className="text-white font-bold mb-3">Pending Orders ({pendingOrders.length})</h3>
-              {pendingOrders.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">No pending orders</p>
-              ) : (
-                pendingOrders.map(order => {
+              {pendingOrders.length === 0 && completedOrders.length === 0 && (
+                <p className="text-gray-400 text-center py-8">No orders</p>
+              )}
+              
+              {pendingOrders.length > 0 && pendingOrders.map(order => {
                   const designs = JEWELRY_DESIGNS[order.rarity] || [];
                   const design = designs.find(d => d.name === order.item);
                   if (!design) return null;
@@ -601,6 +644,25 @@ export default function BusinessManagement({ servant, onClose }) {
           )}
         </div>
       </motion.div>
+      
+      <AnimatePresence>
+        {shippingOrder && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80"
+          >
+            <motion.div
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-center"
+            >
+              <p className="text-gray-300 text-lg">Delivering personally...</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
