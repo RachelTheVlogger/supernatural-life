@@ -142,7 +142,8 @@ export default function Home() {
                 <h2 className="text-3xl font-bold text-red-400 mb-4">You died.</h2>
                 <p className="text-gray-300 mb-4">Three nights ago. Car accident. Quick. Painless.</p>
                 <p className="text-gray-300 mb-4">But you didn't stay dead.</p>
-                <p className="text-gray-300 mb-6">Something ancient woke you. Changed you. Now the nights stretch endlessly ahead.</p>
+                <p className="text-gray-300 mb-4">Something ancient woke you. Changed you. You're a vampire now. Male. Immortal.</p>
+                <p className="text-gray-300 mb-6">The nights stretch endlessly ahead.</p>
                 <button
                   onClick={() => setIntroStep(1)}
                   className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
