@@ -138,7 +138,7 @@ export default function FriendInteraction({ friend, servant, vampireState, onClo
       }
       
       await base44.entities.NightLog.create({
-        entry: `You interacted with ${friend.name}, ${servant.name}'s friend. ${result}`,
+        entry: `You interacted with ${friend.name}, ${servant?.name || 'your servant'}'s friend. ${result}`,
         category: 'interaction',
         intensity: 'moderate'
       });
@@ -181,7 +181,7 @@ export default function FriendInteraction({ friend, servant, vampireState, onClo
           {friend.personality}
         </p>
         <p className="text-gray-500 text-xs mb-4">
-          Friend of {servant.name}
+          Friend of {servant?.name || 'your servant'}
         </p>
 
         {outcome ? (
