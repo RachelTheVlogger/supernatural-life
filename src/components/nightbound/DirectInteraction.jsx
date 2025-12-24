@@ -373,8 +373,8 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Dominate them',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 40,
+    tier: 1,
+    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: [
@@ -409,8 +409,8 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Let them dominate',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 40,
+    tier: 1,
+    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: [
@@ -445,8 +445,8 @@ const INTERACTIONS = {
     icon: Star,
     label: 'Let them worship you',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 45,
+    tier: 1,
+    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -542,8 +542,8 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Edge them',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 45,
+    tier: 1,
+    minRelationship: 0,
     gains: [18, 28],
     outcomes: {
       mid: [
@@ -568,8 +568,8 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'BDSM scene',
     category: 'bdsm',
-    tier: 3,
-    minRelationship: 55,
+    tier: 1,
+    minRelationship: 0,
     gains: [30, 40],
     outcomes: {
       mid: [
@@ -596,8 +596,8 @@ const INTERACTIONS = {
     icon: Skull,
     label: 'Degrade them (verbal)',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 50,
+    tier: 1,
+    minRelationship: 0,
     gains: [20, 30],
     getDynamicOutcomes: (servantName) => {
       const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion', 'cedar'];
@@ -699,8 +699,8 @@ const INTERACTIONS = {
     icon: Zap,
     label: 'Control their orgasms',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 50,
+    tier: 1,
+    minRelationship: 0,
     gains: [22, 32],
     outcomes: {
       mid: [
@@ -725,8 +725,8 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Put a collar on them',
     category: 'bdsm',
-    tier: 3,
-    minRelationship: 60,
+    tier: 1,
+    minRelationship: 0,
     gains: [30, 40],
     outcomes: {
       mid: [
@@ -751,8 +751,8 @@ const INTERACTIONS = {
     icon: Zap,
     label: 'Train them',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 50,
+    tier: 1,
+    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: [
@@ -777,8 +777,8 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Punish them',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 45,
+    tier: 1,
+    minRelationship: 0,
     gains: [18, 28],
     outcomes: {
       mid: [
@@ -881,8 +881,8 @@ const INTERACTIONS = {
     icon: Lock,
     label: 'Bind them',
     category: 'bdsm',
-    tier: 3,
-    minRelationship: 55,
+    tier: 1,
+    minRelationship: 0,
     gains: [22, 32],
     outcomes: {
       mid: [
