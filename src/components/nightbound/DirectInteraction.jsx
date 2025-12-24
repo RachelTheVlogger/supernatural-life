@@ -1598,30 +1598,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         intensity: ['intimate', 'makeout', 'bite'].includes(type) ? 'significant' : 'moderate'
       });
       
-      // Update interaction progress for unlocking new tiers
-      const category = interaction.category;
-      if (category !== 'power') {
-        const categoryProgress = interactionProgress.find(p => p.category === category);
-        if (categoryProgress) {
-          const newTimesUsed = categoryProgress.times_used + 1;
-          const newTier = Math.floor(newTimesUsed / 5) + 1; // Unlock new tier every 5 uses
-          await base44.entities.InteractionProgress.update(categoryProgress.id, {
-            times_used: newTimesUsed,
-            unlocked_tier: newTier
-          });
-          
-          // Generate new interactions when reaching tier 5, 10, 15, etc
-          if (newTier >= 5 && newTier % 5 === 0) {
-            await generateNewInteractions(category, newTier);
-          }
-        } else {
-          await base44.entities.InteractionProgress.create({
-            category: category,
-            times_used: 1,
-            unlocked_tier: 1
-          });
-        }
-      }
+      // Tier system removed - no progression tracking needed
 
       // Update quest progress
       const quests = await base44.entities.Quest.filter({ servant_id: servant.id });
@@ -1685,11 +1662,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   
   const rel = servant.relationship || 0;
 
-  // Get unlocked tiers for each category
-  const getUnlockedTier = (category) => {
-    const progress = interactionProgress.find(p => p.category === category);
-    return progress?.unlocked_tier || 1;
-  };
+  // Tier system removed - all interactions available
 
   // Combine interactions - add vampire interactions if servant is turned
   const allInteractions = servant.is_turned 
@@ -1764,42 +1737,23 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           They're here with you. What will you do?
         </p>
         
-        {/* Category filter with tier display */}
+        {/* Category filter */}
         {!outcome && !processing && (
           <div className="mb-4">
             <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
-              {categories.map(cat => {
-                const unlockedTier = getUnlockedTier(cat);
-                const progress = interactionProgress.find(p => p.category === cat);
-                const timesUsed = progress?.times_used || 0;
-                const nextTierAt = unlockedTier * 5;
-
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-colors relative touch-manipulation ${
-                      selectedCategory === cat 
-                        ? 'bg-purple-600 text-white' 
-                        : 'bg-gray-800 text-gray-400 active:bg-gray-700'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <span>{cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
-                      {cat !== 'all' && cat !== 'power' && (
-                        <span className="bg-black/30 px-1.5 py-0.5 rounded text-[10px]">
-                          T{unlockedTier}
-                        </span>
-                      )}
-                    </div>
-                    {cat !== 'all' && cat !== 'power' && selectedCategory === cat && (
-                      <div className="mt-1 text-[10px] text-purple-200">
-                        {timesUsed}/{nextTierAt} to T{unlockedTier + 1}
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-colors touch-manipulation ${
+                    selectedCategory === cat 
+                      ? 'bg-purple-600 text-white' 
+                      : 'bg-gray-800 text-gray-400 active:bg-gray-700'
+                  }`}
+                >
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -1951,10 +1905,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         ) : (
           <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-2">
             {filteredInteractions.map(([key, interaction]) => {
-              const unlockedTier = getUnlockedTier(interaction.category);
-              const isLocked = interaction.tier && interaction.tier > unlockedTier;
               const relDisabled = interaction.minRelationship && rel < interaction.minRelationship;
-              const disabled = isLocked || relDisabled;
               const Icon = interaction.icon;
 
               return (
@@ -1962,24 +1913,14 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                   key={key}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (!disabled) handleInteraction(key);
+                    if (!relDisabled) handleInteraction(key);
                   }}
-                  disabled={disabled}
-                  className={`bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm ${
-                    isLocked ? 'bg-gray-800 hover:bg-gray-800' : ''
-                  }`}
+                  disabled={relDisabled}
+                  className="bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm"
                 >
                   <Icon className="w-4 h-4" />
                   <span>{interaction.label}</span>
-                  {isLocked && <span className="text-xs text-gray-400 ml-auto flex items-center gap-1">
-                    <Lock className="w-3 h-3" /> Tier {interaction.tier}
-                  </span>}
-                  {!isLocked && relDisabled && <span className="text-xs ml-auto">({interaction.minRelationship}+)</span>}
-                  {!isLocked && !relDisabled && interaction.tier && (
-                    <span className="text-xs text-white bg-purple-600/50 px-2 py-0.5 rounded ml-auto">
-                      T{interaction.tier}
-                    </span>
-                  )}
+                  {relDisabled && <span className="text-xs ml-auto">({interaction.minRelationship}+)</span>}
                 </button>
               );
             })}
