@@ -244,49 +244,63 @@ export default function BusinessManagement({ servant, onClose }) {
   const handleCraft = async (design, rarity, orderId) => {
     setCrafting(orderId);
     
-    // Consume materials
-    for (const [material, amount] of Object.entries(design.materials)) {
-      const inv = inventory.find(i => i.material === material);
-      if (inv) {
-        await base44.entities.Inventory.update(inv.id, {
-          quantity: inv.quantity - amount
-        });
+    try {
+      // Consume materials
+      for (const [material, amount] of Object.entries(design.materials)) {
+        const inv = inventory.find(i => i.material === material);
+        if (inv) {
+          await base44.entities.Inventory.update(inv.id, {
+            quantity: inv.quantity - amount
+          });
+        }
       }
-    }
 
-    // Apply speed upgrade
-    const speedLevel = getUpgradeLevel('speed_bench');
-    const craftTime = design.time * (1 - (speedLevel * 0.25));
+      // Apply speed upgrade
+      const speedLevel = getUpgradeLevel('speed_bench');
+      const craftTime = design.time * (1 - (speedLevel * 0.25));
 
-    setTimeout(async () => {
-      await base44.entities.BusinessOrder.update(orderId, {
-        status: 'completed'
-      });
+      setTimeout(async () => {
+        try {
+          // Update order status first
+          await base44.entities.BusinessOrder.update(orderId, {
+            status: 'completed'
+          });
 
-      // Apply quality upgrade to price
-      const qualityLevel = getUpgradeLevel('quality_tools');
-      const priceBonus = 1 + (qualityLevel * 0.15);
-      const finalPrice = Math.floor(design.basePrice * priceBonus);
+          // Apply quality upgrade to price
+          const qualityLevel = getUpgradeLevel('quality_tools');
+          const priceBonus = 1 + (qualityLevel * 0.15);
+          const finalPrice = Math.floor(design.basePrice * priceBonus);
 
-      // Update stats
-      const displayLevel = getUpgradeLevel('display_case');
-      const repGain = Math.floor((5 + (rarity === 'legendary' ? 10 : rarity === 'rare' ? 5 : 0)) * (1 + displayLevel * 0.2));
-      
-      await base44.entities.BusinessStats.update(businessStats.id, {
-        total_sales: businessStats.total_sales + 1,
-        revenue: businessStats.revenue + finalPrice,
-        reputation: Math.min(100, businessStats.reputation + repGain)
-      });
+          // Update stats
+          const displayLevel = getUpgradeLevel('display_case');
+          const repGain = Math.floor((5 + (rarity === 'legendary' ? 10 : rarity === 'rare' ? 5 : 0)) * (1 + displayLevel * 0.2));
+          
+          await base44.entities.BusinessStats.update(businessStats.id, {
+            total_sales: businessStats.total_sales + 1,
+            revenue: businessStats.revenue + finalPrice,
+            reputation: Math.min(100, businessStats.reputation + repGain)
+          });
 
-      await base44.entities.NightLog.create({
-        entry: `${servant.name} crafted ${design.name}. Sold for $${finalPrice}.`,
-        category: 'interaction',
-        intensity: 'subtle'
-      });
+          await base44.entities.NightLog.create({
+            entry: `${servant.name} crafted ${design.name}. Ready to ship for $${finalPrice}.`,
+            category: 'interaction',
+            intensity: 'subtle'
+          });
 
-      queryClient.invalidateQueries();
+          // Force refresh all queries
+          await queryClient.invalidateQueries(['orders']);
+          await queryClient.invalidateQueries(['stats']);
+          await queryClient.invalidateQueries(['inventory']);
+          setCrafting(null);
+        } catch (error) {
+          console.error('Craft completion error:', error);
+          setCrafting(null);
+        }
+      }, craftTime);
+    } catch (error) {
+      console.error('Craft error:', error);
       setCrafting(null);
-    }, craftTime);
+    }
   };
 
   const handleBuyMaterial = async (materialKey, amount) => {
@@ -366,9 +380,27 @@ export default function BusinessManagement({ servant, onClose }) {
     
     const methodData = methods[method];
     
-    if (method === 'handDeliver') {
-      setShippingOrder(order.id);
-      setTimeout(async () => {
+    try {
+      if (method === 'handDeliver') {
+        setShippingOrder(order.id);
+        setTimeout(async () => {
+          await base44.entities.BusinessOrder.update(order.id, { status: 'shipped' });
+          
+          if (methodData.bonus > 0) {
+            const newRel = Math.min((servant.relationship || 0) + methodData.bonus, 100);
+            await base44.entities.Servant.update(servant.id, { relationship: newRel });
+          }
+          
+          await base44.entities.NightLog.create({
+            entry: `${servant.name}: ${methodData.log}`,
+            category: 'interaction',
+            intensity: 'moderate'
+          });
+          
+          await queryClient.invalidateQueries(['orders']);
+          setShippingOrder(null);
+        }, methodData.time);
+      } else {
         await base44.entities.BusinessOrder.update(order.id, { status: 'shipped' });
         
         if (methodData.bonus > 0) {
@@ -379,21 +411,14 @@ export default function BusinessManagement({ servant, onClose }) {
         await base44.entities.NightLog.create({
           entry: `${servant.name}: ${methodData.log}`,
           category: 'interaction',
-          intensity: 'moderate'
+          intensity: 'subtle'
         });
         
-        queryClient.invalidateQueries();
-        setShippingOrder(null);
-      }, methodData.time);
-    } else {
-      await base44.entities.BusinessOrder.update(order.id, { status: 'shipped' });
-      
-      if (methodData.bonus > 0) {
-        const newRel = Math.min((servant.relationship || 0) + methodData.bonus, 100);
-        await base44.entities.Servant.update(servant.id, { relationship: newRel });
+        await queryClient.invalidateQueries(['orders']);
       }
-      
-      queryClient.invalidateQueries();
+    } catch (error) {
+      console.error('Ship order error:', error);
+      setShippingOrder(null);
     }
   };
 
