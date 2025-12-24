@@ -74,6 +74,9 @@ export default function ServantHome() {
       return;
     }
 
+    // Immediate feedback
+    setDoingChore(chore.id);
+
     if (chore.id === 'restock') {
       const materials = ['silver', 'moonstone', 'onyx', 'obsidian', 'garnet', 'amethyst', 'chain', 'wire'];
       const toBuy = materials[Math.floor(Math.random() * materials.length)];
@@ -94,8 +97,6 @@ export default function ServantHome() {
         });
       }
     }
-
-    setDoingChore(chore.id);
     
     setTimeout(async () => {
       const outcome = chore.outcomes[Math.floor(Math.random() * chore.outcomes.length)];
@@ -248,10 +249,14 @@ export default function ServantHome() {
               handleChore(chore);
             }}
             disabled={!!doingChore}
-            className="w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg disabled:opacity-50 transition-all bitlife-btn"
+            className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all touch-manipulation ${
+              doingChore === chore.id ? 'opacity-70 scale-95' : 'bitlife-btn'
+            } ${!!doingChore && doingChore !== chore.id ? 'opacity-30' : ''}`}
           >
             <chore.icon className="w-5 h-5" />
-            <span className="text-base font-medium">{chore.label}</span>
+            <span className="text-base font-medium">
+              {doingChore === chore.id ? 'Working on it...' : chore.label}
+            </span>
           </motion.button>
         ))}
       </div>
