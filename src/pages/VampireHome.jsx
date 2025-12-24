@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Moon, Book, Clock, Zap, Heart, Brain, Eye, Scroll, TreePine } from 'lucide-react';
+import { ArrowLeft, Moon, Book, Zap, Heart, Brain, Eye, Scroll, TreePine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
