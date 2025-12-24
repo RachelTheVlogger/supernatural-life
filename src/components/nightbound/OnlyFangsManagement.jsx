@@ -986,7 +986,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
         {/* Tab Content */}
         {tab === 'profile' && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             <div className="bg-gray-800 rounded-xl p-4">
               <h3 className="text-white font-medium mb-2">Account Type</h3>
               <p className="text-gray-300">{servantProfile.is_couple_account ? '❤️ Couples Account' : '💋 Solo Account'}</p>
@@ -1115,7 +1115,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         )}
 
         {tab === 'create' && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             {!selectedCategory ? (
               <>
                 <h3 className="text-white font-bold mb-3">Choose Content Category</h3>
@@ -1247,7 +1247,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         )}
 
         {tab === 'videos' && (
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[55vh] overflow-y-auto">
             {videos.length === 0 ? (
               <p className="text-gray-400 text-center py-8">No videos yet. Time to create some content!</p>
             ) : (
@@ -1324,7 +1324,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         )}
 
         {tab === 'ppv' && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             <div className="bg-gradient-to-br from-pink-950/40 to-purple-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
               <h3 className="text-white text-xl font-bold mb-2 flex items-center gap-2">
                 <MessageCircle className="w-5 h-5" /> Mass PPV Message
@@ -1430,7 +1430,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         )}
 
         {tab === 'fans' && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             <div className="bg-gradient-to-br from-yellow-950/40 to-amber-950/40 border-2 border-yellow-500/30 rounded-2xl p-6">
               <h3 className="text-white text-xl font-bold mb-4 flex items-center gap-2">
                 <Award className="w-5 h-5 text-yellow-400" /> Top Fans
@@ -1494,7 +1494,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         )}
 
         {tab === 'analytics' && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             <div className="bg-gradient-to-br from-blue-950/40 to-purple-950/40 border-2 border-blue-500/30 rounded-2xl p-6">
               <h3 className="text-white text-xl font-bold mb-4 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5" /> Performance Analytics
@@ -1548,7 +1548,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         )}
 
         {tab === 'engagement' && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             <div className="bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 rounded-2xl p-6">
               <h3 className="text-white text-xl font-bold mb-4 flex items-center gap-2">
                 <Zap className="w-5 h-5" /> Engagement Tools
@@ -1645,7 +1645,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         )}
 
         {tab === 'brainstorm' && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
               <h3 className="text-white text-xl font-bold mb-2 flex items-center gap-2">
                 💡 Content Brainstorming

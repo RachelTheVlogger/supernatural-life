@@ -229,11 +229,12 @@ export default function ServantHome() {
       </motion.div>
       
       {/* Activities */}
-      <div className="max-w-2xl mx-auto space-y-3 mb-8 relative z-10">
+      <div className="max-w-2xl mx-auto mb-8 relative z-10">
         <h2 className="text-sm uppercase mb-4 text-gray-400">
           {servant.is_turned ? 'What will you do tonight?' : 'What will you do?'}
         </h2>
         
+        <div className="space-y-3 max-h-[55vh] overflow-y-auto">
         {activities.map((chore, i) => (
           <motion.button
             key={chore.id}
@@ -255,6 +256,7 @@ export default function ServantHome() {
             </span>
           </motion.button>
         ))}
+        </div>
       </div>
       
       {/* Loading overlay for activities */}
