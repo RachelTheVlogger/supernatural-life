@@ -70,7 +70,8 @@ export default function ServantHome() {
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', servantId],
     queryFn: () => base44.entities.Message.filter({ servant_id: servantId }, '-created_date'),
-    enabled: !!servantId
+    enabled: !!servantId,
+    staleTime: 5000
   });
   
   const unreadMessages = messages.filter(m => !m.read && m.sender === 'vampire').length;

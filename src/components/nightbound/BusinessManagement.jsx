@@ -94,22 +94,26 @@ export default function BusinessManagement({ servant, onClose }) {
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['inventory', servant.id],
-    queryFn: () => base44.entities.Inventory.filter({ servant_id: servant.id })
+    queryFn: () => base44.entities.Inventory.filter({ servant_id: servant.id }),
+    staleTime: 3000
   });
 
   const { data: orders = [] } = useQuery({
     queryKey: ['orders', servant.id],
-    queryFn: () => base44.entities.BusinessOrder.filter({ servant_id: servant.id }, '-created_date')
+    queryFn: () => base44.entities.BusinessOrder.filter({ servant_id: servant.id }, '-created_date'),
+    staleTime: 3000
   });
 
   const { data: reviews = [] } = useQuery({
     queryKey: ['reviews', servant.id],
-    queryFn: () => base44.entities.Review.filter({ servant_id: servant.id })
+    queryFn: () => base44.entities.Review.filter({ servant_id: servant.id }),
+    staleTime: 5000
   });
 
   const { data: upgrades = [] } = useQuery({
     queryKey: ['upgrades', servant.id],
-    queryFn: () => base44.entities.WorkshopUpgrade.filter({ servant_id: servant.id })
+    queryFn: () => base44.entities.WorkshopUpgrade.filter({ servant_id: servant.id }),
+    staleTime: 5000
   });
 
   const { data: stats = [] } = useQuery({

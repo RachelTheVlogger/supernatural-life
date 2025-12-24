@@ -64,12 +64,14 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
-    queryFn: () => base44.entities.OnlyFangsProfile.filter({ servant_id: servant.id })
+    queryFn: () => base44.entities.OnlyFangsProfile.filter({ servant_id: servant.id }),
+    staleTime: 5000
   });
 
   const { data: videos = [] } = useQuery({
     queryKey: ['onlyfangs-videos', servant.id],
-    queryFn: () => base44.entities.OnlyFangsVideo.filter({ servant_id: servant.id }, '-created_date')
+    queryFn: () => base44.entities.OnlyFangsVideo.filter({ servant_id: servant.id }, '-created_date'),
+    staleTime: 3000
   });
 
   const servantProfile = profile[0];
