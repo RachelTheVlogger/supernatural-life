@@ -45,15 +45,45 @@ const POWER_PATHS = {
     description: 'Master the minds of mortals',
     powers: [
       {
+        name: 'Enhanced Senses',
+        description: 'Perceive heartbeats from across a room',
+        requirements: { nights: 1 },
+        tier: 1
+      },
+      {
         name: 'Subtle Influence',
         description: 'Plant thoughts that feel like their own',
         requirements: { nights: 3, relationship: 15 },
         tier: 1
       },
       {
+        name: 'Feral Rage',
+        description: 'Unleash primal vampire fury',
+        requirements: { nights: 4, relationship: 20, prerequisite: 'Enhanced Senses' },
+        tier: 1
+      },
+      {
+        name: 'Dream Walking',
+        description: 'Enter and control their dreams',
+        requirements: { nights: 6, relationship: 30, prerequisite: 'Enhanced Senses' },
+        tier: 1
+      },
+      {
+        name: 'Soul Gaze',
+        description: 'See into their very essence',
+        requirements: { nights: 8, relationship: 35, prerequisite: 'Enhanced Senses' },
+        tier: 2
+      },
+      {
         name: 'Commanding Presence',
         description: 'Your words carry unnatural weight',
         requirements: { nights: 8, relationship: 30, prerequisite: 'Subtle Influence' },
+        tier: 2
+      },
+      {
+        name: 'Time Dilation',
+        description: 'Slow their perception of time',
+        requirements: { nights: 10, powers: 3, relationship: 40, prerequisite: 'Dream Walking' },
         tier: 2
       },
       {
