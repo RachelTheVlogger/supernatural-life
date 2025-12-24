@@ -147,14 +147,41 @@ export default function VampireHome() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          {servants.length > 0 && (
+          <div className="flex gap-3">
             <button
-              onClick={() => navigate(createPageUrl(`ServantHome?id=${servants[0].id}`))}
-              className="text-purple-400 hover:text-purple-300 transition-colors text-sm"
+              onClick={async () => {
+                if (confirm('Reset game? This will delete all progress.')) {
+                  // Delete all game data
+                  const allVampireStates = await base44.entities.VampireState.list();
+                  const allServants = await base44.entities.Servant.list();
+                  const allLogs = await base44.entities.NightLog.list();
+                  const allQuests = await base44.entities.Quest.list();
+                  const allMessages = await base44.entities.Message.list();
+
+                  await Promise.all([
+                    ...allVampireStates.map(v => base44.entities.VampireState.delete(v.id)),
+                    ...allServants.map(s => base44.entities.Servant.delete(s.id)),
+                    ...allLogs.map(l => base44.entities.NightLog.delete(l.id)),
+                    ...allQuests.map(q => base44.entities.Quest.delete(q.id)),
+                    ...allMessages.map(m => base44.entities.Message.delete(m.id))
+                  ]);
+
+                  navigate(createPageUrl('Home'), { replace: true });
+                }
+              }}
+              className="text-red-400 hover:text-red-300 transition-colors text-sm"
             >
-              Switch to Servant →
+              Reset Game
             </button>
-          )}
+            {servants.length > 0 && (
+              <button
+                onClick={() => navigate(createPageUrl(`ServantHome?id=${servants[0].id}`))}
+                className="text-purple-400 hover:text-purple-300 transition-colors text-sm"
+              >
+                Switch to Servant →
+              </button>
+            )}
+          </div>
         </div>
         
         <div className="max-w-4xl mx-auto">
