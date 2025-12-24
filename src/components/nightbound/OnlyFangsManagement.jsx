@@ -824,7 +824,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               <textarea
                 value={profileData.bio}
                 onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
-                placeholder="Tell them what makes you special..."
+                placeholder={profileData.is_couple ? "Tell them about your couple's account..." : "Tell them what makes you special..."}
                 className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1 h-20"
               />
             </div>
@@ -836,7 +836,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   onClick={() => setProfileData({...profileData, is_couple: true})}
                   className={`flex-1 py-3 rounded-lg transition-colors ${profileData.is_couple ? 'bg-gradient-to-r from-pink-600 to-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}
                 >
-                  💑 Couple Account
+                  ❤️ Couples Account
                 </button>
                 <button
                   onClick={() => setProfileData({...profileData, is_couple: false})}
@@ -982,7 +982,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           <div className="space-y-4">
             <div className="bg-gray-800 rounded-xl p-4">
               <h3 className="text-white font-medium mb-2">Account Type</h3>
-              <p className="text-gray-300">{servantProfile.is_couple_account ? '💑 Couples Account' : '💋 Solo Account'}</p>
+              <p className="text-gray-300">{servantProfile.is_couple_account ? '❤️ Couples Account' : '💋 Solo Account'}</p>
             </div>
             
             <div className="bg-gray-800 rounded-xl p-4">
