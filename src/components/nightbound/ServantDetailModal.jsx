@@ -516,7 +516,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
         ) : (
           <div className="space-y-3">
             <button
-              onClick={() => setShowInteractions(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowInteractions(true);
+              }}
               className="w-full bg-gradient-to-r from-pink-900/40 to-purple-900/40 hover:from-pink-900/60 hover:to-purple-900/60 border-2 border-pink-500/50 rounded-xl py-4 flex items-center justify-center gap-2 transition-all"
             >
               <Heart className="w-5 h-5 text-pink-400" />
@@ -524,7 +527,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
             
             <button
-              onClick={() => setShowFriends(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowFriends(true);
+              }}
               className="w-full bg-gradient-to-r from-blue-900/40 to-cyan-900/40 hover:from-blue-900/60 hover:to-cyan-900/60 border-2 border-blue-500/50 rounded-xl py-4 flex items-center justify-center gap-2 transition-all"
             >
               <Users className="w-5 h-5 text-blue-400" />
@@ -533,7 +539,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             
             {!activeQuest && (
               <button
-                onClick={() => setShowQuestModal(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowQuestModal(true);
+                }}
                 className="w-full bg-gradient-to-r from-purple-900/30 to-pink-900/30 border-2 border-purple-500/50 rounded-xl py-3 flex items-center justify-center gap-2 transition-all hover:from-purple-900/50 hover:to-pink-900/50"
               >
                 <Sparkles className="w-5 h-5 text-purple-400" />
@@ -543,7 +552,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             
             {!servant.is_turned && (
               <button
-                onClick={handleFeedOn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleFeedOn();
+                }}
                 className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
               >
                 <Heart className="w-5 h-5" />
@@ -560,7 +572,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             )}
             
             <button
-              onClick={handleTeach}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleTeach();
+              }}
               className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
             >
               <BookOpen className="w-5 h-5" />
@@ -568,7 +583,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
             
             <button
-              onClick={() => setShowLocations(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowLocations(true);
+              }}
               className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
             >
               <MapPin className="w-5 h-5" />
@@ -576,7 +594,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
             
             <button
-              onClick={() => setShowTownPeople(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowTownPeople(true);
+              }}
               className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
             >
               <Users className="w-5 h-5" />
@@ -585,7 +606,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             
             {!servant.is_turned && servant.obsession_stage >= 4 && (
               <button
-                onClick={handleTurn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleTurn();
+                }}
                 className="w-full bg-red-900 hover:bg-red-800 text-white rounded-xl py-4 flex items-center gap-3 transition-colors"
               >
                 <Zap className="w-5 h-5" />
