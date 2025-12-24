@@ -26,25 +26,12 @@ export default function Home() {
       return;
     }
     
-    // Clear all existing data
-    const servants = await base44.entities.Servant.list();
-    const logs = await base44.entities.NightLog.list();
-    const quests = await base44.entities.Quest.list();
-    const messages = await base44.entities.Message.list();
-    const temptations = await base44.entities.Temptation.list();
-    const powerProgress = await base44.entities.PowerProgress.list();
-    const interactionProgress = await base44.entities.InteractionProgress.list();
-    
-    await Promise.all([
-      ...servants.map(s => base44.entities.Servant.delete(s.id)),
-      ...logs.map(l => base44.entities.NightLog.delete(l.id)),
-      ...quests.map(q => base44.entities.Quest.delete(q.id)),
-      ...messages.map(m => base44.entities.Message.delete(m.id)),
-      ...temptations.map(t => base44.entities.Temptation.delete(t.id)),
-      ...powerProgress.map(p => base44.entities.PowerProgress.delete(p.id)),
-      ...interactionProgress.map(i => base44.entities.InteractionProgress.delete(i.id)),
-      ...vampireStates.map(v => base44.entities.VampireState.delete(v.id))
-    ]);
+    // Only delete vampire states - game will handle cleanup
+    if (vampireStates.length > 0) {
+      for (const v of vampireStates) {
+        await base44.entities.VampireState.delete(v.id);
+      }
+    }
     
     // Create new vampire state
     await base44.entities.VampireState.create({
