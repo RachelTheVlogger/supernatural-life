@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Brain, Eye, Heart, Skull, Wind, Moon, Sparkles, Shield, Sun, Star, Lock } from 'lucide-react';
+import { Zap, Brain, Eye, Heart, Skull, Wind, Moon, Sparkles, Shield, Sun, Star, Lock, Clock, Droplets } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 
