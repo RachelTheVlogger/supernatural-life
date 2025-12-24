@@ -426,6 +426,90 @@ const POWER_LIBRARY = {
       relationshipBonus: 30 + (level * 10),
       description: level <= 3 ? ['Basic blood bond', 'Deep vampiric connection', 'Eternal soul binding'][level - 1] : `Master level ${level} - Cosmic unity`
     })
+  },
+
+  // Additional Evolution Tree Powers
+  'Subtle Influence': {
+    icon: Brain,
+    description: 'Plant thoughts that feel like their own',
+    cost: 'Minor mental strain',
+    hungerCost: 0,
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'You whispered a thought. It took root. They think it\'s theirs.',
+        'Subtle influence planted. They\'ll never know it came from you.',
+        'The idea bloomed in their mind. Natural. Unforced.',
+        'You shaped their thoughts. Gently. Imperceptibly.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 12, 100)
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'connection'
+  },
+
+  'Commanding Presence': {
+    icon: Shield,
+    description: 'Your words carry unnatural weight',
+    cost: 'Hunger increase',
+    hungerCost: 1,
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'You spoke. Authority absolute. They obeyed instantly.',
+        'Your presence commanded the room. The air. Their will.',
+        'Words like law. They couldn\'t resist.',
+        'Commanding presence activated. They bent to your will.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 15, 100),
+        obsession_stage: Math.min(servant.obsession_stage + 1, 5)
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'domination'
+  },
+
+  'Hypnotic Charm': {
+    icon: Eye,
+    description: 'Make them desire you irresistibly',
+    cost: 'Temporary dependency',
+    hungerCost: 0,
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'Their eyes dilated. Pure desire. They wanted you desperately.',
+        'Charmed. They couldn\'t look away. Need radiated from them.',
+        'You became their entire world in that moment.',
+        'They touched you like starving. The charm overwhelming.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 15, 100),
+        emotional_state: 'infatuated'
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'charm'
+  },
+
+  'Shared Hunger': {
+    icon: Droplets,
+    description: 'Hunt together, feed together',
+    cost: 'Bond deepens',
+    hungerCost: 1,
+    requiresTurned: true,
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'You hunted together. Two vampires. One hunger. Shared prey.',
+        'Feeding side by side. Your hungers synchronized perfectly.',
+        'The shared hunt was intoxicating. Blood. Violence. Together.',
+        'Two predators. One target. Perfect synchronization.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 25, 100)
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'bond'
   }
 };
 
