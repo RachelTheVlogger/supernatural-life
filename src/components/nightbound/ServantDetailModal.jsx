@@ -9,6 +9,7 @@ import QuestSystem from './QuestSystem';
 import DirectInteraction from './DirectInteraction';
 import FriendsSystem from './FriendsSystem';
 import NPCInteraction from './NPCInteraction';
+import DateOutingModal from './DateOutingModal';
 
 const TEACHING_TOPICS = [
   'Explaining restraint',
@@ -66,6 +67,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [showInteractions, setShowInteractions] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
   const [showTownPeople, setShowTownPeople] = useState(false);
+  const [showDate, setShowDate] = useState(false);
   const queryClient = useQueryClient();
   
   // Fetch quests for this servant
@@ -362,6 +364,14 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             servant={servant}
           />
         )}
+        
+        {showDate && (
+          <DateOutingModal
+            servant={servant}
+            vampireState={vampireState}
+            onClose={() => setShowDate(false)}
+          />
+        )}
       </AnimatePresence>
       
       {!visitingLocation && (
@@ -595,12 +605,12 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setShowLocations(true);
+                setShowDate(true);
               }}
               className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
             >
               <MapPin className="w-5 h-5" />
-              <span>Go somewhere together</span>
+              <span>Take them on a date</span>
             </button>
             
             <button
