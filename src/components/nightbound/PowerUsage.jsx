@@ -166,7 +166,6 @@ const POWER_LIBRARY = {
     })
   },
   
-  // Monster powers (Humanity <= 15)
   'Dominate': {
     icon: Shield,
     description: 'Break their will entirely. Make them your puppet.',
@@ -190,6 +189,112 @@ const POWER_LIBRARY = {
     visualEffect: 'destruction',
     upgradeEffects: (level) => ({
       description: level <= 3 ? ['Basic domination', 'Complete mental control', 'Soul binding'][level - 1] : `Master level ${level} - Reality erasure`
+    })
+  },
+
+  'Feral Rage': {
+    icon: Skull,
+    description: 'Unleash primal vampire fury',
+    cost: 'Lose control temporarily. High hunger cost.',
+    hungerCost: 3,
+    moralityRequirement: { max: 30, path: 'ruthless' },
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'You lost control. Animal instincts took over. They saw the beast.',
+        'Pure rage. Supernatural strength. They cowered in terror.',
+        'The monster emerged. Raw. Brutal. Unrestrained.',
+        'Feral. You moved like a predator. They were prey.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.max((servant.relationship || 0) - 20, 0),
+        emotional_state: 'terrified',
+        obsession_stage: Math.min(servant.obsession_stage + 1, 5)
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'fear',
+    upgradeEffects: (level) => ({
+      relationshipCost: Math.max(5, 20 - (level * 3)),
+      description: level <= 3 ? ['Controlled fury', 'Devastating rage', 'Primal apocalypse'][level - 1] : `Master level ${level} - Embodiment of terror`
+    })
+  },
+
+  'Dream Walking': {
+    icon: Moon,
+    description: 'Enter their dreams. Control their subconscious.',
+    cost: 'Requires deep bond. Hunger increase.',
+    hungerCost: 1,
+    moralityRequirement: { min: 30, max: 70 },
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'You slipped into their dreams. Shaped their fantasies.',
+        'Their subconscious opened to you. You planted seeds.',
+        'Dream walking complete. They\'ll remember you differently now.',
+        'You rewrote their dreams. Made yourself the center.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 18, 100),
+        emotional_state: 'enchanted'
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'connection',
+    upgradeEffects: (level) => ({
+      relationshipBonus: 18 + (level * 7),
+      description: level <= 3 ? ['Surface dreams', 'Deep manipulation', 'Reality alteration'][level - 1] : `Master level ${level} - Architect of dreams`
+    })
+  },
+
+  'Time Dilation': {
+    icon: Clock,
+    description: 'Slow their perception. Moments become eternities.',
+    cost: 'Extreme hunger cost. Reality bending.',
+    hungerCost: 4,
+    moralityRequirement: { min: 40 },
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'Time slowed for them. A second became an hour in their mind.',
+        'You bent reality. They experienced infinity in a moment.',
+        'Time dilation complete. They aged subjectively while you watched.',
+        'Their perception shattered. Time lost all meaning.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 25, 100),
+        emotional_state: 'awestruck'
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'perception',
+    upgradeEffects: (level) => ({
+      relationshipBonus: 25 + (level * 10),
+      hungerCost: Math.max(2, 4 - Math.floor(level / 3)),
+      description: level <= 3 ? ['Slow moments', 'Stop time', 'Reverse flow'][level - 1] : `Master level ${level} - Master of temporal reality`
+    })
+  },
+
+  'Soul Gaze': {
+    icon: Eye,
+    description: 'See into their very soul. Know them completely.',
+    cost: 'No hunger cost. Perfect understanding.',
+    hungerCost: 0,
+    moralityRequirement: { min: 50 },
+    effects: async (servant, vampireState) => {
+      const outcomes = [
+        'You gazed into their soul. Saw everything. Every secret. Every desire.',
+        'Soul gaze complete. Their essence laid bare before you.',
+        'You looked deeper than flesh. Than mind. Into the core of them.',
+        'Their soul opened like a book. You read every page.'
+      ];
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min((servant.relationship || 0) + 20, 100),
+        emotional_state: 'vulnerable'
+      });
+      return outcomes[Math.floor(Math.random() * outcomes.length)];
+    },
+    visualEffect: 'perception',
+    upgradeEffects: (level) => ({
+      relationshipBonus: 20 + (level * 8),
+      description: level <= 3 ? ['Surface soul', 'Deep essence', 'Cosmic truth'][level - 1] : `Master level ${level} - See all that was and will be`
     })
   },
   
