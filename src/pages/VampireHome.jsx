@@ -8,7 +8,7 @@ import { base44 } from '@/api/base44Client';
 import EvolutionTree from '@/components/nightbound/EvolutionTree';
 import DirectInteraction from '@/components/nightbound/DirectInteraction';
 import TemptationModal from '@/components/nightbound/TemptationModal';
-
+import OnlyFangsManagement from '@/components/nightbound/OnlyFangsManagement';
 import MoralityDisplay from '@/components/nightbound/MoralityDisplay';
 
 export default function VampireHome() {
@@ -19,6 +19,7 @@ export default function VampireHome() {
   const [showEvolutionTree, setShowEvolutionTree] = useState(false);
   const [selectedServantForInteraction, setSelectedServantForInteraction] = useState(null);
   const [showTemptation, setShowTemptation] = useState(false);
+  const [showOnlyFangs, setShowOnlyFangs] = useState(false);
 
   
   const { data: vampireStates = [] } = useQuery({
@@ -268,6 +269,31 @@ export default function VampireHome() {
             </button>
           </motion.div>
           
+          {/* OnlyFangs Management */}
+          {servants.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mb-8"
+            >
+              <button
+                onClick={() => setShowOnlyFangs(true)}
+                className="w-full bg-gradient-to-r from-pink-950/40 to-red-950/40 hover:from-pink-950/60 hover:to-red-950/60 border-2 border-pink-500/50 rounded-2xl p-6 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="text-4xl">💑</div>
+                    <div className="text-left">
+                      <h3 className="text-white text-xl font-bold mb-1">OnlyFangs (Couples)</h3>
+                      <p className="text-gray-300 text-sm">Film content together. Intimate. Profitable.</p>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </motion.div>
+          )}
+
           {/* Temptation System */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -481,6 +507,13 @@ export default function VampireHome() {
             vampireState={vampireState}
             servants={servants}
             onClose={() => setShowTemptation(false)}
+          />
+        )}
+        {showOnlyFangs && servants.length > 0 && (
+          <OnlyFangsManagement
+            servant={servants[0]}
+            vampireState={vampireState}
+            onClose={() => setShowOnlyFangs(false)}
           />
         )}
         {meditating && (

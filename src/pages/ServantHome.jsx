@@ -61,6 +61,13 @@ export default function ServantHome() {
     enabled: !!servantId
   });
   
+  const { data: vampireStates = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+  
+  const vampireState = vampireStates[0];
+  
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', servantId],
     queryFn: () => base44.entities.Message.filter({ servant_id: servantId }, '-created_date'),
@@ -308,6 +315,7 @@ export default function ServantHome() {
         {showOnlyFangs && (
           <OnlyFangsManagement
             servant={servant}
+            vampireState={vampireState}
             onClose={() => setShowOnlyFangs(false)}
           />
         )}

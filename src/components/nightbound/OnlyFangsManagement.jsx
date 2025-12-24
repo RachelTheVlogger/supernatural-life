@@ -5,6 +5,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const VIDEO_CATEGORIES = {
+  couple: { label: 'Couple', icon: '💑', examples: ['Making love together', 'Vampire takes their servant', 'Passionate kissing', 'Riding my vampire', 'Our morning routine', 'Shower together'] },
+  filmed: { label: 'Filmed by Partner', icon: '🎥', examples: ['They film me touching myself', 'Stripping for the camera', 'Playing while they watch', 'Teasing for their lens', 'Solo but not alone'] },
   solo: { label: 'Solo', icon: '💋', examples: ['Touching myself thinking of you', 'Undressing slowly', 'Playing with toys', 'Morning routine', 'Bath time fun'] },
   pov: { label: 'POV', icon: '👁️', examples: ['Your view while I ride you', 'On my knees for you', 'Waking up together', 'Between my legs', 'Facesitting POV'] },
   roleplay: { label: 'Roleplay', icon: '🎭', examples: ['Vampire seduction', 'Your obedient servant', 'Master and pet', 'Forbidden encounter', 'Dark ritual'] },
@@ -20,10 +22,12 @@ const VIDEO_CATEGORIES = {
   artistic: { label: 'Artistic', icon: '🎨', examples: ['Sensual dance', 'Body art', 'Shadow play', 'Aesthetic nudity', 'Artistic poses'] }
 };
 
-export default function OnlyFangsManagement({ servant, onClose }) {
+export default function OnlyFangsManagement({ servant, vampireState, onClose }) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('profile');
   const [creating, setCreating] = useState(false);
+  const [filming, setFilming] = useState(false);
+  const [filmingOutcome, setFilmingOutcome] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [newVideo, setNewVideo] = useState({ title: '', content_type: '', price: 15 });
   const [editingProfile, setEditingProfile] = useState(false);
@@ -46,15 +50,16 @@ export default function OnlyFangsManagement({ servant, onClose }) {
     await base44.entities.OnlyFangsProfile.create({
       servant_id: servant.id,
       username: profileData.username || `${servant.name}_vamp`,
-      bio: profileData.bio || 'Your favorite creature of the night 🌙',
+      bio: profileData.bio || `Vampire and their devoted servant. Watch us together. 🌙🦇`,
       profile_pic: profileData.profile_pic,
+      is_couple_account: true,
       subscriber_count: 0,
       revenue: 0,
       reputation: 0
     });
 
     await base44.entities.NightLog.create({
-      entry: `${servant.name} created an OnlyFangs profile. The night just got more interesting.`,
+      entry: `You and ${servant.name} created a couples OnlyFangs account. The night just got more interesting.`,
       category: 'interaction',
       intensity: 'moderate'
     });
@@ -66,53 +71,128 @@ export default function OnlyFangsManagement({ servant, onClose }) {
   const handleCreateVideo = async () => {
     if (!selectedCategory || !newVideo.content_type) return;
     
-    setCreating(true);
+    const isFilmedCategory = ['filmed', 'couple'].includes(selectedCategory);
     
-    setTimeout(async () => {
-      const video = await base44.entities.OnlyFangsVideo.create({
-        servant_id: servant.id,
-        title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
-        category: selectedCategory,
-        content_type: newVideo.content_type,
-        price: newVideo.price,
-        views: 0,
-        earnings: 0,
-        rating: 0
-      });
+    if (isFilmedCategory) {
+      setFilming(true);
+      
+      const filmingOutcomes = [
+        'You held the camera. Watched them perform. Got hard watching. Had to put the camera down and join.',
+        'Behind the lens. Filming them. They looked at you with those eyes. You couldn\'t resist anymore.',
+        'You directed them. "Touch yourself there." They obeyed. You were aching by the end.',
+        'Filming them strip. Your hands shaking. They noticed. "Want to be in the video too?"',
+        'You watched through the camera. So fucking beautiful. Had to stop filming to touch them.',
+        'Behind the camera, watching them pleasure themselves. You were rock hard. They saw. Smiled.',
+        'Filming session became a fucking session. The camera kept rolling. Better content anyway.',
+        'You tried to stay professional. Failed completely. Ended up making couple content instead.'
+      ];
+      
+      const outcome = filmingOutcomes[Math.floor(Math.random() * filmingOutcomes.length)];
+      setFilmingOutcome(outcome);
+      
+      setTimeout(async () => {
+        const video = await base44.entities.OnlyFangsVideo.create({
+          servant_id: servant.id,
+          title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
+          category: selectedCategory,
+          content_type: newVideo.content_type,
+          price: newVideo.price,
+          views: 0,
+          earnings: 0,
+          rating: 0
+        });
 
-      // Random initial views and earnings
-      const initialViews = Math.floor(Math.random() * 50) + 10;
-      const purchases = Math.floor(initialViews * (Math.random() * 0.3 + 0.1));
-      const earnings = purchases * newVideo.price;
+        // Higher earnings for couple/filmed content
+        const initialViews = Math.floor(Math.random() * 80) + 30;
+        const purchases = Math.floor(initialViews * (Math.random() * 0.4 + 0.2));
+        const earnings = purchases * newVideo.price;
 
-      await base44.entities.OnlyFangsVideo.update(video.id, {
-        views: initialViews,
-        earnings: earnings,
-        rating: Math.random() * 2 + 3
-      });
+        await base44.entities.OnlyFangsVideo.update(video.id, {
+          views: initialViews,
+          earnings: earnings,
+          rating: Math.random() * 1.5 + 3.5
+        });
 
-      // Update profile
-      const newRevenue = servantProfile.revenue + earnings;
-      const newSubs = servantProfile.subscriber_count + Math.floor(Math.random() * 10);
-      const newRep = Math.min(100, servantProfile.reputation + Math.floor(Math.random() * 5) + 2);
+        // Update profile
+        const newRevenue = servantProfile.revenue + earnings;
+        const newSubs = servantProfile.subscriber_count + Math.floor(Math.random() * 15) + 5;
+        const newRep = Math.min(100, servantProfile.reputation + Math.floor(Math.random() * 8) + 5);
 
-      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-        revenue: newRevenue,
-        subscriber_count: newSubs,
-        reputation: newRep
-      });
+        await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+          revenue: newRevenue,
+          subscriber_count: newSubs,
+          reputation: newRep
+        });
 
-      await base44.entities.NightLog.create({
-        entry: `${servant.name} posted new content: "${newVideo.content_type}". Earned $${earnings} already.`,
-        category: 'interaction',
-        intensity: 'moderate'
-      });
+        // Increase relationship
+        const relBonus = Math.floor(Math.random() * 10) + 10;
+        await base44.entities.Servant.update(servant.id, {
+          relationship: Math.min(100, (servant.relationship || 0) + relBonus)
+        });
 
-      queryClient.invalidateQueries();
-      setCreating(false);
-      setSelectedCategory(null);
-      setNewVideo({ title: '', content_type: '', price: 15 });
-    }, 2500);
+        await base44.entities.NightLog.create({
+          entry: outcome,
+          category: 'interaction',
+          intensity: 'significant'
+        });
+
+        queryClient.invalidateQueries();
+        
+        setTimeout(() => {
+          setFilming(false);
+          setFilmingOutcome('');
+          setCreating(false);
+          setSelectedCategory(null);
+          setNewVideo({ title: '', content_type: '', price: 15 });
+        }, 4000);
+      }, 3000);
+    } else {
+      setCreating(true);
+      
+      setTimeout(async () => {
+        const video = await base44.entities.OnlyFangsVideo.create({
+          servant_id: servant.id,
+          title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
+          category: selectedCategory,
+          content_type: newVideo.content_type,
+          price: newVideo.price,
+          views: 0,
+          earnings: 0,
+          rating: 0
+        });
+
+        const initialViews = Math.floor(Math.random() * 50) + 10;
+        const purchases = Math.floor(initialViews * (Math.random() * 0.3 + 0.1));
+        const earnings = purchases * newVideo.price;
+
+        await base44.entities.OnlyFangsVideo.update(video.id, {
+          views: initialViews,
+          earnings: earnings,
+          rating: Math.random() * 2 + 3
+        });
+
+        const newRevenue = servantProfile.revenue + earnings;
+        const newSubs = servantProfile.subscriber_count + Math.floor(Math.random() * 10);
+        const newRep = Math.min(100, servantProfile.reputation + Math.floor(Math.random() * 5) + 2);
+
+        await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+          revenue: newRevenue,
+          subscriber_count: newSubs,
+          reputation: newRep
+        });
+
+        await base44.entities.NightLog.create({
+          entry: `${servant.name} posted new content: "${newVideo.content_type}". Earned $${earnings}.`,
+          category: 'interaction',
+          intensity: 'moderate'
+        });
+
+        queryClient.invalidateQueries();
+        setCreating(false);
+        setSelectedCategory(null);
+        setNewVideo({ title: '', content_type: '', price: 15 });
+      }, 2500);
+    }
   };
 
   const handleSetDiscount = async (videoId, discount, hours) => {
@@ -155,10 +235,10 @@ export default function OnlyFangsManagement({ servant, onClose }) {
             <X className="w-5 h-5" />
           </button>
 
-          <div className="text-6xl mb-4">🦇</div>
-          <h2 className="text-2xl font-bold text-white mb-2">OnlyFangs</h2>
+          <div className="text-6xl mb-4">💑</div>
+          <h2 className="text-2xl font-bold text-white mb-2">OnlyFangs - Couples Account</h2>
           <p className="text-gray-400 mb-6">
-            Create adult content. Build an audience. Earn while you sleep. The night is yours.
+            Create adult content together. Film each other. Build an audience. The night is yours.
           </p>
 
           <button
@@ -398,10 +478,10 @@ export default function OnlyFangsManagement({ servant, onClose }) {
 
                   <button
                     onClick={handleCreateVideo}
-                    disabled={!newVideo.content_type || creating}
+                    disabled={!newVideo.content_type || creating || filming}
                     className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50"
                   >
-                    {creating ? 'Creating...' : 'Create Video'}
+                    {filming ? 'Filming...' : creating ? 'Processing...' : ['filmed', 'couple'].includes(selectedCategory) ? 'Film Together' : 'Create Video'}
                   </button>
                 </div>
               </>
@@ -486,6 +566,27 @@ export default function OnlyFangsManagement({ servant, onClose }) {
           </div>
         )}
       </motion.div>
+      
+      <AnimatePresence>
+        {filmingOutcome && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center border border-red-500/30"
+            >
+              <div className="text-5xl mb-4">🎥</div>
+              <p className="text-gray-300 text-lg leading-relaxed">{filmingOutcome}</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
