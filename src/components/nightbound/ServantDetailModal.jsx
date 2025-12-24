@@ -386,7 +386,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           <X className="w-5 h-5" />
         </button>
         
-        <h2 className="text-2xl font-bold text-white mb-2">
+        <h2 className="text-2xl font-bold text-white mb-2 pr-8 break-words">
           {servant.name}
         </h2>
         <p className="text-gray-400 text-sm capitalize">
