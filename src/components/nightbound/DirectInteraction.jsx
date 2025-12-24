@@ -1220,7 +1220,8 @@ const INTERACTIONS = {
     gains: [0, 0],
     outcomes: {
       low: ['You drained them completely. They collapsed. Dead.', 'Their life ended in your arms. Quick. Final.', 'You killed them. No hesitation. No remorse.']
-    }
+    },
+    isKill: true
   }
 };
 
@@ -1383,6 +1384,14 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       // If killed, delete the servant and create a new one
       if (type === 'kill') {
         await base44.entities.Servant.delete(servant.id);
+
+        // Track ripper kill if in ripper mode
+        if (vampireState.emotional_mode === 'ruthless' && vampireState.id) {
+          const ripperKills = (vampireState.ripper_kills || 0) + 1;
+          await base44.entities.VampireState.update(vampireState.id, {
+            ripper_kills: ripperKills
+          });
+        }
 
         // Create a new servant after a delay
         setTimeout(async () => {
