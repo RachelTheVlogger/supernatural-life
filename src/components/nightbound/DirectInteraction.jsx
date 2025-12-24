@@ -169,6 +169,13 @@ const INTERACTIONS = {
     category: 'physical',
     gains: [12, 20],
     outcomes: {
+      low: [
+        'Behind them. Your lips brushed their neck. They stiffened.',
+        'You kissed their neck from behind. Gentle. They held their breath.',
+        'Your mouth on their neck. Behind them. They trembled slightly.',
+        'Soft neck kisses from behind. They didn\'t pull away.',
+        'You pressed a kiss to their neck. They stood very still.'
+      ],
       mid: [
         'Behind them. Your lips on their neck. They gasped, head tilting.',
         'You kissed their neck softly from behind. They shivered, leaning back into you.',
@@ -192,6 +199,13 @@ const INTERACTIONS = {
     category: 'physical',
     gains: [14, 22],
     outcomes: {
+      low: [
+        'You whispered something dark in their ear. They froze.',
+        'Your breath on their neck. Dirty words. They shivered nervously.',
+        'You told them what you wanted. Whispered. They blushed deep.',
+        'Filthy whispers. They looked away, uncertain.',
+        'Your voice low in their ear. They tensed, but stayed.'
+      ],
       mid: [
         'You whispered what you wanted to do to them. They shivered.',
         'Behind them. Your mouth at their ear. "You\'re mine." They whimpered.',
@@ -217,6 +231,12 @@ const INTERACTIONS = {
     category: 'physical',
     gains: [18, 28],
     outcomes: {
+      low: [
+        'Behind them. Your hands on their shoulders. They tensed.',
+        'You pressed against their back carefully. They stayed still.',
+        'Behind them. Soft touches. They didn\'t resist.',
+        'Your body close to theirs from behind. Tentative. New.'
+      ],
       mid: [
         'Behind them. Hands roaming. Lips on their neck. Dirty words whispered. They melted.',
         'You pressed against them from behind. Kissing. Touching. Whispering. Perfect.',
