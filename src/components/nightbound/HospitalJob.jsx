@@ -1,204 +1,227 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, AlertTriangle, CheckCircle, MessageCircle, Send } from 'lucide-react';
+import { X, Heart, AlertTriangle, CheckCircle, MessageCircle, Send, Syringe, Coffee, Video, DollarSign, Camera } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const HOSPITAL_SCENES = [
   {
-    title: "Blood Donation Center",
-    description: "You're restocking the blood bank. Refrigerator full of fresh bags. Type O negative. Still warm from recent donations. The plastic bags condensation-slick. So easy to slip one into your pocket.",
-    temptation: "Take a bag. No one would notice. Just one. You could drink it in the supply closet.",
-    humanity_cost: 15,
+    title: "Blood Sample Collection",
+    description: "You're drawing blood samples from patients. Needle punctures skin. Dark red fills the vial. Twenty samples collected. So warm in your hands. You could pocket one. No one counts.",
+    temptation: "Just one vial. Drink it in the bathroom. Quick energy. No one harmed.",
+    humanity_cost: 12,
     outcomes: {
-      resist: "You closed the fridge door. Your hands shook. Fangs aching. But you did it. You're still in control.",
-      give_in: "You took a bag. Hid in the supply closet. Punctured it with your teeth. Warm blood flooded your mouth. Your secret shame. But god, it helped."
+      resist: "You processed every sample correctly. Sent them to the lab. The vials stayed sealed. Professional.",
+      give_in: "You pocketed a vial. Drank it in the bathroom stall. Hospital blood. Clinical. Wrong. But it worked."
     }
   },
   {
     title: "Trauma Patient",
-    description: "Motorcycle accident. Patient bleeding badly from a neck wound. You're alone with them in the trauma bay. The scent is overwhelming - fresh, hot blood pooling. Your fangs extend automatically.",
-    temptation: "They're unconscious. Vitals dropping. Just a taste. They're dying anyway. They won't remember.",
+    description: "Motorcycle accident. Patient bleeding from neck wound. You're alone in trauma bay. Fresh hot blood pooling. Fangs extend automatically.",
+    temptation: "Unconscious. Dying anyway. Just a taste. Won't remember.",
     humanity_cost: 25,
     outcomes: {
-      resist: "You called for help immediately. Applied pressure. Saved them. The hunger screamed but you held on. You're better than this.",
-      give_in: "You fed. Just a little from the wound. They survived. Barely. You tell yourself it was nothing. But you know what you did."
-    }
-  },
-  {
-    title: "Night Shift Isolation",
-    description: "3 AM. Empty halls. A comatose patient in room 304, hooked to machines. No cameras in the room. No witnesses. No one would know. The thought has been building all shift.",
-    temptation: "This is why you took this job. Admit it. Access. Privacy. Victims who can't remember.",
-    humanity_cost: 30,
-    outcomes: {
-      resist: "You walked past the room. Did your job. Checked other patients instead. You're not a monster yet. Not yet.",
-      give_in: "You entered. Locked the door. Fed carefully from their IV line. Left them alive but changed. Marked. This is who you are now."
-    }
-  },
-  {
-    title: "Coworker's Cut",
-    description: "Dr. Martinez cut her hand badly on broken glass. Deep laceration, blood flowing freely. She asks you to help bandage it. You're alone in the break room. Her blood smells incredible.",
-    temptation: "Help her. Get close. Smell it. Maybe taste it from your fingers after. The scent of her blood...",
-    humanity_cost: 10,
-    outcomes: {
-      resist: "You bandaged her hand quickly and professionally. Kept your distance. She thanked you. You smiled back. Normal interaction.",
-      give_in: "You got too close. Breathed it in deep. Licked your fingers after touching her wound. She noticed your stare, pupils blown wide. Uncomfortable silence."
+      resist: "Called for help. Applied pressure. Saved them. Hunger screamed but you held on.",
+      give_in: "Fed from the wound. Just a little. They survived. Barely. You know what you did."
     }
   },
   {
     title: "Morgue Access",
-    description: "You have access to the morgue. Fresh bodies from tonight. No heartbeat but blood still liquid for hours. No one would miss what's already dead. The thought disgusts you. But the hunger doesn't care.",
-    temptation: "They're already dead. It's not murder. Just... practical. Efficient.",
+    description: "Fresh bodies from tonight. Blood still liquid for hours. No heartbeat but warm enough. No one would miss what's already dead.",
+    temptation: "Already dead. Not murder. Just practical. Efficient.",
     humanity_cost: 20,
     outcomes: {
-      resist: "You stayed upstairs. Did your rounds. The bodies stayed untouched. There are lines you won't cross. Yet.",
-      give_in: "You went downstairs. Fed from a fresh corpse. Cold blood. Wrong. But it filled you. You're a different kind of monster now."
+      resist: "Stayed upstairs. Did your rounds. Bodies untouched. Lines you won't cross.",
+      give_in: "Went downstairs. Fed from a corpse. Cold blood. Wrong. But it filled you."
     }
   },
   {
-    title: "Pediatric Ward",
-    description: "A sick child. Alone. Parents stepped out. They're so small, so vulnerable. Their blood would be sweet. Pure. The thought makes you hate yourself. But it's there.",
-    temptation: "No. Not this. But the hunger doesn't have morals. It just wants.",
-    humanity_cost: 40,
+    title: "Blood Bag Inventory",
+    description: "Restocking blood bank. Refrigerator full of fresh donations. Type O negative. Plastic bags condensation-slick. Easy to slip one into your pocket.",
+    temptation: "One bag. No one counts. Drink it in supply closet.",
+    humanity_cost: 15,
     outcomes: {
-      resist: "You walked away. Fast. Locked yourself in the bathroom. Fought it down. There are lines. This is one of them.",
-      give_in: "You did it. Fed from a child. They'll live but... what you did... You're a monster. Completely. No coming back."
+      resist: "Closed the fridge. Hands shaking. Fangs aching. But you did it. Still in control.",
+      give_in: "Took a bag. Hid in supply closet. Punctured with teeth. Warm blood flooded mouth."
     }
   },
   {
-    title: "Seduction",
-    description: "A nurse flirts with you in the break room. Attracted to you, obviously. It would be so easy. Seduce them. Take them somewhere private. Feed while they're distracted by pleasure.",
-    temptation: "Consensual. Sort of. They want you. You want their blood. Everyone gets what they need.",
-    humanity_cost: 12,
-    outcomes: {
-      resist: "You deflected politely. Kept it professional. Went back to work. You won't mix feeding with sex. Not yet.",
-      give_in: "You took them to the on-call room. Made out. Bit their neck during. They thought it was a hickey. You fed. They enjoyed it. Win-win?"
-    }
-  },
-  {
-    title: "Code Blue",
-    description: "Patient coding. CPR in progress. Blood in their mouth from the crash cart. You're doing compressions. Leaning over them. Face close. Blood so close to your lips.",
-    temptation: "Save them. But taste it first. Just a drop. No one's looking at your mouth right now.",
+    title: "IV Line Access",
+    description: "Patient on heavy sedation. IV line direct to vein. You're checking fluids. Could easily tap the line. Draw some off. They wouldn't wake.",
+    temptation: "So simple. Just use a syringe. Small amount. Medical procedure. Sort of.",
     humanity_cost: 18,
     outcomes: {
-      resist: "You saved them. Professional. Clean. The blood stayed where it was. You did your job right.",
-      give_in: "You licked your lips. Tasted their blood. Saved them anyway but... you used their crisis. That's new."
+      resist: "Checked the IV. Left it alone. Did your job. That's all.",
+      give_in: "Drew blood from their IV. Drank from the syringe. Medical vampire. Is that better or worse?"
+    }
+  },
+  {
+    title: "Coworker Injury",
+    description: "Dr. Martinez cut her hand badly. Deep laceration. Blood flowing. Asks you to help bandage. Alone in break room. Smells incredible.",
+    temptation: "Get close. Smell it. Maybe taste from your fingers after. Just the scent...",
+    humanity_cost: 10,
+    outcomes: {
+      resist: "Bandaged quickly. Professionally. Kept distance. Normal interaction.",
+      give_in: "Got too close. Breathed deep. Licked fingers after. She saw your pupils blown wide."
+    }
+  },
+  {
+    title: "Night Isolation",
+    description: "3 AM. Empty halls. Comatose patient room 304. No cameras. No witnesses. Thought building all shift.",
+    temptation: "This is why you took this job. Access. Privacy. Victims who can't remember.",
+    humanity_cost: 30,
+    outcomes: {
+      resist: "Walked past. Did your job. Checked other patients. Not a monster yet.",
+      give_in: "Entered. Locked door. Fed from IV line. Left alive but marked. This is who you are."
+    }
+  },
+  {
+    title: "Seduction Opportunity",
+    description: "Nurse flirts in break room. Attracted to you. Easy to seduce. Take somewhere private. Feed while distracted by pleasure.",
+    temptation: "Consensual-ish. They want you. You want blood. Everyone gets something.",
+    humanity_cost: 12,
+    outcomes: {
+      resist: "Deflected politely. Professional. Won't mix feeding with sex. Not yet.",
+      give_in: "Took them to on-call room. Made out. Bit neck during. Hickey. Fed. They enjoyed it."
     }
   }
 ];
 
 export default function HospitalJob({ vampireState, onClose }) {
   const queryClient = useQueryClient();
-  const [scene, setScene] = useState(null);
+  const [shiftPhase, setShiftPhase] = useState('start'); // start, task, break, scene
+  const [currentScene, setCurrentScene] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState(null);
-  const [showMessages, setShowMessages] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const [messageInput, setMessageInput] = useState('');
+  const [scenesCompleted, setScenesCompleted] = useState(0);
 
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
     queryFn: () => base44.entities.Servant.list()
   });
 
+  const servant = servants[0];
+
   const { data: messages = [] } = useQuery({
-    queryKey: ['messages', servants[0]?.id],
-    queryFn: () => base44.entities.Message.filter({ servant_id: servants[0]?.id }, '-created_date'),
-    enabled: servants.length > 0 && showMessages
+    queryKey: ['hospital-messages', servant?.id],
+    queryFn: () => base44.entities.Message.filter({ servant_id: servant?.id }, '-created_date', 20),
+    enabled: !!servant && showChat,
+    staleTime: 3000
+  });
+
+  const { data: onlyfangsProfile } = useQuery({
+    queryKey: ['onlyfangs-profile', servant?.id],
+    queryFn: async () => {
+      const profiles = await base44.entities.OnlyFangsProfile.filter({ servant_id: servant?.id });
+      return profiles[0];
+    },
+    enabled: !!servant && showChat
   });
 
   const handleSendMessage = async () => {
-    if (!messageInput.trim() || servants.length === 0) return;
+    if (!messageInput.trim() || !servant) return;
 
     const userMessage = messageInput;
     setMessageInput('');
 
     await base44.entities.Message.create({
-      servant_id: servants[0].id,
+      servant_id: servant.id,
       content: userMessage,
       sender: 'vampire'
     });
 
-    queryClient.invalidateQueries(['messages']);
+    queryClient.invalidateQueries(['hospital-messages']);
 
-    // AI response
     setTimeout(async () => {
-      const servant = servants[0];
-      const recentMessages = messages.slice(-6).map(m => 
-        `${m.sender === 'vampire' ? 'Vampire' : servant.name}: ${m.content}`
+      const recentMsgs = messages.slice(-8).map(m => 
+        `${m.sender === 'vampire' ? 'You' : servant.name}: ${m.content}`
       ).join('\n');
 
+      const hasOnlyFangs = !!onlyfangsProfile;
+      const onlyfangsContext = hasOnlyFangs 
+        ? `\n\nYou run an OnlyFangs account together (${onlyfangsProfile.is_couple_account ? 'couples account' : 'solo account'}). You can discuss: filming ideas, PPV content, fan interactions, new video concepts, livestream plans, etc. Be explicit and creative about content ideas.`
+        : '';
+
       const variantTraits = {
-        devoted: 'deeply devoted, soft, eager to please, emotionally open, affectionate',
-        defiant: 'resistant but fascinated, struggles with feelings, conflicted, tsundere energy',
-        dreamer: 'detached, poetic, ethereal, already half in the vampire\'s world, dreamy'
+        devoted: 'deeply devoted, soft, eager, emotionally open, affectionate',
+        defiant: 'resistant but fascinated, conflicted, tsundere',
+        dreamer: 'detached, poetic, ethereal, dreamy'
       };
 
-      const relationshipContext = servant.relationship >= 80 ? 'deeply bound and utterly devoted' : 
-                                servant.relationship >= 60 ? 'trusting and devoted' :
-                                servant.relationship >= 40 ? 'beginning to trust' :
-                                servant.relationship >= 20 ? 'curious but cautious' : 'wary and uncertain';
+      const relContext = (servant.relationship || 0) >= 80 ? 'deeply bound' : 
+                        (servant.relationship || 0) >= 60 ? 'trusting' :
+                        (servant.relationship || 0) >= 40 ? 'warming up' : 'cautious';
 
-      const prompt = `You are ${servant.name}, a servant of a vampire. Personality: ${variantTraits[servant.variant]}. Bond level: ${relationshipContext}.
+      const prompt = `You are ${servant.name}, servant to a vampire working night shift at hospital. Personality: ${variantTraits[servant.variant]}. Bond: ${relContext}.${onlyfangsContext}
 
-Recent conversation:
-${recentMessages}
+Recent texts:
+${recentMsgs}
 Vampire: ${userMessage}
 
-Respond naturally as ${servant.name}. Keep it 1-3 sentences. Be authentic to your personality. Respond to explicit or sexual messages appropriately based on your bond level and personality. If they're flirting or explicit, respond in kind if your bond is strong enough. Be real, emotional, and in-character.`;
+Respond naturally as ${servant.name}. 1-3 sentences. React to what they said. Be authentic. If they mention OnlyFangs, discuss content ideas explicitly. If flirty/sexual, respond accordingly based on bond. Be real and in-character.`;
 
       try {
-        const response = await base44.integrations.Core.InvokeLLM({
-          prompt: prompt
-        });
-
+        const response = await base44.integrations.Core.InvokeLLM({ prompt });
         await base44.entities.Message.create({
-          servant_id: servants[0].id,
+          servant_id: servant.id,
           content: response,
           sender: 'servant'
         });
-      } catch (error) {
+      } catch {
         await base44.entities.Message.create({
-          servant_id: servants[0].id,
-          content: "I... I'm here. With you.",
+          servant_id: servant.id,
+          content: "Miss you. Stay safe.",
           sender: 'servant'
         });
       }
 
-      queryClient.invalidateQueries(['messages']);
-    }, 2000 + Math.random() * 2000);
+      queryClient.invalidateQueries(['hospital-messages']);
+    }, 1500 + Math.random() * 2000);
   };
 
-  const startShift = () => {
-    const randomScene = HOSPITAL_SCENES[Math.floor(Math.random() * HOSPITAL_SCENES.length)];
-    setScene(randomScene);
+  const startTask = () => {
+    const tasks = [
+      { action: 'draw_blood', text: 'Drawing blood samples from patients...' },
+      { action: 'check_vitals', text: 'Checking vital signs on floor 3...' },
+      { action: 'restock', text: 'Restocking medical supplies...' },
+      { action: 'assist', text: 'Assisting with patient care...' }
+    ];
+    const task = tasks[Math.floor(Math.random() * tasks.length)];
+    
+    setProcessing(true);
+    setTimeout(() => {
+      setProcessing(false);
+      if (Math.random() > 0.5) {
+        const scene = HOSPITAL_SCENES[Math.floor(Math.random() * HOSPITAL_SCENES.length)];
+        setCurrentScene(scene);
+        setShiftPhase('scene');
+      } else {
+        setShiftPhase('break');
+      }
+    }, 2500);
   };
 
-  const handleChoice = async (resist) => {
+  const handleSceneChoice = async (resist) => {
     setProcessing(true);
     
     setTimeout(async () => {
       const result = resist ? 'resist' : 'give_in';
-      const outcomeText = scene.outcomes[result];
+      const outcomeText = currentScene.outcomes[result];
       
-      // Update humanity
-      const humanityChange = resist ? 0 : -scene.humanity_cost;
+      const humanityChange = resist ? 0 : -currentScene.humanity_cost;
       const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity || 50) + humanityChange));
       
-      // Update hunger state if gave in
       const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
-      const currentHungerIndex = hungerStates.indexOf(vampireState.hunger_state);
-      let newHungerState = vampireState.hunger_state;
+      const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
+      const newHungerState = !resist && currentIndex > 0 
+        ? hungerStates[Math.max(0, currentIndex - 2)]
+        : vampireState.hunger_state;
       
-      if (!resist && currentHungerIndex > 0) {
-        newHungerState = hungerStates[Math.max(0, currentHungerIndex - 2)];
-      }
-      
-      // Determine moral path
-      let moralPath = 'balanced';
-      if (newHumanity >= 70) moralPath = 'humane';
-      else if (newHumanity >= 40) moralPath = 'balanced';
-      else if (newHumanity >= 15) moralPath = 'ruthless';
-      else moralPath = 'monster';
+      let moralPath = newHumanity >= 70 ? 'humane' : 
+                     newHumanity >= 40 ? 'balanced' :
+                     newHumanity >= 15 ? 'ruthless' : 'monster';
       
       await base44.entities.VampireState.update(vampireState.id, {
         humanity: newHumanity,
@@ -207,21 +230,39 @@ Respond naturally as ${servant.name}. Keep it 1-3 sentences. Be authentic to you
       });
       
       await base44.entities.NightLog.create({
-        entry: `Hospital shift: ${outcomeText}`,
+        entry: `Hospital: ${outcomeText}`,
         category: resist ? 'observation' : 'feeding',
         intensity: resist ? 'subtle' : 'significant'
       });
       
-      queryClient.invalidateQueries(['vampireState']);
-      queryClient.invalidateQueries(['logs']);
+      queryClient.invalidateQueries();
       
       setOutcome({ text: outcomeText, resisted: resist });
       setProcessing(false);
       
+      const completed = scenesCompleted + 1;
+      setScenesCompleted(completed);
+      
       setTimeout(() => {
-        onClose();
-      }, 4000);
+        setOutcome(null);
+        setCurrentScene(null);
+        if (completed >= 3) {
+          onClose();
+        } else {
+          setShiftPhase('break');
+        }
+      }, 3500);
     }, 2000);
+  };
+
+  const handleBreak = () => {
+    setShowChat(true);
+  };
+
+  const endBreak = () => {
+    setShowChat(false);
+    setShiftPhase('task');
+    startTask();
   };
 
   return (
@@ -236,11 +277,11 @@ Respond naturally as ${servant.name}. Keep it 1-3 sentences. Be authentic to you
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full border border-red-900/30"
+        className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full border border-red-900/30 relative"
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>
@@ -248,99 +289,229 @@ Respond naturally as ${servant.name}. Keep it 1-3 sentences. Be authentic to you
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
             <Heart className="w-6 h-6 text-red-400" />
-            Night Shift at the Hospital
+            Night Shift
           </h2>
-          {servants.length > 0 && (
-            <button
-              onClick={() => setShowMessages(!showMessages)}
-              className="text-purple-400 hover:text-purple-300 transition-colors relative"
-            >
-              <MessageCircle className="w-6 h-6" />
-              {messages.filter(m => m.sender === 'servant' && !m.read).length > 0 && (
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
-              )}
-            </button>
-          )}
+          <div className="text-gray-400 text-sm">
+            Scene {scenesCompleted}/3
+          </div>
         </div>
 
-        {showMessages ? (
-          <div className="space-y-4">
-            <div className="bg-gray-800 rounded-xl p-4 max-h-64 overflow-y-auto space-y-2">
-              {messages.length === 0 ? (
-                <p className="text-gray-500 text-sm text-center">No messages yet...</p>
-              ) : (
-                messages.slice(-10).reverse().map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`${
-                      msg.sender === 'vampire' 
-                        ? 'text-right' 
-                        : 'text-left'
-                    }`}
-                  >
-                    <div
-                      className={`inline-block px-3 py-2 rounded-xl text-sm ${
-                        msg.sender === 'vampire'
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-gray-700 text-gray-200 italic'
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Text them during your shift..."
-                className="flex-1 bg-gray-800 text-white rounded-xl px-4 py-2 text-sm outline-none"
-              />
+        <AnimatePresence mode="wait">
+          {shiftPhase === 'start' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-4"
+            >
+              <p className="text-gray-300">
+                Night shift at the hospital. Empty halls. Unconscious patients. Blood everywhere.
+              </p>
+              <p className="text-gray-400 text-sm italic">
+                This job keeps you close to what you need. But tests your control every night.
+              </p>
               <button
-                onClick={handleSendMessage}
-                disabled={!messageInput.trim()}
-                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-xl px-4 py-2 transition-colors"
+                onClick={() => {
+                  setShiftPhase('task');
+                  startTask();
+                }}
+                className="w-full bitlife-btn py-4 rounded-xl text-lg font-medium"
               >
-                <Send className="w-4 h-4" />
+                Start Shift
               </button>
-            </div>
-            <button
-              onClick={() => setShowMessages(false)}
-              className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2 rounded-xl text-sm transition-colors"
+            </motion.div>
+          )}
+
+          {shiftPhase === 'task' && processing && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-12"
             >
-              Back to Shift
-            </button>
-          </div>
-        ) : !scene ? (
-          <div className="space-y-4">
-            <p className="text-gray-300">
-              You work the night shift. Empty halls. Unconscious patients. Blood everywhere.
-            </p>
-            <p className="text-gray-400 text-sm italic">
-              This job keeps you close to what you need. But it tests your control every single night.
-            </p>
-            <button
-              onClick={startShift}
-              className="w-full bitlife-btn py-4 rounded-xl text-lg font-medium"
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="text-5xl mb-4"
+              >
+                <Syringe className="w-12 h-12 mx-auto text-red-400" />
+              </motion.div>
+              <p className="text-gray-400">Working...</p>
+            </motion.div>
+          )}
+
+          {shiftPhase === 'break' && !showChat && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-4"
             >
-              Start Your Shift
-            </button>
-          </div>
-        ) : outcome ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-4"
-          >
-            <div className={`p-4 rounded-xl border ${
-              outcome.resisted 
-                ? 'bg-green-950/20 border-green-800/30' 
-                : 'bg-red-950/20 border-red-800/30'
-            }`}>
+              <div className="bg-gray-800 rounded-xl p-4 border border-purple-900/30">
+                <Coffee className="w-8 h-8 text-purple-400 mb-2" />
+                <h3 className="text-white font-bold mb-2">Break Time</h3>
+                <p className="text-gray-400 text-sm">15 minutes. What will you do?</p>
+              </div>
+
+              <div className="grid gap-3">
+                {servant && (
+                  <button
+                    onClick={handleBreak}
+                    className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 text-white py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Text {servant.name}
+                  </button>
+                )}
+                <button
+                  onClick={endBreak}
+                  className="bg-gray-800 hover:bg-gray-700 text-gray-300 py-3 rounded-xl transition-colors"
+                >
+                  Skip Break - Back to Work
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {shiftPhase === 'break' && showChat && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-4"
+            >
+              <div className="bg-gray-800 rounded-xl p-4 max-h-64 overflow-y-auto space-y-2">
+                {messages.length === 0 ? (
+                  <p className="text-gray-500 text-sm text-center py-4">Start conversation...</p>
+                ) : (
+                  messages.slice(-10).map(msg => (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, x: msg.sender === 'vampire' ? 20 : -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className={`flex ${msg.sender === 'vampire' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[75%] px-3 py-2 rounded-xl text-sm ${
+                          msg.sender === 'vampire'
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-gray-700 text-gray-200'
+                        }`}
+                      >
+                        {msg.content}
+                      </div>
+                    </motion.div>
+                  ))
+                )}
+              </div>
+
+              {onlyfangsProfile && (
+                <div className="bg-pink-950/30 border border-pink-800/30 rounded-xl p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Camera className="w-4 h-4 text-pink-400" />
+                    <span className="text-pink-400 text-sm font-medium">OnlyFangs Ideas</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setMessageInput("Want to film something tonight after my shift?")}
+                      className="bg-pink-900/40 hover:bg-pink-900/60 text-pink-300 text-xs py-2 rounded-lg transition-colors"
+                    >
+                      📹 Film Together
+                    </button>
+                    <button
+                      onClick={() => setMessageInput("What content do you think fans want next?")}
+                      className="bg-purple-900/40 hover:bg-purple-900/60 text-purple-300 text-xs py-2 rounded-lg transition-colors"
+                    >
+                      💭 Brainstorm
+                    </button>
+                    <button
+                      onClick={() => setMessageInput("Should we do a PPV message? What would you tease?")}
+                      className="bg-red-900/40 hover:bg-red-900/60 text-red-300 text-xs py-2 rounded-lg transition-colors"
+                    >
+                      💵 PPV Ideas
+                    </button>
+                    <button
+                      onClick={() => setMessageInput("Feeling creative. Describe what you'd want to film...")}
+                      className="bg-indigo-900/40 hover:bg-indigo-900/60 text-indigo-300 text-xs py-2 rounded-lg transition-colors"
+                    >
+                      🎨 Get Explicit
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Text them..."
+                  className="flex-1 bg-gray-800 text-white rounded-xl px-4 py-2 text-sm outline-none"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!messageInput.trim()}
+                  className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-xl px-4 py-2 transition-colors"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+
+              <button
+                onClick={endBreak}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2 rounded-xl text-sm transition-colors"
+              >
+                End Break
+              </button>
+            </motion.div>
+          )}
+
+          {shiftPhase === 'scene' && !outcome && !processing && currentScene && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-6"
+            >
+              <div className="bg-black/40 rounded-xl p-4 border border-red-900/30">
+                <h3 className="text-white font-bold mb-2">{currentScene.title}</h3>
+                <p className="text-gray-300 mb-4">{currentScene.description}</p>
+                <p className="text-red-400 italic text-sm">{currentScene.temptation}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => handleSceneChoice(true)}
+                  className="bg-green-950/40 hover:bg-green-950/60 border border-green-800/50 text-green-300 py-4 rounded-xl transition-colors font-medium"
+                >
+                  Resist
+                </button>
+                <button
+                  onClick={() => handleSceneChoice(false)}
+                  className="bg-red-950/40 hover:bg-red-950/60 border border-red-800/50 text-red-300 py-4 rounded-xl transition-colors font-medium"
+                >
+                  Give In
+                </button>
+              </div>
+
+              <p className="text-gray-500 text-xs text-center">
+                Giving in: -{currentScene.humanity_cost} humanity, reduces hunger
+              </p>
+            </motion.div>
+          )}
+
+          {outcome && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className={`p-4 rounded-xl border ${
+                outcome.resisted 
+                  ? 'bg-green-950/20 border-green-800/30' 
+                  : 'bg-red-950/20 border-red-800/30'
+              }`}
+            >
               <div className="flex items-center gap-2 mb-2">
                 {outcome.resisted ? (
                   <CheckCircle className="w-5 h-5 text-green-400" />
@@ -352,41 +523,19 @@ Respond naturally as ${servant.name}. Keep it 1-3 sentences. Be authentic to you
                 </h3>
               </div>
               <p className="text-gray-300">{outcome.text}</p>
-            </div>
-            <p className="text-gray-500 text-sm text-center">Shift ending...</p>
-          </motion.div>
-        ) : processing ? (
-          <div className="text-center py-8">
-            <p className="text-gray-400">...</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="bg-black/40 rounded-xl p-4 border border-red-900/30">
-              <h3 className="text-white font-bold mb-2">{scene.title}</h3>
-              <p className="text-gray-300 mb-4">{scene.description}</p>
-              <p className="text-red-400 italic text-sm">{scene.temptation}</p>
-            </div>
+            </motion.div>
+          )}
 
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => handleChoice(true)}
-                className="bg-green-950/40 hover:bg-green-950/60 border border-green-800/50 text-green-300 py-4 rounded-xl transition-colors font-medium"
-              >
-                Resist
-              </button>
-              <button
-                onClick={() => handleChoice(false)}
-                className="bg-red-950/40 hover:bg-red-950/60 border border-red-800/50 text-red-300 py-4 rounded-xl transition-colors font-medium"
-              >
-                Give In
-              </button>
-            </div>
-
-            <p className="text-gray-500 text-xs text-center">
-              Giving in reduces humanity by {scene.humanity_cost} but eases hunger
-            </p>
-          </div>
-        )}
+          {processing && shiftPhase === 'scene' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-8"
+            >
+              <p className="text-gray-400">...</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </motion.div>
   );
