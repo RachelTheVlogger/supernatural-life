@@ -2125,6 +2125,14 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </motion.div>
         )}
 
+        {showMerch && (
+          <OnlyFangsMerch
+            servant={servant}
+            profile={servantProfile}
+            onClose={() => setShowMerch(false)}
+          />
+        )}
+
         {filmingOutcome && (
           <motion.div
             initial={{ opacity: 0 }}

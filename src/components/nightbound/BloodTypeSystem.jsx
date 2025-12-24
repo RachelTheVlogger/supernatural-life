@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Droplets, Zap, TrendingUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@antml:function_calls';
+import { useQueryClient } from '@tanstack/react-query';
 
 const BLOOD_TYPES = {
   'O-': { rarity: 'universal', powerBoost: 1.5, description: 'Universal donor. Pure. Powerful. Rare.' },
