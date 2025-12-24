@@ -580,7 +580,7 @@ export default function BusinessManagement({ servant, onClose }) {
         </AnimatePresence>
 
         {/* Tab Content */}
-        <div className="space-y-3">
+        <div className="space-y-3 max-h-[50vh] overflow-y-auto">
           {tab === 'orders' && (
             <>
               <h3 className="text-white font-bold mb-3">Pending Orders ({pendingOrders.length})</h3>
