@@ -29,6 +29,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [filming, setFilming] = useState(false);
   const [filmingOutcome, setFilmingOutcome] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [filmWithVampire, setFilmWithVampire] = useState(null);
   const [newVideo, setNewVideo] = useState({ title: '', content_type: '', price: 15 });
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState({ username: '', bio: '', profile_pic: '🦇' });
@@ -68,12 +69,34 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     setEditingProfile(false);
   };
 
+  const handleQuit = async () => {
+    if (!confirm(`Quit OnlyFangs? You can always come back later.`)) return;
+    
+    const career = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
+    if (career[0]) {
+      await base44.entities.ServantCareer.update(career[0].id, {
+        onlyfangs_active: false
+      });
+    }
+    
+    await base44.entities.NightLog.create({
+      entry: `${servant.name} decided to take a break from OnlyFangs. Maybe they'll come back.`,
+      category: 'interaction',
+      intensity: 'subtle'
+    });
+    
+    queryClient.invalidateQueries();
+    onClose();
+  };
+
   const handleCreateVideo = async () => {
     if (!selectedCategory || !newVideo.content_type) return;
+    if (filmWithVampire === null && ['filmed', 'couple'].includes(selectedCategory)) return;
     
     const isFilmedCategory = ['filmed', 'couple'].includes(selectedCategory);
+    const withVampire = filmWithVampire === true;
     
-    if (isFilmedCategory) {
+    if (isFilmedCategory && withVampire) {
       setFilming(true);
       
       const filmingOutcomes = [
@@ -143,9 +166,58 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           setFilmingOutcome('');
           setCreating(false);
           setSelectedCategory(null);
+          setFilmWithVampire(null);
           setNewVideo({ title: '', content_type: '', price: 15 });
         }, 4000);
       }, 3000);
+    } else if (isFilmedCategory && !withVampire) {
+      // Filming alone
+      setCreating(true);
+      
+      setTimeout(async () => {
+        const video = await base44.entities.OnlyFangsVideo.create({
+          servant_id: servant.id,
+          title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
+          category: selectedCategory,
+          content_type: newVideo.content_type,
+          price: newVideo.price,
+          views: 0,
+          earnings: 0,
+          rating: 0
+        });
+
+        const initialViews = Math.floor(Math.random() * 60) + 20;
+        const purchases = Math.floor(initialViews * (Math.random() * 0.35 + 0.15));
+        const earnings = purchases * newVideo.price;
+
+        await base44.entities.OnlyFangsVideo.update(video.id, {
+          views: initialViews,
+          earnings: earnings,
+          rating: Math.random() * 1.8 + 3.2
+        });
+
+        const newRevenue = servantProfile.revenue + earnings;
+        const newSubs = servantProfile.subscriber_count + Math.floor(Math.random() * 12) + 3;
+        const newRep = Math.min(100, servantProfile.reputation + Math.floor(Math.random() * 6) + 3);
+
+        await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+          revenue: newRevenue,
+          subscriber_count: newSubs,
+          reputation: newRep
+        });
+
+        await base44.entities.NightLog.create({
+          entry: `${servant.name} filmed solo content: "${newVideo.content_type}". Earned $${earnings}.`,
+          category: 'interaction',
+          intensity: 'moderate'
+        });
+
+        queryClient.invalidateQueries();
+        setCreating(false);
+        setSelectedCategory(null);
+        setFilmWithVampire(null);
+        setNewVideo({ title: '', content_type: '', price: 15 });
+      }, 2500);
     } else {
       setCreating(true);
       
@@ -190,6 +262,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         queryClient.invalidateQueries();
         setCreating(false);
         setSelectedCategory(null);
+        setFilmWithVampire(null);
         setNewVideo({ title: '', content_type: '', price: 15 });
       }, 2500);
     }
@@ -401,6 +474,13 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               <h3 className="text-white font-medium mb-2">Bio</h3>
               <p className="text-gray-300">{servantProfile.bio}</p>
             </div>
+            
+            <button
+              onClick={handleQuit}
+              className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-xl py-3 transition-colors"
+            >
+              Quit OnlyFangs
+            </button>
           </div>
         )}
 
@@ -476,12 +556,41 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     </div>
                   </div>
 
+                  {['filmed', 'couple'].includes(selectedCategory) && filmWithVampire === null && (
+                    <div className="space-y-2 mb-4">
+                      <label className="text-gray-400 text-sm">Who's filming?</label>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setFilmWithVampire(false)}
+                          className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white transition-colors"
+                        >
+                          Film Alone
+                        </button>
+                        <button
+                          onClick={() => setFilmWithVampire(true)}
+                          className="flex-1 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg py-3 text-white transition-colors"
+                        >
+                          Film With Vampire 🔥
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {filmWithVampire !== null && ['filmed', 'couple'].includes(selectedCategory) && (
+                    <button
+                      onClick={() => setFilmWithVampire(null)}
+                      className="w-full bg-gray-800 hover:bg-gray-700 text-gray-400 text-sm py-2 rounded-lg mb-2"
+                    >
+                      ← Change filming choice
+                    </button>
+                  )}
+
                   <button
                     onClick={handleCreateVideo}
-                    disabled={!newVideo.content_type || creating || filming}
+                    disabled={!newVideo.content_type || creating || filming || (['filmed', 'couple'].includes(selectedCategory) && filmWithVampire === null)}
                     className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50"
                   >
-                    {filming ? 'Filming...' : creating ? 'Processing...' : ['filmed', 'couple'].includes(selectedCategory) ? 'Film Together' : 'Create Video'}
+                    {filming ? 'Filming...' : creating ? 'Processing...' : 'Create Video'}
                   </button>
                 </div>
               </>

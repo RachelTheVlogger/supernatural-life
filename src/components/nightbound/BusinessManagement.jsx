@@ -72,6 +72,26 @@ export default function BusinessManagement({ servant, onClose }) {
   const [showShippingOptions, setShowShippingOptions] = useState(null);
   const [shippingOrder, setShippingOrder] = useState(null);
 
+  const handleQuit = async () => {
+    if (!confirm(`Quit the jewelry business? You can always start again later.`)) return;
+    
+    const career = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
+    if (career[0]) {
+      await base44.entities.ServantCareer.update(career[0].id, {
+        jewelry_business_active: false
+      });
+    }
+    
+    await base44.entities.NightLog.create({
+      entry: `${servant.name} decided to close the jewelry business. Time for something new.`,
+      category: 'interaction',
+      intensity: 'subtle'
+    });
+    
+    queryClient.invalidateQueries();
+    onClose();
+  };
+
   const { data: inventory = [] } = useQuery({
     queryKey: ['inventory', servant.id],
     queryFn: () => base44.entities.Inventory.filter({ servant_id: servant.id })
@@ -701,6 +721,13 @@ export default function BusinessManagement({ servant, onClose }) {
                   </div>
                 ))
               )}
+              
+              <button
+                onClick={handleQuit}
+                className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-xl py-3 transition-colors mt-4"
+              >
+                Quit Jewelry Business
+              </button>
             </>
           )}
         </div>
