@@ -255,7 +255,9 @@ export default function ServantHome() {
           >
             <chore.icon className="w-5 h-5" />
             <span className="text-base font-medium">
-              {doingChore === chore.id ? '⸱ ⸱' : chore.label}
+              {doingChore === chore.id ? (
+                <span className="inline-block animate-pulse text-2xl">⸱ ⸱</span>
+              ) : chore.label}
             </span>
           </motion.button>
         ))}
