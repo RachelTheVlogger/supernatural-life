@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Video, DollarSign, Users, TrendingUp, Eye, Star, Camera, Lock, Unlock, Percent } from 'lucide-react';
+import { X, Video, DollarSign, Users, TrendingUp, Eye, Star, Camera, Lock, Unlock, Percent, MessageCircle, Gift, Award, BarChart3, Package, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -22,6 +22,22 @@ const VIDEO_CATEGORIES = {
   artistic: { label: 'Artistic', icon: '🎨', examples: ['Sensual dance', 'Body art', 'Shadow play', 'Aesthetic nudity', 'Artistic poses'] }
 };
 
+const SUBSCRIPTION_TIERS = [
+  { price: 5, name: 'Basic', perks: ['Access to feed', 'Like & comment'] },
+  { price: 10, name: 'Premium', perks: ['All Basic perks', '10% off PPV', 'Weekly exclusive'] },
+  { price: 20, name: 'VIP', perks: ['All Premium perks', '25% off PPV', 'Priority DMs', 'Custom content requests'] }
+];
+
+const WISHLIST_ITEMS = [
+  { name: 'Silver', icon: '🪙', cost: 50, material: 'silver' },
+  { name: 'Moonstone', icon: '🌙', cost: 75, material: 'moonstone' },
+  { name: 'Garnet', icon: '🔴', cost: 100, material: 'garnet' },
+  { name: 'Ruby', icon: '❤️', cost: 200, material: 'ruby' },
+  { name: 'New Camera', icon: '📷', cost: 300 },
+  { name: 'Lingerie Set', icon: '💋', cost: 150 },
+  { name: 'Toys', icon: '🔥', cost: 250 }
+];
+
 export default function OnlyFangsManagement({ servant, vampireState, onClose }) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('profile');
@@ -38,6 +54,13 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [chatMessages, setChatMessages] = useState([]);
   const [userMessage, setUserMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [ppvMessage, setPpvMessage] = useState({ text: '', price: 20, videoId: null });
+  const [sendingPpv, setSendingPpv] = useState(false);
+  const [creatingPoll, setCreatingPoll] = useState(false);
+  const [pollData, setPollData] = useState({ question: '', options: ['', ''] });
+  const [activePoll, setActivePoll] = useState(null);
+  const [creatingBundle, setCreatingBundle] = useState(false);
+  const [bundleData, setBundleData] = useState({ name: '', videoIds: [], discount: 0.3 });
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -51,6 +74,33 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
   const servantProfile = profile[0];
   const hasProfile = !!servantProfile;
+
+  // Generate top fans
+  const topFans = React.useMemo(() => {
+    if (!servantProfile) return [];
+    const fanNames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen'];
+    return fanNames.slice(0, 5).map((name, i) => ({
+      name,
+      spent: Math.floor(servantProfile.revenue * (0.3 - i * 0.05)),
+      tier: i === 0 ? 'VIP' : i < 3 ? 'Premium' : 'Basic'
+    }));
+  }, [servantProfile?.revenue]);
+
+  // Analytics data
+  const analytics = React.useMemo(() => {
+    const byCategory = {};
+    videos.forEach(v => {
+      if (!byCategory[v.category]) byCategory[v.category] = { views: 0, earnings: 0, count: 0 };
+      byCategory[v.category].views += v.views;
+      byCategory[v.category].earnings += v.earnings;
+      byCategory[v.category].count++;
+    });
+    return Object.entries(byCategory).map(([cat, data]) => ({
+      category: VIDEO_CATEGORIES[cat]?.label || cat,
+      ...data,
+      avgEarnings: data.count > 0 ? Math.floor(data.earnings / data.count) : 0
+    })).sort((a, b) => b.earnings - a.earnings);
+  }, [videos]);
 
   const handleCreateProfile = async () => {
     await base44.entities.OnlyFangsProfile.create({
@@ -435,6 +485,165 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     setSendingMessage(false);
   };
 
+  const handleSendPPV = async () => {
+    if (!ppvMessage.text || !ppvMessage.videoId) return;
+    setSendingPpv(true);
+    
+    setTimeout(async () => {
+      const unlocks = Math.floor(servantProfile.subscriber_count * (Math.random() * 0.2 + 0.1));
+      const earnings = unlocks * ppvMessage.price;
+      
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: servantProfile.revenue + earnings
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: `Sent PPV message to ${servantProfile.subscriber_count} subscribers. ${unlocks} unlocked it. Earned $${earnings}.`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
+      queryClient.invalidateQueries();
+      setSendingPpv(false);
+      setPpvMessage({ text: '', price: 20, videoId: null });
+    }, 2000);
+  };
+
+  const handleCreatePoll = async () => {
+    if (!pollData.question || pollData.options.filter(o => o).length < 2) return;
+    setCreatingPoll(true);
+    
+    setTimeout(() => {
+      const votes = pollData.options.filter(o => o).map(opt => ({
+        option: opt,
+        votes: Math.floor(Math.random() * servantProfile.subscriber_count * 0.3)
+      }));
+      setActivePoll({ question: pollData.question, results: votes });
+      setCreatingPoll(false);
+      setPollData({ question: '', options: ['', ''] });
+    }, 1500);
+  };
+
+  const handleCustomRequest = async () => {
+    const requests = [
+      { fan: 'DarkLover69', request: 'Shower video with my name written on your body', offer: 150 },
+      { fan: 'VampireFan420', request: 'Roleplay: vampire seducing innocent victim', offer: 200 },
+      { fan: 'NightStalker', request: 'Feet content + face reveal', offer: 300 },
+      { fan: 'GothKing', request: 'Video calling my name while you finish', offer: 250 }
+    ];
+    
+    const request = requests[Math.floor(Math.random() * requests.length)];
+    
+    if (confirm(`${request.fan} wants: "${request.request}" - Offering $${request.offer}. Accept?`)) {
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: servantProfile.revenue + request.offer
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: `Accepted custom request from ${request.fan}: "${request.request}". Earned $${request.offer}.`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
+      queryClient.invalidateQueries();
+    }
+  };
+
+  const handleShoutout = async () => {
+    const fan = topFans[0];
+    if (!fan) return;
+    
+    const earnings = 100;
+    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+      revenue: servantProfile.revenue + earnings
+    });
+    
+    await base44.entities.NightLog.create({
+      entry: `Recorded personalized shoutout for ${fan.name}. Earned $${earnings}.`,
+      category: 'interaction',
+      intensity: 'subtle'
+    });
+    
+    queryClient.invalidateQueries();
+  };
+
+  const handleWishlistPurchase = async (item) => {
+    const earnings = item.cost;
+    
+    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+      revenue: servantProfile.revenue + earnings
+    });
+    
+    if (item.material) {
+      const inv = await base44.entities.Inventory.filter({ servant_id: servant.id, material: item.material });
+      if (inv[0]) {
+        await base44.entities.Inventory.update(inv[0].id, {
+          quantity: inv[0].quantity + 10
+        });
+      } else {
+        await base44.entities.Inventory.create({
+          servant_id: servant.id,
+          material: item.material,
+          quantity: 10
+        });
+      }
+    }
+    
+    await base44.entities.NightLog.create({
+      entry: `A fan bought you ${item.name} from your wishlist! Received $${earnings}.`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+    
+    queryClient.invalidateQueries();
+  };
+
+  const handleCreateBundle = async () => {
+    if (bundleData.videoIds.length < 2) return;
+    setCreatingBundle(true);
+    
+    setTimeout(async () => {
+      const totalPrice = bundleData.videoIds.reduce((sum, id) => {
+        const video = videos.find(v => v.id === id);
+        return sum + (video?.price || 0);
+      }, 0);
+      
+      const bundlePrice = Math.floor(totalPrice * (1 - bundleData.discount));
+      const sales = Math.floor(Math.random() * 30) + 10;
+      const earnings = sales * bundlePrice;
+      
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: servantProfile.revenue + earnings
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: `Created bundle "${bundleData.name}". Sold ${sales} copies. Earned $${earnings}.`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
+      queryClient.invalidateQueries();
+      setCreatingBundle(false);
+      setBundleData({ name: '', videoIds: [], discount: 0.3 });
+    }, 2000);
+  };
+
+  const handleFreeTrial = async () => {
+    const newSubs = Math.floor(Math.random() * 50) + 30;
+    
+    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+      subscriber_count: servantProfile.subscriber_count + newSubs
+    });
+    
+    await base44.entities.NightLog.create({
+      entry: `Started 24h free trial promotion. Gained ${newSubs} new subscribers!`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+    
+    queryClient.invalidateQueries();
+  };
+
   if (!hasProfile && !editingProfile) {
     return (
       <motion.div
@@ -610,30 +819,30 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto">
-          <button
-            onClick={() => setTab('profile')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
-          >
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          <button onClick={() => setTab('profile')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             Profile
           </button>
-          <button
-            onClick={() => setTab('livestream')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 ${tab === 'livestream' ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}
-          >
-            <span className="text-red-400">🔴</span> Go Live
+          <button onClick={() => setTab('livestream')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'livestream' ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            <span className="text-red-400">🔴</span> Live
           </button>
-          <button
-            onClick={() => setTab('create')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'create' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
-          >
-            Create Content
+          <button onClick={() => setTab('create')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'create' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            Create
           </button>
-          <button
-            onClick={() => setTab('videos')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'videos' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
-          >
-            My Videos
+          <button onClick={() => setTab('videos')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'videos' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            Videos
+          </button>
+          <button onClick={() => setTab('ppv')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'ppv' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            <MessageCircle className="w-3 h-3" /> PPV
+          </button>
+          <button onClick={() => setTab('fans')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'fans' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            <Award className="w-3 h-3" /> Fans
+          </button>
+          <button onClick={() => setTab('analytics')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'analytics' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            <BarChart3 className="w-3 h-3" /> Stats
+          </button>
+          <button onClick={() => setTab('engagement')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'engagement' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            <Zap className="w-3 h-3" /> Tools
           </button>
         </div>
 
@@ -955,6 +1164,327 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 );
               })
             )}
+          </div>
+        )}
+
+        {tab === 'ppv' && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-pink-950/40 to-purple-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-2 flex items-center gap-2">
+                <MessageCircle className="w-5 h-5" /> Mass PPV Message
+              </h3>
+              <p className="text-gray-400 text-sm mb-4">Send locked content to all {servantProfile.subscriber_count} subscribers</p>
+              
+              <div className="space-y-3">
+                <textarea
+                  value={ppvMessage.text}
+                  onChange={(e) => setPpvMessage({...ppvMessage, text: e.target.value})}
+                  placeholder="Your teasing message... 'Want to see what happened next? 😈'"
+                  className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 h-20"
+                />
+                
+                <div>
+                  <label className="text-gray-400 text-sm">Select Video to Lock</label>
+                  <select
+                    value={ppvMessage.videoId || ''}
+                    onChange={(e) => setPpvMessage({...ppvMessage, videoId: e.target.value})}
+                    className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1"
+                  >
+                    <option value="">Choose a video...</option>
+                    {videos.map(v => (
+                      <option key={v.id} value={v.id}>{v.title} (${v.price})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-gray-400 text-sm">Unlock Price ($)</label>
+                  <div className="flex gap-2 mt-1">
+                    {[10, 15, 20, 30, 50].map(price => (
+                      <button
+                        key={price}
+                        onClick={() => setPpvMessage({...ppvMessage, price})}
+                        className={`px-4 py-2 rounded-lg ${ppvMessage.price === price ? 'bg-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+                      >
+                        ${price}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleSendPPV}
+                  disabled={!ppvMessage.text || !ppvMessage.videoId || sendingPpv}
+                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50"
+                >
+                  {sendingPpv ? 'Sending...' : `Send to ${servantProfile.subscriber_count} Subscribers`}
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-4">
+              <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+                <Package className="w-4 h-4" /> Create Bundle
+              </h4>
+              <p className="text-gray-400 text-sm mb-3">Package videos together at a discount</p>
+              
+              <input
+                type="text"
+                value={bundleData.name}
+                onChange={(e) => setBundleData({...bundleData, name: e.target.value})}
+                placeholder="Bundle name..."
+                className="w-full bg-gray-900 text-white rounded-lg px-3 py-2 mb-3"
+              />
+              
+              <div className="space-y-2 mb-3">
+                {videos.slice(0, 5).map(v => (
+                  <label key={v.id} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={bundleData.videoIds.includes(v.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setBundleData({...bundleData, videoIds: [...bundleData.videoIds, v.id]});
+                        } else {
+                          setBundleData({...bundleData, videoIds: bundleData.videoIds.filter(id => id !== v.id)});
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <span className="text-gray-300">{v.title} (${v.price})</span>
+                  </label>
+                ))}
+              </div>
+
+              <div className="flex gap-2 mb-3">
+                <button onClick={() => setBundleData({...bundleData, discount: 0.2})} className={`flex-1 py-2 rounded text-sm ${bundleData.discount === 0.2 ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-400'}`}>20% Off</button>
+                <button onClick={() => setBundleData({...bundleData, discount: 0.3})} className={`flex-1 py-2 rounded text-sm ${bundleData.discount === 0.3 ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-400'}`}>30% Off</button>
+                <button onClick={() => setBundleData({...bundleData, discount: 0.5})} className={`flex-1 py-2 rounded text-sm ${bundleData.discount === 0.5 ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-400'}`}>50% Off</button>
+              </div>
+
+              <button
+                onClick={handleCreateBundle}
+                disabled={bundleData.videoIds.length < 2 || !bundleData.name || creatingBundle}
+                className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {creatingBundle ? 'Creating...' : 'Create Bundle'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {tab === 'fans' && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-yellow-950/40 to-amber-950/40 border-2 border-yellow-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-4 flex items-center gap-2">
+                <Award className="w-5 h-5 text-yellow-400" /> Top Fans
+              </h3>
+              <div className="space-y-3">
+                {topFans.map((fan, i) => (
+                  <div key={fan.name} className="bg-gray-800/50 rounded-lg p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : '⭐'}</span>
+                      <div>
+                        <p className="text-white font-medium">{fan.name}</p>
+                        <p className="text-gray-400 text-sm">{fan.tier} Subscriber</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-green-400 font-bold">${fan.spent}</p>
+                      <p className="text-gray-500 text-xs">total spent</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-3">
+              <button
+                onClick={handleCustomRequest}
+                className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 hover:from-purple-900/60 hover:to-pink-900/60 border border-purple-500/30 rounded-xl p-4 text-left transition-colors"
+              >
+                <h4 className="text-white font-medium mb-1">Custom Content Request</h4>
+                <p className="text-gray-400 text-sm">Fans pay premium for personalized content</p>
+              </button>
+
+              <button
+                onClick={handleShoutout}
+                className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 hover:from-blue-900/60 hover:to-purple-900/60 border border-blue-500/30 rounded-xl p-4 text-left transition-colors"
+              >
+                <h4 className="text-white font-medium mb-1">Record Shoutout</h4>
+                <p className="text-gray-400 text-sm">$100 - Personalized video for top fan</p>
+              </button>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-4">
+              <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+                <Gift className="w-4 h-4" /> Wishlist
+              </h4>
+              <div className="grid grid-cols-2 gap-3">
+                {WISHLIST_ITEMS.map(item => (
+                  <button
+                    key={item.name}
+                    onClick={() => handleWishlistPurchase(item)}
+                    className="bg-gray-900 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
+                  >
+                    <div className="text-3xl mb-2">{item.icon}</div>
+                    <p className="text-white text-sm font-medium">{item.name}</p>
+                    <p className="text-green-400 text-xs">${item.cost}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab === 'analytics' && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-blue-950/40 to-purple-950/40 border-2 border-blue-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-4 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5" /> Performance Analytics
+              </h3>
+              
+              <div className="space-y-3">
+                {analytics.length === 0 ? (
+                  <p className="text-gray-400 text-center py-8">Create content to see analytics</p>
+                ) : (
+                  analytics.map(cat => (
+                    <div key={cat.category} className="bg-gray-800/50 rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="text-white font-medium">{cat.category}</h4>
+                        <span className="text-green-400 font-bold">${cat.earnings}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">Videos</p>
+                          <p className="text-white">{cat.count}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Views</p>
+                          <p className="text-white">{cat.views}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Avg Earn</p>
+                          <p className="text-white">${cat.avgEarnings}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-3">
+              <div className="bg-gray-800 rounded-lg p-4">
+                <p className="text-gray-400 text-sm">Total Views</p>
+                <p className="text-white text-2xl font-bold">{videos.reduce((sum, v) => sum + v.views, 0)}</p>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-4">
+                <p className="text-gray-400 text-sm">Avg Rating</p>
+                <p className="text-white text-2xl font-bold">{videos.length > 0 ? (videos.reduce((sum, v) => sum + v.rating, 0) / videos.length).toFixed(1) : '0.0'} ⭐</p>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-4">
+                <p className="text-gray-400 text-sm">Best Video</p>
+                <p className="text-white text-sm font-medium">{videos.sort((a, b) => b.earnings - a.earnings)[0]?.title || 'N/A'}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab === 'engagement' && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-4 flex items-center gap-2">
+                <Zap className="w-5 h-5" /> Engagement Tools
+              </h3>
+
+              <div className="space-y-3">
+                <button
+                  onClick={handleFreeTrial}
+                  className="w-full bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border border-green-500/30 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium mb-1">🎁 24h Free Trial</h4>
+                  <p className="text-gray-400 text-sm">Massive subscriber boost. Limited time promotion.</p>
+                </button>
+
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-medium mb-3">Create Poll</h4>
+                  <input
+                    type="text"
+                    value={pollData.question}
+                    onChange={(e) => setPollData({...pollData, question: e.target.value})}
+                    placeholder="What should I film next?"
+                    className="w-full bg-gray-900 text-white rounded-lg px-3 py-2 mb-2"
+                  />
+                  {pollData.options.map((opt, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      value={opt}
+                      onChange={(e) => {
+                        const newOpts = [...pollData.options];
+                        newOpts[i] = e.target.value;
+                        setPollData({...pollData, options: newOpts});
+                      }}
+                      placeholder={`Option ${i + 1}`}
+                      className="w-full bg-gray-900 text-white rounded-lg px-3 py-2 mb-2"
+                    />
+                  ))}
+                  <button
+                    onClick={() => setPollData({...pollData, options: [...pollData.options, '']})}
+                    className="text-purple-400 text-sm mb-2"
+                  >
+                    + Add Option
+                  </button>
+                  <button
+                    onClick={handleCreatePoll}
+                    disabled={!pollData.question || pollData.options.filter(o => o).length < 2 || creatingPoll}
+                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {creatingPoll ? 'Creating...' : 'Create Poll'}
+                  </button>
+                </div>
+
+                {activePoll && (
+                  <div className="bg-gray-800 rounded-xl p-4">
+                    <h4 className="text-white font-medium mb-3">Poll Results: {activePoll.question}</h4>
+                    {activePoll.results.map((r, i) => (
+                      <div key={i} className="mb-2">
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-300">{r.option}</span>
+                          <span className="text-purple-400">{r.votes} votes</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div
+                            style={{ width: `${(r.votes / Math.max(...activePoll.results.map(x => x.votes))) * 100}%` }}
+                            className="h-2 bg-purple-500 rounded-full"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-medium mb-2">Subscription Tiers</h4>
+                  <div className="space-y-2">
+                    {SUBSCRIPTION_TIERS.map(tier => (
+                      <div key={tier.name} className="bg-gray-900 rounded-lg p-3">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-white font-medium">{tier.name}</span>
+                          <span className="text-green-400">${tier.price}/month</span>
+                        </div>
+                        <ul className="text-gray-400 text-xs space-y-1">
+                          {tier.perks.map((perk, i) => (
+                            <li key={i}>• {perk}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </motion.div>
