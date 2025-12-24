@@ -5,10 +5,10 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const VIDEO_CATEGORIES = {
-  couple: { label: 'Couple', icon: '💑', examples: ['Making love together', 'Vampire takes their servant', 'Passionate kissing', 'Riding my vampire', 'Our morning routine', 'Shower together'] },
-  filmed: { label: 'Filmed by Partner', icon: '🎥', examples: ['They film me touching myself', 'Stripping for the camera', 'Playing while they watch', 'Teasing for their lens', 'Solo but not alone'] },
-  vampiresolo: { label: 'Vampire Solo', icon: '🦇', examples: ['Vampire showing off', 'Vampire touching themselves', 'Vampire teasing the camera', 'Dominant vampire energy', 'Vampire flexing power'] },
-  solo: { label: 'Solo', icon: '💋', examples: ['Touching myself thinking of you', 'Undressing slowly', 'Playing with toys', 'Morning routine', 'Bath time fun'] },
+  couple: { label: 'Couple', icon: '💑', examples: ['Making love together', 'Vampire takes their servant', 'Riding my vampire', 'Getting bred on camera', 'Passionate fucking', 'Shower sex'] },
+  filmed: { label: 'Filmed by Partner', icon: '🎥', examples: ['They film me masturbating', 'Stripping and touching myself', 'Using toys while they watch', 'Fingering myself for them', 'Moaning for the camera'] },
+  vampiresolo: { label: 'Vampire Solo', icon: '🦇', examples: ['Vampire masturbating', 'Vampire stripping and teasing', 'Dominant vampire jerking off', 'Vampire using toys', 'Vampire showing everything'] },
+  solo: { label: 'Solo', icon: '💋', examples: ['Masturbating thinking of you', 'Undressing and fingering myself', 'Playing with toys and moaning', 'Multiple orgasms on camera', 'Edging and cumming'] },
   pov: { label: 'POV', icon: '👁️', examples: ['Your view while I ride you', 'On my knees for you', 'Waking up together', 'Between my legs', 'Facesitting POV'] },
   roleplay: { label: 'Roleplay', icon: '🎭', examples: ['Vampire seduction', 'Your obedient servant', 'Master and pet', 'Forbidden encounter', 'Dark ritual'] },
   teasing: { label: 'Teasing', icon: '😈', examples: ['Strip tease', 'Almost showing everything', 'Teasing touches', 'Denial game', 'Edge play'] },
@@ -62,6 +62,8 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [activePoll, setActivePoll] = useState(null);
   const [creatingBundle, setCreatingBundle] = useState(false);
   const [bundleData, setBundleData] = useState({ name: '', videoIds: [], discount: 0.3 });
+  const [brainstorming, setBrainstorming] = useState(false);
+  const [brainstormIdea, setBrainstormIdea] = useState(null);
 
   const { data: profile = [], isLoading: profileLoading } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -703,6 +705,51 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     queryClient.invalidateQueries();
   };
 
+  const handleBrainstorm = async () => {
+    setBrainstorming(true);
+    
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are ${servant.name}, brainstorming explicit OnlyFangs content ideas with your vampire partner. Generate 3 creative, explicit adult content ideas. Be specific about the sexual acts. Each idea should include: a catchy title, explicit description of what happens, and estimated earnings potential. Consider: masturbation, sex acts, toys, roleplay, fetish content. Format as JSON array with objects containing: title, description, category, estimated_earnings.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            ideas: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string' },
+                  description: { type: 'string' },
+                  category: { type: 'string' },
+                  estimated_earnings: { type: 'number' }
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      setBrainstormIdea(response.ideas);
+    } catch (e) {
+      // Fallback ideas
+      setBrainstormIdea([
+        { title: 'Vampire Breeds Me', description: 'Full penetration. Multiple positions. Creampie finish.', category: 'couple', estimated_earnings: 200 },
+        { title: 'Masturbating to Exhaustion', description: 'Using toys. Multiple orgasms. Moaning and begging.', category: 'solo', estimated_earnings: 150 },
+        { title: 'Shower Sex POV', description: 'Wet bodies. Fucking against the wall. His POV.', category: 'pov', estimated_earnings: 180 }
+      ]);
+    }
+    
+    setBrainstorming(false);
+  };
+
+  const handleUseIdea = (idea) => {
+    setTab('create');
+    setSelectedCategory(idea.category);
+    setNewVideo({ title: idea.title, content_type: idea.description, price: 20 });
+    setBrainstormIdea(null);
+  };
+
   if (!hasProfile && !editingProfile) {
     return (
       <motion.div
@@ -902,6 +949,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </button>
           <button onClick={() => setTab('engagement')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'engagement' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <Zap className="w-3 h-3" /> Tools
+          </button>
+          <button onClick={() => setTab('brainstorm')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'brainstorm' ? 'bg-gradient-to-r from-pink-600 to-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            💡 Ideas
           </button>
         </div>
 
@@ -1564,6 +1614,68 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     ))}
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab === 'brainstorm' && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-2 flex items-center gap-2">
+                💡 Content Brainstorming
+              </h3>
+              <p className="text-gray-400 mb-4">
+                Discuss ideas together. Plan your next explicit content.
+              </p>
+              
+              {!brainstormIdea ? (
+                <button
+                  onClick={handleBrainstorm}
+                  disabled={brainstorming}
+                  className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50"
+                >
+                  {brainstorming ? 'Brainstorming...' : 'Brainstorm New Ideas Together'}
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  {brainstormIdea.map((idea, i) => (
+                    <div key={i} className="bg-gray-800 rounded-xl p-4">
+                      <h4 className="text-white font-bold mb-2">{idea.title}</h4>
+                      <p className="text-gray-300 text-sm mb-2">{idea.description}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-green-400 text-sm">Est. ${idea.estimated_earnings}</span>
+                        <button
+                          onClick={() => handleUseIdea(idea)}
+                          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg text-sm transition-all"
+                        >
+                          Use This Idea
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => setBrainstormIdea(null)}
+                    className="w-full bg-gray-800 hover:bg-gray-700 text-gray-400 py-2 rounded-lg text-sm"
+                  >
+                    ← Back
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-4">
+              <h4 className="text-white font-medium mb-3">Quick Content Suggestions</h4>
+              <div className="space-y-2 text-sm">
+                <button onClick={() => { setTab('create'); setSelectedCategory('solo'); setNewVideo({...newVideo, content_type: 'Masturbating with toys, multiple orgasms'}); }} className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 text-left px-3 py-2 rounded-lg text-gray-300">
+                  💋 Solo Masturbation Session
+                </button>
+                <button onClick={() => { setTab('create'); setSelectedCategory('couple'); setNewVideo({...newVideo, content_type: 'Passionate fucking, multiple positions, creampie'}); }} className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-left px-3 py-2 rounded-lg text-gray-300">
+                  💑 Couple Sex Tape
+                </button>
+                <button onClick={() => { setTab('create'); setSelectedCategory('vampiresolo'); setNewVideo({...newVideo, content_type: 'Vampire jerking off, showing everything'}); }} className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 text-left px-3 py-2 rounded-lg text-gray-300">
+                  🦇 Vampire Solo Content
+                </button>
               </div>
             </div>
           </div>
