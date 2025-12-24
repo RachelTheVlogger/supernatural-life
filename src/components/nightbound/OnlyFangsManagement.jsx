@@ -282,59 +282,12 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         setSelectedCategory(null);
         setFilmWithVampire(null);
         setNewVideo({ title: '', content_type: '', price: 15 });
-      }, 2500);
-    } else {
-      setCreating(true);
-      
-      setTimeout(async () => {
-        const video = await base44.entities.OnlyFangsVideo.create({
-          servant_id: servant.id,
-          title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
-          category: selectedCategory,
-          content_type: newVideo.content_type,
-          price: newVideo.price,
-          views: 0,
-          earnings: 0,
-          rating: 0
-        });
+        }, 2500);
+        } else if (isVampireSolo) {
+        // Vampire solo content
+        setCreating(true);
 
-        const initialViews = Math.floor(Math.random() * 50) + 10;
-        const purchases = Math.floor(initialViews * (Math.random() * 0.3 + 0.1));
-        const earnings = purchases * newVideo.price;
-
-        await base44.entities.OnlyFangsVideo.update(video.id, {
-          views: initialViews,
-          earnings: earnings,
-          rating: Math.random() * 2 + 3
-        });
-
-        const newRevenue = servantProfile.revenue + earnings;
-        const newSubs = servantProfile.subscriber_count + Math.floor(Math.random() * 10);
-        const newRep = Math.min(100, servantProfile.reputation + Math.floor(Math.random() * 5) + 2);
-
-        await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-          revenue: newRevenue,
-          subscriber_count: newSubs,
-          reputation: newRep
-        });
-
-        await base44.entities.NightLog.create({
-          entry: `${servant.name} posted new content: "${newVideo.content_type}". Earned $${earnings}.`,
-          category: 'interaction',
-          intensity: 'moderate'
-        });
-
-        queryClient.invalidateQueries();
-        setCreating(false);
-        setSelectedCategory(null);
-        setFilmWithVampire(null);
-        setNewVideo({ title: '', content_type: '', price: 15 });
-      }, 2500);
-    } else if (isVampireSolo) {
-      // Vampire solo content
-      setCreating(true);
-      
-      setTimeout(async () => {
+        setTimeout(async () => {
         const video = await base44.entities.OnlyFangsVideo.create({
           servant_id: servant.id,
           title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
@@ -378,11 +331,11 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         setSelectedCategory(null);
         setFilmWithVampire(null);
         setNewVideo({ title: '', content_type: '', price: 15 });
-      }, 2500);
-    } else {
-      setCreating(true);
-      
-      setTimeout(async () => {
+        }, 2500);
+        } else {
+        setCreating(true);
+
+        setTimeout(async () => {
         const video = await base44.entities.OnlyFangsVideo.create({
           servant_id: servant.id,
           title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
@@ -425,9 +378,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         setSelectedCategory(null);
         setFilmWithVampire(null);
         setNewVideo({ title: '', content_type: '', price: 15 });
-      }, 2500);
-    }
-  };
+        }, 2500);
+        }
+        };
 
   const handleSetDiscount = async (videoId, discount, hours) => {
     const video = videos.find(v => v.id === videoId);
