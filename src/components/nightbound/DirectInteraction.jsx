@@ -1291,12 +1291,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     const outcomes = interaction.outcomes[tier] || interaction.outcomes.low;
     const baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
     
-    // Add variant-specific flavor
-    const variantFlavor = getVariantFlavor(servant.variant, tier, servant.obsession_stage);
-    let outcome = baseOutcome + variantFlavor;
-    
     // Add title if set
-    outcome = addTitleToOutcome(outcome);
+    let outcome = addTitleToOutcome(baseOutcome);
     
     setOutcome(outcome);
     
