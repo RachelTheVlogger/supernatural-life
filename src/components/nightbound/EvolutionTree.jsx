@@ -5,6 +5,39 @@ import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
 const POWER_PATHS = {
+  ripper: {
+    name: 'Path of the Ripper',
+    icon: Zap,
+    color: 'red',
+    description: 'Embrace the monster. Ruthless. Brutal. Unstoppable.',
+    requiresRipper: true,
+    powers: [
+      {
+        name: 'Blood Frenzy',
+        description: 'Feed on multiple victims in one night without sating',
+        requirements: { nights: 5, ripperKills: 3 },
+        tier: 1
+      },
+      {
+        name: 'Brutal Efficiency',
+        description: 'Kills restore more hunger and grant temporary strength',
+        requirements: { nights: 10, ripperKills: 8, prerequisite: 'Blood Frenzy' },
+        tier: 2
+      },
+      {
+        name: 'Terror Aura',
+        description: 'Victims freeze in fear, making hunting effortless',
+        requirements: { nights: 18, ripperKills: 15, prerequisite: 'Brutal Efficiency' },
+        tier: 3
+      },
+      {
+        name: 'The Ripper Ascendant',
+        description: 'Complete loss of control. Maximum power. Pure monster.',
+        requirements: { nights: 30, ripperKills: 30, humanity: 10, prerequisite: 'Terror Aura' },
+        tier: 4
+      }
+    ]
+  },
   persuasion: {
     name: 'Path of Persuasion',
     icon: Brain,
@@ -151,8 +184,8 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
       relationship: avgRelationship,
       turned: turnedCount,
       powers: vampireState.unlocked_powers?.length || 0,
-      hunts: 0, // Would need to track this
-      feeds: 0  // Would need to track this
+      ripperKills: vampireState.ripper_kills || 0,
+      humanity: vampireState.humanity || 50
     };
   };
   
@@ -171,8 +204,8 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
       (!reqs.relationship || stats.relationship >= reqs.relationship) &&
       (!reqs.turned || stats.turned >= reqs.turned) &&
       (!reqs.powers || stats.powers >= reqs.powers) &&
-      (!reqs.hunts || stats.hunts >= reqs.hunts) &&
-      (!reqs.feeds || stats.feeds >= reqs.feeds)
+      (!reqs.ripperKills || stats.ripperKills >= reqs.ripperKills) &&
+      (!reqs.humanity || stats.humanity <= reqs.humanity)
     );
   };
   
@@ -229,7 +262,7 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
         <p className="text-gray-400 text-sm mb-6">Choose your path. Become what you were meant to be.</p>
         
         {/* Stats Bar */}
-        <div className="bg-black/40 rounded-xl p-4 mb-6 grid grid-cols-3 md:grid-cols-6 gap-3 text-center">
+        <div className="bg-black/40 rounded-xl p-4 mb-6 grid grid-cols-3 md:grid-cols-7 gap-3 text-center">
           <div>
             <p className="text-gray-400 text-xs">Nights</p>
             <p className="text-white font-bold">{stats.nights}</p>
@@ -247,11 +280,15 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
             <p className="text-white font-bold">{stats.turned}</p>
           </div>
           <div>
-            <p className="text-gray-400 text-xs">Powers</p>
-            <p className="text-white font-bold">{stats.powers}</p>
+            <p className="text-gray-400 text-xs">Humanity</p>
+            <p className="text-blue-400 font-bold">{stats.humanity}</p>
           </div>
           <div>
-            <p className="text-gray-400 text-xs">Total</p>
+            <p className="text-gray-400 text-xs">Ripper Kills</p>
+            <p className="text-red-400 font-bold">{stats.ripperKills}</p>
+          </div>
+          <div>
+            <p className="text-gray-400 text-xs">Powers</p>
             <p className="text-purple-400 font-bold">{unlockedPowers.length}</p>
           </div>
         </div>
@@ -262,19 +299,32 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
               const Icon = path.icon;
               const pathPowers = path.powers.filter(p => unlockedPowers.includes(p.name));
               const progress = (pathPowers.length / path.powers.length) * 100;
+              const isRipperMode = vampireState.emotional_mode === 'ruthless';
+              const isLocked = path.requiresRipper && !isRipperMode;
               
               return (
                 <motion.button
                   key={key}
-                  whileHover={{ scale: 1.02 }}
-                  onClick={() => setSelectedPath(key)}
-                  className={`bg-${path.color}-950/20 border border-${path.color}-800/50 rounded-xl p-6 text-left transition-all hover:bg-${path.color}-950/30`}
+                  whileHover={!isLocked ? { scale: 1.02 } : {}}
+                  onClick={() => !isLocked && setSelectedPath(key)}
+                  disabled={isLocked}
+                  className={`bg-${path.color}-950/20 border border-${path.color}-800/50 rounded-xl p-6 text-left transition-all relative ${
+                    isLocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-' + path.color + '-950/30'
+                  }`}
                 >
+                  {isLocked && (
+                    <div className="absolute top-4 right-4">
+                      <Lock className="w-5 h-5 text-red-400" />
+                    </div>
+                  )}
                   <div className="flex items-start gap-4">
                     <Icon className={`w-8 h-8 text-${path.color}-400`} />
                     <div className="flex-1">
                       <h3 className="text-white font-bold text-lg mb-1">{path.name}</h3>
                       <p className="text-gray-400 text-sm mb-3">{path.description}</p>
+                      {path.requiresRipper && (
+                        <p className="text-red-400 text-xs mb-2">⚠️ Requires Ripper Mode</p>
+                      )}
                       
                       <div className="flex items-center gap-2 mb-2">
                         <div className="flex-1 bg-gray-800 rounded-full h-2">
@@ -384,6 +434,24 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
                                   : 'bg-gray-800 text-gray-400'
                               }`}>
                                 {stats.turned}/{power.requirements.turned} turned
+                              </span>
+                            )}
+                            {power.requirements.ripperKills && (
+                              <span className={`text-xs px-2 py-1 rounded ${
+                                stats.ripperKills >= power.requirements.ripperKills 
+                                  ? 'bg-green-900/50 text-green-300' 
+                                  : 'bg-gray-800 text-gray-400'
+                              }`}>
+                                {stats.ripperKills}/{power.requirements.ripperKills} kills
+                              </span>
+                            )}
+                            {power.requirements.humanity && (
+                              <span className={`text-xs px-2 py-1 rounded ${
+                                stats.humanity <= power.requirements.humanity 
+                                  ? 'bg-green-900/50 text-green-300' 
+                                  : 'bg-gray-800 text-gray-400'
+                              }`}>
+                                ≤{power.requirements.humanity} humanity
                               </span>
                             )}
                             {power.requirements.prerequisite && (
