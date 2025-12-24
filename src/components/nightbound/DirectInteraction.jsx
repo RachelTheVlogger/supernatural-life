@@ -43,7 +43,6 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Droplets,
     label: 'Feed on each other',
     category: 'vampire',
-    minRelationship: 0,
     gains: [25, 40],
     outcomes: {
       mid: ['You bit them. They bit you back. Vampire blood. Electric. Intimate.', 'Feeding on another vampire. The taste was different. Ancient. Powerful.', 'You drank from each other. Twin ecstasy. The bond deepened.'],
@@ -54,7 +53,6 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Droplets,
     label: 'Feed together (hunt)',
     category: 'vampire',
-    tier: 1,
     gains: [20, 35],
     outcomes: {
       mid: ['You hunted together. Blood shared. Primal connection.', 'Two vampires. One prey. Intimate violence.', 'You fed side by side. Their hunger matched yours.'],
@@ -65,7 +63,6 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Flame,
     label: 'Vampire intimacy',
     category: 'vampire',
-    minRelationship: 0,
     gains: [25, 40],
     outcomes: {
       mid: ['Vampire bodies. Supernatural stamina. Hours passed like moments.', 'They felt everything deeper now. Every touch electric.', 'Turned. Heightened senses. The pleasure was overwhelming.'],
@@ -76,7 +73,6 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Moon,
     label: 'Hunt together',
     category: 'vampire',
-    tier: 1,
     gains: [15, 25],
     outcomes: {
       mid: ['You stalked prey together. Teaching them your ways.', 'Two predators in the night. Perfectly synchronized.', 'They moved like you now. Supernatural. Deadly.'],
@@ -91,7 +87,6 @@ const INTERACTIONS = {
     icon: Hand,
     label: 'Touch them',
     category: 'physical',
-    tier: 1,
     gains: [5, 10],
     outcomes: {
       low: ['You brushed their hand. They flinched but didn\'t pull away.', 'Your fingers traced their jaw. Their breath caught.', 'You held their face. They closed their eyes.'],
@@ -103,7 +98,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Kiss them',
     category: 'physical',
-    tier: 1,
     gains: [8, 15],
     outcomes: {
       low: [
@@ -136,7 +130,6 @@ const INTERACTIONS = {
     icon: Smile,
     label: 'Cuddle',
     category: 'physical',
-    tier: 1,
     gains: [6, 12],
     outcomes: {
       low: ['You held them carefully. They were stiff at first.', 'They leaned against you hesitantly.', 'Awkward closeness. Slowly relaxing.'],
@@ -148,7 +141,6 @@ const INTERACTIONS = {
     icon: Wind,
     label: 'Approach from behind',
     category: 'physical',
-    tier: 1,
     gains: [8, 14],
     outcomes: {
       low: [
@@ -277,7 +269,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Tease them',
     category: 'physical',
-    tier: 1,
     gains: [7, 13],
     outcomes: {
       low: [
@@ -364,8 +355,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Dominate them',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: [
@@ -400,8 +389,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Let them dominate',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: [
@@ -436,8 +423,6 @@ const INTERACTIONS = {
     icon: Star,
     label: 'Let them worship you',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -531,8 +516,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Edge them',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [18, 28],
     outcomes: {
       mid: [
@@ -557,8 +540,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'BDSM scene',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [30, 40],
     outcomes: {
       mid: [
@@ -585,8 +566,6 @@ const INTERACTIONS = {
     icon: Skull,
     label: 'Degrade them (verbal)',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [20, 30],
     getDynamicOutcomes: (servantName) => {
       const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion', 'cedar'];
@@ -686,8 +665,6 @@ const INTERACTIONS = {
     icon: Zap,
     label: 'Control their orgasms',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [22, 32],
     outcomes: {
       mid: [
@@ -712,8 +689,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Put a collar on them',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [30, 40],
     outcomes: {
       mid: [
@@ -738,8 +713,6 @@ const INTERACTIONS = {
     icon: Zap,
     label: 'Train them',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: [
@@ -764,8 +737,6 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Punish them',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [18, 28],
     outcomes: {
       mid: [
@@ -865,8 +836,6 @@ const INTERACTIONS = {
     icon: Lock,
     label: 'Bind them',
     category: 'bdsm',
-    tier: 1,
-    minRelationship: 0,
     gains: [22, 32],
     outcomes: {
       mid: [
@@ -1227,7 +1196,6 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Talk deeply',
     category: 'social',
-    tier: 1,
     gains: [10, 18],
     outcomes: {
       low: ['You asked about their life before. They spoke quietly.', 'They told you about their fears. You listened.', 'Conversation in low voices. Building trust.'],
@@ -1239,7 +1207,6 @@ const INTERACTIONS = {
     icon: Smile,
     label: 'Joke around',
     category: 'social',
-    tier: 1,
     gains: [5, 10],
     outcomes: {
       low: ['You made them smile. Small victory.', 'They laughed softly. Walls lowering.', 'Playful banter. They relaxed.'],
@@ -1251,7 +1218,6 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Compliment',
     category: 'social',
-    tier: 1,
     gains: [4, 8],
     outcomes: {
       low: ['You praised them. They looked away, uncertain.', 'They didn\'t believe you. Yet.', 'Your words made them blush slightly.'],
@@ -1298,7 +1264,6 @@ const INTERACTIONS = {
     icon: Eye,
     label: 'Watch them',
     category: 'activity',
-    tier: 1,
     gains: [3, 7],
     outcomes: {
       low: ['You watched them move. They noticed. Looked away.', 'They tried not to meet your eyes. Failed.', 'You studied them. They pretended not to notice.'],
@@ -1310,7 +1275,6 @@ const INTERACTIONS = {
     icon: Coffee,
     label: 'Share a drink',
     category: 'activity',
-    tier: 1,
     gains: [5, 10],
     outcomes: {
       low: ['You poured them wine. They sipped carefully.', 'Drinks together. Comfortable silence.', 'They watched you over the rim of their glass.'],
@@ -1322,7 +1286,6 @@ const INTERACTIONS = {
     icon: Music,
     label: 'Listen to music',
     category: 'activity',
-    tier: 1,
     gains: [6, 11],
     outcomes: {
       low: ['Music played. You sat together. Peaceful.', 'They hummed along softly.', 'Shared silence. Shared sound.'],
@@ -1391,7 +1354,6 @@ const INTERACTIONS = {
     icon: Zap,
     label: 'Use Power',
     category: 'power',
-    tier: 1,
     special: true,
     gains: [0, 0]
   },
@@ -1400,7 +1362,6 @@ const INTERACTIONS = {
     icon: Crown,
     label: 'Set your title',
     category: 'power',
-    tier: 1,
     special: true,
     gains: [0, 0]
   },
@@ -1410,8 +1371,6 @@ const INTERACTIONS = {
     icon: Skull,
     label: 'Kill them',
     category: 'power',
-    tier: 1,
-    minRelationship: 0,
     gains: [0, 0],
     outcomes: {
       low: ['You drained them completely. They collapsed. Dead.', 'Their life ended in your arms. Quick. Final.', 'You killed them. No hesitation. No remorse.']
