@@ -449,17 +449,19 @@ const INTERACTIONS = {
   },
   degradation: {
     icon: Skull,
-    label: 'Degrade them',
+    label: 'Degrade them (verbal)',
     category: 'physical',
-    tier: 4,
-    minRelationship: 75,
+    tier: 3,
+    minRelationship: 70,
     gains: [20, 30],
     outcomes: {
       mid: [
         'You called them your slut. They moaned.',
         'Degrading words. They got wetter.',
         'You made them say what they are. They obeyed.',
-        'Humiliation kink satisfied.'
+        'Humiliation kink satisfied.',
+        '"You\'re such a whore for me." They nodded eagerly.',
+        '"My little fucktoy." They whimpered with need.'
       ],
       high: [
         'You degraded them thoroughly. They thanked you.',
@@ -471,7 +473,40 @@ const INTERACTIONS = {
         'You made them beg to be degraded more.',
         'Your filthy slut. They wore the title proudly.',
         'Degraded and used. Exactly what they needed.',
-        'They knew their place. Beneath you.'
+        'They knew their place. Beneath you.',
+        '"Beg like the desperate slut you are." They did.',
+        '"You\'re nothing but a hole for me." They came.',
+        'Called them a cum dump. They thanked you.',
+        '"My dirty little whore." Perfect obedience.'
+      ]
+    }
+  },
+  praise: {
+    icon: Star,
+    label: 'Praise them',
+    category: 'social',
+    tier: 2,
+    minRelationship: 40,
+    gains: [15, 25],
+    outcomes: {
+      mid: [
+        '"Good girl." They melted at your words.',
+        '"You\'re doing so well." They beamed.',
+        '"Such a good boy for me." Pride in their eyes.',
+        'Praise made them glow. Beautiful.',
+        '"Perfect. Just perfect." They blushed.'
+      ],
+      high: [
+        '"Good girl. My perfect good girl." They trembled.',
+        '"Such a good boy. I\'m so proud of you." Tears.',
+        'Praised them thoroughly. They lived for it.',
+        '"You\'re being so good for me." They melted.',
+        'They craved your approval. You gave it.',
+        '"My good girl. Always so good." Pure devotion.',
+        '"Good boy. The best boy." They worshipped you.',
+        'Praise was their drug. You their dealer.',
+        '"You make me so happy." They glowed.',
+        '"Perfect obedience. Good girl." Euphoric.'
       ]
     }
   },
@@ -706,6 +741,280 @@ const INTERACTIONS = {
         'They floated in the restraints. Subspace.',
         'Bound. Helpless. Perfectly safe with you.',
         'The bondage was meditation. Beautiful surrender.'
+      ]
+    }
+  },
+  
+  // CASUAL DOMINANCE - Live-in dom/sub dynamics
+  morningRoutine: {
+    icon: Coffee,
+    label: 'Morning routine (dom)',
+    category: 'activity',
+    tier: 2,
+    minRelationship: 50,
+    gains: [10, 15],
+    outcomes: {
+      mid: [
+        'They woke you with gentle touches. Obedient.',
+        'Prepared your coffee exactly how you like it.',
+        'Knelt beside the bed until you acknowledged them.',
+        'Morning service. A daily ritual.'
+      ],
+      high: [
+        'Woke you with their mouth. Perfect start.',
+        'They waited naked and kneeling. Good.',
+        'Morning inspection. They presented themselves.',
+        'Coffee. Breakfast. Worship. Daily devotion.',
+        'They asked permission to speak. Granted.',
+        'Morning protocol maintained. Perfect.'
+      ]
+    }
+  },
+  positionTraining: {
+    icon: Hand,
+    label: 'Position training',
+    category: 'activity',
+    tier: 3,
+    minRelationship: 60,
+    gains: [15, 20],
+    outcomes: {
+      mid: [
+        'Taught them proper kneeling position.',
+        'Present position practiced. Getting better.',
+        'They held position for minutes. Improving.',
+        'Protocol training. Essential.'
+      ],
+      high: [
+        'Perfect positions. Every time. Trained well.',
+        'They could hold positions for hours now.',
+        'Presentation position automatic. Natural.',
+        'Position training complete. Muscle memory.',
+        'You called a position. They assumed it instantly.',
+        'Living furniture training. They didn\'t move.'
+      ]
+    }
+  },
+  dailyInspection: {
+    icon: Eye,
+    label: 'Daily inspection',
+    category: 'activity',
+    tier: 2,
+    minRelationship: 55,
+    gains: [12, 18],
+    outcomes: {
+      mid: [
+        'Daily inspection. They stood still. Examined.',
+        'You checked them over. Approved.',
+        'Inspection routine. They knew the drill.',
+        'Examined thoroughly. Nothing hidden from you.'
+      ],
+      high: [
+        'Full inspection. They spread. Presented. Perfect.',
+        'Daily check. Collar. Body. Mind. All yours.',
+        'Inspection found them wet. Always ready.',
+        'They lived for your approval during inspection.',
+        'Examined every inch. Your property. Maintained.',
+        'Inspection ritual. Vulnerability. Trust. Complete.'
+      ]
+    }
+  },
+  casualUse: {
+    icon: Flame,
+    label: 'Casual use',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 65,
+    gains: [18, 25],
+    outcomes: {
+      mid: [
+        'Bent them over the counter. Casual. Natural.',
+        'Used them while cooking dinner. Multitasking.',
+        'They were watching TV. You used them. Continued.',
+        'Free use established. They loved it.'
+      ],
+      high: [
+        'Casual use anytime anywhere. Their favorite.',
+        'Mid-conversation you used them. Kept talking.',
+        'They were yours to use. Always. No questions.',
+        'Fucked them while they did dishes. Perfect.',
+        'Free use lifestyle. They were always available.',
+        'Used them then went back to reading. Normal.',
+        'Casual dominance. Constant. Natural. Right.'
+      ]
+    }
+  },
+  servicePosition: {
+    icon: Heart,
+    label: 'Service position (kneel)',
+    category: 'activity',
+    tier: 2,
+    minRelationship: 50,
+    gains: [10, 15],
+    outcomes: {
+      mid: [
+        'Pointed. They knelt immediately. Good.',
+        'Service position. They assumed it. Waited.',
+        'You sat. They knelt at your feet. Natural.',
+        'Kneeling was their place. They knew it.'
+      ],
+      high: [
+        'They knelt without being told anymore.',
+        'Service position automatic. Perfect training.',
+        'Kneeling at your feet. Their favorite place.',
+        'You gestured. They dropped. No hesitation.',
+        'Service position maintained for hours. Beautiful.',
+        'They lived at your feet now. Belonged there.'
+      ]
+    }
+  },
+  
+  // SUB PERFORMING ACTS ON DOM
+  worshipDom: {
+    icon: Heart,
+    label: 'Make them worship you',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 65,
+    gains: [20, 28],
+    outcomes: {
+      mid: [
+        'They worshipped your body. Every inch.',
+        'Kisses trailing everywhere. Reverent.',
+        'They worshipped you like a god. Fitting.',
+        'Body worship. You deserved it.'
+      ],
+      high: [
+        'They worshipped you for hours. Devoted.',
+        'Every part of you received attention. Perfect.',
+        'Body worship was their meditation. Holy.',
+        'They kissed. Licked. Worshipped. Completely.',
+        'Worship was prayer. You were their religion.',
+        'They lived to worship you. Purpose fulfilled.'
+      ]
+    }
+  },
+  oralService: {
+    icon: Flame,
+    label: 'Receive oral service',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 60,
+    gains: [22, 30],
+    outcomes: {
+      mid: [
+        'They serviced you with their mouth. Skilled.',
+        'On their knees. Serving. Obedient.',
+        'Oral service rendered. Excellent.',
+        'Their mouth was yours to use. They knew it.'
+      ],
+      high: [
+        'Expert oral service. Trained perfectly.',
+        'They sucked you for hours. No complaints.',
+        'Deepthroat training paid off. Impressive.',
+        'Their throat was yours. They offered it eagerly.',
+        'Oral service until you were satisfied. Completely.',
+        'They lived to please you with their mouth.',
+        'Facefucked them thoroughly. They thanked you.',
+        'Their mouth was your property. Used well.'
+      ]
+    }
+  },
+  massageDom: {
+    icon: Hand,
+    label: 'Demand massage',
+    category: 'activity',
+    tier: 2,
+    minRelationship: 45,
+    gains: [10, 15],
+    outcomes: {
+      mid: [
+        'They massaged you. Skilled hands. Relaxing.',
+        'Full body massage. You needed it. They gave it.',
+        'Massage service. Part of their duties.',
+        'They worked out every knot. Perfect.'
+      ],
+      high: [
+        'Massage with a happy ending. Obviously.',
+        'They massaged you for hours. Service.',
+        'Expert massage. Trained well. Rewarded.',
+        'Massage turned into more. As planned.',
+        'They massaged. You relaxed. They served.',
+        'Service massage. Their pleasure was your pleasure.'
+      ]
+    }
+  },
+  rideDom: {
+    icon: Flame,
+    label: 'Make them ride you',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 70,
+    gains: [25, 35],
+    outcomes: {
+      mid: [
+        'They rode you. Hard. Fast. Desperate.',
+        'Rode until their legs gave out. Beautiful.',
+        'They did all the work. You watched.',
+        'Riding you was their privilege.'
+      ],
+      high: [
+        'Rode you for hours. Came multiple times. Kept going.',
+        'They rode you until they couldn\'t anymore.',
+        'Perfect rhythm. Trained body. Your pleasure.',
+        'Rode you desperately. Begged to continue.',
+        'They came from riding you. Again. Again.',
+        'Riding was worship. They gave everything.',
+        'You didn\'t move. They did all the work. Perfect.',
+        'Rode until exhaustion. Still tried to continue.'
+      ]
+    }
+  },
+  dressUp: {
+    icon: Sparkles,
+    label: 'Make them dress for you',
+    category: 'activity',
+    tier: 2,
+    minRelationship: 50,
+    gains: [12, 18],
+    outcomes: {
+      mid: [
+        'You chose their outfit. They wore it proudly.',
+        'Dressed them how you wanted. Perfect.',
+        'Lingerie. Your choice. They modeled.',
+        'They dressed to please you. Only you.'
+      ],
+      high: [
+        'Dressed them like a doll. Your doll.',
+        'You controlled their wardrobe completely now.',
+        'They wore only what you approved. Always.',
+        'Outfit selected. Presented for approval. Perfect.',
+        'Dressed them. Undressed them. Controlled.',
+        'Your preferences became their style. Complete.'
+      ]
+    }
+  },
+  beg: {
+    icon: MessageCircle,
+    label: 'Make them beg',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 60,
+    gains: [18, 25],
+    outcomes: {
+      mid: [
+        'You made them beg. They did. Beautifully.',
+        'Begging was required. They complied.',
+        'They begged for permission. Granted. Eventually.',
+        'Begging showed proper respect. Good.'
+      ],
+      high: [
+        'They begged so prettily. You made them continue.',
+        'Begging became natural. Automatic. Right.',
+        'Made them beg for hours. Then denied them.',
+        'They begged. Cried. Pleaded. Finally allowed.',
+        'Beautiful begging. Desperate. Sincere. Perfect.',
+        'They knew to beg. Never had to remind them.',
+        'Begging was their love language now.'
       ]
     }
   },
