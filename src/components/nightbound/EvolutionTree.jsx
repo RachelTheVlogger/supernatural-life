@@ -14,25 +14,25 @@ const POWER_PATHS = {
       {
         name: 'Subtle Influence',
         description: 'Plant thoughts that feel like their own',
-        requirements: { nights: 5, relationship: 20 },
+        requirements: { nights: 3, relationship: 15 },
         tier: 1
       },
       {
         name: 'Commanding Presence',
         description: 'Your words carry unnatural weight',
-        requirements: { nights: 15, relationship: 40, prerequisite: 'Subtle Influence' },
+        requirements: { nights: 8, relationship: 30, prerequisite: 'Subtle Influence' },
         tier: 2
       },
       {
         name: 'Mass Compulsion',
         description: 'Bend multiple minds at once',
-        requirements: { nights: 30, relationship: 70, servants: 3, prerequisite: 'Commanding Presence' },
+        requirements: { nights: 15, relationship: 50, servants: 2, prerequisite: 'Commanding Presence' },
         tier: 3
       },
       {
         name: 'Perfect Thrall',
         description: 'Create servants who cannot disobey',
-        requirements: { nights: 50, relationship: 90, turned: 1, prerequisite: 'Mass Compulsion' },
+        requirements: { nights: 25, relationship: 70, turned: 1, prerequisite: 'Mass Compulsion' },
         tier: 4
       }
     ]
@@ -46,25 +46,25 @@ const POWER_PATHS = {
       {
         name: 'Mist Form',
         description: 'Dissolve into fog',
-        requirements: { nights: 8, hunts: 5 },
+        requirements: { nights: 4 },
         tier: 1
       },
       {
         name: 'Silent Movement',
         description: 'Your footsteps make no sound',
-        requirements: { nights: 18, hunts: 12, prerequisite: 'Mist Form' },
+        requirements: { nights: 9, prerequisite: 'Mist Form' },
         tier: 2
       },
       {
         name: 'Veil of Darkness',
         description: 'Bend shadows around yourself',
-        requirements: { nights: 35, hunts: 25, prerequisite: 'Silent Movement' },
+        requirements: { nights: 17, prerequisite: 'Silent Movement' },
         tier: 3
       },
       {
         name: 'Phantom Walk',
         description: 'Phase through solid matter',
-        requirements: { nights: 60, hunts: 40, powers: 8, prerequisite: 'Veil of Darkness' },
+        requirements: { nights: 30, powers: 5, prerequisite: 'Veil of Darkness' },
         tier: 4
       }
     ]
@@ -78,25 +78,25 @@ const POWER_PATHS = {
       {
         name: 'Blood Bond',
         description: 'Create unbreakable loyalty through feeding',
-        requirements: { nights: 10, feeds: 8 },
+        requirements: { nights: 5, relationship: 20 },
         tier: 1
       },
       {
         name: 'Servant Network',
         description: 'Your servants can sense each other',
-        requirements: { nights: 20, servants: 3, prerequisite: 'Blood Bond' },
+        requirements: { nights: 12, servants: 2, prerequisite: 'Blood Bond' },
         tier: 2
       },
       {
         name: 'Shared Senses',
         description: 'See through your servants\' eyes',
-        requirements: { nights: 40, servants: 4, relationship: 60, prerequisite: 'Servant Network' },
+        requirements: { nights: 20, servants: 2, relationship: 50, prerequisite: 'Servant Network' },
         tier: 3
       },
       {
         name: 'Hive Mind',
         description: 'All your servants act as one',
-        requirements: { nights: 70, turned: 2, relationship: 85, prerequisite: 'Shared Senses' },
+        requirements: { nights: 35, turned: 1, relationship: 70, prerequisite: 'Shared Senses' },
         tier: 4
       }
     ]
@@ -110,25 +110,25 @@ const POWER_PATHS = {
       {
         name: 'Heightened Reflexes',
         description: 'Move faster than mortal eyes can follow',
-        requirements: { nights: 7, hunts: 8 },
+        requirements: { nights: 3 },
         tier: 1
       },
       {
         name: 'Supernatural Strength',
         description: 'Bend steel with your hands',
-        requirements: { nights: 22, hunts: 15, prerequisite: 'Heightened Reflexes' },
+        requirements: { nights: 10, prerequisite: 'Heightened Reflexes' },
         tier: 2
       },
       {
         name: 'Regeneration',
         description: 'Wounds close in moments',
-        requirements: { nights: 45, feeds: 30, prerequisite: 'Supernatural Strength' },
+        requirements: { nights: 22, prerequisite: 'Supernatural Strength' },
         tier: 3
       },
       {
         name: 'Ancient Form',
         description: 'Transform into a creature of nightmare',
-        requirements: { nights: 80, turned: 3, powers: 12, prerequisite: 'Regeneration' },
+        requirements: { nights: 40, turned: 2, powers: 8, prerequisite: 'Regeneration' },
         tier: 4
       }
     ]
