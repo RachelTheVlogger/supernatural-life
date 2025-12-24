@@ -203,7 +203,10 @@ const INTERACTIONS = {
         'You made them beg for more. They did. Eagerly.',
         'Intense. Raw. Primal. They loved every second.',
         'You took them hard. They screamed. Perfect.',
-        'Bodies slick with sweat. Breathless. Satisfied.'
+        'Bodies slick with sweat. Breathless. Satisfied.',
+        'You pinned them down. They loved it.',
+        'Every thrust deeper. They cried out.',
+        'You owned them completely in that moment.'
       ]
     }
   },
@@ -220,34 +223,75 @@ const INTERACTIONS = {
       high: ['They begged you to bite. You obliged. Ecstasy.', 'You fed. They came undone beneath you.', 'Feeding became intimacy. They craved your bite.']
     }
   },
-  roughSex: {
+  dominate: {
     icon: Flame,
-    label: 'Rough intimacy',
+    label: 'Dominate them',
     category: 'physical',
     tier: 3,
     minRelationship: 60,
     gains: [20, 30],
     outcomes: {
       mid: [
-        'Rough. Intense. They wanted it harder.', 
-        'You pinned them down. They begged for more.', 
-        'Wild. Animalistic. Perfect.',
-        'You grabbed their hips hard. They cried out.',
-        'Teeth. Nails. Marks. They loved it.',
-        'You pushed them against the wall. Took them there.'
+        'You commanded. They obeyed instantly.', 
+        'On their knees. Eyes up. Waiting for orders.', 
+        'You told them exactly how to please you. They did.',
+        'Control absolute. They surrendered willingly.',
+        'Your hand in their hair. Guiding. Commanding.',
+        'You pushed them to the edge. Made them wait.',
+        'They begged permission. You made them earn it.'
       ],
       high: [
-        'You fucked them savagely. They loved every second.', 
-        'Marks. Bruises. Screaming. Ecstasy.', 
-        'Complete domination. They surrendered utterly.',
-        'You pounded into them relentlessly. They screamed.',
-        'Hair pulled. Throat exposed. Vulnerable. Yours.',
-        'You spanked them. They begged you not to stop.',
-        'Rough. Hard. Fast. They came screaming your name.',
-        'You choked them lightly. Their eyes rolled back.',
-        'Completely at your mercy. They trusted you with everything.',
-        'Bruises bloomed on their skin. Beautiful.',
-        'You used them. They thanked you for it.'
+        'Complete submission. They lived to serve you.', 
+        'You fucked their throat. They took it all.', 
+        'Marks on their neck. Your hands. Your ownership.',
+        'You used them exactly how you wanted. Perfect.',
+        'They came only when you allowed it. Total control.',
+        'You spanked them until they cried. Then fucked them hard.',
+        'Collar around their neck. Leash in your hand. Yours.',
+        'You choked them while fucking them. They loved it.',
+        'You slapped them. They thanked you. Begged for more.',
+        'Tied up. Helpless. Completely at your mercy.',
+        'You edged them for hours. They broke beautifully.',
+        'Your cum on their face. They wore it proudly.',
+        'You degraded them. They got wetter for it.',
+        'Rough. Brutal. Perfect. They came screaming.',
+        'You made them crawl. Beg. Earn every touch.'
+      ]
+    }
+  },
+  submit: {
+    icon: Heart,
+    label: 'Let them dominate',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 60,
+    gains: [20, 30],
+    outcomes: {
+      mid: [
+        'You gave them control. They took it eagerly.',
+        'They pushed you down. Took what they wanted.',
+        'For once, you surrendered. It felt good.',
+        'They commanded you. You obeyed. Strange. Thrilling.',
+        'Their hands exploring you. In charge now.',
+        'You let them lead. They surprised you.',
+        'They rode you hard. Taking their pleasure.'
+      ],
+      high: [
+        'They used you for their pleasure. You loved it.',
+        'They sat on your face. You worshipped them.',
+        'Complete role reversal. They owned you tonight.',
+        'They fucked you. Hard. You were theirs.',
+        'Your pleasure second. Theirs first. Perfect.',
+        'They marked you. Claimed you. Possessed you.',
+        'You were their toy tonight. Willing. Eager.',
+        'They edged you mercilessly. Made you beg.',
+        'Tied down by them. Vulnerable. Trusting.',
+        'They took everything they wanted. You gave it.',
+        'Power exchange complete. Beautiful surrender.',
+        'They rode you until you couldn\'t take more.',
+        'Your safe word ready. Never needed. Perfect trust.',
+        'They pushed your limits. You let them.',
+        'Dominated completely. You craved more.'
       ]
     }
   },
@@ -265,7 +309,9 @@ const INTERACTIONS = {
         'They treated you like a god. You allowed it.',
         'Their mouth on you. Eager. Worshipful.',
         'They kissed every part of you. Reverently.',
-        'You sat back. They served. Perfect.'
+        'You sat back. They served. Perfect.',
+        'Their tongue on you. Devoted. Tireless.',
+        'They pleasured you for hours. No complaints.'
       ],
       high: [
         'Hours of worship. They existed only to please you.', 
@@ -277,7 +323,47 @@ const INTERACTIONS = {
         'You used their mouth for your pleasure. They loved it.',
         'On their knees for hours. Never complaining.',
         'Your pleasure was everything. They lived for it.',
-        'You finished on them. They wore it proudly.'
+        'You finished on them. They wore it proudly.',
+        'They sucked you until you couldn\'t stand.',
+        'Their mouth was yours. They gave it freely.',
+        'You fucked their face. They thanked you.',
+        'They worshipped your cock with their tongue.',
+        'Every drop swallowed. Grateful. Eager.'
+      ]
+    }
+  },
+  breeding: {
+    icon: Flame,
+    label: 'Breed them',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 75,
+    gains: [30, 40],
+    outcomes: {
+      mid: [
+        'You came deep inside. They begged for it.',
+        'Claiming them completely. Filled. Owned.',
+        'They wanted your seed. You gave it.',
+        'Breeding them. Primal. Perfect.',
+        'They clenched around you. Taking everything.',
+        'You finished inside. They moaned in pleasure.'
+      ],
+      high: [
+        'You bred them over and over. Insatiable.',
+        'Every drop inside. They wanted to carry you.',
+        'Primal need to fill them. You did. Repeatedly.',
+        'They begged to be bred. You obliged thoroughly.',
+        'Cum dripping from them. You pushed it back in.',
+        'You owned them. Claimed them. Bred them.',
+        'They came just from you filling them up.',
+        'Multiple loads. All inside. Thoroughly bred.',
+        'You made them beg for your cum. Then gave it.',
+        'Breeding kink satisfied. They were yours now.',
+        'You pumped them full. They loved every second.',
+        'Your seed deep inside where it belongs.',
+        'They felt you pulsing. Filling. Claiming.',
+        'Bred properly. Thoroughly. Completely.',
+        'You didn\'t pull out. Never would again.'
       ]
     }
   },
@@ -916,7 +1002,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
               return (
                 <button
                   key={key}
-                  onClick={() => !disabled && handleInteraction(key)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!disabled) handleInteraction(key);
+                  }}
                   disabled={disabled}
                   className={`bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed text-sm relative ${
                     isNew ? 'ring-2 ring-yellow-400' : ''

@@ -167,51 +167,7 @@ export default function ServantHome() {
   
   return (
     <div className="min-h-screen p-4 md:p-6 relative overflow-hidden">
-      {/* Blood drop animation for turned vampires */}
-      {servant.is_turned && (
-        <>
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute text-2xl"
-                style={{
-                  left: `${10 + i * 12}%`,
-                  top: '-5%'
-                }}
-                animate={{
-                  y: ['0vh', '110vh'],
-                  opacity: [0, 0.6, 0.6, 0],
-                  rotate: [0, 360]
-                }}
-                transition={{
-                  duration: 8 + Math.random() * 4,
-                  repeat: Infinity,
-                  delay: i * 1.2,
-                  ease: 'linear'
-                }}
-              >
-                🩸
-              </motion.div>
-            ))}
-          </div>
-          
-          {/* Red glow effect */}
-          <div className="absolute inset-0 pointer-events-none">
-            <motion.div
-              className="absolute inset-0 bg-red-900/10"
-              animate={{
-                opacity: [0.1, 0.2, 0.1]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-            />
-          </div>
-        </>
-      )}
+
       
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -221,18 +177,9 @@ export default function ServantHome() {
         <h1 className="text-3xl md:text-4xl font-bold text-white mb-1">
           {servant.name}
         </h1>
-        <p className={`text-sm capitalize ${servant.is_turned ? 'text-red-400' : 'text-gray-400'}`}>
+        <p className="text-sm capitalize text-gray-400">
           {servant.is_turned ? '🦇 Vampire' : `${servant.variant} servant`}
         </p>
-        {servant.is_turned && (
-          <motion.p
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-red-400 text-xs mt-2"
-          >
-            ⚡ Heightened senses. Eternal hunger. ⚡
-          </motion.p>
-        )}
         
         <div className="flex gap-3 justify-center mt-4 flex-wrap">
           <button
@@ -269,11 +216,7 @@ export default function ServantHome() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className={`max-w-2xl mx-auto rounded-xl p-4 mb-6 relative z-10 ${
-          servant.is_turned 
-            ? 'bg-red-950/40 border border-red-900/30' 
-            : 'bg-gray-900'
-        }`}
+        className="max-w-2xl mx-auto rounded-xl p-4 mb-6 relative z-10 bg-gray-900"
       >
         <p className="text-gray-300 text-sm italic text-center">
           {servant.is_turned 
@@ -282,7 +225,7 @@ export default function ServantHome() {
         </p>
         <div className="mt-3 flex justify-between text-xs">
           <span className="text-gray-400">Bond with them:</span>
-          <span className={servant.is_turned ? 'text-red-400' : 'text-purple-400'}>
+          <span className="text-purple-400">
             {servant.relationship || 0}%
           </span>
         </div>
@@ -290,7 +233,7 @@ export default function ServantHome() {
       
       {/* Activities */}
       <div className="max-w-2xl mx-auto space-y-3 mb-8 relative z-10">
-        <h2 className={`text-sm uppercase mb-4 ${servant.is_turned ? 'text-red-400' : 'text-gray-400'}`}>
+        <h2 className="text-sm uppercase mb-4 text-gray-400">
           {servant.is_turned ? 'What will you do tonight?' : 'What will you do?'}
         </h2>
         
@@ -300,13 +243,12 @@ export default function ServantHome() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: i * 0.05 }}
-            onClick={() => handleChore(chore)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleChore(chore);
+            }}
             disabled={!!doingChore}
-            className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg disabled:opacity-50 transition-all ${
-              servant.is_turned
-                ? 'bg-red-950/40 hover:bg-red-950/60 border border-red-900/30'
-                : 'bitlife-btn'
-            }`}
+            className="w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg disabled:opacity-50 transition-all bitlife-btn"
           >
             <chore.icon className="w-5 h-5" />
             <span className="text-base font-medium">{chore.label}</span>
