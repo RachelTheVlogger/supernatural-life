@@ -152,19 +152,29 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
     setTurning(true);
     
     setTimeout(async () => {
+      // Assign powers based on variant
+      const variantPowers = {
+        devoted: ['Blood Bond', 'Heightened Reflexes', 'Subtle Influence'],
+        defiant: ['Supernatural Strength', 'Veil of Darkness', 'Commanding Presence'],
+        dreamer: ['Mist Form', 'Silent Movement', 'Shared Senses']
+      };
+      
+      const servantPowers = variantPowers[servant.variant] || variantPowers.devoted;
+      
       await base44.entities.Servant.update(servant.id, {
         is_turned: true,
-        obsession_stage: 5
+        obsession_stage: 5,
+        unlocked_powers: servantPowers
       });
       
       await base44.entities.NightLog.create({
-        entry: `You turned them. Your blood on their lips. Their last breath as a mortal, gasping against your neck. Bound forever.`,
+        entry: `You turned ${servant.name}. Blood on their lips. Last mortal breath. Powers awakened: ${servantPowers.join(', ')}. Forever bound.`,
         category: 'interaction',
         intensity: 'significant'
       });
       
       // Turning is a major decision - humanity impact
-      const humanityChange = servant.relationship >= 80 ? -5 : -10; // Less impact if they truly wanted it
+      const humanityChange = servant.relationship >= 80 ? -5 : -10;
       const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + humanityChange));
       let moral_path = 'balanced';
       if (newHumanity >= 75) moral_path = 'humane';
