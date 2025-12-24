@@ -982,7 +982,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           <div className="space-y-4">
             <div className="bg-gray-800 rounded-xl p-4">
               <h3 className="text-white font-medium mb-2">Account Type</h3>
-              <p className="text-gray-300">{servantProfile.is_couple_account ? '💑 Couple Account' : '💋 Solo Account'}</p>
+              <p className="text-gray-300">{servantProfile.is_couple_account ? '💑 Couples Account' : '💋 Solo Account'}</p>
             </div>
             
             <div className="bg-gray-800 rounded-xl p-4">
