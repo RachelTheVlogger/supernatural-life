@@ -2022,22 +2022,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               </motion.div>
             ))}
 
-            {/* Camera flash effects */}
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={`flash-${i}`}
-                className="absolute inset-0 bg-white pointer-events-none"
-                initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: [0, 0.3, 0]
-                }}
-                transition={{ 
-                  duration: 0.2,
-                  delay: i * 0.5,
-                  repeat: 2
-                }}
-              />
-            ))}
+
 
             {/* Sparkle effects */}
             {[...Array(40)].map((_, i) => (
