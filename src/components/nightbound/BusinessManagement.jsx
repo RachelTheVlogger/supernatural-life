@@ -399,6 +399,7 @@ export default function BusinessManagement({ servant, onClose }) {
 
   const pendingOrders = orders.filter(o => o.status === 'pending');
   const completedOrders = orders.filter(o => o.status === 'completed');
+  const shippedOrders = orders.filter(o => o.status === 'shipped');
 
   return (
     <motion.div
@@ -635,6 +636,26 @@ export default function BusinessManagement({ servant, onClose }) {
                           Ship Order
                         </button>
                       )}
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {shippedOrders.length > 0 && (
+                <>
+                  <h3 className="text-white font-bold mb-3 mt-6">Shipped Orders ({shippedOrders.length})</h3>
+                  {shippedOrders.map(order => (
+                    <div key={order.id} className="bg-gray-800/50 rounded-xl p-4 mb-3 border border-green-900/30">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-white font-medium">{order.item}</h4>
+                          <p className="text-gray-400 text-sm">{order.customer_name}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-green-400 font-bold">${order.price}</p>
+                          <p className="text-green-500 text-xs">✓ Shipped</p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </>
