@@ -284,12 +284,12 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         setSelectedCategory(null);
         setFilmWithVampire(null);
         setNewVideo({ title: '', content_type: '', price: 15 });
-        }, 2500);
-        } else if (isVampireSolo) {
-        // Vampire solo content
-        setCreating(true);
-
-        setTimeout(async () => {
+      }, 2500);
+    } else if (isVampireSolo) {
+      // Vampire solo content
+      setCreating(true);
+      
+      setTimeout(async () => {
         const video = await base44.entities.OnlyFangsVideo.create({
           servant_id: servant.id,
           title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
@@ -333,11 +333,11 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         setSelectedCategory(null);
         setFilmWithVampire(null);
         setNewVideo({ title: '', content_type: '', price: 15 });
-        }, 2500);
-        } else {
-        setCreating(true);
-
-        setTimeout(async () => {
+      }, 2500);
+    } else {
+      setCreating(true);
+      
+      setTimeout(async () => {
         const video = await base44.entities.OnlyFangsVideo.create({
           servant_id: servant.id,
           title: newVideo.title || `${VIDEO_CATEGORIES[selectedCategory].label} Content`,
@@ -380,9 +380,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         setSelectedCategory(null);
         setFilmWithVampire(null);
         setNewVideo({ title: '', content_type: '', price: 15 });
-        }, 2500);
-        }
-        };
+      }, 2500);
+    }
+  };
 
   const handleSetDiscount = async (videoId, discount, hours) => {
     const video = videos.find(v => v.id === videoId);
