@@ -92,29 +92,37 @@ export default function BusinessManagement({ servant, onClose }) {
     onClose();
   };
 
-  const { data: inventory = [] } = useQuery({
+  const { data: inventory = [], isLoading: inventoryLoading } = useQuery({
     queryKey: ['inventory', servant.id],
     queryFn: () => base44.entities.Inventory.filter({ servant_id: servant.id }),
     staleTime: 3000
   });
 
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ['orders', servant.id],
     queryFn: () => base44.entities.BusinessOrder.filter({ servant_id: servant.id }, '-created_date'),
     staleTime: 3000
   });
 
-  const { data: reviews = [] } = useQuery({
+  const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
     queryKey: ['reviews', servant.id],
     queryFn: () => base44.entities.Review.filter({ servant_id: servant.id }),
     staleTime: 5000
   });
 
-  const { data: upgrades = [] } = useQuery({
+  const { data: upgrades = [], isLoading: upgradesLoading } = useQuery({
     queryKey: ['upgrades', servant.id],
     queryFn: () => base44.entities.WorkshopUpgrade.filter({ servant_id: servant.id }),
     staleTime: 5000
   });
+
+  const isTabLoading = (tabName) => {
+    if (tabName === 'orders') return ordersLoading;
+    if (tabName === 'materials') return inventoryLoading;
+    if (tabName === 'reviews') return reviewsLoading;
+    if (tabName === 'upgrades') return upgradesLoading;
+    return false;
+  };
 
   const { data: stats = [] } = useQuery({
     queryKey: ['stats', servant.id],
@@ -547,6 +555,29 @@ export default function BusinessManagement({ servant, onClose }) {
             </button>
           ))}
         </div>
+
+        {/* Loading Overlay */}
+        <AnimatePresence>
+          {isTabLoading(tab) && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-2xl"
+            >
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 180, 360]
+                }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="text-5xl"
+              >
+                ✨
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Tab Content */}
         <div className="space-y-3">

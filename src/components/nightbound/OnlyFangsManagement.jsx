@@ -62,17 +62,23 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [creatingBundle, setCreatingBundle] = useState(false);
   const [bundleData, setBundleData] = useState({ name: '', videoIds: [], discount: 0.3 });
 
-  const { data: profile = [] } = useQuery({
+  const { data: profile = [], isLoading: profileLoading } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
     queryFn: () => base44.entities.OnlyFangsProfile.filter({ servant_id: servant.id }),
     staleTime: 5000
   });
 
-  const { data: videos = [] } = useQuery({
+  const { data: videos = [], isLoading: videosLoading } = useQuery({
     queryKey: ['onlyfangs-videos', servant.id],
     queryFn: () => base44.entities.OnlyFangsVideo.filter({ servant_id: servant.id }, '-created_date'),
     staleTime: 3000
   });
+
+  const isTabLoading = (tabName) => {
+    if (tabName === 'videos') return videosLoading;
+    if (tabName === 'create') return videosLoading;
+    return false;
+  };
 
   const servantProfile = profile[0];
   const hasProfile = !!servantProfile;
@@ -847,6 +853,28 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             <Zap className="w-3 h-3" /> Tools
           </button>
         </div>
+
+        {/* Loading Overlay */}
+        <AnimatePresence>
+          {isTabLoading(tab) && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-2xl"
+            >
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.3, 1],
+                }}
+                transition={{ duration: 1, repeat: Infinity }}
+                className="text-6xl"
+              >
+                💋
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Tab Content */}
         {tab === 'profile' && (
