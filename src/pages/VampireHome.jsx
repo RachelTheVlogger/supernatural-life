@@ -580,7 +580,7 @@ export default function VampireHome() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative"
             >
               <button
                 onClick={() => setShowAllFriends(false)}
@@ -591,8 +591,13 @@ export default function VampireHome() {
 
               <h2 className="text-2xl font-bold text-white mb-4">Friends</h2>
 
-              <div className="space-y-3 max-h-[60vh] overflow-y-auto">
-                {allFriends.map(friend => (
+              {allFriends.length === 0 ? (
+                <p className="text-gray-400 text-center py-8">
+                  No friends discovered yet. Your servants will introduce you to people over time.
+                </p>
+              ) : (
+                <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+                  {allFriends.map(friend => (
                   <button
                     key={friend.id}
                     onClick={() => {
@@ -619,9 +624,10 @@ export default function VampireHome() {
                     </div>
                   </button>
                 ))}
-              </div>
-            </motion.div>
-          </motion.div>
+                </div>
+                )}
+                </motion.div>
+                </motion.div>
         )}
         {meditating && (
           <motion.div

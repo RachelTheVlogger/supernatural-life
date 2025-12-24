@@ -12,7 +12,7 @@ import HuntingModal from '@/components/nightbound/HuntingModal';
 import PowersModal from '@/components/nightbound/PowersModal';
 import AdvanceNight from '@/components/nightbound/AdvanceNight';
 import NPCInteraction from '@/components/nightbound/NPCInteraction';
-import TutorialSystem from '@/components/nightbound/TutorialSystem';
+
 import HospitalJob from '@/components/nightbound/HospitalJob';
 
 export default function Night() {
@@ -20,8 +20,6 @@ export default function Night() {
   const queryClient = useQueryClient();
   const [activeModal, setActiveModal] = useState(null);
   const [selectedServant, setSelectedServant] = useState(null);
-  const [showTutorial, setShowTutorial] = useState(null);
-  
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -42,11 +40,6 @@ export default function Night() {
     queryFn: () => base44.entities.NightLog.list('-created_date', 10)
   });
   
-  // Check if first time playing
-  const { data: completedTutorials = [] } = useQuery({
-    queryKey: ['tutorials'],
-    queryFn: () => base44.entities.Tutorial.list()
-  });
   
   // Ensure only one servant exists at a time
   const [servantsInitialized, setServantsInitialized] = useState(false);
@@ -62,12 +55,6 @@ export default function Night() {
     checkAndRedirect();
   }, [navigate]);
   
-  useEffect(() => {
-    // Show welcome tutorial if no tutorials have been completed
-    if (completedTutorials.length === 0 && vampireState) {
-      setShowTutorial('welcome');
-    }
-  }, [completedTutorials.length, vampireState]);
   
   if (vampireLoading) {
     return (
@@ -307,15 +294,6 @@ export default function Night() {
           />
         )}
         </AnimatePresence>
-
-            {/* Tutorial */}
-            {showTutorial && (
-            <TutorialSystem
-            tutorialId={showTutorial}
-            onComplete={() => setShowTutorial(null)}
-            onSkip={() => setShowTutorial(null)}
-            />
-            )}
-            </div>
+      </div>
             );
             }
