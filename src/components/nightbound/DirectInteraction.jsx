@@ -113,12 +113,12 @@ const INTERACTIONS = {
         'You tasted them. Sweet. Wanting. Yours.'
       ],
       high: [
-        'Desperate kisses. Hands everywhere. Breathless.', 
-        'You devoured them. They surrendered completely.', 
-        'They kissed you like drowning, like breathing.',
-        'Consuming. You bit their lip. They moaned.',
-        'Your hand in their hair, pulling. They whimpered.',
-        'You kissed down their neck. They trembled.'
+        'Desperate kisses. Hands grabbing, pulling. You felt them trembling, gasping into your mouth.', 
+        'You devoured them. Teeth catching their lip, tongue deep. They surrendered, whimpering.', 
+        'They kissed you like drowning, like breathing. Desperate sounds escaping between kisses.',
+        'Consuming. You bit their lip hard. They moaned loud, pressing harder against you.',
+        'Your hand fisted in their hair, pulling their head back. They whimpered, exposing their throat.',
+        'You kissed down their neck, feeling their pulse racing. They trembled, skin hot under your lips.'
       ]
     }
   },
@@ -195,19 +195,19 @@ const INTERACTIONS = {
         'You kissed down their body. Soft sounds escaping them.'
       ],
       high: [
-        'Wild. Consuming. You took everything they offered.', 
-        'They begged. You obliged. Perfect surrender.', 
-        'Afterwards, they stayed in your arms. Utterly content.',
-        'You fucked them slowly, deeply. They moaned your name.',
-        'They came undone beneath you, trembling, gasping.',
-        'Your name on their lips. Over and over.',
-        'You made them beg for more. They did. Eagerly.',
-        'Intense. Raw. Primal. They loved every second.',
-        'You took them hard. They screamed. Perfect.',
-        'Bodies slick with sweat. Breathless. Satisfied.',
-        'You pinned them down. They loved it.',
-        'Every thrust deeper. They cried out.',
-        'You owned them completely in that moment.'
+        'Wild. Consuming. You buried yourself deep inside them, feeling them clench around you.', 
+        'They begged to be filled. You obliged, pushing deep. Perfect surrender.', 
+        'Afterwards, they stayed in your arms. Your cum leaking from them. Utterly content.',
+        'You fucked them slowly, deeply. Each thrust made them moan your name, nails digging into your back.',
+        'They came undone beneath you, trembling, gasping. You felt them pulsing, clenching tight around your cock.',
+        'Your name on their lips. Over and over. Each thrust punching it out of them.',
+        'You made them beg for more. They did. Eagerly. "Please, fuck me harder."',
+        'Intense. Raw. Primal. Skin slapping, their moans filling the room. They loved every second.',
+        'You took them hard and fast. They screamed, body arching. Perfect.',
+        'Bodies slick with sweat. Breathless. You felt them trembling, sensitive and thoroughly used.',
+        'You pinned them down, wrists above their head. They loved being held down, fucked deep.',
+        'Every thrust deeper, harder. They cried out each time you bottomed out inside them.',
+        'You owned them completely. Every inch of you buried inside. They were yours.'
       ]
     }
   },
@@ -242,21 +242,21 @@ const INTERACTIONS = {
         'They begged permission. You made them earn it.'
       ],
       high: [
-        'Complete submission. They lived to serve you.', 
-        'You fucked their throat. They took it all.', 
-        'Marks on their neck. Your hands. Your ownership.',
-        'You used them exactly how you wanted. Perfect.',
-        'They came only when you allowed it. Total control.',
-        'You spanked them until they cried. Then fucked them hard.',
-        'Collar around their neck. Leash in your hand. Yours.',
-        'You choked them while fucking them. They loved it.',
-        'You slapped them. They thanked you. Begged for more.',
-        'Tied up. Helpless. Completely at your mercy.',
-        'You edged them for hours. They broke beautifully.',
-        'Your cum on their face. They wore it proudly.',
-        'You degraded them. They got wetter for it.',
-        'Rough. Brutal. Perfect. They came screaming.',
-        'You made them crawl. Beg. Earn every touch.'
+        'Complete submission. You fucked them exactly how you wanted. They took everything willingly.', 
+        'You fucked their throat deep. They gagged, tears streaming, but didn\'t pull away. Took it all.', 
+        'Marks on their neck from your hands. Bruises blooming. Your ownership visible.',
+        'You used them roughly. Bent them over, grabbed their hips, fucked them hard. Perfect.',
+        'They came only when you allowed it. "Please, can I cum?" Total control.',
+        'You spanked them until they cried. Red handprints on their ass. Then fucked them hard while they whimpered.',
+        'Collar around their neck. Leash in your hand. You pulled it tight while fucking them from behind. Yours.',
+        'You choked them while fucking them deep. Their eyes rolled back, body tightening. They loved it.',
+        'You slapped their face. They moaned "Thank you." Begged for more. Again.',
+        'Tied up tight. Helpless. Legs spread. Completely at your mercy. You used them thoroughly.',
+        'You edged them for hours. Brought them close, denied them. They broke, sobbing, begging.',
+        'Your cum painted their face. Dripping from their lips. They wore it proudly, didn\'t wipe it off.',
+        'You degraded them. Called them your whore. They got visibly wetter, pussy dripping.',
+        'Rough. Brutal. You pounded into them relentlessly. They came screaming your name.',
+        'You made them crawl on hands and knees. Beg properly. Earn every touch, every thrust.'
       ]
     }
   },
@@ -315,21 +315,21 @@ const INTERACTIONS = {
         'They pleasured you for hours. No complaints.'
       ],
       high: [
-        'Hours of worship. They existed only to please you.', 
-        'Complete devotion. Your pleasure was their religion.', 
-        'They served you endlessly. You took everything.',
-        'Their tongue worked tirelessly. Only your pleasure mattered.',
-        'You came in their mouth. They swallowed gratefully.',
-        'They begged to please you again. And again.',
-        'You used their mouth for your pleasure. They loved it.',
-        'On their knees for hours. Never complaining.',
-        'Your pleasure was everything. They lived for it.',
-        'You finished on them. They wore it proudly.',
-        'They sucked you until you couldn\'t stand.',
-        'Their mouth was yours. They gave it freely.',
-        'You fucked their face. They thanked you.',
-        'They worshipped your cock with their tongue.',
-        'Every drop swallowed. Grateful. Eager.'
+        'Hours of worship. They licked, sucked, kissed every inch of you. Existed only to please you.', 
+        'Complete devotion. They worshipped your body with tongue and lips. Your pleasure was their religion.', 
+        'They served you endlessly. Mouth on you for hours. You took everything, came multiple times.',
+        'Their tongue worked tirelessly on your cock. Skilled, devoted. Only your pleasure mattered.',
+        'You came deep in their mouth. They swallowed every drop gratefully, licking you clean.',
+        'They begged to please you again. "Please let me taste you again." And again.',
+        'You used their mouth for your pleasure. Grabbed their head, fucked their throat. They loved it.',
+        'On their knees for hours. Sucking, licking, worshipping. Never complaining.',
+        'Your pleasure was everything. They lived for the taste of you, the feel of you in their mouth.',
+        'You finished on their face. Cum dripping down. They wore it proudly, smiling.',
+        'They sucked you until you couldn\'t stand. Legs shaking, vision blurring. Perfect.',
+        'Their mouth was yours. Throat open, tongue working. They gave it freely.',
+        'You fucked their face roughly. Hands in their hair. They thanked you after, voice hoarse.',
+        'They worshipped your cock with their tongue. Every inch licked, kissed, sucked.',
+        'Every drop swallowed. Not a bit wasted. Grateful. Eager for more.'
       ]
     }
   },
@@ -350,21 +350,21 @@ const INTERACTIONS = {
         'You finished inside. They moaned in pleasure.'
       ],
       high: [
-        'You bred them over and over. Insatiable.',
-        'Every drop inside. They wanted to carry you.',
-        'Primal need to fill them. You did. Repeatedly.',
-        'They begged to be bred. You obliged thoroughly.',
-        'Cum dripping from them. You pushed it back in.',
-        'You owned them. Claimed them. Bred them.',
-        'They came just from you filling them up.',
-        'Multiple loads. All inside. Thoroughly bred.',
-        'You made them beg for your cum. Then gave it.',
-        'Breeding kink satisfied. They were yours now.',
-        'You pumped them full. They loved every second.',
-        'Your seed deep inside where it belongs.',
-        'They felt you pulsing. Filling. Claiming.',
-        'Bred properly. Thoroughly. Completely.',
-        'You didn\'t pull out. Never would again.'
+        'You bred them over and over. Round after round, filling them up. Insatiable.',
+        'Every drop pumped deep inside. They wanted to carry your seed. Begged for it.',
+        'Primal need to fill them completely. You did. Repeatedly. Cum dripping out between rounds.',
+        'They begged to be bred. "Please, fill me up. I need your cum inside me." You obliged thoroughly.',
+        'Cum dripping from their pussy. You pushed it back in with your fingers, then fucked them again.',
+        'You owned them. Claimed them. Bred them deep. They were marked as yours.',
+        'They came just from feeling you pulse inside them, filling them up. No other touch needed.',
+        'Multiple loads. All pumped deep inside. Thoroughly bred, cum leaking from them.',
+        'You made them beg for your cum. "Please cum inside me." Then gave it, filling them.',
+        'Breeding kink satisfied. Your seed deep in them. They were yours now, completely.',
+        'You pumped them full of cum. They moaned feeling each pulse. Loved every second.',
+        'Your seed pumped deep inside where it belongs. Filling them completely.',
+        'They felt you pulsing, cock throbbing inside them. Filling. Claiming. Breeding.',
+        'Bred properly. Thoroughly. Completely. Pussy full of your cum.',
+        'You didn\'t pull out. Stayed buried deep, pumping them full. Never would again.'
       ]
     }
   },
@@ -383,13 +383,13 @@ const INTERACTIONS = {
         'The thrill of being caught. They loved it.'
       ],
       high: [
-        'You fucked them in the club bathroom. Music pounding.',
-        'Bent over in the parking garage. Cars passing.',
-        'They sucked you off under the table. Others nearby.',
-        'Public sex. The ultimate thrill. They came hard.',
-        'You took them in the changing room. Risky. Perfect.',
-        'Exhibitionism satisfied. They wanted more.',
-        'The danger made it better. Both of you knew it.'
+        'You fucked them hard in the club bathroom. Music pounding. They tried to stay quiet, failed.',
+        'Bent them over in the parking garage. Fucked them fast. Cars passing nearby, could be seen.',
+        'They sucked you off under the table. Others nearby talking. You stayed composed, they swallowed.',
+        'Public sex. The ultimate thrill. Risk of being caught. They came hard, biting down to stay quiet.',
+        'You took them in the changing room. Hand over their mouth. Quick, rough. Risky. Perfect.',
+        'Exhibitionism satisfied. The thrill of it. They wanted more, wetter from the danger.',
+        'The danger made it better. Could be caught. Made them cum harder. Both of you knew it.'
       ]
     }
   },
@@ -908,14 +908,14 @@ const INTERACTIONS = {
         'Their mouth was yours to use. They knew it.'
       ],
       high: [
-        'Expert oral service. Trained perfectly.',
-        'They sucked you for hours. No complaints.',
-        'Deepthroat training paid off. Impressive.',
-        'Their throat was yours. They offered it eagerly.',
-        'Oral service until you were satisfied. Completely.',
-        'They lived to please you with their mouth.',
-        'Facefucked them thoroughly. They thanked you.',
-        'Their mouth was your property. Used well.'
+        'Expert oral service. Trained perfectly. Took you deep, no gagging, skillful tongue work.',
+        'They sucked you for hours. Worshipped your cock with their mouth. No complaints.',
+        'Deepthroat training paid off. They took you all the way down. Impressive, nose pressed to you.',
+        'Their throat was yours. They offered it eagerly, opening wide, relaxing their throat.',
+        'Oral service until you were satisfied. They kept going until you came. Completely.',
+        'They lived to please you with their mouth. Sucked you eagerly, lovingly.',
+        'Facefucked them thoroughly. Grabbed their head, used their throat. They thanked you after.',
+        'Their mouth was your property. Used it whenever you wanted. They loved it.'
       ]
     }
   },
@@ -958,14 +958,14 @@ const INTERACTIONS = {
         'Riding you was their privilege.'
       ],
       high: [
-        'Rode you for hours. Came multiple times. Kept going.',
-        'They rode you until they couldn\'t anymore.',
-        'Perfect rhythm. Trained body. Your pleasure.',
-        'Rode you desperately. Begged to continue.',
-        'They came from riding you. Again. Again.',
-        'Riding was worship. They gave everything.',
-        'You didn\'t move. They did all the work. Perfect.',
-        'Rode until exhaustion. Still tried to continue.'
+        'Rode you for hours. Bouncing on your cock. Came multiple times, kept going, insatiable.',
+        'They rode you until their legs gave out. Thighs shaking, exhausted, satisfied.',
+        'Perfect rhythm. Bodies trained to please you. Rode you just how you like it.',
+        'Rode you desperately. "Please let me keep going." Begged to continue even when spent.',
+        'They came from riding you. Again. Again. Each orgasm making them clench tight around you.',
+        'Riding was worship. They gave everything, bodies bouncing, taking you deep.',
+        'You didn\'t move. Just watched them work. They did all the work, fucking themselves on you. Perfect.',
+        'Rode until exhaustion. Legs trembling. Still tried to continue, couldn\'t get enough.'
       ]
     }
   },
