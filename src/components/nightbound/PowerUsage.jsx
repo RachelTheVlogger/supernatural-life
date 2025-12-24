@@ -519,10 +519,10 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
       const effects = [];
       
       for (const powerName of selectedPowers) {
-        const powerData = POWER_LIBRARY[powerName];
+        const power = POWER_LIBRARY[powerName];
         const level = getPowerLevel(powerName);
-        const result = await powerData.effects(servant, vampireState);
-        effects.push({ name: powerName, result, visualEffect: powerData.visualEffect });
+        const result = await power.effects(servant, vampireState);
+        effects.push({ name: powerName, result, visualEffect: power.visualEffect });
       
         // Update power progress - INFINITE LEVELS
         const existingProgress = powerProgress.find(p => p.power_name === powerName);
@@ -548,11 +548,10 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
         }
         
         // Update hunger
-        const powerData = POWER_LIBRARY[powerName];
-        if (powerData.hungerCost > 0) {
+        if (power.hungerCost > 0) {
           const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
           const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
-          const newIndex = Math.min(currentIndex + powerData.hungerCost, hungerStates.length - 1);
+          const newIndex = Math.min(currentIndex + power.hungerCost, hungerStates.length - 1);
           await base44.entities.VampireState.update(vampireState.id, {
             hunger_state: hungerStates[newIndex]
           });
@@ -683,7 +682,7 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
             >
               <Zap className="w-16 h-16 text-purple-400 mx-auto" />
             </motion.div>
-            <p className="text-gray-400 mt-4">Using {selectedPower}...</p>
+            <p className="text-gray-400 mt-4">Using power{selectedPowers.length > 1 ? 's' : ''}...</p>
           </div>
         ) : (
           <>
