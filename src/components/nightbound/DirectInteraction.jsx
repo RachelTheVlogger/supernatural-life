@@ -43,8 +43,7 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Droplets,
     label: 'Feed on each other',
     category: 'vampire',
-    tier: 1,
-    minRelationship: 40,
+    minRelationship: 0,
     gains: [25, 40],
     outcomes: {
       mid: ['You bit them. They bit you back. Vampire blood. Electric. Intimate.', 'Feeding on another vampire. The taste was different. Ancient. Powerful.', 'You drank from each other. Twin ecstasy. The bond deepened.'],
@@ -66,8 +65,7 @@ const TURNED_VAMPIRE_INTERACTIONS = {
     icon: Flame,
     label: 'Vampire intimacy',
     category: 'vampire',
-    tier: 1,
-    minRelationship: 50,
+    minRelationship: 0,
     gains: [25, 40],
     outcomes: {
       mid: ['Vampire bodies. Supernatural stamina. Hours passed like moments.', 'They felt everything deeper now. Every touch electric.', 'Turned. Heightened senses. The pleasure was overwhelming.'],
@@ -177,8 +175,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Kiss their neck from behind',
     category: 'physical',
-    tier: 2,
-    minRelationship: 30,
+    minRelationship: 0,
     gains: [12, 20],
     outcomes: {
       mid: [
@@ -202,8 +199,7 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Whisper dirty things',
     category: 'physical',
-    tier: 2,
-    minRelationship: 35,
+    minRelationship: 0,
     gains: [14, 22],
     outcomes: {
       mid: [
@@ -229,8 +225,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Seduce from behind',
     category: 'physical',
-    tier: 3,
-    minRelationship: 50,
+    minRelationship: 0,
     gains: [18, 28],
     outcomes: {
       mid: [
@@ -255,8 +250,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Take them from behind (rough)',
     category: 'physical',
-    tier: 4,
-    minRelationship: 65,
+    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -313,8 +307,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Make out',
     category: 'physical',
-    tier: 2,
-    minRelationship: 30,
+    minRelationship: 0,
     gains: [12, 20],
     outcomes: {
       mid: ['Heated kisses. Exploring hands. Growing intensity.', 'You pushed them against the wall. They gasped.', 'Breathless. Flushed. Wanting more.'],
@@ -325,8 +318,7 @@ const INTERACTIONS = {
     icon: Sparkles,
     label: 'Be intimate',
     category: 'physical',
-    tier: 2,
-    minRelationship: 40,
+    minRelationship: 0,
     gains: [15, 25],
     outcomes: {
       mid: [
@@ -360,8 +352,7 @@ const INTERACTIONS = {
     icon: Droplets,
     label: 'Bite (feed)',
     category: 'physical',
-    tier: 2,
-    minRelationship: 20,
+    minRelationship: 0,
     gains: [10, 18],
     outcomes: {
       low: ['You bit carefully. They whimpered but stayed still.', 'Your fangs pierced skin. They trembled.', 'You fed. They gasped. Fear mixed with something else.'],
@@ -482,8 +473,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Breed them',
     category: 'physical',
-    tier: 4,
-    minRelationship: 75,
+    minRelationship: 0,
     gains: [30, 40],
     outcomes: {
       mid: [
@@ -517,8 +507,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Use them publicly',
     category: 'physical',
-    tier: 4,
-    minRelationship: 80,
+    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -637,8 +626,7 @@ const INTERACTIONS = {
     icon: Star,
     label: 'Praise them',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 40,
+    minRelationship: 0,
     gains: [15, 25],
     getDynamicOutcomes: (servantName) => {
       const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion', 'cedar'];
@@ -673,8 +661,7 @@ const INTERACTIONS = {
     icon: Eye,
     label: 'Make them perform',
     category: 'physical',
-    tier: 4,
-    minRelationship: 70,
+    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -803,8 +790,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Make them service you',
     category: 'physical',
-    tier: 4,
-    minRelationship: 75,
+    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -829,8 +815,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Make them cum multiple times',
     category: 'physical',
-    tier: 4,
-    minRelationship: 70,
+    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -855,8 +840,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'All night session',
     category: 'physical',
-    tier: 4,
-    minRelationship: 80,
+    minRelationship: 0,
     gains: [35, 45],
     outcomes: {
       mid: [
@@ -907,8 +891,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Establish safe word',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 50,
+    minRelationship: 0,
     gains: [15, 20],
     outcomes: {
       mid: [
@@ -931,8 +914,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Aftercare',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 40,
+    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: [
@@ -957,8 +939,7 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Negotiate scene',
     category: 'bdsm',
-    tier: 2,
-    minRelationship: 45,
+    minRelationship: 0,
     gains: [12, 18],
     outcomes: {
       mid: [
@@ -983,8 +964,7 @@ const INTERACTIONS = {
     icon: Coffee,
     label: 'Morning routine (dom)',
     category: 'activity',
-    tier: 2,
-    minRelationship: 50,
+    minRelationship: 0,
     gains: [10, 15],
     outcomes: {
       mid: [
@@ -1007,8 +987,7 @@ const INTERACTIONS = {
     icon: Hand,
     label: 'Position training',
     category: 'activity',
-    tier: 3,
-    minRelationship: 60,
+    minRelationship: 0,
     gains: [15, 20],
     outcomes: {
       mid: [
@@ -1031,8 +1010,7 @@ const INTERACTIONS = {
     icon: Eye,
     label: 'Daily inspection',
     category: 'activity',
-    tier: 2,
-    minRelationship: 55,
+    minRelationship: 0,
     gains: [12, 18],
     outcomes: {
       mid: [
@@ -1055,8 +1033,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Casual use',
     category: 'physical',
-    tier: 3,
-    minRelationship: 65,
+    minRelationship: 0,
     gains: [18, 25],
     outcomes: {
       mid: [
@@ -1080,8 +1057,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Service position (kneel)',
     category: 'activity',
-    tier: 2,
-    minRelationship: 50,
+    minRelationship: 0,
     gains: [10, 15],
     outcomes: {
       mid: [
@@ -1106,8 +1082,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Make them worship you',
     category: 'physical',
-    tier: 3,
-    minRelationship: 65,
+    minRelationship: 0,
     gains: [20, 28],
     outcomes: {
       mid: [
@@ -1130,8 +1105,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Receive oral service',
     category: 'physical',
-    tier: 3,
-    minRelationship: 60,
+    minRelationship: 0,
     gains: [22, 30],
     outcomes: {
       mid: [
@@ -1156,8 +1130,7 @@ const INTERACTIONS = {
     icon: Hand,
     label: 'Demand massage',
     category: 'activity',
-    tier: 2,
-    minRelationship: 45,
+    minRelationship: 0,
     gains: [10, 15],
     outcomes: {
       mid: [
@@ -1180,8 +1153,7 @@ const INTERACTIONS = {
     icon: Flame,
     label: 'Make them ride you',
     category: 'physical',
-    tier: 4,
-    minRelationship: 70,
+    minRelationship: 0,
     gains: [25, 35],
     outcomes: {
       mid: [
@@ -1206,8 +1178,7 @@ const INTERACTIONS = {
     icon: Sparkles,
     label: 'Make them dress for you',
     category: 'activity',
-    tier: 2,
-    minRelationship: 50,
+    minRelationship: 0,
     gains: [12, 18],
     outcomes: {
       mid: [
@@ -1230,8 +1201,7 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Make them beg',
     category: 'physical',
-    tier: 3,
-    minRelationship: 60,
+    minRelationship: 0,
     gains: [18, 25],
     outcomes: {
       mid: [
@@ -1293,8 +1263,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Confess feelings',
     category: 'social',
-    tier: 2,
-    minRelationship: 50,
+    minRelationship: 0,
     gains: [20, 30],
     outcomes: {
       mid: ['You told them what they mean to you. They cried.', 'Your confession changed everything. They said it back.', 'Words hung between you. Sacred.'],
@@ -1305,8 +1274,7 @@ const INTERACTIONS = {
     icon: MessageCircle,
     label: 'Share a secret',
     category: 'social',
-    tier: 3,
-    minRelationship: 60,
+    minRelationship: 0,
     gains: [15, 25],
     outcomes: {
       mid: ['You told them something you never tell anyone.', 'A secret shared. The bond deepened.', 'They held your secret carefully. Sacred.'],
@@ -1317,8 +1285,7 @@ const INTERACTIONS = {
     icon: Heart,
     label: 'Make a promise',
     category: 'social',
-    tier: 4,
-    minRelationship: 70,
+    minRelationship: 0,
     gains: [20, 35],
     outcomes: {
       mid: ['You promised them forever. You meant it.', 'A vow made. Unbreakable.', 'Your promise hung in the air. Sacred.'],
@@ -1367,7 +1334,6 @@ const INTERACTIONS = {
     icon: Book,
     label: 'Read together',
     category: 'activity',
-    tier: 2,
     gains: [7, 13],
     outcomes: {
       low: ['You read aloud. They listened.', 'Books between you. Safe distance.', 'They watched you read. Mesmerized.'],
@@ -1379,7 +1345,6 @@ const INTERACTIONS = {
     icon: Utensils,
     label: 'Cook for them',
     category: 'activity',
-    tier: 2,
     gains: [8, 14],
     outcomes: {
       low: ['You prepared food. They ate quietly.', 'Your effort showed. They appreciated it.', 'Care expressed through cooking.'],
@@ -1391,7 +1356,6 @@ const INTERACTIONS = {
     icon: Moon,
     label: 'Stargaze',
     category: 'activity',
-    tier: 2,
     gains: [9, 16],
     outcomes: {
       low: ['You looked at stars together. Quiet companionship.', 'They pointed out constellations.', 'Night sky. Shared wonder.'],
@@ -1403,8 +1367,7 @@ const INTERACTIONS = {
     icon: Wind,
     label: 'Travel together',
     category: 'activity',
-    tier: 3,
-    minRelationship: 50,
+    minRelationship: 0,
     gains: [12, 20],
     outcomes: {
       mid: ['You explored the city together. New places. New memories.', 'Adventure shared. The bond grew.', 'Traveling side by side. The world felt smaller.'],
@@ -1415,8 +1378,7 @@ const INTERACTIONS = {
     icon: Moon,
     label: 'Perform a ritual',
     category: 'activity',
-    tier: 4,
-    minRelationship: 65,
+    minRelationship: 0,
     gains: [15, 25],
     outcomes: {
       mid: ['An ancient ritual performed together. Sacred.', 'Blood and moonlight. The ritual bonded you.', 'Magic flowed between you. Powerful.'],
