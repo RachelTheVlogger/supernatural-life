@@ -743,8 +743,8 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
             <div>
               <label className="text-gray-400 text-sm">Profile Picture (emoji)</label>
-              <div className="flex gap-2 mt-1">
-                {['🦇', '💋', '🌙', '🖤', '😈', '🔥', '💜', '🌹'].map(emoji => (
+              <div className="flex gap-2 mt-1 flex-wrap">
+                {['🦇', '💋', '🌙', '🔥', '💜'].map(emoji => (
                   <button
                     key={emoji}
                     onClick={() => setProfileData({...profileData, profile_pic: emoji})}
