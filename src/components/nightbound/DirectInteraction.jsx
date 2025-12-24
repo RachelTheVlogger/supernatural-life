@@ -633,26 +633,33 @@ const INTERACTIONS = {
     tier: 2,
     minRelationship: 40,
     gains: [15, 25],
-    outcomes: {
-      mid: [
-        '"Good girl." They melted at your words.',
-        '"You\'re doing so well." They beamed.',
-        '"Such a good boy for me." Pride in their eyes.',
-        'Praise made them glow. Beautiful.',
-        '"Perfect. Just perfect." They blushed.'
-      ],
-      high: [
-        '"Good girl. My perfect good girl." They trembled.',
-        '"Such a good boy. I\'m so proud of you." Tears.',
-        'Praised them thoroughly. They lived for it.',
-        '"You\'re being so good for me." They melted.',
-        'They craved your approval. You gave it.',
-        '"My good girl. Always so good." Pure devotion.',
-        '"Good boy. The best boy." They worshipped you.',
-        'Praise was their drug. You their dealer.',
-        '"You make me so happy." They glowed.',
-        '"Perfect obedience. Good girl." Euphoric.'
-      ]
+    getDynamicOutcomes: (servantName) => {
+      const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion', 'cedar'];
+      const isMale = maleNames.some(name => servantName?.toLowerCase().includes(name));
+      const term = isMale ? 'boy' : 'girl';
+      const Term = isMale ? 'Boy' : 'Girl';
+      
+      return {
+        mid: [
+          `"Good ${term}." They melted at your words.`,
+          '"You\'re doing so well." They beamed.',
+          `"Such a good ${term} for me." Pride in their eyes.`,
+          'Praise made them glow. Beautiful.',
+          '"Perfect. Just perfect." They blushed.'
+        ],
+        high: [
+          `"Good ${term}. My perfect good ${term}." They trembled.`,
+          `"Such a good ${term}. I\'m so proud of you." Tears.`,
+          'Praised them thoroughly. They lived for it.',
+          '"You\'re being so good for me." They melted.',
+          'They craved your approval. You gave it.',
+          `"My good ${term}. Always so good." Pure devotion.`,
+          `"Good ${term}. The best ${term}." They worshipped you.`,
+          'Praise was their drug. You their dealer.',
+          '"You make me so happy." They glowed.',
+          `"Perfect obedience. Good ${term}." Euphoric.`
+        ]
+      };
     }
   },
   exhibition: {
@@ -1442,7 +1449,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     const rel = servant.relationship || 0;
     const tier = getRelationshipTier(rel);
     
-    const outcomes = interaction.outcomes[tier] || interaction.outcomes.low;
+    // Handle dynamic outcomes for praise
+    const outcomes = interaction.getDynamicOutcomes 
+      ? interaction.getDynamicOutcomes(servant.name)[tier]
+      : (interaction.outcomes[tier] || interaction.outcomes.low);
     const baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
     
     // Add title if set
