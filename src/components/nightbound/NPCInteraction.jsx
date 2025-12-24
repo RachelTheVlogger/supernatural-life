@@ -245,13 +245,19 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleFeed(npc, true)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFeed(npc, true);
+                        }}
                         className="flex-1 bg-green-950/40 hover:bg-green-950/60 border border-green-800/50 text-green-300 py-2 rounded-lg text-xs transition-colors"
                       >
                         Resist
                       </button>
                       <button
-                        onClick={() => handleFeed(npc, false)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFeed(npc, false);
+                        }}
                         className="flex-1 bg-red-950/40 hover:bg-red-950/60 border border-red-800/50 text-red-300 py-2 rounded-lg text-xs transition-colors"
                       >
                         Feed
@@ -263,7 +269,8 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
                     {Object.entries(INTERACTION_OPTIONS).map(([key, action]) => (
                       <button
                         key={key}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedNPC(npc);
                           handleInteract(npc, key);
                         }}
@@ -276,7 +283,8 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
                     ))}
                     {isVampire && (
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedNPC(npc);
                           setShowFeedPrompt(true);
                         }}

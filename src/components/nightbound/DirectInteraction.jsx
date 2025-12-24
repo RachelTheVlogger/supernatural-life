@@ -367,6 +367,165 @@ const INTERACTIONS = {
       ]
     }
   },
+  publicUse: {
+    icon: Flame,
+    label: 'Use them publicly',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 80,
+    gains: [25, 35],
+    outcomes: {
+      mid: [
+        'Restroom stall. Public place. Quick and dirty.',
+        'Against the alley wall. Anyone could see.',
+        'Your hand over their mouth. Silencing moans.',
+        'The thrill of being caught. They loved it.'
+      ],
+      high: [
+        'You fucked them in the club bathroom. Music pounding.',
+        'Bent over in the parking garage. Cars passing.',
+        'They sucked you off under the table. Others nearby.',
+        'Public sex. The ultimate thrill. They came hard.',
+        'You took them in the changing room. Risky. Perfect.',
+        'Exhibitionism satisfied. They wanted more.',
+        'The danger made it better. Both of you knew it.'
+      ]
+    }
+  },
+  edging: {
+    icon: Heart,
+    label: 'Edge them',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 65,
+    gains: [18, 28],
+    outcomes: {
+      mid: [
+        'You brought them to the edge. Stopped. Again.',
+        'Begging. Pleading. You denied them.',
+        'Control absolute. Their pleasure yours to give.',
+        'So close. Not yet. You decided when.'
+      ],
+      high: [
+        'Hours of edging. They were sobbing.',
+        'Denied over and over. Broken beautifully.',
+        'When you finally let them cum, they screamed.',
+        'Complete control. They came when allowed.',
+        'Edged until they couldn\'t form words.',
+        'The release was earth-shattering. Worth the wait.',
+        'You broke them with denial. Perfect.',
+        'They thanked you for the torture.'
+      ]
+    }
+  },
+  bdsm: {
+    icon: Flame,
+    label: 'BDSM scene',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 70,
+    gains: [30, 40],
+    outcomes: {
+      mid: [
+        'Ropes. Restraints. Complete surrender.',
+        'Bound and blindfolded. At your mercy.',
+        'Flogger. Paddle. Marks blooming.',
+        'Pain and pleasure blurred together.'
+      ],
+      high: [
+        'Full BDSM scene. Safe words ready. Never needed.',
+        'You used them completely. They loved it.',
+        'Suspended. Helpless. Trusting absolutely.',
+        'Wax. Ice. Sensation play. Overwhelmed.',
+        'They endured for you. Perfect submission.',
+        'Aftercare as important as the scene.',
+        'Beautiful marks. Evidence of trust.',
+        'Subspace achieved. Floating. Perfect.',
+        'You owned every part of them tonight.',
+        'Safe. Sane. Consensual. Intense.'
+      ]
+    }
+  },
+  degradation: {
+    icon: Skull,
+    label: 'Degrade them',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 75,
+    gains: [20, 30],
+    outcomes: {
+      mid: [
+        'You called them your slut. They moaned.',
+        'Degrading words. They got wetter.',
+        'You made them say what they are. They obeyed.',
+        'Humiliation kink satisfied.'
+      ],
+      high: [
+        'You degraded them thoroughly. They thanked you.',
+        'Called them your whore. Your toy. Your pet.',
+        'They came from the degradation alone.',
+        'You spit in their mouth. They swallowed.',
+        'Treated like an object. They loved it.',
+        'Verbal degradation. Physical use. Perfect.',
+        'You made them beg to be degraded more.',
+        'Your filthy slut. They wore the title proudly.',
+        'Degraded and used. Exactly what they needed.',
+        'They knew their place. Beneath you.'
+      ]
+    }
+  },
+  exhibition: {
+    icon: Eye,
+    label: 'Make them perform',
+    category: 'physical',
+    tier: 4,
+    minRelationship: 70,
+    gains: [25, 35],
+    outcomes: {
+      mid: [
+        'You made them strip. Slowly. For you.',
+        'They touched themselves. You watched.',
+        'Performance. Seduction. Just for you.',
+        'Your eyes on them. That was enough.'
+      ],
+      high: [
+        'They performed for you. Every fantasy acted out.',
+        'Strip tease. Lap dance. Complete devotion.',
+        'You directed every move. They obeyed perfectly.',
+        'They masturbated while you watched. Intense.',
+        'Your personal show. They gave everything.',
+        'Performed like a professional. Just for you.',
+        'Exhibition kink satisfied. They felt seen.',
+        'You made them cum while performing. Beautiful.'
+      ]
+    }
+  },
+  orgasmControl: {
+    icon: Zap,
+    label: 'Control their orgasms',
+    category: 'physical',
+    tier: 3,
+    minRelationship: 68,
+    gains: [22, 32],
+    outcomes: {
+      mid: [
+        'They could only cum with permission.',
+        'You controlled every orgasm. Total power.',
+        'Denied. Allowed. Denied. Your choice.',
+        'They begged for release. You decided.'
+      ],
+      high: [
+        'Orgasm control absolute. They came on command.',
+        'You trained them. Now they need permission.',
+        'Multiple orgasms granted. Then denied.',
+        'They couldn\'t cum without you anymore.',
+        'Control so complete they felt it always.',
+        'You owned their pleasure completely.',
+        'Permission granted. They shattered.',
+        'Denied for days. The release was explosive.'
+      ]
+    }
+  },
   
   // Social - Tier 1
   talk: {

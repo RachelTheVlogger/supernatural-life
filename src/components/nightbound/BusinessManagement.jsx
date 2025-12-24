@@ -405,7 +405,12 @@ export default function BusinessManagement({ servant, onClose }) {
                       </div>
                       
                       <button
-                        onClick={() => handleCraft(design, order.rarity, order.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (canMake && !isCrafting) {
+                            handleCraft(design, order.rarity, order.id);
+                          }
+                        }}
                         disabled={!canMake || isCrafting}
                         className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white rounded-lg py-2 transition-colors disabled:opacity-50"
                       >
@@ -466,7 +471,10 @@ export default function BusinessManagement({ servant, onClose }) {
                     </div>
                     <p className="text-purple-400 text-sm mb-2">Stock: {current}</p>
                     <button
-                      onClick={() => handleBuyMaterial(key, 5)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!isBuying) handleBuyMaterial(key, 5);
+                      }}
                       disabled={isBuying}
                       className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg py-2 transition-colors disabled:opacity-50"
                     >
@@ -498,7 +506,10 @@ export default function BusinessManagement({ servant, onClose }) {
                       </div>
                     </div>
                     <button
-                      onClick={() => handlePurchaseUpgrade(key)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!maxed) handlePurchaseUpgrade(key);
+                      }}
                       disabled={maxed}
                       className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white rounded-lg py-2 transition-colors disabled:opacity-50"
                     >

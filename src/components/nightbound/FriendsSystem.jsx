@@ -242,7 +242,10 @@ export default function FriendsSystem({ servant, onClose }) {
         ) : (
           <div className="space-y-3">
             <button
-              onClick={handleMeetNewPerson}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMeetNewPerson();
+              }}
               className="w-full bg-gradient-to-r from-blue-900/40 to-purple-900/40 hover:from-blue-900/60 hover:to-purple-900/60 border-2 border-blue-500/50 rounded-xl py-4 flex items-center justify-center gap-2 transition-all"
             >
               <UserPlus className="w-5 h-5" />
@@ -302,7 +305,10 @@ export default function FriendsSystem({ servant, onClose }) {
                     
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleConversation(friend)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleConversation(friend);
+                        }}
                         className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
                       >
                         <MessageCircle className="w-3 h-3" />
@@ -311,7 +317,10 @@ export default function FriendsSystem({ servant, onClose }) {
                       
                       {!friend.knows_about_vampires && friend.curiosity_level >= 50 && (
                         <button
-                          onClick={() => handleRevealTruth(friend)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRevealTruth(friend);
+                          }}
                           className="flex-1 bg-yellow-900/40 hover:bg-yellow-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
                         >
                           <Eye className="w-3 h-3" />
@@ -321,7 +330,10 @@ export default function FriendsSystem({ servant, onClose }) {
                       
                       {friend.knows_about_vampires && friend.curiosity_level >= 80 && (
                         <button
-                          onClick={() => handleRecruitAsServant(friend)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRecruitAsServant(friend);
+                          }}
                           className="flex-1 bg-red-900/40 hover:bg-red-900/60 rounded-lg py-2 text-white text-xs transition-colors flex items-center justify-center gap-1"
                         >
                           <Users className="w-3 h-3" />
