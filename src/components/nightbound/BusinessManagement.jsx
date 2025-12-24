@@ -149,11 +149,26 @@ export default function BusinessManagement({ servant, onClose }) {
 
   const businessStats = stats[0] || { reputation: 50, total_sales: 0, revenue: 0, average_rating: 0, passive_income_rate: 0 };
 
-  // Auto-generate orders
+  // Auto-generate orders and starting inventory
   React.useEffect(() => {
+    const initInventory = async () => {
+      if (inventory.length === 0) {
+        // Give starting materials
+        const startingMaterials = ['silver', 'moonstone', 'onyx', 'chain', 'wire', 'garnet', 'amethyst'];
+        for (const mat of startingMaterials) {
+          await base44.entities.Inventory.create({
+            servant_id: servant.id,
+            material: mat,
+            quantity: 20
+          });
+        }
+        queryClient.invalidateQueries(['inventory']);
+      }
+    };
+    
     const generateOrder = async () => {
-      if (orders.length < 5) {
-        const rarities = ['common', 'common', 'common', 'uncommon', 'uncommon', 'rare'];
+      if (orders.length < 3) {
+        const rarities = ['common', 'common', 'uncommon'];
         const rarity = rarities[Math.floor(Math.random() * rarities.length)];
         const designs = JEWELRY_DESIGNS[rarity];
         const design = designs[Math.floor(Math.random() * designs.length)];
@@ -176,11 +191,12 @@ export default function BusinessManagement({ servant, onClose }) {
       }
     };
     
-    const interval = setInterval(generateOrder, 30000); // Every 30 seconds
-    generateOrder(); // Initial order
+    initInventory();
+    const interval = setInterval(generateOrder, 45000);
+    if (orders.length === 0) generateOrder();
     
     return () => clearInterval(interval);
-  }, [orders.length]);
+  }, [orders.length, inventory.length]);
 
   // Calculate passive income
   const calculatePassiveIncome = () => {
