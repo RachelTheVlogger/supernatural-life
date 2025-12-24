@@ -161,7 +161,7 @@ export default function VampireHome() {
             className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
           >
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/30">
-              <Clock className="w-6 h-6 text-purple-400 mb-2" />
+              <Moon className="w-6 h-6 text-purple-400 mb-2" />
               <p className="text-2xl font-bold text-white">{vampireState.nights_passed}</p>
               <p className="text-xs text-gray-400">Nights Survived</p>
             </div>
