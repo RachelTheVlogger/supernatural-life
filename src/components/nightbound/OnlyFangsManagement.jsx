@@ -1117,6 +1117,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           <button onClick={() => setTab('collab')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'collab' ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <UserPlus className="w-3 h-3" /> Collab
           </button>
+          <button onClick={() => setShowMerch(true)} className="px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm bg-gray-800 text-gray-400 hover:bg-gray-700">
+            <ShoppingBag className="w-3 h-3" /> Store
+          </button>
         </div>
 
         {/* Loading Overlay */}
