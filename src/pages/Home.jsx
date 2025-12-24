@@ -4,11 +4,12 @@ import { Moon, Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import TutorialSystem from '@/components/nightbound/TutorialSystem';
 
 export default function Home() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [vampireName, setVampireName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
@@ -46,7 +47,8 @@ export default function Home() {
         moral_path: 'balanced'
       });
       
-      // Navigate directly to the game
+      // Invalidate queries and navigate
+      await queryClient.invalidateQueries();
       navigate(createPageUrl('Night'));
     } catch (error) {
       alert('Error starting game. Please try again.');
