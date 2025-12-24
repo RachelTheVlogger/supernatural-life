@@ -1166,16 +1166,27 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 <div className="space-y-3">
                   <div>
                     <label className="text-gray-400 text-sm">Content Description</label>
-                    <select
+                    <textarea
                       value={newVideo.content_type}
                       onChange={(e) => setNewVideo({...newVideo, content_type: e.target.value})}
-                      className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1"
-                    >
-                      <option value="">Choose what to create...</option>
-                      {VIDEO_CATEGORIES[selectedCategory].examples.map(ex => (
-                        <option key={ex} value={ex}>{ex}</option>
-                      ))}
-                    </select>
+                      placeholder="Describe what you want to create... Be as explicit as you want."
+                      className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1 h-20"
+                    />
+                    <details className="mt-2">
+                      <summary className="text-purple-400 text-xs cursor-pointer">Quick suggestions</summary>
+                      <div className="grid grid-cols-1 gap-1 mt-2">
+                        {VIDEO_CATEGORIES[selectedCategory].examples.map(ex => (
+                          <button
+                            key={ex}
+                            type="button"
+                            onClick={() => setNewVideo({...newVideo, content_type: ex})}
+                            className="text-left text-xs text-gray-400 hover:text-white bg-gray-900 hover:bg-gray-700 px-2 py-1 rounded transition-colors"
+                          >
+                            {ex}
+                          </button>
+                        ))}
+                      </div>
+                    </details>
                   </div>
 
                   <div>
