@@ -53,10 +53,14 @@ export default function Night() {
   
   // Redirect to home if no vampire exists
   useEffect(() => {
-    if (!vampireLoading && vampireStates.length === 0) {
-      navigate(createPageUrl('Home'));
-    }
-  }, [vampireStates.length, vampireLoading, navigate]);
+    const checkAndRedirect = async () => {
+      const states = await base44.entities.VampireState.list();
+      if (states.length === 0) {
+        navigate(createPageUrl('Home'), { replace: true });
+      }
+    };
+    checkAndRedirect();
+  }, [navigate]);
   
   useEffect(() => {
     // Show welcome tutorial if no tutorials have been completed

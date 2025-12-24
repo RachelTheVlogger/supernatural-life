@@ -29,7 +29,7 @@ export default function VampireHome() {
     const checkGameState = async () => {
       const states = await base44.entities.VampireState.list();
       if (states.length === 0) {
-        navigate(createPageUrl('Home'));
+        navigate(createPageUrl('Home'), { replace: true });
       }
     };
     checkGameState();
