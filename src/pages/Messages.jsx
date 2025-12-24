@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Send, Trash2, Package, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -50,23 +50,33 @@ export default function Messages() {
     enabled: !!servantId
   });
   
-  const { data: messages = [] } = useQuery({
+  const { data: messages = [], isLoading: messagesLoading } = useQuery({
     queryKey: ['messages', servantId],
     queryFn: () => base44.entities.Message.filter({ servant_id: servantId }, '-created_date'),
-    enabled: !!servantId
+    enabled: !!servantId,
+    staleTime: 3000
   });
 
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ['orders', servantId],
     queryFn: () => base44.entities.BusinessOrder.filter({ servant_id: servantId }, '-created_date'),
-    enabled: !!servantId
+    enabled: !!servantId,
+    staleTime: 3000
   });
 
-  const { data: reviews = [] } = useQuery({
+  const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
     queryKey: ['reviews', servantId],
     queryFn: () => base44.entities.Review.filter({ servant_id: servantId }, '-created_date'),
-    enabled: !!servantId
+    enabled: !!servantId,
+    staleTime: 5000
   });
+
+  const isTabLoading = (tabName) => {
+    if (tabName === 'messages') return messagesLoading;
+    if (tabName === 'business') return ordersLoading;
+    if (tabName === 'reviews') return reviewsLoading;
+    return false;
+  };
   
   const sendMessageMutation = useMutation({
     mutationFn: (data) => base44.entities.Message.create(data),
@@ -251,7 +261,30 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
       </div>
       
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 relative">
+        {/* Loading Overlay */}
+        <AnimatePresence>
+          {isTabLoading(tab) && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            >
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 360]
+                }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+                className="text-5xl"
+              >
+                💌
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {tab === 'messages' ? (
           <>
             {messages.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)).map((msg) => (
