@@ -173,7 +173,7 @@ export default function Night() {
       </motion.div>
       
       {/* Action buttons - Bitlife style */}
-      <div className="max-w-2xl mx-auto space-y-3 mb-8">
+      <div className="max-w-2xl mx-auto space-y-3 mb-8 max-h-[50vh] overflow-y-auto">
         {actions.map((action, i) => (
           <motion.button
             key={action.label}

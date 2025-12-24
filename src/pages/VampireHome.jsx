@@ -366,7 +366,7 @@ export default function VampireHome() {
           </motion.div>
           
           {/* Room sections - Interactive */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto">
             {/* Main chamber */}
             <motion.button
               initial={{ opacity: 0, x: -20 }}
