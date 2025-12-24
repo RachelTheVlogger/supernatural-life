@@ -1867,7 +1867,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                   </span>}
                   {!isLocked && relDisabled && <span className="text-xs ml-auto">({interaction.minRelationship}+)</span>}
                   {!isLocked && !relDisabled && interaction.tier && (
-                    <span className="text-xs text-purple-300 ml-auto">
+                    <span className="text-xs text-white bg-purple-600/50 px-2 py-0.5 rounded ml-auto">
                       T{interaction.tier}
                     </span>
                   )}
