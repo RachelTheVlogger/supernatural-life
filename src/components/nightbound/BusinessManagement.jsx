@@ -384,53 +384,88 @@ export default function BusinessManagement({ servant, onClose }) {
   };
 
   const handleShipOrder = async (order, method = 'standard') => {
+    setShowShippingOptions(null);
+    
     const methods = {
       standard: { time: 0, bonus: 0, log: 'Standard shipping. 5-7 days.' },
-      express: { time: 0, bonus: 5, log: 'Express shipping. Customer loves the speed!' },
+      express: { time: 500, bonus: 5, log: 'Express shipping. Customer loves the speed!' },
       handDeliver: { time: 2000, bonus: 15, log: 'You delivered it personally. They were touched by the gesture.' }
     };
     
     const methodData = methods[method];
     
     try {
-      if (method === 'handDeliver') {
+      if (methodData.time > 0) {
         setShippingOrder(order.id);
-        setTimeout(async () => {
-          await base44.entities.BusinessOrder.update(order.id, { status: 'shipped' });
-          
-          if (methodData.bonus > 0) {
-            const newRel = Math.min((servant.relationship || 0) + methodData.bonus, 100);
-            await base44.entities.Servant.update(servant.id, { relationship: newRel });
-          }
-          
-          await base44.entities.NightLog.create({
-            entry: `${servant.name}: ${methodData.log}`,
-            category: 'interaction',
-            intensity: 'moderate'
-          });
-          
-          await queryClient.invalidateQueries(['orders']);
-          setShippingOrder(null);
-        }, methodData.time);
-      } else {
+      }
+      
+      setTimeout(async () => {
+        // Update order status
         await base44.entities.BusinessOrder.update(order.id, { status: 'shipped' });
         
+        // Apply relationship bonus
         if (methodData.bonus > 0) {
           const newRel = Math.min((servant.relationship || 0) + methodData.bonus, 100);
           await base44.entities.Servant.update(servant.id, { relationship: newRel });
         }
         
+        // Create log entry
         await base44.entities.NightLog.create({
           entry: `${servant.name}: ${methodData.log}`,
           category: 'interaction',
-          intensity: 'subtle'
+          intensity: methodData.bonus > 0 ? 'moderate' : 'subtle'
         });
         
-        await queryClient.invalidateQueries(['orders']);
-      }
+        // Generate customer review after 2-5 seconds
+        setTimeout(async () => {
+          const rating = method === 'handDeliver' ? Math.floor(Math.random() * 2) + 4 : // 4-5 stars
+                        method === 'express' ? Math.floor(Math.random() * 2) + 4 : // 4-5 stars
+                        Math.floor(Math.random() * 3) + 3; // 3-5 stars
+          
+          const positiveComments = [
+            'Absolutely stunning! Exactly what I wanted.',
+            'Beautiful craftsmanship, will order again!',
+            'Love it! The quality is amazing.',
+            'Perfect! Better than I expected.',
+            'Gorgeous piece, highly recommend!'
+          ];
+          
+          const neutralComments = [
+            'Nice piece, decent quality.',
+            'Good work, took a bit long though.',
+            'It\'s okay, matches the description.'
+          ];
+          
+          const comment = rating >= 4 ? positiveComments[Math.floor(Math.random() * positiveComments.length)]
+                                      : neutralComments[Math.floor(Math.random() * neutralComments.length)];
+          
+          await base44.entities.Review.create({
+            servant_id: servant.id,
+            customer_name: order.customer_name,
+            rating: rating,
+            comment: comment,
+            order_id: order.id
+          });
+          
+          // Update average rating
+          const allReviews = await base44.entities.Review.filter({ servant_id: servant.id });
+          const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+          
+          await base44.entities.BusinessStats.update(businessStats.id, {
+            average_rating: avgRating
+          });
+          
+          queryClient.invalidateQueries(['reviews']);
+          queryClient.invalidateQueries(['stats']);
+        }, Math.floor(Math.random() * 3000) + 2000);
+        
+        queryClient.invalidateQueries(['orders']);
+        setShippingOrder(null);
+      }, methodData.time);
     } catch (error) {
       console.error('Ship order error:', error);
       setShippingOrder(null);
+      setShowShippingOptions(null);
     }
   };
 
@@ -655,45 +690,55 @@ export default function BusinessManagement({ servant, onClose }) {
                       {showShippingOptions === order.id ? (
                         <div className="space-y-2 mt-3">
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleShipOrder(order, 'standard');
-                              setShowShippingOptions(null);
                             }}
-                            className="w-full bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-sm text-left touch-manipulation active:scale-95"
+                            disabled={shippingOrder === order.id}
+                            className="w-full bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white px-3 py-2 rounded text-sm text-left transition-colors"
                           >
                             📦 Standard (5-7 days)
                           </button>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleShipOrder(order, 'express');
-                              setShowShippingOptions(null);
                             }}
-                            className="w-full bg-blue-700 hover:bg-blue-600 px-3 py-2 rounded text-sm text-left touch-manipulation active:scale-95"
+                            disabled={shippingOrder === order.id}
+                            className="w-full bg-blue-700 hover:bg-blue-600 disabled:opacity-50 text-white px-3 py-2 rounded text-sm text-left transition-colors"
                           >
                             ⚡ Express (2-3 days) +5 relationship
                           </button>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleShipOrder(order, 'handDeliver');
-                              setShowShippingOptions(null);
                             }}
-                            className="w-full bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded text-sm text-left touch-manipulation active:scale-95"
+                            disabled={shippingOrder === order.id}
+                            className="w-full bg-purple-700 hover:bg-purple-600 disabled:opacity-50 text-white px-3 py-2 rounded text-sm text-left transition-colors"
                           >
                             🚶 Hand Deliver +15 relationship
                           </button>
                           <button
-                            onClick={() => setShowShippingOptions(null)}
-                            className="w-full bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded text-xs touch-manipulation active:scale-95"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowShippingOptions(null);
+                            }}
+                            className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded text-xs transition-colors"
                           >
                             Cancel
                           </button>
                         </div>
                       ) : (
                         <button
-                          onClick={() => setShowShippingOptions(order.id)}
-                          className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-2 mt-2 transition-colors touch-manipulation active:scale-95"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowShippingOptions(order.id);
+                          }}
+                          disabled={shippingOrder === order.id}
+                          className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg py-2 mt-2 transition-colors"
                         >
-                          Ship Order
+                          {shippingOrder === order.id ? 'Shipping...' : 'Ship Order'}
                         </button>
                       )}
                     </div>
