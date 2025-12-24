@@ -107,6 +107,16 @@ export default function Codex() {
   const [selectedCategory, setSelectedCategory] = useState('lore');
   const [selectedEntry, setSelectedEntry] = useState(null);
 
+  const { data: servants = [] } = useQuery({
+    queryKey: ['servants'],
+    queryFn: () => base44.entities.Servant.list()
+  });
+
+  const { data: vampireStates = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+
   const { data: entries = [] } = useQuery({
     queryKey: ['codex'],
     queryFn: async () => {
@@ -125,16 +135,6 @@ export default function Codex() {
       
       return existing;
     }
-  });
-
-  const { data: servants = [] } = useQuery({
-    queryKey: ['servants'],
-    queryFn: () => base44.entities.Servant.list()
-  });
-
-  const { data: vampireStates = [] } = useQuery({
-    queryKey: ['vampireState'],
-    queryFn: () => base44.entities.VampireState.list()
   });
 
   const vampireState = vampireStates[0];
