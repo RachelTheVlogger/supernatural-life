@@ -35,6 +35,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [profileData, setProfileData] = useState({ username: '', bio: '', profile_pic: '🦇', is_couple: true });
   const [livestreaming, setLivestreaming] = useState(false);
   const [livestreamOutcome, setLivestreamOutcome] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
+  const [userMessage, setUserMessage] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -293,28 +296,58 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
   const handleLivestream = async (withVampire) => {
     setLivestreaming(true);
+    setChatMessages([]);
     
-    const soloOutcomes = [
-      'You went live. Touching yourself. Moaning. Viewers flooded in. Tips pouring. You came on camera.',
-      'Livestream started. You stripped slowly. Chat went wild. Made $200 in tips in one hour.',
-      'Live and exposed. You showed everything. Did exactly what they asked. They loved it.',
-      'You performed live. No editing. No retakes. Raw and real. Subscribers doubled.',
-      'Livestream session. You touched yourself thinking of them watching. Came hard. Perfect.',
+    // Generate initial chat messages
+    const initialMessages = [];
+    const explicitMessages = withVampire ? [
+      'Oh fuck yes breed her',
+      'Make her scream daddy',
+      'Fill her up 💦',
+      'She\'s so fucking hot',
+      'I wish I was there',
+      'Choke her please',
+      'Harder! Fuck her harder!',
+      'Her moans are perfect 🔥',
+      'Best stream ever',
+      'Take it all baby',
+    ] : [
+      'You\'re so fucking sexy',
+      'Touch yourself for us',
+      'Show us more baby',
+      'Your body is perfect',
+      'I\'m so hard for you',
+      'Keep going gorgeous',
+      'You\'re making me so wet',
+      'Don\'t stop please',
+      'So hot 🔥🔥',
+      'I want you so bad',
     ];
     
-    const coupleOutcomes = [
-      'You went live together. They watched you fuck in real-time. Chat exploded. Tips everywhere.',
-      'Live sex show. You and your vampire. Unscripted. Passionate. Made $500 in tips.',
-      'Livestream turned into breeding session. Everyone watched you get filled. Subscribers went crazy.',
-      'You both performed live. Fucking. Moaning. Real orgasms. Chat begging for more.',
-      'Live together. They dominated you on camera. You took it. Loved it. Viewers obsessed.',
-      'Went live. Started innocent. Ended with you screaming their name. Best stream yet.',
-    ];
+    const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire'];
     
-    const outcome = withVampire ? coupleOutcomes[Math.floor(Math.random() * coupleOutcomes.length)] : soloOutcomes[Math.floor(Math.random() * soloOutcomes.length)];
-    setLivestreamOutcome(outcome);
+    for (let i = 0; i < 8; i++) {
+      initialMessages.push({
+        username: usernames[Math.floor(Math.random() * usernames.length)],
+        message: explicitMessages[Math.floor(Math.random() * explicitMessages.length)],
+        tip: Math.random() > 0.6 ? Math.floor(Math.random() * 50) + 5 : 0
+      });
+    }
+    
+    setChatMessages(initialMessages);
+    
+    // Keep adding messages during stream
+    const messageInterval = setInterval(() => {
+      const newMsg = {
+        username: usernames[Math.floor(Math.random() * usernames.length)],
+        message: explicitMessages[Math.floor(Math.random() * explicitMessages.length)],
+        tip: Math.random() > 0.7 ? Math.floor(Math.random() * 50) + 5 : 0
+      };
+      setChatMessages(prev => [...prev.slice(-12), newMsg]);
+    }, 2000);
     
     setTimeout(async () => {
+      clearInterval(messageInterval);
       const earnings = withVampire ? Math.floor(Math.random() * 400) + 200 : Math.floor(Math.random() * 200) + 100;
       const newSubs = withVampire ? Math.floor(Math.random() * 30) + 20 : Math.floor(Math.random() * 20) + 10;
       const repGain = withVampire ? Math.floor(Math.random() * 15) + 10 : Math.floor(Math.random() * 10) + 5;
@@ -332,8 +365,18 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         });
       }
       
+      const outcomes = withVampire ? [
+        'Live sex show complete. Chat went insane. Tips flooded in. You both came together on camera.',
+        'Stream ended. Everyone watched you get bred live. Subscribers exploded. $' + earnings + ' earned.',
+        'Livestream finished. You fucked on camera. Real. Raw. Unfiltered. They loved every second.',
+      ] : [
+        'Stream ended. You came on camera. Chat tipped like crazy. $' + earnings + ' earned.',
+        'Livestream complete. Solo show. Touching yourself. Moaning. Perfect performance.',
+        'You finished the stream. Everyone saw you at your most vulnerable. They can\'t get enough.',
+      ];
+      
       await base44.entities.NightLog.create({
-        entry: outcome,
+        entry: outcomes[Math.floor(Math.random() * outcomes.length)],
         category: 'interaction',
         intensity: 'significant'
       });
@@ -343,8 +386,53 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
       setTimeout(() => {
         setLivestreaming(false);
         setLivestreamOutcome('');
-      }, 4000);
-    }, 3500);
+        setChatMessages([]);
+      }, 3000);
+    }, 15000);
+  };
+  
+  const handleSendMessage = async () => {
+    if (!userMessage.trim() || sendingMessage) return;
+    
+    setSendingMessage(true);
+    const myMessage = userMessage;
+    setUserMessage('');
+    
+    // Add user message to chat
+    setChatMessages(prev => [...prev.slice(-12), { username: 'You', message: myMessage, isUser: true }]);
+    
+    // Get AI response
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are responding to a livestream chat message during an adult OnlyFangs livestream. The streamer (${servant.name}) is ${servantProfile.is_couple_account ? 'performing with their vampire partner' : 'performing solo'}. A viewer in chat said: "${myMessage}". Generate 2-3 responses from different viewers that are explicit, complimentary, or reacting to what was said. Keep responses short (under 15 words each). Be explicit and sexual. Format as JSON array of strings.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            responses: { type: 'array', items: { type: 'string' } }
+          }
+        }
+      });
+      
+      const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing'];
+      response.responses.forEach((msg, i) => {
+        setTimeout(() => {
+          setChatMessages(prev => [...prev.slice(-12), {
+            username: usernames[Math.floor(Math.random() * usernames.length)],
+            message: msg,
+            tip: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 5 : 0
+          }]);
+        }, (i + 1) * 1000);
+      });
+    } catch (e) {
+      // Fallback
+      const fallbacks = ['Yes please!', 'So hot 🔥', 'Keep going!', 'Amazing'];
+      setChatMessages(prev => [...prev.slice(-12), {
+        username: 'VampireFan420',
+        message: fallbacks[Math.floor(Math.random() * fallbacks.length)]
+      }]);
+    }
+    
+    setSendingMessage(false);
   };
 
   if (!hasProfile && !editingProfile) {
@@ -571,7 +659,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </div>
         )}
 
-        {tab === 'livestream' && (
+        {tab === 'livestream' && !livestreaming && (
           <div className="space-y-4">
             <div className="bg-gradient-to-br from-red-950/40 to-pink-950/40 border-2 border-red-500/30 rounded-2xl p-6 text-center">
               <motion.div
@@ -592,7 +680,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   disabled={livestreaming}
                   className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50"
                 >
-                  {livestreaming ? 'Live...' : 'Go Live Solo 💋'}
+                  Go Live Solo 💋
                 </button>
                 {servantProfile.is_couple_account && (
                   <button
@@ -600,7 +688,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     disabled={livestreaming}
                     className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50"
                   >
-                    {livestreaming ? 'Live...' : 'Go Live Together 💑'}
+                    Go Live Together 💑
                   </button>
                 )}
               </div>
@@ -618,6 +706,63 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 <li>• Couple streams earn 2x more</li>
                 <li>• Massive subscriber growth</li>
               </ul>
+            </div>
+          </div>
+        )}
+
+        {tab === 'livestream' && livestreaming && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-red-950/60 to-pink-950/60 border-2 border-red-500/50 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <motion.div
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="w-3 h-3 bg-red-500 rounded-full"
+                />
+                <span className="text-red-400 font-bold">LIVE</span>
+                <span className="text-gray-400 text-sm ml-auto">{servantProfile.subscriber_count} watching</span>
+              </div>
+              
+              {/* Live Chat */}
+              <div className="bg-black/40 rounded-xl p-3 h-64 overflow-y-auto mb-3 space-y-2">
+                {chatMessages.map((msg, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className={`${msg.isUser ? 'bg-purple-900/40' : 'bg-gray-800/60'} rounded-lg p-2`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className={`${msg.isUser ? 'text-purple-400' : 'text-pink-400'} text-xs font-bold`}>
+                        {msg.username}
+                      </span>
+                      {msg.tip > 0 && (
+                        <span className="text-green-400 text-xs">💵 ${msg.tip}</span>
+                      )}
+                    </div>
+                    <p className="text-gray-300 text-sm">{msg.message}</p>
+                  </motion.div>
+                ))}
+              </div>
+              
+              {/* Message Input */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={userMessage}
+                  onChange={(e) => setUserMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Say something to the chat..."
+                  className="flex-1 bg-gray-900/60 border border-purple-500/30 rounded-lg px-3 py-2 text-white text-sm"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  disabled={sendingMessage || !userMessage.trim()}
+                  className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  Send
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -830,32 +975,6 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             >
               <div className="text-5xl mb-4">🎥</div>
               <p className="text-gray-300 text-lg leading-relaxed">{filmingOutcome}</p>
-            </motion.div>
-          </motion.div>
-        )}
-        
-        {livestreamOutcome && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-gradient-to-br from-red-950/80 to-pink-950/80 rounded-2xl p-6 max-w-md w-full text-center border-2 border-red-500/50"
-            >
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-                className="text-5xl mb-4"
-              >
-                🔴
-              </motion.div>
-              <p className="text-white text-lg leading-relaxed font-medium mb-2">LIVE</p>
-              <p className="text-gray-300 text-lg leading-relaxed">{livestreamOutcome}</p>
             </motion.div>
           </motion.div>
         )}

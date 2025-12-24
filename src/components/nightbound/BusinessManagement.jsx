@@ -132,6 +132,21 @@ export default function BusinessManagement({ servant, onClose }) {
     }
   });
 
+  const [lastSeenOrderCount, setLastSeenOrderCount] = React.useState(orders.length);
+  const [lastSeenReviewCount, setLastSeenReviewCount] = React.useState(reviews.length);
+  
+  React.useEffect(() => {
+    if (orders.length > lastSeenOrderCount) {
+      setLastSeenOrderCount(orders.length);
+    }
+  }, [orders.length]);
+  
+  React.useEffect(() => {
+    if (reviews.length > lastSeenReviewCount) {
+      setLastSeenReviewCount(reviews.length);
+    }
+  }, [reviews.length]);
+
   const businessStats = stats[0] || { reputation: 50, total_sales: 0, revenue: 0, average_rating: 0, passive_income_rate: 0 };
 
   // Calculate passive income
@@ -401,6 +416,27 @@ export default function BusinessManagement({ servant, onClose }) {
           </motion.button>
         )}
 
+        {/* Alerts */}
+        {orders.length > lastSeenOrderCount && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-green-950/40 border border-green-500/30 rounded-xl p-4 mb-4"
+          >
+            <p className="text-green-400 font-medium">🎉 New order received! Check the Orders tab.</p>
+          </motion.div>
+        )}
+        
+        {reviews.length > lastSeenReviewCount && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-yellow-950/40 border border-yellow-500/30 rounded-xl p-4 mb-4"
+          >
+            <p className="text-yellow-400 font-medium">⭐ New review received! Check the Reviews tab.</p>
+          </motion.div>
+        )}
+
         {/* Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto">
           {[
@@ -412,13 +448,23 @@ export default function BusinessManagement({ servant, onClose }) {
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setTab(id)}
-              className={`px-4 py-2 rounded-lg whitespace-nowrap touch-manipulation flex items-center gap-2 ${
+              onClick={() => {
+                setTab(id);
+                if (id === 'orders') setLastSeenOrderCount(orders.length);
+                if (id === 'reviews') setLastSeenReviewCount(reviews.length);
+              }}
+              className={`px-4 py-2 rounded-lg whitespace-nowrap touch-manipulation flex items-center gap-2 relative ${
                 tab === id ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 active:bg-gray-700'
               }`}
             >
               <Icon className="w-4 h-4" />
               {label}
+              {id === 'orders' && orders.length > lastSeenOrderCount && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></span>
+              )}
+              {id === 'reviews' && reviews.length > lastSeenReviewCount && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full"></span>
+              )}
             </button>
           ))}
         </div>

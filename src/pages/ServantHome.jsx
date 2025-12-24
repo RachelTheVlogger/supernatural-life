@@ -35,7 +35,6 @@ const BUSINESS_ACTIVITIES = [
   { id: 'design', label: 'Design new pieces', icon: BookOpen, duration: 2500, outcomes: ['You sketched new designs. Moon phases. Ravens. Thorns.', 'Inspiration struck. You drew late into the night.', 'New designs flow from you. Darker. More beautiful.'] },
   { id: 'photograph', label: 'Photograph jewelry', icon: Camera, duration: 2000, outcomes: ['You captured the perfect shot. Light and shadow dancing.', 'Each angle tells a story. Your work deserves to be seen.', 'The photos turned out hauntingly beautiful.'] },
   { id: 'social', label: 'Post on social media', icon: MessageCircle, duration: 1500, outcomes: ['Posted your latest piece. Comments already rolling in.', 'Your followers love the new design. Engagement up.', 'The goth community is obsessed with your work.'] },
-  { id: 'ship', label: 'Package orders', icon: Home, duration: 2000, outcomes: ['You wrapped each piece with care. Sent into the world.', 'Packages ready. Your creations leaving your hands.', 'Orders shipped. They\'ll find their way to those who need them.'] },
   { id: 'restock', label: 'Buy materials', icon: ShoppingBag, duration: 2500, outcomes: ['Restocked materials. Silver, stones, chains.', 'New supplies arrived. Time to create.', 'Materials acquired. Your workshop is ready.'] }
 ];
 
@@ -128,34 +127,7 @@ export default function ServantHome() {
         intensity: 'subtle'
       });
 
-      // Random chance for new review after shipping
-      if (chore.id === 'ship' && Math.random() > 0.5) {
-        const orders = await base44.entities.BusinessOrder.filter({ 
-          servant_id: servantId, 
-          status: 'completed' 
-        });
-        if (orders.length > 0) {
-          const order = orders[Math.floor(Math.random() * orders.length)];
-          const rating = Math.random() > 0.2 ? 5 : Math.floor(Math.random() * 2) + 4;
-          const comments = {
-            5: ['Absolutely stunning! Best Etsy purchase ever.', 'The craftsmanship is incredible. Will order again!', 'Perfect gothic aesthetic. Exceeded expectations.'],
-            4: ['Beautiful piece. Took a bit longer but worth it.', 'Love it! Exactly as described.', 'Great quality. Very happy with this.'],
-            3: ['It\'s okay. Not quite what I expected.', 'Decent but could be better.', 'Average. Does the job.']
-          };
-          
-          await base44.entities.Review.create({
-            servant_id: servantId,
-            customer_name: order.customer_name,
-            rating: rating,
-            comment: comments[rating][Math.floor(Math.random() * comments[rating].length)],
-            order_id: order.id
-          });
 
-          await base44.entities.BusinessOrder.update(order.id, {
-            status: 'shipped'
-          });
-        }
-      }
       
       queryClient.invalidateQueries();
       
