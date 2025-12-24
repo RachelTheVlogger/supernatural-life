@@ -291,6 +291,62 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     queryClient.invalidateQueries(['onlyfangs-videos']);
   };
 
+  const handleLivestream = async (withVampire) => {
+    setLivestreaming(true);
+    
+    const soloOutcomes = [
+      'You went live. Touching yourself. Moaning. Viewers flooded in. Tips pouring. You came on camera.',
+      'Livestream started. You stripped slowly. Chat went wild. Made $200 in tips in one hour.',
+      'Live and exposed. You showed everything. Did exactly what they asked. They loved it.',
+      'You performed live. No editing. No retakes. Raw and real. Subscribers doubled.',
+      'Livestream session. You touched yourself thinking of them watching. Came hard. Perfect.',
+    ];
+    
+    const coupleOutcomes = [
+      'You went live together. They watched you fuck in real-time. Chat exploded. Tips everywhere.',
+      'Live sex show. You and your vampire. Unscripted. Passionate. Made $500 in tips.',
+      'Livestream turned into breeding session. Everyone watched you get filled. Subscribers went crazy.',
+      'You both performed live. Fucking. Moaning. Real orgasms. Chat begging for more.',
+      'Live together. They dominated you on camera. You took it. Loved it. Viewers obsessed.',
+      'Went live. Started innocent. Ended with you screaming their name. Best stream yet.',
+    ];
+    
+    const outcome = withVampire ? coupleOutcomes[Math.floor(Math.random() * coupleOutcomes.length)] : soloOutcomes[Math.floor(Math.random() * soloOutcomes.length)];
+    setLivestreamOutcome(outcome);
+    
+    setTimeout(async () => {
+      const earnings = withVampire ? Math.floor(Math.random() * 400) + 200 : Math.floor(Math.random() * 200) + 100;
+      const newSubs = withVampire ? Math.floor(Math.random() * 30) + 20 : Math.floor(Math.random() * 20) + 10;
+      const repGain = withVampire ? Math.floor(Math.random() * 15) + 10 : Math.floor(Math.random() * 10) + 5;
+      
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: servantProfile.revenue + earnings,
+        subscriber_count: servantProfile.subscriber_count + newSubs,
+        reputation: Math.min(100, servantProfile.reputation + repGain)
+      });
+      
+      if (withVampire) {
+        const relBonus = Math.floor(Math.random() * 15) + 15;
+        await base44.entities.Servant.update(servant.id, {
+          relationship: Math.min(100, (servant.relationship || 0) + relBonus)
+        });
+      }
+      
+      await base44.entities.NightLog.create({
+        entry: outcome,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setLivestreaming(false);
+        setLivestreamOutcome('');
+      }, 4000);
+    }, 3500);
+  };
+
   if (!hasProfile && !editingProfile) {
     return (
       <motion.div
