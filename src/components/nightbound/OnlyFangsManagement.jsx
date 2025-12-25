@@ -1060,7 +1060,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             e.stopPropagation();
             onClose();
           }} 
-          className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white z-10 touch-manipulation p-2"
         >
           <X className="w-5 h-5" />
         </button>
@@ -2037,7 +2037,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   e.stopPropagation();
                   setCreatingPost(false);
                 }} 
-                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10 touch-manipulation p-2"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2131,7 +2131,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   e.stopPropagation();
                   setViewingComments(null);
                 }} 
-                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10 touch-manipulation p-2"
               >
                 <X className="w-5 h-5" />
               </button>

@@ -91,7 +91,7 @@ export default function LocationVisit({ location, servantName, outcome, onClose 
           e.stopPropagation();
           onClose();
         }}
-        className="absolute top-4 left-4 text-white/60 hover:text-white transition-colors z-10"
+        className="absolute top-4 left-4 text-white/60 hover:text-white transition-colors z-10 touch-manipulation p-2"
       >
         <ArrowLeft className="w-6 h-6" />
       </button>
