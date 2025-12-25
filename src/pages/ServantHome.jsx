@@ -11,6 +11,7 @@ import ServantAutomationSettings from '@/components/nightbound/ServantAutomation
 import ServantProactiveActions from '@/components/nightbound/ServantProactiveActions';
 import OnlyFangsManagement from '@/components/nightbound/OnlyFangsManagement';
 import ServantInteractions from '@/components/nightbound/ServantInteractions';
+import YouTubeCareer from '@/components/nightbound/YouTubeCareer';
 
 const CHORES = [
   { id: 'clean', label: 'Clean the rooms', icon: Sparkles, duration: 2000, outcomes: ['You tidied the bedroom. Everything feels peaceful.', 'You dusted the shelves. The space feels lighter.', 'You organized their belongings with care.'] },
@@ -33,6 +34,7 @@ const VAMPIRE_ACTIVITIES = [
 const BUSINESS_ACTIVITIES = [
   { id: 'manage', label: 'Manage business', icon: Sparkles, duration: 0, isModal: true },
   { id: 'onlyfangs', label: 'OnlyFangs (adult content)', icon: Camera, duration: 0, isModal: true },
+  { id: 'youtube', label: 'YouTube Channel', icon: Camera, duration: 0, isModal: true },
   { id: 'design', label: 'Design new pieces', icon: BookOpen, duration: 2500, outcomes: ['You sketched new designs. Moon phases. Ravens. Thorns.', 'Inspiration struck. You drew late into the night.', 'New designs flow from you. Darker. More beautiful.'] },
   { id: 'photograph', label: 'Photograph jewelry', icon: Camera, duration: 2000, outcomes: ['You captured the perfect shot. Light and shadow dancing.', 'Each angle tells a story. Your work deserves to be seen.', 'The photos turned out hauntingly beautiful.'] },
   { id: 'social', label: 'Post on social media', icon: MessageCircle, duration: 1500, outcomes: ['Posted your latest piece. Comments already rolling in.', 'Your followers love the new design. Engagement up.', 'The goth community is obsessed with your work.'] },
@@ -49,6 +51,7 @@ export default function ServantHome() {
   const [showAutomationSettings, setShowAutomationSettings] = useState(false);
   const [showOnlyFangs, setShowOnlyFangs] = useState(false);
   const [showServantInteractions, setShowServantInteractions] = useState(false);
+  const [showYouTube, setShowYouTube] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -111,6 +114,8 @@ export default function ServantHome() {
         setShowBusinessModal(true);
       } else if (chore.id === 'onlyfangs') {
         setShowOnlyFangs(true);
+      } else if (chore.id === 'youtube') {
+        setShowYouTube(true);
       }
       return;
     }
@@ -360,6 +365,13 @@ export default function ServantHome() {
             vampireState={vampireState}
             currentServant={servant}
             onClose={() => setShowServantInteractions(false)}
+          />
+        )}
+        {showYouTube && (
+          <YouTubeCareer
+            servant={servant}
+            vampireState={vampireState}
+            onClose={() => setShowYouTube(false)}
           />
         )}
         </AnimatePresence>
