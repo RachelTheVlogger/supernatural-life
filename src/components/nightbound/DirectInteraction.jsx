@@ -1448,6 +1448,14 @@ const INTERACTIONS = {
     special: true,
     gains: [0, 0]
   },
+
+  setIdentity: {
+    icon: Heart,
+    label: 'Discuss their identity',
+    category: 'social',
+    special: true,
+    gains: [0, 0]
+  },
   
   // Dark option
   kill: {
@@ -1470,6 +1478,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [showPowers, setShowPowers] = useState(false);
   const [showTitleSelection, setShowTitleSelection] = useState(false);
   const [showBoundaries, setShowBoundaries] = useState(false);
+  const [showIdentity, setShowIdentity] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const queryClient = useQueryClient();
   
@@ -1526,6 +1535,11 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
     if (type === 'setBoundaries') {
       setShowBoundaries(true);
+      return;
+    }
+
+    if (type === 'setIdentity') {
+      setShowIdentity(true);
       return;
     }
     
@@ -1654,6 +1668,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           const variants = ['devoted', 'defiant', 'dreamer'];
           const emotionalStates = ['curious', 'wary', 'distant'];
           const genders = ['male', 'female', 'nonbinary'];
+          const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
           const jobs = [
             'Night Club Bartender',
             'Tattoo Artist',
@@ -1670,6 +1685,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           await base44.entities.Servant.create({
             name: names[Math.floor(Math.random() * names.length)],
             gender: genders[Math.floor(Math.random() * genders.length)],
+            sexuality: sexualities[Math.floor(Math.random() * sexualities.length)],
             job: jobs[Math.floor(Math.random() * jobs.length)],
             variant: variants[Math.floor(Math.random() * variants.length)],
             obsession_stage: 1,
@@ -1821,6 +1837,104 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                 >
                   <h3 className="text-white font-medium mb-1">🌙 No Strings</h3>
                   <p className="text-gray-400 text-sm">Casual. No expectations. Just fun.</p>
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+        {showIdentity && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowIdentity(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative max-h-[85vh] overflow-y-auto"
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowIdentity(false);
+                }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-2xl font-bold text-white mb-2">Set Identity</h2>
+              <p className="text-gray-400 text-sm mb-4">
+                Help {servant.name} express who they are
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white font-medium mb-2 block">Gender</label>
+                  <div className="space-y-2">
+                    {['male', 'female', 'nonbinary'].map(g => (
+                      <button
+                        key={g}
+                        onClick={async () => {
+                          await base44.entities.Servant.update(servant.id, { gender: g });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-3 px-4 text-left transition-colors ${
+                          servant.gender === g 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {g.charAt(0).toUpperCase() + g.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-white font-medium mb-2 block">Sexuality</label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'straight', label: 'Straight' },
+                      { value: 'gay', label: 'Gay' },
+                      { value: 'lesbian', label: 'Lesbian' },
+                      { value: 'bisexual', label: 'Bisexual' },
+                      { value: 'pansexual', label: 'Pansexual' },
+                      { value: 'asexual', label: 'Asexual' },
+                      { value: 'questioning', label: 'Questioning' }
+                    ].map(option => (
+                      <button
+                        key={option.value}
+                        onClick={async () => {
+                          await base44.entities.Servant.update(servant.id, { sexuality: option.value });
+                          await base44.entities.NightLog.create({
+                            entry: `${servant.name} opened up about their sexuality. They're ${option.label.toLowerCase()}.`,
+                            category: 'interaction',
+                            intensity: 'moderate'
+                          });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm ${
+                          servant.sexuality === option.value 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowIdentity(false)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition-colors mt-4"
+                >
+                  Done
                 </button>
               </div>
             </motion.div>

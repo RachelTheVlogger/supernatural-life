@@ -12,6 +12,7 @@ export default function Home() {
   const queryClient = useQueryClient();
   const [vampireName, setVampireName] = useState('');
   const [vampireGender, setVampireGender] = useState('male');
+  const [vampireSexuality, setVampireSexuality] = useState('bisexual');
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
   
@@ -37,6 +38,7 @@ export default function Home() {
     await base44.entities.VampireState.create({
       vampire_name: vampireName.trim(),
       gender: vampireGender,
+      sexuality: vampireSexuality,
       job: 'Night Shift Nurse',
       hunger_state: 'calm',
       emotional_mode: 'feeling',
@@ -227,6 +229,51 @@ export default function Home() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setIntroStep(1)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={() => setIntroStep(3)}
+                    className="flex-1 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
+
+            {introStep === 3 && (
+              <>
+                <h2 className="text-2xl font-bold text-white mb-4">Your sexuality</h2>
+                <p className="text-purple-300 text-sm mb-4">Who are you attracted to?</p>
+                <div className="space-y-2 mb-6 max-h-[50vh] overflow-y-auto">
+                  {[
+                    { value: 'straight', label: 'Straight', desc: 'Attracted to opposite gender' },
+                    { value: 'gay', label: 'Gay', desc: 'Men attracted to men' },
+                    { value: 'lesbian', label: 'Lesbian', desc: 'Women attracted to women' },
+                    { value: 'bisexual', label: 'Bisexual', desc: 'Attracted to two or more genders' },
+                    { value: 'pansexual', label: 'Pansexual', desc: 'Attracted to all genders' },
+                    { value: 'asexual', label: 'Asexual', desc: 'Little to no sexual attraction' },
+                    { value: 'questioning', label: 'Questioning', desc: 'Still figuring it out' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setVampireSexuality(option.value)}
+                      className={`w-full rounded-lg py-3 px-4 text-left transition-all ${
+                        vampireSexuality === option.value 
+                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      }`}
+                    >
+                      <span className="font-medium">{option.label}</span>
+                      <p className="text-sm opacity-80">{option.desc}</p>
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIntroStep(2)}
                     className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
                   >
                     Back
