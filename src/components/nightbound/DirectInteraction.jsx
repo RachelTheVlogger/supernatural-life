@@ -1674,9 +1674,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           setTimeout(async () => {
             const names = [
               'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
-              'Alex', 'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
+              'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
               'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren',
-              'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar'
+              'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar', 'Dante',
+              'Celeste', 'Zephyr', 'Vesper', 'Sable', 'Crimson', 'Nyx', 'Aspen'
             ];
             const variants = ['devoted', 'defiant', 'dreamer'];
             const emotionalStates = ['curious', 'wary', 'distant'];
@@ -1695,8 +1696,17 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
               'Graveyard Groundskeeper'
             ];
 
+            // Check for existing servant names to avoid duplicates
+            const existingServants = await base44.entities.Servant.list();
+            const existingNames = existingServants.map(s => s.name);
+            const availableNames = names.filter(n => !existingNames.includes(n));
+            
+            const newName = availableNames.length > 0 
+              ? availableNames[Math.floor(Math.random() * availableNames.length)]
+              : names[Math.floor(Math.random() * names.length)];
+
             await base44.entities.Servant.create({
-              name: names[Math.floor(Math.random() * names.length)],
+              name: newName,
               gender: genders[Math.floor(Math.random() * genders.length)],
               sexuality: sexualities[Math.floor(Math.random() * sexualities.length)],
               job: jobs[Math.floor(Math.random() * jobs.length)],

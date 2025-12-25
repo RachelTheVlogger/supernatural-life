@@ -113,8 +113,13 @@ export default function FriendInteraction({ friend, servant, vampireState, onClo
           lonely: 'devoted'
         };
         
+        const genders = ['male', 'female', 'custom'];
+        const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
+        
         await base44.entities.Servant.create({
           name: friend.name,
+          gender: genders[Math.floor(Math.random() * genders.length)],
+          sexuality: sexualities[Math.floor(Math.random() * sexualities.length)],
           variant: variantMap[friend.personality] || 'devoted',
           obsession_stage: 1,
           relationship: Math.floor(newFriendship / 2),
