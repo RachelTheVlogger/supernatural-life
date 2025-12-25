@@ -96,6 +96,8 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [creatingPoll, setCreatingPoll] = useState(false);
   const [pollData, setPollData] = useState({ question: '', options: ['', ''] });
   const [activePoll, setActivePoll] = useState(null);
+  const [generatedImage, setGeneratedImage] = useState(null);
+  const [generatingImage, setGeneratingImage] = useState(false);
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -213,6 +215,19 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     
     if (isFilmedCategory && withVampire) {
       setFilming(true);
+      setGeneratingImage(true);
+      
+      // Generate filming image
+      try {
+        const imagePrompt = `Artistic sensual adult content: couple filming intimate content together, one person holding camera, passionate moment, bedroom setting, suggestive adult content aesthetic, dark romantic lighting, OnlyFans style`;
+        const imageResult = await base44.integrations.Core.GenerateImage({
+          prompt: imagePrompt
+        });
+        setGeneratedImage(imageResult.url);
+      } catch (e) {
+        console.log('Image generation failed');
+      }
+      setGeneratingImage(false);
       
       const isVampFemale = vampireState.gender === 'woman';
       const filmingOutcomes = isVampFemale ? [
@@ -283,6 +298,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           setSelectedCategory(null);
           setFilmWithVampire(null);
           setNewVideo({ title: '', content_type: '', price: 15 });
+          setGeneratedImage(null);
         }, 4000);
       }, 3000);
     } else {
@@ -422,6 +438,22 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const handleLivestream = async (withVampire) => {
     setLivestreaming(true);
     setChatMessages([]);
+    setGeneratingImage(true);
+    
+    // Generate livestream image
+    try {
+      const imagePrompt = withVampire 
+        ? `Artistic sensual adult content scene: couple in intimate moment, passionate embrace, tasteful adult content aesthetic, dark moody lighting, bedroom setting, suggestive but artistic, OnlyFans style content`
+        : `Artistic sensual adult content scene: solo performer in intimate setting, seductive pose, tasteful adult content aesthetic, dark moody lighting, bedroom ambiance, suggestive but artistic, OnlyFans style content`;
+      
+      const imageResult = await base44.integrations.Core.GenerateImage({
+        prompt: imagePrompt
+      });
+      setGeneratedImage(imageResult.url);
+    } catch (e) {
+      console.log('Image generation failed, continuing without image');
+    }
+    setGeneratingImage(false);
     
     const initialMessages = [];
     const isVampFemale = vampireState.gender === 'woman';
@@ -501,6 +533,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
       setTimeout(() => {
         setLivestreaming(false);
         setChatMessages([]);
+        setGeneratedImage(null);
       }, 3000);
     }, 12000);
   };
@@ -1205,32 +1238,48 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         )}
 
         {tab === 'livestream' && livestreaming && (
-          <div className="bg-gradient-to-br from-red-950/60 to-pink-950/60 border-2 border-red-500/50 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <motion.div
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-                className="w-3 h-3 bg-red-500 rounded-full"
-              />
-              <span className="text-red-400 font-bold">LIVE</span>
-              <span className="text-gray-400 text-sm ml-auto">{servantProfile.subscriber_count} watching</span>
-            </div>
-            
-            <div className="bg-black/40 rounded-xl p-3 h-64 overflow-y-auto space-y-2">
-              {chatMessages.map((msg, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="bg-gray-800/60 rounded-lg p-2"
-                >
-                  <div className="flex items-start gap-2">
-                    <span className="text-pink-400 text-xs font-bold">{msg.username}</span>
-                    {msg.tip > 0 && <span className="text-green-400 text-xs">💵 ${msg.tip}</span>}
-                  </div>
-                  <p className="text-gray-300 text-sm">{msg.message}</p>
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            {/* Generated Image */}
+            {generatingImage ? (
+              <div className="bg-gray-800 rounded-xl p-8 text-center">
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="text-5xl mb-2">
+                  📸
                 </motion.div>
-              ))}
+                <p className="text-gray-400">Generating preview...</p>
+              </div>
+            ) : generatedImage && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl overflow-hidden">
+                <img src={generatedImage} alt="Livestream" className="w-full h-64 object-cover rounded-xl" />
+              </motion.div>
+            )}
+
+            <div className="bg-gradient-to-br from-red-950/60 to-pink-950/60 border-2 border-red-500/50 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <motion.div
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="w-3 h-3 bg-red-500 rounded-full"
+                />
+                <span className="text-red-400 font-bold">LIVE</span>
+                <span className="text-gray-400 text-sm ml-auto">{servantProfile.subscriber_count} watching</span>
+              </div>
+              
+              <div className="bg-black/40 rounded-xl p-3 h-48 overflow-y-auto space-y-2">
+                {chatMessages.map((msg, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="bg-gray-800/60 rounded-lg p-2"
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className="text-pink-400 text-xs font-bold">{msg.username}</span>
+                      {msg.tip > 0 && <span className="text-green-400 text-xs">💵 ${msg.tip}</span>}
+                    </div>
+                    <p className="text-gray-300 text-sm">{msg.message}</p>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -1626,9 +1675,14 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
+              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"
             >
               <motion.div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center">
+                {generatedImage && (
+                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="mb-4">
+                    <img src={generatedImage} alt="Content" className="w-full h-48 object-cover rounded-xl" />
+                  </motion.div>
+                )}
                 <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="text-5xl mb-4">
                   🎥
                 </motion.div>
