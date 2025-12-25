@@ -1699,33 +1699,32 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     setOutcome(outcome);
     
     setTimeout(async () => {
-      // Bourbon special effect - coping mechanism like Stefan Salvatore
-      // Sometimes it works, sometimes it doesn't
+      // Bourbon - Stefan Salvatore style. Rarely works. Often fails. Temptation wins.
       if (type === 'bourbon' && vampireState.id) {
         const effectiveness = Math.random();
 
-        if (effectiveness > 0.7) {
-          // Works well - reduces hunger significantly
+        if (effectiveness > 0.85) {
+          // Rarely works - brief respite
           const hungerStates = ['restless', 'heightened', 'lingering', 'calm', 'sated'];
           const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
           if (currentIndex < hungerStates.length - 1) {
             await base44.entities.VampireState.update(vampireState.id, {
               hunger_state: hungerStates[currentIndex + 1]
             });
-            setOutcome(outcome + ' The bourbon helped. The cravings dulled.');
+            setOutcome(outcome + ' The bourbon helped. For now. It won\'t last.');
           }
-        } else if (effectiveness > 0.3) {
-          // Mild effect - just coping
-          setOutcome(outcome + ' The bourbon barely helped. But it\'s something.');
+        } else if (effectiveness > 0.45) {
+          // Does nothing - just delaying the inevitable
+          setOutcome(outcome + ' The bourbon did nothing. The hunger remains. You\'re fooling yourself.');
         } else {
-          // Doesn't work - hunger intensifies
+          // Usually makes it worse - temptation intensifies
           const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
           const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
           if (currentIndex < hungerStates.length - 1) {
             await base44.entities.VampireState.update(vampireState.id, {
               hunger_state: hungerStates[currentIndex + 1]
             });
-            setOutcome(outcome + ' The bourbon made it worse. The hunger roared back.');
+            setOutcome(outcome + ' The bourbon backfired. The hunger intensified. You\'re losing control.');
           }
         }
       }
