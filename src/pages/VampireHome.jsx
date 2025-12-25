@@ -194,8 +194,8 @@ export default function VampireHome() {
           >
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/30">
               <Moon className="w-6 h-6 text-purple-400 mb-2" />
-              <p className="text-2xl font-bold text-white">{vampireState.nights_passed}</p>
-              <p className="text-xs text-gray-400">Nights Survived</p>
+              <p className="text-2xl font-bold text-white">{vampireState.humanity || 50}</p>
+              <p className="text-xs text-gray-400">Humanity</p>
             </div>
             
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/30">
