@@ -96,9 +96,18 @@ export default function RivalVampireModal({ onClose, vampireState }) {
     }, 2000);
   };
 
-  // Ensure exactly 3 rivals
+  // Ensure exactly 3 rivals with unique names
   React.useEffect(() => {
     const initRivals = async () => {
+      const NAME_POOL = [
+        'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
+        'Dorian Blackwood', 'Seraphina Nyx', 'Marcus Ravencroft',
+        'Evangeline Thorn', 'Lucien Deveraux', 'Isolde Morningstar',
+        'Viktor Shadowmere', 'Anastasia Crimson', 'Dante Nightshade'
+      ];
+      
+      const PERSONALITIES = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
+      
       if (rivals.length === 0) {
         const fixedRivals = [
           { name: 'Lilith the Ancient', age: 487, personality: 'seductive', power: 75 },
@@ -122,30 +131,26 @@ export default function RivalVampireModal({ onClose, vampireState }) {
         await Promise.all(toDelete.map(r => base44.entities.RivalVampire.delete(r.id).catch(() => {})));
         queryClient.invalidateQueries(['rivals']);
       } else if (rivals.length < 3) {
-        const namePool = [
-          'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
-          'Dorian Blackwood', 'Seraphina Nyx', 'Marcus Ravencroft',
-          'Evangeline Thorn', 'Lucien Deveraux', 'Isolde Morningstar',
-          'Viktor Shadowmere', 'Anastasia Crimson', 'Dante Nightshade'
-        ];
-        
+        // Get existing names from current rivals
         const existingNames = rivals.map(r => r.name);
-        const availableNames = namePool.filter(n => !existingNames.includes(n));
         
-        if (availableNames.length > 0) {
-          const personalities = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
-          const newName = availableNames[Math.floor(Math.random() * availableNames.length)];
-          
-          await base44.entities.RivalVampire.create({
-            name: newName,
-            age: Math.floor(Math.random() * 500) + 50,
-            personality: personalities[Math.floor(Math.random() * personalities.length)],
-            power_level: Math.floor(Math.random() * 40) + 40,
-            relationship: Math.floor(Math.random() * 40) - 20,
-            servants_count: Math.floor(Math.random() * 5)
-          });
-          queryClient.invalidateQueries(['rivals']);
-        }
+        // Filter out used names from pool
+        const availableNames = NAME_POOL.filter(n => !existingNames.includes(n));
+        
+        // If all names are used (shouldn't happen with 12 names and 3 slots), use a random one with a number
+        const newName = availableNames.length > 0 
+          ? availableNames[Math.floor(Math.random() * availableNames.length)]
+          : `${NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)]} II`;
+        
+        await base44.entities.RivalVampire.create({
+          name: newName,
+          age: Math.floor(Math.random() * 500) + 50,
+          personality: PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)],
+          power_level: Math.floor(Math.random() * 40) + 40,
+          relationship: Math.floor(Math.random() * 40) - 20,
+          servants_count: Math.floor(Math.random() * 5)
+        });
+        queryClient.invalidateQueries(['rivals']);
       }
     };
     
