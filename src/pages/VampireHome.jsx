@@ -31,6 +31,7 @@ export default function VampireHome() {
   const [jealousyEvent, setJealousyEvent] = useState(null);
   const [showCrimsonBliss, setShowCrimsonBliss] = useState(false);
   const [identityRevelation, setIdentityRevelation] = useState(null);
+  const [showVampireIdentity, setShowVampireIdentity] = useState(false);
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -206,6 +207,29 @@ export default function VampireHome() {
             <p className="text-gray-400">Where the night begins and ends</p>
           </motion.div>
           
+          {/* Vampire Identity Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="mb-6"
+          >
+            <button
+              onClick={() => setShowVampireIdentity(true)}
+              className="w-full bg-gradient-to-r from-purple-900/40 to-pink-900/40 hover:from-purple-900/60 hover:to-pink-900/60 border-2 border-purple-500/50 rounded-xl p-4 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div className="text-left">
+                  <h3 className="text-white font-medium">Your Identity</h3>
+                  <p className="text-gray-400 text-sm">
+                    {vampireState.gender} • {vampireState.sexuality}
+                  </p>
+                </div>
+                <Heart className="w-5 h-5 text-purple-400" />
+              </div>
+            </button>
+          </motion.div>
+
           {/* Quick Stats Overview */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -667,6 +691,111 @@ export default function VampireHome() {
             vampireState={vampireState}
             onClose={() => setIdentityRevelation(null)}
           />
+        )}
+        {showVampireIdentity && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowVampireIdentity(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative max-h-[85vh] overflow-y-auto"
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowVampireIdentity(false);
+                }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-2xl font-bold text-white mb-2">Your Identity</h2>
+              <p className="text-gray-400 text-sm mb-4">Who you are, who you've always been</p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white font-medium mb-2 block">Gender</label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'male', label: 'Male', pronouns: 'He/Him' },
+                      { value: 'female', label: 'Female', pronouns: 'She/Her' },
+                      { value: 'custom', label: 'Custom', pronouns: 'They/Them' }
+                    ].map(g => (
+                      <button
+                        key={g.value}
+                        onClick={async () => {
+                          try {
+                            await base44.entities.VampireState.update(vampireState.id, { gender: g.value });
+                            queryClient.invalidateQueries();
+                          } catch (e) {
+                            console.error('Failed to update gender:', e);
+                          }
+                        }}
+                        className={`w-full rounded-lg py-3 px-4 text-left transition-colors ${
+                          vampireState.gender === g.value 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <span className="font-medium">{g.label}</span>
+                        <p className="text-sm opacity-80">{g.pronouns}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-white font-medium mb-2 block">Sexuality</label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'straight', label: 'Straight', desc: 'Attracted to opposite gender' },
+                      { value: 'gay', label: 'Gay', desc: 'Men attracted to men' },
+                      { value: 'lesbian', label: 'Lesbian', desc: 'Women attracted to women' },
+                      { value: 'bisexual', label: 'Bisexual', desc: 'Attracted to two or more genders' },
+                      { value: 'pansexual', label: 'Pansexual', desc: 'Attracted to all genders' },
+                      { value: 'asexual', label: 'Asexual', desc: 'Little to no sexual attraction' },
+                      { value: 'questioning', label: 'Questioning', desc: 'Still figuring it out' }
+                    ].map(option => (
+                      <button
+                        key={option.value}
+                        onClick={async () => {
+                          try {
+                            await base44.entities.VampireState.update(vampireState.id, { sexuality: option.value });
+                            queryClient.invalidateQueries();
+                          } catch (e) {
+                            console.error('Failed to update sexuality:', e);
+                          }
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm ${
+                          vampireState.sexuality === option.value 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <span className="font-medium">{option.label}</span>
+                        <p className="text-xs opacity-70">{option.desc}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowVampireIdentity(false)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition-colors mt-4"
+                >
+                  Done
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
         {showAllFriends && (
           <motion.div
