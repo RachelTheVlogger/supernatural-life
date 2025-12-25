@@ -14,6 +14,7 @@ import FriendInteraction from '@/components/nightbound/FriendInteraction';
 import DateOutingModal from '@/components/nightbound/DateOutingModal';
 import ServantJealousyEvent from '@/components/nightbound/ServantJealousyEvent';
 import CrimsonBlissLab from '@/components/nightbound/CrimsonBlissLab';
+import ServantIdentityRevelation from '@/components/nightbound/ServantIdentityRevelation';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ export default function VampireHome() {
   const [dateServant, setDateServant] = useState(null);
   const [jealousyEvent, setJealousyEvent] = useState(null);
   const [showCrimsonBliss, setShowCrimsonBliss] = useState(false);
+  const [identityRevelation, setIdentityRevelation] = useState(null);
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -132,6 +134,16 @@ export default function VampireHome() {
       const highJealousy = jealousServants.filter(s => (s.jealousy_level || 0) > 60);
       if (highJealousy.length >= 2 && !jealousyEvent && Math.random() > 0.7) {
         setJealousyEvent({ s1: highJealousy[0], s2: highJealousy[1] });
+      }
+    }
+  }, [servants]);
+
+  // Check for identity revelation events
+  React.useEffect(() => {
+    if (servants.length > 0) {
+      const needsRevelation = servants.filter(s => !s.identity_revealed && (s.relationship || 0) > 30);
+      if (needsRevelation.length > 0 && !identityRevelation && Math.random() > 0.6) {
+        setIdentityRevelation(needsRevelation[0]);
       }
     }
   }, [servants]);
@@ -647,6 +659,13 @@ export default function VampireHome() {
             vampireState={vampireState}
             servants={servants}
             onClose={() => setShowCrimsonBliss(false)}
+          />
+        )}
+        {identityRevelation && (
+          <ServantIdentityRevelation
+            servant={identityRevelation}
+            vampireState={vampireState}
+            onClose={() => setIdentityRevelation(null)}
           />
         )}
         {showAllFriends && (
