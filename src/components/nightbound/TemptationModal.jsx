@@ -114,7 +114,7 @@ const TEMPTATIONS = {
       // Generate new servant
       const names = ['Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven'];
       const variants = ['devoted', 'defiant', 'dreamer'];
-      const genders = ['male', 'female', 'custom'];
+      const genders = ['man', 'woman', 'custom'];
       const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
       const newName = names[Math.floor(Math.random() * names.length)];
       const newVariant = variants[Math.floor(Math.random() * variants.length)];

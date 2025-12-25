@@ -151,7 +151,7 @@ export default function Night() {
     try {
       const variants = ['devoted', 'defiant', 'dreamer'];
       const emotionalStates = ['curious', 'wary', 'distant'];
-      const genders = ['male', 'female', 'custom'];
+      const genders = ['man', 'woman', 'custom'];
       const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
       const randomVariant = variants[Math.floor(Math.random() * variants.length)];
       const randomState = emotionalStates[Math.floor(Math.random() * emotionalStates.length)];

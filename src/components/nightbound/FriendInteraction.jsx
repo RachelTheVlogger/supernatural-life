@@ -124,7 +124,7 @@ export default function FriendInteraction({ friend, servant, vampireState, onClo
           lonely: 'devoted'
         };
         
-        const genders = ['male', 'female', 'custom'];
+        const genders = ['man', 'woman', 'custom'];
         const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
         
         await base44.entities.Servant.create({

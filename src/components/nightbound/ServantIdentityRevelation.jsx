@@ -10,7 +10,7 @@ export default function ServantIdentityRevelation({ servant, onClose }) {
   const [revealed, setRevealed] = useState(false);
   
   // Generate identity if not set
-  const gender = servant.gender || ['male', 'female', 'custom'][Math.floor(Math.random() * 3)];
+  const gender = servant.gender || ['man', 'woman', 'custom'][Math.floor(Math.random() * 3)];
   const sexuality = servant.sexuality || ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'][Math.floor(Math.random() * 7)];
   
   const handleReveal = async () => {
@@ -43,8 +43,8 @@ export default function ServantIdentityRevelation({ servant, onClose }) {
   };
   
   const getGenderLabel = (g) => {
-    if (g === 'male') return 'male';
-    if (g === 'female') return 'female';
+    if (g === 'man') return 'a man';
+    if (g === 'woman') return 'a woman';
     return 'non-binary';
   };
   

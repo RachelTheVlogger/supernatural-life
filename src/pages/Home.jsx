@@ -11,7 +11,7 @@ export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [vampireName, setVampireName] = useState('');
-  const [vampireGender, setVampireGender] = useState('male');
+  const [vampireGender, setVampireGender] = useState('man');
   const [vampireSexuality, setVampireSexuality] = useState('bisexual');
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
@@ -193,25 +193,25 @@ export default function Home() {
                 <p className="text-purple-300 text-sm mb-4">How do you see yourself?</p>
                 <div className="space-y-3 mb-6">
                   <button
-                    onClick={() => setVampireGender('male')}
+                    onClick={() => setVampireGender('man')}
                     className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                      vampireGender === 'male' 
+                      vampireGender === 'man' 
                         ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
                         : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                     }`}
                   >
-                    <span className="font-medium">Male</span>
+                    <span className="font-medium">Man</span>
                     <p className="text-sm opacity-80">He/Him</p>
                   </button>
                   <button
-                    onClick={() => setVampireGender('female')}
+                    onClick={() => setVampireGender('woman')}
                     className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                      vampireGender === 'female' 
+                      vampireGender === 'woman' 
                         ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
                         : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                     }`}
                   >
-                    <span className="font-medium">Female</span>
+                    <span className="font-medium">Woman</span>
                     <p className="text-sm opacity-80">She/Her</p>
                   </button>
                   <button

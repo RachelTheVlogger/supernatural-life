@@ -757,8 +757,8 @@ export default function VampireHome() {
                   <label className="text-white font-medium mb-2 block">Gender</label>
                   <div className="space-y-2">
                     {[
-                      { value: 'male', label: 'Male', pronouns: 'He/Him' },
-                      { value: 'female', label: 'Female', pronouns: 'She/Her' },
+                      { value: 'man', label: 'Man', pronouns: 'He/Him' },
+                      { value: 'woman', label: 'Woman', pronouns: 'She/Her' },
                       { value: 'custom', label: 'Custom', pronouns: 'They/Them' }
                     ].map(g => (
                       <button

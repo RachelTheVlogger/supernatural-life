@@ -1597,7 +1597,7 @@ const INTERACTIONS = {
 };
 
 export default function DirectInteraction({ servant, vampireState, onClose }) {
-  const isVampFemale = vampireState.gender === 'female';
+  const isVampFemale = vampireState.gender === 'woman';
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [interactionType, setInteractionType] = useState('');
@@ -1837,7 +1837,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             ];
             const variants = ['devoted', 'defiant', 'dreamer'];
             const emotionalStates = ['curious', 'wary', 'distant'];
-            const genders = ['male', 'female', 'custom'];
+            const genders = ['man', 'woman', 'custom'];
             const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
             const jobs = [
               'Night Club Bartender',
@@ -2059,8 +2059,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                   <label className="text-white font-medium mb-2 block">Gender</label>
                   <div className="space-y-2">
                     {[
-                      { value: 'male', label: 'Male' },
-                      { value: 'female', label: 'Female' },
+                      { value: 'man', label: 'Man' },
+                      { value: 'woman', label: 'Woman' },
                       { value: 'custom', label: 'Custom' }
                     ].map(g => (
                       <button

@@ -7,7 +7,7 @@ import OnlyFangsMerch from './OnlyFangsMerch';
 
 // Generate gender-appropriate examples
 const getGenderExamples = (vampireGender) => {
-  const isFemale = vampireGender === 'female';
+  const isFemale = vampireGender === 'woman';
   const vampireAnatomy = isFemale ? 'touching myself' : 'stroking myself';
   const servantAnatomy = 'touching myself'; // Servant examples remain neutral
   
@@ -227,7 +227,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     if (isFilmedCategory && withVampire) {
       setFilming(true);
       
-      const isVampFemale = vampireState.gender === 'female';
+      const isVampFemale = vampireState.gender === 'woman';
       const filmingOutcomes = isVampFemale ? [
         'You held the camera. Watched them perform. Got so wet watching. Had to put the camera down and join.',
         'Behind the lens. Filming them. They looked at you with those eyes. You couldn\'t resist anymore.',
@@ -482,7 +482,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     
     // Generate initial chat messages
     const initialMessages = [];
-    const isVampFemale = vampireState.gender === 'female';
+    const isVampFemale = vampireState.gender === 'woman';
     const explicitMessages = withVampire ? (isVampFemale ? [
       'Oh fuck yes take it',
       'Make them scream',
