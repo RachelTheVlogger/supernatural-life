@@ -1375,6 +1375,7 @@ const INTERACTIONS = {
 };
 
 export default function DirectInteraction({ servant, vampireState, onClose }) {
+  const isVampFemale = vampireState.gender === 'female';
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [interactionType, setInteractionType] = useState('');

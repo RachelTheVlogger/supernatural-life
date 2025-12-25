@@ -5,10 +5,27 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import OnlyFangsMerch from './OnlyFangsMerch';
 
+// Generate gender-appropriate examples
+const getGenderExamples = (vampireGender) => {
+  const isFemale = vampireGender === 'female';
+  const vampireAnatomy = isFemale ? 'touching myself' : 'stroking myself';
+  const servantAnatomy = 'touching myself'; // Servant examples remain neutral
+  
+  return {
+    couple: isFemale 
+      ? ['Making love together', 'Vampire takes their servant', 'Riding my vampire', 'Getting filled on camera', 'Passionate fucking', 'Shower sex']
+      : ['Making love together', 'Vampire takes their servant', 'Riding my vampire', 'Getting bred on camera', 'Passionate fucking', 'Shower sex'],
+    filmed: ['They film me masturbating', 'Stripping and touching myself', 'Using toys while they watch', 'Fingering myself for them', 'Moaning for the camera'],
+    vampiresolo: isFemale
+      ? ['Vampire masturbating', 'Vampire stripping and teasing', 'Playing with my pussy', 'Vampire using toys', 'Showing everything']
+      : ['Vampire masturbating', 'Vampire stripping and teasing', 'Dominant vampire jerking off', 'Vampire using toys', 'Vampire showing everything']
+  };
+};
+
 const VIDEO_CATEGORIES = {
-  couple: { label: 'Couple', icon: '💑', examples: ['Making love together', 'Vampire takes their servant', 'Riding my vampire', 'Getting bred on camera', 'Passionate fucking', 'Shower sex'], minRep: 0 },
-  filmed: { label: 'Filmed by Partner', icon: '🎥', examples: ['They film me masturbating', 'Stripping and touching myself', 'Using toys while they watch', 'Fingering myself for them', 'Moaning for the camera'], minRep: 0 },
-  vampiresolo: { label: 'Vampire Solo', icon: '🦇', examples: ['Vampire masturbating', 'Vampire stripping and teasing', 'Dominant vampire jerking off', 'Vampire using toys', 'Vampire showing everything'], minRep: 0 },
+  couple: { label: 'Couple', icon: '💑', minRep: 0 },
+  filmed: { label: 'Filmed by Partner', icon: '🎥', minRep: 0 },
+  vampiresolo: { label: 'Vampire Solo', icon: '🦇', minRep: 0 },
   solo: { label: 'Solo', icon: '💋', examples: ['Masturbating thinking of you', 'Undressing and fingering myself', 'Playing with toys and moaning', 'Multiple orgasms on camera', 'Edging and cumming'], minRep: 0 },
   pov: { label: 'POV', icon: '👁️', examples: ['Your view while I ride you', 'On my knees for you', 'Waking up together', 'Between my legs', 'Facesitting POV'], minRep: 0 },
   roleplay: { label: 'Roleplay', icon: '🎭', examples: ['Vampire seduction', 'Your obedient servant', 'Master and pet', 'Forbidden encounter', 'Dark ritual'], minRep: 0 },
@@ -50,6 +67,15 @@ const WISHLIST_ITEMS = [
 export default function OnlyFangsManagement({ servant, vampireState, onClose }) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('profile');
+  
+  // Gender-appropriate examples
+  const genderExamples = getGenderExamples(vampireState.gender);
+  const updatedCategories = {
+    ...VIDEO_CATEGORIES,
+    couple: { ...VIDEO_CATEGORIES.couple, examples: genderExamples.couple },
+    filmed: { ...VIDEO_CATEGORIES.filmed, examples: genderExamples.filmed },
+    vampiresolo: { ...VIDEO_CATEGORIES.vampiresolo, examples: genderExamples.vampiresolo }
+  };
   const [creating, setCreating] = useState(false);
   const [filming, setFilming] = useState(false);
   const [filmingOutcome, setFilmingOutcome] = useState('');
@@ -201,7 +227,17 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     if (isFilmedCategory && withVampire) {
       setFilming(true);
       
-      const filmingOutcomes = [
+      const isVampFemale = vampireState.gender === 'female';
+      const filmingOutcomes = isVampFemale ? [
+        'You held the camera. Watched them perform. Got so wet watching. Had to put the camera down and join.',
+        'Behind the lens. Filming them. They looked at you with those eyes. You couldn\'t resist anymore.',
+        'You directed them. "Touch yourself there." They obeyed. You were dripping by the end.',
+        'Filming them strip. Your hands shaking. They noticed. "Want to be in the video too?"',
+        'You watched through the camera. So fucking beautiful. Had to stop filming to touch them.',
+        'Behind the camera, watching them pleasure themselves. Your pussy throbbing. They saw. Smiled.',
+        'Filming session became a fucking session. The camera kept rolling. Better content anyway.',
+        'You tried to stay professional. Failed completely. Ended up making couple content instead.'
+      ] : [
         'You held the camera. Watched them perform. Got hard watching. Had to put the camera down and join.',
         'Behind the lens. Filming them. They looked at you with those eyes. You couldn\'t resist anymore.',
         'You directed them. "Touch yourself there." They obeyed. You were aching by the end.',
@@ -446,7 +482,19 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     
     // Generate initial chat messages
     const initialMessages = [];
-    const explicitMessages = withVampire ? [
+    const isVampFemale = vampireState.gender === 'female';
+    const explicitMessages = withVampire ? (isVampFemale ? [
+      'Oh fuck yes take it',
+      'Make them scream',
+      'So hot together 💦',
+      'You\'re both so fucking hot',
+      'I wish I was there',
+      'Ride them harder',
+      'Yes! Fuck!',
+      'Your moans are perfect 🔥',
+      'Best stream ever',
+      'Don\'t stop',
+    ] : [
       'Oh fuck yes breed her',
       'Make her scream daddy',
       'Fill her up 💦',
@@ -457,7 +505,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
       'Her moans are perfect 🔥',
       'Best stream ever',
       'Take it all baby',
-    ] : [
+    ]) : [
       'You\'re so fucking sexy',
       'Touch yourself for us',
       'Show us more baby',
@@ -1376,7 +1424,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               <>
                 <h3 className="text-white font-bold mb-3">Choose Content Category</h3>
                 <div className="grid md:grid-cols-3 gap-3">
-                  {Object.entries(VIDEO_CATEGORIES).map(([key, cat]) => {
+                  {Object.entries(updatedCategories).map(([key, cat]) => {
                     const isLocked = cat.minRep > servantProfile.reputation;
                     const isNew = cat.minRep > 0 && cat.minRep <= servantProfile.reputation && cat.minRep > (servantProfile.reputation - 20);
 
@@ -1416,7 +1464,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 </button>
 
                 <h3 className="text-white font-bold mb-3">
-                  {VIDEO_CATEGORIES[selectedCategory].icon} {VIDEO_CATEGORIES[selectedCategory].label} Content
+                  {updatedCategories[selectedCategory].icon} {updatedCategories[selectedCategory].label} Content
                 </h3>
 
                 <div className="space-y-3">
@@ -1431,7 +1479,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     <details className="mt-2">
                       <summary className="text-purple-400 text-xs cursor-pointer">Quick suggestions</summary>
                       <div className="grid grid-cols-1 gap-1 mt-2">
-                        {VIDEO_CATEGORIES[selectedCategory].examples.map(ex => (
+                        {updatedCategories[selectedCategory].examples.map(ex => (
                           <button
                             key={ex}
                             type="button"
