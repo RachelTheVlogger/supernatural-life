@@ -76,19 +76,21 @@ export default function ServantAutomationSettings({ servant, onClose }) {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 rounded-2xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto"
+        className="bg-gray-900 rounded-2xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto relative"
       >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Settings className="w-6 h-6 text-purple-400" />
-            <h2 className="text-2xl font-bold text-white">Automation Settings</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="flex items-center gap-2 mb-6">
+          <Settings className="w-6 h-6 text-purple-400" />
+          <h2 className="text-2xl font-bold text-white">Automation Settings</h2>
         </div>
 
         <p className="text-gray-400 text-sm mb-6">

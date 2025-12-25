@@ -48,11 +48,14 @@ export default function RelationshipEvent({ milestone, servantName, onClose }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gradient-to-b from-purple-900/40 to-red-900/40 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-purple-500/30"
+        className="bg-gradient-to-b from-purple-900/40 to-red-900/40 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-purple-500/30 relative"
       >
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>
