@@ -961,82 +961,94 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   };
 
   const handleCreatePost = async () => {
-    if (!newPost.content || !newPost.caption) return;
+    if (!newPost.content || !newPost.caption || creatingPost) return;
     setCreatingPost(true);
     
     setTimeout(async () => {
-      const post = await base44.entities.OnlyFangsPost.create({
-        servant_id: servant.id,
-        caption: newPost.caption,
-        content: newPost.content,
-        is_ppv: newPost.is_ppv,
-        price: newPost.price,
-        likes: 0,
-        earnings: 0
-      });
-
-      const baseLikes = Math.floor(Math.random() * 100) + 50;
-      let earnings = 0;
-      
-      if (newPost.is_ppv) {
-        const unlocks = Math.floor(servantProfile.subscriber_count * (Math.random() * 0.3 + 0.2));
-        earnings = unlocks * newPost.price;
-      }
-
-      await base44.entities.OnlyFangsPost.update(post.id, {
-        likes: baseLikes,
-        earnings: earnings
-      });
-
-      // Generate 3-8 comments with unique usernames
-      const numComments = Math.floor(Math.random() * 6) + 3;
-      const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire'];
-      const comments = [
-        'So fucking hot 🔥', 'Damn you look amazing', 'I need more of you', 'Perfect body',
-        'This is everything', 'You\'re so sexy', 'Can\'t stop looking at this', 'Wow just wow',
-        'Please post more like this', 'Absolutely stunning', 'My favorite creator', 'So beautiful',
-        'This made my night', 'I\'m obsessed with you', 'Best content ever', 'You\'re incredible'
-      ];
-      
-      const usedNames = new Set();
-      for (let i = 0; i < numComments; i++) {
-        let username = usernames[Math.floor(Math.random() * usernames.length)];
-        let attempts = 0;
-        while (usedNames.has(username) && attempts < 10) {
-          username = usernames[Math.floor(Math.random() * usernames.length)];
-          attempts++;
-        }
-        usedNames.add(username);
-        
-        await base44.entities.OnlyFangsComment.create({
+      try {
+        const post = await base44.entities.OnlyFangsPost.create({
           servant_id: servant.id,
-          post_id: post.id,
-          username,
-          comment: comments[Math.floor(Math.random() * comments.length)],
-          tip: Math.random() > 0.7 ? Math.floor(Math.random() * 20) + 5 : 0
+          caption: newPost.caption,
+          content: newPost.content,
+          is_ppv: newPost.is_ppv,
+          price: newPost.price,
+          likes: 0,
+          earnings: 0
         });
+
+        const baseLikes = Math.floor(Math.random() * 100) + 50;
+        let earnings = 0;
+        
+        if (newPost.is_ppv) {
+          const unlocks = Math.floor(servantProfile.subscriber_count * (Math.random() * 0.3 + 0.2));
+          earnings = unlocks * newPost.price;
+        }
+
+        await base44.entities.OnlyFangsPost.update(post.id, {
+          likes: baseLikes,
+          earnings: earnings
+        });
+
+        // Generate 3-8 comments with unique usernames - batch creation
+        const numComments = Math.floor(Math.random() * 6) + 3;
+        const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire'];
+        const comments = [
+          'So fucking hot 🔥', 'Damn you look amazing', 'I need more of you', 'Perfect body',
+          'This is everything', 'You\'re so sexy', 'Can\'t stop looking at this', 'Wow just wow',
+          'Please post more like this', 'Absolutely stunning', 'My favorite creator', 'So beautiful',
+          'This made my night', 'I\'m obsessed with you', 'Best content ever', 'You\'re incredible'
+        ];
+        
+        const usedNames = new Set();
+        const commentPromises = [];
+        
+        for (let i = 0; i < numComments; i++) {
+          let username = usernames[Math.floor(Math.random() * usernames.length)];
+          let attempts = 0;
+          while (usedNames.has(username) && attempts < 10) {
+            username = usernames[Math.floor(Math.random() * usernames.length)];
+            attempts++;
+          }
+          usedNames.add(username);
+          
+          commentPromises.push(
+            base44.entities.OnlyFangsComment.create({
+              servant_id: servant.id,
+              post_id: post.id,
+              username,
+              comment: comments[Math.floor(Math.random() * comments.length)],
+              tip: Math.random() > 0.7 ? Math.floor(Math.random() * 20) + 5 : 0
+            })
+          );
+        }
+
+        // Wait for all comments to be created
+        await Promise.all(commentPromises);
+
+        const newRevenue = servantProfile.revenue + earnings;
+        const newSubs = servantProfile.subscriber_count + Math.floor(Math.random() * 8) + 2;
+        const newRep = Math.min(100, servantProfile.reputation + Math.floor(Math.random() * 5) + 2);
+
+        await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+          revenue: newRevenue,
+          subscriber_count: newSubs,
+          reputation: newRep
+        });
+
+        await base44.entities.NightLog.create({
+          entry: `${servant.name} posted: "${newPost.caption}". ${baseLikes} likes. ${numComments} comments.${newPost.is_ppv ? ` Earned $${earnings}.` : ''}`,
+          category: 'interaction',
+          intensity: 'moderate'
+        });
+
+        queryClient.invalidateQueries();
+        setCreatingPost(false);
+        setNewPost({ caption: '', content: '', is_ppv: false, price: 0 });
+        setTab('posts');
+      } catch (error) {
+        console.error('Error creating post:', error);
+        setCreatingPost(false);
       }
-
-      const newRevenue = servantProfile.revenue + earnings;
-      const newSubs = servantProfile.subscriber_count + Math.floor(Math.random() * 8) + 2;
-      const newRep = Math.min(100, servantProfile.reputation + Math.floor(Math.random() * 5) + 2);
-
-      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-        revenue: newRevenue,
-        subscriber_count: newSubs,
-        reputation: newRep
-      });
-
-      await base44.entities.NightLog.create({
-        entry: `${servant.name} posted: "${newPost.caption}". ${baseLikes} likes. ${numComments} comments.${newPost.is_ppv ? ` Earned $${earnings}.` : ''}`,
-        category: 'interaction',
-        intensity: 'moderate'
-      });
-
-      queryClient.invalidateQueries();
-      setCreatingPost(false);
-      setNewPost({ caption: '', content: '', is_ppv: false, price: 0 });
-      setTab('posts');
     }, 2000);
   };
 
