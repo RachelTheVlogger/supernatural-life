@@ -23,6 +23,7 @@ import BloodTypeSystem from '@/components/nightbound/BloodTypeSystem';
 import VampireWeaknessModal from '@/components/nightbound/VampireWeaknessModal';
 import MilestonesDisplay from '@/components/nightbound/MilestonesDisplay';
 import CovenManagement from '@/components/nightbound/CovenManagement';
+import ServantInteractions from '@/components/nightbound/ServantInteractions';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -124,6 +125,31 @@ export default function Night() {
     restless: 'rgba(200, 0, 0, 0.9)'
   }[vampireState.hunger_state];
   
+  const handleAddServant = async () => {
+    const variants = ['devoted', 'defiant', 'dreamer'];
+    const emotionalStates = ['curious', 'wary', 'distant'];
+    const randomVariant = variants[Math.floor(Math.random() * variants.length)];
+    const randomState = emotionalStates[Math.floor(Math.random() * emotionalStates.length)];
+
+    const existingNames = servants.map(s => s.name);
+    const newName = generateRandomName(existingNames);
+
+    await base44.entities.Servant.create({
+      name: newName,
+      variant: randomVariant,
+      obsession_stage: 1,
+      emotional_state: randomState
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${newName} has entered your life. A new servant begins their journey.`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+
+    queryClient.invalidateQueries(['servants']);
+  };
+
   const actions = [
     { icon: Droplets, label: 'Feed', modal: 'feeding' },
     { icon: Users, label: 'Servants', modal: 'servants' },
@@ -171,12 +197,36 @@ export default function Night() {
       
       {/* Action buttons - Bitlife style */}
       <div className="max-w-2xl mx-auto space-y-3 mb-8 max-h-[50vh] overflow-y-auto">
+        {servants.length > 1 && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            onClick={() => setActiveModal('servant-interactions')}
+            className="w-full bg-gradient-to-r from-pink-900/60 to-purple-900/60 hover:from-pink-900/80 hover:to-purple-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
+          >
+            <Users className="w-5 h-5 text-white" />
+            <span className="text-base font-medium text-white">Servant Interactions ({servants.length} servants)</span>
+          </motion.button>
+        )}
+
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: servants.length > 1 ? 0.05 : 0 }}
+          onClick={handleAddServant}
+          className="w-full bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-2 border-green-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
+        >
+          <Users className="w-5 h-5 text-white" />
+          <span className="text-base font-medium text-white">Add New Servant</span>
+        </motion.button>
+
         {actions.map((action, i) => (
           <motion.button
             key={action.label}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: i * 0.05 }}
+            transition={{ duration: 0.4, delay: (servants.length > 1 ? 0.1 : 0.05) + i * 0.05 }}
             onClick={() => setActiveModal(action.modal)}
             className="bitlife-btn w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg"
           >
@@ -413,6 +463,13 @@ export default function Night() {
           <CovenManagement
             vampireState={vampireState}
             servants={servants}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'servant-interactions' && (
+          <ServantInteractions
+            servants={servants}
+            vampireState={vampireState}
             onClose={() => setActiveModal(null)}
           />
         )}
