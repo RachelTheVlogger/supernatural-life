@@ -135,6 +135,11 @@ export default function Night() {
   }[vampireState.hunger_state];
   
   const handleAddServant = async () => {
+    if (servants.length >= 2) {
+      alert('You can only have 2 servants at a time.');
+      return;
+    }
+
     try {
       const variants = ['devoted', 'defiant', 'dreamer'];
       const emotionalStates = ['curious', 'wary', 'distant'];
@@ -214,16 +219,18 @@ export default function Night() {
       
       {/* Action buttons - Bitlife style */}
       <div className="max-w-2xl mx-auto space-y-3 mb-8 max-h-[50vh] overflow-y-auto">
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: servants.length > 1 ? 0.05 : 0 }}
-          onClick={handleAddServant}
-          className="w-full bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-2 border-green-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
-        >
-          <Users className="w-5 h-5 text-white" />
-          <span className="text-base font-medium text-white">Add New Servant</span>
-        </motion.button>
+        {servants.length < 2 && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0 }}
+            onClick={handleAddServant}
+            className="w-full bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-2 border-green-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
+          >
+            <Users className="w-5 h-5 text-white" />
+            <span className="text-base font-medium text-white">Add New Servant</span>
+          </motion.button>
+        )}
 
         {actions.map((action, i) => (
           <motion.button
