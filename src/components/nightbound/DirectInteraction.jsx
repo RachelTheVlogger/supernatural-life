@@ -1507,13 +1507,25 @@ const INTERACTIONS = {
   },
   bourbon: {
     icon: Wine,
-    label: 'Drink bourbon',
+    label: 'Drink bourbon (cope)',
     category: 'activity',
     gains: [4, 8],
     outcomes: {
-      low: ['You shared bourbon. They sipped. You tried. Burned going down.', 'Bourbon. Strong. You felt almost human drinking it.', 'You drank together. The alcohol did nothing to you. Almost nothing.'],
-      mid: ['Bourbon flowed. They got tipsy. You pretended. Shared the moment.', 'You poured glasses. Drank. Talked. Almost forgot the hunger.', 'Bourbon and conversation. They relaxed. You watched them.'],
-      high: ['Bourbon together. They were drunk and honest. You were present. The hunger dimmed. Slightly.', 'You drank bourbon for hours. They opened up. You felt... less monstrous.', 'Bourbon helped. Maybe. The cravings quieted. Or you just forgot them.']
+      low: [
+        'You poured bourbon. Drank it neat. The burn distracted from the hunger. Barely.',
+        'Bourbon. Glass after glass. They watched you. "You okay?" Not really.',
+        'You drank to dull the cravings. It worked. Sort of. For now.'
+      ],
+      mid: [
+        'Bourbon became a ritual. Pour. Drink. Resist. They didn\'t ask why you needed it.',
+        'You drank bourbon instead of blood. Healthier? Debatable. Necessary? Absolutely.',
+        'The bottle emptied. The hunger remained. But quieter. Manageable. Almost.'
+      ],
+      high: [
+        'Bourbon was your anchor. Your control. They understood. Didn\'t judge. Stayed.',
+        'You drank bourbon for hours. Talking. Laughing. Almost forgot you were a monster.',
+        'The cravings screamed. The bourbon whispered. You listened to the bourbon. This time.'
+      ]
     },
     special: true
   },
@@ -1687,16 +1699,33 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     setOutcome(outcome);
     
     setTimeout(async () => {
-      // Bourbon special effect - chance to reduce hunger
+      // Bourbon special effect - coping mechanism like Stefan Salvatore
+      // Sometimes it works, sometimes it doesn't
       if (type === 'bourbon' && vampireState.id) {
-        const hungerReduced = Math.random() > 0.5; // 50% chance
-        if (hungerReduced) {
+        const effectiveness = Math.random();
+
+        if (effectiveness > 0.7) {
+          // Works well - reduces hunger significantly
           const hungerStates = ['restless', 'heightened', 'lingering', 'calm', 'sated'];
           const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
           if (currentIndex < hungerStates.length - 1) {
             await base44.entities.VampireState.update(vampireState.id, {
               hunger_state: hungerStates[currentIndex + 1]
             });
+            setOutcome(outcome + ' The bourbon helped. The cravings dulled.');
+          }
+        } else if (effectiveness > 0.3) {
+          // Mild effect - just coping
+          setOutcome(outcome + ' The bourbon barely helped. But it\'s something.');
+        } else {
+          // Doesn't work - hunger intensifies
+          const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
+          const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
+          if (currentIndex < hungerStates.length - 1) {
+            await base44.entities.VampireState.update(vampireState.id, {
+              hunger_state: hungerStates[currentIndex + 1]
+            });
+            setOutcome(outcome + ' The bourbon made it worse. The hunger roared back.');
           }
         }
       }
