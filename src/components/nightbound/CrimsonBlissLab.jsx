@@ -8,7 +8,7 @@ const BASE_STRAINS = [
   { name: 'Crimson Bliss', potency: 1, effects: 'Mild euphoria. Colors slightly brighter. Warm feeling.', price: 50, addictiveness: 30 },
   { name: 'Midnight Rush', potency: 3, effects: 'Intense visuals. Time slows. Everything pulses.', price: 150, addictiveness: 50 },
   { name: 'Eternal Dream', potency: 5, effects: 'Reality fractures. See through dimensions. Pure ecstasy.', price: 300, addictiveness: 70 },
-  { name: 'Bloodfire', potency: 7, effects: 'Your blood burns. Power surges. Primal rage mixed with bliss.', price: 500, addictiveness: 85 },
+  { name: 'Bloodfire', potency: 7, effects: 'your blood burns. Power surges. Primal rage mixed with bliss.', price: 500, addictiveness: 85 },
   { name: 'Void Kiss', potency: 10, effects: 'Total ego death. Become the darkness itself. Transcendence.', price: 1000, addictiveness: 95 }
 ];
 
