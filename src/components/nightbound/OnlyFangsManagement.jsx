@@ -27,6 +27,7 @@ const VIDEO_CATEGORIES = {
   filmed: { label: 'Filmed by Partner', icon: '🎥', minRep: 0 },
   vampiresolo: { label: 'Vampire Solo', icon: '🦇', minRep: 0 },
   solo: { label: 'Solo', icon: '💋', examples: ['Masturbating thinking of you', 'Undressing and fingering myself', 'Playing with toys and moaning', 'Multiple orgasms on camera', 'Edging and cumming'], minRep: 0 },
+  clothed: { label: 'Clothed/Lingerie', icon: '👙', examples: ['Lingerie try-on', 'Strip tease (clothes stay on)', 'Modeling new outfits', 'Teasing in silk', 'Bra and panties showcase', 'Sensual but covered'], minRep: 0 },
   pov: { label: 'POV', icon: '👁️', examples: ['Your view while I ride you', 'On my knees for you', 'Waking up together', 'Between my legs', 'Facesitting POV'], minRep: 0 },
   roleplay: { label: 'Roleplay', icon: '🎭', examples: ['Vampire seduction', 'Your obedient servant', 'Master and pet', 'Forbidden encounter', 'Dark ritual'], minRep: 0 },
   teasing: { label: 'Teasing', icon: '😈', examples: ['Strip tease', 'Almost showing everything', 'Teasing touches', 'Denial game', 'Edge play'], minRep: 0 },
@@ -1959,12 +1960,30 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
                 <div className="bg-gray-800 rounded-xl p-4">
                   <h4 className="text-white font-medium mb-2">Subscription Tiers</h4>
+                  <p className="text-gray-400 text-xs mb-3">Set your monthly subscription prices</p>
                   <div className="space-y-2">
                     {SUBSCRIPTION_TIERS.map(tier => (
                       <div key={tier.name} className="bg-gray-900 rounded-lg p-3">
-                        <div className="flex justify-between items-center mb-1">
+                        <div className="flex justify-between items-center mb-2">
                           <span className="text-white font-medium">{tier.name}</span>
-                          <span className="text-green-400">${tier.price}/month</span>
+                          <div className="flex gap-2">
+                            {[5, 10, 15, 20, 25, 30].map(price => (
+                              <button
+                                key={price}
+                                onClick={async () => {
+                                  await base44.entities.NightLog.create({
+                                    entry: `Updated ${tier.name} tier to $${price}/month.`,
+                                    category: 'interaction',
+                                    intensity: 'subtle'
+                                  });
+                                  queryClient.invalidateQueries();
+                                }}
+                                className={`px-2 py-1 rounded text-xs ${tier.price === price ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+                              >
+                                ${price}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                         <ul className="text-gray-400 text-xs space-y-1">
                           {tier.perks.map((perk, i) => (
