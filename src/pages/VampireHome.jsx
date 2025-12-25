@@ -183,15 +183,21 @@ export default function VampireHome() {
       <div className="relative z-10 p-6">
         <div className="flex justify-between items-center mb-8">
           <button
-            onClick={() => navigate(createPageUrl('Night'))}
-            className="text-white/60 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(createPageUrl('Night'));
+            }}
+            className="text-white/60 hover:text-white transition-colors touch-manipulation p-2"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
           {servants.length > 0 && (
             <button
-              onClick={() => navigate(createPageUrl(`ServantHome?id=${servants[0].id}`))}
-              className="text-purple-400 hover:text-purple-300 transition-colors text-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(createPageUrl(`ServantHome?id=${servants[0].id}`));
+              }}
+              className="text-purple-400 hover:text-purple-300 transition-colors text-sm touch-manipulation p-2"
             >
               Switch to Servant →
             </button>
@@ -359,32 +365,30 @@ export default function VampireHome() {
           </motion.div>
           
           {/* OnlyFangs Management */}
-          {servants.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mb-8"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-8"
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowOnlyFangs(true);
+              }}
+              className="w-full bg-gradient-to-r from-pink-950/40 to-red-950/40 hover:from-pink-950/60 hover:to-red-950/60 border-2 border-pink-500/50 rounded-2xl p-6 transition-all touch-manipulation"
             >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowOnlyFangs(true);
-                }}
-                className="w-full bg-gradient-to-r from-pink-950/40 to-red-950/40 hover:from-pink-950/60 hover:to-red-950/60 border-2 border-pink-500/50 rounded-2xl p-6 transition-all touch-manipulation"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="text-4xl">❤️</div>
-                    <div className="text-left">
-                      <h3 className="text-white text-xl font-bold mb-1">OnlyFangs</h3>
-                      <p className="text-gray-300 text-sm">Create content. Livestream. Build your empire.</p>
-                    </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-4xl">❤️</div>
+                  <div className="text-left">
+                    <h3 className="text-white text-xl font-bold mb-1">OnlyFangs</h3>
+                    <p className="text-gray-300 text-sm">Create content. Livestream. Build your empire.</p>
                   </div>
                 </div>
-              </button>
-              </motion.div>
-              )}
+              </div>
+            </button>
+          </motion.div>
 
               {/* Crimson Bliss Lab */}
               <motion.div
@@ -714,9 +718,9 @@ export default function VampireHome() {
             onClose={() => setShowTemptation(false)}
           />
         )}
-        {showOnlyFangs && servants.length > 0 && (
+        {showOnlyFangs && (
           <OnlyFangsManagement
-            servant={servants[0]}
+            servant={{ id: vampireState.id, name: vampireState.vampire_name }}
             vampireState={vampireState}
             onClose={() => setShowOnlyFangs(false)}
           />
@@ -750,7 +754,7 @@ export default function VampireHome() {
             onClose={() => setShowCrimsonBliss(false)}
           />
         )}
-        {showFoodSystem && servants.length > 0 && (
+        {showFoodSystem && (
           <FoodSystem
             vampireState={vampireState}
             servants={servants}

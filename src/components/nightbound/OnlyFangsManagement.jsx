@@ -1156,8 +1156,11 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             </div>
 
             <button
-              onClick={handleCreateProfile}
-              className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-medium py-3 rounded-xl transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCreateProfile();
+              }}
+              className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-medium py-3 rounded-xl transition-all touch-manipulation"
             >
               Create Profile
             </button>
@@ -1225,43 +1228,43 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          <button onClick={() => setTab('profile')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('profile'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm touch-manipulation ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             Profile
           </button>
-          <button onClick={() => setTab('livestream')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'livestream' ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('livestream'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'livestream' ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <span className="text-red-400">🔴</span> Live
           </button>
-          <button onClick={() => setTab('create')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'create' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('create'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm touch-manipulation ${tab === 'create' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             Create
           </button>
-          <button onClick={() => setTab('videos')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'videos' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('videos'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm touch-manipulation ${tab === 'videos' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             Videos
           </button>
-          <button onClick={() => setTab('posts')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'posts' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('posts'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm touch-manipulation ${tab === 'posts' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             Pictures
           </button>
-          <button onClick={() => setTab('ppv')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'ppv' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('ppv'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'ppv' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <MessageCircle className="w-3 h-3" /> PPV
           </button>
-          <button onClick={() => setTab('fans')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'fans' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('fans'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'fans' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <Award className="w-3 h-3" /> Fans
           </button>
-          <button onClick={() => setTab('analytics')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'analytics' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('analytics'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'analytics' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <BarChart3 className="w-3 h-3" /> Stats
           </button>
-          <button onClick={() => setTab('engagement')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'engagement' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('engagement'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'engagement' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <Zap className="w-3 h-3" /> Tools
           </button>
-          <button onClick={() => setTab('brainstorm')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'brainstorm' ? 'bg-gradient-to-r from-pink-600 to-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('brainstorm'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'brainstorm' ? 'bg-gradient-to-r from-pink-600 to-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             💡 Ideas
           </button>
-          <button onClick={() => setTab('merch')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'merch' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('merch'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'merch' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <ShoppingBag className="w-3 h-3" /> Merch
           </button>
-          <button onClick={() => setTab('collab')} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm ${tab === 'collab' ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); setTab('collab'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'collab' ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <UserPlus className="w-3 h-3" /> Collab
           </button>
-          <button onClick={() => setShowMerch(true)} className="px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm bg-gray-800 text-gray-400 hover:bg-gray-700">
+          <button onClick={(e) => { e.stopPropagation(); setShowMerch(true); }} className="px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm bg-gray-800 text-gray-400 hover:bg-gray-700 touch-manipulation">
             <ShoppingBag className="w-3 h-3" /> Store
           </button>
         </div>
@@ -1302,8 +1305,11 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             </div>
             
             <button
-              onClick={handleQuit}
-              className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-xl py-3 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleQuit();
+              }}
+              className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-xl py-3 transition-colors touch-manipulation"
             >
               Quit OnlyFangs
             </button>
@@ -1327,17 +1333,23 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               
               <div className="flex gap-3">
                 <button
-                  onClick={() => handleLivestream(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLivestream(false);
+                  }}
                   disabled={livestreaming}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50"
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50 touch-manipulation"
                 >
                   Go Live Solo 💋
                 </button>
                 {servantProfile.is_couple_account && (
                   <button
-                    onClick={() => handleLivestream(true)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLivestream(true);
+                    }}
                     disabled={livestreaming}
-                    className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50"
+                    className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl transition-all disabled:opacity-50 touch-manipulation"
                   >
                     Go Live Together 💑
                   </button>
@@ -1549,9 +1561,12 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   )}
 
                   <button
-                    onClick={handleCreateVideo}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCreateVideo();
+                    }}
                     disabled={!newVideo.content_type || creating || filming || (['filmed', 'couple'].includes(selectedCategory) && filmWithVampire === null)}
-                    className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50"
+                    className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50 touch-manipulation"
                   >
                     {filming ? 'Filming...' : creating ? 'Processing...' : 'Create Video'}
                   </button>
