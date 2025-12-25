@@ -521,20 +521,18 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                     >
                       Use Solo
                     </button>
-                    {servants && servants.length > 0 && (
-                      <div className="space-y-1">
-                        {servants.map(servant => (
-                          <button
-                            key={servant.id}
-                            onClick={() => handleUseWith(drug, servant)}
-                            disabled={drug.quantity < 2}
-                            className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
-                          >
-                            Use with {servant.name} 💕 (2 doses)
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    <div className="space-y-1">
+                      {servants.filter(s => s.id).map(servant => (
+                        <button
+                          key={servant.id}
+                          onClick={() => handleUseWith(drug, servant)}
+                          disabled={drug.quantity < 2}
+                          className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
+                        >
+                          Use with {servant.name} 💕 (2 doses)
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))

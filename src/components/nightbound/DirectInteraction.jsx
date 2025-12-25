@@ -1336,6 +1336,118 @@ const INTERACTIONS = {
     }
   },
   
+  // Sweet & Romantic - Tier 1
+  holdHands: {
+    icon: Heart,
+    label: 'Hold hands',
+    category: 'romantic',
+    gains: [5, 10],
+    outcomes: {
+      low: ['You reached for their hand. They let you.', 'Fingers intertwined. Simple. Sweet.', 'Hand in hand. A small gesture. Meaningful.'],
+      mid: ['You held hands. They squeezed yours gently.', 'Walking together. Hands clasped. Perfect.', 'Their hand fit perfectly in yours.'],
+      high: ['You held hands. They pulled you closer.', 'Hand in hand. Like it was always meant to be.', 'Your hands together. Inseparable.']
+    }
+  },
+  forehead: {
+    icon: Heart,
+    label: 'Kiss their forehead',
+    category: 'romantic',
+    gains: [6, 12],
+    outcomes: {
+      low: ['You kissed their forehead softly. They smiled.', 'A gentle forehead kiss. Tender.', 'You pressed your lips to their forehead. Sweet.'],
+      mid: ['Forehead kiss. They closed their eyes. Peaceful.', 'You kissed their forehead. They sighed contentedly.', 'A soft kiss to their forehead. They melted.'],
+      high: ['You kissed their forehead. They whispered "I love you."', 'Forehead kiss. Pure affection. Pure love.', 'You kissed their forehead tenderly. Everything felt right.']
+    }
+  },
+  slowDance: {
+    icon: Music,
+    label: 'Slow dance',
+    category: 'romantic',
+    gains: [8, 15],
+    outcomes: {
+      low: ['You pulled them close for a slow dance. Awkward but sweet.', 'Dancing slowly. Learning each other\'s rhythm.', 'You swayed together. Getting closer.'],
+      mid: ['Slow dancing. Your bodies moved as one.', 'You held them close. Dancing in the moonlight.', 'Swaying together. Lost in the moment.'],
+      high: ['Slow dance. Perfect synchronicity. Pure romance.', 'Dancing together. Time stopped. Just you two.', 'You held them close, dancing. Nothing else existed.']
+    }
+  },
+  breakfast: {
+    icon: Coffee,
+    label: 'Make breakfast',
+    category: 'romantic',
+    gains: [7, 13],
+    outcomes: {
+      low: ['You made them breakfast. They appreciated it.', 'Morning surprise. Pancakes and coffee.', 'You cooked for them. Sweet gesture.'],
+      mid: ['Breakfast in bed. They woke up smiling.', 'You made their favorite. They kissed you.', 'Morning together. Breakfast. Perfect.'],
+      high: ['You made breakfast. They said it was the sweetest thing.', 'Morning routine. Together. Like a real couple.', 'Breakfast made with love. They felt it.']
+    }
+  },
+  stargaze2: {
+    icon: Moon,
+    label: 'Stargaze together',
+    category: 'romantic',
+    gains: [9, 16],
+    outcomes: {
+      low: ['Under the stars together. Peaceful.', 'You pointed out constellations. They listened.', 'Stargazing. Quiet companionship.'],
+      mid: ['Under the stars. They rested their head on you.', 'Stargazing together. Fingers intertwined.', 'You looked at stars. They looked at you.'],
+      high: ['They said you\'re more beautiful than the stars.', 'Stargazing. Perfect moment. Perfect person.', 'Under the stars. They said "forever."']
+    }
+  },
+  movieNight: {
+    icon: Smile,
+    label: 'Movie night',
+    category: 'romantic',
+    gains: [6, 11],
+    outcomes: {
+      low: ['Movie night. You sat together.', 'Watching a movie. Comfortable silence.', 'Film playing. You focused on each other more.'],
+      mid: ['Movie night. Cuddled up together.', 'You didn\'t watch much of the movie. Too distracted.', 'Cozy movie night. They fell asleep on you.'],
+      high: ['Movie forgotten. You couldn\'t stop kissing.', 'Movie night turned into cuddles and kisses.', 'The movie played. You made your own memories.']
+    }
+  },
+  surprise: {
+    icon: Sparkles,
+    label: 'Surprise them',
+    category: 'romantic',
+    gains: [10, 18],
+    outcomes: {
+      low: ['You surprised them with flowers. They blushed.', 'Small surprise. Big smile.', 'You left them a note. They loved it.'],
+      mid: ['Surprise date. They were thrilled.', 'You planned something special. Perfect.', 'Surprise gift. They were speechless.'],
+      high: ['Your surprise made them cry happy tears.', 'Perfect surprise. They said you\'re incredible.', 'Romantic surprise. They\'ll never forget it.']
+    }
+  },
+  massage: {
+    icon: Hand,
+    label: 'Give massage',
+    category: 'romantic',
+    gains: [8, 14],
+    outcomes: {
+      low: ['You massaged their shoulders. They relaxed.', 'Gentle massage. Caring touch.', 'You rubbed their back. Soothing.'],
+      mid: ['Massage. They melted under your hands.', 'You massaged them. Intimate. Caring.', 'Gentle touches. Relaxation. Connection.'],
+      high: ['Massage turned into tender kisses everywhere.', 'You massaged them. Pure love in every touch.', 'They said your touch heals them.']
+    }
+  },
+  picnic: {
+    icon: Utensils,
+    label: 'Midnight picnic',
+    category: 'romantic',
+    gains: [11, 19],
+    outcomes: {
+      low: ['Midnight picnic. Simple. Nice.', 'You laid out food under the moon.', 'Picnic together. Getting to know each other.'],
+      mid: ['Perfect midnight picnic. Romantic.', 'Under the moon. Food. Laughter. Kisses.', 'Picnic date. They said it was magical.'],
+      high: ['Best date ever. They called it perfect.', 'Midnight picnic. They said they\'re falling for you.', 'Romantic picnic. Everything felt right.']
+    }
+  },
+  letter: {
+    icon: MessageCircle,
+    label: 'Write love letter',
+    category: 'romantic',
+    gains: [12, 20],
+    outcomes: {
+      low: ['You wrote them a letter. They read it carefully.', 'Love letter. Simple words. True feelings.', 'You expressed yourself in writing. They kept it.'],
+      mid: ['Your letter made them emotional.', 'Love letter. They said it was beautiful.', 'You poured your heart out. They felt it.'],
+      high: ['Your letter made them cry. Happy tears.', 'They said your letter was the most beautiful thing.', 'Love letter. They\'ll treasure it forever.']
+    }
+  },
+
   // Activity - Tier 1
   observe: {
     icon: Eye,
@@ -1745,8 +1857,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     : INTERACTIONS;
 
   const categories = servant.is_turned 
-    ? ['all', 'vampire', 'physical', 'bdsm', 'social', 'activity', 'power']
-    : ['all', 'physical', 'bdsm', 'social', 'activity', 'power'];
+    ? ['all', 'romantic', 'vampire', 'physical', 'bdsm', 'social', 'activity', 'power']
+    : ['all', 'romantic', 'physical', 'bdsm', 'social', 'activity', 'power'];
 
   // Filter by category only (show locked interactions too)
   const filteredInteractions = Object.entries(allInteractions).filter(([key, interaction]) => {
