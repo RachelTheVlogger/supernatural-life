@@ -2064,7 +2064,11 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 <button onClick={() => { setTab('create'); setSelectedCategory('couple'); setNewVideo({...newVideo, content_type: 'Passionate fucking, multiple positions, creampie'}); }} className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-left px-3 py-2 rounded-lg text-gray-300">
                   💑 Couple Sex Tape
                 </button>
-                <button onClick={() => { setTab('create'); setSelectedCategory('vampiresolo'); setNewVideo({...newVideo, content_type: 'Vampire jerking off, showing everything'}); }} className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 text-left px-3 py-2 rounded-lg text-gray-300">
+                <button onClick={() => { 
+                  setTab('create'); 
+                  setSelectedCategory('vampiresolo'); 
+                  setNewVideo({...newVideo, content_type: vampireState.gender === 'female' ? 'Playing with my pussy, showing everything' : 'Vampire jerking off, showing everything'}); 
+                }} className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 text-left px-3 py-2 rounded-lg text-gray-300">
                   🦇 Vampire Solo Content
                 </button>
               </div>

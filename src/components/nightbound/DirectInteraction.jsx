@@ -369,33 +369,52 @@ const INTERACTIONS = {
     label: 'Dominate them',
     category: 'bdsm',
     gains: [20, 30],
-    outcomes: {
-      mid: [
-        'You commanded. They obeyed instantly.', 
-        'On their knees. Eyes up. Waiting for orders.', 
-        'You told them exactly how to please you. They did.',
-        'Control absolute. They surrendered willingly.',
-        'Your hand in their hair. Guiding. Commanding.',
-        'You pushed them to the edge. Made them wait.',
-        'They begged permission. You made them earn it.'
-      ],
-      high: [
-        'Complete submission. You fucked them exactly how you wanted. They took everything willingly.', 
-        'You fucked their throat deep. They gagged, tears streaming, but didn\'t pull away. Took it all.', 
-        'Marks on their neck from your hands. Bruises blooming. Your ownership visible.',
-        'You used them roughly. Bent them over, grabbed their hips, fucked them hard. Perfect.',
-        'They came only when you allowed it. "Please, can I cum?" Total control.',
-        'You spanked them until they cried. Red handprints on their ass. Then fucked them hard while they whimpered.',
-        'Collar around their neck. Leash in your hand. You pulled it tight while fucking them from behind. Yours.',
-        'You choked them while fucking them deep. Their eyes rolled back, body tightening. They loved it.',
-        'You slapped their face. They moaned "Thank you." Begged for more. Again.',
-        'Tied up tight. Helpless. Legs spread. Completely at your mercy. You used them thoroughly.',
-        'You edged them for hours. Brought them close, denied them. They broke, sobbing, begging.',
-        'Your cum painted their face. Dripping from their lips. They wore it proudly, didn\'t wipe it off.',
-        'You degraded them. Called them your whore. They got visibly wetter, pussy dripping.',
-        'Rough. Brutal. You pounded into them relentlessly. They came screaming your name.',
-        'You made them crawl on hands and knees. Beg properly. Earn every touch, every thrust.'
-      ]
+    getDynamicOutcomes: (vampireGender) => {
+      const isFemale = vampireGender === 'female';
+      return {
+        mid: [
+          'You commanded. They obeyed instantly.', 
+          'On their knees. Eyes up. Waiting for orders.', 
+          'You told them exactly how to please you. They did.',
+          'Control absolute. They surrendered willingly.',
+          'Your hand in their hair. Guiding. Commanding.',
+          'You pushed them to the edge. Made them wait.',
+          'They begged permission. You made them earn it.'
+        ],
+        high: isFemale ? [
+          'Complete submission. You used them exactly how you wanted. They took everything willingly.',
+          'You sat on their face. Made them lick deep. They gagged but didn\'t pull away. Took it all.',
+          'Marks on their neck from your hands. Bruises blooming. Your ownership visible.',
+          'You used them roughly. Pushed them down, rode their face hard. Perfect.',
+          'They came only when you allowed it. "Please, can I cum?" Total control.',
+          'You spanked them until they cried. Red handprints on their ass. Then rode them hard while they whimpered.',
+          'Collar around their neck. Leash in your hand. You pulled it tight while grinding on them. Yours.',
+          'You choked them while riding their face. Their eyes rolled back, tongue working. They loved it.',
+          'You slapped their face. They moaned "Thank you." Begged for more. Again.',
+          'Tied up tight. Helpless. Legs spread. Completely at your mercy. You used them thoroughly.',
+          'You edged them for hours. Brought them close, denied them. They broke, sobbing, begging.',
+          'You came on their face. Dripping down. They wore it proudly, didn\'t wipe it off.',
+          'You degraded them. Called them your whore. They got visibly wetter, pussy dripping.',
+          'Rough. Intense. You used them relentlessly. They came screaming your name.',
+          'You made them crawl on hands and knees. Beg properly. Earn every touch, every pleasure.'
+        ] : [
+          'Complete submission. You fucked them exactly how you wanted. They took everything willingly.',
+          'You fucked their throat deep. They gagged, tears streaming, but didn\'t pull away. Took it all.',
+          'Marks on their neck from your hands. Bruises blooming. Your ownership visible.',
+          'You used them roughly. Bent them over, grabbed their hips, fucked them hard. Perfect.',
+          'They came only when you allowed it. "Please, can I cum?" Total control.',
+          'You spanked them until they cried. Red handprints on their ass. Then fucked them hard while they whimpered.',
+          'Collar around their neck. Leash in your hand. You pulled it tight while fucking them from behind. Yours.',
+          'You choked them while fucking them deep. Their eyes rolled back, body tightening. They loved it.',
+          'You slapped their face. They moaned "Thank you." Begged for more. Again.',
+          'Tied up tight. Helpless. Legs spread. Completely at your mercy. You used them thoroughly.',
+          'You edged them for hours. Brought them close, denied them. They broke, sobbing, begging.',
+          'Your cum painted their face. Dripping from their lips. They wore it proudly, didn\'t wipe it off.',
+          'You degraded them. Called them your whore. They got visibly wetter, pussy dripping.',
+          'Rough. Brutal. You pounded into them relentlessly. They came screaming your name.',
+          'You made them crawl on hands and knees. Beg properly. Earn every touch, every thrust.'
+        ]
+      };
     }
   },
   submit: {
@@ -437,67 +456,112 @@ const INTERACTIONS = {
     label: 'Let them worship you',
     category: 'bdsm',
     gains: [25, 35],
-    outcomes: {
-      mid: [
-        'They worshipped your body. Every inch. Devoted.', 
-        'On their knees. Serving you. Perfect submission.', 
-        'They treated you like a god. You allowed it.',
-        'Their mouth on you. Eager. Worshipful.',
-        'They kissed every part of you. Reverently.',
-        'You sat back. They served. Perfect.',
-        'Their tongue on you. Devoted. Tireless.',
-        'They pleasured you for hours. No complaints.'
-      ],
-      high: [
-        'Hours of worship. They licked, sucked, kissed every inch of you. Existed only to please you.', 
-        'Complete devotion. They worshipped your body with tongue and lips. Your pleasure was their religion.', 
-        'They served you endlessly. Mouth on you for hours. You took everything, came multiple times.',
-        'Their tongue worked tirelessly on your cock. Skilled, devoted. Only your pleasure mattered.',
-        'You came deep in their mouth. They swallowed every drop gratefully, licking you clean.',
-        'They begged to please you again. "Please let me taste you again." And again.',
-        'You used their mouth for your pleasure. Grabbed their head, fucked their throat. They loved it.',
-        'On their knees for hours. Sucking, licking, worshipping. Never complaining.',
-        'Your pleasure was everything. They lived for the taste of you, the feel of you in their mouth.',
-        'You finished on their face. Cum dripping down. They wore it proudly, smiling.',
-        'They sucked you until you couldn\'t stand. Legs shaking, vision blurring. Perfect.',
-        'Their mouth was yours. Throat open, tongue working. They gave it freely.',
-        'You fucked their face roughly. Hands in their hair. They thanked you after, voice hoarse.',
-        'They worshipped your cock with their tongue. Every inch licked, kissed, sucked.',
-        'Every drop swallowed. Not a bit wasted. Grateful. Eager for more.'
-      ]
+    getDynamicOutcomes: (vampireGender) => {
+      const isFemale = vampireGender === 'female';
+      return {
+        mid: [
+          'They worshipped your body. Every inch. Devoted.', 
+          'On their knees. Serving you. Perfect submission.', 
+          'They treated you like a god. You allowed it.',
+          'Their mouth on you. Eager. Worshipful.',
+          'They kissed every part of you. Reverently.',
+          'You sat back. They served. Perfect.',
+          'Their tongue on you. Devoted. Tireless.',
+          'They pleasured you for hours. No complaints.'
+        ],
+        high: isFemale ? [
+          'Hours of worship. They licked, sucked, kissed every inch of you. Existed only to please you.',
+          'Complete devotion. They worshipped your body with tongue and lips. Your pleasure was their religion.',
+          'They served you endlessly. Mouth on you for hours. You took everything, came multiple times.',
+          'Their tongue worked tirelessly on your pussy. Skilled, devoted. Only your pleasure mattered.',
+          'You came on their face. They licked you clean gratefully, worshipping your wetness.',
+          'They begged to please you again. "Please let me taste you again." And again.',
+          'You used their mouth for your pleasure. Grabbed their head, rode their face. They loved it.',
+          'On their knees for hours. Licking, sucking, worshipping. Never complaining.',
+          'Your pleasure was everything. They lived for the taste of you, your wetness on their tongue.',
+          'You came on their tongue. Multiple times. They savored every drop, eager for more.',
+          'They ate you out until you couldn\'t stand. Legs shaking, vision blurring. Perfect.',
+          'Their mouth was yours. Tongue working, lips sucking. They gave it freely.',
+          'You sat on their face. Rode it roughly. They thanked you after, face wet with you.',
+          'They worshipped your pussy with their tongue. Every inch licked, kissed, sucked.',
+          'Every drop licked up. Not a bit wasted. Grateful. Eager for more.'
+        ] : [
+          'Hours of worship. They licked, sucked, kissed every inch of you. Existed only to please you.',
+          'Complete devotion. They worshipped your body with tongue and lips. Your pleasure was their religion.',
+          'They served you endlessly. Mouth on you for hours. You took everything, came multiple times.',
+          'Their tongue worked tirelessly on your cock. Skilled, devoted. Only your pleasure mattered.',
+          'You came deep in their mouth. They swallowed every drop gratefully, licking you clean.',
+          'They begged to please you again. "Please let me taste you again." And again.',
+          'You used their mouth for your pleasure. Grabbed their head, fucked their throat. They loved it.',
+          'On their knees for hours. Sucking, licking, worshipping. Never complaining.',
+          'Your pleasure was everything. They lived for the taste of you, the feel of you in their mouth.',
+          'You finished on their face. Cum dripping down. They wore it proudly, smiling.',
+          'They sucked you until you couldn\'t stand. Legs shaking, vision blurring. Perfect.',
+          'Their mouth was yours. Throat open, tongue working. They gave it freely.',
+          'You fucked their face roughly. Hands in their hair. They thanked you after, voice hoarse.',
+          'They worshipped your cock with their tongue. Every inch licked, kissed, sucked.',
+          'Every drop swallowed. Not a bit wasted. Grateful. Eager for more.'
+        ]
+      };
     }
   },
   breeding: {
     icon: Flame,
-    label: 'Breed them',
+    label: isFemale ? 'Use strap-on' : 'Breed them',
     category: 'physical',
     gains: [30, 40],
-    outcomes: {
-      mid: [
-        'You came deep inside. They begged for it.',
-        'Claiming them completely. Filled. Owned.',
-        'They wanted your seed. You gave it.',
-        'Breeding them. Primal. Perfect.',
-        'They clenched around you. Taking everything.',
-        'You finished inside. They moaned in pleasure.'
-      ],
-      high: [
-        'You bred them over and over. Round after round, filling them up. Insatiable.',
-        'Every drop pumped deep inside. They wanted to carry your seed. Begged for it.',
-        'Primal need to fill them completely. You did. Repeatedly. Cum dripping out between rounds.',
-        'They begged to be bred. "Please, fill me up. I need your cum inside me." You obliged thoroughly.',
-        'Cum dripping from their pussy. You pushed it back in with your fingers, then fucked them again.',
-        'You owned them. Claimed them. Bred them deep. They were marked as yours.',
-        'They came just from feeling you pulse inside them, filling them up. No other touch needed.',
-        'Multiple loads. All pumped deep inside. Thoroughly bred, cum leaking from them.',
-        'You made them beg for your cum. "Please cum inside me." Then gave it, filling them.',
-        'Breeding kink satisfied. Your seed deep in them. They were yours now, completely.',
-        'You pumped them full of cum. They moaned feeling each pulse. Loved every second.',
-        'Your seed pumped deep inside where it belongs. Filling them completely.',
-        'They felt you pulsing, cock throbbing inside them. Filling. Claiming. Breeding.',
-        'Bred properly. Thoroughly. Completely. Pussy full of your cum.',
-        'You didn\'t pull out. Stayed buried deep, pumping them full. Never would again.'
-      ]
+    getDynamicOutcomes: (vampireGender) => {
+      const isFemale = vampireGender === 'female';
+      return {
+        mid: isFemale ? [
+          'You strapped on. Took them deep. They begged for it.',
+          'Claiming them completely. Filled. Owned.',
+          'They wanted you inside. You gave it.',
+          'Fucking them with your strap. Primal. Perfect.',
+          'They clenched around the toy. Taking everything.',
+          'You pounded into them. They moaned in pleasure.'
+        ] : [
+          'You came deep inside. They begged for it.',
+          'Claiming them completely. Filled. Owned.',
+          'They wanted your seed. You gave it.',
+          'Breeding them. Primal. Perfect.',
+          'They clenched around you. Taking everything.',
+          'You finished inside. They moaned in pleasure.'
+        ],
+        high: isFemale ? [
+          'You fucked them with the strap for hours. Round after round. Insatiable.',
+          'Every inch buried deep inside. They wanted you. Begged for it.',
+          'Primal need to fill them completely. You did. Repeatedly. So wet.',
+          'They begged to be fucked. "Please, fill me up." You obliged thoroughly.',
+          'So wet from taking your strap. You kept going, fucking them again.',
+          'You owned them. Claimed them. Fucked them deep with your cock. They were yours.',
+          'They came just from feeling the strap pulse inside them. No other touch needed.',
+          'Multiple rounds. All deep inside. Thoroughly fucked, trembling.',
+          'You made them beg for it. "Please fuck me." Then gave it, filling them.',
+          'Strap-on kink satisfied. Your toy deep in them. They were yours now, completely.',
+          'You pounded into them. They moaned feeling each thrust. Loved every second.',
+          'Your strap buried deep inside where it belongs. Filling them completely.',
+          'They felt you thrusting, strap working inside them. Filling. Claiming. Owning.',
+          'Fucked properly. Thoroughly. Completely. Pussy full.',
+          'You didn\'t pull out. Stayed buried deep, grinding. Never wanted to stop.'
+        ] : [
+          'You bred them over and over. Round after round, filling them up. Insatiable.',
+          'Every drop pumped deep inside. They wanted to carry your seed. Begged for it.',
+          'Primal need to fill them completely. You did. Repeatedly. Cum dripping out between rounds.',
+          'They begged to be bred. "Please, fill me up. I need your cum inside me." You obliged thoroughly.',
+          'Cum dripping from their pussy. You pushed it back in with your fingers, then fucked them again.',
+          'You owned them. Claimed them. Bred them deep. They were marked as yours.',
+          'They came just from feeling you pulse inside them, filling them up. No other touch needed.',
+          'Multiple loads. All pumped deep inside. Thoroughly bred, cum leaking from them.',
+          'You made them beg for your cum. "Please cum inside me." Then gave it, filling them.',
+          'Breeding kink satisfied. Your seed deep in them. They were yours now, completely.',
+          'You pumped them full of cum. They moaned feeling each pulse. Loved every second.',
+          'Your seed pumped deep inside where it belongs. Filling them completely.',
+          'They felt you pulsing, cock throbbing inside them. Filling. Claiming. Breeding.',
+          'Bred properly. Thoroughly. Completely. Pussy full of your cum.',
+          'You didn\'t pull out. Stayed buried deep, pumping them full. Never would again.'
+        ]
+      };
     }
   },
   publicUse: {
@@ -1072,23 +1136,35 @@ const INTERACTIONS = {
     label: 'Receive oral service',
     category: 'physical',
     gains: [22, 30],
-    outcomes: {
-      mid: [
-        'They serviced you with their mouth. Skilled.',
-        'On their knees. Serving. Obedient.',
-        'Oral service rendered. Excellent.',
-        'Their mouth was yours to use. They knew it.'
-      ],
-      high: [
-        'Expert oral service. Trained perfectly. Took you deep, no gagging, skillful tongue work.',
-        'They sucked you for hours. Worshipped your cock with their mouth. No complaints.',
-        'Deepthroat training paid off. They took you all the way down. Impressive, nose pressed to you.',
-        'Their throat was yours. They offered it eagerly, opening wide, relaxing their throat.',
-        'Oral service until you were satisfied. They kept going until you came. Completely.',
-        'They lived to please you with their mouth. Sucked you eagerly, lovingly.',
-        'Facefucked them thoroughly. Grabbed their head, used their throat. They thanked you after.',
-        'Their mouth was your property. Used it whenever you wanted. They loved it.'
-      ]
+    getDynamicOutcomes: (vampireGender) => {
+      const isFemale = vampireGender === 'female';
+      return {
+        mid: [
+          'They serviced you with their mouth. Skilled.',
+          'On their knees. Serving. Obedient.',
+          'Oral service rendered. Excellent.',
+          'Their mouth was yours to use. They knew it.'
+        ],
+        high: isFemale ? [
+          'Expert oral service. Trained perfectly. Their tongue worked you skillfully, no hesitation.',
+          'They ate you out for hours. Worshipped your pussy with their mouth. No complaints.',
+          'Tongue training paid off. They licked you perfectly. Impressive technique.',
+          'Their mouth was yours. They offered it eagerly, tongue ready, lips soft.',
+          'Oral service until you were satisfied. They kept going until you came. Multiple times.',
+          'They lived to please you with their mouth. Licked you eagerly, lovingly.',
+          'You rode their face thoroughly. Grabbed their head, used their tongue. They thanked you after.',
+          'Their mouth was your property. Used it whenever you wanted. They loved it.'
+        ] : [
+          'Expert oral service. Trained perfectly. Took you deep, no gagging, skillful tongue work.',
+          'They sucked you for hours. Worshipped your cock with their mouth. No complaints.',
+          'Deepthroat training paid off. They took you all the way down. Impressive, nose pressed to you.',
+          'Their throat was yours. They offered it eagerly, opening wide, relaxing their throat.',
+          'Oral service until you were satisfied. They kept going until you came. Completely.',
+          'They lived to please you with their mouth. Sucked you eagerly, lovingly.',
+          'Facefucked them thoroughly. Grabbed their head, used their throat. They thanked you after.',
+          'Their mouth was your property. Used it whenever you wanted. They loved it.'
+        ]
+      };
     }
   },
   massageDom: {
@@ -1118,23 +1194,35 @@ const INTERACTIONS = {
     label: 'Make them ride you',
     category: 'physical',
     gains: [25, 35],
-    outcomes: {
-      mid: [
-        'They rode you. Hard. Fast. Desperate.',
-        'Rode until their legs gave out. Beautiful.',
-        'They did all the work. You watched.',
-        'Riding you was their privilege.'
-      ],
-      high: [
-        'Rode you for hours. Bouncing on your cock. Came multiple times, kept going, insatiable.',
-        'They rode you until their legs gave out. Thighs shaking, exhausted, satisfied.',
-        'Perfect rhythm. Bodies trained to please you. Rode you just how you like it.',
-        'Rode you desperately. "Please let me keep going." Begged to continue even when spent.',
-        'They came from riding you. Again. Again. Each orgasm making them clench tight around you.',
-        'Riding was worship. They gave everything, bodies bouncing, taking you deep.',
-        'You didn\'t move. Just watched them work. They did all the work, fucking themselves on you. Perfect.',
-        'Rode until exhaustion. Legs trembling. Still tried to continue, couldn\'t get enough.'
-      ]
+    getDynamicOutcomes: (vampireGender) => {
+      const isFemale = vampireGender === 'female';
+      return {
+        mid: [
+          'They rode you. Hard. Fast. Desperate.',
+          'Rode until their legs gave out. Beautiful.',
+          'They did all the work. You watched.',
+          'Riding you was their privilege.'
+        ],
+        high: isFemale ? [
+          'They rode your thigh for hours. Grinding desperately. Came multiple times, kept going, insatiable.',
+          'They rode your fingers until their legs gave out. Thighs shaking, exhausted, satisfied.',
+          'Perfect rhythm. Bodies trained to please you. Rode your hand just how you like it.',
+          'Rode your fingers desperately. "Please let me keep going." Begged to continue even when spent.',
+          'They came from riding you. Again. Again. Each orgasm making them clench tight around your fingers.',
+          'Riding was worship. They gave everything, bodies grinding, taking what you gave.',
+          'You didn\'t move. Just watched them work. They did all the work, fucking themselves on your fingers. Perfect.',
+          'Rode until exhaustion. Legs trembling. Still tried to continue, couldn\'t get enough.'
+        ] : [
+          'Rode you for hours. Bouncing on your cock. Came multiple times, kept going, insatiable.',
+          'They rode you until their legs gave out. Thighs shaking, exhausted, satisfied.',
+          'Perfect rhythm. Bodies trained to please you. Rode you just how you like it.',
+          'Rode you desperately. "Please let me keep going." Begged to continue even when spent.',
+          'They came from riding you. Again. Again. Each orgasm making them clench tight around you.',
+          'Riding was worship. They gave everything, bodies bouncing, taking you deep.',
+          'You didn\'t move. Just watched them work. They did all the work, fucking themselves on you. Perfect.',
+          'Rode until exhaustion. Legs trembling. Still tried to continue, couldn\'t get enough.'
+        ]
+      };
     }
   },
   dressUp: {
@@ -1459,9 +1547,9 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     const rel = servant.relationship || 0;
     const tier = getRelationshipTier(rel);
     
-    // Handle dynamic outcomes for praise/degradation
+    // Handle dynamic outcomes for gender-specific interactions
     const outcomes = interaction.getDynamicOutcomes 
-      ? interaction.getDynamicOutcomes(servant.name)[tier]
+      ? (['worship', 'oralService', 'rideDom', 'dominate'].includes(key) ? interaction.getDynamicOutcomes(vampireState.gender)[tier] : interaction.getDynamicOutcomes(servant.name)[tier])
       : (interaction.outcomes[tier] || interaction.outcomes.low);
     const baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
     
