@@ -35,7 +35,7 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
     } else if (council.length > 3) {
       // Delete extras - keep only first 3
       const toDelete = council.slice(3);
-      Promise.all(toDelete.map(m => base44.entities.VampireCouncil.delete(m.id)))
+      Promise.all(toDelete.map(m => base44.entities.VampireCouncil.delete(m.id).catch(() => {})))
         .then(() => queryClient.invalidateQueries(['council']));
     }
   }, [council.length]);
@@ -70,19 +70,23 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
           const newPowers = ['Council Blessing', 'Ancient Technique', 'Elder\'s Gift'];
           const randomPower = newPowers[Math.floor(Math.random() * newPowers.length)];
           
-          await base44.entities.VampireState.update(vampireState.id, {
-            unlocked_powers: [...(vampireState.unlocked_powers || []), randomPower]
-          });
-        }
+          try {
+            await base44.entities.VampireState.update(vampireState.id, {
+              unlocked_powers: [...(vampireState.unlocked_powers || []), randomPower]
+            });
+          } catch (e) {
+            // State update failed, continue
+          }
+          }
 
-        await base44.entities.NightLog.create({
+          await base44.entities.NightLog.create({
           entry: `${selectedMember.council_member_name}: ${boons[boonType]}`,
           category: 'power',
           intensity: 'significant'
-        });
-      } else {
-        setOutcome('They denied your request. Your favor is too low. Earn their respect first.');
-      }
+          });
+          } else {
+          setOutcome('They denied your request. Your favor is too low. Earn their respect first.');
+          }
 
       queryClient.invalidateQueries();
 
