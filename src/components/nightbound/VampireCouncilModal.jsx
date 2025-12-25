@@ -10,10 +10,12 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const { data: council = [] } = useQuery({
+  const { data: council = [], isLoading } = useQuery({
     queryKey: ['council'],
     queryFn: () => base44.entities.VampireCouncil.list()
   });
+
+  const [councilInitialized, setCouncilInitialized] = React.useState(false);
 
   // One council member at a time - clean up extras and create if needed
   React.useEffect(() => {
@@ -27,7 +29,8 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
       }
       
       // Create one council member if none exist
-      if (council.length === 0) {
+      if (council.length === 0 && !councilInitialized) {
+        setCouncilInitialized(true);
         const NAME_POOL = [
           { name: 'Elder Magdalena', position: 'elder' },
           { name: 'Viktor the Enforcer', position: 'enforcer' },
@@ -52,7 +55,7 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
     };
     
     manageCouncil();
-  }, [council.length, queryClient]);
+  }, [council.length, councilInitialized, queryClient]);
 
   const handleRequestBoon = async (boonType) => {
     setProcessing(true);
@@ -149,9 +152,9 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
 
         {!selectedMember ? (
           <div className="space-y-3">
-            {council.length === 0 ? (
-              <p className="text-gray-400 text-center py-8">No council member available...</p>
-            ) : council.map(member => {
+            {isLoading || council.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">Loading council...</p>
+            ) : council.slice(0, 1).map(member => {
               const Icon = positionIcons[member.position];
               return (
                 <button
