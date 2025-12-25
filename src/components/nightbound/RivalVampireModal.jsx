@@ -86,25 +86,25 @@ export default function RivalVampireModal({ onClose, vampireState }) {
     }, 2000);
   };
 
-  // Generate rivals if none exist
+  // Generate rivals if none exist - ensure exactly 3 with unique names
   React.useEffect(() => {
     if (rivals.length === 0) {
-      const names = ['Lilith', 'Vladislav', 'Carmilla', 'Dragomir', 'Selene', 'Corvinus'];
-      const personalities = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
+      const fixedRivals = [
+        { name: 'Lilith the Ancient', age: 487, personality: 'seductive', power: 75 },
+        { name: 'Vladislav Corvinus', age: 312, personality: 'ruthless', power: 68 },
+        { name: 'Carmilla Drăculești', age: 234, personality: 'diplomatic', power: 62 }
+      ];
       
-      Promise.all([...Array(3)].map(() => {
-        const name = names[Math.floor(Math.random() * names.length)];
-        const age = Math.floor(Math.random() * 500) + 50;
-        
-        return base44.entities.RivalVampire.create({
-          name,
-          age,
-          personality: personalities[Math.floor(Math.random() * personalities.length)],
-          power_level: Math.floor(Math.random() * 40) + 40,
+      Promise.all(fixedRivals.map(r => 
+        base44.entities.RivalVampire.create({
+          name: r.name,
+          age: r.age,
+          personality: r.personality,
+          power_level: r.power,
           relationship: Math.floor(Math.random() * 40) - 20,
           servants_count: Math.floor(Math.random() * 5)
-        });
-      })).then(() => queryClient.invalidateQueries(['rivals']));
+        })
+      )).then(() => queryClient.invalidateQueries(['rivals']));
     }
   }, [rivals.length]);
 
