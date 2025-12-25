@@ -217,8 +217,11 @@ export default function VampireHome() {
             className="mb-6"
           >
             <button
-              onClick={() => setShowVampireIdentity(true)}
-              className="w-full bg-gradient-to-r from-purple-900/40 to-pink-900/40 hover:from-purple-900/60 hover:to-pink-900/60 border-2 border-purple-500/50 rounded-xl p-4 transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowVampireIdentity(true);
+              }}
+              className="w-full bg-gradient-to-r from-purple-900/40 to-pink-900/40 hover:from-purple-900/60 hover:to-pink-900/60 border-2 border-purple-500/50 rounded-xl p-4 transition-all touch-manipulation"
             >
               <div className="flex items-center justify-between">
                 <div className="text-left">
@@ -272,8 +275,11 @@ export default function VampireHome() {
             className="mb-8"
           >
             <button
-              onClick={() => setShowEvolutionTree(true)}
-              className="w-full bg-gradient-to-r from-purple-900/40 to-red-900/40 hover:from-purple-900/60 hover:to-red-900/60 border-2 border-purple-500/50 rounded-2xl p-6 transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowEvolutionTree(true);
+              }}
+              className="w-full bg-gradient-to-r from-purple-900/40 to-red-900/40 hover:from-purple-900/60 hover:to-red-900/60 border-2 border-purple-500/50 rounded-2xl p-6 transition-all touch-manipulation"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -299,7 +305,8 @@ export default function VampireHome() {
             className="mb-8"
           >
             <button
-              onClick={async () => {
+              onClick={async (e) => {
+                e.stopPropagation();
                 try {
                   if (vampireState.id) {
                     const newMode = vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling';
@@ -312,7 +319,7 @@ export default function VampireHome() {
                   console.error('Failed to toggle mode:', e);
                 }
               }}
-              className={`w-full rounded-2xl p-6 transition-all border-2 ${
+              className={`w-full rounded-2xl p-6 transition-all border-2 touch-manipulation ${
                 vampireState.emotional_mode === 'ruthless'
                   ? 'bg-red-950/40 border-red-500/50 hover:bg-red-950/60'
                   : 'bg-purple-950/40 border-purple-500/50 hover:bg-purple-950/60'
@@ -360,8 +367,11 @@ export default function VampireHome() {
               className="mb-8"
             >
               <button
-                onClick={() => setShowOnlyFangs(true)}
-                className="w-full bg-gradient-to-r from-pink-950/40 to-red-950/40 hover:from-pink-950/60 hover:to-red-950/60 border-2 border-pink-500/50 rounded-2xl p-6 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowOnlyFangs(true);
+                }}
+                className="w-full bg-gradient-to-r from-pink-950/40 to-red-950/40 hover:from-pink-950/60 hover:to-red-950/60 border-2 border-pink-500/50 rounded-2xl p-6 transition-all touch-manipulation"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -384,8 +394,11 @@ export default function VampireHome() {
                 className="mb-8"
               >
                 <button
-                  onClick={() => setShowCrimsonBliss(true)}
-                  className="w-full bg-gradient-to-r from-red-950/40 to-purple-950/40 hover:from-red-950/60 hover:to-purple-950/60 border-2 border-red-500/50 rounded-2xl p-6 transition-all"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowCrimsonBliss(true);
+                  }}
+                  className="w-full bg-gradient-to-r from-red-950/40 to-purple-950/40 hover:from-red-950/60 hover:to-purple-950/60 border-2 border-red-500/50 rounded-2xl p-6 transition-all touch-manipulation"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -407,8 +420,11 @@ export default function VampireHome() {
                 className="mb-8"
               >
                 <button
-                  onClick={() => setShowFoodSystem(true)}
-                  className="w-full bg-gradient-to-r from-green-950/40 to-emerald-950/40 hover:from-green-950/60 hover:to-emerald-950/60 border-2 border-green-500/50 rounded-2xl p-6 transition-all"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowFoodSystem(true);
+                  }}
+                  className="w-full bg-gradient-to-r from-green-950/40 to-emerald-950/40 hover:from-green-950/60 hover:to-emerald-950/60 border-2 border-green-500/50 rounded-2xl p-6 transition-all touch-manipulation"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -431,8 +447,11 @@ export default function VampireHome() {
               className="mb-8"
               >
               <button
-                onClick={() => setShowAllFriends(true)}
-                className="w-full bg-gradient-to-r from-blue-950/40 to-cyan-950/40 hover:from-blue-950/60 hover:to-cyan-950/60 border-2 border-blue-500/50 rounded-2xl p-6 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowAllFriends(true);
+                }}
+                className="w-full bg-gradient-to-r from-blue-950/40 to-cyan-950/40 hover:from-blue-950/60 hover:to-cyan-950/60 border-2 border-blue-500/50 rounded-2xl p-6 transition-all touch-manipulation"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -459,8 +478,11 @@ export default function VampireHome() {
             className="mb-8"
           >
             <button
-              onClick={() => setShowTemptation(true)}
-              className="w-full bg-gradient-to-r from-red-950/40 to-purple-950/40 hover:from-red-950/60 hover:to-purple-950/60 border-2 border-red-500/50 rounded-2xl p-6 transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowTemptation(true);
+              }}
+              className="w-full bg-gradient-to-r from-red-950/40 to-purple-950/40 hover:from-red-950/60 hover:to-purple-950/60 border-2 border-red-500/50 rounded-2xl p-6 transition-all touch-manipulation"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -486,8 +508,11 @@ export default function VampireHome() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              onClick={handleMeditate}
-              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMeditate();
+              }}
+              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left touch-manipulation"
             >
               <div className="text-6xl mb-4">🕯️</div>
               <h3 className="text-white text-xl font-bold mb-2">Main Chamber</h3>
@@ -501,8 +526,11 @@ export default function VampireHome() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              onClick={handleReadLore}
-              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleReadLore();
+              }}
+              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left touch-manipulation"
             >
               <div className="text-6xl mb-4">📚</div>
               <h3 className="text-white text-xl font-bold mb-2">Library</h3>
@@ -516,8 +544,11 @@ export default function VampireHome() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              onClick={() => setActiveAction('view')}
-              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveAction('view');
+              }}
+              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left touch-manipulation"
             >
               <div className="text-6xl mb-4">🌙</div>
               <h3 className="text-white text-xl font-bold mb-2">The View</h3>
@@ -531,8 +562,11 @@ export default function VampireHome() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              onClick={() => setActiveAction('rest')}
-              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveAction('rest');
+              }}
+              className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-900/30 transition-all text-left touch-manipulation"
             >
               <div className="text-6xl mb-4">🛏️</div>
               <h3 className="text-white text-xl font-bold mb-2">Resting Place</h3>
@@ -578,18 +612,24 @@ export default function VampireHome() {
                       </div>
                     </div>
                     <div className="flex gap-1">
-                      <button
-                        onClick={() => setSelectedServantForInteraction(servant)}
-                        className="flex-1 bg-pink-950/30 hover:bg-pink-950/50 border border-pink-800/30 rounded-lg py-1.5 text-xs text-pink-300 transition-colors"
-                      >
-                        Interact
-                      </button>
-                      <button
-                        onClick={() => setDateServant(servant)}
-                        className="flex-1 bg-purple-950/30 hover:bg-purple-950/50 border border-purple-800/30 rounded-lg py-1.5 text-xs text-purple-300 transition-colors"
-                      >
-                        Date
-                      </button>
+                     <button
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         setSelectedServantForInteraction(servant);
+                       }}
+                       className="flex-1 bg-pink-950/30 hover:bg-pink-950/50 border border-pink-800/30 rounded-lg py-1.5 text-xs text-pink-300 transition-colors touch-manipulation"
+                     >
+                       Interact
+                     </button>
+                     <button
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         setDateServant(servant);
+                       }}
+                       className="flex-1 bg-purple-950/30 hover:bg-purple-950/50 border border-purple-800/30 rounded-lg py-1.5 text-xs text-purple-300 transition-colors touch-manipulation"
+                     >
+                       Date
+                     </button>
                     </div>
                   </div>
                 ))}
@@ -820,8 +860,11 @@ export default function VampireHome() {
                 </div>
 
                 <button
-                  onClick={() => setShowVampireIdentity(false)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition-colors mt-4"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowVampireIdentity(false);
+                  }}
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition-colors mt-4 touch-manipulation"
                 >
                   Done
                 </button>
@@ -940,8 +983,11 @@ export default function VampireHome() {
                 </p>
               </div>
               <button
-                onClick={() => setActiveAction(null)}
-                className="mt-6 w-full bitlife-btn py-3 rounded-xl"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveAction(null);
+                }}
+                className="mt-6 w-full bitlife-btn py-3 rounded-xl touch-manipulation"
               >
                 Close
               </button>
@@ -990,8 +1036,11 @@ export default function VampireHome() {
                 <p className="text-purple-400 italic">The city is yours. They just don't know it yet.</p>
               </div>
               <button
-                onClick={() => setActiveAction(null)}
-                className="mt-6 w-full bitlife-btn py-3 rounded-xl"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveAction(null);
+                }}
+                className="mt-6 w-full bitlife-btn py-3 rounded-xl touch-manipulation"
               >
                 Close
               </button>
@@ -1022,8 +1071,11 @@ export default function VampireHome() {
                 <p className="text-purple-400 italic">But for now, peace. Absolute stillness.</p>
               </div>
               <button
-                onClick={() => setActiveAction(null)}
-                className="mt-6 w-full bitlife-btn py-3 rounded-xl"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveAction(null);
+                }}
+                className="mt-6 w-full bitlife-btn py-3 rounded-xl touch-manipulation"
               >
                 Rise
               </button>
