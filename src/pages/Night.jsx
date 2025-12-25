@@ -100,22 +100,30 @@ export default function Night() {
   };
   
   useEffect(() => {
-    // Generate first servant if none exist
-    if (servants.length === 0 && !servantsInitialized) {
-      setServantsInitialized(true);
-      const variants = ['devoted', 'defiant', 'dreamer'];
-      const emotionalStates = ['curious', 'wary', 'distant'];
-      const randomVariant = variants[Math.floor(Math.random() * variants.length)];
-      const randomState = emotionalStates[Math.floor(Math.random() * emotionalStates.length)];
-      
-      base44.entities.Servant.create({
-        name: generateRandomName([]),
-        variant: randomVariant,
-        obsession_stage: 1,
-        emotional_state: randomState
-      }).then(() => queryClient.invalidateQueries(['servants']));
-    }
-  }, [servants.length, servantsInitialized]);
+    const initServants = async () => {
+      if (servants.length === 0 && !servantsInitialized) {
+        setServantsInitialized(true);
+        const variants = ['devoted', 'defiant', 'dreamer'];
+        const emotionalStates = ['curious', 'wary', 'distant'];
+        const genders = ['male', 'female', 'custom'];
+        const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
+        const randomVariant = variants[Math.floor(Math.random() * variants.length)];
+        const randomState = emotionalStates[Math.floor(Math.random() * emotionalStates.length)];
+        
+        await base44.entities.Servant.create({
+          name: generateRandomName([]),
+          gender: genders[Math.floor(Math.random() * genders.length)],
+          sexuality: sexualities[Math.floor(Math.random() * sexualities.length)],
+          variant: randomVariant,
+          obsession_stage: 1,
+          emotional_state: randomState
+        });
+        queryClient.invalidateQueries(['servants']);
+      }
+    };
+    
+    initServants();
+  }, [servants.length, servantsInitialized, queryClient]);
   
   const hungerColor = {
     sated: 'rgba(60, 20, 20, 0.6)',
@@ -126,28 +134,36 @@ export default function Night() {
   }[vampireState.hunger_state];
   
   const handleAddServant = async () => {
-    const variants = ['devoted', 'defiant', 'dreamer'];
-    const emotionalStates = ['curious', 'wary', 'distant'];
-    const randomVariant = variants[Math.floor(Math.random() * variants.length)];
-    const randomState = emotionalStates[Math.floor(Math.random() * emotionalStates.length)];
+    try {
+      const variants = ['devoted', 'defiant', 'dreamer'];
+      const emotionalStates = ['curious', 'wary', 'distant'];
+      const genders = ['male', 'female', 'custom'];
+      const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
+      const randomVariant = variants[Math.floor(Math.random() * variants.length)];
+      const randomState = emotionalStates[Math.floor(Math.random() * emotionalStates.length)];
 
-    const existingNames = servants.map(s => s.name);
-    const newName = generateRandomName(existingNames);
+      const existingNames = servants.map(s => s.name);
+      const newName = generateRandomName(existingNames);
 
-    await base44.entities.Servant.create({
-      name: newName,
-      variant: randomVariant,
-      obsession_stage: 1,
-      emotional_state: randomState
-    });
+      await base44.entities.Servant.create({
+        name: newName,
+        gender: genders[Math.floor(Math.random() * genders.length)],
+        sexuality: sexualities[Math.floor(Math.random() * sexualities.length)],
+        variant: randomVariant,
+        obsession_stage: 1,
+        emotional_state: randomState
+      });
 
-    await base44.entities.NightLog.create({
-      entry: `${newName} has entered your life. A new servant begins their journey.`,
-      category: 'interaction',
-      intensity: 'moderate'
-    });
+      await base44.entities.NightLog.create({
+        entry: `${newName} has entered your life. A new servant begins their journey.`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
 
-    queryClient.invalidateQueries(['servants']);
+      queryClient.invalidateQueries(['servants']);
+    } catch (e) {
+      console.error('Failed to add servant:', e);
+    }
   };
 
   const actions = [
@@ -238,11 +254,15 @@ export default function Night() {
           <span className="text-gray-400">Mode:</span>
           <button
             onClick={async () => {
-              if (vampireState.id) {
-                await base44.entities.VampireState.update(vampireState.id, {
-                  emotional_mode: vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling'
-                });
-                queryClient.invalidateQueries(['vampireState']);
+              try {
+                if (vampireState.id) {
+                  await base44.entities.VampireState.update(vampireState.id, {
+                    emotional_mode: vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling'
+                  });
+                  queryClient.invalidateQueries(['vampireState']);
+                }
+              } catch (e) {
+                console.error('Failed to toggle mode:', e);
               }
             }}
             className="text-purple-400 hover:text-purple-300 transition-colors capitalize"

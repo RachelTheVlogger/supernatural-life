@@ -1563,7 +1563,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     
     // Handle dynamic outcomes for gender-specific interactions
     const outcomes = interaction.getDynamicOutcomes 
-      ? (['worship', 'oralService', 'rideDom', 'dominate'].includes(key) ? interaction.getDynamicOutcomes(vampireState.gender)[tier] : interaction.getDynamicOutcomes(servant.name)[tier])
+      ? (['worship', 'oralService', 'rideDom', 'dominate'].includes(type) ? interaction.getDynamicOutcomes(vampireState.gender)[tier] : interaction.getDynamicOutcomes(servant.name)[tier])
       : (interaction.outcomes[tier] || interaction.outcomes.low);
     const baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
     
@@ -1596,13 +1596,17 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         jealousyGain = Math.floor(Math.random() * 5) + 2;
       }
       
-      await base44.entities.Servant.update(servant.id, {
-        relationship: newRel,
-        obsession_stage: Math.min(Math.floor(newRel / 20) + 1, 5),
-        emotional_state: newEmotionalState,
-        last_interaction: new Date().toISOString(),
-        jealousy_level: Math.min((servant.jealousy_level || 0) + jealousyGain, 100)
-      });
+      try {
+        await base44.entities.Servant.update(servant.id, {
+          relationship: newRel,
+          obsession_stage: Math.min(Math.floor(newRel / 20) + 1, 5),
+          emotional_state: newEmotionalState,
+          last_interaction: new Date().toISOString(),
+          jealousy_level: Math.min((servant.jealousy_level || 0) + jealousyGain, 100)
+        });
+      } catch (e) {
+        console.error('Failed to update servant:', e);
+      }
       
       // Determine humanity impact of interaction
       let humanityChange = 0;
@@ -1610,18 +1614,22 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       else if (['bite', 'intimate'].includes(type) && rel < 40) humanityChange = -2; // Forcing intimacy
       
       // Update vampire state with humanity
-      if (humanityChange !== 0 && vampireState.id) {
-        const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + humanityChange));
-        let moral_path = 'balanced';
-        if (newHumanity >= 75) moral_path = 'humane';
-        else if (newHumanity >= 25) moral_path = 'balanced';
-        else if (newHumanity >= 10) moral_path = 'ruthless';
-        else moral_path = 'monster';
-        
-        await base44.entities.VampireState.update(vampireState.id, {
-          humanity: newHumanity,
-          moral_path: moral_path
-        });
+      try {
+        if (humanityChange !== 0 && vampireState.id) {
+          const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + humanityChange));
+          let moral_path = 'balanced';
+          if (newHumanity >= 75) moral_path = 'humane';
+          else if (newHumanity >= 25) moral_path = 'balanced';
+          else if (newHumanity >= 10) moral_path = 'ruthless';
+          else moral_path = 'monster';
+          
+          await base44.entities.VampireState.update(vampireState.id, {
+            humanity: newHumanity,
+            moral_path: moral_path
+          });
+        }
+      } catch (e) {
+        console.error('Failed to update humanity:', e);
       }
       
       await base44.entities.NightLog.create({
@@ -1633,67 +1641,75 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       // Tier system removed - no progression tracking needed
 
       // Update quest progress
-      const quests = await base44.entities.Quest.filter({ servant_id: servant.id });
-      const activeQuest = quests.find(q => !q.completed);
-      if (activeQuest) {
-        const progress = activeQuest.progress || {};
-        const newCount = (progress.interact || 0) + 1;
-        await base44.entities.Quest.update(activeQuest.id, {
-          progress: { ...progress, interact: newCount }
-        });
+      try {
+        const quests = await base44.entities.Quest.filter({ servant_id: servant.id });
+        const activeQuest = quests.find(q => !q.completed);
+        if (activeQuest) {
+          const progress = activeQuest.progress || {};
+          const newCount = (progress.interact || 0) + 1;
+          await base44.entities.Quest.update(activeQuest.id, {
+            progress: { ...progress, interact: newCount }
+          });
+        }
+      } catch (e) {
+        console.error('Failed to update quest:', e);
       }
 
       queryClient.invalidateQueries();
 
       // If killed, delete the servant and create a new one
       if (type === 'kill') {
-        await base44.entities.Servant.delete(servant.id);
+        try {
+          await base44.entities.Servant.delete(servant.id);
 
-        // Track ripper kill if in ripper mode
-        if (vampireState.emotional_mode === 'ruthless' && vampireState.id) {
-          const ripperKills = (vampireState.ripper_kills || 0) + 1;
-          await base44.entities.VampireState.update(vampireState.id, {
-            ripper_kills: ripperKills
-          });
+          // Track ripper kill if in ripper mode
+          if (vampireState.emotional_mode === 'ruthless' && vampireState.id) {
+            const ripperKills = (vampireState.ripper_kills || 0) + 1;
+            await base44.entities.VampireState.update(vampireState.id, {
+              ripper_kills: ripperKills
+            });
+          }
+
+          // Create a new servant after a delay
+          setTimeout(async () => {
+            const names = [
+              'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
+              'Alex', 'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
+              'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren',
+              'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar'
+            ];
+            const variants = ['devoted', 'defiant', 'dreamer'];
+            const emotionalStates = ['curious', 'wary', 'distant'];
+            const genders = ['male', 'female', 'custom'];
+            const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
+            const jobs = [
+              'Night Club Bartender',
+              'Tattoo Artist',
+              'Night Security Guard',
+              'Museum Curator',
+              'Mortuary Assistant',
+              'Librarian',
+              'Underground Music Venue Manager',
+              'Vintage Shop Owner',
+              'Late Night Radio Host',
+              'Graveyard Groundskeeper'
+            ];
+
+            await base44.entities.Servant.create({
+              name: names[Math.floor(Math.random() * names.length)],
+              gender: genders[Math.floor(Math.random() * genders.length)],
+              sexuality: sexualities[Math.floor(Math.random() * sexualities.length)],
+              job: jobs[Math.floor(Math.random() * jobs.length)],
+              variant: variants[Math.floor(Math.random() * variants.length)],
+              obsession_stage: 1,
+              emotional_state: emotionalStates[Math.floor(Math.random() * emotionalStates.length)]
+            });
+
+            queryClient.invalidateQueries();
+          }, 2000);
+        } catch (e) {
+          console.error('Failed to kill servant:', e);
         }
-
-        // Create a new servant after a delay
-        setTimeout(async () => {
-          const names = [
-            'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
-            'Alex', 'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
-            'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren',
-            'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar'
-          ];
-          const variants = ['devoted', 'defiant', 'dreamer'];
-          const emotionalStates = ['curious', 'wary', 'distant'];
-          const genders = ['male', 'female', 'custom'];
-          const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
-          const jobs = [
-            'Night Club Bartender',
-            'Tattoo Artist',
-            'Night Security Guard',
-            'Museum Curator',
-            'Mortuary Assistant',
-            'Librarian',
-            'Underground Music Venue Manager',
-            'Vintage Shop Owner',
-            'Late Night Radio Host',
-            'Graveyard Groundskeeper'
-          ];
-
-          await base44.entities.Servant.create({
-            name: names[Math.floor(Math.random() * names.length)],
-            gender: genders[Math.floor(Math.random() * genders.length)],
-            sexuality: sexualities[Math.floor(Math.random() * sexualities.length)],
-            job: jobs[Math.floor(Math.random() * jobs.length)],
-            variant: variants[Math.floor(Math.random() * variants.length)],
-            obsession_stage: 1,
-            emotional_state: emotionalStates[Math.floor(Math.random() * emotionalStates.length)]
-          });
-
-          queryClient.invalidateQueries();
-        }, 2000);
 
         setTimeout(() => {
           onClose();
@@ -1884,8 +1900,12 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                       <button
                         key={g.value}
                         onClick={async () => {
-                          await base44.entities.Servant.update(servant.id, { gender: g.value });
-                          queryClient.invalidateQueries();
+                         try {
+                           await base44.entities.Servant.update(servant.id, { gender: g.value });
+                           queryClient.invalidateQueries();
+                         } catch (e) {
+                           console.error('Failed to update gender:', e);
+                         }
                         }}
                         className={`w-full rounded-lg py-3 px-4 text-left transition-colors ${
                           servant.gender === g.value 
@@ -1911,8 +1931,12 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                       <button
                         key={p.value}
                         onClick={async () => {
-                          await base44.entities.Servant.update(servant.id, { pronouns: p.value });
-                          queryClient.invalidateQueries();
+                         try {
+                           await base44.entities.Servant.update(servant.id, { pronouns: p.value });
+                           queryClient.invalidateQueries();
+                         } catch (e) {
+                           console.error('Failed to update pronouns:', e);
+                         }
                         }}
                         className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm ${
                           servant.pronouns === p.value 
@@ -1941,13 +1965,17 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                       <button
                         key={option.value}
                         onClick={async () => {
-                          await base44.entities.Servant.update(servant.id, { sexuality: option.value });
-                          await base44.entities.NightLog.create({
-                            entry: `${servant.name} opened up about their sexuality. They're ${option.label.toLowerCase()}.`,
-                            category: 'interaction',
-                            intensity: 'moderate'
-                          });
-                          queryClient.invalidateQueries();
+                         try {
+                           await base44.entities.Servant.update(servant.id, { sexuality: option.value });
+                           await base44.entities.NightLog.create({
+                             entry: `${servant.name} opened up about their sexuality. They're ${option.label.toLowerCase()}.`,
+                             category: 'interaction',
+                             intensity: 'moderate'
+                           });
+                           queryClient.invalidateQueries();
+                         } catch (e) {
+                           console.error('Failed to update sexuality:', e);
+                         }
                         }}
                         className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm ${
                           servant.sexuality === option.value 
