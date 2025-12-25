@@ -114,6 +114,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [selectedTier, setSelectedTier] = useState('basic');
   const [dmMessages, setDmMessages] = useState([]);
   const [sendingDm, setSendingDm] = useState(false);
+  const [paidDmData, setPaidDmData] = useState({ message: '', price: 10 });
 
   const { data: profile = [], isLoading: profileLoading } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -1027,6 +1028,30 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     }
     
     setSendingDm(false);
+  };
+
+  const handleSendPaidDM = async () => {
+    if (!paidDmData.message || sendingDm) return;
+    setSendingDm(true);
+    
+    setTimeout(async () => {
+      const unlocks = Math.floor(servantProfile.subscriber_count * (Math.random() * 0.25 + 0.15));
+      const earnings = unlocks * paidDmData.price;
+      
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: servantProfile.revenue + earnings
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: `Sent paid DM to all subscribers. ${unlocks} unlocked it for $${paidDmData.price} each. Earned $${earnings}.`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
+      queryClient.invalidateQueries();
+      setPaidDmData({ message: '', price: 10 });
+      setSendingDm(false);
+    }, 2000);
   };
 
   const handleCreatePost = async () => {
@@ -2257,36 +2282,73 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               <h3 className="text-white text-xl font-bold mb-2 flex items-center gap-2">
                 <MessageCircle className="w-5 h-5" /> Direct Messages
               </h3>
-              <p className="text-gray-400 text-sm mb-4">Fans send you DMs with tips</p>
+              <p className="text-gray-400 text-sm mb-4">Send locked DMs or receive messages from fans</p>
               
-              <button
-                onClick={() => handleSendDM(topFans[Math.floor(Math.random() * topFans.length)]?.name || 'VampireFan420')}
-                disabled={sendingDm}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50 mb-4"
-              >
-                {sendingDm ? 'Receiving...' : 'Check DMs'}
-              </button>
+              <div className="bg-gray-800 rounded-xl p-4 mb-4">
+                <h4 className="text-white font-medium mb-3">Send Paid DM</h4>
+                <p className="text-gray-400 text-xs mb-3">Send a locked message to all subscribers - they pay to unlock it</p>
+                
+                <textarea
+                  value={paidDmData.message}
+                  onChange={(e) => setPaidDmData({...paidDmData, message: e.target.value})}
+                  placeholder="Your teasing message... 'I did something naughty tonight 😈 Unlock to see...'"
+                  className="w-full bg-gray-900 text-white rounded-lg px-3 py-2 h-20 mb-3"
+                />
+                
+                <div className="mb-3">
+                  <label className="text-gray-400 text-sm block mb-2">Unlock Price</label>
+                  <div className="flex gap-2">
+                    {[5, 10, 15, 25, 50].map(price => (
+                      <button
+                        key={price}
+                        onClick={() => setPaidDmData({...paidDmData, price})}
+                        className={`px-4 py-2 rounded-lg ${paidDmData.price === price ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-400'}`}
+                      >
+                        ${price}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleSendPaidDM}
+                  disabled={!paidDmData.message || sendingDm}
+                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50"
+                >
+                  {sendingDm ? 'Sending...' : `Send to ${servantProfile.subscriber_count} Subscribers`}
+                </button>
+              </div>
               
-              <div className="space-y-3 max-h-[40vh] overflow-y-auto">
-                {dmMessages.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No messages yet. Check your DMs!</p>
-                ) : (
-                  dmMessages.map((dm, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="bg-gray-800 rounded-xl p-4"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="text-purple-400 font-medium">{dm.fan}</span>
-                        <span className="text-green-400 font-bold">+${dm.tip}</span>
-                      </div>
-                      <p className="text-gray-300 text-sm">{dm.message}</p>
-                      <p className="text-gray-600 text-xs mt-2">{new Date(dm.timestamp).toLocaleTimeString()}</p>
-                    </motion.div>
-                  ))
-                )}
+              <div className="border-t border-gray-700 pt-4">
+                <h4 className="text-white font-medium mb-3">Inbox</h4>
+                <button
+                  onClick={() => handleSendDM(topFans[Math.floor(Math.random() * topFans.length)]?.name || 'VampireFan420')}
+                  disabled={sendingDm}
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition-all mb-3"
+                >
+                  {sendingDm ? 'Receiving...' : 'Check New Messages'}
+                </button>
+                
+                <div className="space-y-3 max-h-[30vh] overflow-y-auto">
+                  {dmMessages.length === 0 ? (
+                    <p className="text-gray-500 text-center py-4 text-sm">No messages yet</p>
+                  ) : (
+                    dmMessages.map((dm, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="bg-gray-800 rounded-xl p-3"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-purple-400 font-medium text-sm">{dm.fan}</span>
+                          <span className="text-green-400 font-bold text-sm">+${dm.tip}</span>
+                        </div>
+                        <p className="text-gray-300 text-sm">{dm.message}</p>
+                      </motion.div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           </div>
