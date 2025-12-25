@@ -150,6 +150,7 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
               sender: 'servant'
             });
           } catch (error) {
+            console.log('LLM rate limit hit, using fallback');
             // Fallback to internal commentary if LLM fails
             const responses = INTERNAL_COMMENTARY[servant.variant]?.[servant.obsession_stage] || ['You sense... something. Faint.'];
             const response = responses[Math.floor(Math.random() * responses.length)];
