@@ -918,9 +918,15 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center"
+          className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center relative"
         >
-          <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }} 
+            className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+          >
             <X className="w-5 h-5" />
           </button>
 
@@ -954,9 +960,15 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+          className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative"
         >
-          <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }} 
+            className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+          >
             <X className="w-5 h-5" />
           </button>
 
