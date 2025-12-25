@@ -423,6 +423,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     setLivestreaming(true);
     setChatMessages([]);
     
+    const initialMessages = [];
     const isVampFemale = vampireState.gender === 'woman';
     
     const explicitMessages = withVampire ? (isVampFemale ? [
