@@ -15,33 +15,43 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
     queryFn: () => base44.entities.VampireCouncil.list()
   });
 
-  // Ensure exactly 3 council members
+  // One council member at a time - clean up extras and create if needed
   React.useEffect(() => {
-    const initCouncil = async () => {
-      if (council.length === 0) {
-        const members = [
-          { name: 'Elder Magdalena', position: 'elder', favor: 50 },
-          { name: 'Viktor the Enforcer', position: 'enforcer', favor: 40 },
-          { name: 'Isabeau the Diplomat', position: 'diplomat', favor: 60 }
-        ];
-
-        await Promise.all(members.map(m => 
-          base44.entities.VampireCouncil.create({
-            council_member_name: m.name,
-            position: m.position,
-            favor: m.favor,
-            can_grant_boons: true
-          })
-        ));
-        queryClient.invalidateQueries(['council']);
-      } else if (council.length > 3) {
-        const toDelete = council.slice(3);
+    const manageCouncil = async () => {
+      // Clean up any extra council members (should only be 1)
+      if (council.length > 1) {
+        const toDelete = council.slice(1);
         await Promise.all(toDelete.map(m => base44.entities.VampireCouncil.delete(m.id).catch(() => {})));
+        queryClient.invalidateQueries(['council']);
+        return;
+      }
+      
+      // Create one council member if none exist
+      if (council.length === 0) {
+        const NAME_POOL = [
+          { name: 'Elder Magdalena', position: 'elder' },
+          { name: 'Viktor the Enforcer', position: 'enforcer' },
+          { name: 'Isabeau the Diplomat', position: 'diplomat' },
+          { name: 'Lysander the Archivist', position: 'archivist' },
+          { name: 'Seraphine the Ancient', position: 'elder' },
+          { name: 'Darius Bloodborn', position: 'enforcer' },
+          { name: 'Celestine the Wise', position: 'diplomat' },
+          { name: 'Thornwick the Keeper', position: 'archivist' }
+        ];
+        
+        const member = NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)];
+        
+        await base44.entities.VampireCouncil.create({
+          council_member_name: member.name,
+          position: member.position,
+          favor: Math.floor(Math.random() * 30) + 40, // 40-70
+          can_grant_boons: true
+        });
         queryClient.invalidateQueries(['council']);
       }
     };
     
-    initCouncil();
+    manageCouncil();
   }, [council.length, queryClient]);
 
   const handleRequestBoon = async (boonType) => {
@@ -134,12 +144,14 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-2">The Council</h2>
-        <p className="text-gray-400 text-sm mb-6">Ancient vampires who rule from shadows. Respect them. Fear them.</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Council Member</h2>
+        <p className="text-gray-400 text-sm mb-6">Ancient vampire who rules from shadows. Respect them. Fear them.</p>
 
         {!selectedMember ? (
           <div className="space-y-3">
-            {council.map(member => {
+            {council.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No council member available...</p>
+            ) : council.map(member => {
               const Icon = positionIcons[member.position];
               return (
                 <button
