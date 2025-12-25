@@ -30,20 +30,37 @@ export default function TerritoryMap({ onClose, vampireState }) {
     queryFn: () => base44.entities.RivalVampire.list()
   });
 
-  // Initialize territories
+  // Initialize exactly 8 territories - clean up extras
   React.useEffect(() => {
-    if (territories.length === 0) {
-      Promise.all(TERRITORIES.map(t => 
-        base44.entities.Territory.create({
-          area_name: t.name,
-          control_level: t.name === 'Old Town' ? 30 : 0,
-          controlled_by: t.name === 'Old Town' ? 'you' : 'neutral',
-          feeding_quality: t.quality,
-          heat_level: 0
-        })
-      )).then(() => queryClient.invalidateQueries(['territories']));
-    }
-  }, [territories.length]);
+    const manageTerritories = async () => {
+      // Clean up any extra territories beyond the 8 defined
+      if (territories.length > TERRITORIES.length) {
+        const toDelete = territories.slice(TERRITORIES.length);
+        await Promise.all(toDelete.map(t => base44.entities.Territory.delete(t.id).catch(() => {})));
+        queryClient.invalidateQueries(['territories']);
+        return;
+      }
+      
+      // Create missing territories
+      if (territories.length < TERRITORIES.length) {
+        const existingNames = territories.map(t => t.area_name);
+        const missingTerritories = TERRITORIES.filter(t => !existingNames.includes(t.name));
+        
+        await Promise.all(missingTerritories.map(t => 
+          base44.entities.Territory.create({
+            area_name: t.name,
+            control_level: t.name === 'Old Town' ? 30 : 0,
+            controlled_by: t.name === 'Old Town' ? 'you' : 'neutral',
+            feeding_quality: t.quality,
+            heat_level: 0
+          })
+        ));
+        queryClient.invalidateQueries(['territories']);
+      }
+    };
+    
+    manageTerritories();
+  }, [territories.length, queryClient]);
 
   const handleClaim = async () => {
     setClaiming(true);
