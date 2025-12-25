@@ -154,7 +154,7 @@ export default function Night() {
           {vampireState.vampire_name}
         </h1>
         <p className="text-sm text-gray-400">
-          Night {vampireState.nights_passed}
+          {vampireState.current_date ? format(new Date(vampireState.current_date), 'MMMM d, yyyy') : 'Night ' + vampireState.nights_passed}
         </p>
 
         <div className="flex gap-4 justify-center mt-4">

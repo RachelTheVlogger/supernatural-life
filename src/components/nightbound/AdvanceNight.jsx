@@ -9,27 +9,28 @@ export default function AdvanceNight({ vampireState, onClose }) {
   const [advancing, setAdvancing] = useState(false);
   const queryClient = useQueryClient();
   
-  // Calculate current game date
-  const gameStartDate = vampireState.game_start_date 
-    ? new Date(vampireState.game_start_date) 
+  // Get current date
+  const currentGameDate = vampireState.current_date 
+    ? new Date(vampireState.current_date) 
     : new Date();
-  const currentGameDate = addDays(gameStartDate, vampireState.nights_passed || 0);
+  const nextGameDate = addDays(currentGameDate, 1);
   
   const handleAdvance = async () => {
     setAdvancing(true);
     
     setTimeout(async () => {
-      // Advance night counter
+      // Advance to next day
       const newNight = (vampireState.nights_passed || 0) + 1;
       
       // Update vampire state
       await base44.entities.VampireState.update(vampireState.id, {
-        nights_passed: newNight
+        nights_passed: newNight,
+        current_date: nextGameDate.toISOString()
       });
       
       // Log the night passing
       await base44.entities.NightLog.create({
-        entry: `Night ${newNight} begins. The city sleeps. You do not.`,
+        entry: `${format(nextGameDate, 'MMMM d, yyyy')} - Another night begins. The city sleeps. You do not.`,
         category: 'observation',
         intensity: 'subtle'
       });
@@ -75,12 +76,14 @@ export default function AdvanceNight({ vampireState, onClose }) {
           <div className="bg-black/40 rounded-xl p-4 my-6">
             <div className="flex items-center justify-center gap-3 mb-3">
               <Calendar className="w-5 h-5 text-gray-400" />
-              <p className="text-gray-300">
-                {format(currentGameDate, 'MMMM d, yyyy')}
-              </p>
+              <p className="text-gray-300 text-sm">Current Date</p>
             </div>
-            <p className="text-gray-400 text-sm">Current: Night {vampireState.nights_passed || 0}</p>
-            <p className="text-purple-400 text-lg font-bold">Next: Night {(vampireState.nights_passed || 0) + 1}</p>
+            <p className="text-gray-400 text-lg mb-2">
+              {format(currentGameDate, 'MMMM d, yyyy')}
+            </p>
+            <p className="text-purple-400 text-lg font-bold">
+              Next: {format(nextGameDate, 'MMMM d, yyyy')}
+            </p>
           </div>
           
           {advancing ? (
