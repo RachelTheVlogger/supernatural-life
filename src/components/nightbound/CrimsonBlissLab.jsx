@@ -355,7 +355,7 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         potency: Math.min(10, avgPotency),
         quantity: 3,
         price_per_dose: Math.floor((strain1.price_per_dose + strain2.price_per_dose) * 0.7),
-        effects: `Hybrid effects: ${effect1}... merged with ${effect2}...`,
+        effects: `hybrid effects: ${effect1}... merged with ${effect2}...`,
         addictiveness: avgAddictiveness,
         is_hybrid: true,
         quality: quality,
