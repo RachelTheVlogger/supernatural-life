@@ -271,6 +271,87 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
     queryClient.invalidateQueries();
   };
 
+  const handleAlgorithmBoost = async (type) => {
+    const boosts = {
+      clickbait: { cost: 500, subs: Math.floor(Math.random() * 5000) + 3000, views: Math.floor(Math.random() * 50000) + 30000, text: 'Optimized titles and thumbnails. Algorithm loves it. Views exploding.' },
+      trending: { cost: 1000, subs: Math.floor(Math.random() * 10000) + 8000, views: Math.floor(Math.random() * 100000) + 80000, text: 'Rode the trending wave. #1 on trending page. Channel blowing up.' },
+      viral: { cost: 2000, subs: Math.floor(Math.random() * 25000) + 20000, views: Math.floor(Math.random() * 500000) + 300000, text: 'Video went MEGA VIRAL. Millions of views. Everyone knows your channel now.' },
+      collab: { cost: 800, subs: Math.floor(Math.random() * 7000) + 5000, views: Math.floor(Math.random() * 70000) + 50000, text: 'Collaborated with massive creator. Their audience flooded your channel.' }
+    };
+
+    const boost = boosts[type];
+    
+    if (channel.revenue < boost.cost) {
+      alert(`Need $${boost.cost} (have $${channel.revenue})`);
+      return;
+    }
+
+    await base44.entities.YouTubeChannel.update(channel.id, {
+      subscriber_count: channel.subscriber_count + boost.subs,
+      total_views: channel.total_views + boost.views,
+      revenue: channel.revenue - boost.cost + Math.floor(boost.views * 0.003),
+      reputation: Math.min(100, channel.reputation + 20)
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${boost.text} +${boost.subs.toLocaleString()} subs. +${boost.views.toLocaleString()} views.`,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+  };
+
+  const handleMassUpload = async () => {
+    if (channel.revenue < 1500) {
+      alert('Need $1,500 to hire editors');
+      return;
+    }
+
+    const numVideos = Math.floor(Math.random() * 3) + 5; // 5-7 videos
+    let totalViews = 0;
+    let totalSubs = 0;
+    let totalEarnings = 0;
+
+    for (let i = 0; i < numVideos; i++) {
+      const views = Math.floor(Math.random() * 10000) + 5000;
+      const subs = Math.floor(views * 0.02);
+      const earnings = Math.floor(views * 0.003);
+      
+      totalViews += views;
+      totalSubs += subs;
+      totalEarnings += earnings;
+
+      await base44.entities.YouTubeVideo.create({
+        channel_id: channel.id,
+        title: `Mass Upload Video ${i + 1}`,
+        category: channel.niche,
+        content_description: 'Part of mass upload strategy',
+        views: views,
+        likes: Math.floor(views * 0.08),
+        earnings: earnings,
+        is_viral: false,
+        controversy_score: 0,
+        featured_vampire: false
+      });
+    }
+
+    await base44.entities.YouTubeChannel.update(channel.id, {
+      subscriber_count: channel.subscriber_count + totalSubs,
+      total_views: channel.total_views + totalViews,
+      revenue: channel.revenue - 1500 + totalEarnings,
+      reputation: Math.min(100, channel.reputation + 15)
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `Mass uploaded ${numVideos} videos. Hired editors. +${totalSubs.toLocaleString()} subs. +${totalViews.toLocaleString()} views. Dominating the algorithm.`,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+  };
+
   if (!hasChannel && !editingChannel) {
     return (
       <motion.div
@@ -465,6 +546,9 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           <button onClick={() => setTab('livestream')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'livestream' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             🔴 Livestream
           </button>
+          <button onClick={() => setTab('algorithm')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'algorithm' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            🚀 Algorithm
+          </button>
           <button onClick={() => setTab('analytics')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'analytics' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             📊 Analytics
           </button>
@@ -650,6 +734,116 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ALGORITHM TAB */}
+        {tab === 'algorithm' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 rounded-2xl p-6 text-center mb-4">
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 360] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="text-6xl mb-3"
+              >
+                🚀
+              </motion.div>
+              <h3 className="text-white text-2xl font-bold mb-2">RULE THE ALGORITHM</h3>
+              <p className="text-purple-300 text-sm">Explode your growth. Dominate YouTube.</p>
+            </div>
+
+            <button
+              onClick={() => handleAlgorithmBoost('clickbait')}
+              disabled={channel.revenue < 500}
+              className="w-full bg-gradient-to-br from-orange-950/40 to-red-950/40 border-2 border-orange-500/30 hover:border-orange-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">📢</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Clickbait Mastery</h4>
+                    <p className="text-gray-400 text-sm">Optimize titles & thumbnails. Algorithm boost.</p>
+                    <p className="text-orange-400 text-xs mt-1">+3-8k subs, +30-80k views</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$500</span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => handleAlgorithmBoost('trending')}
+              disabled={channel.revenue < 1000}
+              className="w-full bg-gradient-to-br from-red-950/40 to-pink-950/40 border-2 border-red-500/30 hover:border-red-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">📈</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Hit Trending Page</h4>
+                    <p className="text-gray-400 text-sm">Get on #1 trending. Massive exposure.</p>
+                    <p className="text-red-400 text-xs mt-1">+8-18k subs, +80-180k views</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$1,000</span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => handleAlgorithmBoost('viral')}
+              disabled={channel.revenue < 2000}
+              className="w-full bg-gradient-to-br from-purple-950/40 to-blue-950/40 border-2 border-purple-500/30 hover:border-purple-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">💥</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1 flex items-center gap-2">
+                      MEGA VIRAL
+                      <Flame className="w-5 h-5 text-orange-400" />
+                    </h4>
+                    <p className="text-gray-400 text-sm">Force a video to go MEGA viral. Millions of views.</p>
+                    <p className="text-purple-400 text-xs mt-1">+20-45k subs, +300k-800k views</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$2,000</span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => handleAlgorithmBoost('collab')}
+              disabled={channel.revenue < 800}
+              className="w-full bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border-2 border-blue-500/30 hover:border-blue-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">🤝</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Big Creator Collab</h4>
+                    <p className="text-gray-400 text-sm">Collab with massive YouTuber. Steal their audience.</p>
+                    <p className="text-blue-400 text-xs mt-1">+5-12k subs, +50-120k views</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$800</span>
+              </div>
+            </button>
+
+            <button
+              onClick={handleMassUpload}
+              disabled={channel.revenue < 1500}
+              className="w-full bg-gradient-to-br from-yellow-950/40 to-orange-950/40 border-2 border-yellow-500/30 hover:border-yellow-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">⚡</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Mass Upload Campaign</h4>
+                    <p className="text-gray-400 text-sm">Hire editors. Upload 5-7 videos at once. Flood the algorithm.</p>
+                    <p className="text-yellow-400 text-xs mt-1">Instant growth spike</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$1,500</span>
+              </div>
+            </button>
           </div>
         )}
 
