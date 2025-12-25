@@ -41,16 +41,20 @@ export default function RivalVampireModal({ onClose, vampireState }) {
       const success = Math.random() > 0.5;
       const result = success ? 'success' : (action === 'challenge' ? 'lose' : 'fail');
       const outcomeText = outcomes[action][result][Math.floor(Math.random() * outcomes[action][result].length)];
-      
+
       setOutcome(outcomeText);
 
       // Update based on action
       if (action === 'challenge' && success) {
         const newPowerLevel = Math.max(0, selectedRival.power_level - 20);
-        
+
         // If rival is defeated (power reaches 0), replace them with a new one
         if (newPowerLevel === 0) {
-          await base44.entities.RivalVampire.delete(selectedRival.id);
+          try {
+            await base44.entities.RivalVampire.delete(selectedRival.id);
+          } catch (e) {
+            // Already deleted, continue
+          }
           
           // Generate new rival with unique name
           const namePool = [
@@ -93,13 +97,21 @@ export default function RivalVampireModal({ onClose, vampireState }) {
           }
         }
       } else if (action === 'negotiate' && success) {
-        await base44.entities.RivalVampire.update(selectedRival.id, {
-          relationship: Math.min(100, (selectedRival.relationship || 0) + 20)
-        });
+        try {
+          await base44.entities.RivalVampire.update(selectedRival.id, {
+            relationship: Math.min(100, (selectedRival.relationship || 0) + 20)
+          });
+        } catch (e) {
+          // Entity deleted, skip
+        }
       } else if (action === 'seduce' && success) {
-        await base44.entities.RivalVampire.update(selectedRival.id, {
-          relationship: Math.min(100, (selectedRival.relationship || 0) + 40)
-        });
+        try {
+          await base44.entities.RivalVampire.update(selectedRival.id, {
+            relationship: Math.min(100, (selectedRival.relationship || 0) + 40)
+          });
+        } catch (e) {
+          // Entity deleted, skip
+        }
       }
 
       await base44.entities.NightLog.create({

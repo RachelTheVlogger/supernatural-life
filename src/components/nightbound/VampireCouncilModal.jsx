@@ -56,10 +56,15 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
       if (success) {
         setOutcome(boons[boonType]);
         
-        await base44.entities.VampireCouncil.update(selectedMember.id, {
-          favor: selectedMember.favor - 20,
-          last_contacted: new Date().toISOString()
-        });
+        try {
+          await base44.entities.VampireCouncil.update(selectedMember.id, {
+            favor: selectedMember.favor - 20,
+            last_contacted: new Date().toISOString()
+          });
+        } catch (e) {
+          // Entity might have been cleaned up, refresh list
+          queryClient.invalidateQueries(['council']);
+        }
 
         if (boonType === 'power' && vampireState.id) {
           const newPowers = ['Council Blessing', 'Ancient Technique', 'Elder\'s Gift'];
