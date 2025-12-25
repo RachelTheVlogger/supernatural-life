@@ -34,8 +34,6 @@ export default function Night() {
     queryFn: () => base44.entities.VampireState.list()
   });
   
-  const vampireState = vampireStates[0];
-  
   // Fetch servants
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
@@ -48,20 +46,17 @@ export default function Night() {
     queryFn: () => base44.entities.NightLog.list('-created_date', 10)
   });
   
-  
   // Ensure only one servant exists at a time
   const [servantsInitialized, setServantsInitialized] = useState(false);
   
+  const vampireState = vampireStates[0];
+  
   // Redirect to home if no vampire exists
   useEffect(() => {
-    const checkAndRedirect = async () => {
-      const states = await base44.entities.VampireState.list();
-      if (states.length === 0) {
-        navigate(createPageUrl('Home'), { replace: true });
-      }
-    };
-    checkAndRedirect();
-  }, [navigate]);
+    if (vampireStates.length === 0) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [vampireStates, navigate]);
   
   
   if (vampireLoading) {
