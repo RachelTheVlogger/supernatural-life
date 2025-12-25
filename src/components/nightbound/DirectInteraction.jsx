@@ -507,7 +507,7 @@ const INTERACTIONS = {
   },
   breeding: {
     icon: Flame,
-    label: isFemale ? 'Use strap-on' : 'Breed them',
+    label: 'Breed them',
     category: 'physical',
     gains: [30, 40],
     getDynamicOutcomes: (vampireGender) => {
