@@ -60,10 +60,16 @@ export default function Messages() {
   const { data: servant } = useQuery({
     queryKey: ['servant', servantId],
     queryFn: async () => {
-      const servants = await base44.entities.Servant.list();
-      return servants.find(s => s.id === servantId);
+      try {
+        const servants = await base44.entities.Servant.list();
+        return servants.find(s => s.id === servantId);
+      } catch (e) {
+        console.error('Failed to fetch servant:', e);
+        return null;
+      }
     },
-    enabled: !!servantId && servantId !== 'null' && servantId !== 'undefined'
+    enabled: !!servantId && servantId !== 'null' && servantId !== 'undefined',
+    retry: 2
   });
   
   const { data: messages = [], isLoading: messagesLoading } = useQuery({

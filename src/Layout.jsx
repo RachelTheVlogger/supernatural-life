@@ -14,8 +14,16 @@ export default function Layout({ children, currentPageName }) {
   // Fetch servants for navigation
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
-    queryFn: () => base44.entities.Servant.list(),
-    enabled: ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName)
+    queryFn: async () => {
+      try {
+        return await base44.entities.Servant.list();
+      } catch (e) {
+        console.error('Failed to fetch servants:', e);
+        return [];
+      }
+    },
+    enabled: ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName),
+    retry: 1
   });
   
   // Show nav on main game pages only

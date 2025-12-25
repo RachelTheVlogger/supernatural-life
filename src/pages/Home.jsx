@@ -18,7 +18,15 @@ export default function Home() {
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
-    queryFn: () => base44.entities.VampireState.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.VampireState.list();
+      } catch (e) {
+        console.error('Failed to fetch vampire state:', e);
+        return [];
+      }
+    },
+    retry: 2
   });
   
   const existingGame = vampireStates.length > 0;

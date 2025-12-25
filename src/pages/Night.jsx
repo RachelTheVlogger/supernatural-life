@@ -33,19 +33,43 @@ export default function Night() {
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
-    queryFn: () => base44.entities.VampireState.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.VampireState.list();
+      } catch (e) {
+        console.error('Failed to fetch vampire state:', e);
+        return [];
+      }
+    },
+    retry: 2
   });
   
   // Fetch servants
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
-    queryFn: () => base44.entities.Servant.list('-last_interaction')
+    queryFn: async () => {
+      try {
+        return await base44.entities.Servant.list('-last_interaction');
+      } catch (e) {
+        console.error('Failed to fetch servants:', e);
+        return [];
+      }
+    },
+    retry: 2
   });
   
   // Fetch recent logs
   const { data: logs = [] } = useQuery({
     queryKey: ['logs'],
-    queryFn: () => base44.entities.NightLog.list('-created_date', 10)
+    queryFn: async () => {
+      try {
+        return await base44.entities.NightLog.list('-created_date', 10);
+      } catch (e) {
+        console.error('Failed to fetch logs:', e);
+        return [];
+      }
+    },
+    retry: 1
   });
   
   const [servantsInitialized, setServantsInitialized] = useState(false);
