@@ -20,10 +20,12 @@ export default function TerritoryMap({ onClose, vampireState }) {
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   const [claiming, setClaiming] = useState(false);
 
-  const { data: territories = [] } = useQuery({
+  const { data: territories = [], isLoading } = useQuery({
     queryKey: ['territories'],
     queryFn: () => base44.entities.Territory.list()
   });
+
+  const [territoriesInitialized, setTerritoriesInitialized] = React.useState(false);
 
   const { data: rivals = [] } = useQuery({
     queryKey: ['rivals'],
@@ -42,7 +44,8 @@ export default function TerritoryMap({ onClose, vampireState }) {
       }
       
       // Create missing territories
-      if (territories.length < TERRITORIES.length) {
+      if (territories.length < TERRITORIES.length && !territoriesInitialized) {
+        setTerritoriesInitialized(true);
         const existingNames = territories.map(t => t.area_name);
         const missingTerritories = TERRITORIES.filter(t => !existingNames.includes(t.name));
         
@@ -60,7 +63,7 @@ export default function TerritoryMap({ onClose, vampireState }) {
     };
     
     manageTerritories();
-  }, [territories.length, queryClient]);
+  }, [territories.length, territoriesInitialized, queryClient]);
 
   const handleClaim = async () => {
     setClaiming(true);
@@ -135,7 +138,9 @@ export default function TerritoryMap({ onClose, vampireState }) {
 
         {!selectedTerritory ? (
           <div className="grid md:grid-cols-2 gap-3">
-            {territories.map(territory => {
+            {isLoading ? (
+              <p className="text-gray-400 text-center py-8 col-span-2">Loading territories...</p>
+            ) : territories.map(territory => {
               const isYours = territory.controlled_by === 'you';
               const isRival = territory.controlled_by !== 'you' && territory.controlled_by !== 'neutral';
               

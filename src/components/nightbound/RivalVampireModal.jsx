@@ -10,10 +10,12 @@ export default function RivalVampireModal({ onClose, vampireState }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const { data: rivals = [] } = useQuery({
+  const { data: rivals = [], isLoading } = useQuery({
     queryKey: ['rivals'],
     queryFn: () => base44.entities.RivalVampire.list('-power_level')
   });
+
+  const [rivalsInitialized, setRivalsInitialized] = React.useState(false);
 
   const handleAction = async (action) => {
     setProcessing(true);
@@ -139,7 +141,8 @@ export default function RivalVampireModal({ onClose, vampireState }) {
       }
       
       // Create one rival if none exist
-      if (rivals.length === 0) {
+      if (rivals.length === 0 && !rivalsInitialized) {
+        setRivalsInitialized(true);
         const NAME_POOL = [
           'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
           'Dorian Blackwood', 'Seraphina Nyx', 'Marcus Ravencroft',
@@ -171,7 +174,7 @@ export default function RivalVampireModal({ onClose, vampireState }) {
     };
     
     manageRivals();
-  }, [rivals.length, queryClient]);
+  }, [rivals.length, rivalsInitialized, queryClient]);
 
   return (
     <motion.div
@@ -203,9 +206,9 @@ export default function RivalVampireModal({ onClose, vampireState }) {
 
         {!selectedRival ? (
           <div className="space-y-3">
-            {rivals.length === 0 ? (
-              <p className="text-gray-400 text-center py-8">No rivals yet...</p>
-            ) : rivals.map(rival => (
+            {isLoading || rivals.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">Loading rivals...</p>
+            ) : rivals.slice(0, 1).map(rival => (
               <button
                 key={rival.id}
                 onClick={() => setSelectedRival(rival)}

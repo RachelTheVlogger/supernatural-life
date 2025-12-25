@@ -10,15 +10,18 @@ export default function HunterThreatModal({ onClose, vampireState }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const { data: hunters = [] } = useQuery({
+  const { data: hunters = [], isLoading } = useQuery({
     queryKey: ['hunters'],
     queryFn: () => base44.entities.Hunter.list('-suspicion')
   });
 
+  const [huntersInitialized, setHuntersInitialized] = React.useState(false);
+
   // Generate hunters based on exposure
   React.useEffect(() => {
     const initHunters = async () => {
-      if (hunters.length === 0 && (vampireState.exposure_level || 0) > 20) {
+      if (hunters.length === 0 && (vampireState.exposure_level || 0) > 20 && !huntersInitialized) {
+        setHuntersInitialized(true);
         const namePool = [
           'Sarah Cross', 'Marcus Blade', 'Father Dominic', 'Dr. Helena Vale',
           'Agent Rivers', 'Sister Margaret', 'Detective Stone', 'Professor Harker',
@@ -47,7 +50,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
     };
     
     initHunters();
-  }, [hunters.length, vampireState.exposure_level, queryClient]);
+  }, [hunters.length, vampireState.exposure_level, huntersInitialized, queryClient]);
 
   const handleAction = async (action) => {
     setProcessing(true);
