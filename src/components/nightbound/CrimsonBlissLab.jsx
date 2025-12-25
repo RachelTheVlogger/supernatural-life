@@ -1130,51 +1130,57 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           </div>
         )}
 
-        {tab === 'advanced' && operation && (
+        {tab === 'advanced' && (
           <div className="space-y-3">
             <h3 className="text-white font-bold mb-3">Advanced Operations</h3>
             
-            <div className="bg-gray-800 rounded-xl p-4">
-              <h4 className="text-white font-bold mb-2">Automation</h4>
-              <p className="text-gray-400 text-sm mb-3">Assign a servant to handle distribution</p>
-              <div className="space-y-2">
-                {servants.map(servant => (
-                  <button
-                    key={servant.id}
-                    onClick={() => handleSetupDistributor(servant)}
-                    disabled={operation.servant_distributor_id === servant.id}
-                    className={`w-full py-2 rounded-lg transition-colors text-sm ${
-                      operation.servant_distributor_id === servant.id
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                    }`}
-                  >
-                    {operation.servant_distributor_id === servant.id ? '✓ ' : ''}{servant.name}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {!operation ? (
+              <p className="text-gray-400 text-center py-8">Loading operations...</p>
+            ) : (
+              <>
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-bold mb-2">Automation</h4>
+                  <p className="text-gray-400 text-sm mb-3">Assign a servant to handle distribution</p>
+                  <div className="space-y-2">
+                    {servants.map(servant => (
+                      <button
+                        key={servant.id}
+                        onClick={() => handleSetupDistributor(servant)}
+                        disabled={operation.servant_distributor_id === servant.id}
+                        className={`w-full py-2 rounded-lg transition-colors text-sm ${
+                          operation.servant_distributor_id === servant.id
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        }`}
+                      >
+                        {operation.servant_distributor_id === servant.id ? '✓ ' : ''}{servant.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            <div className="bg-gray-800 rounded-xl p-4">
-              <h4 className="text-white font-bold mb-2">Territory Control</h4>
-              <p className="text-gray-400 text-sm mb-3">Your dominance: {operation.territory_control}%</p>
-              <div className="w-full bg-gray-700 rounded-full h-3">
-                <div 
-                  style={{ width: `${operation.territory_control}%` }}
-                  className="h-3 bg-gradient-to-r from-red-500 to-purple-500 rounded-full"
-                />
-              </div>
-            </div>
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-bold mb-2">Territory Control</h4>
+                  <p className="text-gray-400 text-sm mb-3">Your dominance: {operation.territory_control}%</p>
+                  <div className="w-full bg-gray-700 rounded-full h-3">
+                    <div 
+                      style={{ width: `${operation.territory_control}%` }}
+                      className="h-3 bg-gradient-to-r from-red-500 to-purple-500 rounded-full"
+                    />
+                  </div>
+                </div>
 
-            <div className="bg-gray-800 rounded-xl p-4">
-              <h4 className="text-white font-bold mb-2">Quality Standards</h4>
-              <p className="text-gray-400 text-sm">Hybrid strains and servant blood produce premium/legendary quality</p>
-              <div className="flex gap-2 text-xs mt-2">
-                <span className="bg-gray-700 px-2 py-1 rounded">Standard</span>
-                <span className="bg-blue-700 px-2 py-1 rounded">Premium</span>
-                <span className="bg-yellow-700 px-2 py-1 rounded">Legendary</span>
-              </div>
-            </div>
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-bold mb-2">Quality Standards</h4>
+                  <p className="text-gray-400 text-sm">Hybrid strains and servant blood produce premium/legendary quality</p>
+                  <div className="flex gap-2 text-xs mt-2">
+                    <span className="bg-gray-700 px-2 py-1 rounded">Standard</span>
+                    <span className="bg-blue-700 px-2 py-1 rounded">Premium</span>
+                    <span className="bg-yellow-700 px-2 py-1 rounded">Legendary</span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 
