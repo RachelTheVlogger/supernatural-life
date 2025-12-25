@@ -28,6 +28,10 @@ const VIDEO_CATEGORIES = {
   vampiresolo: { label: 'Vampire Solo', icon: '🦇', minRep: 0 },
   solo: { label: 'Solo', icon: '💋', examples: ['Masturbating thinking of you', 'Undressing and fingering myself', 'Playing with toys and moaning', 'Multiple orgasms on camera', 'Edging and cumming'], minRep: 0 },
   clothed: { label: 'Clothed/Lingerie', icon: '👙', examples: ['Lingerie try-on', 'Strip tease (clothes stay on)', 'Modeling new outfits', 'Teasing in silk', 'Bra and panties showcase', 'Sensual but covered'], minRep: 0 },
+  softcore: { label: 'Softcore/Implied', icon: '🌸', examples: ['Covered nudity', 'Implied touching under sheets', 'Suggestive poses', 'Sensual but not explicit', 'Implied pleasure', 'Seductive without showing'], minRep: 0 },
+  fashion: { label: 'Fashion/Modeling', icon: '👗', examples: ['Outfit showcases', 'Fashion modeling', 'Dress try-ons', 'Casual outfit videos', 'Street style content', 'Clothing hauls'], minRep: 0 },
+  workout: { label: 'Workout/Fitness', icon: '💪', examples: ['Gym outfit videos', 'Yoga poses', 'Exercise routines', 'Stretching content', 'Sports bra content', 'Fitness motivation'], minRep: 0 },
+  lifestyle: { label: 'Lifestyle/Vlog', icon: '📸', examples: ['Day in my life', 'Behind the scenes', 'Morning routine', 'Getting ready content', 'Q&A videos', 'Personal updates'], minRep: 0 },
   pov: { label: 'POV', icon: '👁️', examples: ['Your view while I ride you', 'On my knees for you', 'Waking up together', 'Between my legs', 'Facesitting POV'], minRep: 0 },
   roleplay: { label: 'Roleplay', icon: '🎭', examples: ['Vampire seduction', 'Your obedient servant', 'Master and pet', 'Forbidden encounter', 'Dark ritual'], minRep: 0 },
   teasing: { label: 'Teasing', icon: '😈', examples: ['Strip tease', 'Almost showing everything', 'Teasing touches', 'Denial game', 'Edge play'], minRep: 0 },
@@ -49,10 +53,10 @@ const VIDEO_CATEGORIES = {
   exclusive: { label: 'Exclusive Elite', icon: '💎', examples: ['VIP-only content', 'Elite tier exclusive', 'Premium ultra-rare', 'Top-tier only', 'Highest bidder'], minRep: 95 }
 };
 
-const SUBSCRIPTION_TIERS = [
-  { price: 5, name: 'Basic', perks: ['Access to feed', 'Like & comment'] },
-  { price: 10, name: 'Premium', perks: ['All Basic perks', '10% off PPV', 'Weekly exclusive'] },
-  { price: 20, name: 'VIP', perks: ['All Premium perks', '25% off PPV', 'Priority DMs', 'Custom content requests'] }
+const getSubscriptionTiers = (servantId) => [
+  { id: 'basic', price: 5, name: 'Basic', perks: ['Access to feed', 'Like & comment'] },
+  { id: 'premium', price: 10, name: 'Premium', perks: ['All Basic perks', '10% off PPV', 'Weekly exclusive'] },
+  { id: 'vip', price: 20, name: 'VIP', perks: ['All Premium perks', '25% off PPV', 'Priority DMs', 'Custom content requests'] }
 ];
 
 const WISHLIST_ITEMS = [
@@ -1960,30 +1964,13 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
                 <div className="bg-gray-800 rounded-xl p-4">
                   <h4 className="text-white font-medium mb-2">Subscription Tiers</h4>
-                  <p className="text-gray-400 text-xs mb-3">Set your monthly subscription prices</p>
+                  <p className="text-gray-400 text-xs mb-3">Tiers are set at optimal prices for maximum revenue</p>
                   <div className="space-y-2">
-                    {SUBSCRIPTION_TIERS.map(tier => (
+                    {getSubscriptionTiers(servant.id).map(tier => (
                       <div key={tier.name} className="bg-gray-900 rounded-lg p-3">
-                        <div className="flex justify-between items-center mb-2">
+                        <div className="flex justify-between items-center mb-1">
                           <span className="text-white font-medium">{tier.name}</span>
-                          <div className="flex gap-2">
-                            {[5, 10, 15, 20, 25, 30].map(price => (
-                              <button
-                                key={price}
-                                onClick={async () => {
-                                  await base44.entities.NightLog.create({
-                                    entry: `Updated ${tier.name} tier to $${price}/month.`,
-                                    category: 'interaction',
-                                    intensity: 'subtle'
-                                  });
-                                  queryClient.invalidateQueries();
-                                }}
-                                className={`px-2 py-1 rounded text-xs ${tier.price === price ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
-                              >
-                                ${price}
-                              </button>
-                            ))}
-                          </div>
+                          <span className="text-green-400 font-bold">${tier.price}/month</span>
                         </div>
                         <ul className="text-gray-400 text-xs space-y-1">
                           {tier.perks.map((perk, i) => (
