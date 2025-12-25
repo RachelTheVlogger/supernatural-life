@@ -1505,6 +1505,18 @@ const INTERACTIONS = {
       high: ['They said the stars were nothing compared to you.', 'You kissed under moonlight. Perfect moment.', 'The universe witnessed your connection.']
     }
   },
+  bourbon: {
+    icon: Wine,
+    label: 'Drink bourbon',
+    category: 'activity',
+    gains: [4, 8],
+    outcomes: {
+      low: ['You shared bourbon. They sipped. You tried. Burned going down.', 'Bourbon. Strong. You felt almost human drinking it.', 'You drank together. The alcohol did nothing to you. Almost nothing.'],
+      mid: ['Bourbon flowed. They got tipsy. You pretended. Shared the moment.', 'You poured glasses. Drank. Talked. Almost forgot the hunger.', 'Bourbon and conversation. They relaxed. You watched them.'],
+      high: ['Bourbon together. They were drunk and honest. You were present. The hunger dimmed. Slightly.', 'You drank bourbon for hours. They opened up. You felt... less monstrous.', 'Bourbon helped. Maybe. The cravings quieted. Or you just forgot them.']
+    },
+    special: true
+  },
   travel: {
     icon: Wind,
     label: 'Travel together',
