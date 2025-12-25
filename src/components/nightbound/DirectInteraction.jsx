@@ -1687,9 +1687,23 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     setOutcome(outcome);
     
     setTimeout(async () => {
+      // Bourbon special effect - chance to reduce hunger
+      if (type === 'bourbon' && vampireState.id) {
+        const hungerReduced = Math.random() > 0.5; // 50% chance
+        if (hungerReduced) {
+          const hungerStates = ['restless', 'heightened', 'lingering', 'calm', 'sated'];
+          const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
+          if (currentIndex < hungerStates.length - 1) {
+            await base44.entities.VampireState.update(vampireState.id, {
+              hunger_state: hungerStates[currentIndex + 1]
+            });
+          }
+        }
+      }
+
       const [min, max] = interaction.gains;
       const baseGain = Math.floor(Math.random() * (max - min + 1)) + min;
-      
+
       // Apply variant modifier
       const modifier = getVariantModifier(servant.variant, interaction.category);
       const relationshipGain = Math.round(baseGain * modifier);
