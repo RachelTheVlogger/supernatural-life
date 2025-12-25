@@ -118,7 +118,7 @@ export default function RivalVampireModal({ onClose, vampireState }) {
     }, 2000);
   };
 
-  // Generate rivals if none exist - ensure exactly 3 with unique names
+  // Ensure exactly 3 rivals - fixed set
   React.useEffect(() => {
     if (rivals.length === 0) {
       const fixedRivals = [
@@ -137,6 +137,11 @@ export default function RivalVampireModal({ onClose, vampireState }) {
           servants_count: Math.floor(Math.random() * 5)
         })
       )).then(() => queryClient.invalidateQueries(['rivals']));
+    } else if (rivals.length > 3) {
+      // Delete extras if somehow more than 3 exist
+      const toDelete = rivals.slice(3);
+      Promise.all(toDelete.map(r => base44.entities.RivalVampire.delete(r.id)))
+        .then(() => queryClient.invalidateQueries(['rivals']));
     }
   }, [rivals.length]);
 
