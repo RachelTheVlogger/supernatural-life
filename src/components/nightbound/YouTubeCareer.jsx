@@ -380,7 +380,7 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           </motion.div>
           <h2 className="text-3xl font-bold text-white mb-3">YouTube Career</h2>
           <p className="text-gray-400 mb-8">
-            Create content. Build an audience. Make it big. (Or expose your secret...)
+            Build your channel. Dominate the algorithm. Rule YouTube.
           </p>
 
           <button
