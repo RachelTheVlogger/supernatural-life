@@ -197,19 +197,6 @@ export default function Night() {
       
       {/* Action buttons - Bitlife style */}
       <div className="max-w-2xl mx-auto space-y-3 mb-8 max-h-[50vh] overflow-y-auto">
-        {servants.length > 1 && (
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4 }}
-            onClick={() => setActiveModal('servant-interactions')}
-            className="w-full bg-gradient-to-r from-pink-900/60 to-purple-900/60 hover:from-pink-900/80 hover:to-purple-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
-          >
-            <Users className="w-5 h-5 text-white" />
-            <span className="text-base font-medium text-white">Servant Interactions ({servants.length} servants)</span>
-          </motion.button>
-        )}
-
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -463,13 +450,6 @@ export default function Night() {
           <CovenManagement
             vampireState={vampireState}
             servants={servants}
-            onClose={() => setActiveModal(null)}
-          />
-        )}
-        {activeModal === 'servant-interactions' && (
-          <ServantInteractions
-            servants={servants}
-            vampireState={vampireState}
             onClose={() => setActiveModal(null)}
           />
         )}
