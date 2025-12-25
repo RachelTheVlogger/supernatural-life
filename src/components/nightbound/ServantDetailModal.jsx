@@ -582,19 +582,6 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
               </button>
             )}
             
-            {!servant.is_turned && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleFeedOn();
-                }}
-                className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
-              >
-                <Heart className="w-5 h-5" />
-                <span>Feed on them</span>
-              </button>
-            )}
-            
             {servant.is_turned && (
               <div className="bg-red-900/30 border border-red-800/50 rounded-xl p-4 mb-2">
                 <p className="text-red-300 text-sm text-center">
