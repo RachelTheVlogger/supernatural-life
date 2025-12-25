@@ -231,6 +231,8 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     const isVampireSolo = selectedCategory === 'vampiresolo';
     const withVampire = filmWithVampire === true;
     
+    // All other categories use standard creation flow
+    
     if (isFilmedCategory && withVampire) {
       setFilming(true);
       
