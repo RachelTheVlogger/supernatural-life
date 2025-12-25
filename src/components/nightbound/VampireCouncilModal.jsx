@@ -21,8 +21,7 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
       const members = [
         { name: 'Elder Magdalena', position: 'elder', favor: 50 },
         { name: 'Viktor the Enforcer', position: 'enforcer', favor: 40 },
-        { name: 'Isabeau the Diplomat', position: 'diplomat', favor: 60 },
-        { name: 'Theron the Archivist', position: 'archivist', favor: 55 }
+        { name: 'Isabeau the Diplomat', position: 'diplomat', favor: 60 }
       ];
 
       Promise.all(members.map(m => 
