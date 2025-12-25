@@ -151,7 +151,7 @@ export default function Night() {
         className="text-center mb-8"
       >
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
-          NIGHTBOUND
+          {vampireState.vampire_name}
         </h1>
         <p className="text-sm text-gray-400">
           Night {vampireState.nights_passed}
