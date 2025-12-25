@@ -471,10 +471,19 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     ];
     
     const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire'];
-    
+    const usedNames = new Set();
+
     for (let i = 0; i < 8; i++) {
+      let username = usernames[Math.floor(Math.random() * usernames.length)];
+      let attempts = 0;
+      while (usedNames.has(username) && attempts < 10) {
+        username = usernames[Math.floor(Math.random() * usernames.length)];
+        attempts++;
+      }
+      usedNames.add(username);
+
       initialMessages.push({
-        username: usernames[Math.floor(Math.random() * usernames.length)],
+        username,
         message: explicitMessages[Math.floor(Math.random() * explicitMessages.length)],
         tip: Math.random() > 0.6 ? Math.floor(Math.random() * 50) + 5 : 0
       });
@@ -788,14 +797,27 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const handleCollab = async () => {
     setCollabing(true);
     
-    const creators = [
+    const creatorPool = [
       { name: 'MidnightMuse', followers: 50000, type: 'Solo creator' },
       { name: 'DarkDesires', followers: 120000, type: 'Couple account' },
       { name: 'ShadowPlay', followers: 80000, type: 'Fetish specialist' },
-      { name: 'NightQueen', followers: 200000, type: 'Top creator' }
+      { name: 'NightQueen', followers: 200000, type: 'Top creator' },
+      { name: 'VelvetVixen', followers: 95000, type: 'Dominant creator' },
+      { name: 'CrimsonRose', followers: 150000, type: 'Elite content' }
     ];
     
-    const creator = creators[Math.floor(Math.random() * creators.length)];
+    // Get existing collabs to avoid duplicates
+    const { data: existingCollabs = [] } = await queryClient.fetchQuery({
+      queryKey: ['collabs', servant.id],
+      queryFn: () => base44.entities.OnlyFangsCollab.filter({ servant_id: servant.id })
+    });
+    
+    const usedNames = existingCollabs.map(c => c.creator_name);
+    const availableCreators = creatorPool.filter(c => !usedNames.includes(c.name));
+    
+    const creator = availableCreators.length > 0 
+      ? availableCreators[Math.floor(Math.random() * availableCreators.length)]
+      : creatorPool[Math.floor(Math.random() * creatorPool.length)];
     
     setTimeout(async () => {
       const collab = await base44.entities.OnlyFangsCollab.create({
@@ -870,7 +892,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         earnings: earnings
       });
 
-      // Generate 3-8 comments
+      // Generate 3-8 comments with unique usernames
       const numComments = Math.floor(Math.random() * 6) + 3;
       const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire'];
       const comments = [
@@ -880,11 +902,20 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         'This made my night', 'I\'m obsessed with you', 'Best content ever', 'You\'re incredible'
       ];
       
+      const usedNames = new Set();
       for (let i = 0; i < numComments; i++) {
+        let username = usernames[Math.floor(Math.random() * usernames.length)];
+        let attempts = 0;
+        while (usedNames.has(username) && attempts < 10) {
+          username = usernames[Math.floor(Math.random() * usernames.length)];
+          attempts++;
+        }
+        usedNames.add(username);
+        
         await base44.entities.OnlyFangsComment.create({
           servant_id: servant.id,
           post_id: post.id,
-          username: usernames[Math.floor(Math.random() * usernames.length)],
+          username,
           comment: comments[Math.floor(Math.random() * comments.length)],
           tip: Math.random() > 0.7 ? Math.floor(Math.random() * 20) + 5 : 0
         });

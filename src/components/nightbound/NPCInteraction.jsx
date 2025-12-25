@@ -24,6 +24,33 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
     queryFn: () => base44.entities.NPC.list()
   });
 
+  // Generate NPCs if empty - unique names only
+  React.useEffect(() => {
+    if (npcs.length === 0) {
+      const namePool = [
+        'Alex Rivers', 'Jordan Kane', 'Morgan Stone', 'Casey Harper',
+        'Riley Quinn', 'Drew Mitchell', 'Sage Cooper', 'Blake Turner',
+        'Avery Scott', 'Rowan Ellis', 'Parker Hayes', 'Devon Reed'
+      ];
+      const occupations = ['Barista', 'Nurse', 'Artist', 'Bartender', 'Student', 'Musician'];
+      const locations = ['Downtown Cafe', 'City Hospital', 'Art Gallery', 'Night Club', 'University', 'Jazz Bar'];
+      const personalities = ['friendly', 'shy', 'curious', 'flirty', 'mysterious', 'bold'];
+      
+      const npcsToCreate = Math.min(4, namePool.length);
+      
+      Promise.all([...Array(npcsToCreate)].map((_, i) =>
+        base44.entities.NPC.create({
+          name: namePool[i],
+          occupation: occupations[i % occupations.length],
+          location: locations[i % locations.length],
+          personality: personalities[i % personalities.length],
+          relationship_vampire: 50,
+          relationship_servant: 50
+        })
+      )).then(() => queryClient.invalidateQueries(['npcs']));
+    }
+  }, [npcs.length]);
+
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
     queryFn: () => base44.entities.VampireState.list(),
