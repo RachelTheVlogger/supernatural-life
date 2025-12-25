@@ -68,10 +68,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { min: 25, max: 75 },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'Their eyes dilated. Pure desire. They wanted you desperately.',
-        'Charmed. They couldn\'t look away. Need radiated from them.',
-        'You became their entire world in that moment.',
-        'They touched you like starving. The charm overwhelming.'
+        'their eyes dilated. Pure desire. They wanted you desperately.',
+        'charmed. They couldn\'t look away. Need radiated from them.',
+        'you became their entire world in that moment.',
+        'they touched you like starving. The charm overwhelming.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 15, 100),
