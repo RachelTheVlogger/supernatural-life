@@ -1041,9 +1041,15 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-gray-900 rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto relative"
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white z-10">
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }} 
+          className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+        >
           <X className="w-5 h-5" />
         </button>
 
@@ -2012,8 +2018,17 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative"
             >
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCreatingPost(false);
+                }} 
+                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
               <h3 className="text-white text-xl font-bold mb-4">Post New Picture</h3>
               
               <div className="space-y-4">
@@ -2097,9 +2112,18 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto relative"
             >
-              <h3 className="text-white text-xl font-bold mb-2">{viewingComments.title}</h3>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setViewingComments(null);
+                }} 
+                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <h3 className="text-white text-xl font-bold mb-2 pr-8">{viewingComments.title}</h3>
               <p className="text-gray-400 text-sm mb-4">Comments</p>
               
               <div className="space-y-3">

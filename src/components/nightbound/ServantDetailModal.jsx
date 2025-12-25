@@ -399,8 +399,11 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
         className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative"
       >
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>
