@@ -491,10 +491,18 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     
     setChatMessages(initialMessages);
     
-    // Keep adding messages during stream
+    // Keep adding messages during stream - avoid recent duplicates
     const messageInterval = setInterval(() => {
+      const recentNames = chatMessages.slice(-5).map(m => m.username);
+      let username = usernames[Math.floor(Math.random() * usernames.length)];
+      let attempts = 0;
+      while (recentNames.includes(username) && attempts < 5) {
+        username = usernames[Math.floor(Math.random() * usernames.length)];
+        attempts++;
+      }
+      
       const newMsg = {
-        username: usernames[Math.floor(Math.random() * usernames.length)],
+        username,
         message: explicitMessages[Math.floor(Math.random() * explicitMessages.length)],
         tip: Math.random() > 0.7 ? Math.floor(Math.random() * 50) + 5 : 0
       };
@@ -568,11 +576,21 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         }
       });
       
-      const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing'];
+      const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire', 'MidnightCrave', 'CrimsonFan'];
+      const usedInResponse = new Set(chatMessages.map(m => m.username));
+      
       response.responses.forEach((msg, i) => {
         setTimeout(() => {
+          let username = usernames[Math.floor(Math.random() * usernames.length)];
+          let attempts = 0;
+          while (usedInResponse.has(username) && attempts < 10) {
+            username = usernames[Math.floor(Math.random() * usernames.length)];
+            attempts++;
+          }
+          usedInResponse.add(username);
+          
           setChatMessages(prev => [...prev.slice(-12), {
-            username: usernames[Math.floor(Math.random() * usernames.length)],
+            username,
             message: msg,
             tip: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 5 : 0
           }]);
