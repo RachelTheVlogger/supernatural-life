@@ -19,15 +19,18 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
   const [temptation, setTemptation] = useState(0);
   const [showFeedPrompt, setShowFeedPrompt] = useState(false);
 
-  const { data: npcs = [] } = useQuery({
+  const { data: npcs = [], isLoading } = useQuery({
     queryKey: ['npcs'],
     queryFn: () => base44.entities.NPC.list()
   });
 
+  const [npcsInitialized, setNpcsInitialized] = React.useState(false);
+
   // Generate NPCs if empty - unique names only
   React.useEffect(() => {
     const initNPCs = async () => {
-      if (npcs.length === 0) {
+      if (npcs.length === 0 && !npcsInitialized) {
+        setNpcsInitialized(true);
         const namePool = [
           'Alex Rivers', 'Jordan Kane', 'Morgan Stone', 'Casey Harper',
           'Riley Quinn', 'Drew Mitchell', 'Sage Cooper', 'Blake Turner',
@@ -54,7 +57,7 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
     };
     
     initNPCs();
-  }, [npcs.length, queryClient]);
+  }, [npcs.length, npcsInitialized, queryClient]);
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -219,8 +222,8 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
           People Around Town
         </h2>
 
-        {npcs.length === 0 ? (
-          <p className="text-gray-400 text-center py-8">No one around right now...</p>
+        {isLoading || npcs.length === 0 ? (
+          <p className="text-gray-400 text-center py-8">Loading...</p>
         ) : (
           <div className="space-y-3">
             {npcs.map((npc) => (
