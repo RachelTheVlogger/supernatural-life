@@ -1381,17 +1381,7 @@ const INTERACTIONS = {
       high: ['You made breakfast. They said it was the sweetest thing.', 'Morning routine. Together. Like a real couple.', 'Breakfast made with love. They felt it.']
     }
   },
-  stargaze2: {
-    icon: Moon,
-    label: 'Stargaze together',
-    category: 'romantic',
-    gains: [9, 16],
-    outcomes: {
-      low: ['Under the stars together. Peaceful.', 'You pointed out constellations. They listened.', 'Stargazing. Quiet companionship.'],
-      mid: ['Under the stars. They rested their head on you.', 'Stargazing together. Fingers intertwined.', 'You looked at stars. They looked at you.'],
-      high: ['They said you\'re more beautiful than the stars.', 'Stargazing. Perfect moment. Perfect person.', 'Under the stars. They said "forever."']
-    }
-  },
+
   movieNight: {
     icon: Smile,
     label: 'Movie night',
