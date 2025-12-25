@@ -25,6 +25,9 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const [experienceOutcome, setExperienceOutcome] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [chatOutcome, setChatOutcome] = useState('');
+  const [hybridMode, setHybridMode] = useState(false);
+  const [selectedStrains, setSelectedStrains] = useState([]);
+  const [servantBloodMode, setServantBloodMode] = useState(false);
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['bloodDrugs'],
@@ -36,8 +39,32 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
     queryFn: () => base44.entities.DrugCustomer.list('-total_spent')
   });
 
+  const { data: operations = [] } = useQuery({
+    queryKey: ['drugOperation'],
+    queryFn: () => base44.entities.DrugOperation.list()
+  });
+
+  const operation = operations[0];
+
   const totalRevenue = customers.reduce((sum, c) => sum + c.total_spent, 0);
   const totalDoses = inventory.reduce((sum, i) => sum + i.quantity, 0);
+
+  // Initialize operation if needed
+  React.useEffect(() => {
+    const initOperation = async () => {
+      if (operations.length === 0) {
+        await base44.entities.DrugOperation.create({
+          reputation: 0,
+          heat_level: 0,
+          territory_control: 50,
+          rival_threat: 0,
+          automation_level: 0
+        });
+        queryClient.invalidateQueries(['drugOperation']);
+      }
+    };
+    initOperation();
+  }, [operations.length, queryClient]);
 
   // Track experimentation count
   const experimentCount = React.useMemo(() => {
@@ -290,6 +317,273 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
     }, 2000);
   };
 
+  const handleCreateHybrid = async () => {
+    if (selectedStrains.length !== 2) return;
+    
+    setProducing(true);
+
+    setTimeout(async () => {
+      const strain1 = inventory.find(i => i.id === selectedStrains[0]);
+      const strain2 = inventory.find(i => i.id === selectedStrains[1]);
+
+      if (strain1.quantity < 2 || strain2.quantity < 2) {
+        setProducing(false);
+        return;
+      }
+
+      const newName = `${strain1.strain_name.split(' ')[0]} ${strain2.strain_name.split(' ')[1]}`;
+      const avgPotency = Math.floor((strain1.potency + strain2.potency) / 2) + Math.floor(Math.random() * 3);
+      const avgAddictiveness = Math.floor((strain1.addictiveness + strain2.addictiveness) / 2);
+      const quality = Math.random() > 0.7 ? 'premium' : Math.random() > 0.9 ? 'legendary' : 'standard';
+
+      await base44.entities.BloodDrug.update(strain1.id, {
+        quantity: strain1.quantity - 2
+      });
+      await base44.entities.BloodDrug.update(strain2.id, {
+        quantity: strain2.quantity - 2
+      });
+
+      await base44.entities.BloodDrug.create({
+        strain_name: newName,
+        potency: Math.min(10, avgPotency),
+        quantity: 3,
+        price_per_dose: Math.floor((strain1.price_per_dose + strain2.price_per_dose) * 0.7),
+        effects: `Hybrid effects: ${strain1.effects.substring(0, 50)}... merged with ${strain2.effects.substring(0, 50)}...`,
+        addictiveness: avgAddictiveness,
+        is_hybrid: true,
+        quality: quality,
+        parent_strains: [strain1.strain_name, strain2.strain_name]
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `Created hybrid strain: ${newName}. Quality: ${quality}. Experimentation pays off.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+      setProducing(false);
+      setHybridMode(false);
+      setSelectedStrains([]);
+    }, 3000);
+  };
+
+  const handleServantBloodProduction = async (servant) => {
+    setProducing(true);
+    setServantBloodMode(false);
+
+    setTimeout(async () => {
+      const quality = Math.random() > 0.8 ? 'premium' : Math.random() > 0.95 ? 'legendary' : 'standard';
+      const nameVariants = ['Essence', 'Dreams', 'Soul', 'Spirit', 'Blood', 'Whisper'];
+      const strainName = `${servant.name}'s ${nameVariants[Math.floor(Math.random() * nameVariants.length)]}`;
+
+      await base44.entities.BloodDrug.create({
+        strain_name: strainName,
+        potency: Math.floor(Math.random() * 5) + 5,
+        quantity: 4,
+        price_per_dose: Math.floor(Math.random() * 400) + 300,
+        effects: `Made from ${servant.name}'s blood. Their essence. Their memories. Intimate. Personal. Powerful.`,
+        addictiveness: 75,
+        quality: quality,
+        base_servant_id: servant.id
+      });
+
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min(100, (servant.relationship || 0) + 10)
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `Used ${servant.name}'s blood to create ${strainName}. Quality: ${quality}. They gave themselves to you.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+      setProducing(false);
+    }, 3000);
+  };
+
+  const handleCustomerReferral = async (customer) => {
+    if (!customer.is_vip) return;
+
+    const namePool = customer.customer_type === 'vampire' 
+      ? ['Vladislav', 'Carmilla', 'Lestat', 'Akasha', 'Armand', 'Selene', 'Viktor', 'Lucian', 'Sonja', 'Kraven', 'Aro', 'Marcus']
+      : ['Marcus', 'Elena', 'David', 'Sarah', 'Alex', 'Maya', 'Nathan', 'Rachel', 'Lucas', 'Jade', 'Chris', 'Kim'];
+    
+    const existingNames = customers.map(c => c.name);
+    const availableNames = namePool.filter(n => !existingNames.includes(n));
+    
+    if (availableNames.length === 0) return;
+
+    const newName = availableNames[Math.floor(Math.random() * availableNames.length)];
+
+    await base44.entities.DrugCustomer.create({
+      name: newName,
+      customer_type: customer.customer_type,
+      addiction_level: 0,
+      preferred_strain: customer.preferred_strain,
+      total_spent: 0,
+      referred_by: customer.id
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${customer.name} referred ${newName}. Your network grows.`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+
+    queryClient.invalidateQueries();
+  };
+
+  const handleOverdoseEvent = async (customer) => {
+    const survived = Math.random() > (customer.overdose_risk / 100);
+
+    if (survived) {
+      await base44.entities.DrugCustomer.update(customer.id, {
+        overdose_risk: Math.max(0, customer.overdose_risk - 20),
+        addiction_level: Math.max(0, customer.addiction_level - 10)
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `${customer.name} overdosed but survived. They're scared now. Less addicted.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+    } else {
+      await base44.entities.DrugCustomer.delete(customer.id);
+
+      if (operation) {
+        await base44.entities.DrugOperation.update(operation.id, {
+          heat_level: Math.min(100, (operation.heat_level || 0) + 15),
+          reputation: Math.max(0, (operation.reputation || 0) - 10)
+        });
+      }
+
+      await base44.entities.NightLog.create({
+        entry: `${customer.name} died from overdose. Heat increased. Blood on your hands.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+    }
+
+    queryClient.invalidateQueries();
+  };
+
+  const handleViolentCustomer = async (customer) => {
+    const outcomes = [
+      `${customer.name} attacked you in withdrawal. You subdued them. Barely. They're dangerous now.`,
+      `${customer.name} threatened you. Desperate. Violent. You gave them a free dose to calm them.`,
+      `${customer.name} went berserk. Broke things. You had to restrain them. This is getting out of hand.`
+    ];
+
+    const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+
+    await base44.entities.DrugCustomer.update(customer.id, {
+      violence_level: Math.max(0, customer.violence_level - 20)
+    });
+
+    if (operation) {
+      await base44.entities.DrugOperation.update(operation.id, {
+        heat_level: Math.min(100, (operation.heat_level || 0) + 10)
+      });
+    }
+
+    await base44.entities.NightLog.create({
+      entry: outcome,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+  };
+
+  const handleRivalEvent = async () => {
+    if (!operation) return;
+
+    const events = [
+      { text: 'Rival dealer tried to steal your customers. You fought them off.', rep: 5, threat: -10 },
+      { text: 'Rival contaminated your supply. Had to destroy a batch. Lost product.', rep: -10, threat: 10 },
+      { text: 'You sabotaged rival operation. Their customers come to you now.', rep: 15, threat: -20 },
+      { text: 'Rival dealer challenged you to territory war. Ongoing conflict.', rep: 0, threat: 20 }
+    ];
+
+    const event = events[Math.floor(Math.random() * events.length)];
+
+    await base44.entities.DrugOperation.update(operation.id, {
+      reputation: Math.max(0, Math.min(100, (operation.reputation || 0) + event.rep)),
+      rival_threat: Math.max(0, Math.min(100, (operation.rival_threat || 0) + event.threat))
+    });
+
+    await base44.entities.NightLog.create({
+      entry: event.text,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+  };
+
+  const handleSetupDistributor = async (servant) => {
+    if (!operation) return;
+
+    await base44.entities.DrugOperation.update(operation.id, {
+      servant_distributor_id: servant.id,
+      automation_level: 50
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${servant.name} is now your distributor. They'll handle sales. Operation automated.`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+
+    queryClient.invalidateQueries();
+  };
+
+  const handleCustomOrder = async (customer) => {
+    if (!customer.custom_order || !customer.is_vip) return;
+
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Create a custom blood drug strain based on this request: "${customer.custom_order}". Make it creative and explicit. Include: name, potency (1-10), effects, price (200-1500), addictiveness (40-95). Format as JSON.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            potency: { type: 'number' },
+            effects: { type: 'string' },
+            price: { type: 'number' },
+            addictiveness: { type: 'number' }
+          }
+        }
+      });
+
+      await base44.entities.BloodDrug.create({
+        strain_name: response.name,
+        potency: response.potency,
+        quantity: 1,
+        price_per_dose: response.price,
+        effects: response.effects,
+        addictiveness: response.addictiveness,
+        quality: 'premium'
+      });
+
+      await base44.entities.DrugCustomer.update(customer.id, {
+        custom_order: null
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `Fulfilled ${customer.name}'s custom order: ${response.name}. They paid well.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+    } catch (e) {
+      console.error('Failed to create custom order:', e);
+    }
+  };
+
   const handleChatWithCustomer = async (customer) => {
     setSelectedCustomer(customer);
 
@@ -441,6 +735,35 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           </div>
         </div>
 
+        {/* Operation Stats */}
+        {operation && (
+          <div className="bg-gray-800 rounded-xl p-4 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div>
+                <p className="text-gray-400 text-xs">Reputation</p>
+                <p className="text-white font-bold">{operation.reputation || 0}%</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-xs">Heat Level</p>
+                <p className={`font-bold ${(operation.heat_level || 0) > 60 ? 'text-red-400' : 'text-green-400'}`}>{operation.heat_level || 0}%</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-xs">Territory</p>
+                <p className="text-white font-bold">{operation.territory_control || 50}%</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-xs">Rival Threat</p>
+                <p className={`font-bold ${(operation.rival_threat || 0) > 60 ? 'text-red-400' : 'text-yellow-400'}`}>{operation.rival_threat || 0}%</p>
+              </div>
+            </div>
+            {operation.servant_distributor_id && (
+              <p className="text-purple-400 text-xs mt-2">
+                🤖 {servants.find(s => s.id === operation.servant_distributor_id)?.name} running distribution
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto">
           <button 
@@ -467,14 +790,29 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           >
             Customers
           </button>
+          <button 
+            onClick={() => setTab('advanced')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'advanced' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            Advanced
+          </button>
+          <button 
+            onClick={() => setTab('events')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'events' ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            Events
+          </button>
         </div>
 
         {/* Tab Content */}
-        {tab === 'produce' && !producing && (
+        {tab === 'produce' && !producing && !hybridMode && !servantBloodMode && (
           <div className="space-y-3">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-white font-bold">Create Blood Drugs</h3>
-              <span className="text-purple-400 text-sm">{experimentCount} custom strains discovered</span>
+              <div className="flex gap-2">
+                <button onClick={() => setHybridMode(true)} className="text-purple-400 text-xs px-3 py-1 bg-purple-900/40 rounded-lg">Create Hybrid</button>
+                <button onClick={() => setServantBloodMode(true)} className="text-red-400 text-xs px-3 py-1 bg-red-900/40 rounded-lg">Use Servant Blood</button>
+              </div>
             </div>
             {BASE_STRAINS.map(strain => (
               <div key={strain.name} className="bg-gray-800 rounded-xl p-4">
@@ -496,6 +834,61 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                   </button>
                 </div>
               </div>
+            ))}
+          </div>
+        )}
+
+        {hybridMode && !producing && (
+          <div className="space-y-3">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-white font-bold">Create Hybrid Strain</h3>
+              <button onClick={() => { setHybridMode(false); setSelectedStrains([]); }} className="text-gray-400 text-sm">Cancel</button>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">Select 2 strains to combine (requires 2 doses each)</p>
+            {inventory.map(drug => (
+              <div key={drug.id} className={`bg-gray-800 rounded-xl p-4 border-2 ${selectedStrains.includes(drug.id) ? 'border-purple-500' : 'border-transparent'}`}>
+                <button
+                  onClick={() => {
+                    if (selectedStrains.includes(drug.id)) {
+                      setSelectedStrains(selectedStrains.filter(id => id !== drug.id));
+                    } else if (selectedStrains.length < 2) {
+                      setSelectedStrains([...selectedStrains, drug.id]);
+                    }
+                  }}
+                  disabled={drug.quantity < 2}
+                  className="w-full text-left"
+                >
+                  <h4 className="text-white font-bold mb-1">{drug.strain_name}</h4>
+                  <p className="text-gray-400 text-xs">Stock: {drug.quantity} | Potency: {drug.potency}</p>
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={handleCreateHybrid}
+              disabled={selectedStrains.length !== 2}
+              className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white py-3 rounded-lg transition-colors disabled:opacity-50"
+            >
+              Create Hybrid ({selectedStrains.length}/2 selected)
+            </button>
+          </div>
+        )}
+
+        {servantBloodMode && !producing && (
+          <div className="space-y-3">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-white font-bold">Use Servant Blood</h3>
+              <button onClick={() => setServantBloodMode(false)} className="text-gray-400 text-sm">Cancel</button>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">Create strains using your servants' blood. Intimate. Personal. Powerful.</p>
+            {servants.map(servant => (
+              <button
+                key={servant.id}
+                onClick={() => handleServantBloodProduction(servant)}
+                className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left transition-colors"
+              >
+                <h4 className="text-white font-bold mb-1">{servant.name}</h4>
+                <p className="text-gray-400 text-sm">Use their blood to create a unique strain</p>
+              </button>
             ))}
           </div>
         )}
@@ -688,15 +1081,18 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                         {customer.is_vip && <span className="text-xs bg-yellow-600 text-white px-2 py-0.5 rounded">VIP</span>}
                       </div>
                       <p className="text-gray-400 text-sm capitalize">{customer.customer_type}</p>
+                      {customer.custom_order && <p className="text-purple-400 text-xs mt-1">💎 Custom order: {customer.custom_order}</p>}
                     </div>
                     <span className="text-green-400 font-bold">${customer.total_spent}</span>
                   </div>
-                  <div className="flex gap-3 text-xs mb-2">
+                  <div className="flex gap-3 text-xs mb-2 flex-wrap">
                     <span className="text-purple-400">Prefers: {customer.preferred_strain}</span>
                     <span className={`${customer.addiction_level > 70 ? 'text-red-400' : 'text-yellow-400'}`}>
                       Addiction: {customer.addiction_level}%
                     </span>
                     <span className="text-blue-400">Friend: {customer.friendship || 0}%</span>
+                    {(customer.overdose_risk || 0) > 50 && <span className="text-red-400">⚠️ OD Risk: {customer.overdose_risk}%</span>}
+                    {(customer.violence_level || 0) > 50 && <span className="text-orange-400">⚡ Violent: {customer.violence_level}%</span>}
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
                     <div 
@@ -704,14 +1100,122 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                       className="h-2 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 rounded-full"
                     />
                   </div>
-                  <button
-                    onClick={() => handleChatWithCustomer(customer)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors text-sm"
-                  >
-                    Talk to Them
-                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleChatWithCustomer(customer)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors text-sm"
+                    >
+                      Talk
+                    </button>
+                    {customer.is_vip && (
+                      <button
+                        onClick={() => handleCustomerReferral(customer)}
+                        className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition-colors text-sm"
+                      >
+                        Get Referral
+                      </button>
+                    )}
+                    {customer.custom_order && (
+                      <button
+                        onClick={() => handleCustomOrder(customer)}
+                        className="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors text-sm col-span-2"
+                      >
+                        Fulfill Custom Order
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))
+            )}
+          </div>
+        )}
+
+        {tab === 'advanced' && operation && (
+          <div className="space-y-3">
+            <h3 className="text-white font-bold mb-3">Advanced Operations</h3>
+            
+            <div className="bg-gray-800 rounded-xl p-4">
+              <h4 className="text-white font-bold mb-2">Automation</h4>
+              <p className="text-gray-400 text-sm mb-3">Assign a servant to handle distribution</p>
+              <div className="space-y-2">
+                {servants.map(servant => (
+                  <button
+                    key={servant.id}
+                    onClick={() => handleSetupDistributor(servant)}
+                    disabled={operation.servant_distributor_id === servant.id}
+                    className={`w-full py-2 rounded-lg transition-colors text-sm ${
+                      operation.servant_distributor_id === servant.id
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                    }`}
+                  >
+                    {operation.servant_distributor_id === servant.id ? '✓ ' : ''}{servant.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-4">
+              <h4 className="text-white font-bold mb-2">Territory Control</h4>
+              <p className="text-gray-400 text-sm mb-3">Your dominance: {operation.territory_control}%</p>
+              <div className="w-full bg-gray-700 rounded-full h-3">
+                <div 
+                  style={{ width: `${operation.territory_control}%` }}
+                  className="h-3 bg-gradient-to-r from-red-500 to-purple-500 rounded-full"
+                />
+              </div>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-4">
+              <h4 className="text-white font-bold mb-2">Quality Standards</h4>
+              <p className="text-gray-400 text-sm">Hybrid strains and servant blood produce premium/legendary quality</p>
+              <div className="flex gap-2 text-xs mt-2">
+                <span className="bg-gray-700 px-2 py-1 rounded">Standard</span>
+                <span className="bg-blue-700 px-2 py-1 rounded">Premium</span>
+                <span className="bg-yellow-700 px-2 py-1 rounded">Legendary</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab === 'events' && (
+          <div className="space-y-3">
+            <h3 className="text-white font-bold mb-3">Manage Events</h3>
+            
+            {operation && (operation.rival_threat || 0) > 30 && (
+              <button
+                onClick={handleRivalEvent}
+                className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left transition-colors"
+              >
+                <h4 className="text-white font-bold mb-1">⚔️ Handle Rival Dealer</h4>
+                <p className="text-gray-400 text-sm">Threat level: {operation.rival_threat}%</p>
+              </button>
+            )}
+
+            {customers.filter(c => (c.overdose_risk || 0) > 60).map(customer => (
+              <button
+                key={customer.id}
+                onClick={() => handleOverdoseEvent(customer)}
+                className="w-full bg-orange-900/40 hover:bg-orange-900/60 border border-orange-500/30 rounded-xl p-4 text-left transition-colors"
+              >
+                <h4 className="text-white font-bold mb-1">⚠️ {customer.name} - High OD Risk</h4>
+                <p className="text-gray-400 text-sm">Overdose risk: {customer.overdose_risk}%</p>
+              </button>
+            ))}
+
+            {customers.filter(c => (c.violence_level || 0) > 60).map(customer => (
+              <button
+                key={customer.id}
+                onClick={() => handleViolentCustomer(customer)}
+                className="w-full bg-yellow-900/40 hover:bg-yellow-900/60 border border-yellow-500/30 rounded-xl p-4 text-left transition-colors"
+              >
+                <h4 className="text-white font-bold mb-1">⚡ {customer.name} - Violent</h4>
+                <p className="text-gray-400 text-sm">Violence level: {customer.violence_level}%</p>
+              </button>
+            ))}
+
+            {customers.length === 0 && (
+              <p className="text-gray-400 text-center py-8">No active events. Keep selling to generate events.</p>
             )}
           </div>
         )}
