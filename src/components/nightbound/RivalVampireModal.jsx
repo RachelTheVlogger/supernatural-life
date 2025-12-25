@@ -51,6 +51,29 @@ export default function RivalVampireModal({ onClose, vampireState }) {
 
           if (newPowerLevel === 0) {
             await base44.entities.RivalVampire.delete(selectedRival.id);
+
+            // Create new rival after delay
+            setTimeout(async () => {
+              const NAME_POOL = [
+                'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
+                'Dorian Blackwood', 'Seraphina Nyx', 'Marcus Ravencroft',
+                'Evangeline Thorn', 'Lucien Deveraux', 'Isolde Morningstar',
+                'Viktor Shadowmere', 'Anastasia Crimson', 'Dante Nightshade'
+              ];
+
+              const PERSONALITIES = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
+              const newName = NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)];
+
+              await base44.entities.RivalVampire.create({
+                name: newName,
+                age: Math.floor(Math.random() * 500) + 50,
+                personality: PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)],
+                power_level: Math.floor(Math.random() * 40) + 50,
+                relationship: Math.floor(Math.random() * 40) - 20,
+                servants_count: Math.floor(Math.random() * 5)
+              });
+              queryClient.invalidateQueries(['rivals']);
+            }, 3000);
           } else {
             await base44.entities.RivalVampire.update(selectedRival.id, {
               relationship: (selectedRival.relationship || 0) - 30,
@@ -96,57 +119,25 @@ export default function RivalVampireModal({ onClose, vampireState }) {
     }, 2000);
   };
 
-  // Ensure exactly 3 rivals with unique names
+  // One rival at a time - create only if none exist
   React.useEffect(() => {
-    const initRivals = async () => {
-      const NAME_POOL = [
-        'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
-        'Dorian Blackwood', 'Seraphina Nyx', 'Marcus Ravencroft',
-        'Evangeline Thorn', 'Lucien Deveraux', 'Isolde Morningstar',
-        'Viktor Shadowmere', 'Anastasia Crimson', 'Dante Nightshade'
-      ];
-      
-      const PERSONALITIES = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
-      
+    const initRival = async () => {
       if (rivals.length === 0) {
-        const fixedRivals = [
-          { name: 'Lilith the Ancient', age: 487, personality: 'seductive', power: 75 },
-          { name: 'Vladislav Corvinus', age: 312, personality: 'ruthless', power: 68 },
-          { name: 'Carmilla Drăculești', age: 234, personality: 'diplomatic', power: 62 }
+        const NAME_POOL = [
+          'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
+          'Dorian Blackwood', 'Seraphina Nyx', 'Marcus Ravencroft',
+          'Evangeline Thorn', 'Lucien Deveraux', 'Isolde Morningstar',
+          'Viktor Shadowmere', 'Anastasia Crimson', 'Dante Nightshade'
         ];
         
-        await Promise.all(fixedRivals.map(r => 
-          base44.entities.RivalVampire.create({
-            name: r.name,
-            age: r.age,
-            personality: r.personality,
-            power_level: r.power,
-            relationship: Math.floor(Math.random() * 40) - 20,
-            servants_count: Math.floor(Math.random() * 5)
-          })
-        ));
-        queryClient.invalidateQueries(['rivals']);
-      } else if (rivals.length > 3) {
-        const toDelete = rivals.slice(3);
-        await Promise.all(toDelete.map(r => base44.entities.RivalVampire.delete(r.id).catch(() => {})));
-        queryClient.invalidateQueries(['rivals']);
-      } else if (rivals.length < 3) {
-        // Get existing names from current rivals
-        const existingNames = rivals.map(r => r.name);
-        
-        // Filter out used names from pool
-        const availableNames = NAME_POOL.filter(n => !existingNames.includes(n));
-        
-        // If all names are used (shouldn't happen with 12 names and 3 slots), use a random one with a number
-        const newName = availableNames.length > 0 
-          ? availableNames[Math.floor(Math.random() * availableNames.length)]
-          : `${NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)]} II`;
+        const PERSONALITIES = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
+        const newName = NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)];
         
         await base44.entities.RivalVampire.create({
           name: newName,
           age: Math.floor(Math.random() * 500) + 50,
           personality: PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)],
-          power_level: Math.floor(Math.random() * 40) + 40,
+          power_level: Math.floor(Math.random() * 40) + 50,
           relationship: Math.floor(Math.random() * 40) - 20,
           servants_count: Math.floor(Math.random() * 5)
         });
@@ -154,7 +145,7 @@ export default function RivalVampireModal({ onClose, vampireState }) {
       }
     };
     
-    initRivals();
+    initRival();
   }, [rivals.length, queryClient]);
 
   return (
@@ -182,12 +173,14 @@ export default function RivalVampireModal({ onClose, vampireState }) {
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-2">Rival Vampires</h2>
-        <p className="text-gray-400 text-sm mb-6">Others like you. Competition. Threat. Opportunity.</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Rival Vampire</h2>
+        <p className="text-gray-400 text-sm mb-6">Another predator. Competition. Threat. Opportunity.</p>
 
         {!selectedRival ? (
           <div className="space-y-3">
-            {rivals.map(rival => (
+            {rivals.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No rivals yet...</p>
+            ) : rivals.map(rival => (
               <button
                 key={rival.id}
                 onClick={() => setSelectedRival(rival)}
