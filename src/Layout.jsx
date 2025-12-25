@@ -86,11 +86,12 @@ export default function Layout({ children, currentPageName }) {
                   <Icon className="w-5 h-5" />
                   <span className="text-xs">{item.name}</span>
                 </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-      </div>
-      );
-      }
+                );
+                })}
+                </div>
+                </div>
+                )}
+                </div>
+                </ErrorBoundary>
+                );
+                }
