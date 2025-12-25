@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { format } from 'date-fns';
 import FeedingModal from '@/components/nightbound/FeedingModal';
 import ServantsList from '@/components/nightbound/ServantsList';
 import NightLogView from '@/components/nightbound/NightLogView';

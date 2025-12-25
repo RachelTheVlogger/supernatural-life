@@ -40,6 +40,7 @@ export default function Home() {
       emotional_mode: 'feeling',
       unlocked_powers: [],
       nights_passed: 0,
+      current_date: new Date().toISOString(),
       humanity: 50,
       moral_path: 'balanced'
     });
