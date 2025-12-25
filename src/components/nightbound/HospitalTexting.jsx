@@ -92,7 +92,22 @@ Respond in 1-2 sentences. Be authentic, flirty, and match their energy. If they'
 
         setResponse(aiResponse);
       } catch (error) {
-        setResponse('...');
+        const fallbackResponses = [
+          "Miss you. Come home safe.",
+          "Can't wait to see you tonight.",
+          "Thinking about you...",
+          "Be careful. Love you.",
+          "Hurry back to me."
+        ];
+        const fallback = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+        
+        await base44.entities.Message.create({
+          servant_id: servant.id,
+          content: fallback,
+          sender: 'servant'
+        });
+        
+        setResponse(fallback);
       }
 
       queryClient.invalidateQueries(['messages']);

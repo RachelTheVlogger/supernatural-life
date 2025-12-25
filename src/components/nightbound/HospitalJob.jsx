@@ -170,9 +170,16 @@ Respond naturally as ${servant.name}. 1-3 sentences. React to what they said. Be
           sender: 'servant'
         });
       } catch {
+        const fallbacks = [
+          "Miss you. Stay safe.",
+          "Can't wait for you to come home.",
+          "Thinking about you at work...",
+          "Be careful tonight.",
+          "Love you. Come back soon."
+        ];
         await base44.entities.Message.create({
           servant_id: servant.id,
-          content: "Miss you. Stay safe.",
+          content: fallbacks[Math.floor(Math.random() * fallbacks.length)],
           sender: 'servant'
         });
       }
