@@ -23,6 +23,8 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const [testEffects, setTestEffects] = useState('');
   const [usingWith, setUsingWith] = useState(null);
   const [experienceOutcome, setExperienceOutcome] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [chatOutcome, setChatOutcome] = useState('');
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['bloodDrugs'],
@@ -616,7 +618,7 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           </div>
         )}
 
-        {tab === 'customers' && (
+        {tab === 'customers' && !selectedCustomer && (
           <div className="space-y-3">
             <h3 className="text-white font-bold mb-3">Your Clients</h3>
             {customers.length === 0 ? (
@@ -626,7 +628,10 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                 <div key={customer.id} className="bg-gray-800 rounded-xl p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h4 className="text-white font-bold">{customer.name}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-white font-bold">{customer.name}</h4>
+                        {customer.is_vip && <span className="text-xs bg-yellow-600 text-white px-2 py-0.5 rounded">VIP</span>}
+                      </div>
                       <p className="text-gray-400 text-sm capitalize">{customer.customer_type}</p>
                     </div>
                     <span className="text-green-400 font-bold">${customer.total_spent}</span>
@@ -636,16 +641,36 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                     <span className={`${customer.addiction_level > 70 ? 'text-red-400' : 'text-yellow-400'}`}>
                       Addiction: {customer.addiction_level}%
                     </span>
+                    <span className="text-blue-400">Friend: {customer.friendship || 0}%</span>
                   </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
                     <div 
                       style={{ width: `${customer.addiction_level}%` }}
                       className="h-2 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 rounded-full"
                     />
                   </div>
+                  <button
+                    onClick={() => handleChatWithCustomer(customer)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors text-sm"
+                  >
+                    Talk to Them
+                  </button>
                 </div>
               ))
             )}
+          </div>
+        )}
+
+        {selectedCustomer && chatOutcome && (
+          <div className="text-center py-12">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-6xl mb-4"
+            >
+              💬
+            </motion.div>
+            <p className="text-gray-300 text-lg whitespace-pre-line">{chatOutcome}</p>
           </div>
         )}
       </motion.div>
