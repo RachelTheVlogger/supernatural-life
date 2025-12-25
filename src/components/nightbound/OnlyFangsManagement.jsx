@@ -113,16 +113,24 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const servantProfile = profile[0];
   const hasProfile = !!servantProfile;
 
-  // Generate top fans
+  // Generate top fans - unique names
   const topFans = React.useMemo(() => {
     if (!servantProfile) return [];
-    const fanNames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen'];
-    return fanNames.slice(0, 5).map((name, i) => ({
+    const fanNamePool = [
+      'DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen',
+      'LustfulNight', 'EternalDesire', 'MidnightCrave', 'CrimsonFan', 'ObsessedOne', 'DevotedSub'
+    ];
+    
+    // Use consistent set based on servant ID to avoid regenerating each render
+    const seed = servant.id?.charCodeAt(0) || 0;
+    const shuffled = [...fanNamePool].sort(() => 0.5 - ((seed * 9301 + 49297) % 233280) / 233280);
+    
+    return shuffled.slice(0, 5).map((name, i) => ({
       name,
       spent: Math.floor(servantProfile.revenue * (0.3 - i * 0.05)),
       tier: i === 0 ? 'VIP' : i < 3 ? 'Premium' : 'Basic'
     }));
-  }, [servantProfile?.revenue]);
+  }, [servantProfile?.revenue, servant.id]);
 
   // Analytics data
   const analytics = React.useMemo(() => {

@@ -15,18 +15,25 @@ export default function HunterThreatModal({ onClose, vampireState }) {
     queryFn: () => base44.entities.Hunter.list('-suspicion')
   });
 
-  // Generate hunters based on exposure
+  // Generate hunters based on exposure - unique names only
   React.useEffect(() => {
     if (hunters.length === 0 && (vampireState.exposure_level || 0) > 20) {
-      const names = ['Sarah Cross', 'Marcus Blade', 'Father Dominic', 'Dr. Helena Vale'];
+      const namePool = [
+        'Sarah Cross', 'Marcus Blade', 'Father Dominic', 'Dr. Helena Vale',
+        'Agent Rivers', 'Sister Margaret', 'Detective Stone', 'Professor Harker',
+        'Victor Kane', 'Isabella Hunt', 'Thomas Grey', 'Rachel Ashford'
+      ];
       const specialties = ['tracker', 'researcher', 'combatant', 'infiltrator'];
       
-      const hunterCount = Math.floor((vampireState.exposure_level || 0) / 30);
+      const existingNames = hunters.map(h => h.name);
+      const availableNames = namePool.filter(n => !existingNames.includes(n));
       
-      Promise.all([...Array(Math.min(hunterCount, 3))].map((_, i) =>
+      const hunterCount = Math.min(Math.floor((vampireState.exposure_level || 0) / 30), availableNames.length, 3);
+      
+      Promise.all([...Array(hunterCount)].map((_, i) =>
         base44.entities.Hunter.create({
-          name: names[i],
-          specialty: specialties[i],
+          name: availableNames[i],
+          specialty: specialties[i % specialties.length],
           skill_level: Math.floor(Math.random() * 30) + 40,
           suspicion: Math.floor(Math.random() * 40) + 20,
           status: 'tracking'
