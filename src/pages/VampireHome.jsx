@@ -631,6 +631,7 @@ export default function VampireHome() {
         {showCrimsonBliss && (
           <CrimsonBlissLab
             vampireState={vampireState}
+            servants={servants}
             onClose={() => setShowCrimsonBliss(false)}
           />
         )}

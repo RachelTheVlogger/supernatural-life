@@ -12,7 +12,7 @@ const BASE_STRAINS = [
   { name: 'Void Kiss', potency: 10, effects: 'Total ego death. Become the darkness itself. Transcendence.', price: 1000, addictiveness: 95 }
 ];
 
-export default function CrimsonBlissLab({ vampireState, onClose }) {
+export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('produce');
   const [producing, setProducing] = useState(false);
@@ -21,6 +21,8 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
   const [saleOutcome, setSaleOutcome] = useState('');
   const [testing, setTesting] = useState(false);
   const [testEffects, setTestEffects] = useState('');
+  const [usingWith, setUsingWith] = useState(null);
+  const [experienceOutcome, setExperienceOutcome] = useState('');
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['bloodDrugs'],
@@ -34,6 +36,83 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
 
   const totalRevenue = customers.reduce((sum, c) => sum + c.total_spent, 0);
   const totalDoses = inventory.reduce((sum, i) => sum + i.quantity, 0);
+
+  const handleUseWith = async (drug, servant) => {
+    if (drug.quantity === 0) return;
+    
+    setUsingWith({ drug, servant });
+
+    setTimeout(async () => {
+      await base44.entities.BloodDrug.update(drug.id, {
+        quantity: Math.max(0, drug.quantity - 2)
+      });
+
+      const experiences = [
+        `You both take ${drug.strain_name}. Colors explode. Time stops. You pull them close. Every touch is electric. You kiss. Their lips taste like eternity. Clothes disappear. Bodies merge. Reality fractures as you fuck. You've never felt anything like this.`,
+        `${drug.strain_name} hits. ${servant.name} gasps. Their pupils dilate. "I feel everything," they whisper. You touch their face. They shudder. You undress each other slowly, every sensation amplified. When you enter them, you both see the same fractals. Connected. One being.`,
+        `The drug takes hold. You're both flying. ${servant.name} straddles you, moving in slow motion. Every thrust creates waves of color. You're not just fucking - you're traveling through dimensions together. They scream your name. You taste sound. Hear their pleasure as music.`,
+        `${drug.strain_name} makes everything vibrate. ${servant.name}'s skin glows. You kiss them everywhere. They beg for more. You give them everything. The room breathes with you. Your heartbeats sync. When you finish, you're both crying from how beautiful it was.`,
+        `You dose together. Reality becomes liquid. ${servant.name} touches you and you see through time. You make love for hours - or seconds - you can't tell. Every position creates new universes. You're gods creating worlds with your bodies.`
+      ];
+
+      const outcome = experiences[Math.floor(Math.random() * experiences.length)];
+      setExperienceOutcome(outcome);
+
+      await base44.entities.Servant.update(servant.id, {
+        relationship: Math.min(100, (servant.relationship || 0) + 15)
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `You and ${servant.name} used ${drug.strain_name} together. Transcendent experience.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setUsingWith(null);
+        setExperienceOutcome('');
+      }, 6000);
+    }, 2000);
+  };
+
+  const handlePersonalUse = async (drug) => {
+    if (drug.quantity === 0) return;
+    
+    setTesting(true);
+    setSelectedStrain(drug);
+
+    const soloExperiences = [
+      `You take ${drug.strain_name} alone. The walls melt. You see yourself from outside. Every version of you across infinite timelines. You masturbate watching yourself from every angle. Transcendent.`,
+      `${drug.strain_name} hits hard. You're alone but you feel everything. Touch yourself. Every sensation magnified a thousand times. You finish seeing the birth of galaxies.`,
+      `Solo trip on ${drug.strain_name}. Your reflection moves independently. You have a conversation with it. It tells you secrets. Shows you what immortality really means. You understand now.`,
+      `The drug takes you deep. You remember being human. Being mortal. The moment you died. The moment you woke up different. You relive it all. When you come back, you're changed.`
+    ];
+
+    setTimeout(async () => {
+      const effect = soloExperiences[Math.floor(Math.random() * soloExperiences.length)];
+      setTestEffects(effect);
+
+      await base44.entities.BloodDrug.update(drug.id, {
+        quantity: Math.max(0, drug.quantity - 1)
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `You used ${drug.strain_name} recreationally. Profound experience.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setTesting(false);
+        setTestEffects('');
+        setSelectedStrain(null);
+      }, 6000);
+    }, 2000);
+  };
 
   const handleProduce = async (strain) => {
     setProducing(true);
@@ -224,22 +303,28 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 overflow-x-auto">
           <button 
             onClick={() => setTab('produce')} 
-            className={`px-4 py-2 rounded-lg ${tab === 'produce' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'produce' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             Produce
           </button>
           <button 
             onClick={() => setTab('inventory')} 
-            className={`px-4 py-2 rounded-lg ${tab === 'inventory' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'inventory' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             Inventory
           </button>
           <button 
+            onClick={() => setTab('personal')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'personal' ? 'bg-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            Personal Use
+          </button>
+          <button 
             onClick={() => setTab('customers')} 
-            className={`px-4 py-2 rounded-lg ${tab === 'customers' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'customers' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             Customers
           </button>
@@ -295,7 +380,7 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
 
         {tab === 'inventory' && !selling && !testing && (
           <div className="space-y-3">
-            <h3 className="text-white font-bold mb-3">Your Stock</h3>
+            <h3 className="text-white font-bold mb-3">Business Stock</h3>
             {inventory.length === 0 ? (
               <p className="text-gray-400 text-center py-8">No inventory. Start producing.</p>
             ) : (
@@ -312,21 +397,59 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <button
+                    onClick={() => handleSell(drug)}
+                    disabled={drug.quantity === 0}
+                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    Sell to Customers
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {tab === 'personal' && !testing && !usingWith && (
+          <div className="space-y-3">
+            <h3 className="text-white font-bold mb-3">Personal Stash</h3>
+            {inventory.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No drugs available. Produce some first.</p>
+            ) : (
+              inventory.map(drug => (
+                <div key={drug.id} className="bg-gray-800 rounded-xl p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1">
+                      <h4 className="text-white font-bold mb-1">{drug.strain_name}</h4>
+                      <p className="text-gray-400 text-sm mb-2">{drug.effects}</p>
+                      <div className="flex gap-3 text-xs mb-3">
+                        <span className="text-blue-400">Available: {drug.quantity} doses</span>
+                        <span className="text-purple-400">Potency: {drug.potency}/10</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
                     <button
-                      onClick={() => handleSell(drug)}
+                      onClick={() => handlePersonalUse(drug)}
                       disabled={drug.quantity === 0}
-                      className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50"
+                      className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50"
                     >
-                      Sell
+                      Use Solo
                     </button>
-                    <button
-                      onClick={() => handleTest(drug)}
-                      disabled={drug.quantity === 0}
-                      className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      Test on Yourself
-                    </button>
+                    {servants && servants.length > 0 && (
+                      <div className="space-y-1">
+                        {servants.map(servant => (
+                          <button
+                            key={servant.id}
+                            onClick={() => handleUseWith(drug, servant)}
+                            disabled={drug.quantity < 2}
+                            className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
+                          >
+                            Use with {servant.name} 💕 (2 doses)
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
@@ -347,10 +470,10 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
           </div>
         )}
 
-        {testing && (
+        {(testing || usingWith) && (
           <div className="text-center py-12">
             <AnimatePresence>
-              {!testEffects ? (
+              {!testEffects && !experienceOutcome ? (
                 <motion.div
                   animate={{ 
                     scale: [1, 1.5, 1],
@@ -359,7 +482,7 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
                   transition={{ duration: 2, repeat: Infinity }}
                   className="text-6xl mb-4"
                 >
-                  🌀
+                  {usingWith ? '💕' : '🌀'}
                 </motion.div>
               ) : (
                 <motion.div
@@ -388,11 +511,11 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
                         delay: Math.random() * 2
                       }}
                     >
-                      {['✨', '🌈', '💫', '⚡', '🔥'][Math.floor(Math.random() * 5)]}
+                      {['✨', '🌈', '💫', '⚡', '🔥', '💕', '🌙'][Math.floor(Math.random() * 7)]}
                     </motion.div>
                   ))}
                   <motion.p 
-                    className="text-purple-300 text-xl whitespace-pre-line relative z-10"
+                    className="text-purple-300 text-lg whitespace-pre-line relative z-10 px-4"
                     animate={{ 
                       textShadow: [
                         '0 0 10px rgba(168, 85, 247, 0.5)',
@@ -402,7 +525,7 @@ export default function CrimsonBlissLab({ vampireState, onClose }) {
                     }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    {testEffects}
+                    {testEffects || experienceOutcome}
                   </motion.p>
                 </motion.div>
               )}
