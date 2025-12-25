@@ -72,13 +72,14 @@ export default function Night() {
     return null;
   }
   
-  // Random name generator with duplicate checking
+  // Random name generator with duplicate checking - unique pool for servants
   const generateRandomName = (existingNames = []) => {
     const names = [
       'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
-      'Alex', 'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
+      'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
       'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren',
-      'Ash', 'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar'
+      'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar', 'Dante',
+      'Celeste', 'Zephyr', 'Vesper', 'Sable', 'Crimson', 'Nyx', 'Aspen'
     ];
     
     // Filter out already used names
