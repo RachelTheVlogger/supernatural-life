@@ -15,6 +15,7 @@ import DateOutingModal from '@/components/nightbound/DateOutingModal';
 import ServantJealousyEvent from '@/components/nightbound/ServantJealousyEvent';
 import CrimsonBlissLab from '@/components/nightbound/CrimsonBlissLab';
 import ServantIdentityRevelation from '@/components/nightbound/ServantIdentityRevelation';
+import FoodSystem from '@/components/nightbound/FoodSystem';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function VampireHome() {
   const [showCrimsonBliss, setShowCrimsonBliss] = useState(false);
   const [identityRevelation, setIdentityRevelation] = useState(null);
   const [showVampireIdentity, setShowVampireIdentity] = useState(false);
+  const [showFoodSystem, setShowFoodSystem] = useState(false);
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -397,6 +399,29 @@ export default function VampireHome() {
                 </button>
               </motion.div>
 
+              {/* Food System */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.22 }}
+                className="mb-8"
+              >
+                <button
+                  onClick={() => setShowFoodSystem(true)}
+                  className="w-full bg-gradient-to-r from-green-950/40 to-emerald-950/40 hover:from-green-950/60 hover:to-emerald-950/60 border-2 border-green-500/50 rounded-2xl p-6 transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl">🍽️</div>
+                      <div className="text-left">
+                        <h3 className="text-white text-xl font-bold mb-1">Food & Meals</h3>
+                        <p className="text-gray-300 text-sm">Cook together. Share meals. Vampires can eat too.</p>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </motion.div>
+
               {/* Friends System */}
               {allFriends.length > 0 && (
               <motion.div
@@ -683,6 +708,13 @@ export default function VampireHome() {
             vampireState={vampireState}
             servants={servants}
             onClose={() => setShowCrimsonBliss(false)}
+          />
+        )}
+        {showFoodSystem && servants.length > 0 && (
+          <FoodSystem
+            vampireState={vampireState}
+            servants={servants}
+            onClose={() => setShowFoodSystem(false)}
           />
         )}
         {identityRevelation && (
