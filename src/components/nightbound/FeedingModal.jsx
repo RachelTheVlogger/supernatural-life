@@ -6,19 +6,19 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const FEEDING_OUTCOMES = {
   ethical: [
-    { state: 'sated', log: 'You fed carefully. They survived. Control maintained.', humanity: 2 },
-    { state: 'sated', log: 'You took only what you needed. Restraint is power.', humanity: 3 },
-    { state: 'calm', log: 'You fed with care. They will recover.', humanity: 1 }
+    { state: 'sated', log: 'you fed carefully. They survived. Control maintained.', humanity: 2 },
+    { state: 'sated', log: 'you took only what you needed. Restraint is power.', humanity: 3 },
+    { state: 'calm', log: 'you fed with care. They will recover.', humanity: 1 }
   ],
   neutral: [
-    { state: 'sated', log: 'You fed. They barely noticed.', humanity: 0 },
-    { state: 'calm', log: 'Blood. Relief. The deed is done.', humanity: 0 },
-    { state: 'lingering', log: 'You fed quickly. Efficient.', humanity: -1 }
+    { state: 'sated', log: 'you fed. They barely noticed.', humanity: 0 },
+    { state: 'calm', log: 'blood. Relief. The deed is done.', humanity: 0 },
+    { state: 'lingering', log: 'you fed quickly. Efficient.', humanity: -1 }
   ],
   brutal: [
-    { state: 'sated', log: 'You fed ravenously. They screamed. You didn\'t stop.', humanity: -4 },
-    { state: 'calm', log: 'You drained them nearly dry. The beast was satisfied.', humanity: -3 },
-    { state: 'lingering', log: 'You took more than you should. Their fear was intoxicating.', humanity: -2 }
+    { state: 'sated', log: 'you fed ravenously. They screamed. You didn\'t stop.', humanity: -4 },
+    { state: 'calm', log: 'you drained them nearly dry. The beast was satisfied.', humanity: -3 },
+    { state: 'lingering', log: 'you took more than you should. Their fear was intoxicating.', humanity: -2 }
   ]
 };
 

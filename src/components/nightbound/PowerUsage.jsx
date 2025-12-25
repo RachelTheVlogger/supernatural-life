@@ -16,10 +16,10 @@ const POWER_LIBRARY = {
     conditions: { emotionalStates: ['terrified', 'anxious', 'hurt'] },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'Your presence washed over them. Fear dissolved. Peace.',
-        'They relaxed completely. Safe in your arms.',
-        'You soothed their terror. They trust you absolutely.',
-        'Calmness radiated from you. They breathed easier.'
+        'your presence washed over them. Fear dissolved. Peace.',
+        'they relaxed completely. Safe in your arms.',
+        'you soothed their terror. They trust you absolutely.',
+        'calmness radiated from you. They breathed easier.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 12, 100),
@@ -42,10 +42,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { min: 70, path: 'humane' },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You felt everything they felt. The connection was beautiful.',
-        'Their emotions flooded through you. Understanding complete.',
-        'You shared their pain. Their joy. You became one.',
-        'The empathic link formed. No secrets between you.'
+        'you felt everything they felt. The connection was beautiful.',
+        'their emotions flooded through you. Understanding complete.',
+        'you shared their pain. Their joy. You became one.',
+        'the empathic link formed. No secrets between you.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 10, 100)
@@ -95,10 +95,10 @@ const POWER_LIBRARY = {
     conditions: { timeOfNight: ['midnight', 'late', 'early'] },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You vanished. Appeared behind them. They gasped.',
-        'Impossible speed. You were there, then not, then behind them.',
-        'They blinked. You moved. Supernatural.',
-        'You stepped through shadow. Their eyes widened in awe.'
+        'you vanished. Appeared behind them. They gasped.',
+        'impossible speed. You were there, then not, then behind them.',
+        'they blinked. You moved. Supernatural.',
+        'you stepped through shadow. Their eyes widened in awe.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 8, 100)
@@ -121,10 +121,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { max: 40, path: 'ruthless' },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'They obeyed without question. Eyes glazed.',
-        'You spoke. They moved. Perfect obedience.',
-        'Their will bent completely to yours.',
-        'They did exactly as commanded. No hesitation.'
+        'they obeyed without question. Eyes glazed.',
+        'you spoke. They moved. Perfect obedience.',
+        'their will bent completely to yours.',
+        'they did exactly as commanded. No hesitation.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.max((servant.relationship || 0) - 5, 0),
@@ -147,10 +147,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { max: 35, path: 'ruthless' },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You let them see the monster. They froze in terror.',
-        'Your true nature revealed. They couldn\'t move. Couldn\'t scream.',
-        'Fear absolute. They understood what you could do.',
-        'You showed your fangs. They trembled violently.'
+        'you let them see the monster. They froze in terror.',
+        'your true nature revealed. They couldn\'t move. Couldn\'t scream.',
+        'fear absolute. They understood what you could do.',
+        'you showed your fangs. They trembled violently.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.max((servant.relationship || 0) - 15, 0),
@@ -174,10 +174,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { max: 15, path: 'monster' },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You shattered their will. Nothing remains but obedience.',
-        'Dominated completely. They are yours. Empty. Perfect.',
-        'Their personality dissolved. Only your commands exist.',
-        'You broke them. They smile. Empty eyes. Yours.'
+        'you shattered their will. Nothing remains but obedience.',
+        'dominated completely. They are yours. Empty. Perfect.',
+        'their personality dissolved. Only your commands exist.',
+        'you broke them. They smile. Empty eyes. Yours.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: 0,
@@ -200,10 +200,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { max: 30, path: 'ruthless' },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You lost control. Animal instincts took over. They saw the beast.',
-        'Pure rage. Supernatural strength. They cowered in terror.',
-        'The monster emerged. Raw. Brutal. Unrestrained.',
-        'Feral. You moved like a predator. They were prey.'
+        'you lost control. Animal instincts took over. They saw the beast.',
+        'pure rage. Supernatural strength. They cowered in terror.',
+        'the monster emerged. Raw. Brutal. Unrestrained.',
+        'feral. You moved like a predator. They were prey.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.max((servant.relationship || 0) - 20, 0),
@@ -227,10 +227,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { min: 30, max: 70 },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You slipped into their dreams. Shaped their fantasies.',
-        'Their subconscious opened to you. You planted seeds.',
-        'Dream walking complete. They\'ll remember you differently now.',
-        'You rewrote their dreams. Made yourself the center.'
+        'you slipped into their dreams. Shaped their fantasies.',
+        'their subconscious opened to you. You planted seeds.',
+        'dream walking complete. They\'ll remember you differently now.',
+        'you rewrote their dreams. Made yourself the center.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 18, 100),
@@ -253,10 +253,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { min: 40 },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'Time slowed for them. A second became an hour in their mind.',
-        'You bent reality. They experienced infinity in a moment.',
-        'Time dilation complete. They aged subjectively while you watched.',
-        'Their perception shattered. Time lost all meaning.'
+        'time slowed for them. A second became an hour in their mind.',
+        'you bent reality. They experienced infinity in a moment.',
+        'time dilation complete. They aged subjectively while you watched.',
+        'their perception shattered. Time lost all meaning.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 25, 100),
@@ -280,10 +280,10 @@ const POWER_LIBRARY = {
     moralityRequirement: { min: 50 },
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You gazed into their soul. Saw everything. Every secret. Every desire.',
-        'Soul gaze complete. Their essence laid bare before you.',
-        'You looked deeper than flesh. Than mind. Into the core of them.',
-        'Their soul opened like a book. You read every page.'
+        'you gazed into their soul. Saw everything. Every secret. Every desire.',
+        'soul gaze complete. Their essence laid bare before you.',
+        'you looked deeper than flesh. Than mind. Into the core of them.',
+        'their soul opened like a book. You read every page.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 20, 100),
@@ -307,10 +307,10 @@ const POWER_LIBRARY = {
     requiresTurned: true,
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'Your blood called to theirs. The bond formed. Eternal. Unbreakable.',
-        'Vampire to vampire. The connection snapped into place. Forever bound.',
-        'You felt their immortal soul link to yours. Eternal bond complete.',
-        'Two vampires. One bond. Nothing can break this now.'
+        'your blood called to theirs. The bond formed. Eternal. Unbreakable.',
+        'vampire to vampire. The connection snapped into place. Forever bound.',
+        'you felt their immortal soul link to yours. Eternal bond complete.',
+        'two vampires. One bond. Nothing can break this now.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: 100,
@@ -332,10 +332,10 @@ const POWER_LIBRARY = {
     requiresTurned: true,
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You fed from them. They fed from you. Power flowed both ways. Intoxicating.',
-        'Blood exchange. Your fangs in their neck. Theirs in yours. Pleasure overwhelming.',
-        'You tasted immortal blood. They tasted yours. The world dissolved.',
-        'Vampire feeding on vampire. Taboo. Ecstatic. Perfect.'
+        'you fed from them. They fed from you. Power flowed both ways. Intoxicating.',
+        'blood exchange. Your fangs in their neck. Theirs in yours. Pleasure overwhelming.',
+        'you tasted immortal blood. They tasted yours. The world dissolved.',
+        'vampire feeding on vampire. Taboo. Ecstatic. Perfect.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 30, 100),
@@ -358,10 +358,10 @@ const POWER_LIBRARY = {
     requiresTurned: true,
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'Your touch ignited them. Vampire skin on vampire skin. Electric. Burning.',
-        'Every kiss supernatural. Every caress overwhelming. Immortal passion.',
-        'You moved together. Vampire speed. Vampire strength. Endless stamina.',
-        'They gasped. You grinned. Vampire-to-vampire intimacy hits different.'
+        'your touch ignited them. Vampire skin on vampire skin. Electric. Burning.',
+        'every kiss supernatural. Every caress overwhelming. Immortal passion.',
+        'you moved together. Vampire speed. Vampire strength. Endless stamina.',
+        'they gasped. You grinned. Vampire-to-vampire intimacy hits different.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 25, 100),
@@ -384,11 +384,11 @@ const POWER_LIBRARY = {
     hungerCost: 0,
     effects: async (servant, vampireState) => {
       const desires = [
-        'You sensed their desire for you. Overwhelming. Consuming.',
-        'Their heartbeat told you everything. They craved your touch.',
-        'You smelled their arousal. Their need. Undeniable.',
-        'Every micro-expression revealed. They wanted to surrender.',
-        'You heard their thoughts whisper your name. Over and over.'
+        'you sensed their desire for you. Overwhelming. Consuming.',
+        'their heartbeat told you everything. They craved your touch.',
+        'you smelled their arousal. Their need. Undeniable.',
+        'every micro-expression revealed. They wanted to surrender.',
+        'you heard their thoughts whisper your name. Over and over.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 5, 100)
@@ -409,10 +409,10 @@ const POWER_LIBRARY = {
     hungerCost: 2,
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'Your blood on their lips. The bond formed instantly. Unbreakable.',
-        'They drank. Eyes rolled back. Connection absolute.',
-        'Blood bond complete. They feel you in their veins now.',
-        'You cut yourself. They drank eagerly. Bound forever.'
+        'your blood on their lips. The bond formed instantly. Unbreakable.',
+        'they drank. Eyes rolled back. Connection absolute.',
+        'blood bond complete. They feel you in their veins now.',
+        'you cut yourself. They drank eagerly. Bound forever.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 30, 100),
@@ -436,10 +436,10 @@ const POWER_LIBRARY = {
     hungerCost: 0,
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You whispered a thought. It took root. They think it\'s theirs.',
-        'Subtle influence planted. They\'ll never know it came from you.',
-        'The idea bloomed in their mind. Natural. Unforced.',
-        'You shaped their thoughts. Gently. Imperceptibly.'
+        'you whispered a thought. It took root. They think it\'s theirs.',
+        'subtle influence planted. They\'ll never know it came from you.',
+        'the idea bloomed in their mind. Natural. Unforced.',
+        'you shaped their thoughts. Gently. Imperceptibly.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 12, 100)
@@ -456,10 +456,10 @@ const POWER_LIBRARY = {
     hungerCost: 1,
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You spoke. Authority absolute. They obeyed instantly.',
-        'Your presence commanded the room. The air. Their will.',
-        'Words like law. They couldn\'t resist.',
-        'Commanding presence activated. They bent to your will.'
+        'you spoke. Authority absolute. They obeyed instantly.',
+        'your presence commanded the room. The air. Their will.',
+        'words like law. They couldn\'t resist.',
+        'commanding presence activated. They bent to your will.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 15, 100),
@@ -499,10 +499,10 @@ const POWER_LIBRARY = {
     requiresTurned: true,
     effects: async (servant, vampireState) => {
       const outcomes = [
-        'You hunted together. Two vampires. One hunger. Shared prey.',
-        'Feeding side by side. Your hungers synchronized perfectly.',
-        'The shared hunt was intoxicating. Blood. Violence. Together.',
-        'Two predators. One target. Perfect synchronization.'
+        'you hunted together. Two vampires. One hunger. Shared prey.',
+        'feeding side by side. Your hungers synchronized perfectly.',
+        'the shared hunt was intoxicating. Blood. Violence. Together.',
+        'two predators. One target. Perfect synchronization.'
       ];
       await base44.entities.Servant.update(servant.id, {
         relationship: Math.min((servant.relationship || 0) + 25, 100)

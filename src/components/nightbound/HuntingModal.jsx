@@ -7,38 +7,38 @@ import { useQueryClient } from '@tanstack/react-query';
 const HUNTING_SCENES = [
   {
     title: 'City Silence',
-    description: 'A quiet street. Breath fogs. The choice to approach or pass.',
+    description: 'a quiet street. Breath fogs. The choice to approach or pass.',
     outcomes: [
-      'You watched from shadow. Hunger sharpened without resolution.',
-      'You moved closer. They never knew.',
-      'You let the moment pass. Control held.'
+      'you watched from shadow. Hunger sharpened without resolution.',
+      'you moved closer. They never knew.',
+      'you let the moment pass. Control held.'
     ]
   },
   {
     title: 'Forest Stillness',
-    description: 'Movement between trees. Shared awareness.',
+    description: 'movement between trees. Shared awareness.',
     outcomes: [
-      'The forest held its breath with you.',
-      'Something noticed you noticing.',
-      'You moved without sound. The night approved.'
+      'the forest held its breath with you.',
+      'something noticed you noticing.',
+      'you moved without sound. The night approved.'
     ]
   },
   {
     title: 'Rooftop Watch',
-    description: 'Hours pass. Hunger sharpens.',
+    description: 'hours pass. Hunger sharpens.',
     outcomes: [
-      'Time stretched. You remained still.',
-      'The city below felt farther than before.',
-      'Patience became its own kind of feeding.'
+      'time stretched. You remained still.',
+      'the city below felt farther than before.',
+      'patience became its own kind of feeding.'
     ]
   },
   {
     title: 'Train Platform',
-    description: 'Crowds. Choice of restraint.',
+    description: 'crowds. Choice of restraint.',
     outcomes: [
-      'You stood among them, unseen.',
-      'The urge passed like a held breath.',
-      'Proximity without touch. You left nothing behind.'
+      'you stood among them, unseen.',
+      'the urge passed like a held breath.',
+      'proximity without touch. You left nothing behind.'
     ]
   }
 ];
@@ -60,7 +60,7 @@ export default function HuntingModal({ onClose, vampireState, servants }) {
       let randomOutcome = scene.outcomes[Math.floor(Math.random() * scene.outcomes.length)];
       
       if (withServant && selectedServant) {
-        randomOutcome = `You hunted with ${selectedServant.name}. ${randomOutcome} Your bond deepened.`;
+        randomOutcome = `you hunted with ${selectedServant.name}. ${randomOutcome} Your bond deepened.`;
         
         // Update servant obsession
         await base44.entities.Servant.update(selectedServant.id, {
