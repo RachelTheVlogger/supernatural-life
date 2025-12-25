@@ -290,6 +290,61 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
     }, 2000);
   };
 
+  const handleChatWithCustomer = async (customer) => {
+    setSelectedCustomer(customer);
+
+    const conversations = {
+      low: [
+        `You talk to ${customer.name}. Small talk. They're nervous around you. Watching you carefully.`,
+        `Conversation with ${customer.name}. Surface level. They don't trust you yet. Just business.`,
+        `${customer.name} keeps their distance. Polite but cautious. They're afraid of getting too close.`
+      ],
+      mid: [
+        `${customer.name} opens up a bit. Shares stories. Laughs. You're building something here.`,
+        `Good conversation with ${customer.name}. They're warming up to you. Starting to trust.`,
+        `You talk for hours. ${customer.name} feels comfortable now. This could become friendship.`
+      ],
+      high: [
+        `${customer.name} confides in you. Deep secrets. Real connection. They trust you completely.`,
+        `You and ${customer.name} talk like old friends. They'd do anything for you now. Loyal.`,
+        `${customer.name} says you changed their life. They're here for you, not just the drugs. True friend.`
+      ]
+    };
+
+    setTimeout(async () => {
+      const friendshipGain = Math.floor(Math.random() * 15) + 10;
+      const newFriendship = Math.min(100, (customer.friendship || 0) + friendshipGain);
+      const isVip = newFriendship >= 60;
+      
+      const tier = newFriendship >= 70 ? 'high' : newFriendship >= 40 ? 'mid' : 'low';
+      const outcome = conversations[tier][Math.floor(Math.random() * conversations[tier].length)];
+
+      await base44.entities.DrugCustomer.update(customer.id, {
+        friendship: newFriendship,
+        is_vip: isVip
+      });
+
+      if (isVip && !customer.is_vip) {
+        setChatOutcome(`${outcome}\n\n🌟 ${customer.name} became a VIP regular customer! They'll buy more and stay loyal.`);
+      } else {
+        setChatOutcome(outcome);
+      }
+
+      await base44.entities.NightLog.create({
+        entry: `You talked with ${customer.name}. Friendship growing.${isVip && !customer.is_vip ? ' They became a VIP!' : ''}`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setSelectedCustomer(null);
+        setChatOutcome('');
+      }, 4000);
+    }, 2000);
+  };
+
   const handleTest = async (drug) => {
     setTesting(true);
     setSelectedStrain(drug);
