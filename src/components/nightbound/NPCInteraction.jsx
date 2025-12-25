@@ -26,30 +26,35 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
 
   // Generate NPCs if empty - unique names only
   React.useEffect(() => {
-    if (npcs.length === 0) {
-      const namePool = [
-        'Alex Rivers', 'Jordan Kane', 'Morgan Stone', 'Casey Harper',
-        'Riley Quinn', 'Drew Mitchell', 'Sage Cooper', 'Blake Turner',
-        'Avery Scott', 'Rowan Ellis', 'Parker Hayes', 'Devon Reed'
-      ];
-      const occupations = ['Barista', 'Nurse', 'Artist', 'Bartender', 'Student', 'Musician'];
-      const locations = ['Downtown Cafe', 'City Hospital', 'Art Gallery', 'Night Club', 'University', 'Jazz Bar'];
-      const personalities = ['friendly', 'shy', 'curious', 'flirty', 'mysterious', 'bold'];
-      
-      const npcsToCreate = Math.min(4, namePool.length);
-      
-      Promise.all([...Array(npcsToCreate)].map((_, i) =>
-        base44.entities.NPC.create({
-          name: namePool[i],
-          occupation: occupations[i % occupations.length],
-          location: locations[i % locations.length],
-          personality: personalities[i % personalities.length],
-          relationship_vampire: 50,
-          relationship_servant: 50
-        })
-      )).then(() => queryClient.invalidateQueries(['npcs']));
-    }
-  }, [npcs.length]);
+    const initNPCs = async () => {
+      if (npcs.length === 0) {
+        const namePool = [
+          'Alex Rivers', 'Jordan Kane', 'Morgan Stone', 'Casey Harper',
+          'Riley Quinn', 'Drew Mitchell', 'Sage Cooper', 'Blake Turner',
+          'Avery Scott', 'Rowan Ellis', 'Parker Hayes', 'Devon Reed'
+        ];
+        const occupations = ['Barista', 'Nurse', 'Artist', 'Bartender', 'Student', 'Musician'];
+        const locations = ['Downtown Cafe', 'City Hospital', 'Art Gallery', 'Night Club', 'University', 'Jazz Bar'];
+        const personalities = ['friendly', 'shy', 'curious', 'flirty', 'mysterious', 'bold'];
+        
+        const npcsToCreate = Math.min(4, namePool.length);
+        
+        await Promise.all([...Array(npcsToCreate)].map((_, i) =>
+          base44.entities.NPC.create({
+            name: namePool[i],
+            occupation: occupations[i % occupations.length],
+            location: locations[i % locations.length],
+            personality: personalities[i % personalities.length],
+            relationship_vampire: 50,
+            relationship_servant: 50
+          })
+        ));
+        queryClient.invalidateQueries(['npcs']);
+      }
+    };
+    
+    initNPCs();
+  }, [npcs.length, queryClient]);
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -98,18 +103,22 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
       
       setOutcome(outcomes[actionKey][Math.floor(Math.random() * outcomes[actionKey].length)]);
       
-      await base44.entities.NPC.update(npc.id, {
-        [relationshipKey]: newRel,
-        [`last_interaction_${viewMode}`]: new Date().toISOString()
-      });
-      
-      await base44.entities.NightLog.create({
-        entry: `NPC interaction: ${outcomes[actionKey][0]}`,
-        category: 'social',
-        intensity: 'subtle'
-      });
-      
-      queryClient.invalidateQueries(['npcs']);
+      try {
+        await base44.entities.NPC.update(npc.id, {
+          [relationshipKey]: newRel,
+          [`last_interaction_${viewMode}`]: new Date().toISOString()
+        });
+        
+        await base44.entities.NightLog.create({
+          entry: `NPC interaction: ${outcomes[actionKey][0]}`,
+          category: 'social',
+          intensity: 'subtle'
+        });
+        
+        queryClient.invalidateQueries(['npcs']);
+      } catch (e) {
+        console.error('Failed to interact with NPC:', e);
+      }
       
       setTimeout(() => {
         setProcessing(false);
@@ -124,50 +133,54 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
     setShowFeedPrompt(false);
     
     setTimeout(async () => {
-      if (resist) {
-        setOutcome(`You resisted. ${npc.name} noticed nothing. But god, it was hard.`);
-        
-        if (vampireState?.id) {
-          const newHumanity = Math.min((vampireState.humanity || 50) + 5, 100);
-          await base44.entities.VampireState.update(vampireState.id, {
-            humanity: newHumanity
-          });
-        }
-      } else {
-        const feedOutcomes = [
-          `You fed on ${npc.name}. Quick. Discreet. They won't remember. But you will.`,
-          `${npc.name}'s blood. Sweet. Forbidden. You took just enough. They stumbled, confused.`,
-          `You couldn't resist. Fed on ${npc.name}. They're alive. Changed. Marked by you.`
-        ];
-        setOutcome(feedOutcomes[Math.floor(Math.random() * feedOutcomes.length)]);
-        
-        const relationshipKey = viewMode === 'vampire' ? 'relationship_vampire' : 'relationship_servant';
-        await base44.entities.NPC.update(npc.id, {
-          [relationshipKey]: Math.max((npc[relationshipKey] || 50) - 20, 0)
-        });
-        
-        if (vampireState?.id) {
-          const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
-          const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
-          const newHungerState = hungerStates[Math.max(0, currentIndex - 2)];
-          const newHumanity = Math.max((vampireState.humanity || 50) - 15, 0);
+      try {
+        if (resist) {
+          setOutcome(`You resisted. ${npc.name} noticed nothing. But god, it was hard.`);
           
-          await base44.entities.VampireState.update(vampireState.id, {
-            hunger_state: newHungerState,
-            humanity: newHumanity,
-            last_feed: new Date().toISOString()
+          if (vampireState?.id) {
+            const newHumanity = Math.min((vampireState.humanity || 50) + 5, 100);
+            await base44.entities.VampireState.update(vampireState.id, {
+              humanity: newHumanity
+            });
+          }
+        } else {
+          const feedOutcomes = [
+            `You fed on ${npc.name}. Quick. Discreet. They won't remember. But you will.`,
+            `${npc.name}'s blood. Sweet. Forbidden. You took just enough. They stumbled, confused.`,
+            `You couldn't resist. Fed on ${npc.name}. They're alive. Changed. Marked by you.`
+          ];
+          setOutcome(feedOutcomes[Math.floor(Math.random() * feedOutcomes.length)]);
+          
+          const relationshipKey = viewMode === 'vampire' ? 'relationship_vampire' : 'relationship_servant';
+          await base44.entities.NPC.update(npc.id, {
+            [relationshipKey]: Math.max((npc[relationshipKey] || 50) - 20, 0)
+          });
+          
+          if (vampireState?.id) {
+            const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
+            const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
+            const newHungerState = hungerStates[Math.max(0, currentIndex - 2)];
+            const newHumanity = Math.max((vampireState.humanity || 50) - 15, 0);
+            
+            await base44.entities.VampireState.update(vampireState.id, {
+              hunger_state: newHungerState,
+              humanity: newHumanity,
+              last_feed: new Date().toISOString()
+            });
+          }
+          
+          await base44.entities.NightLog.create({
+            entry: `Fed on ${npc.name}. The hunger demanded it.`,
+            category: 'feeding',
+            intensity: 'significant'
           });
         }
         
-        await base44.entities.NightLog.create({
-          entry: `Fed on ${npc.name}. The hunger demanded it.`,
-          category: 'feeding',
-          intensity: 'significant'
-        });
+        queryClient.invalidateQueries(['npcs']);
+        queryClient.invalidateQueries(['vampireState']);
+      } catch (e) {
+        console.error('Failed to feed on NPC:', e);
       }
-      
-      queryClient.invalidateQueries(['npcs']);
-      queryClient.invalidateQueries(['vampireState']);
       
       setTimeout(() => {
         setProcessing(false);
