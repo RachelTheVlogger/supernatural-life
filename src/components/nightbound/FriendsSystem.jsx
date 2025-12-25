@@ -308,7 +308,7 @@ export default function FriendsSystem({ servant, onClose }) {
             e.stopPropagation();
             onClose();
           }}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>

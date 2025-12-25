@@ -118,16 +118,21 @@ Respond in 1-2 sentences. Be authentic, flirty, and match their energy. If they'
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 rounded-2xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto"
+        className="bg-gray-900 rounded-2xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto relative"
       >
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Text {servant.name}</h2>
-            <p className="text-gray-400 text-sm">On your break. Quick message.</p>
-          </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }} 
+          className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-white">Text {servant.name}</h2>
+          <p className="text-gray-400 text-sm">On your break. Quick message.</p>
         </div>
 
         {response ? (

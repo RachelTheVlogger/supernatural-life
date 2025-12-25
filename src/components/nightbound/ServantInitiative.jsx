@@ -219,8 +219,11 @@ export default function ServantInitiative({ servants, vampireState, onAction }) 
           className="bg-gradient-to-br from-gray-900 to-purple-950/40 rounded-2xl p-6 max-w-md w-full border-2 border-purple-500/50 relative"
         >
           <button
-            onClick={() => setActiveInitiative(null)}
-            className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveInitiative(null);
+            }}
+            className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
           >
             <X className="w-5 h-5" />
           </button>
