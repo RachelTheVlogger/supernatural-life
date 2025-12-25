@@ -1577,7 +1577,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     disabled={!newVideo.content_type || creating || filming || (['filmed', 'couple'].includes(selectedCategory) && filmWithVampire === null)}
                     className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50 touch-manipulation"
                   >
-                    {filming ? 'Filming...' : creating ? 'Processing...' : 'Create Video'}
+                    {filming ? 'Filming...' : creating ? 'Processing...' : 'Post Video'}
                   </button>
                 </div>
               </>
