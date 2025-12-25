@@ -46,10 +46,42 @@ export default function RivalVampireModal({ onClose, vampireState }) {
 
       // Update based on action
       if (action === 'challenge' && success) {
-        await base44.entities.RivalVampire.update(selectedRival.id, {
-          relationship: (selectedRival.relationship || 0) - 30,
-          power_level: Math.max(0, selectedRival.power_level - 20)
-        });
+        const newPowerLevel = Math.max(0, selectedRival.power_level - 20);
+        
+        // If rival is defeated (power reaches 0), replace them with a new one
+        if (newPowerLevel === 0) {
+          await base44.entities.RivalVampire.delete(selectedRival.id);
+          
+          // Generate new rival with unique name
+          const namePool = [
+            'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
+            'Dorian Blackwood', 'Seraphina Nyx', 'Marcus Ravencroft',
+            'Evangeline Thorn', 'Lucien Deveraux', 'Isolde Morningstar',
+            'Viktor Shadowmere', 'Anastasia Crimson', 'Dante Nightshade'
+          ];
+          
+          const existingNames = rivals.filter(r => r.id !== selectedRival.id).map(r => r.name);
+          const availableNames = namePool.filter(n => !existingNames.includes(n));
+          
+          if (availableNames.length > 0) {
+            const personalities = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
+            const newName = availableNames[Math.floor(Math.random() * availableNames.length)];
+            
+            await base44.entities.RivalVampire.create({
+              name: newName,
+              age: Math.floor(Math.random() * 500) + 50,
+              personality: personalities[Math.floor(Math.random() * personalities.length)],
+              power_level: Math.floor(Math.random() * 40) + 40,
+              relationship: Math.floor(Math.random() * 40) - 20,
+              servants_count: Math.floor(Math.random() * 5)
+            });
+          }
+        } else {
+          await base44.entities.RivalVampire.update(selectedRival.id, {
+            relationship: (selectedRival.relationship || 0) - 30,
+            power_level: newPowerLevel
+          });
+        }
         
         if (selectedRival.territory_claimed) {
           const territory = await base44.entities.Territory.filter({ area_name: selectedRival.territory_claimed });
