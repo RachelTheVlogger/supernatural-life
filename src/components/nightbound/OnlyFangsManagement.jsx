@@ -469,20 +469,22 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     setChatMessages(initialMessages);
     
     const messageInterval = setInterval(() => {
-      let message = explicitMessages[Math.floor(Math.random() * explicitMessages.length)];
-      let attempts = 0;
-      const recentMessages = chatMessages.slice(-5).map(m => m.message);
-      while (recentMessages.includes(message) && attempts < 10) {
-        message = explicitMessages[Math.floor(Math.random() * explicitMessages.length)];
-        attempts++;
-      }
-      
-      const newMsg = {
-        username: usernames[Math.floor(Math.random() * usernames.length)],
-        message,
-        tip: Math.random() > 0.7 ? Math.floor(Math.random() * 50) + 5 : 0
-      };
-      setChatMessages(prev => [...prev.slice(-10), newMsg]);
+      setChatMessages(prev => {
+        const recentMessages = prev.slice(-5).map(m => m.message);
+        let message = explicitMessages[Math.floor(Math.random() * explicitMessages.length)];
+        let attempts = 0;
+        while (recentMessages.includes(message) && attempts < 10) {
+          message = explicitMessages[Math.floor(Math.random() * explicitMessages.length)];
+          attempts++;
+        }
+        
+        const newMsg = {
+          username: usernames[Math.floor(Math.random() * usernames.length)],
+          message,
+          tip: Math.random() > 0.7 ? Math.floor(Math.random() * 50) + 5 : 0
+        };
+        return [...prev.slice(-10), newMsg];
+      });
     }, 2000);
     
     setTimeout(async () => {
