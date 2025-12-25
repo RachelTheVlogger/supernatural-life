@@ -11,6 +11,7 @@ export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [vampireName, setVampireName] = useState('');
+  const [vampireGender, setVampireGender] = useState('male');
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
   
@@ -35,6 +36,7 @@ export default function Home() {
     // Create new vampire
     await base44.entities.VampireState.create({
       vampire_name: vampireName.trim(),
+      gender: vampireGender,
       job: 'Night Shift Nurse',
       hunger_state: 'calm',
       emotional_mode: 'feeling',
@@ -149,7 +151,7 @@ export default function Home() {
                 <h2 className="text-3xl font-bold text-red-400 mb-4">You died.</h2>
                 <p className="text-gray-300 mb-4">Three nights ago. Car accident. Quick. Painless.</p>
                 <p className="text-gray-300 mb-4">But you didn't stay dead.</p>
-                <p className="text-gray-300 mb-4">Something ancient woke you. Changed you. You're a vampire now. Male. Immortal.</p>
+                <p className="text-gray-300 mb-4">Something ancient woke you. Changed you. You're a vampire now. Immortal.</p>
                 <p className="text-gray-300 mb-6">The nights stretch endlessly ahead.</p>
                 <button
                   onClick={() => setIntroStep(1)}
@@ -159,7 +161,7 @@ export default function Home() {
                 </button>
               </>
             )}
-            
+
             {introStep === 1 && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">What is your name?</h2>
@@ -168,22 +170,70 @@ export default function Home() {
                   type="text"
                   value={vampireName}
                   onChange={(e) => setVampireName(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && vampireName.trim() && startNewGame()}
+                  onKeyPress={(e) => e.key === 'Enter' && vampireName.trim() && setIntroStep(2)}
                   placeholder="Your eternal name..."
                   className="w-full bg-gray-900 border border-red-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-6 focus:outline-none focus:border-red-500"
                   autoFocus
                 />
+                <button
+                  onClick={() => setIntroStep(2)}
+                  disabled={!vampireName.trim()}
+                  className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg py-3 text-white font-medium transition-all disabled:opacity-50"
+                >
+                  Continue
+                </button>
+              </>
+            )}
+
+            {introStep === 2 && (
+              <>
+                <h2 className="text-2xl font-bold text-white mb-4">Your identity</h2>
+                <p className="text-purple-300 text-sm mb-4">How do you see yourself?</p>
+                <div className="space-y-3 mb-6">
+                  <button
+                    onClick={() => setVampireGender('male')}
+                    className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                      vampireGender === 'male' 
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    <span className="font-medium">Male</span>
+                    <p className="text-sm opacity-80">He/Him</p>
+                  </button>
+                  <button
+                    onClick={() => setVampireGender('female')}
+                    className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                      vampireGender === 'female' 
+                        ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    <span className="font-medium">Female</span>
+                    <p className="text-sm opacity-80">She/Her</p>
+                  </button>
+                  <button
+                    onClick={() => setVampireGender('custom')}
+                    className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                      vampireGender === 'custom' 
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    <span className="font-medium">Custom</span>
+                    <p className="text-sm opacity-80">They/Them</p>
+                  </button>
+                </div>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => { setShowIntro(false); setIntroStep(0); }}
+                    onClick={() => setIntroStep(1)}
                     className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
                   >
-                    Cancel
+                    Back
                   </button>
                   <button
                     onClick={startNewGame}
-                    disabled={!vampireName.trim()}
-                    className="flex-1 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg py-3 text-white font-medium transition-all disabled:opacity-50"
+                    className="flex-1 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
                   >
                     Begin
                   </button>

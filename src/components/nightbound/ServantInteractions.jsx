@@ -10,7 +10,40 @@ export default function ServantInteractions({ servants, vampireState, onClose })
   const [interacting, setInteracting] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  // Get pronoun helpers
+  const getPronouns = () => {
+    if (vampireState.gender === 'female') return { subject: 'she', object: 'her', possessive: 'her' };
+    if (vampireState.gender === 'custom') return { subject: 'they', object: 'them', possessive: 'their' };
+    return { subject: 'he', object: 'him', possessive: 'his' };
+  };
+  const pronouns = getPronouns();
+
   const interactions = [
+    { 
+      id: 'vampire-talk',
+      icon: Sparkles,
+      label: 'Talk about the vampire',
+      outcomes: {
+        positive: [
+          `"Living with ${pronouns.object}... it's incredible. I never want to leave."`,
+          `"${pronouns.subject === 'they' ? 'They are' : pronouns.subject === 'she' ? 'She\'s' : 'He\'s'} everything. I'd die for ${pronouns.object}."`,
+          `"The way ${pronouns.subject} looks at me... I feel alive. Ironically."`,
+          `"I love serving ${pronouns.object}. Every moment is a gift."`,
+          `"${pronouns.possessive.charAt(0).toUpperCase() + pronouns.possessive.slice(1)} presence... intoxicating. Addictive."`,
+        ],
+        neutral: [
+          `"It's... different. Living with a vampire."`,
+          `"Some nights are better than others."`,
+          `"I'm still getting used to all of this."`,
+        ],
+        negative: [
+          `"Sometimes I wonder if ${pronouns.subject} even sees me."`,
+          `"I want ${pronouns.possessive} attention. Not yours."`,
+          `"Why do you get more time with ${pronouns.object}?"`,
+          `"I should be ${pronouns.possessive} favorite. Not you."`,
+        ]
+      }
+    },
     { 
       id: 'chat', 
       icon: MessageCircle, 
