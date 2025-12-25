@@ -4,18 +4,28 @@ import { X, Crown, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
-const PRESET_TITLES = [
-  { value: 'Sir', label: 'Sir' },
-  { value: 'Master', label: 'Master' },
-  { value: 'Daddy', label: 'Daddy' },
-  { value: 'Lord', label: 'Lord' },
-  { value: 'My Lord', label: 'My Lord' },
-  { value: 'Owner', label: 'Owner' },
-  { value: 'King', label: 'King' },
-  { value: 'Boss', label: 'Boss' }
-];
-
 export default function TitleSelection({ vampireState, servant, onClose }) {
+  const isFemale = vampireState.gender === 'female';
+  
+  const PRESET_TITLES = isFemale ? [
+    { value: 'Mistress', label: 'Mistress' },
+    { value: 'Mommy', label: 'Mommy' },
+    { value: 'Lady', label: 'Lady' },
+    { value: 'My Lady', label: 'My Lady' },
+    { value: 'Owner', label: 'Owner' },
+    { value: 'Queen', label: 'Queen' },
+    { value: 'Goddess', label: 'Goddess' },
+    { value: 'Boss', label: 'Boss' }
+  ] : [
+    { value: 'Sir', label: 'Sir' },
+    { value: 'Master', label: 'Master' },
+    { value: 'Daddy', label: 'Daddy' },
+    { value: 'Lord', label: 'Lord' },
+    { value: 'My Lord', label: 'My Lord' },
+    { value: 'Owner', label: 'Owner' },
+    { value: 'King', label: 'King' },
+    { value: 'Boss', label: 'Boss' }
+  ];
   const [customTitle, setCustomTitle] = useState('');
   const [saving, setSaving] = useState(false);
   const queryClient = useQueryClient();
