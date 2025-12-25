@@ -111,6 +111,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [showMerch, setShowMerch] = useState(false);
   const [collabing, setCollabing] = useState(false);
   const [collabOutcome, setCollabOutcome] = useState('');
+  const [selectedTier, setSelectedTier] = useState('basic');
+  const [dmMessages, setDmMessages] = useState([]);
+  const [sendingDm, setSendingDm] = useState(false);
 
   const { data: profile = [], isLoading: profileLoading } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -960,6 +963,72 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     }, 3000);
   };
 
+  const handleChangeTier = async (tierId) => {
+    setSelectedTier(tierId);
+    const tier = getSubscriptionTiers(servant.id).find(t => t.id === tierId);
+    await base44.entities.NightLog.create({
+      entry: `Changed subscription tier to ${tier.name} ($${tier.price}/month). ${tier.perks.join(', ')}.`,
+      category: 'interaction',
+      intensity: 'subtle'
+    });
+    queryClient.invalidateQueries();
+  };
+
+  const handleSendDM = async (fanName) => {
+    if (sendingDm) return;
+    setSendingDm(true);
+    
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are ${fanName}, a fan sending a DM to ${servant.name} on OnlyFangs. Generate a short, explicit, flirty message (under 20 words). Be sexual but not creepy. Include what you want to see or compliment them.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' }
+          }
+        }
+      });
+      
+      const earnings = Math.floor(Math.random() * 30) + 10;
+      
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: servantProfile.revenue + earnings
+      });
+      
+      setDmMessages(prev => [...prev, {
+        fan: fanName,
+        message: response.message,
+        tip: earnings,
+        timestamp: new Date().toISOString()
+      }]);
+      
+      queryClient.invalidateQueries();
+    } catch (e) {
+      const fallbackMessages = [
+        "Hey beautiful, would love a custom video 😍",
+        "You're so hot, can't stop thinking about you",
+        "Just subscribed to your VIP tier, you're amazing",
+        "That last video was incredible, more please 🔥"
+      ];
+      const earnings = Math.floor(Math.random() * 30) + 10;
+      
+      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+        revenue: servantProfile.revenue + earnings
+      });
+      
+      setDmMessages(prev => [...prev, {
+        fan: fanName,
+        message: fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)],
+        tip: earnings,
+        timestamp: new Date().toISOString()
+      }]);
+      
+      queryClient.invalidateQueries();
+    }
+    
+    setSendingDm(false);
+  };
+
   const handleCreatePost = async () => {
     if (!newPost.content || !newPost.caption || creatingPost) return;
     setCreatingPost(true);
@@ -1284,6 +1353,12 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </button>
           <button onClick={(e) => { e.stopPropagation(); setTab('collab'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'collab' ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             <UserPlus className="w-3 h-3" /> Collab
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); setTab('dms'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm touch-manipulation ${tab === 'dms' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            <MessageCircle className="w-3 h-3" /> DMs
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); setTab('subscription'); }} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm touch-manipulation ${tab === 'subscription' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            💳 Tier
           </button>
           <button onClick={(e) => { e.stopPropagation(); setShowMerch(true); }} className="px-3 py-2 rounded-lg whitespace-nowrap flex items-center gap-1 text-sm bg-gray-800 text-gray-400 hover:bg-gray-700 touch-manipulation">
             <ShoppingBag className="w-3 h-3" /> Store
@@ -2135,6 +2210,86 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             profile={servantProfile}
             onClose={() => setTab('profile')}
           />
+        )}
+
+        {tab === 'subscription' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-2xl font-bold mb-2">Select Your Subscription Tier</h3>
+              <p className="text-gray-400 mb-6">Choose the tier that's right for you and your fans</p>
+              
+              <div className="space-y-3">
+                {getSubscriptionTiers(servant.id).map(tier => (
+                  <button
+                    key={tier.id}
+                    onClick={() => handleChangeTier(tier.id)}
+                    className={`w-full rounded-xl p-4 text-left transition-all ${
+                      selectedTier === tier.id 
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white ring-2 ring-purple-400' 
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xl font-bold">{tier.name}</span>
+                      <span className="text-2xl font-bold">${tier.price}/mo</span>
+                    </div>
+                    <ul className="space-y-1 text-sm opacity-90">
+                      {tier.perks.map((perk, i) => (
+                        <li key={i}>✓ {perk}</li>
+                      ))}
+                    </ul>
+                  </button>
+                ))}
+              </div>
+              
+              <div className="mt-6 bg-gray-800/50 rounded-lg p-4">
+                <p className="text-gray-400 text-sm">
+                  <strong className="text-white">Current Tier:</strong> {getSubscriptionTiers(servant.id).find(t => t.id === selectedTier)?.name} - ${getSubscriptionTiers(servant.id).find(t => t.id === selectedTier)?.price}/month
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab === 'dms' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-2 flex items-center gap-2">
+                <MessageCircle className="w-5 h-5" /> Direct Messages
+              </h3>
+              <p className="text-gray-400 text-sm mb-4">Fans send you DMs with tips</p>
+              
+              <button
+                onClick={() => handleSendDM(topFans[Math.floor(Math.random() * topFans.length)]?.name || 'VampireFan420')}
+                disabled={sendingDm}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50 mb-4"
+              >
+                {sendingDm ? 'Receiving...' : 'Check DMs'}
+              </button>
+              
+              <div className="space-y-3 max-h-[40vh] overflow-y-auto">
+                {dmMessages.length === 0 ? (
+                  <p className="text-gray-500 text-center py-8">No messages yet. Check your DMs!</p>
+                ) : (
+                  dmMessages.map((dm, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="bg-gray-800 rounded-xl p-4"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-purple-400 font-medium">{dm.fan}</span>
+                        <span className="text-green-400 font-bold">+${dm.tip}</span>
+                      </div>
+                      <p className="text-gray-300 text-sm">{dm.message}</p>
+                      <p className="text-gray-600 text-xs mt-2">{new Date(dm.timestamp).toLocaleTimeString()}</p>
+                    </motion.div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
         )}
 
         {tab === 'collab' && (
