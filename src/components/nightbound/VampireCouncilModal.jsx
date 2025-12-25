@@ -15,7 +15,7 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
     queryFn: () => base44.entities.VampireCouncil.list()
   });
 
-  // Ensure exactly 3 council members - fixed set
+  // Ensure exactly 3 council members - PERMANENT, never changes
   React.useEffect(() => {
     if (council.length === 0) {
       const members = [
@@ -33,7 +33,7 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
         })
       )).then(() => queryClient.invalidateQueries(['council']));
     } else if (council.length > 3) {
-      // Delete extras if somehow more than 3 exist
+      // Delete extras - keep only first 3
       const toDelete = council.slice(3);
       Promise.all(toDelete.map(m => base44.entities.VampireCouncil.delete(m.id)))
         .then(() => queryClient.invalidateQueries(['council']));

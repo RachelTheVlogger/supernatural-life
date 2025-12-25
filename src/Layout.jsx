@@ -20,12 +20,18 @@ export default function Layout({ children, currentPageName }) {
   // Show nav on main game pages only
   const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName);
   
-  const firstServantId = servants.length > 0 ? servants[0].id : null;
+  // Get current servant from URL or default to first
+  const urlParams = new URLSearchParams(location.search);
+  const currentServantId = urlParams.get('servant') || urlParams.get('id') || (servants.length > 0 ? servants[0].id : null);
+  const currentServant = servants.find(s => s.id === currentServantId) || servants[0];
+  const firstServantId = currentServant?.id;
+  
+  const [showServantSelector, setShowServantSelector] = React.useState(false);
   
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'House', icon: Home, path: 'VampireHome' },
-    { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, disabled: !firstServantId },
+    { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, disabled: !firstServantId, hasSelector: servants.length > 1 },
     { name: 'Messages', icon: MessageCircle, path: `Messages?servant=${firstServantId}`, disabled: !firstServantId },
   
   ];
@@ -77,19 +83,71 @@ export default function Layout({ children, currentPageName }) {
               return (
                 <button
                   key={item.name}
-                  onClick={() => !item.disabled && navigate(createPageUrl(item.path))}
+                  onClick={() => {
+                    if (item.disabled) return;
+                    if (item.hasSelector && servants.length > 1) {
+                      setShowServantSelector(true);
+                    } else {
+                      navigate(createPageUrl(item.path));
+                    }
+                  }}
                   disabled={item.disabled}
-                  className={`flex flex-col items-center gap-1 touch-manipulation ${
+                  className={`flex flex-col items-center gap-1 touch-manipulation relative ${
                     isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-white'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="text-xs">{item.name}</span>
+                  {item.hasSelector && servants.length > 1 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                      {servants.length}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </div>
         </div>
+      )}
+      
+      {/* Servant Selector Modal */}
+      {showServantSelector && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => setShowServantSelector(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+          >
+            <h3 className="text-white text-xl font-bold mb-4">Select Servant</h3>
+            <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+              {servants.map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => {
+                    navigate(createPageUrl(`ServantHome?id=${s.id}`));
+                    setShowServantSelector(false);
+                  }}
+                  className={`w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors ${
+                    s.id === currentServantId ? 'ring-2 ring-purple-500' : ''
+                  }`}
+                >
+                  <h4 className="text-white font-medium">{s.name}</h4>
+                  <p className="text-gray-400 text-sm capitalize">
+                    {s.is_turned ? '🦇 Vampire' : `${s.variant} servant`} • Bond: {s.relationship || 0}%
+                  </p>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
     </ErrorBoundary>

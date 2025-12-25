@@ -47,7 +47,6 @@ export default function Night() {
     queryFn: () => base44.entities.NightLog.list('-created_date', 10)
   });
   
-  // Ensure only one servant exists at a time
   const [servantsInitialized, setServantsInitialized] = useState(false);
   
   const vampireState = vampireStates[0];
@@ -100,14 +99,8 @@ export default function Night() {
   };
   
   useEffect(() => {
-    // Delete extra servants if more than one exists
-    if (servants.length > 1 && !servantsInitialized) {
-      setServantsInitialized(true);
-      // Keep the first one, delete the rest
-      const toDelete = servants.slice(1);
-      Promise.all(toDelete.map(s => base44.entities.Servant.delete(s.id)))
-        .then(() => queryClient.invalidateQueries(['servants']));
-    } else if (servants.length === 0 && !servantsInitialized) {
+    // Generate first servant if none exist
+    if (servants.length === 0 && !servantsInitialized) {
       setServantsInitialized(true);
       const variants = ['devoted', 'defiant', 'dreamer'];
       const emotionalStates = ['curious', 'wary', 'distant'];

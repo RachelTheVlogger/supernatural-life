@@ -118,7 +118,7 @@ export default function RivalVampireModal({ onClose, vampireState }) {
     }, 2000);
   };
 
-  // Ensure exactly 3 rivals - fixed set
+  // Ensure exactly 3 rivals - replace only when defeated
   React.useEffect(() => {
     if (rivals.length === 0) {
       const fixedRivals = [
@@ -138,10 +138,35 @@ export default function RivalVampireModal({ onClose, vampireState }) {
         })
       )).then(() => queryClient.invalidateQueries(['rivals']));
     } else if (rivals.length > 3) {
-      // Delete extras if somehow more than 3 exist
+      // Delete extras - keep only first 3
       const toDelete = rivals.slice(3);
       Promise.all(toDelete.map(r => base44.entities.RivalVampire.delete(r.id)))
         .then(() => queryClient.invalidateQueries(['rivals']));
+    } else if (rivals.length < 3) {
+      // Add new rival if less than 3 (when one was defeated)
+      const namePool = [
+        'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
+        'Dorian Blackwood', 'Seraphina Nyx', 'Marcus Ravencroft',
+        'Evangeline Thorn', 'Lucien Deveraux', 'Isolde Morningstar',
+        'Viktor Shadowmere', 'Anastasia Crimson', 'Dante Nightshade'
+      ];
+      
+      const existingNames = rivals.map(r => r.name);
+      const availableNames = namePool.filter(n => !existingNames.includes(n));
+      
+      if (availableNames.length > 0) {
+        const personalities = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
+        const newName = availableNames[Math.floor(Math.random() * availableNames.length)];
+        
+        base44.entities.RivalVampire.create({
+          name: newName,
+          age: Math.floor(Math.random() * 500) + 50,
+          personality: personalities[Math.floor(Math.random() * personalities.length)],
+          power_level: Math.floor(Math.random() * 40) + 40,
+          relationship: Math.floor(Math.random() * 40) - 20,
+          servants_count: Math.floor(Math.random() * 5)
+        }).then(() => queryClient.invalidateQueries(['rivals']));
+      }
     }
   }, [rivals.length]);
 
