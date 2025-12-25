@@ -289,15 +289,10 @@ Respond naturally as ${servant.name}. 1-3 sentences. React to what they said. Be
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Heart className="w-6 h-6 text-red-400" />
-            Night Shift
-          </h2>
-          <div className="text-gray-400 text-sm">
-            Scene {scenesCompleted}/3
-          </div>
-        </div>
+        <h2 className="text-2xl font-bold text-white flex items-center gap-2 mb-4">
+          <Heart className="w-6 h-6 text-red-400" />
+          Night Shift
+        </h2>
 
         <AnimatePresence mode="wait">
           {shiftPhase === 'start' && (
