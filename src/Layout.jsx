@@ -5,6 +5,7 @@ import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { motion } from 'framer-motion';
 
 export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();

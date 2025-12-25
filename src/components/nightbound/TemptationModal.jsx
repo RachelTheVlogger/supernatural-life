@@ -106,14 +106,23 @@ const TEMPTATIONS = {
     ],
     cost: 'Your current servants might feel replaced. Trust broken.',
     accept: async (vampireState, servants, queryClient) => {
+      // Check if already at max servants (2)
+      if (servants.length >= 2) {
+        return 'You already have enough servants. Cannot seduce more.';
+      }
+      
       // Generate new servant
       const names = ['Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven'];
       const variants = ['devoted', 'defiant', 'dreamer'];
+      const genders = ['male', 'female', 'custom'];
+      const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
       const newName = names[Math.floor(Math.random() * names.length)];
       const newVariant = variants[Math.floor(Math.random() * variants.length)];
       
       await base44.entities.Servant.create({
         name: newName,
+        gender: genders[Math.floor(Math.random() * genders.length)],
+        sexuality: sexualities[Math.floor(Math.random() * sexualities.length)],
         variant: newVariant,
         obsession_stage: 1,
         relationship: 15,

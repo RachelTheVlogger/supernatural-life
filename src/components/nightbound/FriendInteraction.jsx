@@ -106,6 +106,17 @@ export default function FriendInteraction({ friend, servant, vampireState, onClo
       
       // If invited to live, convert to servant
       if (type === 'invite') {
+        // Check if already at max servants (2)
+        const allServants = await base44.entities.Servant.list();
+        if (allServants.length >= 2) {
+          setOutcome('You already have 2 servants. Cannot invite more.');
+          setTimeout(() => {
+            setProcessing(false);
+            setOutcome('');
+          }, 3000);
+          return;
+        }
+        
         const variantMap = {
           cautious: 'defiant',
           curious: 'dreamer',
