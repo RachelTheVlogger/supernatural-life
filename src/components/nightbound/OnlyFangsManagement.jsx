@@ -1612,63 +1612,67 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </div>
         )}
 
-        {showMerch && (
-          <OnlyFangsMerch
-            servant={servant}
-            profile={servantProfile}
-            onClose={() => setShowMerch(false)}
-          />
-        )}
+        <AnimatePresence>
+          {showMerch && (
+            <OnlyFangsMerch
+              servant={servant}
+              profile={servantProfile}
+              onClose={() => setShowMerch(false)}
+            />
+          )}
 
-        {filmingOutcome && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
-          >
-            <motion.div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center">
-              <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="text-5xl mb-4">
-                🎥
-              </motion.div>
-              <p className="text-gray-300 text-lg">{filmingOutcome}</p>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {viewingComments && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"
-            onClick={() => setViewingComments(null)}
-          >
+          {filmingOutcome && (
             <motion.div
-              onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
             >
-              <h3 className="text-white text-xl font-bold mb-4">{viewingComments.title}</h3>
-              
-              <div className="space-y-3">
-                {allComments
-                  .filter(c => viewingComments.type === 'video' ? c.video_id === viewingComments.id : c.post_id === viewingComments.id)
-                  .map(comment => (
-                    <div key={comment.id} className="bg-gray-800 rounded-lg p-3">
-                      <div className="flex justify-between mb-1">
-                        <span className="text-purple-400 font-medium text-sm">{comment.username}</span>
-                        {comment.tip > 0 && <span className="text-green-400 text-xs">💵 ${comment.tip}</span>}
-                      </div>
-                      <p className="text-gray-300 text-sm">{comment.comment}</p>
-                    </div>
-                  ))}
-              </div>
-              
-              <button onClick={() => setViewingComments(null)} className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl mt-4">
-                Close
-              </button>
+              <motion.div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center">
+                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="text-5xl mb-4">
+                  🎥
+                </motion.div>
+                <p className="text-gray-300 text-lg">{filmingOutcome}</p>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+
+          {viewingComments && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"
+              onClick={() => setViewingComments(null)}
+            >
+              <motion.div
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+              >
+                <h3 className="text-white text-xl font-bold mb-4">{viewingComments.title}</h3>
+                
+                <div className="space-y-3">
+                  {allComments
+                    .filter(c => viewingComments.type === 'video' ? c.video_id === viewingComments.id : c.post_id === viewingComments.id)
+                    .map(comment => (
+                      <div key={comment.id} className="bg-gray-800 rounded-lg p-3">
+                        <div className="flex justify-between mb-1">
+                          <span className="text-purple-400 font-medium text-sm">{comment.username}</span>
+                          {comment.tip > 0 && <span className="text-green-400 text-xs">💵 ${comment.tip}</span>}
+                        </div>
+                        <p className="text-gray-300 text-sm">{comment.comment}</p>
+                      </div>
+                    ))}
+                </div>
+                
+                <button onClick={() => setViewingComments(null)} className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl mt-4">
+                  Close
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </motion.div>
   );
 }
