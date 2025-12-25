@@ -10,6 +10,7 @@ import NPCInteraction from '@/components/nightbound/NPCInteraction';
 import ServantAutomationSettings from '@/components/nightbound/ServantAutomationSettings';
 import ServantProactiveActions from '@/components/nightbound/ServantProactiveActions';
 import OnlyFangsManagement from '@/components/nightbound/OnlyFangsManagement';
+import ServantInteractions from '@/components/nightbound/ServantInteractions';
 
 const CHORES = [
   { id: 'clean', label: 'Clean the rooms', icon: Sparkles, duration: 2000, outcomes: ['You tidied the bedroom. Everything feels peaceful.', 'You dusted the shelves. The space feels lighter.', 'You organized their belongings with care.'] },
@@ -47,6 +48,7 @@ export default function ServantHome() {
   const [showNPCModal, setShowNPCModal] = useState(false);
   const [showAutomationSettings, setShowAutomationSettings] = useState(false);
   const [showOnlyFangs, setShowOnlyFangs] = useState(false);
+  const [showServantInteractions, setShowServantInteractions] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -69,6 +71,11 @@ export default function ServantHome() {
       return servants.find(s => s.id === servantId);
     },
     enabled: !!servantId
+  });
+
+  const { data: allServants = [] } = useQuery({
+    queryKey: ['servants'],
+    queryFn: () => base44.entities.Servant.list()
   });
   
   const { data: vampireStates = [] } = useQuery({
@@ -192,6 +199,14 @@ export default function ServantHome() {
           >
             Town People
           </button>
+          {allServants.length > 1 && (
+            <button
+              onClick={() => setShowServantInteractions(true)}
+              className="text-pink-400 hover:text-pink-300 text-sm transition-colors"
+            >
+              Talk to Other Servants
+            </button>
+          )}
           <button
             onClick={() => navigate(createPageUrl('VampireHome'))}
             className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
@@ -326,6 +341,14 @@ export default function ServantHome() {
             servant={servant}
             vampireState={vampireState}
             onClose={() => setShowOnlyFangs(false)}
+          />
+        )}
+        {showServantInteractions && (
+          <ServantInteractions
+            servants={allServants}
+            vampireState={vampireState}
+            currentServant={servant}
+            onClose={() => setShowServantInteractions(false)}
           />
         )}
         </AnimatePresence>
