@@ -1352,6 +1352,14 @@ const INTERACTIONS = {
     special: true,
     gains: [0, 0]
   },
+
+  setBoundaries: {
+    icon: MessageCircle,
+    label: 'Discuss boundaries',
+    category: 'social',
+    special: true,
+    gains: [0, 0]
+  },
   
   // Dark option
   kill: {
@@ -1372,6 +1380,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [interactionType, setInteractionType] = useState('');
   const [showPowers, setShowPowers] = useState(false);
   const [showTitleSelection, setShowTitleSelection] = useState(false);
+  const [showBoundaries, setShowBoundaries] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const queryClient = useQueryClient();
   
@@ -1425,6 +1434,11 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       setShowTitleSelection(true);
       return;
     }
+
+    if (type === 'setBoundaries') {
+      setShowBoundaries(true);
+      return;
+    }
     
     if (type === 'kill') {
       if (!confirm(`Kill ${servant.name}? This cannot be undone.`)) {
@@ -1473,11 +1487,18 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       const stateIndex = Math.min(Math.floor(newRel / 20), 4);
       const newEmotionalState = emotionalStates[servant.variant][stateIndex];
       
+      // Reduce/eliminate jealousy gain for physical interactions if boundaries allow
+      let jealousyGain = 0;
+      if (['physical', 'bdsm'].includes(interaction.category) && !['open', 'no-strings'].includes(servant.boundaries)) {
+        jealousyGain = Math.floor(Math.random() * 5) + 2;
+      }
+      
       await base44.entities.Servant.update(servant.id, {
         relationship: newRel,
         obsession_stage: Math.min(Math.floor(newRel / 20) + 1, 5),
         emotional_state: newEmotionalState,
-        last_interaction: new Date().toISOString()
+        last_interaction: new Date().toISOString(),
+        jealousy_level: Math.min((servant.jealousy_level || 0) + jealousyGain, 100)
       });
       
       // Determine humanity impact of interaction
@@ -1615,6 +1636,91 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
               queryClient.invalidateQueries(['vampireState']);
             }}
           />
+        )}
+        {showBoundaries && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowBoundaries(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative"
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowBoundaries(false);
+                }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-2xl font-bold text-white mb-4">Set Boundaries</h2>
+              <p className="text-gray-400 text-sm mb-6">
+                Discuss what kind of relationship you have with {servant.name}
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  onClick={async () => {
+                    await base44.entities.Servant.update(servant.id, { boundaries: 'exclusive' });
+                    await base44.entities.NightLog.create({
+                      entry: `You and ${servant.name} agreed to be exclusive. They're yours alone.`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+                    queryClient.invalidateQueries();
+                    setShowBoundaries(false);
+                  }}
+                  className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h3 className="text-white font-medium mb-1">💍 Exclusive</h3>
+                  <p className="text-gray-400 text-sm">They're yours alone. No sharing. They'll be jealous of others.</p>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    await base44.entities.Servant.update(servant.id, { boundaries: 'open' });
+                    await base44.entities.NightLog.create({
+                      entry: `You and ${servant.name} agreed to an open relationship. Sharing is allowed.`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+                    queryClient.invalidateQueries();
+                    setShowBoundaries(false);
+                  }}
+                  className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h3 className="text-white font-medium mb-1">💜 Open Relationship</h3>
+                  <p className="text-gray-400 text-sm">Sharing is okay. No jealousy. You can have others.</p>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    await base44.entities.Servant.update(servant.id, { boundaries: 'no-strings' });
+                    await base44.entities.NightLog.create({
+                      entry: `You and ${servant.name} agreed it's casual. No strings attached.`,
+                      category: 'interaction',
+                      intensity: 'subtle'
+                    });
+                    queryClient.invalidateQueries();
+                    setShowBoundaries(false);
+                  }}
+                  className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h3 className="text-white font-medium mb-1">🌙 No Strings</h3>
+                  <p className="text-gray-400 text-sm">Casual. No expectations. Just fun.</p>
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     <motion.div
