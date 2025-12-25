@@ -30,7 +30,7 @@ export default function AdvanceNight({ vampireState, onClose }) {
       
       // Log the night passing
       await base44.entities.NightLog.create({
-        entry: `${format(nextGameDate, 'MMMM d, yyyy')} - Another night begins. The city sleeps. You do not.`,
+        entry: `${format(nextGameDate, 'MMMM d, yyyy')} - Another night begins.`,
         category: 'observation',
         intensity: 'subtle'
       });
