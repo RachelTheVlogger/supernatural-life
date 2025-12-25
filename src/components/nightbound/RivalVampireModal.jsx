@@ -62,7 +62,15 @@ export default function RivalVampireModal({ onClose, vampireState }) {
               ];
 
               const PERSONALITIES = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
-              const newName = NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)];
+
+              // Check all existing rivals to avoid duplicate names
+              const allRivals = await base44.entities.RivalVampire.list();
+              const usedNames = allRivals.map(r => r.name);
+              const availableNames = NAME_POOL.filter(n => !usedNames.includes(n));
+
+              const newName = availableNames.length > 0 
+                ? availableNames[Math.floor(Math.random() * availableNames.length)]
+                : NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)];
 
               await base44.entities.RivalVampire.create({
                 name: newName,
@@ -119,9 +127,18 @@ export default function RivalVampireModal({ onClose, vampireState }) {
     }, 2000);
   };
 
-  // One rival at a time - create only if none exist
+  // One rival at a time - clean up extras and create if needed
   React.useEffect(() => {
-    const initRival = async () => {
+    const manageRivals = async () => {
+      // Clean up any extra rivals (should only be 1)
+      if (rivals.length > 1) {
+        const toDelete = rivals.slice(1);
+        await Promise.all(toDelete.map(r => base44.entities.RivalVampire.delete(r.id).catch(() => {})));
+        queryClient.invalidateQueries(['rivals']);
+        return;
+      }
+      
+      // Create one rival if none exist
       if (rivals.length === 0) {
         const NAME_POOL = [
           'Lilith the Ancient', 'Vladislav Corvinus', 'Carmilla Drăculești',
@@ -131,7 +148,15 @@ export default function RivalVampireModal({ onClose, vampireState }) {
         ];
         
         const PERSONALITIES = ['aggressive', 'diplomatic', 'seductive', 'ruthless', 'ancient'];
-        const newName = NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)];
+        
+        // Get ALL rivals ever created to check for name conflicts
+        const allRivals = await base44.entities.RivalVampire.list();
+        const usedNames = allRivals.map(r => r.name);
+        const availableNames = NAME_POOL.filter(n => !usedNames.includes(n));
+        
+        const newName = availableNames.length > 0 
+          ? availableNames[Math.floor(Math.random() * availableNames.length)]
+          : NAME_POOL[Math.floor(Math.random() * NAME_POOL.length)];
         
         await base44.entities.RivalVampire.create({
           name: newName,
@@ -145,7 +170,7 @@ export default function RivalVampireModal({ onClose, vampireState }) {
       }
     };
     
-    initRival();
+    manageRivals();
   }, [rivals.length, queryClient]);
 
   return (
