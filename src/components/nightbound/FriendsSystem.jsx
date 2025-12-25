@@ -95,11 +95,19 @@ export default function FriendsSystem({ servant, onClose }) {
     setMeetingNew(true);
     
     setTimeout(async () => {
-      const names = ['Jordan', 'Casey', 'Morgan', 'Riley', 'Avery', 'Skylar', 'Dakota', 'Charlie'];
+      const namePool = ['Jordan', 'Casey', 'Morgan', 'Riley', 'Avery', 'Skylar', 'Dakota', 'Charlie', 'Sage', 'Rowan', 'Quinn', 'Eden'];
       const personalities = ['cautious', 'curious', 'thrill-seeking', 'lonely'];
       
+      // Get existing names to avoid duplicates
+      const existingNames = potentialServants.map(p => p.name);
+      const availableNames = namePool.filter(n => !existingNames.includes(n));
+      
+      const newName = availableNames.length > 0 
+        ? availableNames[Math.floor(Math.random() * availableNames.length)]
+        : namePool[Math.floor(Math.random() * namePool.length)] + Math.floor(Math.random() * 100);
+      
       const newPerson = await base44.entities.PotentialServant.create({
-        name: names[Math.floor(Math.random() * names.length)],
+        name: newName,
         met_through_servant_id: servant.id,
         personality: personalities[Math.floor(Math.random() * personalities.length)],
         curiosity_level: Math.floor(Math.random() * 20) + 10,

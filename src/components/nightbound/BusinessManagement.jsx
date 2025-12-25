@@ -185,8 +185,17 @@ export default function BusinessManagement({ servant, onClose }) {
         const designs = JEWELRY_DESIGNS[rarity];
         const design = designs[Math.floor(Math.random() * designs.length)];
         
-        const names = ['Luna', 'Raven', 'Ash', 'Salem', 'Morticia', 'Wednesday', 'Elvira', 'Lilith'];
-        const customerName = names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random() * 100);
+        const namePool = ['Luna', 'Raven', 'Ash', 'Salem', 'Morticia', 'Wednesday', 'Elvira', 'Lilith', 'Violet', 'Scarlett', 'Onyx', 'Jade'];
+        
+        // Get existing customer names to avoid recent duplicates
+        const existingNames = orders.slice(0, 10).map(o => o.customer_name);
+        const availableNames = namePool.filter(n => !existingNames.some(e => e.startsWith(n)));
+        
+        const baseName = availableNames.length > 0 
+          ? availableNames[Math.floor(Math.random() * availableNames.length)]
+          : namePool[Math.floor(Math.random() * namePool.length)];
+        
+        const customerName = baseName + Math.floor(Math.random() * 100);
         
         await base44.entities.BusinessOrder.create({
           servant_id: servant.id,

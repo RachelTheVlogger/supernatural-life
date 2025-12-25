@@ -244,12 +244,20 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           last_purchase: new Date().toISOString()
         });
       } else {
-        const names = customerType === 'vampire' 
-          ? ['Vladislav', 'Carmilla', 'Lestat', 'Akasha', 'Armand']
-          : ['Marcus', 'Elena', 'David', 'Sarah', 'Alex'];
+        const namePool = customerType === 'vampire' 
+          ? ['Vladislav', 'Carmilla', 'Lestat', 'Akasha', 'Armand', 'Selene', 'Viktor', 'Lucian', 'Sonja', 'Kraven']
+          : ['Marcus', 'Elena', 'David', 'Sarah', 'Alex', 'Maya', 'Nathan', 'Rachel', 'Lucas', 'Jade'];
+        
+        // Get existing customer names to avoid duplicates
+        const existingNames = customers.map(c => c.name);
+        const availableNames = namePool.filter(n => !existingNames.includes(n));
+        
+        const newName = availableNames.length > 0
+          ? availableNames[Math.floor(Math.random() * availableNames.length)]
+          : namePool[Math.floor(Math.random() * namePool.length)] + Math.floor(Math.random() * 100);
         
         await base44.entities.DrugCustomer.create({
-          name: names[Math.floor(Math.random() * names.length)],
+          name: newName,
           customer_type: customerType,
           addiction_level: drug.addictiveness / 10,
           preferred_strain: drug.strain_name,
