@@ -15,32 +15,39 @@ export default function HunterThreatModal({ onClose, vampireState }) {
     queryFn: () => base44.entities.Hunter.list('-suspicion')
   });
 
-  // Generate hunters based on exposure - unique names only
+  // Generate hunters based on exposure
   React.useEffect(() => {
-    if (hunters.length === 0 && (vampireState.exposure_level || 0) > 20) {
-      const namePool = [
-        'Sarah Cross', 'Marcus Blade', 'Father Dominic', 'Dr. Helena Vale',
-        'Agent Rivers', 'Sister Margaret', 'Detective Stone', 'Professor Harker',
-        'Victor Kane', 'Isabella Hunt', 'Thomas Grey', 'Rachel Ashford'
-      ];
-      const specialties = ['tracker', 'researcher', 'combatant', 'infiltrator'];
-      
-      const existingNames = hunters.map(h => h.name);
-      const availableNames = namePool.filter(n => !existingNames.includes(n));
-      
-      const hunterCount = Math.min(Math.floor((vampireState.exposure_level || 0) / 30), availableNames.length, 3);
-      
-      Promise.all([...Array(hunterCount)].map((_, i) =>
-        base44.entities.Hunter.create({
-          name: availableNames[i],
-          specialty: specialties[i % specialties.length],
-          skill_level: Math.floor(Math.random() * 30) + 40,
-          suspicion: Math.floor(Math.random() * 40) + 20,
-          status: 'tracking'
-        })
-      )).then(() => queryClient.invalidateQueries(['hunters']));
-    }
-  }, [hunters.length, vampireState.exposure_level]);
+    const initHunters = async () => {
+      if (hunters.length === 0 && (vampireState.exposure_level || 0) > 20) {
+        const namePool = [
+          'Sarah Cross', 'Marcus Blade', 'Father Dominic', 'Dr. Helena Vale',
+          'Agent Rivers', 'Sister Margaret', 'Detective Stone', 'Professor Harker',
+          'Victor Kane', 'Isabella Hunt', 'Thomas Grey', 'Rachel Ashford'
+        ];
+        const specialties = ['tracker', 'researcher', 'combatant', 'infiltrator'];
+        
+        const existingNames = hunters.map(h => h.name);
+        const availableNames = namePool.filter(n => !existingNames.includes(n));
+        
+        const hunterCount = Math.min(Math.floor((vampireState.exposure_level || 0) / 30), availableNames.length, 3);
+        
+        if (hunterCount > 0) {
+          await Promise.all([...Array(hunterCount)].map((_, i) =>
+            base44.entities.Hunter.create({
+              name: availableNames[i],
+              specialty: specialties[i % specialties.length],
+              skill_level: Math.floor(Math.random() * 30) + 40,
+              suspicion: Math.floor(Math.random() * 40) + 20,
+              status: 'tracking'
+            })
+          ));
+          queryClient.invalidateQueries(['hunters']);
+        }
+      }
+    };
+    
+    initHunters();
+  }, [hunters.length, vampireState.exposure_level, queryClient]);
 
   const handleAction = async (action) => {
     setProcessing(true);
@@ -72,27 +79,31 @@ export default function HunterThreatModal({ onClose, vampireState }) {
       
       setOutcome(outcomeText);
 
-      if (success) {
-        if (action === 'confront' || action === 'seduce') {
-          await base44.entities.Hunter.update(selectedHunter.id, {
-            status: action === 'confront' ? 'dead' : 'recruited',
-            suspicion: 0
-          });
+      try {
+        if (success) {
+          if (action === 'confront' || action === 'seduce') {
+            await base44.entities.Hunter.update(selectedHunter.id, {
+              status: action === 'confront' ? 'dead' : 'recruited',
+              suspicion: 0
+            });
+          } else {
+            await base44.entities.Hunter.update(selectedHunter.id, {
+              suspicion: Math.max(0, selectedHunter.suspicion - 30)
+            });
+          }
         } else {
           await base44.entities.Hunter.update(selectedHunter.id, {
-            suspicion: Math.max(0, selectedHunter.suspicion - 30)
+            suspicion: Math.min(100, selectedHunter.suspicion + 20)
           });
+          
+          if (vampireState.id) {
+            await base44.entities.VampireState.update(vampireState.id, {
+              exposure_level: Math.min(100, (vampireState.exposure_level || 0) + 10)
+            });
+          }
         }
-      } else {
-        await base44.entities.Hunter.update(selectedHunter.id, {
-          suspicion: Math.min(100, selectedHunter.suspicion + 20)
-        });
-        
-        if (vampireState.id) {
-          await base44.entities.VampireState.update(vampireState.id, {
-            exposure_level: Math.min(100, (vampireState.exposure_level || 0) + 10)
-          });
-        }
+      } catch (e) {
+        console.error('Failed to update hunter:', e);
       }
 
       await base44.entities.NightLog.create({

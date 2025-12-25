@@ -15,30 +15,34 @@ export default function VampireCouncilModal({ onClose, vampireState }) {
     queryFn: () => base44.entities.VampireCouncil.list()
   });
 
-  // Ensure exactly 3 council members - PERMANENT, never changes
+  // Ensure exactly 3 council members
   React.useEffect(() => {
-    if (council.length === 0) {
-      const members = [
-        { name: 'Elder Magdalena', position: 'elder', favor: 50 },
-        { name: 'Viktor the Enforcer', position: 'enforcer', favor: 40 },
-        { name: 'Isabeau the Diplomat', position: 'diplomat', favor: 60 }
-      ];
+    const initCouncil = async () => {
+      if (council.length === 0) {
+        const members = [
+          { name: 'Elder Magdalena', position: 'elder', favor: 50 },
+          { name: 'Viktor the Enforcer', position: 'enforcer', favor: 40 },
+          { name: 'Isabeau the Diplomat', position: 'diplomat', favor: 60 }
+        ];
 
-      Promise.all(members.map(m => 
-        base44.entities.VampireCouncil.create({
-          council_member_name: m.name,
-          position: m.position,
-          favor: m.favor,
-          can_grant_boons: true
-        })
-      )).then(() => queryClient.invalidateQueries(['council']));
-    } else if (council.length > 3) {
-      // Delete extras - keep only first 3
-      const toDelete = council.slice(3);
-      Promise.all(toDelete.map(m => base44.entities.VampireCouncil.delete(m.id).catch(() => {})))
-        .then(() => queryClient.invalidateQueries(['council']));
-    }
-  }, [council.length]);
+        await Promise.all(members.map(m => 
+          base44.entities.VampireCouncil.create({
+            council_member_name: m.name,
+            position: m.position,
+            favor: m.favor,
+            can_grant_boons: true
+          })
+        ));
+        queryClient.invalidateQueries(['council']);
+      } else if (council.length > 3) {
+        const toDelete = council.slice(3);
+        await Promise.all(toDelete.map(m => base44.entities.VampireCouncil.delete(m.id).catch(() => {})));
+        queryClient.invalidateQueries(['council']);
+      }
+    };
+    
+    initCouncil();
+  }, [council.length, queryClient]);
 
   const handleRequestBoon = async (boonType) => {
     setProcessing(true);

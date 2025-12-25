@@ -19,24 +19,25 @@ export default function AdvanceNight({ vampireState, onClose }) {
     setAdvancing(true);
     
     setTimeout(async () => {
-      // Advance to next day
-      const newNight = (vampireState.nights_passed || 0) + 1;
-      
-      // Update vampire state
-      await base44.entities.VampireState.update(vampireState.id, {
-        nights_passed: newNight,
-        current_date: nextGameDate.toISOString()
-      });
-      
-      // Log the night passing
-      await base44.entities.NightLog.create({
-        entry: `${format(nextGameDate, 'MMMM d, yyyy')} - Another night begins.`,
-        category: 'observation',
-        intensity: 'subtle'
-      });
-      
-      queryClient.invalidateQueries(['vampireState']);
-      queryClient.invalidateQueries(['logs']);
+      try {
+        const newNight = (vampireState.nights_passed || 0) + 1;
+        
+        await base44.entities.VampireState.update(vampireState.id, {
+          nights_passed: newNight,
+          current_date: nextGameDate.toISOString()
+        });
+        
+        await base44.entities.NightLog.create({
+          entry: `${format(nextGameDate, 'MMMM d, yyyy')} - Another night begins.`,
+          category: 'observation',
+          intensity: 'subtle'
+        });
+        
+        queryClient.invalidateQueries(['vampireState']);
+        queryClient.invalidateQueries(['logs']);
+      } catch (e) {
+        console.error('Failed to advance night:', e);
+      }
       
       setTimeout(() => {
         setAdvancing(false);

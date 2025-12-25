@@ -60,20 +60,24 @@ export default function FeedingModal({ onClose, vampireState }) {
       setOutcome(randomOutcome);
       
       // Update vampire state with humanity
-      if (vampireState.id) {
-        const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + randomOutcome.humanity));
-        let moral_path = 'balanced';
-        if (newHumanity >= 75) moral_path = 'humane';
-        else if (newHumanity >= 25) moral_path = 'balanced';
-        else if (newHumanity >= 10) moral_path = 'ruthless';
-        else moral_path = 'monster';
-        
-        await base44.entities.VampireState.update(vampireState.id, {
-          hunger_state: randomOutcome.state,
-          last_feed: new Date().toISOString(),
-          humanity: newHumanity,
-          moral_path: moral_path
-        });
+      try {
+        if (vampireState.id) {
+          const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + randomOutcome.humanity));
+          let moral_path = 'balanced';
+          if (newHumanity >= 75) moral_path = 'humane';
+          else if (newHumanity >= 25) moral_path = 'balanced';
+          else if (newHumanity >= 10) moral_path = 'ruthless';
+          else moral_path = 'monster';
+          
+          await base44.entities.VampireState.update(vampireState.id, {
+            hunger_state: randomOutcome.state,
+            last_feed: new Date().toISOString(),
+            humanity: newHumanity,
+            moral_path: moral_path
+          });
+        }
+      } catch (e) {
+        console.error('Failed to update vampire state:', e);
       }
       
       // Create log entry

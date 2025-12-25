@@ -178,25 +178,29 @@ export default function ServantInteractions({ servants, vampireState, onClose })
         jealousyChange = 5;
       }
       
-      await Promise.all([
-        base44.entities.Servant.update(servant1.id, {
-          jealousy_level: Math.max(0, Math.min(100, (servant1.jealousy_level || 0) + jealousyChange))
-        }),
-        base44.entities.Servant.update(servant2.id, {
-          jealousy_level: Math.max(0, Math.min(100, (servant2.jealousy_level || 0) + jealousyChange))
-        })
-      ]);
-      
-      // Relationship bonus for spending time together
-      if (interactionId === 'together' && outcomeType !== 'negative') {
+      try {
         await Promise.all([
           base44.entities.Servant.update(servant1.id, {
-            relationship: Math.min(100, (servant1.relationship || 0) + 5)
+            jealousy_level: Math.max(0, Math.min(100, (servant1.jealousy_level || 0) + jealousyChange))
           }),
           base44.entities.Servant.update(servant2.id, {
-            relationship: Math.min(100, (servant2.relationship || 0) + 5)
+            jealousy_level: Math.max(0, Math.min(100, (servant2.jealousy_level || 0) + jealousyChange))
           })
         ]);
+        
+        // Relationship bonus for spending time together
+        if (interactionId === 'together' && outcomeType !== 'negative') {
+          await Promise.all([
+            base44.entities.Servant.update(servant1.id, {
+              relationship: Math.min(100, (servant1.relationship || 0) + 5)
+            }),
+            base44.entities.Servant.update(servant2.id, {
+              relationship: Math.min(100, (servant2.relationship || 0) + 5)
+            })
+          ]);
+        }
+      } catch (e) {
+        console.error('Failed to update servants:', e);
       }
       
       await base44.entities.NightLog.create({

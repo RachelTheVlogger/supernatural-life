@@ -72,24 +72,29 @@ export default function VampireHome() {
   const handleMeditate = async () => {
     setMeditating(true);
     setTimeout(async () => {
-      await base44.entities.NightLog.create({
-        entry: 'You meditated in silence. The hunger quieted, if only for a moment.',
-        category: 'observation',
-        intensity: 'subtle'
-      });
-      
-      if (vampireState.id && vampireState.hunger_state !== 'sated') {
-        const hungerStates = ['restless', 'heightened', 'lingering', 'calm', 'sated'];
-        const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
-        if (currentIndex < hungerStates.length - 1) {
-          await base44.entities.VampireState.update(vampireState.id, {
-            hunger_state: hungerStates[currentIndex + 1]
-          });
+      try {
+        await base44.entities.NightLog.create({
+          entry: 'You meditated in silence. The hunger quieted, if only for a moment.',
+          category: 'observation',
+          intensity: 'subtle'
+        });
+        
+        if (vampireState.id && vampireState.hunger_state !== 'sated') {
+          const hungerStates = ['restless', 'heightened', 'lingering', 'calm', 'sated'];
+          const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
+          if (currentIndex < hungerStates.length - 1) {
+            await base44.entities.VampireState.update(vampireState.id, {
+              hunger_state: hungerStates[currentIndex + 1]
+            });
+          }
         }
+        
+        queryClient.invalidateQueries(['vampireState']);
+        queryClient.invalidateQueries(['logs']);
+      } catch (e) {
+        console.error('Failed to meditate:', e);
       }
       
-      queryClient.invalidateQueries(['vampireState']);
-      queryClient.invalidateQueries(['logs']);
       setMeditating(false);
       setActiveAction(null);
     }, 3000);
@@ -102,12 +107,16 @@ export default function VampireHome() {
   const handlePracticePower = async () => {
     setActiveAction('practice');
     setTimeout(async () => {
-      await base44.entities.NightLog.create({
-        entry: 'You practiced your abilities in solitude. Control sharpens with repetition.',
-        category: 'power',
-        intensity: 'moderate'
-      });
-      queryClient.invalidateQueries(['logs']);
+      try {
+        await base44.entities.NightLog.create({
+          entry: 'You practiced your abilities in solitude. Control sharpens with repetition.',
+          category: 'power',
+          intensity: 'moderate'
+        });
+        queryClient.invalidateQueries(['logs']);
+      } catch (e) {
+        console.error('Failed to practice:', e);
+      }
       setActiveAction(null);
     }, 2500);
   };
@@ -253,12 +262,16 @@ export default function VampireHome() {
           >
             <button
               onClick={async () => {
-                if (vampireState.id) {
-                  const newMode = vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling';
-                  await base44.entities.VampireState.update(vampireState.id, {
-                    emotional_mode: newMode
-                  });
-                  queryClient.invalidateQueries(['vampireState']);
+                try {
+                  if (vampireState.id) {
+                    const newMode = vampireState.emotional_mode === 'feeling' ? 'ruthless' : 'feeling';
+                    await base44.entities.VampireState.update(vampireState.id, {
+                      emotional_mode: newMode
+                    });
+                    queryClient.invalidateQueries(['vampireState']);
+                  }
+                } catch (e) {
+                  console.error('Failed to toggle mode:', e);
                 }
               }}
               className={`w-full rounded-2xl p-6 transition-all border-2 ${
