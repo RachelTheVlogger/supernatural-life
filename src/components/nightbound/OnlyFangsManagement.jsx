@@ -630,14 +630,35 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   };
 
   const handleCustomRequest = async () => {
-    const requests = [
+    const requestPool = [
       { fan: 'DarkLover69', request: 'Shower video with my name written on your body', offer: 150 },
       { fan: 'VampireFan420', request: 'Roleplay: vampire seducing innocent victim', offer: 200 },
       { fan: 'NightStalker', request: 'Feet content + face reveal', offer: 300 },
-      { fan: 'GothKing', request: 'Video calling my name while you finish', offer: 250 }
+      { fan: 'GothKing', request: 'Video calling my name while you finish', offer: 250 },
+      { fan: 'ShadowQueen', request: 'Couple video with specific positions', offer: 275 },
+      { fan: 'BloodThirsty', request: 'Solo masturbation saying their name', offer: 180 },
+      { fan: 'LustfulNight', request: 'Custom outfit video with toys', offer: 220 },
+      { fan: 'CrimsonFan', request: 'POV video pretending they are there', offer: 240 }
     ];
     
-    const request = requests[Math.floor(Math.random() * requests.length)];
+    // Get recent custom request logs to avoid repeating same fan
+    const { data: recentLogs = [] } = await queryClient.fetchQuery({
+      queryKey: ['recent-custom-logs'],
+      queryFn: () => base44.entities.NightLog.filter({ category: 'interaction' }, '-created_date', 20)
+    });
+    
+    const recentFans = recentLogs
+      .filter(log => log.entry.includes('custom request from'))
+      .map(log => {
+        const match = log.entry.match(/custom request from ([^:]+):/);
+        return match ? match[1] : null;
+      })
+      .filter(Boolean);
+    
+    const availableRequests = requestPool.filter(r => !recentFans.includes(r.fan));
+    const request = availableRequests.length > 0 
+      ? availableRequests[Math.floor(Math.random() * availableRequests.length)]
+      : requestPool[Math.floor(Math.random() * requestPool.length)];
     
     if (confirm(`${request.fan} wants: "${request.request}" - Offering $${request.offer}. Accept?`)) {
       await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
