@@ -1441,73 +1441,82 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
         {tab === 'create' && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
-            {!selectedCategory ? (
-              <>
-                <h3 className="text-white font-bold mb-3">Choose Content Category</h3>
-                <div className="grid md:grid-cols-3 gap-3">
-                  {Object.entries(updatedCategories).map(([key, cat]) => {
-                    const isLocked = cat.minRep > servantProfile.reputation;
-                    const isNew = cat.minRep > 0 && cat.minRep <= servantProfile.reputation && cat.minRep > (servantProfile.reputation - 20);
+            <div className="bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-4">Create & Post Video</h3>
+              
+              {!selectedCategory ? (
+                <>
+                  <p className="text-gray-400 text-sm mb-4">Select a content category to start creating</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {Object.entries(updatedCategories).map(([key, cat]) => {
+                      const isLocked = cat.minRep > servantProfile.reputation;
+                      const isNew = cat.minRep > 0 && cat.minRep <= servantProfile.reputation && cat.minRep > (servantProfile.reputation - 20);
 
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => !isLocked && setSelectedCategory(key)}
-                        disabled={isLocked}
-                        className={`bg-gray-800 rounded-xl p-4 text-left transition-colors relative ${
-                          isLocked ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-700'
-                        } ${isNew ? 'ring-2 ring-yellow-400' : ''}`}
-                      >
-                        <div className="text-3xl mb-2">{cat.icon}</div>
-                        <h4 className="text-white font-medium">{cat.label}</h4>
-                        {isLocked && (
-                          <span className="absolute top-2 right-2 text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
-                            Rep {cat.minRep}
-                          </span>
-                        )}
-                        {isNew && (
-                          <span className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded font-bold">
-                            NEW!
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setSelectedCategory(null)}
-                  className="text-gray-400 hover:text-white text-sm mb-4"
-                >
-                  ← Back to categories
-                </button>
+                      return (
+                        <button
+                          key={key}
+                          onClick={() => !isLocked && setSelectedCategory(key)}
+                          disabled={isLocked}
+                          className={`bg-gray-800 rounded-xl p-4 text-center transition-all relative ${
+                            isLocked ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-700 hover:scale-105'
+                          } ${isNew ? 'ring-2 ring-yellow-400' : ''}`}
+                        >
+                          <div className="text-3xl mb-2">{cat.icon}</div>
+                          <h4 className="text-white font-medium text-sm">{cat.label}</h4>
+                          {isLocked && (
+                            <span className="absolute top-2 right-2 text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
+                              Rep {cat.minRep}
+                            </span>
+                          )}
+                          {isNew && (
+                            <span className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded font-bold">
+                              NEW!
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <button
+                      onClick={() => {
+                        setSelectedCategory(null);
+                        setNewVideo({ title: '', content_type: '', price: 15 });
+                        setFilmWithVampire(null);
+                      }}
+                      className="text-purple-400 hover:text-purple-300 text-sm flex items-center gap-1"
+                    >
+                      ← Change Category
+                    </button>
+                    <span className="text-2xl">{updatedCategories[selectedCategory].icon}</span>
+                  </div>
 
-                <h3 className="text-white font-bold mb-3">
-                  {updatedCategories[selectedCategory].icon} {updatedCategories[selectedCategory].label} Content
-                </h3>
+                  <div className="bg-gray-800/50 rounded-lg p-3 mb-4">
+                    <h4 className="text-white font-bold text-lg">{updatedCategories[selectedCategory].label}</h4>
+                  </div>
 
-                <div className="space-y-3">
                   <div>
-                    <label className="text-gray-400 text-sm">Content Description</label>
+                    <label className="text-white text-sm font-medium mb-2 block">What are you creating?</label>
                     <textarea
                       value={newVideo.content_type}
                       onChange={(e) => setNewVideo({...newVideo, content_type: e.target.value})}
-                      placeholder="Describe what you want to create... Be as explicit as you want."
-                      className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1 h-20"
+                      placeholder="Describe your content in detail..."
+                      className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 mt-1 h-24 border border-gray-700 focus:border-purple-500 focus:outline-none"
                     />
                     <details className="mt-2">
-                      <summary className="text-purple-400 text-xs cursor-pointer">Quick suggestions</summary>
-                      <div className="grid grid-cols-1 gap-1 mt-2">
+                      <summary className="text-purple-400 text-xs cursor-pointer hover:text-purple-300">💡 Click for ideas</summary>
+                      <div className="grid grid-cols-1 gap-1 mt-2 max-h-32 overflow-y-auto">
                         {updatedCategories[selectedCategory].examples.map(ex => (
                           <button
                             key={ex}
                             type="button"
                             onClick={() => setNewVideo({...newVideo, content_type: ex})}
-                            className="text-left text-xs text-gray-400 hover:text-white bg-gray-900 hover:bg-gray-700 px-2 py-1 rounded transition-colors"
+                            className="text-left text-xs text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded transition-colors"
                           >
-                            {ex}
+                            • {ex}
                           </button>
                         ))}
                       </div>
@@ -1515,58 +1524,65 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   </div>
 
                   <div>
-                    <label className="text-gray-400 text-sm">Custom Title (optional)</label>
+                    <label className="text-white text-sm font-medium mb-2 block">Video Title (optional)</label>
                     <input
                       type="text"
                       value={newVideo.title}
                       onChange={(e) => setNewVideo({...newVideo, title: e.target.value})}
-                      placeholder="Leave blank for auto-title"
-                      className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 mt-1"
+                      placeholder="Auto-generated if left blank"
+                      className="w-full bg-gray-800 text-white rounded-lg px-4 py-2 border border-gray-700 focus:border-purple-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-gray-400 text-sm">Price ($)</label>
-                    <div className="flex gap-2 mt-1">
+                    <label className="text-white text-sm font-medium mb-2 block">Price</label>
+                    <div className="grid grid-cols-3 gap-2">
                       {[0, 5, 10, 15, 25, 50].map(price => (
                         <button
                           key={price}
                           onClick={() => setNewVideo({...newVideo, price})}
-                          className={`px-4 py-2 rounded-lg ${newVideo.price === price ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+                          className={`px-4 py-3 rounded-lg font-medium transition-all ${
+                            newVideo.price === price 
+                              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white scale-105' 
+                              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                          }`}
                         >
-                          {price === 0 ? 'Free' : `$${price}`}
+                          {price === 0 ? 'FREE' : `$${price}`}
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {['filmed', 'couple'].includes(selectedCategory) && filmWithVampire === null && (
-                    <div className="space-y-2 mb-4">
-                      <label className="text-gray-400 text-sm">Who's filming?</label>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setFilmWithVampire(false)}
-                          className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white transition-colors"
-                        >
-                          Film Alone
-                        </button>
-                        <button
-                          onClick={() => setFilmWithVampire(true)}
-                          className="flex-1 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg py-3 text-white transition-colors"
-                        >
-                          Film With Vampire 🔥
-                        </button>
-                      </div>
+                  {['filmed', 'couple'].includes(selectedCategory) && (
+                    <div className="space-y-2">
+                      <label className="text-white text-sm font-medium block">Who's filming?</label>
+                      {filmWithVampire === null ? (
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            onClick={() => setFilmWithVampire(false)}
+                            className="bg-purple-900/40 hover:bg-purple-900/60 border-2 border-purple-500/50 rounded-lg py-3 text-white font-medium transition-all hover:scale-105"
+                          >
+                            Solo 💋
+                          </button>
+                          <button
+                            onClick={() => setFilmWithVampire(true)}
+                            className="bg-red-900/40 hover:bg-red-900/60 border-2 border-red-500/50 rounded-lg py-3 text-white font-medium transition-all hover:scale-105"
+                          >
+                            With Vampire 🔥
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between bg-gray-800 rounded-lg p-3">
+                          <span className="text-white">{filmWithVampire ? '🔥 Filming with vampire' : '💋 Filming solo'}</span>
+                          <button
+                            onClick={() => setFilmWithVampire(null)}
+                            className="text-purple-400 hover:text-purple-300 text-sm"
+                          >
+                            Change
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  {filmWithVampire !== null && ['filmed', 'couple'].includes(selectedCategory) && (
-                    <button
-                      onClick={() => setFilmWithVampire(null)}
-                      className="w-full bg-gray-800 hover:bg-gray-700 text-gray-400 text-sm py-2 rounded-lg mb-2"
-                    >
-                      ← Change filming choice
-                    </button>
                   )}
 
                   <button
@@ -1575,13 +1591,13 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                       handleCreateVideo();
                     }}
                     disabled={!newVideo.content_type || creating || filming || (['filmed', 'couple'].includes(selectedCategory) && filmWithVampire === null)}
-                    className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50 touch-manipulation"
+                    className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-bold py-4 rounded-xl transition-all disabled:opacity-50 touch-manipulation text-lg shadow-lg"
                   >
-                    {filming ? 'Filming...' : creating ? 'Processing...' : 'Post Video'}
+                    {filming ? '🎥 Filming...' : creating ? '⚡ Processing...' : '📤 POST VIDEO NOW'}
                   </button>
                 </div>
-              </>
-            )}
+              )}
+            </div>
           </div>
         )}
 
