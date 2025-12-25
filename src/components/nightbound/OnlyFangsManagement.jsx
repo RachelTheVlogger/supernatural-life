@@ -2093,26 +2093,6 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     ))}
                   </div>
                 )}
-
-                <div className="bg-gray-800 rounded-xl p-4">
-                  <h4 className="text-white font-medium mb-2">Subscription Tiers</h4>
-                  <p className="text-gray-400 text-xs mb-3">Tiers are set at optimal prices for maximum revenue</p>
-                  <div className="space-y-2">
-                    {getSubscriptionTiers(servant.id).map(tier => (
-                      <div key={tier.name} className="bg-gray-900 rounded-lg p-3">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-white font-medium">{tier.name}</span>
-                          <span className="text-green-400 font-bold">${tier.price}/month</span>
-                        </div>
-                        <ul className="text-gray-400 text-xs space-y-1">
-                          {tier.perks.map((perk, i) => (
-                            <li key={i}>• {perk}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
