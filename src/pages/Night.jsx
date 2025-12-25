@@ -303,14 +303,19 @@ export default function Night() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="max-w-2xl mx-auto mt-6 bg-gray-900 rounded-xl p-4"
+          className="max-w-2xl mx-auto mt-6 bg-gradient-to-br from-purple-900/40 to-red-900/40 border-2 border-purple-500/50 rounded-xl p-6"
         >
-          <h3 className="text-gray-400 text-xs uppercase mb-3">Recent Events</h3>
-          <div className="space-y-2">
+          <h3 className="text-purple-300 text-sm font-bold mb-4 flex items-center gap-2">
+            <BookOpen className="w-4 h-4" />
+            Recent Events
+          </h3>
+          <div className="space-y-3">
             {logs.slice(0, 3).map((log) => (
-              <p key={log.id} className="text-gray-300 text-sm">
-                {log.entry}
-              </p>
+              <div key={log.id} className="bg-black/40 rounded-lg p-3 border border-purple-500/20">
+                <p className="text-white text-sm leading-relaxed">
+                  {log.entry}
+                </p>
+              </div>
             ))}
           </div>
         </motion.div>
