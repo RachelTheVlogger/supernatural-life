@@ -126,7 +126,13 @@ export default function HunterThreatModal({ onClose, vampireState }) {
         onClick={(e) => e.stopPropagation()}
         className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }} 
+          className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+        >
           <X className="w-5 h-5" />
         </button>
 
