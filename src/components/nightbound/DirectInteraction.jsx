@@ -1667,7 +1667,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           ];
           const variants = ['devoted', 'defiant', 'dreamer'];
           const emotionalStates = ['curious', 'wary', 'distant'];
-          const genders = ['male', 'female', 'nonbinary'];
+          const genders = ['male', 'female', 'custom'];
           const sexualities = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'];
           const jobs = [
             'Night Club Bartender',
@@ -1876,20 +1876,51 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                 <div>
                   <label className="text-white font-medium mb-2 block">Gender</label>
                   <div className="space-y-2">
-                    {['male', 'female', 'nonbinary'].map(g => (
+                    {[
+                      { value: 'male', label: 'Male' },
+                      { value: 'female', label: 'Female' },
+                      { value: 'custom', label: 'Custom' }
+                    ].map(g => (
                       <button
-                        key={g}
+                        key={g.value}
                         onClick={async () => {
-                          await base44.entities.Servant.update(servant.id, { gender: g });
+                          await base44.entities.Servant.update(servant.id, { gender: g.value });
                           queryClient.invalidateQueries();
                         }}
                         className={`w-full rounded-lg py-3 px-4 text-left transition-colors ${
-                          servant.gender === g 
+                          servant.gender === g.value 
                             ? 'bg-purple-600 text-white' 
                             : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                         }`}
                       >
-                        {g.charAt(0).toUpperCase() + g.slice(1)}
+                        {g.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-white font-medium mb-2 block">Pronouns</label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'he/him', label: 'He/Him' },
+                      { value: 'she/her', label: 'She/Her' },
+                      { value: 'they/them', label: 'They/Them' },
+                      { value: 'any', label: 'Any Pronouns' }
+                    ].map(p => (
+                      <button
+                        key={p.value}
+                        onClick={async () => {
+                          await base44.entities.Servant.update(servant.id, { pronouns: p.value });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm ${
+                          servant.pronouns === p.value 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {p.label}
                       </button>
                     ))}
                   </div>
