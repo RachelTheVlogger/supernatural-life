@@ -425,29 +425,43 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     
     const initialMessages = [];
     const isVampFemale = vampireState.gender === 'woman';
+    
     const explicitMessages = withVampire ? (isVampFemale ? [
-      'Oh fuck yes take it', 'So hot together 💦', 'You\'re both so fucking hot', 'Best stream ever',
+      'Oh fuck yes take it', 'So hot together 💦', 'You\'re both so fucking hot', 'Best stream ever', 'Don\'t stop', 'I\'m so wet watching this',
+      'Harder!', 'They\'re perfect together', 'Wish I was there', 'This is incredible', 'Keep going!', 'So beautiful', 'Amazing chemistry',
+      'I can\'t look away', 'Hottest stream ever', 'You two are fire', 'Need more of this', 'Absolutely stunning', 'My favorite couple',
+      'This is art', 'Pure passion', 'I\'m obsessed', 'Never stop streaming', 'Goals honestly', 'Making me feel things',
+      'Touch them more', 'Yes yes yes!', 'Perfection', 'I love this so much', 'Take my money', 'Worth every penny'
     ] : [
-      'Oh fuck yes breed her', 'Fill her up 💦', 'She\'s so fucking hot', 'Best stream ever',
+      'Oh fuck yes breed her', 'Fill her up 💦', 'She\'s so fucking hot', 'Best stream ever', 'Harder daddy', 'Choke her please',
+      'Make her scream', 'God she\'s perfect', 'I want to be her', 'Fuck her harder', 'She loves it', 'Amazing', 'So hot together',
+      'Don\'t stop', 'Give it to her', 'She\'s taking it so well', 'Hottest couple ever', 'This is insane', 'Keep going',
+      'Her moans 🔥', 'Destroy her', 'She\'s so lucky', 'I\'m so hard rn', 'Best content', 'Need more like this',
+      'Pull her hair', 'She\'s incredible', 'You\'re both perfect', 'I can\'t stop watching', 'Take my money', 'Worth it'
     ]) : [
-      'You\'re so fucking sexy', 'Touch yourself for us', 'So hot 🔥🔥', 'I want you so bad',
+      'You\'re so fucking sexy', 'Touch yourself for us', 'So hot 🔥🔥', 'I want you so bad', 'Don\'t stop baby',
+      'You look amazing', 'Keep going', 'I\'m so turned on', 'Perfect body', 'Show us more', 'You\'re incredible',
+      'Best performer ever', 'I need you', 'So beautiful', 'This is everything', 'Can\'t get enough',
+      'You\'re driving me crazy', 'Gorgeous', 'I\'m addicted to you', 'More please', 'Absolutely stunning',
+      'Your moans 😍', 'I wish I was there', 'So wet watching you', 'You\'re perfect', 'Never stop',
+      'Best stream ever', 'Take my money', 'Worth every second', 'I love you', 'Marry me'
     ];
     
-    const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen'];
-    const usedNames = new Set();
+    const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire', 'MidnightCrave', 'ObsessedOne'];
+    const usedMessages = new Set();
 
     for (let i = 0; i < 6; i++) {
-      let username = usernames[Math.floor(Math.random() * usernames.length)];
+      let message = explicitMessages[Math.floor(Math.random() * explicitMessages.length)];
       let attempts = 0;
-      while (usedNames.has(username) && attempts < 10) {
-        username = usernames[Math.floor(Math.random() * usernames.length)];
+      while (usedMessages.has(message) && attempts < 10) {
+        message = explicitMessages[Math.floor(Math.random() * explicitMessages.length)];
         attempts++;
       }
-      usedNames.add(username);
+      usedMessages.add(message);
 
       initialMessages.push({
-        username,
-        message: explicitMessages[Math.floor(Math.random() * explicitMessages.length)],
+        username: usernames[Math.floor(Math.random() * usernames.length)],
+        message,
         tip: Math.random() > 0.6 ? Math.floor(Math.random() * 50) + 5 : 0
       });
     }
@@ -455,9 +469,17 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     setChatMessages(initialMessages);
     
     const messageInterval = setInterval(() => {
+      let message = explicitMessages[Math.floor(Math.random() * explicitMessages.length)];
+      let attempts = 0;
+      const recentMessages = chatMessages.slice(-5).map(m => m.message);
+      while (recentMessages.includes(message) && attempts < 10) {
+        message = explicitMessages[Math.floor(Math.random() * explicitMessages.length)];
+        attempts++;
+      }
+      
       const newMsg = {
         username: usernames[Math.floor(Math.random() * usernames.length)],
-        message: explicitMessages[Math.floor(Math.random() * explicitMessages.length)],
+        message,
         tip: Math.random() > 0.7 ? Math.floor(Math.random() * 50) + 5 : 0
       };
       setChatMessages(prev => [...prev.slice(-10), newMsg]);
