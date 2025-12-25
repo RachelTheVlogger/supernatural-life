@@ -115,8 +115,11 @@ export default function HuntingModal({ onClose, vampireState, servants }) {
         className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full relative max-h-[80vh] overflow-y-auto"
       >
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>

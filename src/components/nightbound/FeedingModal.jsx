@@ -119,8 +119,11 @@ export default function FeedingModal({ onClose, vampireState }) {
         className="glass rounded-2xl p-8 md:p-12 max-w-lg w-full relative"
       >
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-red-100/40 hover:text-red-100/80 transition-slow"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-4 right-4 text-red-100/40 hover:text-red-100/80 transition-slow z-10"
         >
           <X className="w-5 h-5" />
         </button>
