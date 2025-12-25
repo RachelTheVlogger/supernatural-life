@@ -41,16 +41,21 @@ export default function Messages() {
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('servant');
 
-  // Redirect to Home if no vampire state exists
+  // Redirect to Night if no servant ID or invalid ID
   useEffect(() => {
     const checkGameState = async () => {
       const states = await base44.entities.VampireState.list();
       if (states.length === 0) {
         navigate(createPageUrl('Home'), { replace: true });
+        return;
+      }
+      
+      if (!servantId || servantId === 'null' || servantId === 'undefined') {
+        navigate(createPageUrl('Night'), { replace: true });
       }
     };
     checkGameState();
-  }, [navigate]);
+  }, [navigate, servantId]);
   
   const { data: servant } = useQuery({
     queryKey: ['servant', servantId],
@@ -58,7 +63,7 @@ export default function Messages() {
       const servants = await base44.entities.Servant.list();
       return servants.find(s => s.id === servantId);
     },
-    enabled: !!servantId
+    enabled: !!servantId && servantId !== 'null' && servantId !== 'undefined'
   });
   
   const { data: messages = [], isLoading: messagesLoading } = useQuery({
