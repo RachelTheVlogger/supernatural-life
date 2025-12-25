@@ -5,11 +5,11 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const BASE_STRAINS = [
-  { name: 'Crimson Bliss', potency: 1, effects: 'Mild euphoria. Colors slightly brighter. Warm feeling.', price: 50, addictiveness: 30 },
-  { name: 'Midnight Rush', potency: 3, effects: 'Intense visuals. Time slows. Everything pulses.', price: 150, addictiveness: 50 },
-  { name: 'Eternal Dream', potency: 5, effects: 'Reality fractures. See through dimensions. Pure ecstasy.', price: 300, addictiveness: 70 },
+  { name: 'Crimson Bliss', potency: 1, effects: 'mild euphoria. Colors slightly brighter. Warm feeling.', price: 50, addictiveness: 30 },
+  { name: 'Midnight Rush', potency: 3, effects: 'intense visuals. Time slows. Everything pulses.', price: 150, addictiveness: 50 },
+  { name: 'Eternal Dream', potency: 5, effects: 'reality fractures. See through dimensions. Pure ecstasy.', price: 300, addictiveness: 70 },
   { name: 'Bloodfire', potency: 7, effects: 'your blood burns. Power surges. Primal rage mixed with bliss.', price: 500, addictiveness: 85 },
-  { name: 'Void Kiss', potency: 10, effects: 'Total ego death. Become the darkness itself. Transcendence.', price: 1000, addictiveness: 95 }
+  { name: 'Void Kiss', potency: 10, effects: 'total ego death. Become the darkness itself. Transcendence.', price: 1000, addictiveness: 95 }
 ];
 
 export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
@@ -116,7 +116,7 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         potency: Math.floor(Math.random() * 5) + 5,
         quantity: 3,
         price_per_dose: Math.floor(Math.random() * 500) + 300,
-        effects: 'Reality bends. New dimensions open. Unexplored territory.',
+        effects: 'reality bends. New dimensions open. Unexplored territory.',
         addictiveness: Math.floor(Math.random() * 30) + 60
       });
 
@@ -389,7 +389,7 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         potency: Math.floor(Math.random() * 5) + 5,
         quantity: 4,
         price_per_dose: Math.floor(Math.random() * 400) + 300,
-        effects: `Made from ${servant.name}'s blood. Their essence. Their memories. Intimate. Personal. Powerful.`,
+        effects: `made from ${servant.name}'s blood. Their essence. Their memories. Intimate. Personal. Powerful.`,
         addictiveness: 75,
         quality: quality,
         base_servant_id: servant.id
