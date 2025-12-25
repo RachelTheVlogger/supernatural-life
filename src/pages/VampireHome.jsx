@@ -116,11 +116,11 @@ export default function VampireHome() {
   const totalRelationship = servants.reduce((sum, s) => sum + (s.relationship || 0), 0);
   const avgRelationship = servants.length > 0 ? Math.round(totalRelationship / servants.length) : 0;
 
-  // Check for jealousy events (only for exclusive servants)
+  // Check for jealousy events (only for servants who can be jealous)
   React.useEffect(() => {
     if (servants.length >= 2) {
-      const exclusiveServants = servants.filter(s => s.boundaries === 'exclusive');
-      const highJealousy = exclusiveServants.filter(s => (s.jealousy_level || 0) > 60);
+      const jealousServants = servants.filter(s => !['open', 'no-strings'].includes(s.boundaries));
+      const highJealousy = jealousServants.filter(s => (s.jealousy_level || 0) > 60);
       if (highJealousy.length >= 2 && !jealousyEvent && Math.random() > 0.7) {
         setJealousyEvent({ s1: highJealousy[0], s2: highJealousy[1] });
       }
