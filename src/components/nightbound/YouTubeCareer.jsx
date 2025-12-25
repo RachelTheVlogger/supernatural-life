@@ -571,7 +571,7 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
                       <h4 className="text-white font-medium mb-1 flex items-center gap-2">
                         {v.title}
                         {v.is_viral && <Flame className="w-4 h-4 text-orange-400" />}
-                      </div>
+                      </h4>
                       <p className="text-gray-400 text-sm mb-2">{v.content_description}</p>
                       <div className="flex gap-3 text-xs flex-wrap">
                         <span className="text-blue-400 flex items-center gap-1">
