@@ -1653,9 +1653,24 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           ];
           const variants = ['devoted', 'defiant', 'dreamer'];
           const emotionalStates = ['curious', 'wary', 'distant'];
+          const genders = ['male', 'female', 'nonbinary'];
+          const jobs = [
+            'Night Club Bartender',
+            'Tattoo Artist',
+            'Night Security Guard',
+            'Museum Curator',
+            'Mortuary Assistant',
+            'Librarian',
+            'Underground Music Venue Manager',
+            'Vintage Shop Owner',
+            'Late Night Radio Host',
+            'Graveyard Groundskeeper'
+          ];
 
           await base44.entities.Servant.create({
             name: names[Math.floor(Math.random() * names.length)],
+            gender: genders[Math.floor(Math.random() * genders.length)],
+            job: jobs[Math.floor(Math.random() * jobs.length)],
             variant: variants[Math.floor(Math.random() * variants.length)],
             obsession_stage: 1,
             emotional_state: emotionalStates[Math.floor(Math.random() * emotionalStates.length)]
