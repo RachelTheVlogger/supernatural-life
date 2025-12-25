@@ -158,69 +158,26 @@ Respond in 1-2 sentences. Be authentic, flirty, and match their energy. If they'
             <p className="text-gray-400 mt-4">Sending...</p>
           </div>
         ) : (
-          <>
-            {/* Recent messages */}
-            {messages.length > 0 && (
-              <div className="mb-6 bg-black/40 rounded-xl p-4">
-                <p className="text-gray-500 text-xs mb-3">Recent conversation</p>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {messages.slice(0, 3).map((msg) => (
-                    <div key={msg.id} className={`text-xs ${msg.sender === 'vampire' ? 'text-purple-300' : 'text-gray-400'}`}>
-                      <span className="font-medium">{msg.sender === 'vampire' ? 'You' : servant.name}:</span> {msg.content}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quick messages */}
-            <div className="space-y-4 mb-6">
-              {Object.entries(QUICK_MESSAGES).map(([category, msgs]) => (
-                <div key={category}>
-                  <div className="flex items-center gap-2 mb-2">
-                    {category === 'flirty' && <Heart className="w-4 h-4 text-pink-400" />}
-                    {category === 'dominant' && <Flame className="w-4 h-4 text-red-400" />}
-                    {category === 'sweet' && <Heart className="w-4 h-4 text-blue-400" />}
-                    {category === 'explicit' && <Flame className="w-4 h-4 text-orange-400" />}
-                    <p className="text-gray-400 text-xs uppercase">{category}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {msgs.map((msg, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleSendMessage(msg)}
-                        className="bg-gray-800 hover:bg-gray-700 text-white text-xs px-3 py-2 rounded-lg transition-colors"
-                      >
-                        {msg.replace('{pet_name}', vampireState.preferred_title || 'Master')}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Custom message */}
-            <div className="border-t border-gray-800 pt-4">
-              <p className="text-gray-400 text-xs mb-2">Or type your own</p>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={customMessage}
-                  onChange={(e) => setCustomMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && customMessage.trim() && handleSendMessage(customMessage)}
-                  placeholder="Type anything..."
-                  className="flex-1 bg-gray-800 text-white rounded-xl px-4 py-3 outline-none text-sm"
-                />
-                <button
-                  onClick={() => customMessage.trim() && handleSendMessage(customMessage)}
-                  disabled={!customMessage.trim()}
-                  className="bitlife-btn rounded-xl px-6 py-3 disabled:opacity-50"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={customMessage}
+              onChange={(e) => setCustomMessage(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && customMessage.trim() && handleSendMessage(customMessage)}
+              placeholder="Type your message..."
+              className="flex-1 bg-gray-800 text-white rounded-xl px-4 py-3 outline-none text-sm"
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                customMessage.trim() && handleSendMessage(customMessage);
+              }}
+              disabled={!customMessage.trim()}
+              className="bitlife-btn rounded-xl px-6 py-3 disabled:opacity-50 touch-manipulation"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </div>
         )}
       </motion.div>
     </motion.div>
