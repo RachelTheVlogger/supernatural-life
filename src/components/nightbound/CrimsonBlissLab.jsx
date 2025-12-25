@@ -37,6 +37,64 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const totalRevenue = customers.reduce((sum, c) => sum + c.total_spent, 0);
   const totalDoses = inventory.reduce((sum, i) => sum + i.quantity, 0);
 
+  // Track experimentation count
+  const experimentCount = React.useMemo(() => {
+    return inventory.reduce((sum, drug) => {
+      const baseDrug = BASE_STRAINS.find(b => b.name === drug.strain_name);
+      return sum + (baseDrug ? 0 : 1); // Count custom strains
+    }, 0);
+  }, [inventory]);
+
+  const generateNewStrain = async () => {
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Generate a unique blood drug strain for a vampire drug lab. Make it creative, trippy, and explicit. Include: name (creative 2-word name), potency (1-10), effects (vivid psychedelic description), price (50-1000), addictiveness (30-95). Make it wilder than typical drugs. Format as JSON.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            potency: { type: 'number' },
+            effects: { type: 'string' },
+            price: { type: 'number' },
+            addictiveness: { type: 'number' }
+          }
+        }
+      });
+
+      await base44.entities.BloodDrug.create({
+        strain_name: response.name,
+        potency: response.potency,
+        quantity: 3,
+        price_per_dose: response.price,
+        effects: response.effects,
+        addictiveness: response.addictiveness
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `Through experimentation, you discovered a new strain: ${response.name}. ${response.effects}`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+    } catch (e) {
+      // Fallback strain
+      const fallbackNames = ['Obsidian Dreams', 'Scarlet Whisper', 'Abyssal Rush', 'Lunar Ecstasy'];
+      const name = fallbackNames[Math.floor(Math.random() * fallbackNames.length)];
+      
+      await base44.entities.BloodDrug.create({
+        strain_name: name,
+        potency: Math.floor(Math.random() * 5) + 5,
+        quantity: 3,
+        price_per_dose: Math.floor(Math.random() * 500) + 300,
+        effects: 'Reality bends. New dimensions open. Unexplored territory.',
+        addictiveness: Math.floor(Math.random() * 30) + 60
+      });
+
+      queryClient.invalidateQueries();
+    }
+  };
+
   const handleUseWith = async (drug, servant) => {
     if (drug.quantity === 0) return;
     
@@ -67,6 +125,11 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         category: 'interaction',
         intensity: 'significant'
       });
+
+      // Chance to discover new strain through experimentation
+      if (Math.random() > 0.7) {
+        await generateNewStrain();
+      }
 
       queryClient.invalidateQueries();
 
@@ -103,6 +166,11 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         category: 'interaction',
         intensity: 'significant'
       });
+
+      // Chance to discover new strain through solo experimentation
+      if (Math.random() > 0.75) {
+        await generateNewStrain();
+      }
 
       queryClient.invalidateQueries();
 
@@ -339,7 +407,10 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         {/* Tab Content */}
         {tab === 'produce' && !producing && (
           <div className="space-y-3">
-            <h3 className="text-white font-bold mb-3">Create Blood Drugs</h3>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-white font-bold">Create Blood Drugs</h3>
+              <span className="text-purple-400 text-sm">{experimentCount} custom strains discovered</span>
+            </div>
             {BASE_STRAINS.map(strain => (
               <div key={strain.name} className="bg-gray-800 rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
