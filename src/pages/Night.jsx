@@ -102,6 +102,14 @@ export default function Night() {
   
   useEffect(() => {
     const initServants = async () => {
+      // Clean up if more than 2 servants exist (keep 2 most recent)
+      if (servants.length > 2) {
+        const toDelete = servants.slice(2);
+        await Promise.all(toDelete.map(s => base44.entities.Servant.delete(s.id)));
+        queryClient.invalidateQueries(['servants']);
+        return;
+      }
+
       if (servants.length === 0 && !servantsInitialized) {
         setServantsInitialized(true);
         const variants = ['devoted', 'defiant', 'dreamer'];
