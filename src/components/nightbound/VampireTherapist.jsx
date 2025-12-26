@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const CLIENT_PROBLEMS = [
+  { name: 'Lilith Hart', issue: 'Trust issues and intimacy fears', severity: 'severe', payment: 200, special: true },
   { name: 'Sarah Chen', issue: 'Anxiety about career change', severity: 'moderate', payment: 150 },
   { name: 'Marcus Williams', issue: 'Depression after breakup', severity: 'severe', payment: 180 },
   { name: 'Emma Rodriguez', issue: 'Work-life balance stress', severity: 'mild', payment: 120 },
@@ -110,18 +111,19 @@ export default function VampireTherapist({ vampireState, onClose }) {
         <div className="flex items-center gap-3 mb-6">
           <Brain className="w-8 h-8 text-blue-400" />
           <div>
-            <h2 className="text-2xl font-bold text-white">Vampire Therapist</h2>
-            <p className="text-gray-400 text-sm">Help humans... or exploit them</p>
+            <h2 className="text-2xl font-bold text-white">Dr. Nate Cross</h2>
+            <p className="text-gray-400 text-sm">Licensed therapist. Vampire. Complicated.</p>
           </div>
         </div>
 
         {!sessionActive ? (
           <div className="space-y-4">
             <div className="bg-blue-950/30 rounded-xl p-4 border border-blue-800/30">
-              <p className="text-blue-300 text-sm mb-2">💡 Your Practice</p>
+              <p className="text-blue-300 text-sm mb-2">💡 Dr. Nate Cross - Your Story</p>
               <p className="text-gray-300 text-sm">
-                You're a licensed therapist. Centuries of understanding human nature. 
-                But you're also a vampire. Will you help them... or use them?
+                Licensed therapist. You help people by day, feed by night. Then Lilith Hart walked into your office.
+                Patient became lover. Therapy became passion. One night, mid-session in your bed, you couldn't control it.
+                You turned her. Now she's immortal too. Your greatest success... or failure?
               </p>
             </div>
 
@@ -146,10 +148,17 @@ export default function VampireTherapist({ vampireState, onClose }) {
                 <button
                   key={client.name}
                   onClick={() => startSession(client)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-all"
+                  className={`w-full rounded-xl p-4 text-left transition-all ${
+                    client.special 
+                      ? 'bg-gradient-to-r from-pink-900/40 to-red-900/40 hover:from-pink-900/60 hover:to-red-900/60 border-2 border-pink-500/50'
+                      : 'bg-gray-800 hover:bg-gray-700'
+                  }`}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-white font-medium">{client.name}</h4>
+                    <div>
+                      <h4 className="text-white font-medium">{client.name}</h4>
+                      {client.special && <p className="text-pink-400 text-xs">Your lover. Now vampire.</p>}
+                    </div>
                     <span className="text-green-400 text-sm">${client.payment}</span>
                   </div>
                   <p className="text-gray-400 text-sm">{client.issue}</p>
