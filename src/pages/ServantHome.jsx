@@ -94,7 +94,7 @@ const getBusinessActivities = (servantCareer, vampireState) => {
   }
   
   if (servantCareer?.manga_career_active) {
-    activities.push({ id: 'manga', label: '📖 Manga Artist', icon: BookOpen, duration: 0, isModal: true });
+    activities.push({ id: 'manga_active', label: '📖 Manga Artist', icon: BookOpen, duration: 0, isModal: true });
   }
   
   if (!isLiteMode) {
@@ -229,6 +229,8 @@ export default function ServantHome() {
       } else if (chore.id === 'snapchat') {
         setShowSnapchat(true);
       } else if (chore.id === 'manga') {
+        setShowManga(true);
+      } else if (chore.id === 'manga_active') {
         setShowManga(true);
       }
       return;
