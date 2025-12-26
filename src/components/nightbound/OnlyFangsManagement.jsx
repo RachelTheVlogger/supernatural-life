@@ -1089,12 +1089,32 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
 
             {videos.length > 0 && (
               <div className="bg-gray-800/50 rounded-xl p-4">
-                <h4 className="text-white font-medium mb-2">Recent Videos</h4>
-                {videos.slice(0, 3).map(v => (
-                  <div key={v.id} className="flex justify-between items-center py-2 border-b border-gray-700 last:border-0">
+                <h4 className="text-white font-medium mb-2">Your Videos</h4>
+                <p className="text-purple-400 text-xs mb-3">💡 Click videos to unlock vault access</p>
+                {videos.slice(0, 5).map(v => (
+                  <button
+                    key={v.id}
+                    onClick={async () => {
+                      const vaultEarnings = Math.floor(Math.random() * 150) + 100;
+                      const vipUnlocks = Math.floor(servantProfile.subscriber_count * 0.15);
+                      
+                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                        revenue: servantProfile.revenue + vaultEarnings
+                      });
+                      
+                      await base44.entities.NightLog.create({
+                        entry: `"${v.title}" added to content vault. ${vipUnlocks} VIPs unlocked it. Earned $${vaultEarnings}.`,
+                        category: 'interaction',
+                        intensity: 'moderate'
+                      });
+                      
+                      queryClient.invalidateQueries();
+                    }}
+                    className="w-full flex justify-between items-center py-2 px-2 border-b border-gray-700 last:border-0 hover:bg-gray-700/50 rounded transition-colors text-left"
+                  >
                     <span className="text-gray-300 text-sm truncate flex-1 pr-2">{v.title}</span>
                     <span className="text-green-400 text-xs">${v.earnings}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -2107,24 +2127,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   <p className="text-gray-400 text-sm">Limited time discount (+30-70 subs)</p>
                 </button>
 
-                <button
-                  onClick={async () => {
-                    const earnings = Math.floor(Math.random() * 300) + 200;
-                    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                      revenue: servantProfile.revenue + earnings
-                    });
-                    await base44.entities.NightLog.create({
-                      entry: `Content vault unlocked for VIPs. Earned $${earnings}.`,
-                      category: 'interaction',
-                      intensity: 'moderate'
-                    });
-                    queryClient.invalidateQueries();
-                  }}
-                  className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left"
-                >
-                  <h4 className="text-white font-medium mb-1">🗃️ Content Vault Access</h4>
-                  <p className="text-gray-400 text-sm">All past content for VIPs ($200-500)</p>
-                </button>
+
 
                 <button
                   onClick={async () => {
