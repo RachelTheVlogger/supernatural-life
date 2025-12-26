@@ -79,6 +79,19 @@ export default function VampireHome() {
     queryFn: () => base44.entities.PowerProgress.list()
   });
 
+  // Don't render anything if no vampire state or loading
+  if (vampireLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (vampireStates.length === 0) {
+    return null;
+  }
+
   const vampireState = vampireStates[0];
 
   // Check for jealousy events (only for servants who can be jealous)
@@ -101,19 +114,6 @@ export default function VampireHome() {
       }
     }
   }, [servants, identityRevelation]);
-  
-  // Don't render anything if no vampire state or loading
-  if (vampireLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
-  if (vampireStates.length === 0) {
-    return null;
-  }
   
   const handleMeditate = async () => {
     setMeditating(true);
