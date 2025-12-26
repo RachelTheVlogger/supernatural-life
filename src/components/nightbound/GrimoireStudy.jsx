@@ -17,6 +17,10 @@ export default function GrimoireStudy({ witch, onClose }) {
   const [studying, setStudying] = useState(null);
   const [outcome, setOutcome] = useState('');
 
+  if (!witch) {
+    return null;
+  }
+
   const handleStudy = async (grimoire) => {
     if (!witch || witch.power_level < grimoire.cost) {
       alert(`Need ${grimoire.cost} power to study this!`);

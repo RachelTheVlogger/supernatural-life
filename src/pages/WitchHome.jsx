@@ -85,23 +85,45 @@ export default function WitchHome() {
   const [showCurses, setShowCurses] = useState(false);
   const [showTeaching, setShowTeaching] = useState(false);
 
-  const { data: witches = [] } = useQuery({
+  const { data: witches = [], isLoading: witchLoading } = useQuery({
     queryKey: ['witches'],
-    queryFn: () => base44.entities.Witch.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.Witch.list();
+      } catch (e) {
+        console.error('Failed to fetch witches:', e);
+        return [];
+      }
+    },
+    retry: 2
   });
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
-    queryFn: () => base44.entities.VampireState.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.VampireState.list();
+      } catch (e) {
+        console.error('Failed to fetch vampire state:', e);
+        return [];
+      }
+    },
+    retry: 2
   });
 
   const { data: herbs = [] } = useQuery({
     queryKey: ['witchHerbs'],
     queryFn: async () => {
-      if (!witches[0]) return [];
-      return base44.entities.WitchHerb.filter({ witch_id: witches[0].id });
+      try {
+        if (!witches[0]) return [];
+        return await base44.entities.WitchHerb.filter({ witch_id: witches[0].id });
+      } catch (e) {
+        console.error('Failed to fetch herbs:', e);
+        return [];
+      }
     },
-    enabled: witches.length > 0
+    enabled: witches.length > 0,
+    retry: 1
   });
 
   const witch = witches[0];
@@ -462,6 +484,14 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
       }, 3000);
     }, 2500);
   };
+
+  if (witchLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
 
   if (!witch) {
     return (

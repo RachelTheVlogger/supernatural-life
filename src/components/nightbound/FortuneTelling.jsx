@@ -17,6 +17,10 @@ export default function FortuneTelling({ witch, onClose }) {
   const [reading, setReading] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!witch) {
+    return null;
+  }
+
   const handleReading = async () => {
     setReading(true);
 

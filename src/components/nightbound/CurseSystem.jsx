@@ -21,8 +21,20 @@ export default function CurseSystem({ witch, onClose }) {
 
   const { data: npcs = [] } = useQuery({
     queryKey: ['npcs'],
-    queryFn: () => base44.entities.NPC.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.NPC.list();
+      } catch (e) {
+        console.error('Failed to fetch NPCs:', e);
+        return [];
+      }
+    },
+    retry: 1
   });
+
+  if (!witch) {
+    return null;
+  }
 
   const handleCurse = async () => {
     if (!witch || witch.power_level < selectedCurse.cost) {

@@ -20,8 +20,20 @@ export default function TeachServants({ witch, onClose }) {
 
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
-    queryFn: () => base44.entities.Servant.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.Servant.list();
+      } catch (e) {
+        console.error('Failed to fetch servants:', e);
+        return [];
+      }
+    },
+    retry: 1
   });
+
+  if (!witch) {
+    return null;
+  }
 
   const handleTeach = async () => {
     setTeaching(true);

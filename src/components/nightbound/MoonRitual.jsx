@@ -20,6 +20,10 @@ export default function MoonRitual({ witch, onClose }) {
   const [performing, setPerforming] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!witch) {
+    return null;
+  }
+
   const currentPhase = MOON_PHASES[Math.floor(Math.random() * MOON_PHASES.length)];
 
   const handleRitual = async () => {

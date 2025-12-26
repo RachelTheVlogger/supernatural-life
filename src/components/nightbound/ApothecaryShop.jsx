@@ -19,6 +19,10 @@ export default function ApothecaryShop({ witch, onClose }) {
   const [serving, setServing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!witch) {
+    return null;
+  }
+
   const getRandomCustomer = () => {
     return CUSTOMERS[Math.floor(Math.random() * CUSTOMERS.length)];
   };
