@@ -103,6 +103,16 @@ export default function VampireHome() {
     queryFn: () => base44.entities.Witch.list()
   });
 
+  const { data: hybrids = [] } = useQuery({
+    queryKey: ['hybrids'],
+    queryFn: () => base44.entities.Hybrid.list()
+  });
+
+  const { data: playerWerewolves = [] } = useQuery({
+    queryKey: ['playerWerewolves'],
+    queryFn: () => base44.entities.PlayerWerewolf.list()
+  });
+
   // Check for jealousy events (only for servants who can be jealous)
   React.useEffect(() => {
     if (vampireStates.length > 0 && servants.length >= 2) {
@@ -596,10 +606,17 @@ export default function VampireHome() {
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Terror & nightmares</p>
             </button>
 
-            <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
-              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🔄 Become Hybrid</h3>
-              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Merge with wolf</p>
-            </button>
+            {hybrids.length > 0 ? (
+              <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+                <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🔄 Hybrid Form</h3>
+                <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Access hybrid powers</p>
+              </button>
+            ) : playerWerewolves.length > 0 ? (
+              <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+                <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🔄 Become Hybrid</h3>
+                <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Merge with wolf</p>
+              </button>
+            ) : null}
 
             <button onClick={() => setShowWerewolves(true)} className={`${isDaytime ? 'bg-amber-100/60 border-amber-400/40' : 'bg-orange-900/40 border-orange-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🐺 Werewolves</h3>

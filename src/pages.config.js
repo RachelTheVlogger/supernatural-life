@@ -1,5 +1,6 @@
 import Codex from './pages/Codex';
 import Home from './pages/Home';
+import HybridHome from './pages/HybridHome';
 import IncubusHome from './pages/IncubusHome';
 import Index from './pages/Index';
 import Messages from './pages/Messages';
@@ -7,15 +8,15 @@ import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
 import SuccubusHome from './pages/SuccubusHome';
 import VampireHome from './pages/VampireHome';
-import WitchHome from './pages/WitchHome';
 import WerewolfHome from './pages/WerewolfHome';
-import HybridHome from './pages/HybridHome';
+import WitchHome from './pages/WitchHome';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Codex": Codex,
     "Home": Home,
+    "HybridHome": HybridHome,
     "IncubusHome": IncubusHome,
     "Index": Index,
     "Messages": Messages,
@@ -23,9 +24,8 @@ export const PAGES = {
     "ServantHome": ServantHome,
     "SuccubusHome": SuccubusHome,
     "VampireHome": VampireHome,
-    "WitchHome": WitchHome,
     "WerewolfHome": WerewolfHome,
-    "HybridHome": HybridHome,
+    "WitchHome": WitchHome,
 }
 
 export const pagesConfig = {
