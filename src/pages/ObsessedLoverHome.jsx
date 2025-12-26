@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import KillerLoverInteraction from '@/components/nightbound/KillerLoverInteraction';
 
 export default function ObsessedLoverHome() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function ObsessedLoverHome() {
   const [showingTruth, setShowingTruth] = useState(false);
   const [helping, setHelping] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [showInteraction, setShowInteraction] = useState(false);
 
   const urlParams = new URLSearchParams(location.search);
   const loverId = urlParams.get('id');
@@ -179,6 +181,20 @@ export default function ObsessedLoverHome() {
           </div>
         </div>
 
+        {/* Interaction Button */}
+        <button
+          onClick={() => setShowInteraction(true)}
+          className="w-full bg-gradient-to-r from-pink-900/40 to-red-900/40 border-2 border-pink-500/50 rounded-xl p-4 text-left hover:from-pink-900/60 hover:to-red-900/60 transition-all mb-6"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-white font-bold">❤️ Interact with {killer.killer_name}</h3>
+              <p className="text-gray-400 text-sm">Obsessive love • Devotion: {lover.devotion}%</p>
+            </div>
+            <Heart className="w-6 h-6 text-pink-400" />
+          </div>
+        </button>
+
         {/* Discover Truth */}
         {!lover.knows_truth && lover.devotion >= 40 && (
           <button
@@ -303,6 +319,14 @@ export default function ObsessedLoverHome() {
                 <p className="text-white text-lg leading-relaxed">{outcome}</p>
               </motion.div>
             </motion.div>
+          )}
+
+          {showInteraction && (
+            <KillerLoverInteraction
+              killer={killer}
+              lover={lover}
+              onClose={() => setShowInteraction(false)}
+            />
           )}
         </AnimatePresence>
       </div>

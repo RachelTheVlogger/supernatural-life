@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import KillerLoverInteraction from '@/components/nightbound/KillerLoverInteraction';
 
 const HUNTING_LOCATIONS = [
   { name: 'Dark Alley', risk: 20, success: 80 },
@@ -28,6 +29,7 @@ export default function SerialKillerHome() {
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [huntingOutcome, setHuntingOutcome] = useState('');
   const [viewingTrophies, setViewingTrophies] = useState(false);
+  const [showInteraction, setShowInteraction] = useState(false);
 
   const { data: killers = [], isLoading } = useQuery({
     queryKey: ['serialKillers'],
@@ -348,6 +350,22 @@ export default function SerialKillerHome() {
           </div>
         )}
 
+        {/* Interaction with Lover */}
+        {lovers.length > 0 && (
+          <button
+            onClick={() => setShowInteraction(true)}
+            className="w-full bg-gradient-to-r from-red-900/40 to-pink-900/40 border-2 border-pink-500/50 rounded-xl p-4 text-left hover:from-red-900/60 hover:to-pink-900/60 transition-all mb-4"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-white font-bold">❤️ Interact with {lovers[0].name}</h3>
+                <p className="text-gray-400 text-sm">Obsessive love • Devotion: {lovers[0].devotion}%</p>
+              </div>
+              <Heart className="w-6 h-6 text-pink-400" />
+            </div>
+          </button>
+        )}
+
         {/* Trophies */}
         <button
           onClick={() => setViewingTrophies(true)}
@@ -410,6 +428,14 @@ export default function SerialKillerHome() {
                 <p className="text-white text-lg leading-relaxed">{huntingOutcome}</p>
               </motion.div>
             </motion.div>
+          )}
+
+          {showInteraction && lovers.length > 0 && (
+            <KillerLoverInteraction
+              killer={killer}
+              lover={lovers[0]}
+              onClose={() => setShowInteraction(false)}
+            />
           )}
         </AnimatePresence>
       </div>
