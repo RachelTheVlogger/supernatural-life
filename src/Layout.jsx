@@ -41,8 +41,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'House', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: firstServantId ? `ServantHome?id=${firstServantId}` : 'Night', disabled: !firstServantId, hasSelector: servants.length > 1 },
-    { name: 'Messages', icon: MessageCircle, path: firstServantId ? `Messages?servant=${firstServantId}` : 'Night', disabled: !firstServantId },
-  
+    { name: 'Messages', icon: MessageCircle, path: firstServantId ? `Messages?servant=${firstServantId}` : 'Night', disabled: !firstServantId }
   ];
   
   return (
@@ -102,7 +101,7 @@ export default function Layout({ children, currentPageName }) {
                   }}
                   disabled={item.disabled}
                   className={`flex flex-col items-center gap-1 touch-manipulation relative ${
-                    isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-white'
+                    isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-purple-300'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
