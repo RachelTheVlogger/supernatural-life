@@ -67,34 +67,29 @@ export default function StalkingSystem({ vampireState, onClose }) {
       const personality = PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)];
       const job = JOBS[Math.floor(Math.random() * JOBS.length)];
       
-      const target = await base44.entities.StalkTarget.create({
+      await base44.entities.StalkTarget.create({
         name,
         gender: genders[Math.floor(Math.random() * genders.length)],
         vampire_id: vampireState.id,
-        awareness: Math.floor(Math.random() * 20),
-        enjoyment: Math.floor(Math.random() * 30) + 10,
-        fear_vs_thrill: Math.floor(Math.random() * 50) + 25,
-        obsession: 0
+        awareness: Math.floor(Math.random() * 30) + 20,
+        enjoyment: Math.floor(Math.random() * 40) + 40,
+        fear_vs_thrill: Math.floor(Math.random() * 30) + 60,
+        obsession: Math.floor(Math.random() * 25) + 15
       });
 
-      // Create initial backstory using LLM
-      try {
-        const backstory = await base44.integrations.Core.InvokeLLM({
-          prompt: `Generate a brief 2-3 sentence backstory for ${name}, a ${personality.type} ${job}. Make it slightly mysterious and interesting for a vampire stalking them. No JSON, just the text.`
-        });
+      const meetingStories = [
+        `${name} noticed you first. They've been leaving their curtains open. Taking the long way home. Making themselves visible. Hoping.`,
+        `You've seen ${name} around. They always look your way. Smile. Wait. They want you to approach. They're ready.`,
+        `${name} asked about you. "The one who's always in the shadows," they said. They know. And they like it.`,
+        `You caught ${name} staring. They didn't look away. Bit their lip. Moved closer. An invitation. Crystal clear.`,
+        `${name} started going to places they think you'll be. Coffee shop at midnight. Empty park. They're hunting you as much as you're hunting them.`
+      ];
 
-        await base44.entities.NightLog.create({
-          entry: `You found ${name}. ${backstory}`,
-          category: 'observation',
-          intensity: 'moderate'
-        });
-      } catch (e) {
-        await base44.entities.NightLog.create({
-          entry: `You found ${name}, a ${personality.type} ${job}. Something about them... you need to watch them.`,
-          category: 'observation',
-          intensity: 'moderate'
-        });
-      }
+      await base44.entities.NightLog.create({
+        entry: meetingStories[Math.floor(Math.random() * meetingStories.length)],
+        category: 'observation',
+        intensity: 'moderate'
+      });
 
       queryClient.invalidateQueries();
       setFinding(false);
