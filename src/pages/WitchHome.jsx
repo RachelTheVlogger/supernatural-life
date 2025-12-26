@@ -564,6 +564,58 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
             className="grid md:grid-cols-4 gap-4 mb-8"
           >
             <button
+              onClick={() => setShowApothecary(true)}
+              className="bg-gradient-to-r from-green-900/40 to-teal-900/40 hover:from-green-900/60 hover:to-teal-900/60 border-2 border-green-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">🏪</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Apothecary</h3>
+                  <p className="text-gray-400 text-sm">Sell potions to customers</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowFortuneTelling(true)}
+              className="bg-gradient-to-r from-purple-900/40 to-blue-900/40 hover:from-purple-900/60 hover:to-blue-900/60 border-2 border-purple-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">🔮</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Fortune Telling</h3>
+                  <p className="text-gray-400 text-sm">Divination service</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowGrimoire(true)}
+              className="bg-gradient-to-r from-red-900/40 to-orange-900/40 hover:from-red-900/60 hover:to-orange-900/60 border-2 border-red-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">📖</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Study Grimoire</h3>
+                  <p className="text-gray-400 text-sm">Learn new spells</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowMoonRitual(true)}
+              className="bg-gradient-to-r from-blue-900/40 to-indigo-900/40 hover:from-blue-900/60 hover:to-indigo-900/60 border-2 border-blue-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">🌕</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Moon Ritual</h3>
+                  <p className="text-gray-400 text-sm">Power boost</p>
+                </div>
+              </div>
+            </button>
+          >
+            <button
               onClick={() => setShowSpellbook(true)}
               className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 hover:from-purple-900/60 hover:to-pink-900/60 border-2 border-purple-500/50 rounded-xl p-6 transition-all"
             >
@@ -585,6 +637,32 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
                 <div className="text-left">
                   <h3 className="text-white font-bold">Herbs</h3>
                   <p className="text-gray-400 text-sm">{herbs.length} types collected</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowCurses(true)}
+              className="bg-gradient-to-r from-red-900/40 to-black/40 hover:from-red-900/60 hover:to-black/60 border-2 border-red-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">💀</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Curse Someone</h3>
+                  <p className="text-gray-400 text-sm">Dark magic</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowTeaching(true)}
+              className="bg-gradient-to-r from-yellow-900/40 to-orange-900/40 hover:from-yellow-900/60 hover:to-orange-900/60 border-2 border-yellow-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">🎓</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Teach Servants Magic</h3>
+                  <p className="text-gray-400 text-sm">Share your knowledge</p>
                 </div>
               </div>
             </button>
