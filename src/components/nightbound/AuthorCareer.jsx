@@ -27,8 +27,10 @@ export default function AuthorCareer({ servant, onClose }) {
   const [tab, setTab] = useState('write');
   const [working, setWorking] = useState(false);
   const [workingMessage, setWorkingMessage] = useState('');
+  const [workingExcerpt, setWorkingExcerpt] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
   const [newBook, setNewBook] = useState({ title: '', genre: null, target_words: 80000 });
+  const [showReview, setShowReview] = useState(null);
 
   const { data: books = [] } = useQuery({
     queryKey: ['books', servant.id],
@@ -58,18 +60,74 @@ export default function AuthorCareer({ servant, onClose }) {
 
   const handleWrite = async (book) => {
     setWorking(true);
-    const messages = [
-      'Opening document...',
-      'Finding your flow...',
-      'The words are coming...',
-      'Characters taking shape...',
-      'Scene building...',
-      'Dialogue flowing...',
-      'Almost there...'
+    
+    const excerpts = {
+      dark_romance: [
+        '"His touch burned like ice against my skin. I should run. I should scream. Instead, I leaned closer."',
+        '"You\'re mine," he whispered, his fangs grazing my neck. "In this life and every life after."',
+        '"The darkness in him called to the darkness in me. We were inevitable. Dangerous. Perfect."'
+      ],
+      paranormal: [
+        '"The full moon rose, and with it, my true self emerged. Wild. Untamed. Free."',
+        '"Magic hummed in my veins, ancient and powerful. The world would never be the same."',
+        '"Between the realm of living and dead, we found each other. Love transcending mortality."'
+      ],
+      gothic_horror: [
+        '"The manor whispered secrets. Bloodstained secrets. And I was foolish enough to listen."',
+        '"In the mirror, my reflection smiled. But I wasn\'t smiling. Not anymore."',
+        '"The walls breathed with malice. Each room a chamber of forgotten horrors."'
+      ],
+      urban_fantasy: [
+        '"Neon lights couldn\'t hide the shadow creatures lurking in every alley. This city was theirs now."',
+        '"She summoned fire in the subway. He raised the dead in a coffee shop. Just another Tuesday."',
+        '"Magic and technology collided. The old world met the new. And chaos reigned."'
+      ],
+      erotic_romance: [
+        '"His hands explored territory I\'d forbidden to everyone else. With him, I had no boundaries."',
+        '"We broke every rule. Crossed every line. And neither of us wanted to stop."',
+        '"Desire consumed rational thought. All that mattered was his body against mine."'
+      ],
+      thriller: [
+        '"The killer was closer than I thought. Watching. Waiting. Wearing a familiar face."',
+        '"Three bodies. Three nights. And the pattern pointed directly at me."',
+        '"Trust no one, they said. But when everyone\'s a suspect, paranoia becomes survival."'
+      ],
+      fantasy: [
+        '"The prophecy spoke of darkness rising. They didn\'t know the darkness was already here."',
+        '"Steel met shadow. Ancient power clashed with forbidden magic. War was inevitable."',
+        '"Dragons circled overhead. The age of men was ending. The age of legend had begun."'
+      ],
+      ya_paranormal: [
+        '"Sixteen and immortal. High school was about to get a lot more complicated."',
+        '"I could read minds now. Turns out, ignorance really is bliss."',
+        '"The boy in my dreams appeared in my classroom. This was either fate or a nightmare."'
+      ]
+    };
+    
+    const struggles = [
+      'Coffee. Need more coffee...',
+      'Delete. Delete. Delete. Start over...',
+      'This scene isn\'t working...',
+      'Character motivation unclear...',
+      'Plot hole detected. Fixing...',
+      'Rewriting this paragraph for the fifth time...'
     ];
     
+    const breakthroughs = [
+      'Perfect line! Writing faster now...',
+      'The scene clicks into place!',
+      'Character voice found!',
+      'This dialogue is gold...',
+      'In the zone. Don\'t stop...',
+      'Everything flowing perfectly...'
+    ];
+    
+    const writerBlock = Math.random() < 0.2;
+    const messages = writerBlock ? struggles : breakthroughs;
+    
     let msgIndex = 0;
-    setWorkingMessage(messages[0]);
+    setWorkingMessage(writerBlock ? '3am. Staring at blank page...' : 'Opening document...');
+    
     const interval = setInterval(() => {
       msgIndex++;
       if (msgIndex < messages.length) {
@@ -77,13 +135,22 @@ export default function AuthorCareer({ servant, onClose }) {
       }
     }, 500);
     
+    setTimeout(() => {
+      const excerpt = excerpts[book.genre][Math.floor(Math.random() * excerpts[book.genre].length)];
+      setWorkingExcerpt(excerpt);
+      setWorkingMessage('Writing...');
+    }, 1500);
+    
     setTimeout(async () => {
       clearInterval(interval);
-      const wordsWritten = Math.floor(Math.random() * 3000) + 1000;
+      const wordsWritten = writerBlock 
+        ? Math.floor(Math.random() * 1000) + 500
+        : Math.floor(Math.random() * 3000) + 1500;
       const newWordCount = Math.min(book.word_count + wordsWritten, book.target_words);
-      const qualityChange = Math.floor(Math.random() * 5) - 2;
+      const qualityChange = writerBlock ? -1 : Math.floor(Math.random() * 5);
       
-      setWorkingMessage(`Wrote ${wordsWritten} words!`);
+      setWorkingMessage(`Session complete. ${wordsWritten} words written.`);
+      setWorkingExcerpt('');
       
       await base44.entities.Book.update(book.id, {
         word_count: newWordCount,
@@ -91,13 +158,19 @@ export default function AuthorCareer({ servant, onClose }) {
         status: newWordCount >= book.target_words ? 'rewriting' : 'drafting'
       });
       
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} ${writerBlock ? 'struggled through writer\'s block' : 'had a breakthrough writing session'}. ${wordsWritten} words on "${book.title}".`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
       queryClient.invalidateQueries(['books']);
       
       setTimeout(() => {
         setWorking(false);
         setWorkingMessage('');
-      }, 1000);
-    }, 3500);
+      }, 2000);
+    }, 4000);
   };
 
   const handleRewrite = async (book) => {
@@ -221,32 +294,83 @@ export default function AuthorCareer({ servant, onClose }) {
   };
 
   const handlePublish = async (book, platform) => {
-    const price = BOOK_GENRES[book.genre].basePrice;
+    setWorking(true);
     
-    await base44.entities.Book.update(book.id, {
-      status: 'published',
-      platform: platform,
-      price: price
-    });
+    const rejected = platform === 'traditional' && book.quality < 70 && Math.random() < 0.4;
     
-    // Initial sales
-    const initialSales = Math.floor(Math.random() * 100) + 50;
-    const royalty = PLATFORMS[platform].royalty;
-    const revenue = initialSales * price * royalty;
+    if (rejected) {
+      setWorkingMessage('Submitting to publishers...');
+      setTimeout(() => {
+        setWorkingMessage('Rejection letter received.');
+        setTimeout(() => {
+          setWorkingMessage('"Not quite what we\'re looking for at this time. Best of luck elsewhere."');
+          setTimeout(() => {
+            setWorking(false);
+            setWorkingMessage('');
+            alert('Your manuscript was rejected. Improve quality or try a different platform.');
+          }, 2000);
+        }, 1500);
+      }, 2000);
+      return;
+    }
     
-    await base44.entities.Book.update(book.id, {
-      copies_sold: initialSales,
-      revenue: revenue,
-      rating: Math.random() * 2 + 3
-    });
+    const messages = platform === 'traditional' 
+      ? ['Submitting query letter...', 'Agent interested!', 'Negotiating contract...', 'Deal signed!', 'Going to print...']
+      : ['Formatting manuscript...', 'Uploading files...', 'Setting metadata...', 'Book going live...'];
     
-    await base44.entities.NightLog.create({
-      entry: `${servant.name} published "${book.title}" on ${PLATFORMS[platform].name}. ${initialSales} copies sold. Earned $${revenue.toFixed(2)}.`,
-      category: 'interaction',
-      intensity: 'significant'
-    });
+    let msgIndex = 0;
+    setWorkingMessage(messages[0]);
+    const interval = setInterval(() => {
+      msgIndex++;
+      if (msgIndex < messages.length) {
+        setWorkingMessage(messages[msgIndex]);
+      }
+    }, 800);
     
-    queryClient.invalidateQueries(['books']);
+    setTimeout(async () => {
+      clearInterval(interval);
+      
+      const price = BOOK_GENRES[book.genre].basePrice;
+      
+      await base44.entities.Book.update(book.id, {
+        status: 'published',
+        platform: platform,
+        price: price
+      });
+      
+      const qualityMultiplier = book.quality / 100;
+      const initialSales = Math.floor((Math.random() * 100 + 50) * qualityMultiplier);
+      const royalty = PLATFORMS[platform].royalty;
+      const revenue = initialSales * price * royalty;
+      
+      const upfront = platform === 'traditional' ? PLATFORMS[platform].upfront : 0;
+      
+      setWorkingMessage(upfront > 0 
+        ? `Published! Advance: $${upfront}. ${initialSales} copies sold.`
+        : `Published! ${initialSales} copies sold. $${revenue.toFixed(2)} earned.`
+      );
+      
+      await base44.entities.Book.update(book.id, {
+        copies_sold: initialSales,
+        revenue: revenue + upfront,
+        rating: Math.random() * 1.5 + (book.quality / 100) * 3
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: platform === 'traditional'
+          ? `${servant.name} signed a publishing deal for "${book.title}"! $${upfront} advance. ${initialSales} copies in first week.`
+          : `${servant.name} self-published "${book.title}" on ${PLATFORMS[platform].name}. ${initialSales} copies sold. Earned $${revenue.toFixed(2)}.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+      
+      queryClient.invalidateQueries(['books']);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setWorkingMessage('');
+      }, 2500);
+    }, messages.length * 800);
   };
 
   const handlePromote = async (book) => {
@@ -594,8 +718,23 @@ export default function AuthorCareer({ servant, onClose }) {
                           <Mic className="w-4 h-4 inline mr-1" /> Audiobook
                         </button>
                       )}
-                      <button onClick={() => handleBookTour(book)} disabled={working} className="bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-sm col-span-2">
+                      <button onClick={() => handleBookTour(book)} disabled={working} className="bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-sm">
                         <MapPin className="w-4 h-4 inline mr-1" /> Book Tour
+                      </button>
+                      <button onClick={async () => {
+                        const reviews = [
+                          { stars: 5, text: 'Absolutely captivating! Couldn\'t put it down.' },
+                          { stars: 5, text: 'Best book I\'ve read all year. The ending destroyed me.' },
+                          { stars: 4, text: 'Great read. A few slow parts but overall loved it.' },
+                          { stars: 4, text: 'Solid story. Characters felt real and complex.' },
+                          { stars: 3, text: 'Good concept, execution was okay. Worth the read.' },
+                          { stars: 2, text: 'Started strong but lost me halfway through.' },
+                          { stars: 1, text: 'Not for me. DNF at 30%.' }
+                        ];
+                        const review = reviews[Math.floor(Math.random() * reviews.length)];
+                        setShowReview({ ...review, book: book.title });
+                      }} className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm">
+                        <Star className="w-4 h-4 inline mr-1" /> Reviews
                       </button>
                     </div>
                   </div>
@@ -638,13 +777,13 @@ export default function AuthorCareer({ servant, onClose }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
           >
-            <div className="bg-gray-900 rounded-2xl p-8 max-w-md w-full mx-4 text-center">
+            <div className="bg-gradient-to-b from-gray-900 to-black rounded-2xl p-8 max-w-lg w-full border border-purple-900/50 shadow-2xl">
               <motion.div 
                 animate={{ rotate: [0, 5, -5, 0] }} 
                 transition={{ duration: 0.5, repeat: Infinity }} 
-                className="text-6xl mb-4"
+                className="text-6xl mb-4 text-center"
               >
                 ✍️
               </motion.div>
@@ -652,11 +791,53 @@ export default function AuthorCareer({ servant, onClose }) {
                 key={workingMessage}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-white text-lg"
+                className="text-white text-lg mb-4 text-center"
               >
                 {workingMessage}
               </motion.p>
+              {workingExcerpt && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-black/40 rounded-lg p-4 border border-purple-500/30"
+                >
+                  <p className="text-purple-300 text-sm italic leading-relaxed">
+                    {workingExcerpt}
+                  </p>
+                </motion.div>
+              )}
             </div>
+          </motion.div>
+        )}
+        
+        {showReview && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setShowReview(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full border border-yellow-900/50"
+            >
+              <h3 className="text-white text-xl font-bold mb-2">Reader Review</h3>
+              <p className="text-gray-400 text-sm mb-4">{showReview.book}</p>
+              <div className="flex gap-1 mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className={`w-5 h-5 ${i < showReview.stars ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
+                ))}
+              </div>
+              <p className="text-white italic mb-4">"{showReview.text}"</p>
+              <button
+                onClick={() => setShowReview(null)}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </motion.div>
           </motion.div>
         )}
 
