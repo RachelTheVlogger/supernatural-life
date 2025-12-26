@@ -7,14 +7,19 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 
 const HUMAN_ACTIVITIES = [
-  { id: 'school', label: 'Go to School/Work', icon: School, duration: 3000 },
-  { id: 'coffee', label: 'Coffee Shop', icon: Coffee, duration: 2000 },
-  { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 2500 },
-  { id: 'read', label: 'Read a Book', icon: BookOpen, duration: 2000 },
-  { id: 'explore', label: 'Explore the Town', icon: Eye, duration: 3000 },
-  { id: 'party', label: 'Go to a Party', icon: Heart, duration: 3500 },
-  { id: 'research', label: 'Research Vampires', icon: BookOpen, duration: 3500, requiresAwareness: 20 },
-  { id: 'seek', label: 'Seek Them Out', icon: Eye, duration: 4000, requiresAwareness: 50 }
+  { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
+  { id: 'coffee', label: 'Coffee Shop', icon: Coffee, duration: 4000, awarenessChance: 0.15 },
+  { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 4500, awarenessChance: 0.05 },
+  { id: 'read', label: 'Read a Book', icon: BookOpen, duration: 4000, awarenessChance: 0.1 },
+  { id: 'explore', label: 'Explore the Town', icon: Eye, duration: 5000, awarenessChance: 0.3 },
+  { id: 'party', label: 'Go to a Party', icon: Heart, duration: 5500, awarenessChance: 0.2 },
+  { id: 'gym', label: 'Go to the Gym', icon: Users, duration: 4500, awarenessChance: 0.1 },
+  { id: 'library', label: 'Study at Library', icon: BookOpen, duration: 5000, awarenessChance: 0.15 },
+  { id: 'nightwalk', label: 'Walk Alone at Night', icon: Moon, duration: 4500, awarenessChance: 0.4, requiresAwareness: 10 },
+  { id: 'research', label: 'Research Vampires', icon: Search, duration: 6000, requiresAwareness: 20 },
+  { id: 'investigate', label: 'Investigate Disappearances', icon: Eye, duration: 6500, requiresAwareness: 40 },
+  { id: 'seek', label: 'Deliberately Seek Them Out', icon: Eye, duration: 7000, requiresAwareness: 60 },
+  { id: 'confront', label: 'Confront What You Know', icon: Shield, duration: 7500, requiresAwareness: 80 }
 ];
 
 export default function HumanHome() {
@@ -70,17 +75,50 @@ export default function HumanHome() {
       let dangerGain = 0;
       let vampireEncounter = false;
 
-      if (activity.id === 'research') {
-        awarenessGain = Math.floor(Math.random() * 10) + 15;
+      if (activity.id === 'gym') {
+        awarenessGain = Math.floor(Math.random() * 5);
+        dangerGain = Math.floor(Math.random() * 3);
+        result = 'You worked out. Stayed healthy. Normal life. But you kept looking over your shoulder. Can\'t shake the feeling you\'re being watched.';
+      } else if (activity.id === 'library') {
+        awarenessGain = Math.floor(Math.random() * 8) + 2;
+        result = 'Studied for hours. Tried to focus. But your eyes kept drifting to books about folklore. Mythology. Creatures that shouldn\'t exist.';
+      } else if (activity.id === 'nightwalk') {
+        awarenessGain = Math.floor(Math.random() * 15) + 10;
+        dangerGain = Math.floor(Math.random() * 20) + 10;
+        const nightWalkOutcomes = [
+          'The streets were empty. Too quiet. You heard footsteps behind you. When you turned, nothing. But you felt eyes on you. Watching. Waiting.',
+          'Someone followed you home. You\'re sure of it. Tall. Moved too smoothly. Disappeared when you looked directly at them. You\'re not imagining this.',
+          'A figure in the shadows. They didn\'t try to hide. Just... watched. You locked eyes for a moment. They smiled. You ran.',
+          'You walked past an alley. Heard voices. Saw something that looked like... No. Can\'t be. But the body on the ground. The blood. You kept walking. Faster.'
+        ];
+        result = nightWalkOutcomes[Math.floor(Math.random() * nightWalkOutcomes.length)];
+      } else if (activity.id === 'research') {
+        awarenessGain = Math.floor(Math.random() * 15) + 20;
         const researchOutcomes = [
-          'You found old newspapers. "Mysterious deaths." All drained of blood. Decades apart.',
-          'Online forums. People talking about "them." Dismissed as conspiracy theories. But the details match.',
-          'Library archives. Photos from the 1800s. You recognize someone from town. They haven\'t aged.',
-          'Medical records. "Anemia." Hundreds of cases. All near the same addresses. Over centuries.',
-          'You found protection rituals. Vervain. Garlic. Wooden stakes. Old wives tales, maybe. But you bought some.'
+          'You found old newspapers. "Mysterious deaths." All drained of blood. Decades apart. Same MO. Same locations. This has been happening for over a century.',
+          'Online forums. People talking about "them." Dismissed as conspiracy theories. But the details match. Too many witnesses. Too consistent. This is real.',
+          'Library archives. Photos from the 1800s. You recognize someone from town. They haven\'t aged a day. Same face. Same eyes. Impossible. But there they are.',
+          'Medical records. "Anemia." Hundreds of cases. All near the same addresses. Over centuries. Doctors noticed patterns but dismissed them. You see the truth now.',
+          'You found protection rituals. Vervain. Garlic. Wooden stakes. Old wives tales, maybe. But every culture has them. Every continent. Same methods. You bought some.',
+          'Missing persons reports. Dozens. All young. All last seen at night. Police say "ran away." But you know better. The pattern is clear. They were taken.'
         ];
         result = researchOutcomes[Math.floor(Math.random() * researchOutcomes.length)];
         setEvidenceCollected(prev => [...prev, result.split('.')[0]]);
+      } else if (activity.id === 'investigate') {
+        awarenessGain = Math.floor(Math.random() * 20) + 15;
+        dangerGain = Math.floor(Math.random() * 25) + 15;
+        const investigateOutcomes = [
+          'You visited the last known locations. Found bite marks covered up as "animal attacks." Everyone lying. Everyone scared. You\'re getting too close.',
+          'Talked to witnesses. They changed their stories mid-sentence. Eyes glazed. Like they\'d been... compelled. This is bigger than you thought.',
+          'Found a body. Fresh. Police hadn\'t arrived yet. Two puncture wounds. Neck. Drained. You took photos. Evidence. Now you\'re a target.',
+          'Followed a lead to an abandoned building. Found signs of habitation. Blackout curtains. No mirrors. Locked basement. You heard movement inside. Left quickly.'
+        ];
+        result = investigateOutcomes[Math.floor(Math.random() * investigateOutcomes.length)];
+        setEvidenceCollected(prev => [...prev, 'Investigation evidence']);
+      } else if (activity.id === 'confront') {
+        awarenessGain = Math.floor(Math.random() * 25) + 25;
+        dangerGain = Math.floor(Math.random() * 30) + 30;
+        result = 'You know too much now. You\'re ready to confront the truth. To face them. This could be the end. Or the beginning of something darker.';
       } else if (activity.id === 'seek' && hasVampire) {
         vampireEncounter = true;
         awarenessGain = Math.floor(Math.random() * 20) + 20;
@@ -94,6 +132,53 @@ export default function HumanHome() {
           `You went to the cemetery at night. Stupid. Desperate.\n\n${vampire.vampire_name} appeared like smoke. "Hoping to find me?"\n\nYou nodded. Couldn't lie.\n\n"Brave. Reckless. I respect that."\n\nThey circled you. Considering.`
         ];
         result = seekOutcomes[Math.floor(Math.random() * seekOutcomes.length)];
+      } else if (activity.id === 'school') {
+        awarenessGain = Math.floor(Math.random() * 5);
+        const schoolOutcomes = [
+          'Normal day. Classes. Friends. But you caught yourself staring out windows. Looking for shadows. Searching for something you can\'t name.',
+          'Someone new at school. Pale. Beautiful. Moved like water. Nobody else seemed to notice how different they were. But you did.',
+          'Fell asleep in class. Dreamed of teeth. Blood. Darkness. Woke up with everyone staring. You\'d been whispering something. Couldn\'t remember what.',
+          'Found yourself researching instead of studying. Medieval history. Eastern European folklore. Vampires. You closed the tab when someone walked by.'
+        ];
+        result = schoolOutcomes[Math.floor(Math.random() * schoolOutcomes.length)];
+      } else if (activity.id === 'coffee') {
+        awarenessGain = Math.floor(Math.random() * 8);
+        const coffeeOutcomes = [
+          'Sat alone with your coffee. Watched people. Wondered which ones were real. Which ones were pretending. You\'re becoming paranoid.',
+          'The barista had bite marks on their neck. "Boyfriend," they said quickly. Too quickly. Their eyes were distant. Scared. You didn\'t push.',
+          'Someone sat across from you. Didn\'t order anything. Just watched. You tried to leave. They smiled. "Stay," they whispered. You stayed.',
+          'Overheard a conversation. "...at night..." "...don\'t go alone..." "...people are disappearing..." They stopped talking when they saw you listening.'
+        ];
+        result = coffeeOutcomes[Math.floor(Math.random() * coffeeOutcomes.length)];
+      } else if (activity.id === 'friends') {
+        awarenessGain = Math.floor(Math.random() * 3);
+        const friendOutcomes = [
+          'Your friends laughed about the "vampire rumors." You didn\'t. They noticed. Asked if you were okay. You lied. Said you were fine.',
+          'One friend seemed different. Quieter. Paler. Wearing high collars. Avoiding sunlight. You wanted to ask. Didn\'t dare.',
+          'Everyone talking about the missing student. Police said runaway. Your friends believed it. You knew better. Stayed quiet.',
+          'Normal hangout. Normal conversation. But you kept thinking about what you\'d seen. What you knew. You\'re changing. They don\'t notice yet.'
+        ];
+        result = friendOutcomes[Math.floor(Math.random() * friendOutcomes.length)];
+      } else if (activity.id === 'read') {
+        awarenessGain = Math.floor(Math.random() * 8) + 3;
+        const readOutcomes = [
+          'Started with fiction. Gothic novels. Dracula. Then switched to non-fiction. Historical accounts. Eyewitness testimonies. Too many to be coincidence.',
+          'Found a book that shouldn\'t exist. Self-published. No author name. "A Hunter\'s Guide." Detailed. Specific. Written by someone who knew.',
+          'Reading about vampire mythology. Every culture has them. Different names. Same creature. Same weakness. Same hunger. Universal fear.',
+          'The book described protection methods. Vervain in tea. Salt at doorways. Invitation rules. You\'re memorizing everything. Just in case.'
+        ];
+        result = readOutcomes[Math.floor(Math.random() * readOutcomes.length)];
+      } else if (activity.id === 'party') {
+        awarenessGain = Math.floor(Math.random() * 12) + 5;
+        dangerGain = Math.floor(Math.random() * 15) + 5;
+        const partyOutcomes = [
+          'The party was packed. Loud. Dark. Someone touched your neck. "Beautiful," they whispered. You turned. They were gone. Your neck tingled.',
+          'Saw someone drinking from a bottle. Looked like wine. Too dark. Too thick. They saw you watching. Smiled. Offered you some. You declined.',
+          'Someone followed you to a quiet room. Locked the door. "I know what you know," they said. "Be careful." Left through the window. Second floor.',
+          'Everyone drunk. Everyone oblivious. But you saw them. In corners. Watching. Waiting. Hunting. You left early. Walked fast. Didn\'t look back.'
+        ];
+        result = partyOutcomes[Math.floor(Math.random() * partyOutcomes.length)];
+        if (Math.random() > 0.6) vampireEncounter = true;
       } else if (activity.id === 'explore' && encounterChance > 0.6 && hasVampire) {
         vampireEncounter = true;
         awarenessGain = Math.floor(Math.random() * 15) + 10;
