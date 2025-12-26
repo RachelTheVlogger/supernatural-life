@@ -1080,7 +1080,7 @@ export default function VampireHome() {
             onClose={() => setShowSuccubusInteraction(false)}
           />
         )}
-        {showDonors && (
+        {showDonors && vampireState && (
           <DonorSystem
             vampireState={vampireState}
             onClose={() => setShowDonors(false)}
