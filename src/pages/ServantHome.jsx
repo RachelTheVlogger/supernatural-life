@@ -282,7 +282,7 @@ export default function ServantHome() {
             Town People
           </button>
           <button
-            onClick={() => navigate(createPageUrl('WitchHome'))}
+            onClick={() => setShowWitchVisit(true)}
             className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
           >
             Visit Witch
