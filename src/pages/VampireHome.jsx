@@ -32,6 +32,7 @@ import SuccubusVampireInteraction from '@/components/nightbound/SuccubusVampireI
 import DonorSystem from '@/components/nightbound/DonorSystem';
 import StalkingSystem from '@/components/nightbound/StalkingSystem';
 import JournalSystem from '@/components/nightbound/JournalSystem';
+import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ export default function VampireHome() {
   const [showDonors, setShowDonors] = useState(false);
   const [showStalking, setShowStalking] = useState(false);
   const [showJournal, setShowJournal] = useState(false);
+  const [showDoppelgangers, setShowDoppelgangers] = useState(false);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -672,6 +674,32 @@ export default function VampireHome() {
                 </button>
               </motion.div>
 
+              {/* Doppelgängers */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="mb-8"
+              >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDoppelgangers(true);
+                  }}
+                  className="w-full bg-gradient-to-r from-gray-950/40 to-purple-950/40 hover:from-gray-950/60 hover:to-purple-950/60 border-2 border-gray-500/50 rounded-2xl p-6 transition-all touch-manipulation"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl">👥</div>
+                      <div className="text-left">
+                        <h3 className="text-white text-xl font-bold mb-1">Doppelgängers</h3>
+                        <p className="text-gray-300 text-sm">Find supernatural doubles. Their blood is ancient power.</p>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </motion.div>
+
               {/* Succubus Interaction */}
               {succubus && (
               <motion.div
@@ -1154,6 +1182,12 @@ export default function VampireHome() {
           <JournalSystem
             vampire={vampireState}
             onClose={() => setShowJournal(false)}
+          />
+        )}
+        {showDoppelgangers && vampireState && (
+          <DoppelgangerSystem
+            vampireState={vampireState}
+            onClose={() => setShowDoppelgangers(false)}
           />
         )}
         {showVampireIdentity && (
