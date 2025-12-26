@@ -59,8 +59,8 @@ export default function HerbGathering({ witch, onClose }) {
     const location = herb.locations[Math.floor(Math.random() * herb.locations.length)];
     
     setTimeout(async () => {
-      const success = herb.dangerous ? Math.random() > 0.3 : Math.random() > 0.15;
-      const amount = success ? Math.floor(Math.random() * 3) + 2 : 0;
+      const success = herb.dangerous ? Math.random() > 0.2 : Math.random() > 0.1;
+      const amount = success ? Math.floor(Math.random() * 4) + 3 : 0;
       
       if (success) {
         const existing = inventory.find(i => i.herb_name === herb.name);
@@ -100,8 +100,13 @@ export default function HerbGathering({ witch, onClose }) {
   };
 
   const handleBuy = async (herb) => {
-    const existing = inventory.find(i => i.herb_name === herb.name);
     const amount = Math.floor(Math.random() * 3) + 3;
+    
+    if (!confirm(`Buy ${amount} ${herb.name} for $${herb.price}?`)) {
+      return;
+    }
+
+    const existing = inventory.find(i => i.herb_name === herb.name);
     
     if (existing) {
       await base44.entities.WitchHerb.update(existing.id, {
