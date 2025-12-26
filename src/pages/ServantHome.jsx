@@ -303,7 +303,7 @@ export default function ServantHome() {
     : [...CHORES, ...businessActivities];
   
   return (
-    <div className="min-h-screen p-4 md:p-6 pb-24 relative overflow-hidden" style={{
+    <div className="min-h-screen p-4 md:p-6 pb-24 relative overflow-y-auto" style={{
       background: servant.is_turned 
         ? 'linear-gradient(to bottom, #4A0E0E 0%, #2D0A0A 50%, #1A0404 100%)'
         : 'linear-gradient(to bottom, #0a0a14 0%, #1a0a1a 50%, #0a0014 100%)'
