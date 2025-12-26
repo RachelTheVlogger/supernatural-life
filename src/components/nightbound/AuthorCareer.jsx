@@ -26,6 +26,7 @@ export default function AuthorCareer({ servant, onClose }) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('write');
   const [working, setWorking] = useState(false);
+  const [workingMessage, setWorkingMessage] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
   const [newBook, setNewBook] = useState({ title: '', genre: null, target_words: 80000 });
 
@@ -57,10 +58,32 @@ export default function AuthorCareer({ servant, onClose }) {
 
   const handleWrite = async (book) => {
     setWorking(true);
+    const messages = [
+      'Opening document...',
+      'Finding your flow...',
+      'The words are coming...',
+      'Characters taking shape...',
+      'Scene building...',
+      'Dialogue flowing...',
+      'Almost there...'
+    ];
+    
+    let msgIndex = 0;
+    setWorkingMessage(messages[0]);
+    const interval = setInterval(() => {
+      msgIndex++;
+      if (msgIndex < messages.length) {
+        setWorkingMessage(messages[msgIndex]);
+      }
+    }, 500);
+    
     setTimeout(async () => {
+      clearInterval(interval);
       const wordsWritten = Math.floor(Math.random() * 3000) + 1000;
       const newWordCount = Math.min(book.word_count + wordsWritten, book.target_words);
       const qualityChange = Math.floor(Math.random() * 5) - 2;
+      
+      setWorkingMessage(`Wrote ${wordsWritten} words!`);
       
       await base44.entities.Book.update(book.id, {
         word_count: newWordCount,
@@ -69,14 +92,40 @@ export default function AuthorCareer({ servant, onClose }) {
       });
       
       queryClient.invalidateQueries(['books']);
-      setWorking(false);
-    }, 3000);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setWorkingMessage('');
+      }, 1000);
+    }, 3500);
   };
 
   const handleRewrite = async (book) => {
     setWorking(true);
+    const messages = [
+      'Reading through your draft...',
+      'Identifying weak passages...',
+      'Strengthening character arcs...',
+      'Improving pacing...',
+      'Refining prose...',
+      'Polishing scenes...',
+      'Quality improving...'
+    ];
+    
+    let msgIndex = 0;
+    setWorkingMessage(messages[0]);
+    const interval = setInterval(() => {
+      msgIndex++;
+      if (msgIndex < messages.length) {
+        setWorkingMessage(messages[msgIndex]);
+      }
+    }, 600);
+    
     setTimeout(async () => {
+      clearInterval(interval);
       const qualityGain = Math.floor(Math.random() * 15) + 10;
+      
+      setWorkingMessage(`Quality improved by ${qualityGain}%!`);
       
       await base44.entities.Book.update(book.id, {
         quality: Math.min(100, book.quality + qualityGain),
@@ -84,14 +133,39 @@ export default function AuthorCareer({ servant, onClose }) {
       });
       
       queryClient.invalidateQueries(['books']);
-      setWorking(false);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setWorkingMessage('');
+      }, 1000);
     }, 4000);
   };
 
   const handleEdit = async (book) => {
     setWorking(true);
+    const messages = [
+      'Scanning for errors...',
+      'Fixing grammar...',
+      'Improving sentence flow...',
+      'Tightening paragraphs...',
+      'Removing redundancy...',
+      'Nearly perfect...'
+    ];
+    
+    let msgIndex = 0;
+    setWorkingMessage(messages[0]);
+    const interval = setInterval(() => {
+      msgIndex++;
+      if (msgIndex < messages.length) {
+        setWorkingMessage(messages[msgIndex]);
+      }
+    }, 550);
+    
     setTimeout(async () => {
+      clearInterval(interval);
       const qualityGain = Math.floor(Math.random() * 10) + 5;
+      
+      setWorkingMessage(`Edited successfully! +${qualityGain}% quality`);
       
       await base44.entities.Book.update(book.id, {
         quality: Math.min(100, book.quality + qualityGain),
@@ -99,14 +173,38 @@ export default function AuthorCareer({ servant, onClose }) {
       });
       
       queryClient.invalidateQueries(['books']);
-      setWorking(false);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setWorkingMessage('');
+      }, 1000);
     }, 3500);
   };
 
   const handleProofread = async (book) => {
     setWorking(true);
+    const messages = [
+      'Final read-through...',
+      'Catching typos...',
+      'Checking consistency...',
+      'Perfect punctuation...',
+      'Final polish...'
+    ];
+    
+    let msgIndex = 0;
+    setWorkingMessage(messages[0]);
+    const interval = setInterval(() => {
+      msgIndex++;
+      if (msgIndex < messages.length) {
+        setWorkingMessage(messages[msgIndex]);
+      }
+    }, 500);
+    
     setTimeout(async () => {
+      clearInterval(interval);
       const qualityGain = Math.floor(Math.random() * 8) + 3;
+      
+      setWorkingMessage('Book ready to publish!');
       
       await base44.entities.Book.update(book.id, {
         quality: Math.min(100, book.quality + qualityGain),
@@ -114,7 +212,11 @@ export default function AuthorCareer({ servant, onClose }) {
       });
       
       queryClient.invalidateQueries(['books']);
-      setWorking(false);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setWorkingMessage('');
+      }, 1000);
     }, 2500);
   };
 
@@ -149,11 +251,31 @@ export default function AuthorCareer({ servant, onClose }) {
 
   const handlePromote = async (book) => {
     setWorking(true);
+    const messages = [
+      'Posting on social media...',
+      'Reaching out to influencers...',
+      'Running ads...',
+      'Building buzz...',
+      'Sales coming in...'
+    ];
+    
+    let msgIndex = 0;
+    setWorkingMessage(messages[0]);
+    const interval = setInterval(() => {
+      msgIndex++;
+      if (msgIndex < messages.length) {
+        setWorkingMessage(messages[msgIndex]);
+      }
+    }, 400);
+    
     setTimeout(async () => {
+      clearInterval(interval);
       const newSales = Math.floor(Math.random() * 50) + 20;
       const royalty = PLATFORMS[book.platform].royalty;
       const newRevenue = newSales * book.price * royalty;
       const buzzGain = Math.floor(Math.random() * 20) + 10;
+      
+      setWorkingMessage(`+${newSales} sales! Earned $${newRevenue.toFixed(2)}`);
       
       await base44.entities.Book.update(book.id, {
         copies_sold: book.copies_sold + newSales,
@@ -162,7 +284,11 @@ export default function AuthorCareer({ servant, onClose }) {
       });
       
       queryClient.invalidateQueries(['books']);
-      setWorking(false);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setWorkingMessage('');
+      }, 1500);
     }, 2000);
   };
 
@@ -170,7 +296,28 @@ export default function AuthorCareer({ servant, onClose }) {
     if (book.has_audiobook) return;
     
     setWorking(true);
+    const messages = [
+      'Hiring narrator...',
+      'Recording chapters...',
+      'Chapter 1 complete...',
+      'Chapter 5 complete...',
+      'Editing audio...',
+      'Mastering sound...',
+      'Uploading to platforms...',
+      'Going live...'
+    ];
+    
+    let msgIndex = 0;
+    setWorkingMessage(messages[0]);
+    const interval = setInterval(() => {
+      msgIndex++;
+      if (msgIndex < messages.length) {
+        setWorkingMessage(messages[msgIndex]);
+      }
+    }, 650);
+    
     setTimeout(async () => {
+      clearInterval(interval);
       await base44.entities.Book.update(book.id, {
         has_audiobook: true
       });
@@ -178,23 +325,52 @@ export default function AuthorCareer({ servant, onClose }) {
       const audioSales = Math.floor(Math.random() * 30) + 10;
       const audioRevenue = audioSales * book.price * 1.5 * 0.7;
       
+      setWorkingMessage(`Audiobook live! ${audioSales} copies sold!`);
+      
       await base44.entities.Book.update(book.id, {
         audiobook_sales: audioSales,
         revenue: book.revenue + audioRevenue
       });
       
       queryClient.invalidateQueries(['books']);
-      setWorking(false);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setWorkingMessage('');
+      }, 1500);
     }, 5000);
   };
 
   const handleBookTour = async (book) => {
     setWorking(true);
+    const messages = [
+      'Booking venues...',
+      'First stop: New York...',
+      'Signing books...',
+      'Meeting readers...',
+      'Next stop: LA...',
+      'Media interviews...',
+      'Final stop: Chicago...',
+      'Tour complete!'
+    ];
+    
+    let msgIndex = 0;
+    setWorkingMessage(messages[0]);
+    const interval = setInterval(() => {
+      msgIndex++;
+      if (msgIndex < messages.length) {
+        setWorkingMessage(messages[msgIndex]);
+      }
+    }, 750);
+    
     setTimeout(async () => {
+      clearInterval(interval);
       const newSales = Math.floor(Math.random() * 100) + 50;
       const royalty = PLATFORMS[book.platform].royalty;
       const tourRevenue = newSales * book.price * royalty;
       const repGain = Math.floor(Math.random() * 15) + 10;
+      
+      setWorkingMessage(`Signed ${newSales} books! Earned $${tourRevenue.toFixed(2)}`);
       
       await base44.entities.Book.update(book.id, {
         copies_sold: book.copies_sold + newSales,
@@ -213,7 +389,11 @@ export default function AuthorCareer({ servant, onClose }) {
       });
       
       queryClient.invalidateQueries(['books']);
-      setWorking(false);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setWorkingMessage('');
+      }, 2000);
     }, 6000);
   };
 
@@ -458,11 +638,25 @@ export default function AuthorCareer({ servant, onClose }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm"
           >
-            <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="text-6xl">
-              ✍️
-            </motion.div>
+            <div className="bg-gray-900 rounded-2xl p-8 max-w-md w-full mx-4 text-center">
+              <motion.div 
+                animate={{ rotate: [0, 5, -5, 0] }} 
+                transition={{ duration: 0.5, repeat: Infinity }} 
+                className="text-6xl mb-4"
+              >
+                ✍️
+              </motion.div>
+              <motion.p
+                key={workingMessage}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-white text-lg"
+              >
+                {workingMessage}
+              </motion.p>
+            </div>
           </motion.div>
         )}
 
