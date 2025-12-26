@@ -1116,7 +1116,7 @@ export default function VampireHome() {
             onClose={() => setShowDonors(false)}
           />
         )}
-        {showStalking && vampireState && (
+        {showStalking && (
           <StalkingSystem
             vampireState={vampireState}
             onClose={() => setShowStalking(false)}
