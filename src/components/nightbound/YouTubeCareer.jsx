@@ -68,8 +68,12 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
       channel_name: channelData.channel_name || `${servant.name}`,
       niche: channelData.niche,
       subscriber_count: 0,
+      total_views: 0,
+      watch_hours: 0,
       revenue: 0,
-      reputation: 0
+      reputation: 0,
+      monetized: false,
+      applied_for_monetization: false
     });
 
     await base44.entities.NightLog.create({
@@ -80,6 +84,26 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
 
     queryClient.invalidateQueries();
     setEditingChannel(false);
+  };
+
+  const handleApplyForMonetization = async () => {
+    if (channel.subscriber_count < 1000 || channel.watch_hours < 4000) {
+      alert(`Need 1,000 subs (${channel.subscriber_count}) & 4,000 watch hours (${channel.watch_hours})`);
+      return;
+    }
+
+    await base44.entities.YouTubeChannel.update(channel.id, {
+      applied_for_monetization: true,
+      monetized: true
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `Applied for YouTube Partner Program. APPROVED! Channel is now monetized. Revenue will increase.`,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
   };
 
   const handleCreateVideo = async () => {
@@ -93,7 +117,9 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
       const isViral = Math.random() < viralChance;
       const views = isViral ? baseViews * (Math.floor(Math.random() * 20) + 10) : baseViews;
       const likes = Math.floor(views * (Math.random() * 0.15 + 0.05));
-      const cpm = Math.random() * 3 + 2; // $2-5 CPM
+      const avgWatchTime = Math.random() * 6 + 4; // 4-10 min average watch time
+      const watchHours = Math.floor((views * avgWatchTime) / 60);
+      const cpm = channel.monetized ? (Math.random() * 3 + 2) : 0; // $2-5 CPM if monetized, $0 if not
       const earnings = Math.floor((views / 1000) * cpm);
 
       const video = await base44.entities.YouTubeVideo.create({
@@ -147,7 +173,8 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
 
       await base44.entities.YouTubeChannel.update(channel.id, {
         subscriber_count: channel.subscriber_count + newSubs,
-        total_views: channel.total_views + views,
+        total_views: (channel.total_views || 0) + views,
+        watch_hours: (channel.watch_hours || 0) + watchHours,
         revenue: channel.revenue + earnings,
         reputation: Math.min(100, channel.reputation + repGain),
         verified: channel.subscriber_count + newSubs >= 100000,
@@ -162,7 +189,7 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
       }
 
       await base44.entities.NightLog.create({
-        entry: `${servant.name} posted: "${newVideo.title}". ${views.toLocaleString()} views, ${likes.toLocaleString()} likes. ${isViral ? '🔥 WENT VIRAL! ' : ''}+${newSubs} subs. $${earnings} earned.`,
+        entry: `${servant.name} posted: "${newVideo.title}". ${views.toLocaleString()} views, ${likes.toLocaleString()} likes. ${isViral ? '🔥 WENT VIRAL! ' : ''}+${newSubs} subs${channel.monetized ? `. $${earnings} earned` : ' (not monetized yet)'}.`,
         category: 'interaction',
         intensity: isViral ? 'significant' : 'moderate'
       });
@@ -885,13 +912,77 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
         {/* MONETIZE TAB */}
         {tab === 'monetize' && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            {!channel.monetized && !channel.applied_for_monetization && (
+              <div className="bg-gradient-to-br from-green-950/40 to-emerald-950/40 border-2 border-green-500/30 rounded-2xl p-6">
+                <h3 className="text-white text-xl font-bold mb-3 flex items-center gap-2">
+                  <DollarSign className="w-6 h-6 text-green-400" />
+                  YouTube Partner Program
+                </h3>
+                <p className="text-gray-400 text-sm mb-4">Get monetized. Earn from ads.</p>
+                
+                <div className="space-y-3 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">Subscribers</span>
+                    <span className={`font-bold ${channel.subscriber_count >= 1000 ? 'text-green-400' : 'text-orange-400'}`}>
+                      {channel.subscriber_count.toLocaleString()} / 1,000
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-800 rounded-full h-2">
+                    <div 
+                      style={{ width: `${Math.min((channel.subscriber_count / 1000) * 100, 100)}%` }}
+                      className="h-2 rounded-full bg-gradient-to-r from-green-600 to-emerald-500"
+                    />
+                  </div>
+                  
+                  <div className="flex justify-between items-center mt-4">
+                    <span className="text-gray-400 text-sm">Watch Hours</span>
+                    <span className={`font-bold ${(channel.watch_hours || 0) >= 4000 ? 'text-green-400' : 'text-orange-400'}`}>
+                      {(channel.watch_hours || 0).toLocaleString()} / 4,000
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-800 rounded-full h-2">
+                    <div 
+                      style={{ width: `${Math.min(((channel.watch_hours || 0) / 4000) * 100, 100)}%` }}
+                      className="h-2 rounded-full bg-gradient-to-r from-green-600 to-emerald-500"
+                    />
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleApplyForMonetization}
+                  disabled={channel.subscriber_count < 1000 || (channel.watch_hours || 0) < 4000}
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-bold py-4 rounded-xl disabled:opacity-50"
+                >
+                  {channel.subscriber_count >= 1000 && (channel.watch_hours || 0) >= 4000
+                    ? 'APPLY FOR MONETIZATION'
+                    : 'Requirements Not Met'}
+                </button>
+              </div>
+            )}
+
+            {channel.monetized && (
+              <div className="bg-gradient-to-br from-green-950/40 to-emerald-950/40 border-2 border-green-500/30 rounded-2xl p-6 mb-4">
+                <div className="text-center">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-5xl mb-3"
+                  >
+                    ✅
+                  </motion.div>
+                  <h3 className="text-white text-xl font-bold mb-2">MONETIZED</h3>
+                  <p className="text-green-400 text-sm">Earning from ads on all videos</p>
+                </div>
+              </div>
+            )}
+
             <button
               onClick={handleSponsorship}
               disabled={channel.subscriber_count < 10000}
-              className="w-full bg-gradient-to-br from-green-950/40 to-emerald-950/40 border-2 border-green-500/30 hover:border-green-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+              className="w-full bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 hover:border-purple-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
             >
               <div className="flex items-center gap-3">
-                <DollarSign className="w-8 h-8 text-green-400" />
+                <DollarSign className="w-8 h-8 text-purple-400" />
                 <div>
                   <h4 className="text-white font-bold mb-1">Get Sponsorship</h4>
                   <p className="text-gray-400 text-sm">
@@ -921,23 +1012,25 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
               </div>
             </button>
 
-            <div className="bg-gray-800 rounded-xl p-4">
-              <h4 className="text-white font-medium mb-2">Revenue Breakdown</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Ad Revenue</span>
-                  <span className="text-green-400">${Math.floor(channel.revenue * 0.7)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Sponsorships</span>
-                  <span className="text-green-400">${Math.floor(channel.revenue * 0.3)}</span>
-                </div>
-                <div className="border-t border-gray-700 pt-2 flex justify-between font-bold">
-                  <span className="text-white">Total</span>
-                  <span className="text-green-400">${channel.revenue}</span>
+            {channel.monetized && (
+              <div className="bg-gray-800 rounded-xl p-4">
+                <h4 className="text-white font-medium mb-2">Revenue Breakdown</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Ad Revenue</span>
+                    <span className="text-green-400">${Math.floor(channel.revenue * 0.7)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Sponsorships</span>
+                    <span className="text-green-400">${Math.floor(channel.revenue * 0.3)}</span>
+                  </div>
+                  <div className="border-t border-gray-700 pt-2 flex justify-between font-bold">
+                    <span className="text-white">Total</span>
+                    <span className="text-green-400">${channel.revenue}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
