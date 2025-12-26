@@ -258,12 +258,44 @@ export default function DoppelgangerHome() {
               </>
             )}
             <button
+              onClick={() => handleAction('save')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-green-900/60 to-green-950/60 hover:from-green-900/80 hover:to-green-950/80 border-2 border-green-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Shield className="w-5 h-5 inline mr-2" />
+              Save Them From Danger
+            </button>
+            <button
               onClick={() => handleAction('protect')}
               disabled={acting}
               className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 border-2 border-blue-500/50 rounded-xl py-4 text-white disabled:opacity-50"
             >
               <Shield className="w-5 h-5 inline mr-2" />
-              Protect Them
+              Vow Protection
+            </button>
+            <button
+              onClick={() => handleAction('stalk')}
+              disabled={acting}
+              className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Eye className="w-5 h-5 inline mr-2" />
+              Stalk Them
+            </button>
+            <button
+              onClick={() => handleAction('torment')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-red-950/60 to-red-950/80 hover:from-red-950/80 hover:to-red-950/100 border-2 border-red-600/40 rounded-xl py-4 text-red-400 disabled:opacity-50"
+            >
+              <Skull className="w-5 h-5 inline mr-2" />
+              Torment Them
+            </button>
+            <button
+              onClick={() => handleAction('manipulate')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-purple-950/60 to-purple-950/80 hover:from-purple-950/80 hover:to-purple-950/100 border-2 border-purple-600/40 rounded-xl py-4 text-purple-400 disabled:opacity-50"
+            >
+              <Eye className="w-5 h-5 inline mr-2" />
+              Manipulate Them
             </button>
             {!doppelganger.is_aware && (
               <button
