@@ -54,6 +54,7 @@ export default function WitchHome() {
   const [spellOutcome, setSpellOutcome] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('elemental');
   const [showSpellbook, setShowSpellbook] = useState(false);
+  const [showVampireInteractions, setShowVampireInteractions] = useState(false);
 
   const { data: witches = [] } = useQuery({
     queryKey: ['witches'],
@@ -139,25 +140,111 @@ export default function WitchHome() {
     }, ritual.duration);
   };
 
-  const handleSuppressVampire = async () => {
+  const handleVampireInteraction = async (type) => {
     if (!witch || !vampireState) return;
 
-    setCastingSpell({ name: 'Suppress Vampire', icon: '🦇' });
+    setCastingSpell({ name: type, icon: '✨' });
 
     setTimeout(async () => {
-      const vampirePowers = vampireState.unlocked_powers || [];
-      const powerToSuppress = vampirePowers[Math.floor(Math.random() * vampirePowers.length)];
+      const interactions = {
+        suppress: {
+          outcome: 'Temporarily suppressed vampire abilities. They weakened.',
+          relationshipChange: -15,
+          dispositionChange: 'hostile'
+        },
+        help: {
+          outcomes: [
+            'You used healing magic to soothe their hunger. They looked at you with gratitude.',
+            'Your magic eased their bloodlust. "Thank you," they whispered.',
+            'You cast a calming spell. The beast inside them quieted.'
+          ],
+          relationshipChange: 15,
+          hungerEffect: true
+        },
+        talk: {
+          outcomes: [
+            'You talked about magic and immortality. Two sides of the supernatural coin.',
+            'Deep conversation. They understand the weight of power. So do you.',
+            'You shared stories. Witches and vampires—not so different after all.'
+          ],
+          relationshipChange: 10
+        },
+        flirt: {
+          outcomes: [
+            'You teased them with magic. Sparks dancing between you. They smiled.',
+            'Flirtatious magic. Enchantments and glances. Chemistry undeniable.',
+            'The tension between witch and vampire. Electric. Dangerous. Perfect.'
+          ],
+          relationshipChange: 12
+        },
+        kiss: {
+          outcomes: [
+            'You kissed them. Magic and darkness colliding. Perfect.',
+            'Witch lips on vampire lips. Supernatural. Intoxicating.',
+            'You kissed deeply. They pulled you closer. No hesitation.'
+          ],
+          relationshipChange: 18
+        },
+        intimate: {
+          outcomes: [
+            'Witch and vampire. Bodies entwined. Magic surging with every touch.',
+            'You made love under the moon. Power and darkness became one.',
+            'Intimacy between supernatural beings. Overwhelming. Perfect.'
+          ],
+          relationshipChange: 25
+        },
+        ally: {
+          outcomes: [
+            'You offered an alliance. Witch and vampire together. They accepted.',
+            'Alliance formed. Your powers combined. Unstoppable.',
+            'You pledged to protect each other. Supernatural pact made.'
+          ],
+          relationshipChange: 20,
+          dispositionChange: 'allied'
+        }
+      };
 
-      if (powerToSuppress) {
-        setSpellOutcome(`Temporarily suppressed vampire's ${powerToSuppress} ability!`);
+      const interaction = interactions[type];
+      const outcome = interaction.outcomes 
+        ? interaction.outcomes[Math.floor(Math.random() * interaction.outcomes.length)]
+        : interaction.outcome;
+
+      setSpellOutcome(outcome);
+
+      // Update witch relationship
+      const newRel = Math.max(-100, Math.min(100, (witch.relationship || 0) + interaction.relationshipChange));
+      const updates = { relationship: newRel };
+
+      if (interaction.dispositionChange) {
+        updates.disposition = interaction.dispositionChange;
+      } else if (newRel >= 60) {
+        updates.disposition = 'allied';
+      } else if (newRel >= 30) {
+        updates.disposition = 'curious';
+      } else if (newRel >= 0) {
+        updates.disposition = 'neutral';
+      } else if (newRel >= -30) {
+        updates.disposition = 'wary';
       } else {
-        setSpellOutcome('No vampire powers to suppress.');
+        updates.disposition = 'hostile';
+      }
+
+      if (type !== 'suppress') {
+        updates.knows_vampire_secret = true;
+      }
+
+      await base44.entities.Witch.update(witch.id, updates);
+
+      if (interaction.hungerEffect) {
+        await base44.entities.VampireState.update(vampireState.id, {
+          hunger_state: 'calm'
+        });
       }
 
       await base44.entities.NightLog.create({
-        entry: `${witch.name} suppressed vampire abilities. ${vampireState.vampire_name} weakened.`,
+        entry: `${witch.name}: ${outcome}`,
         category: 'interaction',
-        intensity: 'significant'
+        intensity: type === 'intimate' ? 'significant' : 'moderate'
       });
 
       queryClient.invalidateQueries();
@@ -297,15 +384,18 @@ export default function WitchHome() {
 
             {vampireState && (
               <button
-                onClick={handleSuppressVampire}
+                onClick={() => setShowVampireInteractions(true)}
                 disabled={castingSpell}
                 className="bg-gradient-to-r from-red-900/40 to-purple-900/40 hover:from-red-900/60 hover:to-purple-900/60 border-2 border-red-500/50 rounded-xl p-6 transition-all disabled:opacity-50"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-4xl">🦇</span>
                   <div className="text-left">
-                    <h3 className="text-white font-bold">Suppress Vampire</h3>
-                    <p className="text-gray-400 text-sm">Weaken their powers</p>
+                    <h3 className="text-white font-bold">Interact with Vampire</h3>
+                    <p className="text-gray-400 text-sm">
+                      {(witch.relationship || 0) >= 50 ? 'Allies & lovers' : 
+                       (witch.relationship || 0) >= 0 ? 'Build relationship' : 'Enemies'}
+                    </p>
                   </div>
                 </div>
               </button>
@@ -444,6 +534,118 @@ export default function WitchHome() {
             <div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center border-2 border-purple-500/50">
               <p className="text-white text-lg">{spellOutcome}</p>
             </div>
+          </motion.div>
+        )}
+
+        {showVampireInteractions && vampireState && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowVampireInteractions(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto relative"
+            >
+              <button onClick={() => setShowVampireInteractions(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-2xl font-bold text-white mb-2">Interact with {vampireState.vampire_name}</h2>
+              <p className="text-gray-400 text-sm mb-6">
+                Relationship: {witch.relationship || 0} • {witch.disposition}
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setShowVampireInteractions(false);
+                    handleVampireInteraction('help');
+                  }}
+                  className="w-full bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h3 className="text-white font-medium mb-1">💚 Help with Hunger</h3>
+                  <p className="text-gray-400 text-sm">Use magic to soothe their bloodlust</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowVampireInteractions(false);
+                    handleVampireInteraction('talk');
+                  }}
+                  className="w-full bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h3 className="text-white font-medium mb-1">💬 Deep Talk</h3>
+                  <p className="text-gray-400 text-sm">Supernatural beings understand each other</p>
+                </button>
+
+                {(witch.relationship || 0) >= 20 && (
+                  <button
+                    onClick={() => {
+                      setShowVampireInteractions(false);
+                      handleVampireInteraction('flirt');
+                    }}
+                    className="w-full bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 rounded-xl p-4 text-left transition-colors"
+                  >
+                    <h3 className="text-white font-medium mb-1">💖 Flirt</h3>
+                    <p className="text-gray-400 text-sm">Magic and attraction spark</p>
+                  </button>
+                )}
+
+                {(witch.relationship || 0) >= 30 && (
+                  <button
+                    onClick={() => {
+                      setShowVampireInteractions(false);
+                      handleVampireInteraction('kiss');
+                    }}
+                    className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left transition-colors"
+                  >
+                    <h3 className="text-white font-medium mb-1">💋 Kiss</h3>
+                    <p className="text-gray-400 text-sm">Witch and vampire passion</p>
+                  </button>
+                )}
+
+                {(witch.relationship || 0) >= 50 && (
+                  <button
+                    onClick={() => {
+                      setShowVampireInteractions(false);
+                      handleVampireInteraction('intimate');
+                    }}
+                    className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left transition-colors"
+                  >
+                    <h3 className="text-white font-medium mb-1">🔥 Be Intimate</h3>
+                    <p className="text-gray-400 text-sm">Supernatural passion unleashed</p>
+                  </button>
+                )}
+
+                <button
+                  onClick={() => {
+                    setShowVampireInteractions(false);
+                    handleVampireInteraction('ally');
+                  }}
+                  className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h3 className="text-white font-medium mb-1">🤝 Form Alliance</h3>
+                  <p className="text-gray-400 text-sm">Witch and vampire united</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowVampireInteractions(false);
+                    handleVampireInteraction('suppress');
+                  }}
+                  className="w-full bg-gray-900/40 hover:bg-gray-900/60 border border-gray-500/30 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h3 className="text-white font-medium mb-1">⚡ Suppress Powers (Hostile)</h3>
+                  <p className="text-gray-400 text-sm">Weaken them—damages relationship</p>
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
