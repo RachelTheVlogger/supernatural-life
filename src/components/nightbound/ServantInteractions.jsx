@@ -10,12 +10,12 @@ export default function ServantInteractions({ servants, vampireState, onClose })
   const [interacting, setInteracting] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const getInteractions = (pair) => {
+  const getInteractions = (pair, vState) => {
     // Get pronoun helpers
     const getPronouns = () => {
-      if (!vampireState) return { subject: 'they', object: 'them', possessive: 'their' };
-      if (vampireState.gender === 'female') return { subject: 'she', object: 'her', possessive: 'her' };
-      if (vampireState.gender === 'custom') return { subject: 'they', object: 'them', possessive: 'their' };
+      if (!vState) return { subject: 'they', object: 'them', possessive: 'their' };
+      if (vState.gender === 'woman') return { subject: 'she', object: 'her', possessive: 'her' };
+      if (vState.gender === 'custom') return { subject: 'they', object: 'them', possessive: 'their' };
       return { subject: 'he', object: 'him', possessive: 'his' };
     };
     const p = getPronouns();
@@ -175,7 +175,7 @@ export default function ServantInteractions({ servants, vampireState, onClose })
     
     setTimeout(async () => {
       const [servant1, servant2] = selectedPair;
-      const interactions = getInteractions(selectedPair);
+      const interactions = getInteractions(selectedPair, vampireState);
       const interaction = interactions.find(i => i.id === interactionId);
       
       // Determine outcome based on relationship levels and jealousy
@@ -386,7 +386,7 @@ export default function ServantInteractions({ servants, vampireState, onClose })
               {selectedPair[0].name} & {selectedPair[1].name}
             </h3>
 
-            {getInteractions(selectedPair).map(interaction => (
+            {getInteractions(selectedPair, vampireState).map(interaction => (
               <button
                 key={interaction.id}
                 onClick={() => handleInteraction(interaction.id)}
