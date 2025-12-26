@@ -28,12 +28,12 @@ const PERSONALITIES = [
 const JOBS = ['barista', 'nurse', 'teacher', 'artist', 'writer', 'dancer', 'bartender', 'librarian'];
 
 const STALKING_METHODS = [
-  { id: 'observe', label: 'Just watch', risk: 'low', awareness: 5 },
-  { id: 'photo', label: 'Take photos', risk: 'medium', awareness: 10 },
-  { id: 'approach', label: 'Get closer', risk: 'high', awareness: 15 },
-  { id: 'leave_gift', label: 'Leave anonymous gift', risk: 'medium', awareness: 8, obsession_boost: 10 },
-  { id: 'follow_home', label: 'Follow them home', risk: 'very_high', awareness: 20 },
-  { id: 'letter', label: 'Leave a letter', risk: 'low', awareness: 12, obsession_boost: 15 }
+  { id: 'observe', label: 'Watch from afar', risk: 'low', awareness: 5, desc: 'They look for you' },
+  { id: 'show', label: 'Let them see you', risk: 'medium', awareness: 15, desc: 'They smile when they spot you' },
+  { id: 'closer', label: 'Get closer', risk: 'high', awareness: 20, desc: 'They slow down for you' },
+  { id: 'exchange', label: 'Exchange glances', risk: 'low', awareness: 10, obsession_boost: 10, desc: 'Eye contact that lingers' },
+  { id: 'gift', label: 'Accept their gift', risk: 'medium', awareness: 12, obsession_boost: 15, desc: 'They left something for you' },
+  { id: 'follow', label: 'Walk same route', risk: 'low', awareness: 8, desc: 'They take the long way home hoping you\'ll follow' }
 ];
 
 export default function StalkingSystem({ vampireState, onClose }) {
@@ -117,103 +117,54 @@ export default function StalkingSystem({ vampireState, onClose }) {
       const newObsession = Math.min(100, selectedTarget.obsession + obsessionGain);
       const newThrill = Math.min(100, selectedTarget.fear_vs_thrill + thrillShift);
 
-      // Check for consequences (getting caught, police, etc)
-      const caught = method.risk === 'very_high' && Math.random() > 0.7;
-      const policeCalled = newAwareness > 80 && selectedTarget.fear_vs_thrill < 40 && Math.random() > 0.6;
-
-      if (caught || policeCalled) {
-        const consequenceOutcomes = caught ? [
-          `${selectedTarget.name} saw you clearly. Their face went pale. They started running. You vanished before they could scream. Exposure risk increased.`,
-          `You got too close. ${selectedTarget.name} turned suddenly. "Who are you?!" they shouted. People looked. You had to leave. Fast.`,
-          `Caught. ${selectedTarget.name} took a photo. Your face. Evidence. This could be a problem.`
-        ] : [
-          `${selectedTarget.name} called the police. "Someone's following me." You heard the whole conversation. Time to lay low.`,
-          `Police patrol increased in the area. ${selectedTarget.name} filed a report. Your hunting grounds are compromised.`,
-          `A restraining order. ${selectedTarget.name} got one. Legally, you can't be near them. That won't stop you.`
-        ];
-
-        const result = consequenceOutcomes[Math.floor(Math.random() * consequenceOutcomes.length)];
-        
-        await base44.entities.VampireState.update(vampireState.id, {
-          exposure_level: Math.min(100, (vampireState.exposure_level || 0) + (caught ? 15 : 10))
-        });
-
-        setConsequence(result);
-        
-        await base44.entities.NightLog.create({
-          entry: result,
-          category: 'observation',
-          intensity: 'significant'
-        });
-
-        queryClient.invalidateQueries();
-        
-        setTimeout(() => {
-          setStalking(false);
-          setConsequence(null);
-          setSelectedTarget(null);
-        }, 5000);
-        return;
-      }
-
-      // Generate outcome based on method and target state
+      // Generate outcome based on method and target state - MUTUAL DYNAMIC
       let result = '';
       
-      if (method.id === 'photo') {
-        const photos = [
-          `You captured ${selectedTarget.name} through the lens. Sleeping. Peaceful. Beautiful. You saved the photo. Evidence of your obsession.`,
-          `Click. ${selectedTarget.name} framed perfectly. They'll never know this photo exists. Only you will treasure it.`,
-          `The photo came out perfect. ${selectedTarget.name} mid-laugh. You caught a moment they don't know you witnessed.`
+      if (method.id === 'show') {
+        const shows = [
+          `You let ${selectedTarget.name} see you clearly. Their eyes lit up. They waved. Actually waved. Like they'd been waiting for you to show yourself.`,
+          `${selectedTarget.name} spotted you. Stopped walking. Smiled. Mouthed "finally." They've been hoping you'd reveal yourself.`,
+          `You stepped into the light. ${selectedTarget.name} saw you. Their whole face changed. Relief. Joy. "There you are," they breathed.`
         ];
-        result = photos[Math.floor(Math.random() * photos.length)];
-        setEvidenceCollected(prev => [...prev, `Photo: ${selectedTarget.name} at ${location.label}`]);
-      } else if (method.id === 'leave_gift') {
+        result = shows[Math.floor(Math.random() * shows.length)];
+      } else if (method.id === 'exchange') {
+        const exchanges = [
+          `Your eyes met across ${location.label}. ${selectedTarget.name} held your gaze. Neither of you looked away. The moment stretched. Electric.`,
+          `${selectedTarget.name} locked eyes with you. Smiled. Didn't look away. The message was clear: they want you to keep watching.`,
+          `Eye contact. ${selectedTarget.name} bit their lip. Looked you up and down. Deliberate. Inviting. They know exactly what they're doing.`
+        ];
+        result = exchanges[Math.floor(Math.random() * exchanges.length)];
+      } else if (method.id === 'gift') {
         const gifts = [
-          `You left flowers at their door. No note. They'll wonder. They'll think about you all day.`,
-          `A small gift. Anonymous. ${selectedTarget.name} found it. Touched it. Smiled. They like the mystery.`,
-          `You left something meaningful. ${selectedTarget.name} held it close. Confused. Intrigued. Hooked.`
+          `${selectedTarget.name} left a note for you. "I know you're watching. I like it. Meet me?" They're making the first move.`,
+          `A gift at your usual spot. From ${selectedTarget.name}. "For my shadow," the note read. They're playing along.`,
+          `${selectedTarget.name} left something meaningful. A token. An invitation. They want you to know they're interested.`
         ];
         result = gifts[Math.floor(Math.random() * gifts.length)];
-      } else if (method.id === 'letter') {
-        const letters = [
-          `"I watch you. I see you. You're beautiful when you don't know you're being seen." They read it three times. Kept it.`,
-          `Your letter was poetic. Obsessive. Perfect. ${selectedTarget.name} pressed it to their chest. They're falling for the mystery.`,
-          `Words from shadow. ${selectedTarget.name} read your letter by candlelight. Their hands trembled. Excitement or fear? Both.`
+        setEvidenceCollected(prev => [...prev, `Gift from ${selectedTarget.name}`]);
+      } else if (method.id === 'closer') {
+        const closers = [
+          `You moved closer. ${selectedTarget.name} turned. Smiled. Didn't back away. "I was hoping you'd come closer," they said softly.`,
+          `Close enough to touch. ${selectedTarget.name} stayed still. Waiting. "I like knowing you're watching me," they whispered.`,
+          `You approached. ${selectedTarget.name}'s breath quickened. Excitement, not fear. "Don't stop," they said. "Please."`
         ];
-        result = letters[Math.floor(Math.random() * letters.length)];
-      } else if (method.id === 'approach') {
-        const approaches = [
-          `You got close enough to smell them. ${selectedTarget.name} shivered. Spun around. You were already gone. A ghost.`,
-          `Your shadow touched theirs. ${selectedTarget.name} froze. Felt your presence. Didn't run. Just stood there. Waiting.`,
-          `Close. So close. ${selectedTarget.name}'s breath caught. "I know you're there," they whispered. But they didn't call for help.`
-        ];
-        result = approaches[Math.floor(Math.random() * approaches.length)];
-      } else if (method.id === 'follow_home') {
+        result = closers[Math.floor(Math.random() * closers.length)];
+      } else if (method.id === 'follow') {
         const follows = [
-          `You followed ${selectedTarget.name} home. Every turn. Every street. Now you know where they sleep. Perfect.`,
-          `They walked. You followed. ${selectedTarget.name} looked back twice. Saw nothing. But you were there. Always there.`,
-          `All the way home. ${selectedTarget.name} paused at their door. Looked into the darkness. Looking for you. Almost hoping.`
+          `${selectedTarget.name} took the scenic route. Walking slowly. Looking back. Making sure you were following. They want you there.`,
+          `They walked their usual path. But slower. Pausing at corners. Giving you time to catch up. This is intentional.`,
+          `${selectedTarget.name} kept looking back. Not scared. Checking you're still there. They'd be disappointed if you weren't.`
         ];
         result = follows[Math.floor(Math.random() * follows.length)];
       } else {
-        const outcomes = {
-          low: [
-            `You watched ${selectedTarget.name} ${location.label}. They seemed relaxed. Happy, even. Like they knew you were there.`,
-            `${selectedTarget.name} smiled to themselves. As if they sensed your presence and liked it.`,
-            `You observed from a distance. ${selectedTarget.name} looked around, hopeful. Searching for you.`
-          ],
-          medium: [
-            `You followed ${selectedTarget.name} ${location.label}. They paused. Looked over their shoulder. Smiled slightly.`,
-            `${selectedTarget.name} walked slower than usual. Giving you time to watch. They know. They want this.`,
-            `You stayed close. ${selectedTarget.name} touched their neck absently. Thinking of you.`
-          ],
-          high: [
-            `You stood ${location.label} watching ${selectedTarget.name}. They turned. Looked right at you. Didn't scream. Just... stared back.`,
-            `${selectedTarget.name} saw you ${location.label}. Their breath caught. Not fear. Excitement. They left their curtains open.`,
-            `Your eyes met. ${selectedTarget.name} didn't move away. They moved closer. Pressed their hand to the window.`
-          ]
-        };
-        result = outcomes[intensity][Math.floor(Math.random() * outcomes[intensity].length)];
+        const outcomes = [
+          `${selectedTarget.name} positioned themselves where you could see them best. They know you're watching. They're performing for you.`,
+          `You watched. ${selectedTarget.name} stretched. Moved deliberately. Every motion designed to catch your eye. They know their audience.`,
+          `${selectedTarget.name} glanced toward the shadows. Toward you. Smiled to themselves. They like being your focus.`,
+          `They're putting on a show. ${selectedTarget.name} knows you're there. Every movement is for you. They crave your attention.`,
+          `${selectedTarget.name} looked directly at your hiding spot. Winked. They can't see you clearly, but they know you're there. And they like it.`
+        ];
+        result = outcomes[Math.floor(Math.random() * outcomes.length)];
       }
 
       await base44.entities.StalkTarget.update(selectedTarget.id, {
@@ -363,8 +314,8 @@ export default function StalkingSystem({ vampireState, onClose }) {
           </button>
         )}
 
-        <h2 className="text-2xl font-bold text-white mb-2">👁️ Stalking</h2>
-        <p className="text-gray-400 text-sm mb-6">They don't mind being watched. In fact, they crave it.</p>
+        <h2 className="text-2xl font-bold text-white mb-2">👁️ Mutual Obsession</h2>
+        <p className="text-gray-400 text-sm mb-6">They want your attention as much as you want to give it. A game you both play.</p>
 
         {!selectedTarget && !outcome && !viewingDetails && (
           <>
@@ -473,17 +424,26 @@ export default function StalkingSystem({ vampireState, onClose }) {
               <h3 className="text-white font-bold text-lg mb-2">{selectedTarget.name}</h3>
               <p className="text-gray-400 text-sm mb-3">
                 {selectedTarget.knows_its_you 
-                  ? "They know it's you watching them." 
-                  : "They sense someone watching. They don't know it's you yet."}
+                  ? "They know exactly who you are. And they keep coming back for more." 
+                  : "They sense you watching. They're hoping you'll reveal yourself."}
               </p>
               {selectedTarget.wants_to_meet && (
                 <p className="text-pink-400 text-sm mb-3">
-                  Their obsession is high. They want to finally meet you.
+                  They're ready. They want to stop playing and finally meet you face to face.
                 </p>
               )}
+              <div className="bg-purple-950/40 rounded-lg p-3 border border-purple-500/20">
+                <p className="text-purple-300 text-xs mb-1">Their Interest Level</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 bg-gray-700 rounded-full h-2">
+                    <div style={{ width: `${selectedTarget.obsession || 0}%` }} className="bg-gradient-to-r from-pink-500 to-red-500 h-2 rounded-full" />
+                  </div>
+                  <span className="text-red-400 font-bold">{selectedTarget.obsession || 0}%</span>
+                </div>
+              </div>
             </div>
 
-            <h4 className="text-white text-sm font-medium mb-3">Where will you watch them?</h4>
+            <h4 className="text-white text-sm font-medium mb-3">Where are they waiting for you?</h4>
             <div className="space-y-2 mb-6">
               {LOCATIONS.map(loc => (
                 <button
@@ -560,7 +520,7 @@ export default function StalkingSystem({ vampireState, onClose }) {
 
             <div className="bg-gray-800 rounded-xl p-4 mb-4">
               <h3 className="text-white font-bold mb-1">{selectingMethod.label}</h3>
-              <p className="text-gray-400 text-sm">{selectedTarget.name} will be here. How will you approach?</p>
+              <p className="text-gray-400 text-sm">{selectedTarget.name} is here. They're hoping you show up.</p>
             </div>
 
             <div className="space-y-2">
@@ -568,19 +528,19 @@ export default function StalkingSystem({ vampireState, onClose }) {
                 <button
                   key={method.id}
                   onClick={() => handleStalk(selectingMethod, method)}
-                  className={`w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-all ${
-                    method.risk === 'very_high' ? 'border-2 border-red-500/30' : ''
-                  }`}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-white text-sm">{method.label}</span>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="text-white text-sm font-medium block mb-1">{method.label}</span>
+                      <p className="text-gray-500 text-xs">{method.desc}</p>
+                    </div>
                     <span className={`text-xs px-2 py-1 rounded ${
-                      method.risk === 'very_high' ? 'bg-red-900/60 text-red-200' :
-                      method.risk === 'high' ? 'bg-orange-900/40 text-orange-300' :
-                      method.risk === 'medium' ? 'bg-yellow-900/40 text-yellow-300' :
-                      'bg-green-900/40 text-green-300'
+                      method.risk === 'high' ? 'bg-pink-900/40 text-pink-300' :
+                      method.risk === 'medium' ? 'bg-purple-900/40 text-purple-300' :
+                      'bg-gray-700 text-gray-300'
                     }`}>
-                      {method.risk} risk
+                      {method.risk === 'high' ? 'intimate' : method.risk === 'medium' ? 'bold' : 'subtle'}
                     </span>
                   </div>
                 </button>
@@ -662,13 +622,19 @@ export default function StalkingSystem({ vampireState, onClose }) {
                 )}
 
                 <div className="pt-3 border-t border-gray-700">
-                  <p className="text-gray-400 text-xs mb-2">Current State:</p>
+                  <p className="text-gray-400 text-xs mb-2">How They Feel:</p>
                   <p className="text-gray-300 text-sm">
-                    {viewingDetails.obsession > 80 ? '💖 Completely obsessed with you' :
-                     viewingDetails.obsession > 60 ? '❤️ Can\'t stop thinking about you' :
-                     viewingDetails.obsession > 40 ? '💕 Very interested in you' :
-                     viewingDetails.obsession > 20 ? '💗 Curious about you' :
-                     '💙 Barely aware of you'}
+                    {viewingDetails.obsession > 80 ? '💖 Desperately wants to be with you' :
+                     viewingDetails.obsession > 60 ? '❤️ Actively seeking your attention' :
+                     viewingDetails.obsession > 40 ? '💕 Hoping you notice them' :
+                     viewingDetails.obsession > 20 ? '💗 Intrigued by you' :
+                     '💙 Just starting to notice you'}
+                  </p>
+                  <p className="text-gray-400 text-xs mt-2">
+                    {viewingDetails.enjoyment > 80 ? 'Loves every moment of this game' :
+                     viewingDetails.enjoyment > 60 ? 'Really enjoying the attention' :
+                     viewingDetails.enjoyment > 40 ? 'Finding it exciting' :
+                     'Still warming up to it'}
                   </p>
                 </div>
               </div>

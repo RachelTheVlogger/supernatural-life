@@ -630,14 +630,14 @@ export default function VampireHome() {
                     e.stopPropagation();
                     setShowStalking(true);
                   }}
-                  className="w-full bg-gradient-to-r from-purple-950/40 to-gray-950/40 hover:from-purple-950/60 hover:to-gray-950/60 border-2 border-purple-500/50 rounded-2xl p-6 transition-all touch-manipulation"
+                  className="w-full bg-gradient-to-r from-purple-950/40 to-pink-950/40 hover:from-purple-950/60 hover:to-pink-950/60 border-2 border-purple-500/50 rounded-2xl p-6 transition-all touch-manipulation"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="text-4xl">👁️</div>
+                      <div className="text-4xl">💕</div>
                       <div className="text-left">
-                        <h3 className="text-white text-xl font-bold mb-1">Stalking</h3>
-                        <p className="text-gray-300 text-sm">Watch humans from the shadows. They secretly love the attention.</p>
+                        <h3 className="text-white text-xl font-bold mb-1">Mutual Obsession</h3>
+                        <p className="text-gray-300 text-sm">Humans who crave your attention. They want to be watched.</p>
                       </div>
                     </div>
                   </div>
