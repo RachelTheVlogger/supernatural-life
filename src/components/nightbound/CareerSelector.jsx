@@ -82,7 +82,10 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
           {Object.entries(CAREERS).map(([key, career]) => (
             <button
               key={key}
-              onClick={() => handleSelectCareer(key)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelectCareer(key);
+              }}
               className={`bg-gradient-to-br ${career.color} border-2 ${career.borderColor} rounded-xl p-6 text-center hover:scale-105 transition-all`}
             >
               <div className="text-5xl mb-3">{career.icon}</div>

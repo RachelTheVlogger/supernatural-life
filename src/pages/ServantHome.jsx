@@ -39,13 +39,28 @@ const VAMPIRE_ACTIVITIES = [
   { id: 'explore', label: 'Explore the night', icon: Home, duration: 3500, outcomes: ['The city at night. Your domain now. Everything has changed.', 'You moved through darkness like you were born to it. Maybe you were.', 'The night embraced you. You embraced it back.'] }
 ];
 
-const BUSINESS_ACTIVITIES = [
-  { id: 'manage', label: 'Choose Career / Manage Business', icon: Sparkles, duration: 0, isModal: true },
-  { id: 'onlyfangs', label: 'OnlyFangs (adult content)', icon: Camera, duration: 0, isModal: true },
-  { id: 'youtube', label: 'YouTube Channel', icon: Camera, duration: 0, isModal: true },
-  { id: 'patreon', label: 'Patreon', icon: Coffee, duration: 0, isModal: true },
-  { id: 'snapchat', label: 'Premium Snapchat', icon: MessageCircle, duration: 0, isModal: true }
-];
+const getBusinessActivities = (servantCareer) => {
+  const activities = [];
+  
+  if (servantCareer?.jewelry_business_active) {
+    activities.push({ id: 'jewelry', label: '💎 Jewelry Business', icon: Sparkles, duration: 0, isModal: true });
+  } else if (servantCareer?.tattoo_business_active) {
+    activities.push({ id: 'tattoo', label: '🎨 Tattoo Studio', icon: Sparkles, duration: 0, isModal: true });
+  } else if (servantCareer?.author_career_active) {
+    activities.push({ id: 'author', label: '📚 Author Career', icon: BookOpen, duration: 0, isModal: true });
+  } else {
+    activities.push({ id: 'choose_career', label: 'Choose Career', icon: Sparkles, duration: 0, isModal: true });
+  }
+  
+  activities.push(
+    { id: 'onlyfangs', label: 'OnlyFangs (adult content)', icon: Camera, duration: 0, isModal: true },
+    { id: 'youtube', label: 'YouTube Channel', icon: Camera, duration: 0, isModal: true },
+    { id: 'patreon', label: 'Patreon', icon: Coffee, duration: 0, isModal: true },
+    { id: 'snapchat', label: 'Premium Snapchat', icon: MessageCircle, duration: 0, isModal: true }
+  );
+  
+  return activities;
+};
 
 export default function ServantHome() {
   const navigate = useNavigate();
@@ -135,16 +150,14 @@ export default function ServantHome() {
         setShowDating(true);
       } else if (chore.id === 'npc') {
         setShowNPCModal(true);
-      } else if (chore.id === 'manage') {
-        if (!servantCareer || (!servantCareer.jewelry_business_active && !servantCareer.tattoo_business_active && !servantCareer.author_career_active)) {
-          setShowCareerSelector(true);
-        } else if (servantCareer.jewelry_business_active) {
-          setShowBusinessModal(true);
-        } else if (servantCareer.tattoo_business_active) {
-          setShowTattoo(true);
-        } else if (servantCareer.author_career_active) {
-          setShowAuthor(true);
-        }
+      } else if (chore.id === 'choose_career') {
+        setShowCareerSelector(true);
+      } else if (chore.id === 'jewelry') {
+        setShowBusinessModal(true);
+      } else if (chore.id === 'tattoo') {
+        setShowTattoo(true);
+      } else if (chore.id === 'author') {
+        setShowAuthor(true);
       } else if (chore.id === 'onlyfangs') {
         setShowOnlyFangs(true);
       } else if (chore.id === 'youtube') {
@@ -218,9 +231,10 @@ export default function ServantHome() {
     );
   }
   
+  const businessActivities = getBusinessActivities(servantCareer);
   const activities = servant.is_turned 
-    ? [...VAMPIRE_ACTIVITIES, ...BUSINESS_ACTIVITIES] 
-    : [...CHORES, ...BUSINESS_ACTIVITIES];
+    ? [...VAMPIRE_ACTIVITIES, ...businessActivities] 
+    : [...CHORES, ...businessActivities];
   
   return (
     <div className="min-h-screen p-4 md:p-6 relative overflow-hidden">
@@ -309,12 +323,9 @@ export default function ServantHome() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: i * 0.05 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleChore(chore);
-            }}
+            onClick={() => handleChore(chore)}
             disabled={!!doingChore}
-            className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg touch-manipulation active:scale-95 active:opacity-90 ${
+            className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg touch-manipulation ${
               doingChore === chore.id ? 'opacity-70 scale-95' : 'bitlife-btn'
             } ${!!doingChore && doingChore !== chore.id ? 'opacity-30' : ''}`}
           >
