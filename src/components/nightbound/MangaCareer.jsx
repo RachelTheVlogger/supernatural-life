@@ -179,8 +179,12 @@ export default function MangaCareer({ servant, onClose }) {
               {GENRES.map(genre => (
                 <button
                   key={genre.id}
-                  onClick={() => handleStartSeries(genre)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStartSeries(genre);
+                  }}
+                  disabled={working}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors disabled:opacity-50"
                 >
                   <h4 className="text-white font-medium">{genre.label}</h4>
                   <p className="text-gray-400 text-sm">{genre.desc}</p>
