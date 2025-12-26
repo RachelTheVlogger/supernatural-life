@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Crown, Droplets, Music } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tantml:react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export default function VampireClubScene({ vampireState, onClose }) {
   const queryClient = useQueryClient();
