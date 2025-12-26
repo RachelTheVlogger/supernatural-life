@@ -111,12 +111,22 @@ export default function KillerCouple() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Heart className="w-8 h-8 text-red-400" />
-            <h1 className="text-4xl font-bold text-rose-100">You & Them</h1>
-            <Skull className="w-8 h-8 text-red-400" />
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="text-center">
+              <p className="text-rose-100 text-2xl font-bold">Joe</p>
+              <p className="text-rose-400 text-sm">The Protector</p>
+            </div>
+            <div className="flex items-center gap-2 mx-4">
+              <Heart className="w-8 h-8 text-red-400" />
+              <Skull className="w-8 h-8 text-red-400" />
+            </div>
+            <div className="text-center">
+              <p className="text-rose-100 text-2xl font-bold">Love</p>
+              <p className="text-rose-400 text-sm">The Partner</p>
+            </div>
           </div>
-          <p className="text-rose-300 italic">Two killers. One love. No secrets.</p>
+          <p className="text-rose-300 italic text-lg">Two killers. One love. No secrets.</p>
+          <p className="text-rose-400 text-sm mt-2">Unlike the show, this time they make it work.</p>
         </motion.div>
 
         {/* Stats */}
@@ -126,18 +136,22 @@ export default function KillerCouple() {
           transition={{ delay: 0.2 }}
           className="bg-black/40 backdrop-blur-sm border border-rose-500/30 rounded-2xl p-6 mb-8"
         >
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <p className="text-rose-400 text-sm">Bond</p>
               <p className="text-rose-100 text-2xl font-bold">100%</p>
             </div>
             <div className="text-center">
-              <p className="text-rose-400 text-sm">Kills Together</p>
-              <p className="text-rose-100 text-2xl font-bold">17</p>
+              <p className="text-rose-400 text-sm">Joe's Kills</p>
+              <p className="text-rose-100 text-2xl font-bold">9</p>
             </div>
             <div className="text-center">
-              <p className="text-rose-400 text-sm">Secrets Shared</p>
-              <p className="text-rose-100 text-2xl font-bold">∞</p>
+              <p className="text-rose-400 text-sm">Love's Kills</p>
+              <p className="text-rose-100 text-2xl font-bold">8</p>
+            </div>
+            <div className="text-center">
+              <p className="text-rose-400 text-sm">Together</p>
+              <p className="text-rose-100 text-2xl font-bold">12</p>
             </div>
           </div>
         </motion.div>
