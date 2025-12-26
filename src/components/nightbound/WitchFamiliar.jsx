@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Heart } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tantml:react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const FAMILIARS = [
   { type: 'cat', name: 'Shadow', icon: '🐱', power: 15, ability: 'Night vision & stealth' },
