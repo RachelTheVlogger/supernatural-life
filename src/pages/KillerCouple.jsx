@@ -45,51 +45,6 @@ export default function KillerCouple() {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState(null);
 
-  const { data: couples = [], isLoading } = useQuery({
-    queryKey: ['killerCouples'],
-    queryFn: async () => {
-      // Check if we already have a couple entity, if not we'll use SerialKiller
-      try {
-        const killers = await base44.entities.SerialKiller.list();
-        // For now, we'll just use the first killer and assume they have a partner
-        return killers.length > 0 ? [{ 
-          id: killers[0].id,
-          name1: killers[0].killer_name,
-          name2: 'Your Partner',
-          bond: 100,
-          kills_together: 0
-        }] : [];
-      } catch (e) {
-        return [];
-      }
-    }
-  });
-
-  const couple = couples[0];
-
-  React.useEffect(() => {
-    const initCouple = async () => {
-      if (!isLoading && couples.length === 0) {
-        // Create initial killer couple
-        try {
-          const killer = await base44.entities.SerialKiller.create({
-            killer_name: 'You',
-            method: 'varies',
-            victim_type: 'Those who deserve it',
-            kill_count: 12,
-            suspicion_level: 15,
-            control_level: 85,
-            signature: 'Clean. Calculated. Together.'
-          });
-          queryClient.invalidateQueries(['killerCouples']);
-        } catch (e) {
-          console.error('Failed to create couple:', e);
-        }
-      }
-    };
-    initCouple();
-  }, [couples.length, isLoading, queryClient]);
-
   const handleActivity = async (activity) => {
     setProcessing(true);
     
@@ -116,14 +71,6 @@ export default function KillerCouple() {
       }
     }, 2000);
   };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-950 via-red-950 to-black p-6 relative overflow-hidden">
