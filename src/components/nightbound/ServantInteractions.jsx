@@ -4,7 +4,7 @@ import { X, MessageCircle, Heart, Coffee, Eye, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
-export default function ServantInteractions({ servants, vampireState, onClose }) {
+export default function ServantInteractions({ servants, vampireState, currentServant, onClose }) {
   const queryClient = useQueryClient();
   const [selectedPair, setSelectedPair] = useState(null);
   const [interacting, setInteracting] = useState(false);
