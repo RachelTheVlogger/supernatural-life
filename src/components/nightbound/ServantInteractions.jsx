@@ -12,13 +12,14 @@ export default function ServantInteractions({ servants, vampireState, onClose })
 
   // Get pronoun helpers
   const getPronouns = () => {
+    if (!vampireState) return { subject: 'they', object: 'them', possessive: 'their' };
     if (vampireState.gender === 'female') return { subject: 'she', object: 'her', possessive: 'her' };
     if (vampireState.gender === 'custom') return { subject: 'they', object: 'them', possessive: 'their' };
     return { subject: 'he', object: 'him', possessive: 'his' };
   };
   const pronouns = getPronouns();
 
-  const interactions = [
+  const getInteractions = () => [
     { 
       id: 'vampire-talk',
       icon: Sparkles,
@@ -167,6 +168,8 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       }
     },
   ];
+
+  const interactions = getInteractions();
 
   const handleInteraction = async (interactionId) => {
     setInteracting(true);
