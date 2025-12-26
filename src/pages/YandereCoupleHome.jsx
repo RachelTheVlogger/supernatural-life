@@ -169,46 +169,22 @@ export default function YandereCoupleHome() {
         </button>
 
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Yandere Couple</h1>
-          <p className="text-gray-400">
-            {vampireStage === 'human' && 'Book 1: Obsessive. Possessive. Completely consumed by each other.'}
-            {vampireStage === 'deciding' && 'Book 2: Considering immortality. Forever together. Forever obsessed.'}
-            {vampireStage === 'vampire' && 'Book 3: Vampires now. Eternal obsession. Eternal darkness.'}
-          </p>
+          <h1 className="text-3xl font-bold text-white mb-2">Eric & Ruby</h1>
+          <p className="text-gray-400">Book 1: Obsessive. Possessive. Completely consumed by each other.</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-8">
           <div className="bg-gray-800 rounded-xl p-6 text-center border-2 border-red-500">
             <Heart className="w-8 h-8 text-red-400 mx-auto mb-2" />
-            <h3 className="text-white font-bold">Him</h3>
+            <h3 className="text-white font-bold">Eric</h3>
             <p className="text-gray-400 text-sm">The Obsessive One</p>
           </div>
           <div className="bg-gray-800 rounded-xl p-6 text-center border-2 border-pink-500">
             <Heart className="w-8 h-8 text-pink-400 mx-auto mb-2" />
-            <h3 className="text-white font-bold">Her</h3>
+            <h3 className="text-white font-bold">Ruby</h3>
             <p className="text-gray-400 text-sm">The Possessed One</p>
           </div>
         </div>
-
-        {vampireStage === 'human' && (
-          <button
-            onClick={() => handleTransition('deciding')}
-            className="w-full mb-6 bg-purple-900/40 hover:bg-purple-900/60 border-2 border-purple-500/50 rounded-xl p-4 transition-all"
-          >
-            <h3 className="text-white font-bold">→ Progress to Book 2</h3>
-            <p className="text-gray-400 text-sm">Consider becoming vampires</p>
-          </button>
-        )}
-
-        {vampireStage === 'deciding' && (
-          <button
-            onClick={() => handleTransition('vampire')}
-            className="w-full mb-6 bg-red-900/40 hover:bg-red-900/60 border-2 border-red-500/50 rounded-xl p-4 transition-all"
-          >
-            <h3 className="text-white font-bold">→ Progress to Book 3</h3>
-            <p className="text-gray-400 text-sm">Become vampires together</p>
-          </button>
-        )}
 
         {!processing && (
           <div className="mb-8 max-h-[65vh] overflow-y-auto">
