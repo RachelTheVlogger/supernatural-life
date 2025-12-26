@@ -61,6 +61,9 @@ export default function ServantHome() {
   const [showTattoo, setShowTattoo] = useState(false);
   const [showAuthor, setShowAuthor] = useState(false);
   
+  const urlParams = new URLSearchParams(window.location.search);
+  const servantId = urlParams.get('id');
+  
   const { data: career = [] } = useQuery({
     queryKey: ['career', servantId],
     queryFn: () => base44.entities.ServantCareer.filter({ servant_id: servantId }),
@@ -68,9 +71,6 @@ export default function ServantHome() {
   });
   
   const servantCareer = career[0];
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  const servantId = urlParams.get('id');
 
   // Redirect to Night if no servant ID or invalid ID
   useEffect(() => {
