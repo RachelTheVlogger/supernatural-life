@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import HerbGathering from '@/components/nightbound/HerbGathering';
 
 const SPELLS = {
   elemental: [
@@ -70,6 +71,7 @@ export default function WitchHome() {
   const [selectedCategory, setSelectedCategory] = useState('elemental');
   const [showSpellbook, setShowSpellbook] = useState(false);
   const [showVampireInteractions, setShowVampireInteractions] = useState(false);
+  const [showHerbGathering, setShowHerbGathering] = useState(false);
 
   const { data: witches = [] } = useQuery({
     queryKey: ['witches'],
@@ -79,6 +81,15 @@ export default function WitchHome() {
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
     queryFn: () => base44.entities.VampireState.list()
+  });
+
+  const { data: herbs = [] } = useQuery({
+    queryKey: ['witchHerbs'],
+    queryFn: async () => {
+      if (!witches[0]) return [];
+      return base44.entities.WitchHerb.filter({ witch_id: witches[0].id });
+    },
+    enabled: witches.length > 0
   });
 
   const witch = witches[0];
@@ -382,7 +393,7 @@ export default function WitchHome() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="grid md:grid-cols-2 gap-4 mb-8"
+            className="grid md:grid-cols-3 gap-4 mb-8"
           >
             <button
               onClick={() => setShowSpellbook(true)}
@@ -393,6 +404,19 @@ export default function WitchHome() {
                 <div className="text-left">
                   <h3 className="text-white font-bold">Spellbook</h3>
                   <p className="text-gray-400 text-sm">Cast spells & magic</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowHerbGathering(true)}
+              className="bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border-2 border-green-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">🌿</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Herbs</h3>
+                  <p className="text-gray-400 text-sm">{herbs.length} types collected</p>
                 </div>
               </div>
             </button>
@@ -560,6 +584,13 @@ export default function WitchHome() {
               <p className="text-white text-lg">{spellOutcome}</p>
             </div>
           </motion.div>
+        )}
+
+        {showHerbGathering && (
+          <HerbGathering
+            witch={witch}
+            onClose={() => setShowHerbGathering(false)}
+          />
         )}
 
         {showVampireInteractions && vampireState && (
