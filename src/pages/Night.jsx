@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
@@ -230,6 +230,7 @@ export default function Night() {
     { icon: Droplets, label: 'Feed', modal: 'feeding' },
     { icon: Users, label: 'Servants', modal: 'servants' },
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
+    { icon: Heart, label: 'Mutual Watch', modal: 'stalking' },
     { icon: Zap, label: 'Powers', modal: 'powers' },
     { icon: Users, label: 'Town People', modal: 'npcs' },
     { icon: Home, label: 'Hospital Shift', modal: 'hospital' },
@@ -471,13 +472,7 @@ export default function Night() {
           <span className="text-2xl">⏳</span>
           <p className="text-white text-xs mt-1">Aging</p>
         </button>
-        <button
-          onClick={() => setShowStalking(true)}
-          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">💕</span>
-          <p className="text-white text-xs mt-1">Mutual Watch</p>
-        </button>
+
         </motion.div>
       
 
@@ -518,6 +513,12 @@ export default function Night() {
         )}
         {activeModal === 'advance' && (
           <AdvanceNight
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'stalking' && (
+          <StalkingSystem
             vampireState={vampireState}
             onClose={() => setActiveModal(null)}
           />
@@ -608,9 +609,7 @@ export default function Night() {
         {showAging && (
           <VampireAgingSystem vampireState={vampireState} onClose={() => setShowAging(false)} />
         )}
-        {showStalking && (
-          <StalkingSystem vampireState={vampireState} onClose={() => setShowStalking(false)} />
-        )}
+
         </AnimatePresence>
         </div>
             );
