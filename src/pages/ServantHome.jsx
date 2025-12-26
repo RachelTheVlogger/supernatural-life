@@ -63,8 +63,9 @@ const VAMPIRE_ACTIVITIES = [
   ]}
 ];
 
-const getBusinessActivities = (servantCareer) => {
+const getBusinessActivities = (servantCareer, vampireState) => {
   const activities = [];
+  const isLiteMode = vampireState?.content_filter === 'lite';
   
   // Always show career selector/management
   const hasAnyCareers = servantCareer?.jewelry_business_active || servantCareer?.tattoo_business_active || servantCareer?.author_career_active;
@@ -89,11 +90,19 @@ const getBusinessActivities = (servantCareer) => {
     activities.push({ id: 'author', label: '📚 Author Career', icon: BookOpen, duration: 0, isModal: true });
   }
   
+  // Filter adult content in lite mode
+  const isLiteMode = vampireState?.content_filter === 'lite';
+  
+  if (!isLiteMode) {
+    activities.push(
+      { id: 'onlyfangs', label: 'OnlyFangs (adult content)', icon: Camera, duration: 0, isModal: true },
+      { id: 'snapchat', label: 'Premium Snapchat', icon: MessageCircle, duration: 0, isModal: true }
+    );
+  }
+  
   activities.push(
-    { id: 'onlyfangs', label: 'OnlyFangs (adult content)', icon: Camera, duration: 0, isModal: true },
     { id: 'youtube', label: 'YouTube Channel', icon: Camera, duration: 0, isModal: true },
-    { id: 'patreon', label: 'Patreon', icon: Coffee, duration: 0, isModal: true },
-    { id: 'snapchat', label: 'Premium Snapchat', icon: MessageCircle, duration: 0, isModal: true }
+    { id: 'patreon', label: 'Patreon', icon: Coffee, duration: 0, isModal: true }
   );
   
   return activities;
@@ -277,7 +286,7 @@ export default function ServantHome() {
     );
   }
   
-  const businessActivities = getBusinessActivities(servantCareer);
+  const businessActivities = getBusinessActivities(servantCareer, vampireState);
   const activities = servant.is_turned 
     ? [...VAMPIRE_ACTIVITIES, ...businessActivities] 
     : [...CHORES, ...businessActivities];
