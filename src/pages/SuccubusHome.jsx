@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Heart, Moon, Sparkles, Zap } from 'lucide-react';
+import { ArrowLeft, Heart, Moon, Sparkles, Zap, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -38,6 +38,7 @@ export default function SuccubusHome() {
   const [acting, setActing] = useState(null);
   const [outcome, setOutcome] = useState('');
   const [showVampireInteraction, setShowVampireInteraction] = useState(false);
+  const [showNameInput, setShowNameInput] = useState(false);
 
   const { data: succubi = [] } = useQuery({
     queryKey: ['succubi'],
@@ -51,6 +52,7 @@ export default function SuccubusHome() {
 
   const succubus = succubi[0];
   const vampire = vampireStates[0];
+  const isDaytime = vampire?.time_of_day === 'day';
 
   const handleAction = async (action) => {
     if (!succubus) return;
@@ -214,37 +216,46 @@ export default function SuccubusHome() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-950 via-purple-950 to-red-950 p-6">
-      <button onClick={() => navigate(createPageUrl('Night'))} className="text-white/60 hover:text-white mb-6">
+    <div className="min-h-screen p-6" style={{ 
+      background: isDaytime 
+        ? 'linear-gradient(to bottom right, #FFB6C1, #FFC0CB, #FFD4E5)' 
+        : 'linear-gradient(to bottom right, #500724, #5A0A3D, #4A0E24)' 
+    }}>
+      <button onClick={() => navigate(createPageUrl('Night'))} className={`${isDaytime ? 'text-gray-700 hover:text-gray-900' : 'text-white/60 hover:text-white'} mb-6`}>
         <ArrowLeft className="w-6 h-6" />
       </button>
 
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-pink-300 mb-2">{succubus.name}</h1>
-          <p className="text-pink-100 text-sm">Succubus • {succubus.realm} realm</p>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <h1 className={`text-4xl font-bold ${isDaytime ? 'text-pink-900' : 'text-pink-300'}`}>{succubus.name}</h1>
+            <button onClick={() => setShowNameInput(true)} className={`text-2xl hover:scale-110 transition-transform ${isDaytime ? 'text-pink-700' : 'text-pink-400'}`}>
+              ✏️
+            </button>
+          </div>
+          <p className={`${isDaytime ? 'text-pink-800' : 'text-pink-100'} text-sm`}>Succubus • {succubus.realm} realm</p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-black/40 rounded-xl p-4 border border-pink-500/30">
+          <div className={`${isDaytime ? 'bg-white/70 border-pink-300/50' : 'bg-black/40 border-pink-500/30'} rounded-xl p-4 border`}>
             <Heart className="w-6 h-6 text-pink-400 mb-2" />
-            <p className="text-2xl font-bold text-white">{succubus.charm_level}</p>
-            <p className="text-xs text-pink-300">Charm</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{succubus.charm_level}</p>
+            <p className={`text-xs ${isDaytime ? 'text-pink-700' : 'text-pink-300'}`}>Charm</p>
           </div>
-          <div className="bg-black/40 rounded-xl p-4 border border-purple-500/30">
+          <div className={`${isDaytime ? 'bg-white/70 border-purple-300/50' : 'bg-black/40 border-purple-500/30'} rounded-xl p-4 border`}>
             <Zap className="w-6 h-6 text-purple-400 mb-2" />
-            <p className="text-2xl font-bold text-white">{succubus.energy_collected}</p>
-            <p className="text-xs text-purple-300">Energy</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{succubus.energy_collected}</p>
+            <p className={`text-xs ${isDaytime ? 'text-purple-700' : 'text-purple-300'}`}>Energy</p>
           </div>
-          <div className="bg-black/40 rounded-xl p-4 border border-red-500/30">
+          <div className={`${isDaytime ? 'bg-white/70 border-red-300/50' : 'bg-black/40 border-red-500/30'} rounded-xl p-4 border`}>
             <Sparkles className="w-6 h-6 text-red-400 mb-2" />
-            <p className="text-2xl font-bold text-white">{succubus.target_count}</p>
-            <p className="text-xs text-red-300">Seduced</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{succubus.target_count}</p>
+            <p className={`text-xs ${isDaytime ? 'text-red-700' : 'text-red-300'}`}>Seduced</p>
           </div>
-          <div className="bg-black/40 rounded-xl p-4 border border-pink-500/30">
+          <div className={`${isDaytime ? 'bg-white/70 border-pink-300/50' : 'bg-black/40 border-pink-500/30'} rounded-xl p-4 border`}>
             <Moon className="w-6 h-6 text-pink-400 mb-2" />
-            <p className="text-2xl font-bold text-white">{succubus.contracts_made}</p>
-            <p className="text-xs text-pink-300">Contracts</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{succubus.contracts_made}</p>
+            <p className={`text-xs ${isDaytime ? 'text-pink-700' : 'text-pink-300'}`}>Contracts</p>
           </div>
         </div>
 
@@ -295,6 +306,53 @@ export default function SuccubusHome() {
             vampire={vampire}
             onClose={() => setShowVampireInteraction(false)}
           />
+        )}
+
+        {showNameInput && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowNameInput(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <button onClick={() => setShowNameInput(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-2xl font-bold text-white mb-4">Change Name</h2>
+              <input
+                type="text"
+                defaultValue={succubus.name}
+                onKeyPress={async (e) => {
+                  if (e.key === 'Enter' && e.target.value.trim()) {
+                    await base44.entities.Succubus.update(succubus.id, { name: e.target.value.trim() });
+                    queryClient.invalidateQueries();
+                    setShowNameInput(false);
+                  }
+                }}
+                className="w-full bg-gray-800 border border-pink-500/30 rounded-lg px-4 py-3 text-white mb-4"
+                autoFocus
+              />
+              <button
+                onClick={async (e) => {
+                  const input = e.target.parentElement.querySelector('input');
+                  if (input.value.trim()) {
+                    await base44.entities.Succubus.update(succubus.id, { name: input.value.trim() });
+                    queryClient.invalidateQueries();
+                    setShowNameInput(false);
+                  }
+                }}
+                className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg"
+              >
+                Save
+              </button>
+            </motion.div>
+          </motion.div>
         )}
       </div>
     </div>
