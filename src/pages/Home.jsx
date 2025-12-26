@@ -29,8 +29,28 @@ export default function Home() {
     },
     retry: 2
   });
+
+  const { data: witches = [] } = useQuery({
+    queryKey: ['witches'],
+    queryFn: () => base44.entities.Witch.list()
+  });
+
+  const { data: succubi = [] } = useQuery({
+    queryKey: ['succubi'],
+    queryFn: () => base44.entities.Succubus.list()
+  });
+
+  const { data: incubi = [] } = useQuery({
+    queryKey: ['incubi'],
+    queryFn: () => base44.entities.Incubus.list()
+  });
+
+  const { data: playerWerewolves = [] } = useQuery({
+    queryKey: ['playerWerewolves'],
+    queryFn: () => base44.entities.PlayerWerewolf.list()
+  });
   
-  const existingGame = vampireStates.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || succubi.length > 0 || incubi.length > 0 || playerWerewolves.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -104,7 +124,12 @@ export default function Home() {
   };
   
   const handleContinue = () => {
-    navigate(createPageUrl('Night'));
+    // Navigate to the appropriate home based on what characters exist
+    if (vampireStates.length > 0) navigate(createPageUrl('Night'));
+    else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
+    else if (succubi.length > 0) navigate(createPageUrl('SuccubusHome'));
+    else if (incubi.length > 0) navigate(createPageUrl('IncubusHome'));
+    else if (playerWerewolves.length > 0) navigate(createPageUrl('WerewolfHome'));
   };
   
   return (
@@ -150,18 +175,131 @@ export default function Home() {
           transition={{ delay: 0.5, duration: 0.8 }}
           className="space-y-4"
         >
-          {existingGame && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleContinue();
-              }}
-              className="w-full bg-gradient-to-r from-red-900/60 to-purple-900/60 hover:from-red-900/80 hover:to-purple-900/80 border-2 border-red-500/50 rounded-xl py-4 text-white font-medium text-lg transition-all flex items-center justify-center gap-3"
-            >
-              <Play className="w-5 h-5" />
-              Continue Game
-            </button>
-          )}
+          {existingGame ? (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleContinue();
+                }}
+                className="w-full bg-gradient-to-r from-red-900/60 to-purple-900/60 hover:from-red-900/80 hover:to-purple-900/80 border-2 border-red-500/50 rounded-xl py-4 text-white font-medium text-lg transition-all flex items-center justify-center gap-3"
+              >
+                <Play className="w-5 h-5" />
+                Continue Game
+              </button>
+
+              {/* Character Selection Menu */}
+              <div className="bg-gray-900/60 border border-purple-500/30 rounded-xl p-4">
+                <p className="text-gray-400 text-sm mb-3">Your Characters:</p>
+                <div className="space-y-2">
+                  {vampireStates.map(v => (
+                    <button
+                      key={v.id}
+                      onClick={() => navigate(createPageUrl('Night'))}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🦇</span>
+                        <div>
+                          <p className="text-white font-medium">{v.vampire_name}</p>
+                          <p className="text-gray-400 text-xs">Vampire</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {witches.map(w => (
+                    <button
+                      key={w.id}
+                      onClick={() => navigate(createPageUrl('WitchHome'))}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">✨</span>
+                        <div>
+                          <p className="text-white font-medium">{w.name}</p>
+                          <p className="text-gray-400 text-xs">Witch</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {succubi.map(s => (
+                    <button
+                      key={s.id}
+                      onClick={() => navigate(createPageUrl('SuccubusHome'))}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">💋</span>
+                        <div>
+                          <p className="text-white font-medium">{s.name}</p>
+                          <p className="text-gray-400 text-xs">Succubus</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {incubi.map(i => (
+                    <button
+                      key={i.id}
+                      onClick={() => navigate(createPageUrl('IncubusHome'))}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">😈</span>
+                        <div>
+                          <p className="text-white font-medium">{i.name}</p>
+                          <p className="text-gray-400 text-xs">Incubus</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {playerWerewolves.map(w => (
+                    <button
+                      key={w.id}
+                      onClick={() => navigate(createPageUrl('WerewolfHome'))}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🐺</span>
+                        <div>
+                          <p className="text-white font-medium">{w.name}</p>
+                          <p className="text-gray-400 text-xs">Werewolf</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Lite Mode Toggle */}
+              {vampireStates.length > 0 && (
+                <div className="bg-gray-900/60 border border-blue-500/30 rounded-xl p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-white text-sm font-medium">Lite Mode</p>
+                      <p className="text-gray-400 text-xs">Less explicit content</p>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        const currentMode = vampireStates[0].content_filter;
+                        const newMode = currentMode === 'lite' ? 'full' : 'lite';
+                        await base44.entities.VampireState.update(vampireStates[0].id, {
+                          content_filter: newMode
+                        });
+                        queryClient.invalidateQueries(['vampireState']);
+                      }}
+                      className={`px-4 py-2 rounded-lg transition-colors ${
+                        vampireStates[0]?.content_filter === 'lite'
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-gray-700 text-gray-300'
+                      }`}
+                    >
+                      {vampireStates[0]?.content_filter === 'lite' ? 'ON' : 'OFF'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : null}
 
           <button
             onClick={(e) => {
