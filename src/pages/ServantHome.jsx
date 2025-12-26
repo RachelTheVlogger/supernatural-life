@@ -14,6 +14,9 @@ import ServantInteractions from '@/components/nightbound/ServantInteractions';
 import YouTubeCareer from '@/components/nightbound/YouTubeCareer';
 import PatreonManager from '@/components/nightbound/PatreonManager';
 import SnapchatPremium from '@/components/nightbound/SnapchatPremium';
+import CareerSelector from '@/components/nightbound/CareerSelector';
+import TattooStudio from '@/components/nightbound/TattooStudio';
+import AuthorCareer from '@/components/nightbound/AuthorCareer';
 
 const CHORES = [
   { id: 'clean', label: 'Clean the rooms', icon: Sparkles, duration: 2000, outcomes: ['You tidied the bedroom. Everything feels peaceful.', 'You dusted the shelves. The space feels lighter.', 'You organized their belongings with care.'] },
