@@ -31,7 +31,7 @@ export default function MangaCareer({ servant, onClose }) {
     
     setWorking(true);
     
-    setTimeout(async () => {
+    try {
       const quality = Math.floor(Math.random() * 30) + 50;
       const fansGained = Math.floor(Math.random() * 200) + 100;
       const incomeGained = Math.floor(Math.random() * 150) + 100;
@@ -47,6 +47,24 @@ export default function MangaCareer({ servant, onClose }) {
       ];
       const title = chapterTitles[Math.floor(Math.random() * chapterTitles.length)];
 
+      // Generate AI panel images
+      const genrePrompts = {
+        shonen: 'action-packed manga panel with dynamic fight scene, intense battle, bold linework, high energy',
+        shojo: 'romantic manga panel with flowers and sparkles, shoujo style, soft emotional scene',
+        seinen: 'dark mature manga panel, gritty realistic art style, dramatic shadows',
+        josei: 'elegant mature manga panel, sophisticated adult romance scene, detailed backgrounds',
+        isekai: 'fantasy manga panel with magic and adventure, otherworldly setting, epic scale',
+        'slice-of-life': 'cozy everyday manga panel, peaceful daily life scene, warm atmosphere'
+      };
+
+      const genre = career.current_genre || 'shonen';
+      const prompt = `${genrePrompts[genre]}, black and white manga art style, dramatic composition, professional manga illustration`;
+
+      setOutcome('Generating manga panels...');
+      
+      const imageResult = await base44.integrations.Core.GenerateImage({ prompt });
+      const panelImage = imageResult.url;
+
       const existingChapters = career.manga_chapters || [];
       const newChapter = {
         number: newChapters,
@@ -55,7 +73,8 @@ export default function MangaCareer({ servant, onClose }) {
         quality,
         fans_gained: fansGained,
         income: incomeGained,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        panel_image: panelImage
       };
 
       await base44.entities.ServantCareer.update(career.id, {
@@ -78,7 +97,11 @@ export default function MangaCareer({ servant, onClose }) {
         setWorking(false);
         setOutcome('');
       }, 3000);
-    }, 2000);
+    } catch (error) {
+      console.error('Failed to generate chapter:', error);
+      setWorking(false);
+      setOutcome('Failed to generate chapter. Please try again.');
+    }
   };
 
   const handleStartSeries = async (genre) => {
@@ -206,56 +229,63 @@ export default function MangaCareer({ servant, onClose }) {
                       </div>
                       
                       {/* Panel Grid Visual */}
-                      <div className="grid grid-cols-6 gap-1 mb-2">
-                        {Array.from({ length: Math.min(chapter.panels, 18) }).map((_, i) => {
-                          const genreStyles = {
-                            shonen: { patterns: ['⚔️', '💥', '⚡', '💪', '🔥', '👊', '💢', '🌟'], colors: 'from-orange-900/70 to-red-900/70', border: 'border-orange-500/50' },
-                            shojo: { patterns: ['💕', '💖', '🌸', '✨', '🌹', '💫', '🦋', '💗'], colors: 'from-pink-900/70 to-rose-900/70', border: 'border-pink-500/50' },
-                            seinen: { patterns: ['🌙', '🩸', '💀', '🖤', '⚰️', '🗡️', '👁️', '🌑'], colors: 'from-gray-900/70 to-slate-900/70', border: 'border-gray-500/50' },
-                            josei: { patterns: ['🌸', '💐', '☕', '💄', '👗', '💍', '🍷', '🌺'], colors: 'from-purple-900/70 to-pink-900/70', border: 'border-purple-500/50' },
-                            isekai: { patterns: ['🌀', '✨', '🗡️', '🛡️', '🔮', '⚡', '🌟', '🪄'], colors: 'from-blue-900/70 to-purple-900/70', border: 'border-blue-500/50' },
-                            'slice-of-life': { patterns: ['☕', '🍞', '🎵', '📚', '🌤️', '🍰', '🌻', '🏠'], colors: 'from-amber-900/70 to-yellow-900/70', border: 'border-amber-500/50' }
-                          };
-                          
-                          const genre = career.current_genre || 'shonen';
-                          const style = genreStyles[genre] || genreStyles.shonen;
-                          const pattern = style.patterns[Math.floor(Math.random() * style.patterns.length)];
-                          
-                          // Add speed lines or effects randomly
-                          const hasEffect = Math.random() > 0.7;
-                          const effectType = Math.random() > 0.5 ? 'speed-lines' : 'focus-lines';
-                          
-                          // Different border styles
-                          const borderStyles = ['border-2', 'border', 'border-dashed', 'border-dotted'];
-                          const borderStyle = borderStyles[i % borderStyles.length];
-                          
-                          return (
-                            <div
-                              key={i}
-                              className={`aspect-square rounded bg-gradient-to-br ${style.colors} ${borderStyle} ${style.border} flex items-center justify-center text-xs relative overflow-hidden`}
-                            >
-                              {hasEffect && effectType === 'speed-lines' && (
-                                <div className="absolute inset-0 opacity-30">
-                                  <div className="absolute top-0 left-0 w-full h-px bg-white transform -rotate-45" />
-                                  <div className="absolute top-1/4 left-0 w-full h-px bg-white transform -rotate-45" />
-                                  <div className="absolute top-1/2 left-0 w-full h-px bg-white transform -rotate-45" />
-                                </div>
-                              )}
-                              {hasEffect && effectType === 'focus-lines' && (
-                                <div className="absolute inset-0 opacity-20">
-                                  <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-white" />
-                                </div>
-                              )}
-                              <span className="relative z-10">{pattern}</span>
+                      {chapter.panel_image ? (
+                        <div className="mb-2">
+                          <img 
+                            src={chapter.panel_image} 
+                            alt={`${chapter.title} manga panel`}
+                            className="w-full rounded-lg border-2 border-purple-500/30 object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-6 gap-1 mb-2">
+                          {Array.from({ length: Math.min(chapter.panels, 18) }).map((_, i) => {
+                            const genreStyles = {
+                              shonen: { patterns: ['⚔️', '💥', '⚡', '💪', '🔥', '👊', '💢', '🌟'], colors: 'from-orange-900/70 to-red-900/70', border: 'border-orange-500/50' },
+                              shojo: { patterns: ['💕', '💖', '🌸', '✨', '🌹', '💫', '🦋', '💗'], colors: 'from-pink-900/70 to-rose-900/70', border: 'border-pink-500/50' },
+                              seinen: { patterns: ['🌙', '🩸', '💀', '🖤', '⚰️', '🗡️', '👁️', '🌑'], colors: 'from-gray-900/70 to-slate-900/70', border: 'border-gray-500/50' },
+                              josei: { patterns: ['🌸', '💐', '☕', '💄', '👗', '💍', '🍷', '🌺'], colors: 'from-purple-900/70 to-pink-900/70', border: 'border-purple-500/50' },
+                              isekai: { patterns: ['🌀', '✨', '🗡️', '🛡️', '🔮', '⚡', '🌟', '🪄'], colors: 'from-blue-900/70 to-purple-900/70', border: 'border-blue-500/50' },
+                              'slice-of-life': { patterns: ['☕', '🍞', '🎵', '📚', '🌤️', '🍰', '🌻', '🏠'], colors: 'from-amber-900/70 to-yellow-900/70', border: 'border-amber-500/50' }
+                            };
+                            
+                            const genre = career.current_genre || 'shonen';
+                            const style = genreStyles[genre] || genreStyles.shonen;
+                            const pattern = style.patterns[Math.floor(Math.random() * style.patterns.length)];
+                            
+                            const hasEffect = Math.random() > 0.7;
+                            const effectType = Math.random() > 0.5 ? 'speed-lines' : 'focus-lines';
+                            const borderStyles = ['border-2', 'border', 'border-dashed', 'border-dotted'];
+                            const borderStyle = borderStyles[i % borderStyles.length];
+                            
+                            return (
+                              <div
+                                key={i}
+                                className={`aspect-square rounded bg-gradient-to-br ${style.colors} ${borderStyle} ${style.border} flex items-center justify-center text-xs relative overflow-hidden`}
+                              >
+                                {hasEffect && effectType === 'speed-lines' && (
+                                  <div className="absolute inset-0 opacity-30">
+                                    <div className="absolute top-0 left-0 w-full h-px bg-white transform -rotate-45" />
+                                    <div className="absolute top-1/4 left-0 w-full h-px bg-white transform -rotate-45" />
+                                    <div className="absolute top-1/2 left-0 w-full h-px bg-white transform -rotate-45" />
+                                  </div>
+                                )}
+                                {hasEffect && effectType === 'focus-lines' && (
+                                  <div className="absolute inset-0 opacity-20">
+                                    <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-white" />
+                                  </div>
+                                )}
+                                <span className="relative z-10">{pattern}</span>
+                              </div>
+                            );
+                          })}
+                          {chapter.panels > 18 && (
+                            <div className="aspect-square rounded bg-gray-700/60 border border-gray-500/40 flex items-center justify-center">
+                              <span className="text-gray-300 text-xs font-bold">+{chapter.panels - 18}</span>
                             </div>
-                          );
-                        })}
-                        {chapter.panels > 18 && (
-                          <div className="aspect-square rounded bg-gray-700/60 border border-gray-500/40 flex items-center justify-center">
-                            <span className="text-gray-300 text-xs font-bold">+{chapter.panels - 18}</span>
-                          </div>
-                        )}
-                      </div>
+                          )}
+                        </div>
+                      )}
                       
                       <div className="flex gap-3 text-xs text-gray-400">
                         <span>📄 {chapter.panels} panels</span>
