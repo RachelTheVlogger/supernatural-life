@@ -79,29 +79,6 @@ export default function VampireHome() {
     queryFn: () => base44.entities.PowerProgress.list()
   });
 
-  const vampireState = vampireStates[0];
-
-  // Check for jealousy events (only for servants who can be jealous)
-  React.useEffect(() => {
-    if (vampireState && servants.length >= 2) {
-      const jealousServants = servants.filter(s => !['open', 'no-strings'].includes(s.boundaries));
-      const highJealousy = jealousServants.filter(s => (s.jealousy_level || 0) > 60);
-      if (highJealousy.length >= 2 && !jealousyEvent && Math.random() > 0.7) {
-        setJealousyEvent({ s1: highJealousy[0], s2: highJealousy[1] });
-      }
-    }
-  }, [servants, jealousyEvent, vampireState]);
-
-  // Check for identity revelation events
-  React.useEffect(() => {
-    if (vampireState && servants.length > 0) {
-      const needsRevelation = servants.filter(s => !s.identity_revealed && (s.relationship || 0) > 30);
-      if (needsRevelation.length > 0 && !identityRevelation && Math.random() > 0.6) {
-        setIdentityRevelation(needsRevelation[0]);
-      }
-    }
-  }, [servants, identityRevelation, vampireState]);
-  
   // Don't render anything if no vampire state or loading
   if (vampireLoading) {
     return (
@@ -114,6 +91,29 @@ export default function VampireHome() {
   if (vampireStates.length === 0) {
     return null;
   }
+
+  const vampireState = vampireStates[0];
+
+  // Check for jealousy events (only for servants who can be jealous)
+  React.useEffect(() => {
+    if (servants.length >= 2) {
+      const jealousServants = servants.filter(s => !['open', 'no-strings'].includes(s.boundaries));
+      const highJealousy = jealousServants.filter(s => (s.jealousy_level || 0) > 60);
+      if (highJealousy.length >= 2 && !jealousyEvent && Math.random() > 0.7) {
+        setJealousyEvent({ s1: highJealousy[0], s2: highJealousy[1] });
+      }
+    }
+  }, [servants, jealousyEvent]);
+
+  // Check for identity revelation events
+  React.useEffect(() => {
+    if (servants.length > 0) {
+      const needsRevelation = servants.filter(s => !s.identity_revealed && (s.relationship || 0) > 30);
+      if (needsRevelation.length > 0 && !identityRevelation && Math.random() > 0.6) {
+        setIdentityRevelation(needsRevelation[0]);
+      }
+    }
+  }, [servants, identityRevelation]);
   
   const handleMeditate = async () => {
     setMeditating(true);
