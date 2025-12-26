@@ -58,9 +58,6 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
     staleTime: 3000
   });
 
-  // Spawn stalker
-
-
   const channel = channels[0];
   const hasChannel = !!channel;
 
