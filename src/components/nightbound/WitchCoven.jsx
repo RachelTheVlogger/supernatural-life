@@ -38,16 +38,15 @@ export default function WitchCoven({ witch, onClose }) {
         intensity: 'moderate'
       });
 
-      await queryClient.invalidateQueries(['witches']);
-      await queryClient.invalidateQueries(['witch-coven-data']);
+      queryClient.invalidateQueries(['witches']);
+      queryClient.invalidateQueries(['witch-coven-data', witch.id]);
 
       setOutcome(`${name} joined your coven as a ${specialty} specialist.`);
       
       setTimeout(() => {
         setRecruiting(false);
         setOutcome('');
-        onClose();
-      }, 3000);
+      }, 2000);
     }, 3000);
   };
 
