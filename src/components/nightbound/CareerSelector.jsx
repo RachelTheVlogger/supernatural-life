@@ -30,13 +30,33 @@ const CAREERS = {
 
 export default function CareerSelector({ servant, onClose, onSelect }) {
   const queryClient = useQueryClient();
+  const [currentCareers, setCurrentCareers] = React.useState({
+    jewelry: false,
+    tattoo: false,
+    author: false
+  });
 
-  const handleSelectCareer = async (careerType) => {
+  React.useEffect(() => {
+    const fetchCareers = async () => {
+      const existing = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
+      if (existing.length > 0) {
+        setCurrentCareers({
+          jewelry: existing[0].jewelry_business_active || false,
+          tattoo: existing[0].tattoo_business_active || false,
+          author: existing[0].author_career_active || false
+        });
+      }
+    };
+    fetchCareers();
+  }, [servant.id]);
+
+  const handleToggleCareer = async (careerType) => {
+    const newState = !currentCareers[careerType];
     const careerData = {
       servant_id: servant.id,
-      jewelry_business_active: careerType === 'jewelry',
-      tattoo_business_active: careerType === 'tattoo',
-      author_career_active: careerType === 'author'
+      jewelry_business_active: careerType === 'jewelry' ? newState : currentCareers.jewelry,
+      tattoo_business_active: careerType === 'tattoo' ? newState : currentCareers.tattoo,
+      author_career_active: careerType === 'author' ? newState : currentCareers.author
     };
 
     const existing = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
@@ -48,13 +68,13 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
     }
 
     await base44.entities.NightLog.create({
-      entry: `${servant.name} started a new career: ${CAREERS[careerType].name}`,
+      entry: `${servant.name} ${newState ? 'started' : 'paused'} career: ${CAREERS[careerType].name}`,
       category: 'interaction',
       intensity: 'moderate'
     });
 
+    setCurrentCareers(prev => ({...prev, [careerType]: newState}));
     queryClient.invalidateQueries();
-    onSelect(careerType);
   };
 
   return (
@@ -75,24 +95,32 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-2">Choose a Career</h2>
-        <p className="text-gray-400 text-sm mb-6">What will {servant.name} pursue?</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Manage Careers</h2>
+        <p className="text-gray-400 text-sm mb-6">Toggle careers on/off. You can have multiple active!</p>
 
         <div className="grid md:grid-cols-3 gap-4">
-          {Object.entries(CAREERS).map(([key, career]) => (
-            <button
-              key={key}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSelectCareer(key);
-              }}
-              className={`bg-gradient-to-br ${career.color} border-2 ${career.borderColor} rounded-xl p-6 text-center hover:scale-105 transition-all`}
-            >
-              <div className="text-5xl mb-3">{career.icon}</div>
-              <h3 className="text-white font-bold mb-2">{career.name}</h3>
-              <p className="text-gray-400 text-sm">{career.description}</p>
-            </button>
-          ))}
+          {Object.entries(CAREERS).map(([key, career]) => {
+            const isActive = currentCareers[key];
+            return (
+              <button
+                key={key}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleCareer(key);
+                }}
+                className={`bg-gradient-to-br ${career.color} border-2 ${isActive ? 'border-green-500' : career.borderColor} rounded-xl p-6 text-center hover:scale-105 transition-all relative`}
+              >
+                {isActive && (
+                  <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                    Active
+                  </div>
+                )}
+                <div className="text-5xl mb-3">{career.icon}</div>
+                <h3 className="text-white font-bold mb-2">{career.name}</h3>
+                <p className="text-gray-400 text-sm">{career.description}</p>
+              </button>
+            );
+          })}
         </div>
       </motion.div>
     </motion.div>

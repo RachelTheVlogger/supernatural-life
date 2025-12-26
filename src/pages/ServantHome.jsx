@@ -42,6 +42,17 @@ const VAMPIRE_ACTIVITIES = [
 const getBusinessActivities = (servantCareer) => {
   const activities = [];
   
+  // Always show career selector/management
+  const hasAnyCareers = servantCareer?.jewelry_business_active || servantCareer?.tattoo_business_active || servantCareer?.author_career_active;
+  activities.push({ 
+    id: 'choose_career', 
+    label: hasAnyCareers ? '⚙️ Manage Careers' : '🎯 Choose Career', 
+    icon: Sparkles, 
+    duration: 0, 
+    isModal: true 
+  });
+  
+  // Show active career buttons
   if (servantCareer?.jewelry_business_active) {
     activities.push({ id: 'jewelry', label: '💎 Jewelry Business', icon: Sparkles, duration: 0, isModal: true });
   }
@@ -52,10 +63,6 @@ const getBusinessActivities = (servantCareer) => {
   
   if (servantCareer?.author_career_active) {
     activities.push({ id: 'author', label: '📚 Author Career', icon: BookOpen, duration: 0, isModal: true });
-  }
-  
-  if (!servantCareer?.jewelry_business_active && !servantCareer?.tattoo_business_active && !servantCareer?.author_career_active) {
-    activities.push({ id: 'choose_career', label: 'Choose Career', icon: Sparkles, duration: 0, isModal: true });
   }
   
   activities.push(
