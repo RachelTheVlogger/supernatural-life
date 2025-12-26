@@ -16,6 +16,11 @@ export default function DayCycleToggle({ vampireState }) {
     const newTime = vampireState.time_of_day === 'night' ? 'day' : 'night';
     
     try {
+      // Optimistically update
+      queryClient.setQueryData(['vampireState'], (old) => 
+        old?.map(v => v.id === vampireState.id ? { ...v, time_of_day: newTime } : v) || old
+      );
+
       await base44.entities.VampireState.update(vampireState.id, {
         time_of_day: newTime
       });
@@ -28,17 +33,15 @@ export default function DayCycleToggle({ vampireState }) {
         intensity: 'subtle'
       });
 
-      // Force immediate refetch
-      queryClient.setQueryData(['vampireState'], (old) => 
-        old?.map(v => v.id === vampireState.id ? { ...v, time_of_day: newTime } : v) || old
-      );
-      await queryClient.refetchQueries(['vampireState']);
-      queryClient.invalidateQueries();
+      // Force refetch to ensure consistency
+      await queryClient.refetchQueries({ queryKey: ['vampireState'], exact: true });
     } catch (e) {
       console.error('Toggle failed:', e);
+      // Rollback on error
+      await queryClient.refetchQueries({ queryKey: ['vampireState'], exact: true });
     }
     
-    setTimeout(() => setTransitioning(false), 200);
+    setTimeout(() => setTransitioning(false), 100);
   };
 
   const isDay = vampireState?.time_of_day === 'day';
