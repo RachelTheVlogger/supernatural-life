@@ -90,9 +90,6 @@ const getBusinessActivities = (servantCareer, vampireState) => {
     activities.push({ id: 'author', label: '📚 Author Career', icon: BookOpen, duration: 0, isModal: true });
   }
   
-  // Filter adult content in lite mode
-  const isLiteMode = vampireState?.content_filter === 'lite';
-  
   if (!isLiteMode) {
     activities.push(
       { id: 'onlyfangs', label: 'OnlyFangs (adult content)', icon: Camera, duration: 0, isModal: true },
