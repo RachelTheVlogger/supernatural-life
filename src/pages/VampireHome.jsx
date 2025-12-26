@@ -301,8 +301,8 @@ export default function VampireHome() {
               <div className="flex items-center justify-between">
                 <div className="text-left">
                   <h3 className="text-white font-medium">Your Identity</h3>
-                  <p className="text-gray-400 text-sm">
-                    {vampireState.gender} • {vampireState.sexuality}
+                  <p className="text-gray-400 text-sm capitalize">
+                    {vampireState.gender === 'female' ? 'woman' : vampireState.gender === 'male' ? 'man' : vampireState.gender} • {vampireState.sexuality}
                   </p>
                 </div>
                 <Heart className="w-5 h-5 text-purple-400" />
