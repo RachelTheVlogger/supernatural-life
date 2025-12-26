@@ -74,7 +74,27 @@ export default function VampireHome() {
     staleTime: 0
   });
   
-  const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
+  // Redirect to Home if no vampire state exists
+  useEffect(() => {
+    if (vampireStates.length === 0 && !vampireLoading) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [vampireStates, vampireLoading, navigate]);
+
+  // Don't render anything if no vampire state or loading
+  if (vampireLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (vampireStates.length === 0) {
+    return null;
+  }
+
+  const vampireState = vampireStates[0];
   
   console.log('VampireHome - isDaytime calculation:', vampireState?.time_of_day, 'isDaytime:', vampireState?.time_of_day === 'day');
   
@@ -123,26 +143,6 @@ export default function VampireHome() {
       }
     }
   }, [servants, identityRevelation, vampireStates.length]);
-
-  // Redirect to Home if no vampire state exists
-  useEffect(() => {
-    if (vampireStates.length === 0 && !vampireLoading) {
-      navigate(createPageUrl('Home'), { replace: true });
-    }
-  }, [vampireStates, vampireLoading, navigate]);
-
-  // Don't render anything if no vampire state or loading
-  if (vampireLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
-  if (vampireStates.length === 0) {
-    return null;
-  }
   
   const handleMeditate = async () => {
     if (!vampireState) return;
