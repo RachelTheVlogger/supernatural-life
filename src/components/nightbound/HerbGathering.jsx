@@ -40,6 +40,7 @@ export default function HerbGathering({ witch, onClose }) {
   const [mixing, setMixing] = useState(false);
   const [showGiftModal, setShowGiftModal] = useState(false);
   const [selectedRingRecipient, setSelectedRingRecipient] = useState(null);
+  const [craftedItems, setCraftedItems] = useState([]);
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['witchHerbs'],
@@ -67,6 +68,19 @@ export default function HerbGathering({ witch, onClose }) {
   });
 
   const turnedServants = servants.filter(s => s.is_turned);
+
+  const POTIONS = [
+    { name: 'Healing Elixir', icon: '💚', ingredients: ['Sage', 'Lavender', 'Moonstone'], effect: 'Heal wounds instantly', sellPrice: 150 },
+    { name: 'Strength Potion', icon: '💪', ingredients: ['Dragon\'s Blood Resin', 'Rosemary', 'Iron Shavings'], effect: 'Boost physical strength', sellPrice: 200 },
+    { name: 'Speed Elixir', icon: '⚡', ingredients: ['Bay Leaves', 'Jasmine', 'Wormwood'], effect: 'Enhanced speed temporarily', sellPrice: 180 },
+    { name: 'Blood Purifier', icon: '🩸', ingredients: ['Vervain', 'White Candles', 'Salt'], effect: 'Remove vampire blood from system', sellPrice: 250 },
+    { name: 'Night Vision Potion', icon: '👁️', ingredients: ['Belladonna', 'Mugwort', 'Black Candles'], effect: 'See perfectly in darkness', sellPrice: 170 },
+    { name: 'Vervain Charm', icon: '🛡️', ingredients: ['Vervain', 'Moonstone', 'Salt'], effect: 'Block vampire compulsion', sellPrice: 300 }
+  ];
+
+  const RINGS = [
+    { name: 'Daylight Ring', icon: '💍', ingredients: ['Moonstone', 'Moonstone'], effect: 'Walk in sunlight', sellPrice: 500, gift: true }
+  ];
 
   const handleForage = async (herb) => {
     setGathering(true);
@@ -338,33 +352,62 @@ export default function HerbGathering({ witch, onClose }) {
     setTimeout(() => setOutcome(''), 2500);
   };
 
-  const handleCraftDaylightRing = async () => {
-    const hasLapisLazuli = inventory.find(h => h.herb_name === 'Moonstone' && h.quantity >= 2);
-    
-    if (!hasLapisLazuli) {
-      alert('Need 2 Moonstone to craft a daylight ring!');
+  const canCraftItem = (ingredients) => {
+    return ingredients.every(ing => {
+      const herb = inventory.find(h => h.herb_name === ing);
+      return herb && herb.quantity > 0;
+    });
+  };
+
+  const handleCraftItem = async (item, isRing = false) => {
+    if (!canCraftItem(item.ingredients)) {
+      alert(`Missing ingredients: ${item.ingredients.join(', ')}`);
       return;
     }
 
-    if (!confirm('Craft Daylight Ring? (Costs 2 Moonstone)')) return;
+    if (!confirm(`Craft ${item.name}?`)) return;
 
-    await base44.entities.WitchHerb.update(hasLapisLazuli.id, {
-      quantity: hasLapisLazuli.quantity - 2
-    });
+    // Consume ingredients
+    for (const ing of item.ingredients) {
+      const herb = inventory.find(h => h.herb_name === ing);
+      if (herb) {
+        await base44.entities.WitchHerb.update(herb.id, {
+          quantity: herb.quantity - 1
+        });
+      }
+    }
 
     await base44.entities.NightLog.create({
-      entry: `${witch.name} crafted a Daylight Ring. Powerful enchantment.`,
+      entry: `${witch.name} crafted ${item.name}. ${item.effect}.`,
       category: 'power',
-      intensity: 'significant'
+      intensity: 'moderate'
     });
 
-    setOutcome('Crafted Daylight Ring! Ready to gift to a vampire.');
+    setCraftedItems([...craftedItems, { ...item, id: Date.now() }]);
+    setOutcome(`Crafted ${item.name}!`);
     queryClient.invalidateQueries();
     
     setTimeout(() => {
       setOutcome('');
-      setShowGiftModal(true);
+      if (isRing && item.gift) {
+        setShowGiftModal(true);
+      }
     }, 2000);
+  };
+
+  const handleSellCraftedItem = async (item, index) => {
+    await base44.entities.NightLog.create({
+      entry: `${witch.name} sold ${item.name} for $${item.sellPrice}.`,
+      category: 'interaction',
+      intensity: 'subtle'
+    });
+
+    const newItems = [...craftedItems];
+    newItems.splice(index, 1);
+    setCraftedItems(newItems);
+
+    setOutcome(`Sold ${item.name} for $${item.sellPrice}!`);
+    setTimeout(() => setOutcome(''), 2500);
   };
 
   const handleGiftRing = async (recipient) => {
@@ -456,10 +499,22 @@ export default function HerbGathering({ witch, onClose }) {
             ✨ Blends
           </button>
           <button
-            onClick={() => setTab('craft')}
-            className={`flex-1 px-4 py-2 rounded-lg ${tab === 'craft' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+            onClick={() => setTab('rings')}
+            className={`flex-1 px-4 py-2 rounded-lg ${tab === 'rings' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
-            💍 Craft
+            💍 Rings
+          </button>
+          <button
+            onClick={() => setTab('potions')}
+            className={`flex-1 px-4 py-2 rounded-lg ${tab === 'potions' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            🧪 Potions
+          </button>
+          <button
+            onClick={() => setTab('crafted')}
+            className={`flex-1 px-4 py-2 rounded-lg ${tab === 'crafted' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            📦 Crafted ({craftedItems.length})
           </button>
         </div>
 
@@ -766,46 +821,125 @@ export default function HerbGathering({ witch, onClose }) {
           </div>
         )}
 
-        {tab === 'craft' && (
+        {tab === 'rings' && (
           <div className="space-y-4">
             <p className="text-gray-400 text-sm mb-4">
-              Craft powerful enchanted items
+              Craft enchanted rings
             </p>
 
-            <div className="bg-gray-800 rounded-xl p-6 border-2 border-purple-500/30">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-4xl">💍</span>
-                <div>
-                  <h3 className="text-white font-bold text-lg">Daylight Ring</h3>
-                  <p className="text-gray-400 text-sm">Allows vampires to walk in sunlight</p>
+            {RINGS.map(ring => (
+              <div key={ring.name} className="bg-gray-800 rounded-xl p-6 border-2 border-purple-500/30">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-4xl">{ring.icon}</span>
+                  <div>
+                    <h3 className="text-white font-bold text-lg">{ring.name}</h3>
+                    <p className="text-gray-400 text-sm">{ring.effect}</p>
+                  </div>
                 </div>
+
+                <div className="bg-gray-900 rounded-lg p-3 mb-4">
+                  <p className="text-purple-300 text-sm font-medium mb-2">Required:</p>
+                  {ring.ingredients.map((ing, i) => (
+                    <p key={i} className="text-gray-300 text-sm">• {ing}</p>
+                  ))}
+                </div>
+
+                <p className="text-green-400 text-sm mb-4">Sell for: ${ring.sellPrice}</p>
+
+                <button
+                  onClick={() => handleCraftItem(ring, true)}
+                  disabled={!canCraftItem(ring.ingredients)}
+                  className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium"
+                >
+                  {canCraftItem(ring.ingredients) ? `Craft ${ring.name}` : 'Missing Ingredients'}
+                </button>
               </div>
+            ))}
+          </div>
+        )}
 
-              <div className="bg-gray-900 rounded-lg p-3 mb-4">
-                <p className="text-purple-300 text-sm font-medium mb-2">Required:</p>
-                <p className="text-gray-300 text-sm">• 2 Moonstone 🌙</p>
-                <p className="text-gray-300 text-sm">• Witch power 40+</p>
-              </div>
+        {tab === 'potions' && (
+          <div className="space-y-4">
+            <p className="text-gray-400 text-sm mb-4">
+              Brew magical potions
+            </p>
 
-              <p className="text-gray-500 text-xs mb-4 italic">
-                "Phasmatos Solaris" - A powerful enchantment that lets vampires walk in daylight without burning
-              </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {POTIONS.map(potion => (
+                <div key={potion.name} className="bg-gray-800 rounded-xl p-4 border border-purple-500/30">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-3xl">{potion.icon}</span>
+                    <div>
+                      <h3 className="text-white font-medium">{potion.name}</h3>
+                      <p className="text-gray-400 text-xs">{potion.effect}</p>
+                    </div>
+                  </div>
 
-              <button
-                onClick={handleCraftDaylightRing}
-                disabled={
-                  !inventory.find(h => h.herb_name === 'Moonstone' && h.quantity >= 2) ||
-                  witch.power_level < 40
-                }
-                className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium"
-              >
-                {witch.power_level < 40 
-                  ? 'Need 40+ Power' 
-                  : !inventory.find(h => h.herb_name === 'Moonstone' && h.quantity >= 2)
-                  ? 'Need 2 Moonstone'
-                  : 'Craft Daylight Ring'}
-              </button>
+                  <div className="bg-gray-900 rounded-lg p-2 mb-3">
+                    <p className="text-purple-300 text-xs mb-1">Ingredients:</p>
+                    {potion.ingredients.map((ing, i) => (
+                      <p key={i} className="text-gray-300 text-xs">• {ing}</p>
+                    ))}
+                  </div>
+
+                  <p className="text-green-400 text-xs mb-3">Sell for: ${potion.sellPrice}</p>
+
+                  <button
+                    onClick={() => handleCraftItem(potion)}
+                    disabled={!canCraftItem(potion.ingredients)}
+                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-2 rounded-lg text-sm"
+                  >
+                    {canCraftItem(potion.ingredients) ? 'Brew' : 'Missing'}
+                  </button>
+                </div>
+              ))}
             </div>
+          </div>
+        )}
+
+        {tab === 'crafted' && (
+          <div className="space-y-4">
+            <p className="text-gray-400 text-sm mb-4">
+              Your crafted items ready to sell or gift
+            </p>
+
+            {craftedItems.length === 0 ? (
+              <p className="text-gray-400 text-center py-12">No crafted items yet</p>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-4">
+                {craftedItems.map((item, index) => (
+                  <div key={item.id} className="bg-gray-800 rounded-xl p-4 border border-purple-500/30">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-3xl">{item.icon}</span>
+                      <div>
+                        <h3 className="text-white font-medium">{item.name}</h3>
+                        <p className="text-gray-400 text-xs">{item.effect}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleSellCraftedItem(item, index)}
+                        className="flex-1 bg-green-900/50 hover:bg-green-900/70 text-green-300 px-3 py-2 rounded text-sm"
+                      >
+                        Sell ${item.sellPrice}
+                      </button>
+                      {item.gift && (
+                        <button
+                          onClick={() => {
+                            setSelectedRingRecipient(item);
+                            setShowGiftModal(true);
+                          }}
+                          className="flex-1 bg-purple-900/50 hover:bg-purple-900/70 text-purple-300 px-3 py-2 rounded text-sm"
+                        >
+                          Gift
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
