@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import SuccubusVampireInteraction from '@/components/nightbound/SuccubusVampireInteraction';
 
 const ACTIONS = [
   { id: 'seduce', label: 'Seduce Mortal', icon: '💋', duration: 3000 },
@@ -20,13 +21,20 @@ export default function SuccubusHome() {
   const queryClient = useQueryClient();
   const [acting, setActing] = useState(null);
   const [outcome, setOutcome] = useState('');
+  const [showVampireInteraction, setShowVampireInteraction] = useState(false);
 
   const { data: succubi = [] } = useQuery({
     queryKey: ['succubi'],
     queryFn: () => base44.entities.Succubus.list()
   });
 
+  const { data: vampireStates = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+
   const succubus = succubi[0];
+  const vampire = vampireStates[0];
 
   const handleAction = async (action) => {
     if (!succubus) return;
@@ -147,6 +155,18 @@ export default function SuccubusHome() {
           </div>
         </div>
 
+        {vampire && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => setShowVampireInteraction(true)}
+            className="w-full bg-gradient-to-r from-pink-900/60 to-purple-900/60 hover:from-pink-900/80 hover:to-purple-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 mb-4 flex items-center justify-center gap-3 transition-all"
+          >
+            <span className="text-2xl">💋🦇</span>
+            <span className="text-white font-medium">Interact with Vampire</span>
+          </motion.button>
+        )}
+
         <div className="space-y-3">
           {ACTIONS.map((action, i) => (
             <motion.button
@@ -174,6 +194,14 @@ export default function SuccubusHome() {
               <p className="text-white text-lg">{outcome}</p>
             </div>
           </motion.div>
+        )}
+
+        {showVampireInteraction && vampire && (
+          <SuccubusVampireInteraction
+            succubus={succubus}
+            vampire={vampire}
+            onClose={() => setShowVampireInteraction(false)}
+          />
         )}
       </div>
     </div>

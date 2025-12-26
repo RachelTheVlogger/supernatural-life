@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, MessageCircle, BookOpen, Sparkles } from 'lucide-react';
+import { Home, Moon, User, MessageCircle, BookOpen, Sparkles, Heart, Skull, Zap } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -27,7 +27,7 @@ export default function Layout({ children, currentPageName }) {
   });
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome'].includes(currentPageName);
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
@@ -39,9 +39,10 @@ export default function Layout({ children, currentPageName }) {
   
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
-    { name: 'House', icon: Home, path: 'VampireHome' },
-    { name: 'Servant', icon: User, path: firstServantId ? `ServantHome?id=${firstServantId}` : 'Night', disabled: !firstServantId, hasSelector: servants.length > 1 },
-    { name: 'Messages', icon: MessageCircle, path: firstServantId ? `Messages?servant=${firstServantId}` : 'Night', disabled: !firstServantId },
+    { name: 'Vampire', icon: Home, path: 'VampireHome' },
+    { name: 'Succubus', icon: Heart, path: 'SuccubusHome' },
+    { name: 'Incubus', icon: Skull, path: 'IncubusHome' },
+    { name: 'Wolf', icon: Zap, path: 'WerewolfHome' },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome' }
   ];
   
