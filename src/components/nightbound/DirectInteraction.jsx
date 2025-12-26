@@ -1800,6 +1800,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [showBoundaries, setShowBoundaries] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [liteMode, setLiteMode] = useState(vampireState?.content_filter === 'lite');
   const queryClient = useQueryClient();
   
   // Always call hooks in the same order - never conditionally
@@ -2161,10 +2162,27 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     ? ['all', 'romantic', 'vampire', 'physical', 'bdsm', 'social', 'activity', 'power']
     : ['all', 'romantic', 'physical', 'bdsm', 'social', 'activity', 'power'];
 
-  // Filter by category only (show locked interactions too)
+  // Explicit interactions to hide in lite mode
+  const explicitInteractions = [
+    'dominate', 'submit', 'worship', 'breeding', 'publicUse', 'edging', 'bdsm',
+    'degradation', 'orgasmControl', 'collar', 'train', 'punish', 'bondage',
+    'morningRoutine', 'positionTraining', 'dailyInspection', 'casualUse', 'servicePosition',
+    'worshipDom', 'oralService', 'massageDom', 'rideDom', 'dressUp', 'beg',
+    'vampireSex', 'vampireBiteDuringsex', 'vampireRoughFuck', 'vampireBloodPlay',
+    'vampireSpeedFuck', 'vampireWallFuck', 'vampireMarathon', 'vampireBiteMark',
+    'vampireDoubleFeeding', 'vampireDominance', 'roughBehind', 'whisperDirty',
+    'behindSeduction', 'multiple', 'Marathon', 'service'
+  ];
+
+  // Filter by category and lite mode
   const filteredInteractions = Object.entries(allInteractions).filter(([key, interaction]) => {
     // Category filter
     if (selectedCategory !== 'all' && interaction.category !== selectedCategory) {
+      return false;
+    }
+
+    // Lite mode filter - hide explicit interactions
+    if (liteMode && explicitInteractions.includes(key)) {
       return false;
     }
 
@@ -2453,6 +2471,31 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
         <p className="text-gray-400 text-sm mb-4">
           They're here with you. What will you do?
         </p>
+
+        {/* Lite Mode Toggle */}
+        <div className="mb-4 flex items-center justify-between bg-gray-800/50 rounded-lg p-3">
+          <div>
+            <p className="text-white text-sm font-medium">Lite Mode</p>
+            <p className="text-gray-400 text-xs">Less explicit interactions</p>
+          </div>
+          <button
+            onClick={async () => {
+              const newMode = !liteMode;
+              setLiteMode(newMode);
+              await base44.entities.VampireState.update(vampireState.id, {
+                content_filter: newMode ? 'lite' : 'full'
+              });
+              queryClient.invalidateQueries(['vampireState']);
+            }}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              liteMode 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-700 text-gray-300'
+            }`}
+          >
+            {liteMode ? 'ON' : 'OFF'}
+          </button>
+        </div>
         
         {/* Category filter */}
         {!outcome && !processing && (
