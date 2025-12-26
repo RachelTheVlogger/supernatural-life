@@ -576,6 +576,16 @@ export default function VampireHome() {
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Meet powerful witches</p>
             </button>
 
+            <button onClick={() => navigate(createPageUrl('SuccubusHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-pink-900/40 border-pink-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>💋 Talk to Succubus</h3>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Seduction & pleasure</p>
+            </button>
+
+            <button onClick={() => navigate(createPageUrl('IncubusHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>😈 Talk to Incubus</h3>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Terror & nightmares</p>
+            </button>
+
             <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🔄 Become Hybrid</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Merge with wolf</p>
