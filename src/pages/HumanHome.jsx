@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Users, BookOpen, Heart, Eye, Moon, Coffee, School, Home as HomeIcon } from 'lucide-react';
+import { ArrowLeft, Users, BookOpen, Heart, Eye, Moon, Coffee, School, Home as HomeIcon, Search, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -12,7 +12,9 @@ const HUMAN_ACTIVITIES = [
   { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 2500 },
   { id: 'read', label: 'Read a Book', icon: BookOpen, duration: 2000 },
   { id: 'explore', label: 'Explore the Town', icon: Eye, duration: 3000 },
-  { id: 'party', label: 'Go to a Party', icon: Heart, duration: 3500 }
+  { id: 'party', label: 'Go to a Party', icon: Heart, duration: 3500 },
+  { id: 'research', label: 'Research Vampires', icon: BookOpen, duration: 3500, requiresAwareness: 20 },
+  { id: 'seek', label: 'Seek Them Out', icon: Eye, duration: 4000, requiresAwareness: 50 }
 ];
 
 export default function HumanHome() {
@@ -21,6 +23,8 @@ export default function HumanHome() {
   const [activeAction, setActiveAction] = useState(null);
   const [outcome, setOutcome] = useState('');
   const [showEncounter, setShowEncounter] = useState(false);
+  const [showResearch, setShowResearch] = useState(false);
+  const [evidenceCollected, setEvidenceCollected] = useState([]);
 
   const { data: humans = [] } = useQuery({
     queryKey: ['humans'],
@@ -47,7 +51,31 @@ export default function HumanHome() {
       let dangerGain = 0;
       let vampireEncounter = false;
 
-      if (activity.id === 'explore' && encounterChance > 0.6 && hasVampire) {
+      if (activity.id === 'research') {
+        awarenessGain = Math.floor(Math.random() * 10) + 15;
+        const researchOutcomes = [
+          'You found old newspapers. "Mysterious deaths." All drained of blood. Decades apart.',
+          'Online forums. People talking about "them." Dismissed as conspiracy theories. But the details match.',
+          'Library archives. Photos from the 1800s. You recognize someone from town. They haven\'t aged.',
+          'Medical records. "Anemia." Hundreds of cases. All near the same addresses. Over centuries.',
+          'You found protection rituals. Vervain. Garlic. Wooden stakes. Old wives tales, maybe. But you bought some.'
+        ];
+        result = researchOutcomes[Math.floor(Math.random() * researchOutcomes.length)];
+        setEvidenceCollected(prev => [...prev, result.split('.')[0]]);
+      } else if (activity.id === 'seek' && hasVampire) {
+        vampireEncounter = true;
+        awarenessGain = Math.floor(Math.random() * 20) + 20;
+        dangerGain = Math.floor(Math.random() * 25) + 15;
+        
+        const vampire = vampireStates[0];
+        const seekOutcomes = [
+          `You went to the places they frequent. ${vampire.vampire_name} was there.\n\nThey saw you immediately. "Looking for someone?"\n\nYou couldn't speak. They stepped closer.\n\n"You should stop digging. For your own sake."\n\nBut their eyes said they liked that you were looking.`,
+          `You staked out their house. Waited all night.\n\nDawn approached. No sign of them.\n\nThen: "${vampire.vampire_name}. Behind you. "Interesting hobby."\n\nYou spun around. They were inches away.\n\n"Next time, just knock."`,
+          `You followed the pattern. The deaths. The sightings.\n\nIt led you to an abandoned building.\n\n${vampire.vampire_name} was waiting. "Impressive. Most don't figure it out."\n\nThey looked amused. Dangerous.\n\n"Since you know... want to talk about it?"`,
+          `You went to the cemetery at night. Stupid. Desperate.\n\n${vampire.vampire_name} appeared like smoke. "Hoping to find me?"\n\nYou nodded. Couldn't lie.\n\n"Brave. Reckless. I respect that."\n\nThey circled you. Considering.`
+        ];
+        result = seekOutcomes[Math.floor(Math.random() * seekOutcomes.length)];
+      } else if (activity.id === 'explore' && encounterChance > 0.6 && hasVampire) {
         vampireEncounter = true;
         awarenessGain = Math.floor(Math.random() * 15) + 10;
         dangerGain = Math.floor(Math.random() * 10) + 5;
@@ -214,6 +242,25 @@ export default function HumanHome() {
           </motion.div>
         )}
 
+        {/* Evidence Collected */}
+        {evidenceCollected.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4 mb-6"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Search className="w-4 h-4 text-purple-400" />
+              <p className="text-purple-300 font-medium">Evidence Collected</p>
+            </div>
+            <div className="space-y-1 max-h-32 overflow-y-auto">
+              {evidenceCollected.slice(-5).map((evidence, i) => (
+                <p key={i} className="text-gray-400 text-sm">• {evidence}</p>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         {/* Activities */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -222,20 +269,28 @@ export default function HumanHome() {
           className="space-y-3 mb-8"
         >
           <h2 className="text-xl font-bold text-white mb-4">Daily Life</h2>
-          {HUMAN_ACTIVITIES.map((activity, i) => (
-            <motion.button
-              key={activity.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.25 + i * 0.05 }}
-              onClick={() => handleActivity(activity)}
-              disabled={activeAction}
-              className="w-full bg-gray-900 hover:bg-gray-800 rounded-xl p-4 flex items-center gap-3 border border-gray-800 transition-all disabled:opacity-50"
-            >
-              <activity.icon className="w-5 h-5 text-purple-400" />
-              <span className="text-white font-medium">{activity.label}</span>
-            </motion.button>
-          ))}
+          {HUMAN_ACTIVITIES.map((activity, i) => {
+            const isLocked = activity.requiresAwareness && (human.awareness_level || 0) < activity.requiresAwareness;
+            return (
+              <motion.button
+                key={activity.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.25 + i * 0.05 }}
+                onClick={() => !isLocked && handleActivity(activity)}
+                disabled={activeAction || isLocked}
+                className={`w-full bg-gray-900 hover:bg-gray-800 rounded-xl p-4 flex items-center justify-between border border-gray-800 transition-all disabled:opacity-50 ${isLocked ? 'cursor-not-allowed' : ''}`}
+              >
+                <div className="flex items-center gap-3">
+                  <activity.icon className="w-5 h-5 text-purple-400" />
+                  <span className="text-white font-medium">{activity.label}</span>
+                </div>
+                {isLocked && (
+                  <span className="text-xs text-gray-500">Requires {activity.requiresAwareness}% awareness</span>
+                )}
+              </motion.button>
+            );
+          })}
         </motion.div>
 
         {/* Can be turned option */}
