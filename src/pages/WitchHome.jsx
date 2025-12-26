@@ -6,6 +6,12 @@ import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import HerbGathering from '@/components/nightbound/HerbGathering';
+import ApothecaryShop from '@/components/nightbound/ApothecaryShop';
+import FortuneTelling from '@/components/nightbound/FortuneTelling';
+import GrimoireStudy from '@/components/nightbound/GrimoireStudy';
+import MoonRitual from '@/components/nightbound/MoonRitual';
+import CurseSystem from '@/components/nightbound/CurseSystem';
+import TeachServants from '@/components/nightbound/TeachServants';
 
 const SPELLS = {
   elemental: [
@@ -858,6 +864,13 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
             onClose={() => setShowHerbGathering(false)}
           />
         )}
+
+        {showApothecary && <ApothecaryShop witch={witch} onClose={() => setShowApothecary(false)} />}
+        {showFortuneTelling && <FortuneTelling witch={witch} onClose={() => setShowFortuneTelling(false)} />}
+        {showGrimoire && <GrimoireStudy witch={witch} onClose={() => setShowGrimoire(false)} />}
+        {showMoonRitual && <MoonRitual witch={witch} onClose={() => setShowMoonRitual(false)} />}
+        {showCurses && <CurseSystem witch={witch} onClose={() => setShowCurses(false)} />}
+        {showTeaching && <TeachServants witch={witch} onClose={() => setShowTeaching(false)} />}
 
         {showVampireInteractions && vampireState && (
           <motion.div
