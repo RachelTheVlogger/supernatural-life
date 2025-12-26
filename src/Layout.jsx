@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, MessageCircle, BookOpen } from 'lucide-react';
+import { Home, Moon, User, MessageCircle, BookOpen, Sparkles } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -41,7 +41,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'House', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: firstServantId ? `ServantHome?id=${firstServantId}` : 'Night', disabled: !firstServantId, hasSelector: servants.length > 1 },
-    { name: 'Messages', icon: MessageCircle, path: firstServantId ? `Messages?servant=${firstServantId}` : 'Night', disabled: !firstServantId }
+    { name: 'Messages', icon: MessageCircle, path: firstServantId ? `Messages?servant=${firstServantId}` : 'Night', disabled: !firstServantId },
+    { name: 'Witch', icon: Sparkles, path: 'WitchHome' }
   ];
   
   return (
