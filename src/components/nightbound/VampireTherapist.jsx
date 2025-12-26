@@ -125,9 +125,8 @@ export default function VampireTherapist({ vampireState, onClose }) {
             <div className="bg-blue-950/30 rounded-xl p-4 border border-blue-800/30">
               <p className="text-blue-300 text-sm mb-2">💡 Dr. Nate Cross - Your Story</p>
               <p className="text-gray-300 text-sm">
-                Licensed therapist. You help people by day, feed by night. Then Lilith Hart walked into your office.
-                A year of stolen glances. Professional boundaries tested. The attraction unbearable. You both finally gave in.
-                Sexual. Passionate. Consuming. She asked for eternity. You turned her. Now she's yours forever... or is she?
+                Licensed therapist. You help people by day, feed by night. Lilith Hart was your patient. 
+                A year of tension. You finally gave in. She asked to be turned. Now she's yours forever.
               </p>
             </div>
 
