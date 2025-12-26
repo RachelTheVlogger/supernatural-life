@@ -307,25 +307,25 @@ export default function VampireHome() {
             transition={{ delay: 0.1 }}
             className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
           >
-            <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-blue-300/50' : 'border-purple-900/30'}`}>
+            <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-orange-300/50' : 'border-purple-900/30'}`}>
               <Moon className="w-6 h-6 text-purple-400 mb-2" />
               <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{vampireState.humanity || 50}</p>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Humanity</p>
               </div>
 
-              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-blue-300/50' : 'border-purple-900/30'}`}>
+              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-orange-300/50' : 'border-purple-900/30'}`}>
               <Heart className="w-6 h-6 text-red-400 mb-2" />
               <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{servants.length}</p>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Servants</p>
               </div>
 
-              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-blue-300/50' : 'border-purple-900/30'}`}>
+              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-orange-300/50' : 'border-purple-900/30'}`}>
               <Zap className="w-6 h-6 text-yellow-400 mb-2" />
               <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{vampireState.unlocked_powers?.length || 0}</p>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Powers Unlocked</p>
               </div>
 
-              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-blue-300/50' : 'border-purple-900/30'}`}>
+              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-orange-300/50' : 'border-purple-900/30'}`}>
               <Eye className="w-6 h-6 text-blue-400 mb-2" />
               <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{logs.length}</p>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Events Witnessed</p>
