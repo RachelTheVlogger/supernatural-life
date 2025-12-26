@@ -407,12 +407,36 @@ export default function ServantHome() {
             ? 'Every sense heightened. Every emotion deeper. The hunger pulses through you like a second heartbeat. You are vampire.'
             : "They're out hunting. You wait for them to return."}
         </p>
-        <div className="mt-3 flex justify-between text-xs">
-          <span className={servant.is_turned ? 'text-rose-300' : 'text-gray-400'}>Bond with your sire:</span>
-          <span className={servant.is_turned ? 'text-rose-400' : 'text-purple-400'}>
-            {servant.relationship || 0}%
-          </span>
-        </div>
+        {servant.is_turned && (
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+              <p className="text-rose-300 text-xs">Stage</p>
+              <p className="text-rose-100 font-bold">
+                {servant.vampire_stage === 1 ? '🩸 Newborn' : servant.vampire_stage === 2 ? '🌙 Fledgling' : servant.vampire_stage === 3 ? '⚡ Established' : '👑 Elder'}
+              </p>
+            </div>
+            <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+              <p className="text-rose-300 text-xs">Power Level</p>
+              <p className="text-rose-100 font-bold">{servant.vampire_power_level || 0}/100</p>
+            </div>
+            <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+              <p className="text-rose-300 text-xs">Nights as Vampire</p>
+              <p className="text-rose-100 font-bold">{servant.nights_as_vampire || 0}</p>
+            </div>
+            <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+              <p className="text-rose-300 text-xs">Sire Bond</p>
+              <p className="text-rose-100 font-bold">{servant.relationship || 0}%</p>
+            </div>
+          </div>
+        )}
+        {!servant.is_turned && (
+          <div className="mt-3 flex justify-between text-xs">
+            <span className="text-gray-400">Bond with your sire:</span>
+            <span className="text-purple-400">
+              {servant.relationship || 0}%
+            </span>
+          </div>
+        )}
       </motion.div>
       
       {/* Activities */}
