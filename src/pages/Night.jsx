@@ -97,26 +97,6 @@ export default function Night() {
   
   const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
   
-  // Redirect to home if no vampire exists
-  useEffect(() => {
-    if (!vampireLoading && vampireStates.length === 0) {
-      navigate(createPageUrl('Home'), { replace: true });
-    }
-  }, [vampireStates, vampireLoading, navigate]);
-  
-  
-  if (vampireLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-  
-  if (!vampireState) {
-    return null;
-  }
-  
   // Random name generator with duplicate checking - unique pool for servants
   const generateRandomName = (existingNames = []) => {
     const names = [
@@ -178,6 +158,25 @@ export default function Night() {
     
     initServants();
   }, [servants.length, servantsInitialized, queryClient]);
+
+  // Redirect to home if no vampire exists
+  useEffect(() => {
+    if (!vampireLoading && vampireStates.length === 0) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [vampireStates, vampireLoading, navigate]);
+  
+  if (vampireLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+  
+  if (!vampireState) {
+    return null;
+  }
   
   const hungerColor = {
     sated: 'rgba(60, 20, 20, 0.6)',
