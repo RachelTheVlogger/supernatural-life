@@ -70,6 +70,46 @@ export default function WitchEncounter({ vampireState, onClose }) {
         `${selectedWitch.name} nods slowly. "This could be... useful."`,
         `"Fine. But if you betray me, I'll make you wish you stayed dead."`,
         `A powerful ally secured. Her magic could prove invaluable.`
+      ],
+      flirt: [
+        `You move closer. ${selectedWitch.name}'s breath catches. "Careful, vampire."`,
+        `"Mixing magic and blood... dangerous combination." Her cheeks flush.`,
+        `${selectedWitch.name} doesn't pull away when you touch her hand. Electric.`
+      ],
+      learn: [
+        `${selectedWitch.name} shows you a spell. Ancient. Powerful.`,
+        `"Magic and vampirism... there's overlap. Watch." She demonstrates.`,
+        `You absorb her teachings. Your powers feel... different. Enhanced.`
+      ],
+      gift: [
+        `${selectedWitch.name} accepts your gift. "Thoughtful. For a monster."`,
+        `"Blood-infused moonstone? Interesting choice." She smiles slightly.`,
+        `Her eyes light up. "This is rare. Where did you find it?"`
+      ],
+      spar: [
+        `Magic vs vampire speed. You're both breathless after.`,
+        `${selectedWitch.name} laughs, wiping blood from her lip. "Again."`,
+        `The training is intense. You both learn from each other.`
+      ],
+      drink_tea: [
+        `${selectedWitch.name} pours tea. You sit in her shop, talking for hours.`,
+        `Chamomile and blood oranges. Strange, but... nice. Comfortable.`,
+        `"I never thought I'd have tea with a vampire." She smiles.`
+      ],
+      help_ritual: [
+        `You hold the candles while ${selectedWitch.name} chants. Power flows.`,
+        `"I need your blood for this. Just a drop." The ritual succeeds.`,
+        `Magic circles you both. Connected. The spell is complete.`
+      ],
+      confide: [
+        `${selectedWitch.name} tells you about witch persecution. Old wounds.`,
+        `You share your struggles with bloodlust. She listens. Understands.`,
+        `"We're both monsters to them," she whispers. "Maybe we're not so different."`
+      ],
+      visit_shop: [
+        `Her shop smells like herbs and old books. Comforting.`,
+        `${selectedWitch.name} shows you her collection. Centuries of knowledge.`,
+        `"Stay as long as you want. The sun won't find you here."`
       ]
     };
 
@@ -108,6 +148,48 @@ export default function WitchEncounter({ vampireState, onClose }) {
           dispChange = 'allied';
           newOutcome = messages.ally[Math.floor(Math.random() * messages.ally.length)];
         }
+      } else if (action === 'flirt') {
+        if (selectedWitch.relationship < 20) {
+          relChange = -5;
+          newOutcome = `${selectedWitch.name} steps back. "Don't."`;
+        } else {
+          relChange = 12;
+          newOutcome = messages.flirt[Math.floor(Math.random() * messages.flirt.length)];
+        }
+      } else if (action === 'learn') {
+        if (selectedWitch.relationship < 40) {
+          newOutcome = `${selectedWitch.name} shakes her head. "Not yet. Prove yourself first."`;
+        } else {
+          relChange = 18;
+          newOutcome = messages.learn[Math.floor(Math.random() * messages.learn.length)];
+        }
+      } else if (action === 'gift') {
+        relChange = 15;
+        newOutcome = messages.gift[Math.floor(Math.random() * messages.gift.length)];
+      } else if (action === 'spar') {
+        relChange = 20;
+        newOutcome = messages.spar[Math.floor(Math.random() * messages.spar.length)];
+      } else if (action === 'drink_tea') {
+        relChange = 10;
+        newOutcome = messages.drink_tea[Math.floor(Math.random() * messages.drink_tea.length)];
+      } else if (action === 'help_ritual') {
+        if (selectedWitch.relationship < 50) {
+          newOutcome = `${selectedWitch.name} refuses. "I don't trust you with my magic yet."`;
+        } else {
+          relChange = 25;
+          dispChange = 'allied';
+          newOutcome = messages.help_ritual[Math.floor(Math.random() * messages.help_ritual.length)];
+        }
+      } else if (action === 'confide') {
+        if (selectedWitch.relationship < 30) {
+          newOutcome = `${selectedWitch.name} stays quiet. Not ready to open up.`;
+        } else {
+          relChange = 22;
+          newOutcome = messages.confide[Math.floor(Math.random() * messages.confide.length)];
+        }
+      } else if (action === 'visit_shop') {
+        relChange = 8;
+        newOutcome = messages.visit_shop[Math.floor(Math.random() * messages.visit_shop.length)];
       }
 
       await base44.entities.Witch.update(selectedWitch.id, {
@@ -237,27 +319,83 @@ export default function WitchEncounter({ vampireState, onClose }) {
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleInteraction('approach')}
-                className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl"
+                className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm"
               >
-                Approach Peacefully
+                Approach
               </button>
               <button
                 onClick={() => handleInteraction('negotiate')}
-                className="bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl"
+                className="bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl text-sm"
               >
                 Negotiate
               </button>
+              <button
+                onClick={() => handleInteraction('flirt')}
+                className="bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-xl text-sm"
+              >
+                Flirt
+              </button>
+              <button
+                onClick={() => handleInteraction('drink_tea')}
+                className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-sm"
+              >
+                Have Tea
+              </button>
+              <button
+                onClick={() => handleInteraction('gift')}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white py-3 rounded-xl text-sm"
+              >
+                Give Gift
+              </button>
+              <button
+                onClick={() => handleInteraction('visit_shop')}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm"
+              >
+                Visit Shop
+              </button>
+              {selectedWitch.relationship >= 20 && (
+                <button
+                  onClick={() => handleInteraction('confide')}
+                  className="bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl text-sm"
+                >
+                  Confide
+                </button>
+              )}
               {selectedWitch.relationship >= 30 && (
                 <button
                   onClick={() => handleInteraction('ally')}
-                  className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl col-span-2"
+                  className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-sm"
                 >
-                  Propose Alliance
+                  Alliance
+                </button>
+              )}
+              {selectedWitch.relationship >= 40 && (
+                <>
+                  <button
+                    onClick={() => handleInteraction('learn')}
+                    className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm"
+                  >
+                    Learn Magic
+                  </button>
+                  <button
+                    onClick={() => handleInteraction('spar')}
+                    className="bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl text-sm"
+                  >
+                    Spar
+                  </button>
+                </>
+              )}
+              {selectedWitch.relationship >= 50 && (
+                <button
+                  onClick={() => handleInteraction('help_ritual')}
+                  className="bg-purple-700 hover:bg-purple-800 text-white py-3 rounded-xl text-sm col-span-2"
+                >
+                  Help with Ritual
                 </button>
               )}
               <button
                 onClick={() => handleInteraction('threaten')}
-                className="bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl col-span-2"
+                className="bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl col-span-2 text-sm"
               >
                 Threaten (Dangerous)
               </button>
