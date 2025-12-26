@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, MessageCircle, BookOpen, Sparkles, Heart, Skull, Zap, UserCircle } from 'lucide-react';
+import { Home, Moon, User, MessageCircle, BookOpen, Sparkles, Heart, Skull, Zap, UserCircle, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
