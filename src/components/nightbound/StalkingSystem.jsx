@@ -29,6 +29,8 @@ export default function StalkingSystem({ vampireState, onClose }) {
   });
 
   const handleFindTarget = async () => {
+    if (!vampireState?.id) return;
+    
     setFinding(true);
     
     setTimeout(async () => {
