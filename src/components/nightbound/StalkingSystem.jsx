@@ -24,7 +24,10 @@ export default function StalkingSystem({ vampireState, onClose }) {
 
   const { data: targets = [] } = useQuery({
     queryKey: ['stalkTargets', vampireState?.id],
-    queryFn: () => base44.entities.StalkTarget.filter({ vampire_id: vampireState.id }),
+    queryFn: async () => {
+      if (!vampireState?.id) return [];
+      return await base44.entities.StalkTarget.filter({ vampire_id: vampireState.id });
+    },
     enabled: !!vampireState?.id
   });
 
