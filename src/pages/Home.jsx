@@ -129,15 +129,7 @@ export default function Home() {
             New Vampire Game
           </button>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(createPageUrl('KillerCouple'));
-            }}
-            className="w-full bg-gradient-to-r from-rose-900/60 to-red-900/60 hover:from-rose-900/80 hover:to-red-900/80 border-2 border-rose-500/50 rounded-xl py-4 text-white font-medium text-lg transition-all flex items-center justify-center gap-3"
-          >
-            ❤️🔪 Killer Couple (Joe & Love)
-          </button>
+
         </motion.div>
         
 

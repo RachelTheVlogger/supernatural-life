@@ -30,18 +30,7 @@ export default function Layout({ children, currentPageName }) {
   const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome'].includes(currentPageName);
   
   // Fetch killers for killer tab
-  const { data: killers = [] } = useQuery({
-    queryKey: ['serialKillers'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.SerialKiller.list();
-      } catch (e) {
-        return [];
-      }
-    },
-    enabled: showNav,
-    retry: 1
-  });
+
 
   const { data: witches = [] } = useQuery({
     queryKey: ['witches'],
@@ -110,8 +99,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Succubus', icon: Heart, path: 'SuccubusHome', show: succubi.length > 0 },
     { name: 'Incubus', icon: Skull, path: 'IncubusHome', show: incubi.length > 0 },
     { name: 'Wolf', icon: Zap, path: 'WerewolfHome', show: playerWerewolves.length > 0 },
-    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
-    { name: 'Killer', icon: Skull, path: 'SerialKillerHome', show: killers.length > 0 }
+    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 }
   ];
   
   return (
