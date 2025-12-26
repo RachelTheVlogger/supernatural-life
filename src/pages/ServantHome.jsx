@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, ShoppingBag, Settings, Heart, User } from 'lucide-react';
+import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, ShoppingBag, Settings, Heart, User, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import BusinessManagement from '@/components/nightbound/BusinessManagement';
@@ -21,6 +21,7 @@ import AuthorCareer from '@/components/nightbound/AuthorCareer';
 import ServantWitchInteraction from '@/components/nightbound/ServantWitchInteraction';
 import WitchServantInteraction from '@/components/nightbound/WitchServantInteraction';
 import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
+import TurnedServantProgression from '@/components/nightbound/TurnedServantProgression';
 
 const CHORES = [
   { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
@@ -118,6 +119,7 @@ export default function ServantHome() {
   const [showWitchVisit, setShowWitchVisit] = useState(false);
   const [showWitchTalk, setShowWitchTalk] = useState(false);
   const [showFamily, setShowFamily] = useState(false);
+  const [showProgression, setShowProgression] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -408,24 +410,38 @@ export default function ServantHome() {
             : "They're out hunting. You wait for them to return."}
         </p>
         {servant.is_turned && (
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
-              <p className="text-rose-300 text-xs">Stage</p>
-              <p className="text-rose-100 font-bold">
-                {servant.vampire_stage === 1 ? '🩸 Newborn' : servant.vampire_stage === 2 ? '🌙 Fledgling' : servant.vampire_stage === 3 ? '⚡ Established' : '👑 Elder'}
-              </p>
-            </div>
-            <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
-              <p className="text-rose-300 text-xs">Power Level</p>
-              <p className="text-rose-100 font-bold">{servant.vampire_power_level || 0}/100</p>
-            </div>
-            <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
-              <p className="text-rose-300 text-xs">Nights as Vampire</p>
-              <p className="text-rose-100 font-bold">{servant.nights_as_vampire || 0}</p>
-            </div>
-            <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
-              <p className="text-rose-300 text-xs">Sire Bond</p>
-              <p className="text-rose-100 font-bold">{servant.relationship || 0}%</p>
+          <div className="mt-4">
+            <button
+              onClick={() => setShowProgression(true)}
+              className="w-full bg-gradient-to-r from-rose-900/60 to-red-900/60 hover:from-rose-900/80 hover:to-red-900/80 border-2 border-rose-500/50 rounded-xl p-4 transition-colors mb-3"
+            >
+              <div className="flex items-center justify-between">
+                <div className="text-left">
+                  <h3 className="text-rose-100 font-bold">⚡ Vampire Training</h3>
+                  <p className="text-rose-300 text-xs">Unlock powers • Progress to Elder</p>
+                </div>
+                <Zap className="w-6 h-6 text-rose-400" />
+              </div>
+            </button>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+                <p className="text-rose-300 text-xs">Stage</p>
+                <p className="text-rose-100 font-bold">
+                  {(servant.vampire_stage || 1) === 1 ? '🩸 Newborn' : (servant.vampire_stage || 1) === 2 ? '🌙 Fledgling' : (servant.vampire_stage || 1) === 3 ? '⚡ Established' : '👑 Elder'}
+                </p>
+              </div>
+              <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+                <p className="text-rose-300 text-xs">Power Level</p>
+                <p className="text-rose-100 font-bold">{servant.vampire_power_level || 0}/100</p>
+              </div>
+              <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+                <p className="text-rose-300 text-xs">Nights as Vampire</p>
+                <p className="text-rose-100 font-bold">{servant.nights_as_vampire || 0}</p>
+              </div>
+              <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+                <p className="text-rose-300 text-xs">Sire Bond</p>
+                <p className="text-rose-100 font-bold">{servant.relationship || 0}%</p>
+              </div>
             </div>
           </div>
         )}
@@ -641,6 +657,12 @@ export default function ServantHome() {
             servant={servant}
             vampireState={vampireState}
             onClose={() => setShowFamily(false)}
+          />
+        )}
+        {showProgression && (
+          <TurnedServantProgression
+            servant={servant}
+            onClose={() => setShowProgression(false)}
           />
         )}
         {!vampireState && (showOnlyFangs || showServantInteractions || showYouTube || showSnapchat || showDating) && (
