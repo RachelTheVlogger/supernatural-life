@@ -66,7 +66,9 @@ export default function VampireHome() {
         return [];
       }
     },
-    retry: 2
+    retry: 2,
+    staleTime: 0,
+    cacheTime: 0
   });
   
   const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
