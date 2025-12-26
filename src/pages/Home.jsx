@@ -219,7 +219,7 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 1 && (
+            {introStep === 2 && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your sexuality</h2>
                 <p className="text-purple-300 text-sm mb-4">Who are you attracted to?</p>
