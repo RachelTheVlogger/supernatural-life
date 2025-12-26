@@ -42,6 +42,58 @@ export default function Layout({ children, currentPageName }) {
     enabled: showNav,
     retry: 1
   });
+
+  const { data: witches = [] } = useQuery({
+    queryKey: ['witches'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Witch.list();
+      } catch (e) {
+        return [];
+      }
+    },
+    enabled: showNav,
+    retry: 1
+  });
+
+  const { data: succubi = [] } = useQuery({
+    queryKey: ['succubi'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Succubus.list();
+      } catch (e) {
+        return [];
+      }
+    },
+    enabled: showNav,
+    retry: 1
+  });
+
+  const { data: incubi = [] } = useQuery({
+    queryKey: ['incubi'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Incubus.list();
+      } catch (e) {
+        return [];
+      }
+    },
+    enabled: showNav,
+    retry: 1
+  });
+
+  const { data: playerWerewolves = [] } = useQuery({
+    queryKey: ['playerWerewolves'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.PlayerWerewolf.list();
+      } catch (e) {
+        return [];
+      }
+    },
+    enabled: showNav,
+    retry: 1
+  });
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
@@ -55,6 +107,10 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vampire', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
+    { name: 'Succubus', icon: Heart, path: 'SuccubusHome', show: succubi.length > 0 },
+    { name: 'Incubus', icon: Skull, path: 'IncubusHome', show: incubi.length > 0 },
+    { name: 'Wolf', icon: Zap, path: 'WerewolfHome', show: playerWerewolves.length > 0 },
+    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
     { name: 'Killer', icon: Skull, path: 'SerialKillerHome', show: killers.length > 0 }
   ];
   
