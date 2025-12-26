@@ -388,14 +388,14 @@ export default function ServantHome() {
             onClose={() => setShowAutomationSettings(false)}
           />
         )}
-        {showOnlyFangs && (
+        {showOnlyFangs && vampireState && (
           <OnlyFangsManagement
             servant={servant}
             vampireState={vampireState}
             onClose={() => setShowOnlyFangs(false)}
           />
         )}
-        {showServantInteractions && (
+        {showServantInteractions && vampireState && (
           <ServantInteractions
             servants={allServants}
             vampireState={vampireState}
@@ -403,7 +403,7 @@ export default function ServantHome() {
             onClose={() => setShowServantInteractions(false)}
           />
         )}
-        {showYouTube && (
+        {showYouTube && vampireState && (
           <YouTubeCareer
             servant={servant}
             vampireState={vampireState}
@@ -416,7 +416,7 @@ export default function ServantHome() {
             onClose={() => setShowPatreon(false)}
           />
         )}
-        {showSnapchat && (
+        {showSnapchat && vampireState && (
           <SnapchatPremium
             servant={servant}
             vampireState={vampireState}
@@ -447,7 +447,7 @@ export default function ServantHome() {
             onClose={() => setShowAuthor(false)}
           />
         )}
-        {showDating && (
+        {showDating && vampireState && (
           <ServantDating
             servant={servant}
             vampireState={vampireState}
