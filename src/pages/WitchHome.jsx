@@ -337,7 +337,7 @@ export default function WitchHome() {
     );
   }
 
-  const categorySpells = SPELLS[witch.specialty] || SPELLS.elemental;
+
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-purple-950 via-indigo-950 to-black">
