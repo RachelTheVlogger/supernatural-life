@@ -13,11 +13,22 @@ const GENRES = [
   { id: 'slice-of-life', label: 'Slice of Life', icon: '☕', desc: 'Everyday moments' }
 ];
 
+const ART_STYLES = [
+  { id: 'classic', label: 'Classic Manga', desc: 'Traditional black & white manga style' },
+  { id: 'modern', label: 'Modern Anime', desc: 'Contemporary anime aesthetic' },
+  { id: 'chibi', label: 'Chibi', desc: 'Cute super-deformed style' },
+  { id: 'realistic', label: 'Realistic', desc: 'Detailed realistic art' },
+  { id: 'watercolor', label: 'Watercolor', desc: 'Soft painted style' },
+  { id: 'noir', label: 'Noir', desc: 'High contrast dark style' }
+];
+
 export default function MangaCareer({ servant, onClose }) {
   const queryClient = useQueryClient();
   const [working, setWorking] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [showGenreSelect, setShowGenreSelect] = useState(false);
+  const [showStyleSelect, setShowStyleSelect] = useState(false);
+  const [uploadingStyle, setUploadingStyle] = useState(false);
 
   const { data: careers = [] } = useQuery({
     queryKey: ['career', servant.id],
@@ -58,11 +69,27 @@ export default function MangaCareer({ servant, onClose }) {
       };
 
       const genre = career.current_genre || 'shonen';
-      const prompt = `${genrePrompts[genre]}, black and white manga art style, dramatic composition, professional manga illustration`;
+      const artStyle = career.art_style || 'classic';
+      
+      const stylePrompts = {
+        classic: 'traditional black and white manga art style, classic manga aesthetic, hand-drawn linework',
+        modern: 'modern anime style, vibrant colors, digital anime art, contemporary manga aesthetic',
+        chibi: 'chibi style, super deformed cute characters, simplified features, kawaii aesthetic',
+        realistic: 'realistic detailed art style, photorealistic manga illustration, high detail',
+        watercolor: 'watercolor painting style manga, soft painted aesthetic, artistic brushstrokes',
+        noir: 'noir manga style, high contrast shadows, dark atmosphere, dramatic black and white'
+      };
+
+      const prompt = `${genrePrompts[genre]}, ${stylePrompts[artStyle]}, dramatic composition, professional manga illustration`;
 
       setOutcome('Generating manga panels...');
       
-      const imageResult = await base44.integrations.Core.GenerateImage({ prompt });
+      const generateParams = { prompt };
+      if (career.style_reference_image) {
+        generateParams.existing_image_urls = [career.style_reference_image];
+      }
+      
+      const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
       const panelImage = imageResult.url;
 
       const existingChapters = career.manga_chapters || [];
@@ -128,7 +155,8 @@ export default function MangaCareer({ servant, onClose }) {
           series_name: seriesName,
           chapters_released: 0,
           fans: Math.floor(Math.random() * 50) + 20,
-          income: 0
+          income: 0,
+          art_style: 'classic'
         });
       } else {
         await base44.entities.ServantCareer.update(career.id, {
@@ -137,7 +165,8 @@ export default function MangaCareer({ servant, onClose }) {
           series_name: seriesName,
           chapters_released: 0,
           fans: Math.floor(Math.random() * 50) + 20,
-          income: 0
+          income: 0,
+          art_style: 'classic'
         });
       }
 
@@ -209,13 +238,22 @@ export default function MangaCareer({ servant, onClose }) {
               </div>
             </div>
 
-            <button
-              onClick={handleDrawChapter}
-              disabled={working}
-              className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium mb-4"
-            >
-              {working ? 'Drawing...' : 'Draw Next Chapter'}
-            </button>
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={handleDrawChapter}
+                disabled={working}
+                className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium"
+              >
+                {working ? 'Drawing...' : 'Draw Next Chapter'}
+              </button>
+              <button
+                onClick={() => setShowStyleSelect(true)}
+                disabled={working}
+                className="bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg px-4 text-white disabled:opacity-50"
+              >
+                🎨
+              </button>
+            </div>
 
             {career.manga_chapters && career.manga_chapters.length > 0 && (
               <div>
@@ -286,6 +324,93 @@ export default function MangaCareer({ servant, onClose }) {
         )}
         </div>
       </motion.div>
+
+      {/* Style Selection Modal */}
+      {showStyleSelect && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => !working && setShowStyleSelect(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+          >
+            <h3 className="text-white text-xl font-bold mb-4">Art Style</h3>
+
+            <div className="mb-4">
+              <p className="text-gray-400 text-sm mb-2">Current: {ART_STYLES.find(s => s.id === (career?.art_style || 'classic'))?.label}</p>
+            </div>
+
+            <div className="space-y-2 mb-4">
+              {ART_STYLES.map(style => (
+                <button
+                  key={style.id}
+                  onClick={async () => {
+                    await base44.entities.ServantCareer.update(career.id, { art_style: style.id });
+                    queryClient.invalidateQueries(['career']);
+                    setShowStyleSelect(false);
+                  }}
+                  disabled={working}
+                  className={`w-full rounded-lg p-3 text-left transition-colors ${
+                    career?.art_style === style.id
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                  }`}
+                >
+                  <h4 className="font-medium">{style.label}</h4>
+                  <p className="text-xs opacity-80">{style.desc}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="border-t border-gray-700 pt-4">
+              <h4 className="text-white font-medium mb-2">Style Transfer</h4>
+              <p className="text-gray-400 text-xs mb-3">Upload a reference image to transfer its style</p>
+
+              {career?.style_reference_image && (
+                <div className="mb-3">
+                  <img src={career.style_reference_image} alt="Style reference" className="w-full rounded-lg border border-purple-500/30" />
+                  <button
+                    onClick={async () => {
+                      await base44.entities.ServantCareer.update(career.id, { style_reference_image: null });
+                      queryClient.invalidateQueries(['career']);
+                    }}
+                    className="w-full mt-2 bg-red-900/40 hover:bg-red-900/60 text-red-300 py-2 rounded-lg text-sm"
+                  >
+                    Remove Reference
+                  </button>
+                </div>
+              )}
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  setUploadingStyle(true);
+                  try {
+                    const result = await base44.integrations.Core.UploadFile({ file });
+                    await base44.entities.ServantCareer.update(career.id, { style_reference_image: result.file_url });
+                    queryClient.invalidateQueries(['career']);
+                  } catch (error) {
+                    console.error('Upload failed:', error);
+                  }
+                  setUploadingStyle(false);
+                }}
+                disabled={uploadingStyle}
+                className="w-full bg-gray-800 text-white text-sm rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700"
+              />
+              {uploadingStyle && <p className="text-gray-400 text-xs mt-2">Uploading...</p>}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Genre Selection Modal */}
       {showGenreSelect && (
