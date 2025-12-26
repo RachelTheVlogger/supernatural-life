@@ -35,31 +35,43 @@ export default function MangaCareer({ servant, onClose }) {
       const quality = Math.floor(Math.random() * 30) + 50;
       const fansGained = Math.floor(Math.random() * 200) + 100;
       const incomeGained = Math.floor(Math.random() * 150) + 100;
+      const panels = Math.floor(Math.random() * 10) + 15;
 
       const newFans = (career.fans || 0) + fansGained;
       const newIncome = (career.income || 0) + incomeGained;
       const newChapters = (career.chapters_released || 0) + 1;
 
+      const chapterTitles = [
+        'New Beginning', 'Dark Truth', 'Confrontation', 'Revelation', 'Battle',
+        'Aftermath', 'Rising Tension', 'Breaking Point', 'Destiny', 'Choice'
+      ];
+      const title = chapterTitles[Math.floor(Math.random() * chapterTitles.length)];
+
+      const existingChapters = career.manga_chapters || [];
+      const newChapter = {
+        number: newChapters,
+        title,
+        panels,
+        quality,
+        fans_gained: fansGained,
+        income: incomeGained,
+        date: new Date().toISOString()
+      };
+
       await base44.entities.ServantCareer.update(career.id, {
         fans: newFans,
         income: newIncome,
-        chapters_released: newChapters
+        chapters_released: newChapters,
+        manga_chapters: [...existingChapters, newChapter]
       });
 
       await base44.entities.NightLog.create({
-        entry: `${servant.name} released chapter ${newChapters}. +${fansGained} fans, +$${incomeGained}`,
+        entry: `${servant.name} released Chapter ${newChapters}: "${title}" (${panels} panels). +${fansGained} fans, +$${incomeGained}`,
         category: 'interaction',
         intensity: 'moderate'
       });
 
-      const outcomes = [
-        `Drew an incredible chapter. Fans are going wild. +${fansGained} fans, $${incomeGained}`,
-        `Your art improved. The panel work is stunning. +${fansGained} fans, $${incomeGained}`,
-        `Posted a new chapter. The comments are pouring in. +${fansGained} fans, $${incomeGained}`,
-        `Your character designs are getting praised everywhere. +${fansGained} fans, $${incomeGained}`
-      ];
-
-      setOutcome(outcomes[Math.floor(Math.random() * outcomes.length)]);
+      setOutcome(`Chapter ${newChapters}: "${title}" - ${panels} panels drawn! +${fansGained} fans, $${incomeGained}`);
       queryClient.invalidateQueries(['career']);
 
       setTimeout(() => {
@@ -177,10 +189,31 @@ export default function MangaCareer({ servant, onClose }) {
             <button
               onClick={handleDrawChapter}
               disabled={working}
-              className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium"
+              className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium mb-4"
             >
               {working ? 'Drawing...' : 'Draw Next Chapter'}
             </button>
+
+            {career.manga_chapters && career.manga_chapters.length > 0 && (
+              <div>
+                <h4 className="text-white font-medium text-sm mb-2">Published Chapters</h4>
+                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                  {[...career.manga_chapters].reverse().map((chapter) => (
+                    <div key={chapter.number} className="bg-gray-800/50 rounded-lg p-3">
+                      <div className="flex justify-between items-start mb-1">
+                        <h5 className="text-white font-medium text-sm">Ch. {chapter.number}: {chapter.title}</h5>
+                        <span className="text-xs text-purple-400">{chapter.quality}% quality</span>
+                      </div>
+                      <div className="flex gap-3 text-xs text-gray-400">
+                        <span>📄 {chapter.panels} panels</span>
+                        <span>👥 +{chapter.fans_gained} fans</span>
+                        <span>💰 ${chapter.income}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
