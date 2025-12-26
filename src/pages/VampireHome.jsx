@@ -1023,7 +1023,7 @@ export default function VampireHome() {
         {showAging && vampireState && (
           <VampireAgingSystem vampireState={vampireState} onClose={() => setShowAging(false)} />
         )}
-        {showTherapist && vampireState && (
+        {showTherapist && (
           <VampireTherapist vampireState={vampireState} onClose={() => setShowTherapist(false)} />
         )}
         {showSuccubusInteraction && succubus && (
