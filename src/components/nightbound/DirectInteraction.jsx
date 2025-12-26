@@ -79,6 +79,87 @@ const TURNED_VAMPIRE_INTERACTIONS = {
       high: ['You hunted as one. No words needed. Perfect unity.', 'Twin shadows. The city was yours together.', 'They\'ve become your perfect hunting companion.']
     }
   },
+  vampireBiteDuringsex: {
+    icon: Droplets,
+    label: 'Bite while fucking',
+    category: 'vampire',
+    gains: [30, 45],
+    outcomes: {
+      mid: ['You fucked them deep. Bit their neck mid-thrust. They screamed. Vampire ecstasy.', 'Feeding and fucking. Primal. Perfect. They came hard.', 'You bit them while inside them. Blood and pleasure mixed. Overwhelming.'],
+      high: ['Deep inside them. Fangs in their neck. Both sensations peaked. They shattered.', 'You fucked and fed simultaneously. Vampire intimacy perfected. Complete.', 'Biting while thrusting. Blood flowing. They came screaming your name. Twice.', 'Supernatural fucking. Vampire biting. They couldn\'t tell where one pleasure ended and another began.']
+    }
+  },
+  vampireRoughFuck: {
+    icon: Flame,
+    label: 'Fuck with vampire strength',
+    category: 'vampire',
+    gains: [35, 50],
+    outcomes: {
+      mid: ['Supernatural strength. You fucked them harder than humanly possible.', 'Vampire stamina. Hours. Relentless. They took it all.', 'No holding back. Full vampire force. They loved every second.'],
+      high: ['You fucked them with full vampire strength. Destroyed the bed. Worth it.', 'Supernatural fucking. They screamed. The neighbors heard. You didn\'t care.', 'Vampire speed and strength combined. Pounded them into oblivion. Perfect.', 'You broke furniture. Left marks. Fucked for hours straight. Immortal stamina.', 'So rough the headboard cracked. Neither of you stopped. Vampire bodies can take it.']
+    }
+  },
+  vampireBloodPlay: {
+    icon: Droplets,
+    label: 'Blood play (explicit)',
+    category: 'vampire',
+    gains: [28, 40],
+    outcomes: {
+      mid: ['You cut yourself. Let them drink while you touched them. Intimate.', 'Blood play. Feeding. Pleasure. Lines blurred. Beautiful.', 'Your blood on their tongue. Your hand between their legs. Ecstasy.'],
+      high: ['You fed them your blood while making them cum. Simultaneous. Perfect.', 'Blood play intensified. Feeding. Fucking. Bleeding. All at once. Overwhelming.', 'Your blood made them come. The taste. The power. The intimacy. Complete.', 'You bit your wrist. Fed them while they rode you. Screaming. Perfect vampire intimacy.']
+    }
+  },
+  vampireSpeedFuck: {
+    icon: Wind,
+    label: 'Fuck at vampire speed',
+    category: 'vampire',
+    gains: [32, 45],
+    outcomes: {
+      mid: ['Vampire speed fucking. Blur fast. They couldn\'t keep up. Tried anyway.', 'You moved faster than human. They felt everything. Overwhelmed. Perfect.', 'Speed fucking. Supernatural. They came before they could process it.'],
+      high: ['Vampire speed. You fucked them so fast they lost count of orgasms.', 'Blur speed fucking. They screamed. Came. Screamed again. Couldn\'t stop.', 'Supernatural velocity. Pounding them at inhuman speed. They shattered completely.', 'You fucked them faster than possible. Multiple orgasms. Lost count. Vampire perfection.']
+    }
+  },
+  vampireWallFuck: {
+    icon: Flame,
+    label: 'Pin them to wall (vampire strength)',
+    category: 'vampire',
+    gains: [30, 42],
+    outcomes: {
+      mid: ['Vampire strength. Pinned them to the wall effortlessly. Fucked standing.', 'You held them up with one hand. Fucked them against the wall. Supernatural.', 'Wall fucking with vampire strength. They felt weightless. Completely yours.'],
+      high: ['Slammed them against the wall. Vampire strength. Fucked them hard. They loved it.', 'Held them up effortlessly. Pinned. Fucked deep. Supernatural strength on display.', 'Wall fucking. You didn\'t break a sweat. They came screaming. Vampire power.', 'Pressed them to the wall so hard it cracked. Kept fucking. Immortal bodies don\'t break.']
+    }
+  },
+  vampireMarathon: {
+    icon: Moon,
+    label: 'All night vampire fucking',
+    category: 'vampire',
+    gains: [40, 55],
+    outcomes: {
+      mid: ['Vampire stamina. You fucked for hours. Neither tired. Perfect.', 'All night session. Supernatural endurance. They lost count of orgasms.', 'Dawn approached. Still fucking. Vampire bodies don\'t quit.'],
+      high: ['Fucked from dusk till dawn. Vampire stamina is limitless. Neither wanted to stop.', 'Hours blurred together. Came dozens of times. Vampire marathon sex achieved.', 'All night. Every position. Multiple times. Sun rose. You kept going. Immortal.', 'Marathon vampire fucking. Lost track of time. Lost track of orgasms. Perfect.', 'You fucked for six hours straight. No breaks. No exhaustion. Just endless pleasure.']
+    }
+  },
+  vampireBiteMark: {
+    icon: Skull,
+    label: 'Mark them permanently',
+    category: 'vampire',
+    gains: [35, 48],
+    outcomes: {
+      mid: ['You bit them deep. Marking bite. Permanent scar. Yours forever.', 'Vampire bite that won\'t heal. Permanent mark. Everyone will know they\'re claimed.', 'You marked them. Deep bite. Eternal scar. Property marked.'],
+      high: ['Permanent vampire bite. Deep scar. Visible always. Your eternal claim.', 'You bit them so deep the mark will never fade. Permanent ownership displayed.', 'Marking bite complete. Scar eternal. They wear your claim proudly. Forever.', 'The bite scarred perfectly. Everyone knows they\'re yours. Forever marked. Perfect.']
+    }
+  },
+  vampireDoubleFeeding: {
+    icon: Droplets,
+    label: 'Feed on each other simultaneously',
+    category: 'vampire',
+    gains: [38, 50],
+    outcomes: {
+      mid: ['You bit each other at the same time. Vampire blood exchanged. Intimate beyond words.', 'Simultaneous feeding. Your blood. Their blood. Mixed. Powerful.', 'Double bite. Both feeding. Connection absolute. Overwhelming.'],
+      high: ['Feeding on each other while fucking. Blood and pleasure and power. Transcendent.', 'You came while drinking their blood. They came while drinking yours. Simultaneous. Perfect.', 'Double feeding during sex. You both came at the exact moment. Vampire intimacy perfected.', 'Biting each other. Fucking deep. Blood flowing. Both came screaming. Ultimate vampire intimacy.']
+    }
+  }
+};
   vampireRace: {
     icon: Wind,
     label: 'Race through the city',
