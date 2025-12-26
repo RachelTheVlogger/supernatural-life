@@ -253,50 +253,52 @@ export default function AuthorCareer({ servant, onClose }) {
         <AnimatePresence mode="wait">
           {tab === 'write' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              {draftBooks.length === 0 && !newBook.genre && (
-                <>
+              {/* Always show new book section if no drafts */}
+              {draftBooks.length === 0 && (
+                <div className="bg-gray-800 rounded-xl p-6">
                   <h3 className="text-white font-medium mb-3">Start New Book</h3>
                   <input
                     type="text"
                     value={newBook.title}
                     onChange={(e) => setNewBook({...newBook, title: e.target.value})}
                     placeholder="Book title..."
-                    className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 mb-3"
+                    className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 mb-4"
                   />
-                  <div className="grid md:grid-cols-2 gap-3">
+                  
+                  <h4 className="text-white text-sm mb-2">Choose Genre</h4>
+                  <div className="grid grid-cols-2 gap-2 mb-4">
                     {Object.entries(BOOK_GENRES).map(([key, genre]) => (
                       <button
                         key={key}
                         onClick={() => setNewBook({...newBook, genre: key})}
-                        className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left"
+                        className={`rounded-lg p-3 text-left transition-all ${
+                          newBook.genre === key 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-900 hover:bg-gray-700 text-gray-300'
+                        }`}
                       >
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="text-3xl">{genre.icon}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{genre.icon}</span>
                           <div>
-                            <h4 className="text-white font-medium">{genre.name}</h4>
-                            <p className="text-gray-500 text-xs">{genre.difficulty}</p>
+                            <p className="text-sm font-medium">{genre.name}</p>
+                            <p className="text-xs opacity-70">${genre.basePrice}</p>
                           </div>
                         </div>
                       </button>
                     ))}
                   </div>
-                </>
-              )}
-
-              {newBook.genre && !draftBooks.length && (
-                <div className="bg-gray-800 rounded-xl p-6">
-                  <h3 className="text-white font-bold mb-4">Ready to Start</h3>
-                  <p className="text-gray-400 mb-4">Genre: {BOOK_GENRES[newBook.genre].name}</p>
+                  
                   <button
                     onClick={handleStartBook}
-                    disabled={!newBook.title}
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl"
+                    disabled={!newBook.title || !newBook.genre}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl disabled:opacity-50"
                   >
                     Start Writing
                   </button>
                 </div>
               )}
 
+              {/* Show active drafts */}
               {draftBooks.map(book => (
                 <div key={book.id} className="bg-gray-800 rounded-xl p-6">
                   <div className="flex justify-between items-start mb-4">
