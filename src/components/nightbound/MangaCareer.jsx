@@ -207,18 +207,25 @@ export default function MangaCareer({ servant, onClose }) {
                       
                       {/* Panel Grid Visual */}
                       <div className="grid grid-cols-6 gap-1 mb-2">
-                        {Array.from({ length: Math.min(chapter.panels, 18) }).map((_, i) => (
-                          <div
-                            key={i}
-                            className="aspect-square rounded bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30"
-                            style={{
-                              backgroundImage: `linear-gradient(${Math.random() * 360}deg, rgba(147, 51, 234, 0.3) 0%, rgba(236, 72, 153, 0.3) 100%)`
-                            }}
-                          />
-                        ))}
+                        {Array.from({ length: Math.min(chapter.panels, 18) }).map((_, i) => {
+                          const patterns = [
+                            '💬', '⚡', '💥', '✨', '🌙', '💔', '⚔️', '🔥', '💧', '🌟',
+                            '👁️', '💀', '🩸', '⭐', '💫', '🌸', '🖤', '💜'
+                          ];
+                          const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                          
+                          return (
+                            <div
+                              key={i}
+                              className="aspect-square rounded bg-gradient-to-br from-purple-900/60 to-pink-900/60 border border-purple-400/40 flex items-center justify-center text-xs"
+                            >
+                              {pattern}
+                            </div>
+                          );
+                        })}
                         {chapter.panels > 18 && (
-                          <div className="aspect-square rounded bg-gray-700/40 border border-gray-600/30 flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">+{chapter.panels - 18}</span>
+                          <div className="aspect-square rounded bg-gray-700/60 border border-gray-500/40 flex items-center justify-center">
+                            <span className="text-gray-300 text-xs font-bold">+{chapter.panels - 18}</span>
                           </div>
                         )}
                       </div>
