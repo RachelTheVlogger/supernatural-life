@@ -38,32 +38,68 @@ export default function ServantFamilySystem({ servant, vampireState, onClose }) 
       let relationChange = 0;
       let message = '';
       
-      if (type === 'meet') {
-        const success = vampireState.humanity >= 50;
-        relationChange = success ? 20 : -20;
-        concernChange = success ? -10 : 20;
-        message = success 
-          ? `Met ${member.member_name}. They seem... cautiously okay with you.`
-          : `${member.member_name} is deeply suspicious. This didn't go well.`;
-        
-        await base44.entities.ServantFamily.update(member.id, {
-          knows_secret: true
-        });
-      } else if (type === 'compel') {
-        relationChange = -30;
-        message = `You compelled ${member.member_name} to forget. Dark. Effective.`;
-        
-        await base44.entities.ServantFamily.update(member.id, {
-          knows_secret: false,
-          concern_level: 0
-        });
-      } else if (type === 'bond') {
-        if (member.relationship_with_vampire >= 30) {
-          relationChange = 25;
-          concernChange = -30;
-          message = `${member.member_name} accepts you. Family bond formed.`;
-        } else {
-          message = `${member.member_name} isn't ready to trust you yet.`;
+      if (servant.is_turned) {
+        // Vampire servant interactions
+        if (type === 'meet') {
+          const success = vampireState.humanity >= 50;
+          relationChange = success ? 20 : -20;
+          concernChange = success ? -10 : 20;
+          message = success 
+            ? `Met ${member.member_name}. They seem... cautiously okay with you.`
+            : `${member.member_name} is deeply suspicious. This didn't go well.`;
+          
+          await base44.entities.ServantFamily.update(member.id, {
+            knows_secret: true
+          });
+        } else if (type === 'compel') {
+          relationChange = -30;
+          message = `You compelled ${member.member_name} to forget. Dark. Effective.`;
+          
+          await base44.entities.ServantFamily.update(member.id, {
+            knows_secret: false,
+            concern_level: 0
+          });
+        } else if (type === 'blood_bond') {
+          relationChange = 50;
+          concernChange = -100;
+          message = `You shared blood with ${member.member_name}. Unbreakable loyalty.`;
+          
+          await base44.entities.ServantFamily.update(member.id, {
+            knows_secret: true,
+            concern_level: 0
+          });
+        } else if (type === 'threaten') {
+          relationChange = -50;
+          concernChange = 100;
+          message = `${member.member_name} is terrified of you now. Silence guaranteed.`;
+          
+          await base44.entities.ServantFamily.update(member.id, {
+            knows_secret: true
+          });
+        }
+      } else {
+        // Human servant interactions
+        if (type === 'visit') {
+          const warmth = Math.random() > 0.4;
+          relationChange = warmth ? 15 : -10;
+          concernChange = member.knows_secret ? 10 : -5;
+          message = warmth
+            ? `Nice visit with ${member.member_name}. They seemed happy to see you.`
+            : `${member.member_name} keeps asking questions about your life.`;
+        } else if (type === 'call') {
+          relationChange = 8;
+          concernChange = -8;
+          message = `Called ${member.member_name}. ${member.concern_level > 50 ? 'They\'re worried about you.' : 'A pleasant conversation.'}`;
+        } else if (type === 'gift') {
+          relationChange = 20;
+          concernChange = -15;
+          message = `${member.member_name} loved the gift. They seem less worried now.`;
+        } else if (type === 'reassure') {
+          const success = Math.random() > 0.3;
+          concernChange = success ? -25 : 5;
+          message = success
+            ? `You reassured ${member.member_name}. They feel better about your situation.`
+            : `${member.member_name} isn't buying it. Their concern grows.`;
         }
       }
       
@@ -73,8 +109,8 @@ export default function ServantFamilySystem({ servant, vampireState, onClose }) 
         last_contact: new Date().toISOString()
       });
       
-      // Check for intervention
-      if (member.concern_level > 70 && !member.intervention_attempted) {
+      // Check for intervention (only for human servants)
+      if (!servant.is_turned && member.concern_level > 70 && !member.intervention_attempted) {
         await base44.entities.ServantFamily.update(member.id, {
           intervention_attempted: true
         });
@@ -143,29 +179,73 @@ export default function ServantFamilySystem({ servant, vampireState, onClose }) 
                 </div>
 
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => handleInteract(member, 'meet')}
-                    disabled={interacting || member.knows_secret}
-                    className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 text-blue-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
-                  >
-                    Meet Them
-                  </button>
-                  {member.knows_secret && (
+                  {servant.is_turned ? (
                     <>
                       <button
-                        onClick={() => handleInteract(member, 'bond')}
+                        onClick={() => handleInteract(member, 'meet')}
+                        disabled={interacting || member.knows_secret}
+                        className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 text-blue-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
+                      >
+                        Meet Them
+                      </button>
+                      {member.knows_secret && (
+                        <>
+                          <button
+                            onClick={() => handleInteract(member, 'blood_bond')}
+                            disabled={interacting}
+                            className="flex-1 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
+                          >
+                            Blood Bond
+                          </button>
+                          <button
+                            onClick={() => handleInteract(member, 'compel')}
+                            disabled={interacting}
+                            className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 text-purple-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
+                          >
+                            Compel
+                          </button>
+                          <button
+                            onClick={() => handleInteract(member, 'threaten')}
+                            disabled={interacting}
+                            className="flex-1 bg-gray-900/40 hover:bg-gray-900/60 border border-gray-500/30 text-gray-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
+                          >
+                            Threaten
+                          </button>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleInteract(member, 'visit')}
+                        disabled={interacting}
+                        className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 text-blue-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
+                      >
+                        Visit
+                      </button>
+                      <button
+                        onClick={() => handleInteract(member, 'call')}
                         disabled={interacting}
                         className="flex-1 bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 text-green-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
                       >
-                        Build Trust
+                        Call
                       </button>
                       <button
-                        onClick={() => handleInteract(member, 'compel')}
+                        onClick={() => handleInteract(member, 'gift')}
                         disabled={interacting}
-                        className="flex-1 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
+                        className="flex-1 bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 text-pink-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
                       >
-                        Compel
+                        Give Gift
                       </button>
+                      {member.concern_level > 40 && (
+                        <button
+                          onClick={() => handleInteract(member, 'reassure')}
+                          disabled={interacting}
+                          className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 text-purple-300 rounded-lg py-2 text-sm transition-colors disabled:opacity-50"
+                        >
+                          Reassure
+                        </button>
+                      )}
                     </>
                   )}
                 </div>
