@@ -29,7 +29,7 @@ export default function SerialKillerHome() {
   const [huntingOutcome, setHuntingOutcome] = useState('');
   const [viewingTrophies, setViewingTrophies] = useState(false);
 
-  const { data: killers = [] } = useQuery({
+  const { data: killers = [], isLoading } = useQuery({
     queryKey: ['serialKillers'],
     queryFn: () => base44.entities.SerialKiller.list()
   });
@@ -38,24 +38,78 @@ export default function SerialKillerHome() {
 
   const { data: lovers = [] } = useQuery({
     queryKey: ['obsessedLovers'],
-    queryFn: () => base44.entities.ObsessedLover.filter({ killer_id: killer?.id })
+    queryFn: () => base44.entities.ObsessedLover.filter({ killer_id: killer?.id }),
+    enabled: !!killer
   });
 
   const { data: victims = [] } = useQuery({
     queryKey: ['victims'],
-    queryFn: () => base44.entities.Victim.filter({ killer_id: killer?.id })
+    queryFn: () => base44.entities.Victim.filter({ killer_id: killer?.id }),
+    enabled: !!killer
   });
 
   const { data: investigations = [] } = useQuery({
     queryKey: ['investigations'],
-    queryFn: () => base44.entities.Investigation.filter({ killer_id: killer?.id })
+    queryFn: () => base44.entities.Investigation.filter({ killer_id: killer?.id }),
+    enabled: !!killer
   });
 
   const activeInvestigation = investigations[0];
 
-  if (!killer) {
-    navigate(createPageUrl('Home'));
-    return null;
+  React.useEffect(() => {
+    const initKiller = async () => {
+      if (!isLoading && killers.length === 0) {
+        const names = ['Marcus', 'Ethan', 'Noah', 'Olivia', 'Sophia', 'Emma'];
+        const name = names[Math.floor(Math.random() * names.length)];
+        
+        const newKiller = await base44.entities.SerialKiller.create({
+          killer_name: name,
+          gender: 'custom',
+          sexuality: 'bisexual',
+          method: 'knife',
+          victim_type: 'Random targets',
+          kill_count: 0,
+          suspicion_level: 0,
+          control_level: 50,
+          trophy_count: 0,
+          signature: 'Clean. Methodical. No pattern.',
+          active_investigation: false,
+          media_attention: 0,
+          urge_level: 40,
+          days_since_kill: 0
+        });
+        
+        const loverNames = ['Jordan', 'Alex', 'Casey', 'Riley', 'Morgan', 'Taylor'];
+        const loverName = loverNames[Math.floor(Math.random() * loverNames.length)];
+        
+        await base44.entities.ObsessedLover.create({
+          name: loverName,
+          gender: 'custom',
+          sexuality: 'bisexual',
+          killer_id: newKiller.id,
+          obsession_stage: 1,
+          knows_truth: false,
+          devotion: 30,
+          crimes_helped_with: 0,
+          boundaries: 'will_not_kill',
+          mental_state: 'stable',
+          guilt_level: 0,
+          would_turn_them_in: false
+        });
+        
+        queryClient.invalidateQueries();
+      }
+    };
+    
+    initKiller();
+  }, [killers, isLoading, queryClient]);
+
+  if (isLoading || !killer) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
   }
 
   const handleHunt = async () => {

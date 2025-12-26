@@ -15,7 +15,6 @@ export default function Home() {
   const [vampireSexuality, setVampireSexuality] = useState('bisexual');
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
-  const [creationType, setCreationType] = useState('vampire');
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -34,69 +33,29 @@ export default function Home() {
   
   const startNewGame = async () => {
     if (!vampireName.trim()) {
-      alert('Please enter a name');
+      alert('Please enter a name for your vampire');
       return;
     }
     
-    if (creationType === 'vampire') {
-      await base44.entities.VampireState.create({
-        vampire_name: vampireName.trim(),
-        gender: vampireGender,
-        sexuality: vampireSexuality,
-        job: 'Night Shift Nurse',
-        hunger_state: 'calm',
-        emotional_mode: 'feeling',
-        vampire_stage: 2,
-        vampire_power_level: 25,
-        unlocked_powers: ['Enhanced Senses', 'Compulsion'],
-        nights_passed: 0,
-        current_date: new Date().toISOString(),
-        humanity: 50,
-        moral_path: 'balanced',
-        time_of_day: 'night'
-      });
-      
-      queryClient.invalidateQueries();
-      navigate(createPageUrl('Night'));
-    } else if (creationType === 'killer') {
-      const killer = await base44.entities.SerialKiller.create({
-        killer_name: vampireName.trim(),
-        gender: vampireGender,
-        sexuality: vampireSexuality,
-        method: 'knife',
-        victim_type: 'Random targets',
-        kill_count: 0,
-        suspicion_level: 0,
-        control_level: 50,
-        trophy_count: 0,
-        signature: 'Clean. Methodical. No pattern.',
-        active_investigation: false,
-        media_attention: 0,
-        urge_level: 40,
-        days_since_kill: 0
-      });
-      
-      const loverNames = ['Jordan', 'Alex', 'Casey', 'Riley', 'Morgan', 'Taylor'];
-      const loverName = loverNames[Math.floor(Math.random() * loverNames.length)];
-      
-      await base44.entities.ObsessedLover.create({
-        name: loverName,
-        gender: 'custom',
-        sexuality: 'bisexual',
-        killer_id: killer.id,
-        obsession_stage: 1,
-        knows_truth: false,
-        devotion: 30,
-        crimes_helped_with: 0,
-        boundaries: 'will_not_kill',
-        mental_state: 'stable',
-        guilt_level: 0,
-        would_turn_them_in: false
-      });
-      
-      queryClient.invalidateQueries();
-      navigate(createPageUrl('SerialKillerHome'));
-    }
+    await base44.entities.VampireState.create({
+      vampire_name: vampireName.trim(),
+      gender: vampireGender,
+      sexuality: vampireSexuality,
+      job: 'Night Shift Nurse',
+      hunger_state: 'calm',
+      emotional_mode: 'feeling',
+      vampire_stage: 2,
+      vampire_power_level: 25,
+      unlocked_powers: ['Enhanced Senses', 'Compulsion'],
+      nights_passed: 0,
+      current_date: new Date().toISOString(),
+      humanity: 50,
+      moral_path: 'balanced',
+      time_of_day: 'night'
+    });
+    
+    queryClient.invalidateQueries();
+    navigate(createPageUrl('Night'));
   };
   
   const handleContinue = () => {
@@ -159,30 +118,16 @@ export default function Home() {
             </button>
           )}
           
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setCreationType('vampire');
-                setShowIntro(true);
-              }}
-              className="bg-gradient-to-r from-purple-900/60 to-red-900/60 hover:from-purple-900/80 hover:to-red-900/80 border-2 border-purple-500/50 rounded-xl py-4 text-white font-medium transition-all"
-            >
-              <Moon className="w-6 h-6 mx-auto mb-2" />
-              <span className="text-sm">Vampire</span>
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setCreationType('killer');
-                setShowIntro(true);
-              }}
-              className="bg-gradient-to-r from-red-900/60 to-gray-900/60 hover:from-red-900/80 hover:to-gray-900/80 border-2 border-red-500/50 rounded-xl py-4 text-white font-medium transition-all"
-            >
-              <span className="text-3xl mb-1 block">🔪</span>
-              <span className="text-sm">Serial Killer</span>
-            </button>
-          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowIntro(true);
+            }}
+            className="w-full bg-gradient-to-r from-purple-900/60 to-red-900/60 hover:from-purple-900/80 hover:to-red-900/80 border-2 border-purple-500/50 rounded-xl py-4 text-white font-medium text-lg transition-all flex items-center justify-center gap-3"
+          >
+            <Moon className="w-5 h-5" />
+            New Game
+          </button>
         </motion.div>
         
 
@@ -202,9 +147,7 @@ export default function Home() {
           >
             {introStep === 0 && (
               <>
-                <h2 className="text-2xl font-bold text-white mb-4">
-                  {creationType === 'vampire' ? 'Your vampire name?' : 'Your name?'}
-                </h2>
+                <h2 className="text-2xl font-bold text-white mb-4">What is your name?</h2>
                 <input
                   type="text"
                   value={vampireName}
