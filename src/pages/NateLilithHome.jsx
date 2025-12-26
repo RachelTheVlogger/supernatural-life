@@ -29,16 +29,47 @@ const SHOP_ACTIVITIES = [
 ];
 
 const COUPLE_ACTIVITIES = [
+  // Dark/Hunting
   { id: 'hunt', label: 'Hunt Together', desc: 'Feed together on the streets', type: 'dark' },
-  { id: 'beach', label: 'Beach Night', desc: 'Ocean air and hunting', type: 'romantic' },
+  { id: 'beach', label: 'Beach Night', desc: 'Ocean air and hunting', type: 'dark' },
   { id: 'club', label: 'Vampire Club', desc: 'Feed in the crowd', type: 'dark' },
-  { id: 'journal', label: 'Read His Journal', desc: 'Discover his desires', type: 'intimate' },
-  { id: 'bloodbond', label: 'Blood Bond', desc: 'Cut palms, bind forever', type: 'ritual' },
-  { id: 'shower', label: 'Shower Together', desc: 'Wash the blood away', type: 'intimate' },
-  { id: 'breakfast', label: 'Breakfast Tease', desc: 'Coffee and filthy words', type: 'tease' },
-  { id: 'write', label: 'Write Together', desc: 'One line, honest', type: 'creative' },
-  { id: 'mara', label: 'Deal with Mara', desc: 'The stalker returns', type: 'conflict' },
-  { id: 'bedroom', label: 'Intimate Moment', desc: 'Lose control together', type: 'intimate' }
+  { id: 'forest', label: 'Forest Hunt', desc: 'Chase and catch', type: 'dark' },
+  
+  // Dom/Sub & Kink
+  { id: 'kneel', label: 'Kneel for Him', desc: 'Obey every command', type: 'dom' },
+  { id: 'restraints', label: 'Tied Up', desc: 'He binds your wrists', type: 'dom' },
+  { id: 'edging', label: 'Denial Game', desc: 'He controls your orgasms', type: 'dom' },
+  { id: 'collar', label: 'His Collar', desc: 'Wear his mark', type: 'dom' },
+  { id: 'hairpull', label: 'Hair Pulling', desc: 'He takes control', type: 'dom' },
+  { id: 'throatfuck', label: 'On Your Knees', desc: 'His hand in your hair', type: 'dom' },
+  { id: 'spanking', label: 'Punishment', desc: 'You misbehaved', type: 'dom' },
+  { id: 'public', label: 'Public Control', desc: 'His hand under the table', type: 'dom' },
+  { id: 'commanded', label: 'Orders', desc: 'He tells you exactly what to do', type: 'dom' },
+  { id: 'praise', label: 'Good Girl', desc: 'Earn his praise', type: 'dom' },
+  
+  // Intimate
+  { id: 'bedroom', label: 'Rough Sex', desc: 'Lose control together', type: 'intimate' },
+  { id: 'desk', label: 'Bend Over Desk', desc: 'He takes you hard', type: 'intimate' },
+  { id: 'wall', label: 'Against the Wall', desc: 'Pinned and claimed', type: 'intimate' },
+  { id: 'slow', label: 'Slow and Deep', desc: 'He worships you', type: 'intimate' },
+  { id: 'morning', label: 'Morning After', desc: 'Tangled in sheets', type: 'intimate' },
+  { id: 'bite', label: 'Feed During Sex', desc: 'Blood and pleasure', type: 'intimate' },
+  
+  // Domestic/Romantic
+  { id: 'cooking', label: 'Cook Together', desc: 'Make dinner as a couple', type: 'domestic' },
+  { id: 'movie', label: 'Movie Night', desc: 'Cuddled on the couch', type: 'domestic' },
+  { id: 'reading', label: 'Read Together', desc: 'Quiet evening with books', type: 'domestic' },
+  { id: 'walk', label: 'Evening Walk', desc: 'Stroll through town', type: 'domestic' },
+  { id: 'coffee', label: 'Morning Coffee', desc: 'Domestic bliss', type: 'domestic' },
+  { id: 'bath', label: 'Take a Bath', desc: 'Warm water and him', type: 'domestic' },
+  
+  // Story Events
+  { id: 'journal', label: 'Read His Journal', desc: 'Discover his desires', type: 'story' },
+  { id: 'bloodbond', label: 'Blood Bond', desc: 'Cut palms, bind forever', type: 'story' },
+  { id: 'write', label: 'Write Together', desc: 'One line, honest', type: 'story' },
+  { id: 'mara', label: 'Deal with Mara', desc: 'The stalker returns', type: 'story' },
+  { id: 'shower', label: 'Shower Together', desc: 'Wash the blood away', type: 'story' },
+  { id: 'breakfast', label: 'Breakfast Tease', desc: 'Coffee and filthy words', type: 'story' }
 ];
 
 export default function NateLilithHome() {
@@ -168,59 +199,46 @@ export default function NateLilithHome() {
     setProcessing(true);
 
     const outcomes = {
-      hunt: [
-        'You prowled the streets together. A man stumbled from the bar. You both fed, mouths red, grinding together as blood filled you.',
-        'Alley behind the warehouse. You bit one side, Nate the other. The pulse between you. You kissed with blood on your lips.',
-        'The hunt was quick. You pinned them together, fed together, came together. The body fell. You kept going.'
-      ],
-      beach: [
-        'Ocean air, moonlight, a lone figure on the sand. You fed as waves crashed. Nate bent you over after, salt and blood mixing.',
-        'The beach was empty. You hunted. Fed. Fucked against the rocks with blood still wet on your chin.',
-        'You dragged the body into the surf. Nate took you there, in the shallows, tasting copper and sea.'
-      ],
-      club: [
-        'Bass pounding. Lights flashing. You fed in the crowd, unseen. Nate pulled you to a dark hallway after and fucked you against brick.',
-        'The warehouse club. You both bit the same boy, dancing close. Blood and sweat. You came in the alley after.',
-        'Music drowned out the moans. You fed together. Kissed. His hand in your panties while bodies moved around you.'
-      ],
-      journal: [
-        '"Session Twelve. She crossed her legs. I wanted to ask if her panties were wet." You read his words. Your body answered.',
-        'You found his journal. Every session detailed. Every thought about you. "I wanted to ruin her across that desk." You were soaked.',
-        'His handwriting. His confessions. "Kn eel. Open. Say my name like a prayer." You couldn\'t stop reading. Couldn\'t stop aching.'
-      ],
-      bloodbond: [
-        'He cut your palm. Cut his. Blood to blood. You came together, wound to wound, sealing the vow. Forever.',
-        'The blade was sharp. Blood welled. He pressed your palms together and you felt it—the bond, permanent, eternal.',
-        'You bound yourselves in blood. "Mine," he said. "Yours," you answered. The cuts healed. The vow didn\'t.'
-      ],
-      shower: [
-        'Hot water. Blood washing away. His hands on you, reverent, claiming. You came against the tile as steam filled the room.',
-        'The shower ran red at first. Then clear. Then you were pressed to the wall, his cock inside you, water cascading.',
-        'He washed the blood from your skin. Kissed every inch clean. Then made you dirty again.'
-      ],
-      breakfast: [
-        '"You\'re dripping already," he said over coffee. His foot slid up your calf. You couldn\'t eat. Couldn\'t think. Only ache.',
-        'Breakfast table. His words filthy, his tone calm. "I\'ll fuck you against this counter until you scream." You were wet instantly.',
-        'He described exactly what he\'d do to you. Every detail. You sat there trembling, coffee untouched, pussy throbbing.'
-      ],
-      write: [
-        'One line. Honest. "The fog is a hand over the town\'s mouth." He smiled. "There you are." You wrote more. He watched.',
-        'Your notebook. His eyes on you. "Write what you\'re feeling right now." You wrote: I want you. He pulled you into his lap.',
-        '"One true line." You wrote it. He read it. Kissed you hard. "Perfect. My perfect writer."'
-      ],
-      mara: [
-        'She stood in the dark. "You\'ve poisoned him." Nate stepped forward. "I never wanted you." She left broken.',
-        'Mara appeared at your door. "He was mine first." You smiled, fangs showing. "He was never yours." She ran.',
-        'The restraining order came. Five hundred feet. Nate crumpled it. "Let her try." You kissed him, claiming.'
-      ],
-      bedroom: [
-        'Hair pulled. Throat arched. His cock deep. "Say you\'re mine." You screamed it. Came so hard you saw stars.',
-        'He bent you over the desk. Filled you completely. "You love being mine." Yes. God, yes. Over and over.',
-        'On your knees. His hand in your hair. His voice commanding. You obeyed everything. Came harder than ever before.'
-      ]
+      hunt: ['You prowled the streets together. A man stumbled from the bar. You both fed, mouths red, grinding together as blood filled you.'],
+      beach: ['Ocean air, moonlight, a lone figure on the sand. You fed as waves crashed. Nate bent you over after, salt and blood mixing.'],
+      club: ['Bass pounding. Lights flashing. You fed in the crowd, unseen. Nate pulled you to a dark hallway after and fucked you against brick.'],
+      forest: ['He chased you through the trees. Caught you. Pinned you. Fed from your throat while fucking you against bark.'],
+      
+      kneel: ['"Kneel." You dropped instantly. He stroked your hair. "Good girl. Now open your mouth." You obeyed. Always.'],
+      restraints: ['Wrists bound to the bedpost. You tugged, helpless. "Don\'t fight it," he growled, spreading your thighs. "You\'re mine to use."'],
+      edging: ['Three times he brought you to the edge. Three times he stopped. "Not yet." By the fourth, you were sobbing. "Please..." "Now." You shattered.'],
+      collar: ['Leather around your throat. His fingers traced it. "Everyone will know you belong to me." You shivered. "Good."'],
+      hairpull: ['He fisted your hair, yanking your head back. "Look at me when I fuck you." Your pussy clenched. "Yes, sir."'],
+      throatfuck: ['On your knees. His cock in your mouth. His hand guiding. "Take it deeper." You gagged. He groaned. "Perfect."'],
+      spanking: ['"You\'ve been bratty all day." His palm cracked across your ass. You moaned. "Count them." "One... sir..."'],
+      public: ['Restaurant. His hand slid up your thigh under the table. Fingers in your panties. You bit your lip, trying not to moan. "Come. Quietly."'],
+      commanded: ['"Strip. Slowly." You obeyed. "Touch yourself. Not there—your breasts first." His voice controlled everything. You were dripping.'],
+      praise: ['"Such a good girl for me." His thumb stroked your cheek. "Taking my cock so perfectly." The praise made you clench. "More... please..."'],
+      
+      bedroom: ['Hair pulled. Throat arched. His cock deep. "Say you\'re mine." You screamed it. Came so hard you saw stars.'],
+      desk: ['He bent you over his desk. Papers scattered. One brutal thrust. "You love when I take you like this." "Yes... fuck... yes..."'],
+      wall: ['Pinned against the wall. Your legs around his waist. He pounded into you. "Mine. Say it." "Yours. Always yours."'],
+      slow: ['He took his time. Every thrust deep, deliberate, worshipful. "I love you." Foreheads pressed together. "I love you too."'],
+      morning: ['Sunlight through the curtains. His arms around you. Slow kisses. He slid inside you gently. Morning sex, lazy and perfect.'],
+      bite: ['His fangs sank into your throat as he thrust deep. Blood and pleasure exploded. You came screaming, him filling you as he drank.'],
+      
+      cooking: ['You cooked pasta together. He kissed your neck while you stirred. Domestic and sweet. "I could get used to this."'],
+      movie: ['Curled on the couch, his arm around you. Horror movie playing. You barely watched. Just enjoyed being close.'],
+      reading: ['You both read quietly. Your legs over his lap. He stroked your ankle absently. Perfect peace.'],
+      walk: ['Evening stroll through Crescent Hollow. Hand in hand. The fog rolled in. "Beautiful," you said. "You are," he replied.'],
+      coffee: ['Morning coffee on the balcony. He wrapped a blanket around you. Kissed your temple. "Good morning, love."'],
+      bath: ['Warm water. His chest against your back. His hands washing your hair. Gentle. Intimate. Safe.'],
+      
+      journal: ['"Session Twelve. She crossed her legs. I wanted to ask if her panties were wet." You read his words. Your body answered.'],
+      bloodbond: ['He cut your palm. Cut his. Blood to blood. You came together, wound to wound, sealing the vow. Forever.'],
+      write: ['One line. Honest. "The fog is a hand over the town\'s mouth." He smiled. "There you are." You wrote more. He watched.'],
+      mara: ['She stood in the dark. "You\'ve poisoned him." Nate stepped forward. "I never wanted you." She left broken.'],
+      shower: ['Hot water. Blood washing away. His hands on you, reverent, claiming. You came against the tile as steam filled the room.'],
+      breakfast: ['"You\'re dripping already," he said over coffee. His foot slid up your calf. You couldn\'t eat. Couldn\'t think. Only ache.']
     };
 
-    const randomOutcome = outcomes[activity.id][Math.floor(Math.random() * outcomes[activity.id].length)];
+    const activityOutcomes = outcomes[activity.id] || ['You spent time together. It was perfect.'];
+    const randomOutcome = activityOutcomes[Math.floor(Math.random() * activityOutcomes.length)];
 
     setTimeout(async () => {
       setOutcome(randomOutcome);
@@ -299,16 +317,17 @@ export default function NateLilithHome() {
         {!workMode && !coupleActivity && !processing && (
           <div className="mb-8">
             <h3 className="text-white text-xl font-bold mb-4">Together</h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
               {COUPLE_ACTIVITIES.map(activity => (
                 <button
                   key={activity.id}
                   onClick={() => setCoupleActivity(activity)}
                   className={`rounded-xl p-4 text-left transition-all ${
                     activity.type === 'dark' ? 'bg-red-900/40 hover:bg-red-900/60 border-2 border-red-500/30' :
+                    activity.type === 'dom' ? 'bg-purple-900/40 hover:bg-purple-900/60 border-2 border-purple-500/30' :
                     activity.type === 'intimate' ? 'bg-pink-900/40 hover:bg-pink-900/60 border-2 border-pink-500/30' :
-                    activity.type === 'ritual' ? 'bg-purple-900/40 hover:bg-purple-900/60 border-2 border-purple-500/30' :
-                    activity.type === 'conflict' ? 'bg-orange-900/40 hover:bg-orange-900/60 border-2 border-orange-500/30' :
+                    activity.type === 'domestic' ? 'bg-blue-900/40 hover:bg-blue-900/60 border-2 border-blue-500/30' :
+                    activity.type === 'story' ? 'bg-indigo-900/40 hover:bg-indigo-900/60 border-2 border-indigo-500/30' :
                     'bg-gray-800 hover:bg-gray-700'
                   }`}
                 >
@@ -384,6 +403,7 @@ export default function NateLilithHome() {
                 </button>
 
                 <button
+                  onClick={() => setActiveCharacter('nate')}
                   className="w-full bg-purple-900/40 hover:bg-purple-900/60 border-2 border-purple-500/50 rounded-xl p-6 text-left transition-all"
                 >
                   <h3 className="text-white text-lg font-bold mb-2">Spend Time with Nate</h3>
