@@ -28,6 +28,10 @@ export default function VampireTherapist({ vampireState, onClose }) {
   const [outcome, setOutcome] = useState('');
   const [processing, setProcessing] = useState(false);
 
+  if (!vampireState) {
+    return null;
+  }
+
   const startSession = (client) => {
     setCurrentClient(client);
     setSessionActive(true);
