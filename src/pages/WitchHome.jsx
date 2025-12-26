@@ -78,6 +78,12 @@ export default function WitchHome() {
   const [showSpellbook, setShowSpellbook] = useState(false);
   const [showVampireInteractions, setShowVampireInteractions] = useState(false);
   const [showHerbGathering, setShowHerbGathering] = useState(false);
+  const [showApothecary, setShowApothecary] = useState(false);
+  const [showFortuneTelling, setShowFortuneTelling] = useState(false);
+  const [showGrimoire, setShowGrimoire] = useState(false);
+  const [showMoonRitual, setShowMoonRitual] = useState(false);
+  const [showCurses, setShowCurses] = useState(false);
+  const [showTeaching, setShowTeaching] = useState(false);
 
   const { data: witches = [] } = useQuery({
     queryKey: ['witches'],
