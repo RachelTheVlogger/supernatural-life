@@ -159,7 +159,7 @@ export default function VampireHome() {
     );
   }
 
-  if (vampireStates.length === 0) {
+  if (!vampireState) {
     return null;
   }
   
