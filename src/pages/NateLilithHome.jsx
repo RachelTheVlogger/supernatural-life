@@ -81,14 +81,6 @@ const ACTIVITY_SECTIONS = {
     { id: 'scheduling', label: 'Scheduling' },
     { id: 'paperwork', label: 'Paperwork' },
     { id: 'finances', label: 'Finances' }
-  ],
-  'Story Events': [
-    { id: 'journal', label: 'His Journal' },
-    { id: 'bloodbond', label: 'Blood Bond' },
-    { id: 'write', label: 'Write' },
-    { id: 'mara', label: 'Mara' },
-    { id: 'shower', label: 'Shower' },
-    { id: 'breakfast', label: 'Tease' }
   ]
 };
 
