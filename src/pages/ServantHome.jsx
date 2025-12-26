@@ -70,7 +70,7 @@ const getBusinessActivities = (servantCareer, vampireState) => {
   const isLiteMode = vampireState?.content_filter === 'lite';
   
   // Always show career selector/management
-  const hasAnyCareers = servantCareer?.jewelry_business_active || servantCareer?.tattoo_business_active || servantCareer?.author_career_active;
+  const hasAnyCareers = servantCareer?.jewelry_business_active || servantCareer?.tattoo_business_active || servantCareer?.author_career_active || servantCareer?.manga_career_active;
   activities.push({ 
     id: 'choose_career', 
     label: hasAnyCareers ? '⚙️ Manage Careers' : '🎯 Choose Career', 
@@ -90,6 +90,10 @@ const getBusinessActivities = (servantCareer, vampireState) => {
   
   if (servantCareer?.author_career_active) {
     activities.push({ id: 'author', label: '📚 Author Career', icon: BookOpen, duration: 0, isModal: true });
+  }
+  
+  if (servantCareer?.manga_career_active) {
+    activities.push({ id: 'manga', label: '📖 Manga Artist', icon: BookOpen, duration: 0, isModal: true });
   }
   
   if (!isLiteMode) {
@@ -222,6 +226,8 @@ export default function ServantHome() {
         setShowPatreon(true);
       } else if (chore.id === 'snapchat') {
         setShowSnapchat(true);
+      } else if (chore.id === 'manga') {
+        setShowManga(true);
       }
       return;
     }
@@ -471,6 +477,13 @@ export default function ServantHome() {
           {servant.is_turned ? 'Your vampire powers awaken' : 'What will you do?'}
         </h2>
         
+        <button
+          onClick={() => setShowHobbies(true)}
+          className="w-full bg-gradient-to-r from-pink-900/40 to-purple-900/40 hover:from-pink-900/60 hover:to-purple-900/60 border-2 border-pink-500/50 rounded-xl p-3 transition-all mb-3"
+        >
+          <span className="text-white font-medium">❤️ Hobbies & Time Together</span>
+        </button>
+
         <div className="space-y-3 max-h-[55vh] overflow-y-auto">
         {activities.map((chore, i) => (
           <motion.button
@@ -627,6 +640,7 @@ export default function ServantHome() {
               if (careerType === 'jewelry') setShowBusinessModal(true);
               else if (careerType === 'tattoo') setShowTattoo(true);
               else if (careerType === 'author') setShowAuthor(true);
+              else if (careerType === 'manga') setShowManga(true);
             }}
           />
         )}
@@ -673,6 +687,19 @@ export default function ServantHome() {
           <TurnedServantProgression
             servant={servant}
             onClose={() => setShowProgression(false)}
+          />
+        )}
+        {showManga && (
+          <MangaCareer
+            servant={servant}
+            onClose={() => setShowManga(false)}
+          />
+        )}
+        {showHobbies && vampireState && (
+          <HobbiesSystem
+            servant={servant}
+            vampireState={vampireState}
+            onClose={() => setShowHobbies(false)}
           />
         )}
         {!vampireState && (showOnlyFangs || showServantInteractions || showYouTube || showSnapchat || showDating) && (
