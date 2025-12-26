@@ -29,8 +29,12 @@ export default function WitchCoven({ witch, onClose }) {
       const specialties = ['elemental', 'psychic', 'necromancy', 'protection', 'divination', 'dark_magic'];
       const specialty = specialties[Math.floor(Math.random() * specialties.length)];
       
+      // Fetch fresh witch data
+      const witches = await base44.entities.Witch.list();
+      const freshWitch = witches.find(w => w.id === witch.id);
+      
       await base44.entities.Witch.update(witch.id, {
-        coven_size: (currentWitch.coven_size || 0) + 1
+        coven_size: (freshWitch?.coven_size || 0) + 1
       });
 
       await base44.entities.NightLog.create({
