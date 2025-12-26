@@ -117,109 +117,111 @@ export default function DoppelgangerHome() {
   };
 
   return (
-    <div className="min-h-screen p-6 pb-24 bg-gradient-to-b from-gray-950 via-purple-950/20 to-black">
-      <div className="flex justify-between items-center mb-8">
-        <button
-          onClick={() => navigate(createPageUrl('Night'))}
-          className="text-white/60 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-      </div>
-
-      <div className="max-w-2xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-4xl font-bold text-white mb-2">{doppelganger.name}</h1>
-          <p className="text-purple-400 text-lg">{doppelganger.bloodline} Bloodline</p>
-          {doppelganger.is_vampire && <p className="text-red-400 mt-2">🦇 Vampire Doppelgänger</p>}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-gray-900 rounded-2xl p-6 mb-8"
-        >
-          <h2 className="text-white font-bold mb-4">Status</h2>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-400">Form:</span>
-              <span className="text-white">{doppelganger.is_vampire ? '🦇 Vampire' : '👤 Human'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Aware of Nature:</span>
-              <span className="text-white">{doppelganger.is_aware ? 'Yes' : 'No'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Blood Power:</span>
-              <span className="text-red-400">{doppelganger.power_level}%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Times Bled:</span>
-              <span className="text-white">{doppelganger.times_bled}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Relationship:</span>
-              <span className="text-purple-400">{doppelganger.relationship_vampire || 0}</span>
-            </div>
-            {doppelganger.protected_by && (
-              <div className="flex justify-between">
-                <span className="text-gray-400">Protection:</span>
-                <span className="text-blue-400">🛡️ Protected</span>
-              </div>
-            )}
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="space-y-3"
-        >
-          {!doppelganger.is_vampire && (
-            <>
-              <button
-                onClick={() => handleAction('blood')}
-                disabled={acting}
-                className="w-full bg-gradient-to-r from-red-900/60 to-red-950/60 hover:from-red-900/80 hover:to-red-950/80 border-2 border-red-500/50 rounded-xl py-4 text-white disabled:opacity-50"
-              >
-                <Droplets className="w-5 h-5 inline mr-2" />
-                Drink Their Blood
-              </button>
-              <button
-                onClick={() => handleAction('turn')}
-                disabled={acting}
-                className="w-full bg-gradient-to-r from-purple-900/60 to-purple-950/60 hover:from-purple-900/80 hover:to-purple-950/80 border-2 border-purple-500/50 rounded-xl py-4 text-white disabled:opacity-50"
-              >
-                <Skull className="w-5 h-5 inline mr-2" />
-                Turn Them Into Vampire
-              </button>
-            </>
-          )}
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-purple-950/20 to-black pb-24">
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-8">
           <button
-            onClick={() => handleAction('protect')}
-            disabled={acting}
-            className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 border-2 border-blue-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            onClick={() => navigate(createPageUrl('Night'))}
+            className="text-white/60 hover:text-white transition-colors"
           >
-            <Shield className="w-5 h-5 inline mr-2" />
-            Protect Them
+            <ArrowLeft className="w-6 h-6" />
           </button>
-          {!doppelganger.is_aware && (
+        </div>
+
+        <div className="max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-8"
+          >
+            <h1 className="text-4xl font-bold text-white mb-2">{doppelganger.name}</h1>
+            <p className="text-purple-400 text-lg">{doppelganger.bloodline} Bloodline</p>
+            {doppelganger.is_vampire && <p className="text-red-400 mt-2">🦇 Vampire Doppelgänger</p>}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-gray-900 rounded-2xl p-6 mb-8"
+          >
+            <h2 className="text-white font-bold mb-4">Status</h2>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Form:</span>
+                <span className="text-white">{doppelganger.is_vampire ? '🦇 Vampire' : '👤 Human'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Aware of Nature:</span>
+                <span className="text-white">{doppelganger.is_aware ? 'Yes' : 'No'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Blood Power:</span>
+                <span className="text-red-400">{doppelganger.power_level}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Times Bled:</span>
+                <span className="text-white">{doppelganger.times_bled}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Relationship:</span>
+                <span className="text-purple-400">{doppelganger.relationship_vampire || 0}</span>
+              </div>
+              {doppelganger.protected_by && (
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Protection:</span>
+                  <span className="text-blue-400">🛡️ Protected</span>
+                </div>
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-3 max-h-[50vh] overflow-y-auto pr-2"
+          >
+            {!doppelganger.is_vampire && (
+              <>
+                <button
+                  onClick={() => handleAction('blood')}
+                  disabled={acting}
+                  className="w-full bg-gradient-to-r from-red-900/60 to-red-950/60 hover:from-red-900/80 hover:to-red-950/80 border-2 border-red-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+                >
+                  <Droplets className="w-5 h-5 inline mr-2" />
+                  Drink Their Blood
+                </button>
+                <button
+                  onClick={() => handleAction('turn')}
+                  disabled={acting}
+                  className="w-full bg-gradient-to-r from-purple-900/60 to-purple-950/60 hover:from-purple-900/80 hover:to-purple-950/80 border-2 border-purple-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+                >
+                  <Skull className="w-5 h-5 inline mr-2" />
+                  Turn Them Into Vampire
+                </button>
+              </>
+            )}
             <button
-              onClick={() => handleAction('reveal')}
+              onClick={() => handleAction('protect')}
               disabled={acting}
-              className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl py-4 text-white disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 border-2 border-blue-500/50 rounded-xl py-4 text-white disabled:opacity-50"
             >
-              <Eye className="w-5 h-5 inline mr-2" />
-              Tell Them The Truth
+              <Shield className="w-5 h-5 inline mr-2" />
+              Protect Them
             </button>
-          )}
-        </motion.div>
+            {!doppelganger.is_aware && (
+              <button
+                onClick={() => handleAction('reveal')}
+                disabled={acting}
+                className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl py-4 text-white disabled:opacity-50"
+              >
+                <Eye className="w-5 h-5 inline mr-2" />
+                Tell Them The Truth
+              </button>
+            )}
+          </motion.div>
+        </div>
       </div>
 
       <AnimatePresence>
