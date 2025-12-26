@@ -1813,7 +1813,9 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     
     // Handle dynamic outcomes for gender-specific interactions
     const outcomes = interaction.getDynamicOutcomes 
-      ? (['worship', 'oralService', 'rideDom', 'dominate'].includes(type) ? interaction.getDynamicOutcomes(vampireState.gender)[tier] : interaction.getDynamicOutcomes(servant.name)[tier])
+      ? (['worship', 'oralService', 'rideDom', 'dominate', 'breeding'].includes(type) 
+          ? interaction.getDynamicOutcomes(vampireState.gender)[tier] 
+          : interaction.getDynamicOutcomes(servant.name)[tier])
       : (interaction.outcomes[tier] || interaction.outcomes.low);
     const baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
     
