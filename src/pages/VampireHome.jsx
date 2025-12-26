@@ -201,7 +201,9 @@ export default function VampireHome() {
   const isDaytime = vampireState?.time_of_day === 'day';
 
   return (
-    <div className="min-h-screen relative overflow-hidden"
+    <div 
+      key={`vampire-home-${vampireState?.time_of_day}`}
+      className="min-h-screen relative overflow-hidden"
          style={{ 
            background: isDaytime 
              ? 'linear-gradient(to bottom, #FFB347 0%, #FFCC99 50%, #FFD4A3 100%)' 
