@@ -37,9 +37,11 @@ export default function WitchCoven({ witch, onClose }) {
         intensity: 'moderate'
       });
 
+      await queryClient.invalidateQueries(['witches']);
+      await queryClient.invalidateQueries(['witch-coven']);
+      await queryClient.invalidateQueries();
+
       setOutcome(`${name} joined your coven as a ${specialty} specialist.`);
-      queryClient.invalidateQueries(['witches']);
-      queryClient.invalidateQueries(['witch-coven']);
       
       setTimeout(() => {
         setRecruiting(false);
