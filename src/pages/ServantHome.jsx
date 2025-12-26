@@ -35,11 +35,31 @@ const CHORES = [
 ];
 
 const VAMPIRE_ACTIVITIES = [
-  { id: 'hunt', label: 'Practice hunting', icon: Moon, duration: 3000, outcomes: ['You stalked through shadows. Instinct taking over. Natural.', 'The hunt came easily. Too easily. This is who you are now.', 'Predator instincts sharpened. The night is yours.'] },
-  { id: 'powers', label: 'Test new abilities', icon: Sparkles, duration: 2500, outcomes: ['Your abilities grow stronger. Supernatural. Intoxicating.', 'Testing your limits. There seem to be none.', 'Power surges through you. You\'re becoming something more.'] },
-  { id: 'feed', label: 'Feed (hunger management)', icon: Droplets, duration: 2000, outcomes: ['The hunger quiets. For now. It always returns.', 'Blood. Life. You took what you needed. No guilt.', 'Fed. Sated. The world feels sharper now.'] },
-  { id: 'meditate', label: 'Control the bloodlust', icon: BookOpen, duration: 3000, outcomes: ['You centered yourself. The beast quiets. Control maintained.', 'Bloodlust contained. Barely. This is your new reality.', 'You find peace in the darkness. It\'s easier each time.'] },
-  { id: 'explore', label: 'Explore the night', icon: Home, duration: 3500, outcomes: ['The city at night. Your domain now. Everything has changed.', 'You moved through darkness like you were born to it. Maybe you were.', 'The night embraced you. You embraced it back.'] }
+  { id: 'hunt', label: 'Practice hunting', icon: Moon, duration: 3000, outcomes: [
+    'Every heartbeat for miles. You hear them all. The hunger focuses your senses. Predator instincts awakened.',
+    'Colors sharper. Sounds clearer. The world is ALIVE in ways you never knew. The hunt came naturally. Too naturally.',
+    'You moved through shadows like silk. Every muscle responding perfectly. This body... it\'s not human anymore. It\'s better.'
+  ]},
+  { id: 'powers', label: 'Learn from your Sire', icon: Sparkles, duration: 2500, outcomes: [
+    'Your sire showed you compulsion. You tried it on a stranger. Their eyes glazed over. "Yes," they whispered. Power intoxicates.',
+    'Speed. Your sire taught you to blur. Now you move faster than human eyes can track. The world slows when you need it to.',
+    'You practiced reading thoughts. Whispers of desires. Fears. Secrets. Their minds opening to you like books.'
+  ]},
+  { id: 'feed', label: 'Feed (heightened experience)', icon: Droplets, duration: 2000, outcomes: [
+    'The first drop hit your tongue. EXPLOSION of taste. Life. Memory. Emotion. All flooding through you. Ecstasy.',
+    'Their pulse against your lips. Every sensation amplified. The warmth. The surrender. You took what you needed. No guilt. Only hunger satisfied.',
+    'Fed. The world sharpens impossibly more. Colors burst. Every nerve ending singing. This is what it means to be alive. Truly alive.'
+  ]},
+  { id: 'emotions', label: 'Process vampire emotions', icon: BookOpen, duration: 3000, outcomes: [
+    'Everything feels MORE now. Joy is ecstasy. Anger is rage. Love is obsession. Your sire warned you: vampires feel everything deeper.',
+    'You cried blood. The tears surprised you. Hot. Red. Your emotions don\'t work like before. They\'re primal now. Raw.',
+    'Bloodlust surged. You fought it. Won. Barely. Your sire was right - control is everything. Lose it, lose yourself.'
+  ]},
+  { id: 'senses', label: 'Explore heightened senses', icon: Home, duration: 3500, outcomes: [
+    'You stood in the rain. Each drop a symphony on your skin. You could track them individually. Smell the minerals in the water. Taste the sky.',
+    'A whisper across the street. You heard every word. A perfume three blocks away. You knew the flower. Everything is VIVID now.',
+    'Your sire\'s touch. Electric. Every nerve ending awakened. Even simple contact is overwhelming. Your body alive in ways flesh never was.'
+  ]}
 ];
 
 const getBusinessActivities = (servantCareer) => {
@@ -261,7 +281,37 @@ export default function ServantHome() {
     : [...CHORES, ...businessActivities];
   
   return (
-    <div className="min-h-screen p-4 md:p-6 relative overflow-hidden">
+    <div className="min-h-screen p-4 md:p-6 relative overflow-hidden" style={{
+      background: servant.is_turned 
+        ? 'linear-gradient(to bottom, #4A0E0E 0%, #2D0A0A 50%, #1A0404 100%)'
+        : 'linear-gradient(to bottom, #0a0a14 0%, #1a0a1a 50%, #0a0014 100%)'
+    }}>
+      
+      {/* Blood drop particles for turned servants */}
+      {servant.is_turned && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-3 bg-red-600/40 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `-5%`,
+              }}
+              animate={{
+                y: ['0vh', '110vh'],
+                opacity: [0, 0.6, 0],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+                ease: "linear"
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       
       <motion.div
@@ -270,7 +320,7 @@ export default function ServantHome() {
         className="text-center mb-8 relative z-10"
       >
         <div className="flex items-center justify-center gap-3 mb-1">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">
+          <h1 className={`text-3xl md:text-4xl font-bold ${servant.is_turned ? 'text-rose-100' : 'text-white'}`}>
             {servant.name}
           </h1>
           {vampireState?.time_of_day && (
@@ -279,8 +329,8 @@ export default function ServantHome() {
             </span>
           )}
         </div>
-        <p className="text-sm capitalize text-gray-400">
-          {servant.is_turned ? '🦇 Vampire' : `${servant.variant} servant`}
+        <p className={`text-sm capitalize ${servant.is_turned ? 'text-rose-300' : 'text-gray-400'}`}>
+          {servant.is_turned ? '🩸 Vampire Progeny' : `${servant.variant} servant`}
         </p>
         
         <div className="flex gap-3 justify-center mt-4 flex-wrap">
@@ -346,16 +396,20 @@ export default function ServantHome() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="max-w-2xl mx-auto rounded-xl p-4 mb-6 relative z-10 bg-gray-900"
+        className={`max-w-2xl mx-auto rounded-xl p-4 mb-6 relative z-10 ${
+          servant.is_turned 
+            ? 'bg-gradient-to-br from-rose-950/60 to-red-950/60 border border-rose-500/30' 
+            : 'bg-gray-900'
+        }`}
       >
-        <p className="text-gray-300 text-sm italic text-center">
+        <p className={`text-sm italic text-center ${servant.is_turned ? 'text-rose-100' : 'text-gray-300'}`}>
           {servant.is_turned 
-            ? 'The night is yours. The hunger never truly leaves. But you are no longer prey.'
+            ? 'Every sense heightened. Every emotion deeper. The hunger pulses through you like a second heartbeat. You are vampire.'
             : "They're out hunting. You wait for them to return."}
         </p>
         <div className="mt-3 flex justify-between text-xs">
-          <span className="text-gray-400">Bond with them:</span>
-          <span className="text-purple-400">
+          <span className={servant.is_turned ? 'text-rose-300' : 'text-gray-400'}>Bond with your sire:</span>
+          <span className={servant.is_turned ? 'text-rose-400' : 'text-purple-400'}>
             {servant.relationship || 0}%
           </span>
         </div>
@@ -363,8 +417,8 @@ export default function ServantHome() {
       
       {/* Activities */}
       <div className="max-w-2xl mx-auto mb-8 relative z-10">
-        <h2 className="text-sm uppercase mb-4 text-gray-400">
-          {servant.is_turned ? 'What will you do tonight?' : 'What will you do?'}
+        <h2 className={`text-sm uppercase mb-4 ${servant.is_turned ? 'text-rose-300' : 'text-gray-400'}`}>
+          {servant.is_turned ? 'Your vampire powers awaken' : 'What will you do?'}
         </h2>
         
         <div className="space-y-3 max-h-[55vh] overflow-y-auto">
@@ -377,12 +431,19 @@ export default function ServantHome() {
             onClick={() => handleChore(chore)}
             disabled={!!doingChore}
             className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg touch-manipulation ${
-              doingChore === chore.id ? 'opacity-70 scale-95' : 'bitlife-btn'
-            } ${!!doingChore && doingChore !== chore.id ? 'opacity-30' : ''}`}
+              doingChore === chore.id ? 'opacity-70 scale-95' : ''
+            } ${!!doingChore && doingChore !== chore.id ? 'opacity-30' : ''} ${
+              servant.is_turned 
+                ? 'bg-gradient-to-r from-rose-900/60 to-red-900/60 hover:from-rose-900/80 hover:to-red-900/80 border-2 border-rose-500/50 text-rose-100'
+                : 'bitlife-btn'
+            }`}
+            style={servant.is_turned ? {
+              transition: 'all 300ms ease'
+            } : {}}
           >
             <chore.icon className="w-5 h-5" />
             <span className="text-base font-medium">
-              {doingChore === chore.id ? 'Working on it...' : chore.label}
+              {doingChore === chore.id ? 'Experiencing...' : chore.label}
             </span>
           </motion.button>
         ))}
@@ -396,7 +457,12 @@ export default function ServantHome() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
+            style={{
+              background: servant.is_turned 
+                ? 'radial-gradient(circle, rgba(139, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%)'
+                : 'rgba(0, 0, 0, 0.7)'
+            }}
           >
             <motion.div
               animate={{ 
@@ -406,8 +472,18 @@ export default function ServantHome() {
               transition={{ duration: 1.5, repeat: Infinity }}
               className="text-6xl"
             >
-              {servant.is_turned ? '🦇' : '✨'}
+              {servant.is_turned ? '🩸' : '✨'}
             </motion.div>
+            {servant.is_turned && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute bottom-1/3 text-rose-200 text-sm italic"
+              >
+                Senses awakening...
+              </motion.p>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -421,8 +497,14 @@ export default function ServantHome() {
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
           >
-            <div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center">
-              <p className="text-gray-300 text-lg">{choreOutcome}</p>
+            <div className={`rounded-2xl p-6 max-w-md w-full text-center ${
+              servant.is_turned 
+                ? 'bg-gradient-to-br from-rose-950/90 to-red-950/90 border-2 border-rose-500/50'
+                : 'bg-gray-900'
+            }`}>
+              <p className={`text-lg leading-relaxed ${servant.is_turned ? 'text-rose-100' : 'text-gray-300'}`}>
+                {choreOutcome}
+              </p>
             </div>
           </motion.div>
         )}
