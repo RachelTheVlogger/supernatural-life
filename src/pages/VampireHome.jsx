@@ -79,7 +79,15 @@ export default function VampireHome() {
     queryFn: () => base44.entities.PowerProgress.list()
   });
   
-  // Don't render anything if no vampire state
+  // Don't render anything if no vampire state or loading
+  if (vampireLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
   if (vampireStates.length === 0) {
     return null;
   }
@@ -807,7 +815,7 @@ export default function VampireHome() {
           <WitchEncounter vampireState={vampireState} onClose={() => setShowWitchEncounter(false)} />
         )}
         {showCovenManagement && (
-          <CovenManagement vampireState={vampireState} onClose={() => setShowCovenManagement(false)} />
+          <CovenManagement vampireState={vampireState} servants={servants} onClose={() => setShowCovenManagement(false)} />
         )}
         {showVampireIdentity && (
           <motion.div
