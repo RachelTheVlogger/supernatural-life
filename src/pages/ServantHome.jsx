@@ -19,6 +19,7 @@ import ServantDating from '@/components/nightbound/ServantDating';
 import TattooStudio from '@/components/nightbound/TattooStudio';
 import AuthorCareer from '@/components/nightbound/AuthorCareer';
 import ServantWitchInteraction from '@/components/nightbound/ServantWitchInteraction';
+import WitchServantInteraction from '@/components/nightbound/WitchServantInteraction';
 
 const CHORES = [
   { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
@@ -94,6 +95,7 @@ export default function ServantHome() {
   const [showTattoo, setShowTattoo] = useState(false);
   const [showAuthor, setShowAuthor] = useState(false);
   const [showWitchVisit, setShowWitchVisit] = useState(false);
+  const [showWitchTalk, setShowWitchTalk] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -149,6 +151,11 @@ export default function ServantHome() {
   });
 
   const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
+
+  const { data: witches = [] } = useQuery({
+    queryKey: ['witches'],
+    queryFn: () => base44.entities.Witch.list()
+  });
   
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', servantId],
@@ -287,6 +294,14 @@ export default function ServantHome() {
           >
             Visit Witch
           </button>
+          {witches.length > 0 && (
+            <button
+              onClick={() => setShowWitchTalk(true)}
+              className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
+            >
+              Witch Talks to Servant
+            </button>
+          )}
           {allServants.length > 1 && (
             <button
               onClick={() => setShowServantInteractions(true)}
@@ -491,6 +506,13 @@ export default function ServantHome() {
           <ServantWitchInteraction
             servant={servant}
             onClose={() => setShowWitchVisit(false)}
+          />
+        )}
+        {showWitchTalk && witches[0] && (
+          <WitchServantInteraction
+            servant={servant}
+            witch={witches[0]}
+            onClose={() => setShowWitchTalk(false)}
           />
         )}
         {!vampireState && (showOnlyFangs || showServantInteractions || showYouTube || showSnapchat || showDating) && (
