@@ -5,18 +5,19 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const GENRES = [
-  { id: 'shonen', label: 'Shonen', audience: 'teens', desc: 'Action-packed adventures' },
-  { id: 'shojo', label: 'Shojo', audience: 'teens', desc: 'Romance and relationships' },
-  { id: 'seinen', label: 'Seinen', audience: 'adults', desc: 'Mature themes' },
-  { id: 'josei', label: 'Josei', audience: 'adults', desc: 'Adult romance & drama' },
-  { id: 'isekai', label: 'Isekai', audience: 'mixed', desc: 'Transported to another world' },
-  { id: 'slice-of-life', label: 'Slice of Life', audience: 'mixed', desc: 'Everyday moments' }
+  { id: 'shonen', label: 'Shonen', icon: '⚔️', desc: 'Action-packed adventures' },
+  { id: 'shojo', label: 'Shojo', icon: '💕', desc: 'Romance and relationships' },
+  { id: 'seinen', label: 'Seinen', icon: '🌙', desc: 'Mature themes' },
+  { id: 'josei', label: 'Josei', icon: '🌸', desc: 'Adult romance & drama' },
+  { id: 'isekai', label: 'Isekai', icon: '🌀', desc: 'Transported to another world' },
+  { id: 'slice-of-life', label: 'Slice of Life', icon: '☕', desc: 'Everyday moments' }
 ];
 
 export default function MangaCareer({ servant, onClose }) {
   const queryClient = useQueryClient();
   const [working, setWorking] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [showGenreSelect, setShowGenreSelect] = useState(false);
 
   const { data: careers = [] } = useQuery({
     queryKey: ['career', servant.id],
@@ -184,24 +185,17 @@ export default function MangaCareer({ servant, onClose }) {
         )}
 
         {!career?.series_name && (
-          <div>
-            <h3 className="text-white font-medium mb-3">Start a New Series</h3>
-            <div className="space-y-2">
-              {GENRES.map(genre => (
-                <button
-                  key={genre.id}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleStartSeries(genre);
-                  }}
-                  disabled={working}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium">{genre.label}</h4>
-                  <p className="text-gray-400 text-sm">{genre.desc}</p>
-                </button>
-              ))}
-            </div>
+          <div className="text-center py-8">
+            <BookOpen className="w-16 h-16 text-purple-400 mx-auto mb-4" />
+            <h3 className="text-white font-medium mb-2">No Active Series</h3>
+            <p className="text-gray-400 text-sm mb-6">Start your manga journey</p>
+            <button
+              onClick={() => setShowGenreSelect(true)}
+              disabled={working}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-3 px-6 rounded-xl disabled:opacity-50"
+            >
+              Start New Series
+            </button>
           </div>
         )}
 
@@ -224,6 +218,42 @@ export default function MangaCareer({ servant, onClose }) {
         )}
         </div>
       </motion.div>
+
+      {/* Genre Selection Modal */}
+      {showGenreSelect && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => !working && setShowGenreSelect(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+          >
+            <h3 className="text-white text-xl font-bold mb-4">Choose Genre</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {GENRES.map(genre => (
+                <button
+                  key={genre.id}
+                  onClick={() => {
+                    handleStartSeries(genre);
+                    setShowGenreSelect(false);
+                  }}
+                  disabled={working}
+                  className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-center transition-colors disabled:opacity-50"
+                >
+                  <div className="text-4xl mb-2">{genre.icon}</div>
+                  <h4 className="text-white font-medium text-sm mb-1">{genre.label}</h4>
+                  <p className="text-gray-400 text-xs">{genre.desc}</p>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
