@@ -174,16 +174,22 @@ export default function VampireHome() {
 
 
   
+  const isDaytime = vampireState.time_of_day === 'day';
+
   return (
     <div className="min-h-screen relative overflow-hidden"
-         style={{ background: 'linear-gradient(to bottom, #0a0a14 0%, #1a0a1a 50%, #0a0014 100%)' }}>
-      
+         style={{ 
+           background: isDaytime 
+             ? 'linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #B0E0E6 100%)' 
+             : 'linear-gradient(to bottom, #0a0a14 0%, #1a0a1a 50%, #0a0014 100%)' 
+         }}>
+
       {/* Ambient particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-purple-400/30 rounded-full"
+            className={`absolute w-1 h-1 rounded-full ${isDaytime ? 'bg-yellow-300/40' : 'bg-purple-400/30'}`}
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -232,8 +238,9 @@ export default function VampireHome() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <h1 className="text-4xl font-bold text-white mb-2">{vampireState.vampire_name}</h1>
-            <p className="text-gray-400">Where the night begins and ends</p>
+            <h1 className={`text-4xl font-bold mb-2 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>
+              {vampireState.vampire_name}
+            </h1>
           </motion.div>
           
           {/* Day/Night Cycle Toggle */}
@@ -279,29 +286,29 @@ export default function VampireHome() {
             transition={{ delay: 0.1 }}
             className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
           >
-            <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/30">
+            <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-blue-300/50' : 'border-purple-900/30'}`}>
               <Moon className="w-6 h-6 text-purple-400 mb-2" />
-              <p className="text-2xl font-bold text-white">{vampireState.humanity || 50}</p>
-              <p className="text-xs text-gray-400">Humanity</p>
-            </div>
-            
-            <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/30">
+              <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{vampireState.humanity || 50}</p>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Humanity</p>
+              </div>
+
+              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-blue-300/50' : 'border-purple-900/30'}`}>
               <Heart className="w-6 h-6 text-red-400 mb-2" />
-              <p className="text-2xl font-bold text-white">{servants.length}</p>
-              <p className="text-xs text-gray-400">Servants</p>
-            </div>
-            
-            <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/30">
+              <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{servants.length}</p>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Servants</p>
+              </div>
+
+              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-blue-300/50' : 'border-purple-900/30'}`}>
               <Zap className="w-6 h-6 text-yellow-400 mb-2" />
-              <p className="text-2xl font-bold text-white">{vampireState.unlocked_powers?.length || 0}</p>
-              <p className="text-xs text-gray-400">Powers Unlocked</p>
-            </div>
-            
-            <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/30">
+              <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{vampireState.unlocked_powers?.length || 0}</p>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Powers Unlocked</p>
+              </div>
+
+              <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-blue-300/50' : 'border-purple-900/30'}`}>
               <Eye className="w-6 h-6 text-blue-400 mb-2" />
-              <p className="text-2xl font-bold text-white">{logs.length}</p>
-              <p className="text-xs text-gray-400">Events Witnessed</p>
-            </div>
+              <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{logs.length}</p>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Events Witnessed</p>
+              </div>
           </motion.div>
           
           {/* Evolution Tree Access */}
