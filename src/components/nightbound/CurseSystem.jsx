@@ -25,7 +25,7 @@ export default function CurseSystem({ witch, onClose }) {
   });
 
   const handleCurse = async () => {
-    if (witch.power_level < selectedCurse.cost) {
+    if (!witch || witch.power_level < selectedCurse.cost) {
       alert(`Need ${selectedCurse.cost} power!`);
       return;
     }
