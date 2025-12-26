@@ -915,35 +915,35 @@ export default function VampireHome() {
 
       {/* Action Modals */}
       <AnimatePresence>
-        {showEvolutionTree && (
+        {showEvolutionTree && vampireState && (
           <EvolutionTree
             vampireState={vampireState}
             servants={servants}
             onClose={() => setShowEvolutionTree(false)}
           />
         )}
-        {selectedServantForInteraction && (
+        {selectedServantForInteraction && vampireState && (
           <DirectInteraction
             servant={selectedServantForInteraction}
             vampireState={vampireState}
             onClose={() => setSelectedServantForInteraction(null)}
           />
         )}
-        {showTemptation && (
+        {showTemptation && vampireState && (
           <TemptationModal
             vampireState={vampireState}
             servants={servants}
             onClose={() => setShowTemptation(false)}
           />
         )}
-        {showOnlyFangs && (
+        {showOnlyFangs && vampireState && (
           <OnlyFangsManagement
             servant={{ id: vampireState.id, name: vampireState.vampire_name }}
             vampireState={vampireState}
             onClose={() => setShowOnlyFangs(false)}
           />
         )}
-        {selectedFriend && servants.length > 0 && (
+        {selectedFriend && vampireState && servants.length > 0 && (
           <FriendInteraction
             friend={selectedFriend}
             servant={servants.find(s => s.id === selectedFriend.met_through_servant_id) || servants[0]}
@@ -951,7 +951,7 @@ export default function VampireHome() {
             onClose={() => setSelectedFriend(null)}
           />
         )}
-        {dateServant && (
+        {dateServant && vampireState && (
           <DateOutingModal
             servant={dateServant}
             vampireState={vampireState}
@@ -965,31 +965,31 @@ export default function VampireHome() {
             onClose={() => setJealousyEvent(null)}
           />
         )}
-        {showCrimsonBliss && (
+        {showCrimsonBliss && vampireState && (
           <CrimsonBlissLab
             vampireState={vampireState}
             servants={servants}
             onClose={() => setShowCrimsonBliss(false)}
           />
         )}
-        {showFoodSystem && (
+        {showFoodSystem && vampireState && (
           <FoodSystem
             vampireState={vampireState}
             servants={servants}
             onClose={() => setShowFoodSystem(false)}
           />
         )}
-        {identityRevelation && (
+        {identityRevelation && vampireState && (
           <ServantIdentityRevelation
             servant={identityRevelation}
             vampireState={vampireState}
             onClose={() => setIdentityRevelation(null)}
           />
         )}
-        {showWitchEncounter && (
+        {showWitchEncounter && vampireState && (
           <WitchEncounter vampireState={vampireState} onClose={() => setShowWitchEncounter(false)} />
         )}
-        {showCovenManagement && (
+        {showCovenManagement && vampireState && (
           <CovenManagement vampireState={vampireState} servants={servants} onClose={() => setShowCovenManagement(false)} />
         )}
         {showWerewolves && vampireState && (
