@@ -1063,6 +1063,27 @@ export default function VampireHome() {
 
               <div className="space-y-4">
                 <div>
+                  <label className="text-white font-medium mb-2 block">Name</label>
+                  <input
+                    type="text"
+                    defaultValue={vampireState.vampire_name}
+                    onBlur={async (e) => {
+                      const newName = e.target.value.trim();
+                      if (newName && newName !== vampireState.vampire_name) {
+                        try {
+                          await base44.entities.VampireState.update(vampireState.id, { vampire_name: newName });
+                          queryClient.invalidateQueries(['vampireState']);
+                        } catch (e) {
+                          console.error('Failed to update name:', e);
+                        }
+                      }
+                    }}
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    placeholder="Your vampire name..."
+                  />
+                </div>
+
+                <div>
                   <label className="text-white font-medium mb-2 block">Gender</label>
                   <div className="space-y-2">
                     {[
