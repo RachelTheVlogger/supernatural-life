@@ -11,13 +11,14 @@ export default function WitchCoven({ witch, onClose }) {
   const [recruiting, setRecruiting] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const { data: currentWitch } = useQuery({
+  const { data: currentWitch, refetch } = useQuery({
     queryKey: ['witch-coven-data', witch.id],
     queryFn: async () => {
       const witches = await base44.entities.Witch.list();
       return witches.find(w => w.id === witch.id) || witch;
     },
-    initialData: witch
+    initialData: witch,
+    staleTime: 0
   });
 
   const handleRecruit = async () => {
@@ -38,8 +39,9 @@ export default function WitchCoven({ witch, onClose }) {
         intensity: 'moderate'
       });
 
-      queryClient.invalidateQueries(['witches']);
-      queryClient.invalidateQueries(['witch-coven-data', witch.id]);
+      await queryClient.invalidateQueries(['witches']);
+      await queryClient.invalidateQueries(['witch-coven-data', witch.id]);
+      await refetch();
 
       setOutcome(`${name} joined your coven as a ${specialty} specialist.`);
       
