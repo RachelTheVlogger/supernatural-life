@@ -12,7 +12,13 @@ const ACTIONS = [
   { id: 'disguise', label: 'Change Disguise', icon: '🎭', duration: 2000 },
   { id: 'pact', label: 'Seal Dark Pact', icon: '📿', duration: 5000 },
   { id: 'essence', label: 'Steal Essence', icon: '💀', duration: 3000 },
-  { id: 'shadow', label: 'Walk in Shadows', icon: '🌑', duration: 4000 }
+  { id: 'shadow', label: 'Walk in Shadows', icon: '🌑', duration: 4000 },
+  { id: 'terror_aura', label: 'Radiate Terror', icon: '😱', duration: 2500 },
+  { id: 'possess', label: 'Possess Victim', icon: '👤', duration: 5000 },
+  { id: 'dark_magic', label: 'Cast Dark Curse', icon: '🔥', duration: 3500 },
+  { id: 'soul_devour', label: 'Devour Soul', icon: '👻', duration: 4500 },
+  { id: 'pain_curse', label: 'Curse with Pain', icon: '⚡', duration: 4000 },
+  { id: 'horns', label: 'Manifest Horns', icon: '😈', duration: 2000 }
 ];
 
 export default function IncubusHome() {
@@ -68,6 +74,35 @@ export default function IncubusHome() {
           const currentIdx = domains.indexOf(incubus.domain || 'mortal_world');
           updates.domain = domains[(currentIdx + 1) % domains.length];
           result = `Traveled to the ${updates.domain}`;
+          break;
+        case 'terror_aura':
+          updates.seduction_power = Math.min(100, (incubus.seduction_power || 0) + 4);
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 40;
+          result = 'Terror radiates from you. Fear feeds your power.';
+          break;
+        case 'possess':
+          updates.victims = (incubus.victims || 0) + 1;
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 120;
+          result = 'Body possessed. You control their every move.';
+          break;
+        case 'dark_magic':
+          updates.illusion_mastery = Math.min(100, (incubus.illusion_mastery || 0) + 6);
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 70;
+          result = 'Dark curse unleashed. Suffering spreads.';
+          break;
+        case 'soul_devour':
+          updates.pacts_sealed = (incubus.pacts_sealed || 0) + 1;
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 200;
+          result = 'Soul devoured. Their existence is erased.';
+          break;
+        case 'pain_curse':
+          updates.nightmare_control = Math.min(100, (incubus.nightmare_control || 0) + 5);
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 90;
+          result = 'Cursed with eternal pain. They will never forget you.';
+          break;
+        case 'horns':
+          updates.illusion_mastery = Math.min(100, (incubus.illusion_mastery || 0) + 5);
+          result = 'Demonic horns emerge. Your true nature revealed.';
           break;
       }
       

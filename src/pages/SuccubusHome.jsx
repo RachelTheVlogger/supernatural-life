@@ -13,7 +13,13 @@ const ACTIONS = [
   { id: 'shapeshift', label: 'Change Form', icon: '✨', duration: 2000 },
   { id: 'contract', label: 'Make Soul Contract', icon: '📜', duration: 5000 },
   { id: 'feed', label: 'Drain Energy', icon: '⚡', duration: 3000 },
-  { id: 'realm', label: 'Travel Between Realms', icon: '🌀', duration: 4000 }
+  { id: 'realm', label: 'Travel Between Realms', icon: '🌀', duration: 4000 },
+  { id: 'charm_aura', label: 'Emit Charm Aura', icon: '💫', duration: 2500 },
+  { id: 'mind_control', label: 'Mind Control', icon: '🧠', duration: 4500 },
+  { id: 'lust_magic', label: 'Cast Lust Spell', icon: '🔮', duration: 3500 },
+  { id: 'soul_read', label: 'Read Desires', icon: '👁️', duration: 3000 },
+  { id: 'pleasure_curse', label: 'Curse with Pleasure', icon: '😈', duration: 4000 },
+  { id: 'wings', label: 'Manifest Wings', icon: '🦋', duration: 2000 }
 ];
 
 export default function SuccubusHome() {
@@ -76,6 +82,34 @@ export default function SuccubusHome() {
           const currentIdx = realms.indexOf(succubus.realm || 'mortal');
           updates.realm = realms[(currentIdx + 1) % realms.length];
           result = `Traveled to the ${updates.realm} realm`;
+          break;
+        case 'charm_aura':
+          updates.charm_level = Math.min(100, (succubus.charm_level || 0) + 4);
+          updates.energy_collected = (succubus.energy_collected || 0) + 30;
+          result = 'Charm aura radiates. All around you are drawn in.';
+          break;
+        case 'mind_control':
+          updates.target_count = (succubus.target_count || 0) + 1;
+          updates.energy_collected = (succubus.energy_collected || 0) + 100;
+          result = 'Their mind is yours. Complete control achieved.';
+          break;
+        case 'lust_magic':
+          updates.charm_level = Math.min(100, (succubus.charm_level || 0) + 6);
+          updates.energy_collected = (succubus.energy_collected || 0) + 60;
+          result = 'Lust spell cast. Desire consumes them.';
+          break;
+        case 'soul_read':
+          updates.dream_walking_mastery = Math.min(100, (succubus.dream_walking_mastery || 0) + 4);
+          result = 'You see their deepest desires. Secrets revealed.';
+          break;
+        case 'pleasure_curse':
+          updates.contracts_made = (succubus.contracts_made || 0) + 1;
+          updates.energy_collected = (succubus.energy_collected || 0) + 150;
+          result = 'Cursed with eternal pleasure. They are bound to you.';
+          break;
+        case 'wings':
+          updates.shapeshifting_level = Math.min(100, (succubus.shapeshifting_level || 0) + 5);
+          result = 'Demonic wings unfurl. Your true form revealed.';
           break;
       }
       
