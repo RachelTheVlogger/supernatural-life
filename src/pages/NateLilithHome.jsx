@@ -317,22 +317,21 @@ export default function NateLilithHome() {
         {!workMode && !coupleActivity && !processing && (
           <div className="mb-8">
             <h3 className="text-white text-xl font-bold mb-4">Together</h3>
-            <div className="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+            <div className="grid grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto">
               {COUPLE_ACTIVITIES.map(activity => (
                 <button
                   key={activity.id}
                   onClick={() => setCoupleActivity(activity)}
-                  className={`rounded-xl p-4 text-left transition-all ${
-                    activity.type === 'dark' ? 'bg-red-900/40 hover:bg-red-900/60 border-2 border-red-500/30' :
-                    activity.type === 'dom' ? 'bg-purple-900/40 hover:bg-purple-900/60 border-2 border-purple-500/30' :
-                    activity.type === 'intimate' ? 'bg-pink-900/40 hover:bg-pink-900/60 border-2 border-pink-500/30' :
-                    activity.type === 'domestic' ? 'bg-blue-900/40 hover:bg-blue-900/60 border-2 border-blue-500/30' :
-                    activity.type === 'story' ? 'bg-indigo-900/40 hover:bg-indigo-900/60 border-2 border-indigo-500/30' :
+                  className={`rounded-lg p-2 text-center transition-all ${
+                    activity.type === 'dark' ? 'bg-red-900/40 hover:bg-red-900/60 border border-red-500/30' :
+                    activity.type === 'dom' ? 'bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30' :
+                    activity.type === 'intimate' ? 'bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30' :
+                    activity.type === 'domestic' ? 'bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30' :
+                    activity.type === 'story' ? 'bg-indigo-900/40 hover:bg-indigo-900/60 border border-indigo-500/30' :
                     'bg-gray-800 hover:bg-gray-700'
                   }`}
                 >
-                  <h4 className="text-white font-medium text-sm mb-1">{activity.label}</h4>
-                  <p className="text-gray-400 text-xs">{activity.desc}</p>
+                  <p className="text-white text-xs font-medium">{activity.label}</p>
                 </button>
               ))}
             </div>
