@@ -16,9 +16,8 @@ export default function JournalSystem({ servant, vampire, onClose }) {
   const [summarizing, setSummarizing] = useState(null);
 
   const isVampire = !!vampire;
-  const vampireState = vampire;
-  const ownerId = isVampire ? vampireState?.id : servant?.id;
-  const ownerName = isVampire ? vampireState?.vampire_name : servant?.name;
+  const ownerId = isVampire ? vampire?.id : servant?.id;
+  const ownerName = isVampire ? vampire?.vampire_name : servant?.name;
 
   const { data: entries = [] } = useQuery({
     queryKey: ['journal', ownerId],
@@ -85,7 +84,7 @@ export default function JournalSystem({ servant, vampire, onClose }) {
 
     const recentEvents = recentLogs.map(log => log.entry).join('\n');
     const context = isVampire 
-      ? `You are ${vampireState?.vampire_name}, a vampire. Recent events: ${recentEvents}`
+      ? `You are ${vampire?.vampire_name}, a vampire. Recent events: ${recentEvents}`
       : `You are ${servant?.name}, a ${servant?.is_turned ? 'newly turned vampire' : 'human servant'} serving a vampire. Recent events: ${recentEvents}`;
 
     const prompt = `${context}
