@@ -18,6 +18,7 @@ import ServantIdentityRevelation from '@/components/nightbound/ServantIdentityRe
 import FoodSystem from '@/components/nightbound/FoodSystem';
 import WitchEncounter from '@/components/nightbound/WitchEncounter';
 import CovenManagement from '@/components/nightbound/CovenManagement';
+import DayCycleToggle from '@/components/nightbound/DayCycleToggle';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -235,11 +236,21 @@ export default function VampireHome() {
             <p className="text-gray-400">Where the night begins and ends</p>
           </motion.div>
           
-          {/* Vampire Identity Button */}
+          {/* Day/Night Cycle Toggle */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
+            className="mb-6"
+          >
+            <DayCycleToggle vampireState={vampireState} />
+          </motion.div>
+
+          {/* Vampire Identity Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.06 }}
             className="mb-6"
           >
             <button

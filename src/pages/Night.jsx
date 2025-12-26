@@ -224,9 +224,14 @@ export default function Night() {
         transition={{ duration: 0.6 }}
         className="text-center mb-8"
       >
-        <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
-          {vampireState.vampire_name}
-        </h1>
+        <div className="flex items-center justify-center gap-3 mb-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            {vampireState.time_of_day === 'day' ? 'Daytime' : 'Nighttime'}
+          </h1>
+          <span className="text-3xl">
+            {vampireState.time_of_day === 'day' ? '☀️' : '🌙'}
+          </span>
+        </div>
         <p className="text-sm text-gray-400">
           {format(new Date(vampireState.current_date || new Date()), 'MMMM d, yyyy')}
         </p>
