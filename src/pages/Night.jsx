@@ -24,12 +24,28 @@ import VampireWeaknessModal from '@/components/nightbound/VampireWeaknessModal';
 import MilestonesDisplay from '@/components/nightbound/MilestonesDisplay';
 import CovenManagement from '@/components/nightbound/CovenManagement';
 import ServantInteractions from '@/components/nightbound/ServantInteractions';
+import WerewolfSystem from '@/components/nightbound/WerewolfSystem';
+import DaylightRingCrafting from '@/components/nightbound/DaylightRingCrafting';
+import VampireClubScene from '@/components/nightbound/VampireClubScene';
+import ArtifactCollection from '@/components/nightbound/ArtifactCollection';
+import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
+import BloodBondSystem from '@/components/nightbound/BloodBondSystem';
+import VampirePolitics from '@/components/nightbound/VampirePolitics';
+import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
 
 export default function Night() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeModal, setActiveModal] = useState(null);
   const [selectedServant, setSelectedServant] = useState(null);
+  const [showWerewolves, setShowWerewolves] = useState(false);
+  const [showDaylightRings, setShowDaylightRings] = useState(false);
+  const [showClubs, setShowClubs] = useState(false);
+  const [showArtifacts, setShowArtifacts] = useState(false);
+  const [showFamily, setShowFamily] = useState(false);
+  const [showBloodBonds, setShowBloodBonds] = useState(false);
+  const [showPolitics, setShowPolitics] = useState(false);
+  const [showAging, setShowAging] = useState(false);
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -56,6 +72,11 @@ export default function Night() {
       }
     },
     retry: 2
+  });
+  
+  const { data: witches = [] } = useQuery({
+    queryKey: ['witches'],
+    queryFn: () => base44.entities.Witch.list()
   });
   
   // Fetch recent logs
@@ -391,6 +412,64 @@ export default function Night() {
           <span className="text-2xl">👥</span>
           <p className="text-white text-xs mt-1">Coven</p>
         </button>
+        <button
+          onClick={() => setShowWerewolves(true)}
+          className="bg-orange-950/40 hover:bg-orange-950/60 border border-orange-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🐺</span>
+          <p className="text-white text-xs mt-1">Werewolves</p>
+        </button>
+        <button
+          onClick={() => setShowDaylightRings(true)}
+          className="bg-yellow-950/40 hover:bg-yellow-950/60 border border-yellow-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">☀️</span>
+          <p className="text-white text-xs mt-1">Daylight</p>
+        </button>
+        <button
+          onClick={() => setShowClubs(true)}
+          className="bg-pink-950/40 hover:bg-pink-950/60 border border-pink-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🍷</span>
+          <p className="text-white text-xs mt-1">Clubs</p>
+        </button>
+        <button
+          onClick={() => setShowArtifacts(true)}
+          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">⚡</span>
+          <p className="text-white text-xs mt-1">Artifacts</p>
+        </button>
+        {servants.length > 0 && (
+          <button
+            onClick={() => setShowFamily(true)}
+            className="bg-blue-950/40 hover:bg-blue-950/60 border border-blue-500/30 rounded-lg p-3 text-center transition-colors"
+          >
+            <span className="text-2xl">👨‍👩‍👧</span>
+            <p className="text-white text-xs mt-1">Family</p>
+          </button>
+        )}
+        <button
+          onClick={() => setShowBloodBonds(true)}
+          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🩸</span>
+          <p className="text-white text-xs mt-1">Blood Bonds</p>
+        </button>
+        <button
+          onClick={() => setShowPolitics(true)}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">👑</span>
+          <p className="text-white text-xs mt-1">Politics</p>
+        </button>
+        <button
+          onClick={() => setShowAging(true)}
+          className="bg-gray-950/40 hover:bg-gray-950/60 border border-gray-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">⏳</span>
+          <p className="text-white text-xs mt-1">Aging</p>
+        </button>
         </motion.div>
       
       {/* Recent log entries */}
@@ -518,6 +597,30 @@ export default function Night() {
             servants={servants}
             onClose={() => setActiveModal(null)}
           />
+        )}
+        {showWerewolves && (
+          <WerewolfSystem vampireState={vampireState} onClose={() => setShowWerewolves(false)} />
+        )}
+        {showDaylightRings && (
+          <DaylightRingCrafting vampireState={vampireState} witches={witches} onClose={() => setShowDaylightRings(false)} />
+        )}
+        {showClubs && (
+          <VampireClubScene vampireState={vampireState} onClose={() => setShowClubs(false)} />
+        )}
+        {showArtifacts && (
+          <ArtifactCollection vampireState={vampireState} onClose={() => setShowArtifacts(false)} />
+        )}
+        {showFamily && servants.length > 0 && (
+          <ServantFamilySystem servant={servants[0]} vampireState={vampireState} onClose={() => setShowFamily(false)} />
+        )}
+        {showBloodBonds && (
+          <BloodBondSystem vampireState={vampireState} servants={servants} onClose={() => setShowBloodBonds(false)} />
+        )}
+        {showPolitics && (
+          <VampirePolitics vampireState={vampireState} onClose={() => setShowPolitics(false)} />
+        )}
+        {showAging && (
+          <VampireAgingSystem vampireState={vampireState} onClose={() => setShowAging(false)} />
         )}
         </AnimatePresence>
       </div>
