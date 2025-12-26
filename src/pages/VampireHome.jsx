@@ -27,6 +27,7 @@ import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
 import BloodBondSystem from '@/components/nightbound/BloodBondSystem';
 import VampirePolitics from '@/components/nightbound/VampirePolitics';
 import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
+import VampireTherapist from '@/components/nightbound/VampireTherapist';
 import SuccubusVampireInteraction from '@/components/nightbound/SuccubusVampireInteraction';
 
 export default function VampireHome() {
@@ -56,6 +57,7 @@ export default function VampireHome() {
   const [showBloodBonds, setShowBloodBonds] = useState(false);
   const [showPolitics, setShowPolitics] = useState(false);
   const [showAging, setShowAging] = useState(false);
+  const [showTherapist, setShowTherapist] = useState(false);
   const [showSuccubusInteraction, setShowSuccubusInteraction] = useState(false);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
