@@ -158,8 +158,7 @@ const TURNED_VAMPIRE_INTERACTIONS = {
       mid: ['You bit each other at the same time. Vampire blood exchanged. Intimate beyond words.', 'Simultaneous feeding. Your blood. Their blood. Mixed. Powerful.', 'Double bite. Both feeding. Connection absolute. Overwhelming.'],
       high: ['Feeding on each other while fucking. Blood and pleasure and power. Transcendent.', 'You came while drinking their blood. They came while drinking yours. Simultaneous. Perfect.', 'Double feeding during sex. You both came at the exact moment. Vampire intimacy perfected.', 'Biting each other. Fucking deep. Blood flowing. Both came screaming. Ultimate vampire intimacy.']
     }
-  }
-};
+  },
   vampireRace: {
     icon: Wind,
     label: 'Race through the city',
