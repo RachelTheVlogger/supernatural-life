@@ -760,7 +760,30 @@ export default function BusinessManagement({ servant, onClose }) {
 
               {shippedOrders.length > 0 && (
                 <>
-                  <h3 className="text-white font-bold mb-3 mt-6">Shipped Orders ({shippedOrders.length})</h3>
+                  <div className="flex justify-between items-center mb-3 mt-6">
+                    <h3 className="text-white font-bold">Shipped Orders ({shippedOrders.length})</h3>
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (!confirm(`Clear all ${shippedOrders.length} shipped orders?`)) return;
+                        
+                        for (const order of shippedOrders) {
+                          await base44.entities.BusinessOrder.delete(order.id);
+                        }
+                        
+                        await base44.entities.NightLog.create({
+                          entry: `${servant.name} archived ${shippedOrders.length} completed orders.`,
+                          category: 'interaction',
+                          intensity: 'subtle'
+                        });
+                        
+                        queryClient.invalidateQueries(['orders']);
+                      }}
+                      className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-lg px-3 py-1 text-xs transition-colors"
+                    >
+                      Clear All
+                    </button>
+                  </div>
                   {shippedOrders.map(order => (
                     <div key={order.id} className="bg-gray-800/50 rounded-xl p-4 mb-3 border border-green-900/30">
                       <div className="flex justify-between items-start">
