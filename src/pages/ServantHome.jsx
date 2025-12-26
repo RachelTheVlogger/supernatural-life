@@ -15,6 +15,7 @@ import YouTubeCareer from '@/components/nightbound/YouTubeCareer';
 import PatreonManager from '@/components/nightbound/PatreonManager';
 import SnapchatPremium from '@/components/nightbound/SnapchatPremium';
 import CareerSelector from '@/components/nightbound/CareerSelector';
+import ServantDating from '@/components/nightbound/ServantDating';
 import TattooStudio from '@/components/nightbound/TattooStudio';
 import AuthorCareer from '@/components/nightbound/AuthorCareer';
 
@@ -58,6 +59,7 @@ export default function ServantHome() {
   const [showPatreon, setShowPatreon] = useState(false);
   const [showSnapchat, setShowSnapchat] = useState(false);
   const [showCareerSelector, setShowCareerSelector] = useState(false);
+  const [showDating, setShowDating] = useState(false);
   const [showTattoo, setShowTattoo] = useState(false);
   const [showAuthor, setShowAuthor] = useState(false);
   
