@@ -98,6 +98,12 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [pollData, setPollData] = useState({ question: '', options: ['', ''] });
   const [activePoll, setActivePoll] = useState(null);
   const [showStalkers, setShowStalkers] = useState(false);
+  const [showCollabs, setShowCollabs] = useState(false);
+  const [audioRecording, setAudioRecording] = useState(false);
+  const [activeStory, setActiveStory] = useState(null);
+  const [videoCallFan, setVideoCallFan] = useState(null);
+  const [sextingSession, setSextingSession] = useState(null);
+  const [sextingMessages, setSextingMessages] = useState([]);
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -1004,6 +1010,21 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           <button onClick={() => setTab('analytics')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'analytics' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             📊 Stats
           </button>
+          <button onClick={() => setTab('collab')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'collab' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            👥 Collab
+          </button>
+          <button onClick={() => setTab('audio')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'audio' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            🎙️ Audio
+          </button>
+          <button onClick={() => setTab('stories')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'stories' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            ⭐ Stories
+          </button>
+          <button onClick={() => setTab('calls')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'calls' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            📞 Calls
+          </button>
+          <button onClick={() => setTab('promo')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'promo' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            💰 Promos
+          </button>
           <button onClick={() => setTab('profile')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             ⚙️ Settings
           </button>
@@ -1752,6 +1773,404 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </div>
         )}
 
+        {/* COLLABORATIONS TAB */}
+        {tab === 'collab' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-pink-950/40 to-purple-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-4">👥 Collaborations</h3>
+              <p className="text-gray-400 text-sm mb-6">Create content with other creators</p>
+              
+              <button
+                onClick={async () => {
+                  setCreating(true);
+                  setTimeout(async () => {
+                    const collabTypes = [
+                      { type: 'With another vampire creator', earnings: [400, 800], subGain: [50, 100] },
+                      { type: 'Threesome with fans', earnings: [600, 1000], subGain: [80, 150] },
+                      { type: 'Guest appearance on bigger account', earnings: [200, 400], subGain: [100, 200] }
+                    ];
+                    const collab = collabTypes[Math.floor(Math.random() * collabTypes.length)];
+                    const earnings = Math.floor(Math.random() * (collab.earnings[1] - collab.earnings[0])) + collab.earnings[0];
+                    const subs = Math.floor(Math.random() * (collab.subGain[1] - collab.subGain[0])) + collab.subGain[0];
+                    
+                    await base44.entities.OnlyFangsCollab.create({
+                      servant_id: servant.id,
+                      collab_type: collab.type,
+                      earnings,
+                      new_subscribers: subs
+                    });
+                    
+                    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                      revenue: servantProfile.revenue + earnings,
+                      subscriber_count: servantProfile.subscriber_count + subs,
+                      reputation: Math.min(100, servantProfile.reputation + 15)
+                    });
+                    
+                    await base44.entities.NightLog.create({
+                      entry: `Collaboration complete: ${collab.type}. Earned $${earnings} and gained ${subs} new subscribers!`,
+                      category: 'interaction',
+                      intensity: 'significant'
+                    });
+                    
+                    queryClient.invalidateQueries();
+                    setCreating(false);
+                  }, 3000);
+                }}
+                disabled={creating || servantProfile.reputation < 40}
+                className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-medium py-4 rounded-xl disabled:opacity-50"
+              >
+                {creating ? 'Filming Collab...' : servantProfile.reputation < 40 ? 'Need 40+ Rep' : '🎬 Film Collaboration'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* AUDIO TAB */}
+        {tab === 'audio' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-4">🎙️ Audio Content</h3>
+              
+              <div className="grid gap-3">
+                {[
+                  { type: 'Moaning audio', emoji: '😩', price: 10, desc: 'Just your sounds' },
+                  { type: 'Dirty talk recording', emoji: '💬', price: 15, desc: 'Filthy words for them' },
+                  { type: 'ASMR tingles', emoji: '🎧', price: 20, desc: 'Whispers and sounds' },
+                  { type: 'JOI audio', emoji: '🔥', price: 25, desc: 'Guide them through it' },
+                  { type: 'Orgasm audio', emoji: '💦', price: 30, desc: 'Listening to you finish' }
+                ].map(audio => (
+                  <button
+                    key={audio.type}
+                    onClick={async () => {
+                      setAudioRecording(true);
+                      setTimeout(async () => {
+                        const purchases = Math.floor(servantProfile.subscriber_count * (Math.random() * 0.3 + 0.2));
+                        const earnings = purchases * audio.price;
+                        
+                        await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                          revenue: servantProfile.revenue + earnings
+                        });
+                        
+                        await base44.entities.NightLog.create({
+                          entry: `Posted audio: "${audio.type}". ${purchases} purchases. Earned $${earnings}.`,
+                          category: 'interaction',
+                          intensity: 'moderate'
+                        });
+                        
+                        queryClient.invalidateQueries();
+                        setAudioRecording(false);
+                      }, 2000);
+                    }}
+                    disabled={audioRecording}
+                    className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left disabled:opacity-50"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{audio.emoji}</span>
+                        <div>
+                          <h4 className="text-white font-medium">{audio.type}</h4>
+                          <p className="text-gray-400 text-xs">{audio.desc}</p>
+                        </div>
+                      </div>
+                      <span className="text-green-400 font-bold">${audio.price}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STORIES TAB */}
+        {tab === 'stories' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-2">⭐ Stories (24h)</h3>
+              <p className="text-gray-400 text-sm mb-6">Quick content. Disappears in 24h.</p>
+              
+              <div className="grid gap-3">
+                {[
+                  { type: 'Teasing story', emoji: '😈' },
+                  { type: 'Behind the scenes', emoji: '🎬' },
+                  { type: 'Quick nudes', emoji: '🔥' },
+                  { type: 'Shower story', emoji: '🚿' },
+                  { type: 'Bed selfie', emoji: '🛏️' }
+                ].map(story => (
+                  <button
+                    key={story.type}
+                    onClick={async () => {
+                      setActiveStory(story.type);
+                      setTimeout(async () => {
+                        const views = Math.floor(servantProfile.subscriber_count * (Math.random() * 0.6 + 0.4));
+                        const newSubs = Math.floor(Math.random() * 10) + 5;
+                        
+                        await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                          subscriber_count: servantProfile.subscriber_count + newSubs,
+                          reputation: Math.min(100, servantProfile.reputation + 3)
+                        });
+                        
+                        await base44.entities.NightLog.create({
+                          entry: `Posted story: "${story.type}". ${views} views, +${newSubs} subs.`,
+                          category: 'interaction',
+                          intensity: 'subtle'
+                        });
+                        
+                        queryClient.invalidateQueries();
+                        setActiveStory(null);
+                      }, 2000);
+                    }}
+                    disabled={!!activeStory}
+                    className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left disabled:opacity-50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{story.emoji}</span>
+                      <h4 className="text-white font-medium">{story.type}</h4>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* VIDEO CALLS TAB */}
+        {tab === 'calls' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-red-950/40 to-purple-950/40 border-2 border-red-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-4">📞 Fan Sessions</h3>
+              
+              <div className="space-y-3">
+                <button
+                  onClick={async () => {
+                    const fan = topFans[Math.floor(Math.random() * Math.min(3, topFans.length))];
+                    setVideoCallFan(fan?.name || 'VampireFan420');
+                    setTimeout(async () => {
+                      const earnings = Math.floor(Math.random() * 200) + 100;
+                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                        revenue: servantProfile.revenue + earnings
+                      });
+                      
+                      const relBonus = Math.floor(Math.random() * 8) + 5;
+                      await base44.entities.Servant.update(servant.id, {
+                        relationship: Math.min(100, (servant.relationship || 0) + relBonus)
+                      });
+                      
+                      await base44.entities.NightLog.create({
+                        entry: `Video call with ${videoCallFan}. 15 minutes of private time. Earned $${earnings}.`,
+                        category: 'interaction',
+                        intensity: 'significant'
+                      });
+                      
+                      queryClient.invalidateQueries();
+                      setVideoCallFan(null);
+                    }, 4000);
+                  }}
+                  disabled={!!videoCallFan || servantProfile.reputation < 50}
+                  className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left disabled:opacity-50"
+                >
+                  <h4 className="text-white font-medium mb-1">📹 1-on-1 Video Call</h4>
+                  <p className="text-gray-400 text-sm">15 min private session ($100-300)</p>
+                  {servantProfile.reputation < 50 && <p className="text-red-400 text-xs mt-1">Need 50+ Rep</p>}
+                </button>
+
+                <button
+                  onClick={async () => {
+                    const fan = topFans[Math.floor(Math.random() * topFans.length)]?.name || 'DarkLover69';
+                    setSextingSession(fan);
+                    setSextingMessages([]);
+                    
+                    const msgs = [
+                      'Hey beautiful, I\'ve been thinking about you all day',
+                      'What are you wearing right now?',
+                      'I want you so bad',
+                      'Tell me what you\'d do to me',
+                      'You\'re making me so hard/wet'
+                    ];
+                    
+                    const interval = setInterval(() => {
+                      setSextingMessages(prev => {
+                        if (prev.length >= 10) {
+                          clearInterval(interval);
+                          return prev;
+                        }
+                        return [...prev, msgs[Math.floor(Math.random() * msgs.length)]];
+                      });
+                    }, 1500);
+                    
+                    setTimeout(async () => {
+                      clearInterval(interval);
+                      const earnings = Math.floor(Math.random() * 100) + 50;
+                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                        revenue: servantProfile.revenue + earnings
+                      });
+                      
+                      await base44.entities.NightLog.create({
+                        entry: `Sexting session with ${fan}. Hot and heavy. Earned $${earnings}.`,
+                        category: 'interaction',
+                        intensity: 'moderate'
+                      });
+                      
+                      queryClient.invalidateQueries();
+                      setSextingSession(null);
+                      setSextingMessages([]);
+                    }, 8000);
+                  }}
+                  disabled={!!sextingSession}
+                  className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left disabled:opacity-50"
+                >
+                  <h4 className="text-white font-medium mb-1">💬 Sexting Session</h4>
+                  <p className="text-gray-400 text-sm">Text back and forth ($50-150)</p>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    const earnings = Math.floor(Math.random() * 50) + 30;
+                    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                      revenue: servantProfile.revenue + earnings
+                    });
+                    
+                    await base44.entities.NightLog.create({
+                      entry: `Sent personalized shoutout. Fan ecstatic. Earned $${earnings}.`,
+                      category: 'interaction',
+                      intensity: 'subtle'
+                    });
+                    
+                    queryClient.invalidateQueries();
+                  }}
+                  className="w-full bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-xl p-4 text-left"
+                >
+                  <h4 className="text-white font-medium mb-1">📣 Send Shoutout</h4>
+                  <p className="text-gray-400 text-sm">Personalized message ($30-80)</p>
+                </button>
+              </div>
+
+              {videoCallFan && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-4 bg-black/60 rounded-xl p-4 border border-red-500/50"
+                >
+                  <motion.p
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-red-300 text-center"
+                  >
+                    📹 Video call with {videoCallFan} in progress...
+                  </motion.p>
+                </motion.div>
+              )}
+
+              {sextingSession && (
+                <div className="mt-4 bg-black/60 rounded-xl p-4 border border-purple-500/50 max-h-64 overflow-y-auto">
+                  <p className="text-purple-300 font-bold mb-3">💬 Sexting with {sextingSession}...</p>
+                  <div className="space-y-2">
+                    {sextingMessages.map((msg, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="bg-gray-800 rounded-lg p-2"
+                      >
+                        <p className="text-gray-300 text-sm">{msg}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* PROMOTIONS TAB */}
+        {tab === 'promo' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-green-950/40 to-emerald-950/40 border-2 border-green-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-xl font-bold mb-4">💰 Promotions</h3>
+              
+              <div className="grid gap-3">
+                <button
+                  onClick={async () => {
+                    const newSubs = Math.floor(Math.random() * 40) + 30;
+                    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                      subscriber_count: servantProfile.subscriber_count + newSubs
+                    });
+                    await base44.entities.NightLog.create({
+                      entry: `50% off promotion. Gained ${newSubs} new subscribers!`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+                    queryClient.invalidateQueries();
+                  }}
+                  className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left"
+                >
+                  <h4 className="text-white font-medium mb-1">🏷️ 50% Off Sale</h4>
+                  <p className="text-gray-400 text-sm">Limited time discount (+30-70 subs)</p>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    const earnings = Math.floor(Math.random() * 300) + 200;
+                    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                      revenue: servantProfile.revenue + earnings
+                    });
+                    await base44.entities.NightLog.create({
+                      entry: `Content vault unlocked for VIPs. Earned $${earnings}.`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+                    queryClient.invalidateQueries();
+                  }}
+                  className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left"
+                >
+                  <h4 className="text-white font-medium mb-1">🗃️ Content Vault Access</h4>
+                  <p className="text-gray-400 text-sm">All past content for VIPs ($200-500)</p>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    const earnings = Math.floor(Math.random() * 150) + 100;
+                    const returning = Math.floor(Math.random() * 20) + 10;
+                    await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                      revenue: servantProfile.revenue + earnings,
+                      subscriber_count: servantProfile.subscriber_count + returning
+                    });
+                    await base44.entities.NightLog.create({
+                      entry: `Re-bill campaign to expired subs. ${returning} returned! Earned $${earnings}.`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+                    queryClient.invalidateQueries();
+                  }}
+                  className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left"
+                >
+                  <h4 className="text-white font-medium mb-1">🔄 Win Back Expired Subs</h4>
+                  <p className="text-gray-400 text-sm">Special offer to return (+10-30 subs)</p>
+                </button>
+
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-medium mb-3">🏆 Platform Ranking</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Vampire Category:</span>
+                      <span className="text-purple-400 font-bold">
+                        {servantProfile.reputation > 80 ? 'Top 1%' : 
+                         servantProfile.reputation > 60 ? 'Top 5%' : 
+                         servantProfile.reputation > 40 ? 'Top 20%' : 'Rising'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Overall Rank:</span>
+                      <span className="text-white">
+                        #{Math.floor(1000 - (servantProfile.reputation * 9))}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* PROFILE/SETTINGS TAB */}
         {tab === 'profile' && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
@@ -1763,6 +2182,19 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             <div className="bg-gray-800 rounded-xl p-4">
               <h3 className="text-white font-medium mb-2">Bio</h3>
               <p className="text-gray-300">{servantProfile.bio}</p>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-4">
+              <h3 className="text-white font-medium mb-3">⭐ Fan Reviews</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-4 h-4 ${i < Math.floor(servantProfile.reputation / 20) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
+                  ))}
+                </div>
+                <span className="text-white font-bold">{(servantProfile.reputation / 20).toFixed(1)}/5.0</span>
+              </div>
+              <p className="text-gray-400 text-xs">Based on {servantProfile.subscriber_count} subscribers</p>
             </div>
 
             <button onClick={() => setShowMerch(true)} className="w-full bg-purple-900/40 border border-purple-500/30 text-white py-3 rounded-xl">
