@@ -19,7 +19,9 @@ export default function ServantInteractions({ servants, vampireState, onClose })
   };
   const pronouns = getPronouns();
 
-  const getInteractions = () => [
+  const getInteractions = (pair) => {
+    const p = pronouns;
+    return [
     { 
       id: 'vampire-talk',
       icon: Sparkles,
@@ -27,20 +29,20 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       description: 'Let them discuss their feelings about you',
       outcomes: {
         positive: [
-          `${selectedPair?.[0]?.name}: "Living with ${pronouns.object}... it's incredible. I never want to leave."\n${selectedPair?.[1]?.name}: "I know exactly what you mean. ${pronouns.subject === 'they' ? 'They\'re' : pronouns.subject === 'she' ? 'She\'s' : 'He\'s'} everything."`,
-          `${selectedPair?.[0]?.name}: "${pronouns.subject === 'they' ? 'They are' : pronouns.subject === 'she' ? 'She\'s' : 'He\'s'} everything to me. I'd die for ${pronouns.object}."\n${selectedPair?.[1]?.name}: "Same. We're lucky to be chosen."`,
+          `${pair?.[0]?.name}: "Living with ${p.object}... it's incredible. I never want to leave."\n${pair?.[1]?.name}: "I know exactly what you mean. ${p.subject === 'they' ? 'They\'re' : p.subject === 'she' ? 'She\'s' : 'He\'s'} everything."`,
+          `${pair?.[0]?.name}: "${p.subject === 'they' ? 'They are' : p.subject === 'she' ? 'She\'s' : 'He\'s'} everything to me. I'd die for ${p.object}."\n${pair?.[1]?.name}: "Same. We're lucky to be chosen."`,
           `They talk for hours about you. Their devotion matching. A mutual understanding forms.`,
-          `${selectedPair?.[0]?.name}: "The way ${pronouns.subject} looks at me..."\n${selectedPair?.[1]?.name}: "I know that look. It's intoxicating."\nThey bond over their shared addiction to you.`,
+          `${pair?.[0]?.name}: "The way ${p.subject} looks at me..."\n${pair?.[1]?.name}: "I know that look. It's intoxicating."\nThey bond over their shared addiction to you.`,
         ],
         neutral: [
-          `${selectedPair?.[0]?.name}: "It's... different. Living with a vampire."\n${selectedPair?.[1]?.name}: "Yeah." Awkward silence.`,
+          `${pair?.[0]?.name}: "It's... different. Living with a vampire."\n${pair?.[1]?.name}: "Yeah." Awkward silence.`,
           `They talk about you politely. No real connection made.`,
-          `${selectedPair?.[0]?.name}: "Some nights are better than others."\n${selectedPair?.[1]?.name} nods but doesn't elaborate.`,
+          `${pair?.[0]?.name}: "Some nights are better than others."\n${pair?.[1]?.name} nods but doesn't elaborate.`,
         ],
         negative: [
-          `${selectedPair?.[0]?.name}: "Sometimes I wonder if ${pronouns.subject} even sees me."\n${selectedPair?.[1]?.name}: "Oh, ${pronouns.subject} sees me just fine. Maybe you're the problem."\nTension rises.`,
-          `${selectedPair?.[0]?.name}: "I want ${pronouns.possessive} attention. Not yours."\n${selectedPair?.[1]?.name} walks away, hurt and angry.`,
-          `${selectedPair?.[1]?.name}: "Why does ${pronouns.subject} spend more time with you?"\n${selectedPair?.[0]?.name}: "Because I'm better at this than you."\nThe rivalry deepens.`,
+          `${pair?.[0]?.name}: "Sometimes I wonder if ${p.subject} even sees me."\n${pair?.[1]?.name}: "Oh, ${p.subject} sees me just fine. Maybe you're the problem."\nTension rises.`,
+          `${pair?.[0]?.name}: "I want ${p.possessive} attention. Not yours."\n${pair?.[1]?.name} walks away, hurt and angry.`,
+          `${pair?.[1]?.name}: "Why does ${p.subject} spend more time with you?"\n${pair?.[0]?.name}: "Because I'm better at this than you."\nThe rivalry deepens.`,
         ]
       }
     },
@@ -51,20 +53,20 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       description: 'Encourage them to open up to each other',
       outcomes: {
         positive: [
-          `${selectedPair?.[0]?.name} shares their fears. ${selectedPair?.[1]?.name} listens, really listens. "We're in this together," they say. A bond forms.`,
+          `${pair?.[0]?.name} shares their fears. ${pair?.[1]?.name} listens, really listens. "We're in this together," they say. A bond forms.`,
           `They talk about their past lives. Before you. Both realize how empty they were. How complete they are now. Understanding blooms.`,
-          `${selectedPair?.[0]?.name}: "Do you ever miss your old life?"\n${selectedPair?.[1]?.name}: "Not for a second. This is where I belong."\nThey smile at each other. United.`,
+          `${pair?.[0]?.name}: "Do you ever miss your old life?"\n${pair?.[1]?.name}: "Not for a second. This is where I belong."\nThey smile at each other. United.`,
           `They share their devotion stories. How they fell for you. Different paths, same destination. Respect grows.`,
         ],
         neutral: [
           `They try to connect but the conversation stays surface level. Polite. Safe. Distant.`,
-          `${selectedPair?.[0]?.name} opens up a little. ${selectedPair?.[1]?.name} doesn't reciprocate. It fizzles out.`,
+          `${pair?.[0]?.name} opens up a little. ${pair?.[1]?.name} doesn't reciprocate. It fizzles out.`,
           `Small talk that goes nowhere. They're too different. Or too similar.`,
         ],
         negative: [
-          `${selectedPair?.[0]?.name} tries to connect. ${selectedPair?.[1]?.name} shuts them down. "I don't need a friend. I need ${pronouns.object}."`,
+          `${pair?.[0]?.name} tries to connect. ${pair?.[1]?.name} shuts them down. "I don't need a friend. I need ${p.object}."`,
           `The conversation turns competitive. Each trying to prove they're more devoted. More worthy. More needed.`,
-          `${selectedPair?.[1]?.name}: "You don't understand ${pronouns.object} like I do."\n${selectedPair?.[0]?.name}: "Keep telling yourself that."\nHostility festers.`,
+          `${pair?.[1]?.name}: "You don't understand ${p.object} like I do."\n${pair?.[0]?.name}: "Keep telling yourself that."\nHostility festers.`,
         ]
       }
     },
@@ -76,19 +78,19 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       outcomes: {
         positive: [
           `You tell them they're both important. Both cherished. They look at each other differently now. Allies, not rivals.`,
-          `${selectedPair?.[0]?.name} reaches out. ${selectedPair?.[1]?.name} takes their hand. "We're family now," one whispers. The other agrees.`,
+          `${pair?.[0]?.name} reaches out. ${pair?.[1]?.name} takes their hand. "We're family now," one whispers. The other agrees.`,
           `You explain that loving you means accepting each other. They understand. They try. It works.`,
           `They embrace. Tentatively at first, then genuine. United in their devotion to you.`,
         ],
         neutral: [
           `They try for your sake. Forced smiles. Stiff hugs. The walls remain, but they're trying.`,
-          `${selectedPair?.[0]?.name}: "For ${pronouns.object}, I'll try."\n${selectedPair?.[1]?.name}: "Same."\nSmall progress.`,
+          `${pair?.[0]?.name}: "For ${p.object}, I'll try."\n${pair?.[1]?.name}: "Same."\nSmall progress.`,
           `They tolerate each other now. Not friends, but not enemies. It's something.`,
         ],
         negative: [
-          `${selectedPair?.[0]?.name}: "I don't want to share ${pronouns.object}."\n${selectedPair?.[1]?.name}: "Good. Neither do I."\nYour intervention made it worse.`,
+          `${pair?.[0]?.name}: "I don't want to share ${p.object}."\n${pair?.[1]?.name}: "Good. Neither do I."\nYour intervention made it worse.`,
           `They pretend to bond in front of you. The moment you leave, the masks drop. Hatred intensifies.`,
-          `${selectedPair?.[1]?.name} storms off. "I'm not doing this." ${selectedPair?.[0]?.name} looks relieved they left.`,
+          `${pair?.[1]?.name} storms off. "I'm not doing this." ${pair?.[0]?.name} looks relieved they left.`,
         ]
       }
     },
@@ -99,19 +101,19 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       description: 'Watch how they act when you\'re not around',
       outcomes: {
         positive: [
-          `You watch from the shadows. They don't know you're there. ${selectedPair?.[0]?.name} makes ${selectedPair?.[1]?.name} laugh. Genuine. Natural. Beautiful.`,
+          `You watch from the shadows. They don't know you're there. ${pair?.[0]?.name} makes ${pair?.[1]?.name} laugh. Genuine. Natural. Beautiful.`,
           `They talk about you fondly. Both admiring different things about you. No jealousy. Just shared appreciation.`,
-          `${selectedPair?.[0]?.name} helps ${selectedPair?.[1]?.name} with something. A small gesture of kindness. You smile.`,
+          `${pair?.[0]?.name} helps ${pair?.[1]?.name} with something. A small gesture of kindness. You smile.`,
           `They're comfortable together. No pretense. No competition. Just... peaceful coexistence.`,
         ],
         neutral: [
           `They ignore each other mostly. Polite nods when paths cross. Nothing more.`,
           `They coexist in silence. Not hostile, not friendly. Just... there.`,
-          `${selectedPair?.[0]?.name} reads. ${selectedPair?.[1]?.name} stares out the window. Separate worlds.`,
+          `${pair?.[0]?.name} reads. ${pair?.[1]?.name} stares out the window. Separate worlds.`,
         ],
         negative: [
-          `You hear ${selectedPair?.[0]?.name} whisper: "I wish ${pronouns.subject}'d turn just me. Send ${selectedPair?.[1]?.name} away."\n${selectedPair?.[1]?.name} glares from across the room. They heard it too.`,
-          `${selectedPair?.[1]?.name} hides something of yours. ${selectedPair?.[0]?.name} sees it. "That's pathetic," they mutter. War brewing.`,
+          `You hear ${pair?.[0]?.name} whisper: "I wish ${p.subject}'d turn just me. Send ${pair?.[1]?.name} away."\n${pair?.[1]?.name} glares from across the room. They heard it too.`,
+          `${pair?.[1]?.name} hides something of yours. ${pair?.[0]?.name} sees it. "That's pathetic," they mutter. War brewing.`,
           `Silent hostility. They can't hide it. Every movement calculated to avoid the other.`,
           `One deliberately takes your attention from the other. Sabotage. Manipulation. Jealousy uncontained.`,
         ]
@@ -124,10 +126,10 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       description: 'An evening together - you and both servants',
       outcomes: {
         positive: [
-          `A perfect night. You sit between them. They both lean into you. Content. Safe. Complete.\n"This is enough," ${selectedPair?.[0]?.name} whispers. ${selectedPair?.[1]?.name} agrees.`,
+          `A perfect night. You sit between them. They both lean into you. Content. Safe. Complete.\n"This is enough," ${pair?.[0]?.name} whispers. ${pair?.[1]?.name} agrees.`,
           `You read to them. They hang on every word. Not competing, just enjoying your presence. Together.`,
           `They take turns telling you stories. You laugh. They smile at each other. A moment of unity.`,
-          `${selectedPair?.[0]?.name} on your left. ${selectedPair?.[1]?.name} on your right. Both holding your hands. Perfect balance.`,
+          `${pair?.[0]?.name} on your left. ${pair?.[1]?.name} on your right. Both holding your hands. Perfect balance.`,
           `You watch them learn to share you. It's beautiful. They're learning. For you, they'll do anything.`,
         ],
         neutral: [
@@ -136,9 +138,9 @@ export default function ServantInteractions({ servants, vampireState, onClose })
           `It works. Barely. The tension is there but controlled. Baby steps.`,
         ],
         negative: [
-          `${selectedPair?.[0]?.name} reaches for you. ${selectedPair?.[1]?.name} pulls you away. "My turn," they hiss. A fight erupts.`,
+          `${pair?.[0]?.name} reaches for you. ${pair?.[1]?.name} pulls you away. "My turn," they hiss. A fight erupts.`,
           `You try to give them equal attention. It's not enough. It's never enough. Both want more. Both want all.`,
-          `${selectedPair?.[1]?.name} storms off mid-evening. "I can't do this. I can't watch ${pronouns.object} with someone else."\n${selectedPair?.[0]?.name} looks satisfied. Victory.`,
+          `${pair?.[1]?.name} storms off mid-evening. "I can't do this. I can't watch ${p.object} with someone else."\n${pair?.[0]?.name} looks satisfied. Victory.`,
           `They fight over you right in front of you. Words become sharp. Jealousy explosive. This was a terrible mistake.`,
         ]
       }
@@ -150,10 +152,10 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       description: 'Make them work as a team',
       outcomes: {
         positive: [
-          `They work in sync. ${selectedPair?.[0]?.name} starts something, ${selectedPair?.[1]?.name} finishes it. Natural teamwork. You're impressed.`,
-          `${selectedPair?.[0]?.name}: "Hand me that."\n${selectedPair?.[1]?.name} passes it without hesitation. They're learning each other's rhythms.`,
+          `They work in sync. ${pair?.[0]?.name} starts something, ${pair?.[1]?.name} finishes it. Natural teamwork. You're impressed.`,
+          `${pair?.[0]?.name}: "Hand me that."\n${pair?.[1]?.name} passes it without hesitation. They're learning each other's rhythms.`,
           `The task gets done efficiently. They complement each other well. Different strengths. One team.`,
-          `"We make a good team," ${selectedPair?.[0]?.name} admits. ${selectedPair?.[1]?.name} nods. "For ${pronouns.object}, we do."`,
+          `"We make a good team," ${pair?.[0]?.name} admits. ${pair?.[1]?.name} nods. "For ${p.object}, we do."`,
         ],
         neutral: [
           `They complete the task separately. Side by side but not together. It works. Barely.`,
@@ -161,21 +163,21 @@ export default function ServantInteractions({ servants, vampireState, onClose })
           `They divide the work silently. Efficient but cold. Professional distance.`,
         ],
         negative: [
-          `${selectedPair?.[0]?.name} does it one way. ${selectedPair?.[1]?.name} undoes it and does it differently. "You're doing it wrong," they snap at each other.`,
+          `${pair?.[0]?.name} does it one way. ${pair?.[1]?.name} undoes it and does it differently. "You're doing it wrong," they snap at each other.`,
           `They sabotage each other. Each trying to prove they're better. The task fails. You're disappointed.`,
-          `${selectedPair?.[1]?.name}: "I don't need ${pronouns.possessive} help."\n${selectedPair?.[0]?.name}: "Good. Because I wasn't offering."\nThe task abandoned.`,
+          `${pair?.[1]?.name}: "I don't need ${p.possessive} help."\n${pair?.[0]?.name}: "Good. Because I wasn't offering."\nThe task abandoned.`,
         ]
       }
     },
   ];
-
-  const interactions = getInteractions();
+  };
 
   const handleInteraction = async (interactionId) => {
     setInteracting(true);
     
     setTimeout(async () => {
       const [servant1, servant2] = selectedPair;
+      const interactions = getInteractions(selectedPair);
       const interaction = interactions.find(i => i.id === interactionId);
       
       // Determine outcome based on relationship levels and jealousy
@@ -386,7 +388,7 @@ export default function ServantInteractions({ servants, vampireState, onClose })
               {selectedPair[0].name} & {selectedPair[1].name}
             </h3>
 
-            {interactions.map(interaction => (
+            {getInteractions(selectedPair).map(interaction => (
               <button
                 key={interaction.id}
                 onClick={() => handleInteraction(interaction.id)}
