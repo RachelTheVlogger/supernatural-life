@@ -476,7 +476,7 @@ export default function WitchHome() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="grid md:grid-cols-3 gap-4 mb-8"
+            className="grid md:grid-cols-4 gap-4 mb-8"
           >
             <button
               onClick={() => setShowSpellbook(true)}
@@ -522,6 +522,24 @@ export default function WitchHome() {
                 </div>
               </button>
             )}
+
+            <button
+              onClick={async () => {
+                const servants = await base44.entities.Servant.list();
+                if (servants.length > 0) {
+                  navigate(createPageUrl(`ServantHome?id=${servants[0].id}`));
+                }
+              }}
+              className="bg-gradient-to-r from-pink-900/40 to-purple-900/40 hover:from-pink-900/60 hover:to-purple-900/60 border-2 border-pink-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">👤</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Visit Servant</h3>
+                  <p className="text-gray-400 text-sm">Talk to vampire's human</p>
+                </div>
+              </div>
+            </button>
           </motion.div>
 
           {/* Rituals */}
