@@ -8,42 +8,57 @@ import { base44 } from '@/api/base44Client';
 
 const SPELLS = {
   elemental: [
-    { name: 'Ignite', icon: '🔥', element: 'fire', power: 20, description: 'Set things ablaze', cost: 15 },
-    { name: 'Tsunami', icon: '🌊', element: 'water', power: 30, description: 'Summon water', cost: 25 },
-    { name: 'Gale Force', icon: '💨', element: 'air', power: 25, description: 'Control wind', cost: 20 },
-    { name: 'Earthquake', icon: '🪨', element: 'earth', power: 35, description: 'Shake the ground', cost: 30 }
+    { name: 'Incendia', icon: '🔥', herbs: 'Bay leaves, cinnamon', power: 25, description: 'Ignite flames with a gesture', cost: 15, latin: 'Incendia' },
+    { name: 'Aqueous', icon: '🌊', herbs: 'Vervain, moonwater', power: 30, description: 'Manipulate water', cost: 20, latin: 'Aqua Deflecto' },
+    { name: 'Ventus', icon: '💨', herbs: 'Lavender, sage', power: 25, description: 'Control wind and air', cost: 18, latin: 'Phasmatos Ventus' },
+    { name: 'Terra Motus', icon: '🪨', herbs: 'Rosemary, salt', power: 35, description: 'Shake the earth', cost: 30, latin: 'Phasmatos Tribum Terra' },
+    { name: 'Pyro Burst', icon: '💥', herbs: 'Dragon\'s blood resin', power: 40, description: 'Explosive fire blast', cost: 35, latin: 'Incendia Maximus' }
   ],
   psychic: [
-    { name: 'Mind Read', icon: '🧠', power: 20, description: 'Read thoughts', cost: 20 },
-    { name: 'Memory Wipe', icon: '💭', power: 40, description: 'Erase memories', cost: 35 },
-    { name: 'Illusion', icon: '👁️', power: 30, description: 'Create illusions', cost: 25 },
-    { name: 'Telekinesis', icon: '🌀', power: 35, description: 'Move objects', cost: 30 }
+    { name: 'Telepathy', icon: '🧠', herbs: 'Mugwort, jasmine', power: 20, description: 'Read surface thoughts', cost: 20, latin: 'Phasmatos Matos' },
+    { name: 'Mind Compulsion', icon: '💭', herbs: 'Wormwood, henbane', power: 45, description: 'Plant suggestions in mind', cost: 40, latin: 'Phasmatos Somnus' },
+    { name: 'Memory Erase', icon: '🌫️', herbs: 'Forget-me-not, poppy', power: 50, description: 'Remove specific memories', cost: 45, latin: 'Phasmatos Tributum Obliviscar' },
+    { name: 'Telekinesis', icon: '🌀', herbs: 'Dandelion, thistle', power: 30, description: 'Move objects with mind', cost: 25, latin: 'Motus' },
+    { name: 'Pain Infliction', icon: '⚡', herbs: 'Nettle, thorns', power: 35, description: 'Cause intense pain', cost: 30, latin: 'Phasmatos Incendia' },
+    { name: 'Aneurysm Spell', icon: '🩸', herbs: 'Black pepper, cayenne', power: 55, description: 'Burst blood vessels in brain', cost: 50, latin: 'Corporis Impetus Nocere' }
   ],
   necromancy: [
-    { name: 'Commune', icon: '👻', power: 25, description: 'Speak with dead', cost: 30 },
-    { name: 'Raise Dead', icon: '🧟', power: 50, description: 'Animate corpse', cost: 50 },
-    { name: 'Death Bolt', icon: '💀', power: 45, description: 'Drain life force', cost: 40 },
-    { name: 'Soul Trap', icon: '🫧', power: 40, description: 'Bind a soul', cost: 35 }
+    { name: 'Spirit Communication', icon: '👻', herbs: 'Graveyard dirt, belladonna', power: 25, description: 'Speak with the dead', cost: 25, latin: 'Phasmatos Spiritum' },
+    { name: 'Resurrection', icon: '🕊️', herbs: 'White sage, myrrh, blood', power: 80, description: 'Bring someone back to life', cost: 75, latin: 'Phasmatos Revertas' },
+    { name: 'Expression Triangle', icon: '🔺', herbs: 'Human sacrifice', power: 90, description: 'Tap into dark Expression magic', cost: 85, latin: 'Expression Ritual' },
+    { name: 'Ancestral Channeling', icon: '🌙', herbs: 'Bone dust, salt circle', power: 40, description: 'Draw power from ancestors', cost: 35, latin: 'Phasmatos Antiqua' },
+    { name: 'Veil Manipulation', icon: '🌑', herbs: 'Moonstone, obsidian', power: 70, description: 'Lower veil between living and dead', cost: 65, latin: 'Clausus Velum' }
   ],
-  healing: [
-    { name: 'Mend Wounds', icon: '✨', power: 25, description: 'Heal injuries', cost: 20 },
-    { name: 'Purify', icon: '💫', power: 30, description: 'Remove toxins', cost: 25 },
-    { name: 'Life Force', icon: '💖', power: 40, description: 'Restore vitality', cost: 35 },
-    { name: 'Resurrection', icon: '🕊️', power: 60, description: 'Bring back to life', cost: 60 }
+  protection: [
+    { name: 'Boundary Spell', icon: '⭕', herbs: 'Salt, iron, vervain', power: 40, description: 'Create magical barrier', cost: 35, latin: 'Phasmatos Salves' },
+    { name: 'Invitation Removal', icon: '🚫', herbs: 'Sage, salt circle', power: 35, description: 'Uninvite vampire from home', cost: 30, latin: 'Claudare Ianua' },
+    { name: 'Daylight Amulet', icon: '☀️', herbs: 'Lapis lazuli, sunstone', power: 50, description: 'Enchant jewelry for daylight', cost: 45, latin: 'Phasmatos Solaris' },
+    { name: 'Protection Circle', icon: '🔮', herbs: 'Salt, candles, blood', power: 30, description: 'Sacred protective circle', cost: 25, latin: 'Phasmatos Circumventus' },
+    { name: 'Bennett Sealing Spell', icon: '🔒', herbs: 'Bennett blood, sage', power: 85, description: 'Powerful Bennett bloodline seal', cost: 80, latin: 'Phasmatos Bennett Sigillum' }
+  ],
+  divination: [
+    { name: 'Locator Spell', icon: '🧭', herbs: 'Personal item, map, candles', power: 25, description: 'Find anyone, anywhere', cost: 20, latin: 'Phasmatos Tribum' },
+    { name: 'Scrying', icon: '🔮', herbs: 'Crystal ball, mugwort', power: 30, description: 'See distant places/events', cost: 25, latin: 'Spectare' },
+    { name: 'Prophecy Vision', icon: '👁️', herbs: 'Bay leaves, frankincense', power: 45, description: 'Glimpse possible futures', cost: 40, latin: 'Phasmatos Futurum' },
+    { name: 'Blood Tracking', icon: '🩸', herbs: 'Blood sample, sage', power: 35, description: 'Track someone by their blood', cost: 30, latin: 'Sanguinem Invenire' }
   ],
   dark_magic: [
-    { name: 'Hex', icon: '🌑', power: 30, description: 'Curse someone', cost: 25 },
-    { name: 'Blood Boil', icon: '🩸', power: 45, description: 'Boil blood', cost: 40 },
-    { name: 'Shadow Bind', icon: '🕷️', power: 35, description: 'Trap in shadows', cost: 30 },
-    { name: 'Pain Link', icon: '⛓️', power: 40, description: 'Share pain', cost: 35 }
+    { name: 'Desiccation Spell', icon: '💀', herbs: 'Vervain, nightshade', power: 60, description: 'Mummify a vampire', cost: 55, latin: 'Phasmatos Somnus' },
+    { name: 'Link Spell', icon: '⛓️', herbs: 'Personal items, blood', power: 50, description: 'Link two beings together', cost: 45, latin: 'Ligare Sanguinem' },
+    { name: 'Hellfire', icon: '🔥', herbs: 'Sulfur, black salt', power: 70, description: 'Summon infernal flames', cost: 65, latin: 'Ignis Infernalis' },
+    { name: 'Curse of Pain', icon: '⚡', herbs: 'Thorns, graveyard dirt', power: 55, description: 'Inflict ongoing agony', cost: 50, latin: 'Maledictum Doloris' },
+    { name: 'Expression Magic', icon: '🌑', herbs: 'Human sacrifice', power: 95, description: 'Forbidden dark power', cost: 90, latin: 'Expression words' }
   ]
 };
 
 const RITUALS = [
-  { name: 'Full Moon Ritual', icon: '🌕', duration: 5000, powerBoost: 20, description: 'Amplify powers under full moon' },
-  { name: 'Protection Circle', icon: '⭕', duration: 3000, powerBoost: 10, description: 'Ward off vampires' },
-  { name: 'Scrying', icon: '🔮', duration: 4000, powerBoost: 0, description: 'See distant events' },
-  { name: 'Channeling', icon: '⚡', duration: 6000, powerBoost: 30, description: 'Channel ancestral power' }
+  { name: 'Full Moon Channeling', icon: '🌕', duration: 5000, powerBoost: 25, description: 'Draw power from the full moon', herbs: 'Moonstone, white candles, lunar water' },
+  { name: 'Salt Circle Ritual', icon: '⭕', duration: 3000, powerBoost: 15, description: 'Create protective barrier', herbs: 'Sea salt, iron, vervain' },
+  { name: 'Ancestral Invocation', icon: '👥', duration: 6000, powerBoost: 35, description: 'Channel power of dead witches', herbs: 'Bone ash, white sage, blood' },
+  { name: 'Expression Triangle', icon: '🔺', duration: 8000, powerBoost: 50, description: 'Forbidden power ritual (DANGEROUS)', herbs: 'Three massacres worth of power' },
+  { name: 'Cleansing Ritual', icon: '💫', duration: 4000, powerBoost: 10, description: 'Purify yourself and space', herbs: 'White sage, palo santo, salt' },
+  { name: 'Blood Magic Ritual', icon: '🩸', duration: 5000, powerBoost: 30, description: 'Use blood to amplify spells', herbs: 'Your blood, black candles, obsidian' },
+  { name: 'Boundary Spell', icon: '🚪', duration: 7000, powerBoost: 20, description: 'Trap vampires in a location', herbs: 'Salt line, Bennett magic, moonstone' }
 ];
 
 export default function WitchHome() {
@@ -420,11 +435,16 @@ export default function WitchHome() {
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-3xl">{ritual.icon}</span>
-                    <h3 className="text-white font-medium">{ritual.name}</h3>
+                    <div>
+                      <h3 className="text-white font-medium">{ritual.name}</h3>
+                      <p className="text-gray-400 text-sm">{ritual.description}</p>
+                    </div>
                   </div>
-                  <p className="text-gray-400 text-sm">{ritual.description}</p>
+                  {ritual.herbs && (
+                    <p className="text-green-400 text-xs mb-2">🌿 {ritual.herbs}</p>
+                  )}
                   {ritual.powerBoost > 0 && (
-                    <p className="text-purple-400 text-xs mt-2">+{ritual.powerBoost} power</p>
+                    <p className="text-purple-400 text-xs">+{ritual.powerBoost} power</p>
                   )}
                 </button>
               ))}
@@ -462,7 +482,7 @@ export default function WitchHome() {
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${
+                    className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm capitalize ${
                       selectedCategory === cat ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'
                     }`}
                   >
@@ -486,14 +506,19 @@ export default function WitchHome() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-2xl">{spell.icon}</span>
-                        <h3 className="text-white font-medium">{spell.name}</h3>
+                        <div>
+                          <h3 className="text-white font-medium">{spell.name}</h3>
+                          {spell.latin && <p className="text-purple-400 text-xs italic">{spell.latin}</p>}
+                        </div>
                       </div>
                       <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
                         {spell.cost}⚡
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm">{spell.description}</p>
-                    <p className="text-purple-400 text-xs mt-2">Power: {spell.power}</p>
+                    <p className="text-gray-400 text-sm mb-1">{spell.description}</p>
+                    {spell.herbs && (
+                      <p className="text-green-400 text-xs">🌿 {spell.herbs}</p>
+                    )}
                   </button>
                 ))}
               </div>
