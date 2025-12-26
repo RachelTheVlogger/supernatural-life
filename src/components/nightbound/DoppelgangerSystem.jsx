@@ -4,7 +4,7 @@ import { X, Users, Droplets, Eye, Shield, Skull } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-const BLOODLINES = ['Petrova', 'Salvatore', 'Bennett', 'Lockwood', 'Forbes'];
+const BLOODLINES = ['Moonstone', 'Shadowborn', 'Crimson', 'Nightfall', 'Ancient'];
 
 export default function DoppelgangerSystem({ vampireState, onClose }) {
   const queryClient = useQueryClient();
@@ -27,14 +27,14 @@ export default function DoppelgangerSystem({ vampireState, onClose }) {
       if (chance < 0.3) {
         // Found one!
         const bloodline = BLOODLINES[Math.floor(Math.random() * BLOODLINES.length)];
-        const names = ['Elena', 'Katherine', 'Stefan', 'Silas', 'Amara', 'Tom'];
+        const names = ['Alex', 'Morgan', 'Jordan', 'Taylor', 'Casey', 'River', 'Sage', 'Quinn'];
         const name = names[Math.floor(Math.random() * names.length)];
         
         await base44.entities.Doppelganger.create({
           name,
           bloodline,
           is_aware: Math.random() > 0.7,
-          location: 'Mystic Falls'
+          location: 'Unknown'
         });
 
         await base44.entities.NightLog.create({
@@ -100,6 +100,61 @@ export default function DoppelgangerSystem({ vampireState, onClose }) {
         });
 
         message = `You told them the truth. They're a shadow. A copy. Destined to die for supernatural purposes. They look at you with horror.`;
+      } else if (action === 'torment') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 15, -100)
+        });
+
+        const torments = [
+          'You appeared in their dreams. Every night. Their nightmares now have your face.',
+          'You killed someone they love. Made them watch. Their screams echo in your mind.',
+          'You took their life. Piece by piece. Job. Friends. Hope. Until nothing remained.',
+          'You compelled them to hurt themselves. Over and over. Breaking them slowly.',
+          'You showed them their future. Death. Suffering. No escape. They wept.'
+        ];
+        message = torments[Math.floor(Math.random() * torments.length)];
+        humanityChange = -8;
+      } else if (action === 'stalk') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 5, -100)
+        });
+
+        const stalks = [
+          'You watched them sleep. Every night. They sense someone watching but see nothing.',
+          'You followed them everywhere. Work. Home. Dates. They feel paranoid now.',
+          'You left them gifts. Cryptic notes. Photos of them they never knew existed.',
+          'You stood outside their window. For hours. Just watching. Breathing.'
+        ];
+        message = stalks[Math.floor(Math.random() * stalks.length)];
+        humanityChange = -3;
+      } else if (action === 'save') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.min((doppelganger.relationship_vampire || 0) + 25, 100),
+          protected_by: vampireState.id
+        });
+
+        const saves = [
+          'Hunters came for them. You slaughtered them all. Blood everywhere. They watched you kill for them.',
+          'A vampire attacked. You tore them apart. Saved the doppelganger from turning. They owe you their life.',
+          'They were dying. Accident. You gave them your blood to heal. Now they know what you are.',
+          'A werewolf stalked them. You fought it off. Nearly died. They saw your monster form protecting them.'
+        ];
+        message = saves[Math.floor(Math.random() * saves.length)];
+        humanityChange = 8;
+      } else if (action === 'manipulate') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: (doppelganger.relationship_vampire || 0) + 10,
+          is_aware: false
+        });
+
+        const manipulations = [
+          'You compelled them. Made them forget their suspicions. Now they trust you completely.',
+          'You orchestrated events. Made yourself their hero. They think you saved them. You created the danger.',
+          'You gaslit them. Made them doubt their memories. Now they believe your version of reality.',
+          'You isolated them from friends. Family. Now you\'re all they have left.'
+        ];
+        message = manipulations[Math.floor(Math.random() * manipulations.length)];
+        humanityChange = -5;
       }
 
       if (humanityChange !== 0) {
@@ -190,11 +245,39 @@ export default function DoppelgangerSystem({ vampireState, onClose }) {
               </>
             )}
             <button
+              onClick={() => handleAction('save', selectedDoppelganger)}
+              className="w-full bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 rounded-lg py-3 text-green-300"
+            >
+              <Shield className="w-4 h-4 inline mr-2" />
+              Save Them From Danger
+            </button>
+            <button
               onClick={() => handleAction('protect', selectedDoppelganger)}
               className="w-full bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg py-3 text-blue-300"
             >
               <Shield className="w-4 h-4 inline mr-2" />
-              Protect Them
+              Vow Protection
+            </button>
+            <button
+              onClick={() => handleAction('stalk', selectedDoppelganger)}
+              className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-gray-300"
+            >
+              <Eye className="w-4 h-4 inline mr-2" />
+              Stalk Them
+            </button>
+            <button
+              onClick={() => handleAction('torment', selectedDoppelganger)}
+              className="w-full bg-red-950/60 hover:bg-red-950/80 border border-red-600/40 rounded-lg py-3 text-red-400"
+            >
+              <Skull className="w-4 h-4 inline mr-2" />
+              Torment Them
+            </button>
+            <button
+              onClick={() => handleAction('manipulate', selectedDoppelganger)}
+              className="w-full bg-purple-950/60 hover:bg-purple-950/80 border border-purple-600/40 rounded-lg py-3 text-purple-400"
+            >
+              <Eye className="w-4 h-4 inline mr-2" />
+              Manipulate Them
             </button>
             {!selectedDoppelganger.is_aware && (
               <button
