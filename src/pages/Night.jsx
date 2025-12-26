@@ -34,6 +34,7 @@ import VampirePolitics from '@/components/nightbound/VampirePolitics';
 import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
 import StalkingSystem from '@/components/nightbound/StalkingSystem';
 import PossessionSystem from '@/components/nightbound/PossessionSystem';
+import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ export default function Night() {
   const [showAging, setShowAging] = useState(false);
   const [showStalking, setShowStalking] = useState(false);
   const [showPossession, setShowPossession] = useState(false);
+  const [showDoppelgangers, setShowDoppelgangers] = useState(false);
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -617,6 +619,9 @@ export default function Night() {
         )}
         {showAging && (
           <VampireAgingSystem vampireState={vampireState} onClose={() => setShowAging(false)} />
+        )}
+        {showDoppelgangers && (
+          <DoppelgangerSystem vampireState={vampireState} onClose={() => setShowDoppelgangers(false)} />
         )}
 
         </AnimatePresence>
