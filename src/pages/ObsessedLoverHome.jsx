@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import KillerLoverInteraction from '@/components/nightbound/KillerLoverInteraction';
+import KillerLoverInteraction from '@/components/nightbound/KillerLoverInteraction.jsx';
 
 export default function ObsessedLoverHome() {
   const navigate = useNavigate();
