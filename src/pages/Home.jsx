@@ -49,8 +49,13 @@ export default function Home() {
     queryKey: ['playerWerewolves'],
     queryFn: () => base44.entities.PlayerWerewolf.list()
   });
+
+  const { data: humans = [] } = useQuery({
+    queryKey: ['humans'],
+    queryFn: () => base44.entities.Human.list()
+  });
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || succubi.length > 0 || incubi.length > 0 || playerWerewolves.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || succubi.length > 0 || incubi.length > 0 || playerWerewolves.length > 0 || humans.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -120,6 +125,17 @@ export default function Home() {
       });
       queryClient.invalidateQueries();
       navigate(createPageUrl('WerewolfHome'));
+    } else if (selectedType === 'human') {
+      await base44.entities.Human.create({
+        name: characterName.trim(),
+        gender: characterGender,
+        sexuality: characterSexuality,
+        job: 'Student',
+        awareness_level: 0,
+        danger_level: 0
+      });
+      queryClient.invalidateQueries();
+      navigate(createPageUrl('HumanHome'));
     }
   };
   
@@ -130,6 +146,7 @@ export default function Home() {
     else if (succubi.length > 0) navigate(createPageUrl('SuccubusHome'));
     else if (incubi.length > 0) navigate(createPageUrl('IncubusHome'));
     else if (playerWerewolves.length > 0) navigate(createPageUrl('WerewolfHome'));
+    else if (humans.length > 0) navigate(createPageUrl('HumanHome'));
   };
   
   return (
@@ -327,6 +344,33 @@ export default function Home() {
                       </button>
                     </div>
                   ))}
+                  {humans.map(h => (
+                    <div key={h.id} className="flex gap-2">
+                      <button
+                        onClick={() => navigate(createPageUrl('HumanHome'))}
+                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">👤</span>
+                          <div>
+                            <p className="text-white font-medium">{h.name}</p>
+                            <p className="text-gray-400 text-xs">Human</p>
+                          </div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (confirm(`Delete ${h.name}?`)) {
+                            await base44.entities.Human.delete(h.id);
+                            queryClient.invalidateQueries();
+                          }
+                        }}
+                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -456,6 +500,18 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
+                  <button
+                    onClick={() => { setSelectedType('human'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">👤</span>
+                      <div>
+                        <span className="font-medium text-white block">Human</span>
+                        <p className="text-sm text-gray-400">Mortal life, supernatural discovery</p>
+                      </div>
+                    </div>
+                  </button>
                 </div>
               </>
             )}
@@ -497,40 +553,43 @@ export default function Home() {
                 <div className="space-y-3 mb-6">
                   {(selectedType !== 'succubus' && selectedType !== 'incubus') && (
                     <>
-                      <button
-                        onClick={() => setCharacterGender('man')}
-                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                          characterGender === 'man' 
-                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
-                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                        }`}
-                      >
-                        <span className="font-medium">Man</span>
-                        <p className="text-sm opacity-80">He/Him</p>
-                      </button>
-                      <button
-                        onClick={() => setCharacterGender('woman')}
-                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                          characterGender === 'woman' 
-                            ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
-                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                        }`}
-                      >
-                        <span className="font-medium">Woman</span>
-                        <p className="text-sm opacity-80">She/Her</p>
-                      </button>
-                      <button
-                        onClick={() => setCharacterGender('custom')}
-                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                          characterGender === 'custom' 
-                            ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                        }`}
-                      >
-                        <span className="font-medium">Custom</span>
-                        <p className="text-sm opacity-80">They/Them</p>
-                      </button>
-                    </>
+                      {!['succubus', 'incubus'].includes(selectedType) && (
+                        <>
+                          <button
+                            onClick={() => setCharacterGender('man')}
+                            className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                              characterGender === 'man' 
+                                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            }`}
+                          >
+                            <span className="font-medium">Man</span>
+                            <p className="text-sm opacity-80">He/Him</p>
+                          </button>
+                          <button
+                            onClick={() => setCharacterGender('woman')}
+                            className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                              characterGender === 'woman' 
+                                ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            }`}
+                          >
+                            <span className="font-medium">Woman</span>
+                            <p className="text-sm opacity-80">She/Her</p>
+                          </button>
+                          <button
+                            onClick={() => setCharacterGender('custom')}
+                            className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                              characterGender === 'custom' 
+                                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            }`}
+                          >
+                            <span className="font-medium">Custom</span>
+                            <p className="text-sm opacity-80">They/Them</p>
+                          </button>
+                        </>
+                      )}
                   )}
                   {selectedType === 'succubus' && (
                     <p className="text-gray-400 text-sm">Succubi are female-presenting beings of desire.</p>

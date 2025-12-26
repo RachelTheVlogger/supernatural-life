@@ -12,6 +12,7 @@ import VampireHome from './pages/VampireHome';
 import WerewolfHome from './pages/WerewolfHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
+import HumanHome from './pages/HumanHome';
 import __Layout from './Layout.jsx';
 
 
@@ -30,6 +31,7 @@ export const PAGES = {
     "WerewolfHome": WerewolfHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
+    "HumanHome": HumanHome,
 }
 
 export const pagesConfig = {

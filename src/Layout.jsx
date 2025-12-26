@@ -27,7 +27,7 @@ export default function Layout({ children, currentPageName }) {
   });
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome', 'HumanHome'].includes(currentPageName);
   
   // Fetch killers for killer tab
 
