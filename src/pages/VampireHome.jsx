@@ -748,7 +748,12 @@ export default function VampireHome() {
 
             <button onClick={() => navigate(createPageUrl('NateLilithHome'))} className={`${isDaytime ? 'bg-blue-100/60 border-blue-400/40' : 'bg-blue-900/40 border-blue-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🧠 Nate & Lilith</h3>
-              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Play as the couple</p>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Vampire couple</p>
+            </button>
+
+            <button onClick={() => navigate(createPageUrl('YandereCoupleHome'))} className={`${isDaytime ? 'bg-red-100/60 border-red-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>❤️ Yandere Couple</h3>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Obsessive love story</p>
             </button>
           </motion.div>
 
