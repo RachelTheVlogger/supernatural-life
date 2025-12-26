@@ -40,8 +40,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vampire', icon: Home, path: 'VampireHome' },
-    { name: 'Succubus', icon: Heart, path: 'SuccubusHome' },
-    { name: 'Incubus', icon: Skull, path: 'IncubusHome' },
+    { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
     { name: 'Wolf', icon: Zap, path: 'WerewolfHome' },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome' }
   ];
