@@ -15,6 +15,7 @@ import YandereCoupleHome from './pages/YandereCoupleHome';
 import Stories from './pages/Stories';
 import SerialKillerHome from './pages/SerialKillerHome';
 import ObsessedLoverHome from './pages/ObsessedLoverHome';
+import KillerCouple from './pages/KillerCouple';
 import __Layout from './Layout.jsx';
 
 
@@ -36,6 +37,7 @@ export const PAGES = {
     "Stories": Stories,
     "SerialKillerHome": SerialKillerHome,
     "ObsessedLoverHome": ObsessedLoverHome,
+    "KillerCouple": KillerCouple,
 }
 
 export const pagesConfig = {
