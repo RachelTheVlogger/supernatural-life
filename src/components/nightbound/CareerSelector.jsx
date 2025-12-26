@@ -99,7 +99,7 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full relative"
+        className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto relative"
       >
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
           <X className="w-5 h-5" />
