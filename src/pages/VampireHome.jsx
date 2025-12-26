@@ -576,6 +576,11 @@ export default function VampireHome() {
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Meet powerful witches</p>
             </button>
 
+            <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-purple-100/60 border-purple-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🔄 Become Hybrid</h3>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Merge with wolf</p>
+            </button>
+
             <button onClick={() => setShowWerewolves(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-orange-900/40 border-orange-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🐺 Werewolves</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Ancient enemies</p>

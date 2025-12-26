@@ -150,6 +150,16 @@ export default function WerewolfHome() {
           </div>
         </div>
 
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          onClick={() => navigate(createPageUrl('HybridHome'))}
+          className="w-full bg-gradient-to-r from-purple-900/60 to-red-900/60 hover:from-purple-900/80 hover:to-red-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 mb-4 flex items-center justify-center gap-3 transition-all"
+        >
+          <span className="text-2xl">🔄</span>
+          <span className="text-white font-medium">Become Hybrid</span>
+        </motion.button>
+
         <div className="space-y-3">
           {ACTIONS.map((action, i) => (
             <motion.button
