@@ -52,7 +52,7 @@ export default function WerewolfHome() {
           result = 'The hunt was successful. Blood on your claws.';
           break;
         case 'transform':
-          const forms = ['human', 'hybrid', 'wolf'];
+          const forms = ['human', 'wolf', 'hybrid'];
           const currentIdx = forms.indexOf(werewolf.current_form || 'human');
           updates.current_form = forms[(currentIdx + 1) % forms.length];
           updates.transformation_control = Math.min(100, (werewolf.transformation_control || 0) + 2);
