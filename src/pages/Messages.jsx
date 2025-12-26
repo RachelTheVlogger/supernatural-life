@@ -345,6 +345,31 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
           </>
         ) : tab === 'business' ? (
           <>
+            {orders.length > 0 && (
+              <div className="flex justify-between items-center mb-4">
+                <p className="text-gray-400 text-sm">{orders.length} orders</p>
+                <button
+                  onClick={async () => {
+                    if (!confirm(`Clear all ${orders.length} orders?`)) return;
+                    
+                    for (const order of orders) {
+                      await base44.entities.BusinessOrder.delete(order.id);
+                    }
+                    
+                    await base44.entities.NightLog.create({
+                      entry: `${servant.name} cleared ${orders.length} orders from messages.`,
+                      category: 'interaction',
+                      intensity: 'subtle'
+                    });
+                    
+                    queryClient.invalidateQueries(['orders']);
+                  }}
+                  className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-lg px-3 py-1 text-xs transition-colors"
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
             {orders.length === 0 ? (
               <p className="text-gray-400 text-center py-8">No orders yet...</p>
             ) : (
@@ -378,6 +403,31 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
           </>
         ) : tab === 'reviews' ? (
           <>
+            {reviews.length > 0 && (
+              <div className="flex justify-between items-center mb-4">
+                <p className="text-gray-400 text-sm">{reviews.length} reviews</p>
+                <button
+                  onClick={async () => {
+                    if (!confirm(`Clear all ${reviews.length} reviews?`)) return;
+                    
+                    for (const review of reviews) {
+                      await base44.entities.Review.delete(review.id);
+                    }
+                    
+                    await base44.entities.NightLog.create({
+                      entry: `${servant.name} cleared ${reviews.length} reviews from messages.`,
+                      category: 'interaction',
+                      intensity: 'subtle'
+                    });
+                    
+                    queryClient.invalidateQueries(['reviews']);
+                  }}
+                  className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 rounded-lg px-3 py-1 text-xs transition-colors"
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
             {reviews.length === 0 ? (
               <p className="text-gray-400 text-center py-8">No reviews yet...</p>
             ) : (
