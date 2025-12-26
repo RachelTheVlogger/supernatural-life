@@ -746,9 +746,9 @@ export default function VampireHome() {
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Pass decades/centuries</p>
             </button>
 
-            <button onClick={() => setShowTherapist(true)} className={`${isDaytime ? 'bg-blue-100/60 border-blue-400/40' : 'bg-blue-900/40 border-blue-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
-              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🧠 Therapist</h3>
-              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Help humans... or not</p>
+            <button onClick={() => navigate(createPageUrl('NateLilithHome'))} className={`${isDaytime ? 'bg-blue-100/60 border-blue-400/40' : 'bg-blue-900/40 border-blue-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🧠 Nate & Lilith</h3>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Play as the couple</p>
             </button>
           </motion.div>
 
