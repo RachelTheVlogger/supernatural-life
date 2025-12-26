@@ -48,7 +48,6 @@ export default function ServantFamilySystem({ servant, vampireState, onClose }) 
       { id: 'lunch', label: 'Have Lunch Together', color: 'yellow' },
       { id: 'gift', label: 'Give Gift', color: 'pink' },
       { id: 'heart-to-heart', label: 'Heart to Heart', color: 'purple' },
-      { id: 'lie', label: 'Lie About Your Life', color: 'red' },
       { id: 'reassure', label: 'Reassure', color: 'green', disabled: (m) => m.concern_level < 30 },
       { id: 'avoid', label: 'Avoid Contact', color: 'gray' },
     ]
@@ -150,10 +149,6 @@ export default function ServantFamilySystem({ servant, vampireState, onClose }) 
           } else {
             message = `${servant.name} tried to open up but kept secrets.\n\n${member.member_name} sensed it. "You're holding back. Why won't you trust me?"\n\nThe gap remained. Trust damaged.`;
           }
-        } else if (type === 'lie') {
-          concernChange = Math.floor(Math.random() * 15) - 20;
-          relationChange = Math.floor(Math.random() * 10) - 15;
-          message = `${servant.name} lied smoothly.\n\n"New job. New relationship. Everything's great."\n\nConvincing lies. Practiced lies.\n\n${member.member_name} believed them. For now. But lies have a cost.`;
         } else if (type === 'reassure') {
           const success = Math.random() > 0.25;
           concernChange = success ? Math.floor(Math.random() * 30) - 35 : Math.floor(Math.random() * 10);
