@@ -12,7 +12,7 @@ const ACTIVITY_SECTIONS = {
     { id: 'watch', label: 'Watch Sleep' },
     { id: 'photos', label: 'Take Photos' },
     { id: 'belongings', label: 'Steal Item' },
-    { id: 'jealous', label: 'Get Jealous' },
+    { id: 'admire', label: 'Admire' },
     { id: 'possessive', label: 'Mark Territory' }
   ],
   'Control': [
@@ -84,7 +84,7 @@ export default function YandereCoupleHome() {
       watch: 'You watched them sleep. So peaceful. So vulnerable. So completely yours.',
       photos: 'Another photo added to the collection. Thousands now. Every angle. Every expression. Perfect.',
       belongings: 'You took their hoodie. It still smells like them. You\'ll sleep in it tonight.',
-      jealous: 'Someone looked at them too long. Your blood boiled. They need to know who they belong to.',
+      admire: 'Just watching them exist. The way they move. Breathe. Smile. Perfect. Always perfect.',
       possessive: 'Hickeys. Scratches. Marks they can\'t hide. Everyone needs to see they\'re taken.',
       isolate: 'Convinced them to skip the party. "It\'s just us tonight." Always just us.',
       manipulate: 'Guilt. Love. Fear. You know exactly which buttons to push. They stayed.',

@@ -21,7 +21,7 @@ export default function Stories() {
       id: 'yandere',
       title: 'Eric & Ruby',
       subtitle: 'Obsessive love story',
-      description: 'Book 1: Human obsession. Possessive. Jealous. Completely consumed by each other.',
+      description: 'Book 1: Human obsession. Possessive. Completely consumed by each other.',
       icon: '❤️',
       gradient: 'from-red-900 to-pink-900',
       page: 'YandereCoupleHome'
