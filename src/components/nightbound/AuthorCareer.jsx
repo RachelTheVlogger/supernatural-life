@@ -428,16 +428,33 @@ export default function AuthorCareer({ servant, onClose }) {
   const handleAudiobook = async (book) => {
     if (book.has_audiobook) return;
     
+    const narrators = [
+      { name: 'Alex Rivers', voice: 'Deep & Commanding', rate: 250, quality: 95 },
+      { name: 'Morgan Chase', voice: 'Sultry & Smooth', rate: 300, quality: 98 },
+      { name: 'Jordan Blake', voice: 'Versatile & Dynamic', rate: 200, quality: 85 },
+      { name: 'Casey Night', voice: 'Dark & Mysterious', rate: 280, quality: 92 },
+      { name: 'Riley Storm', voice: 'Young & Energetic', rate: 180, quality: 80 }
+    ];
+    
+    const narrator = narrators[Math.floor(Math.random() * narrators.length)];
+    
+    if (!confirm(`Hire ${narrator.name}?\nVoice: ${narrator.voice}\nRate: $${narrator.rate}/finished hour\nQuality: ${narrator.quality}/100`)) {
+      return;
+    }
+    
     setWorking(true);
     const messages = [
-      'Hiring narrator...',
-      'Recording chapters...',
-      'Chapter 1 complete...',
-      'Chapter 5 complete...',
-      'Editing audio...',
-      'Mastering sound...',
-      'Uploading to platforms...',
-      'Going live...'
+      `Contracting ${narrator.name}...`,
+      'Narrator recording sample chapter...',
+      'Sample approved! Full production starting...',
+      'Recording chapters 1-5...',
+      'Recording chapters 6-10...',
+      'Recording chapters 11-15...',
+      'Final chapters recorded...',
+      'Post-production editing...',
+      'Mastering audio quality...',
+      'Uploading to ACX/Findaway...',
+      'Going live on Audible...'
     ];
     
     let msgIndex = 0;
@@ -447,22 +464,32 @@ export default function AuthorCareer({ servant, onClose }) {
       if (msgIndex < messages.length) {
         setWorkingMessage(messages[msgIndex]);
       }
-    }, 650);
+    }, 700);
     
     setTimeout(async () => {
       clearInterval(interval);
+      
+      const productionCost = Math.floor((book.target_words / 9300) * narrator.rate);
+      
       await base44.entities.Book.update(book.id, {
         has_audiobook: true
       });
       
-      const audioSales = Math.floor(Math.random() * 30) + 10;
-      const audioRevenue = audioSales * book.price * 1.5 * 0.7;
+      const qualityBonus = narrator.quality > 90 ? 1.3 : 1.0;
+      const audioSales = Math.floor((Math.random() * 40 + 20) * qualityBonus);
+      const audioRevenue = audioSales * book.price * 1.5 * 0.7 - productionCost;
       
-      setWorkingMessage(`Audiobook live! ${audioSales} copies sold!`);
+      setWorkingMessage(`Audiobook live! Cost: $${productionCost}. ${audioSales} copies sold. Net: $${audioRevenue.toFixed(2)}`);
       
       await base44.entities.Book.update(book.id, {
         audiobook_sales: audioSales,
         revenue: book.revenue + audioRevenue
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} produced audiobook for "${book.title}" with narrator ${narrator.name}. Cost $${productionCost}. Earned $${audioRevenue.toFixed(2)}.`,
+        category: 'interaction',
+        intensity: 'significant'
       });
       
       queryClient.invalidateQueries(['books']);
@@ -470,8 +497,8 @@ export default function AuthorCareer({ servant, onClose }) {
       setTimeout(() => {
         setWorking(false);
         setWorkingMessage('');
-      }, 1500);
-    }, 5000);
+      }, 2500);
+    }, messages.length * 700);
   };
 
   const handleBookTour = async (book) => {
