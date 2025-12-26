@@ -55,7 +55,7 @@ export default function DonorSystem({ vampireState, onClose }) {
       });
 
       await base44.entities.NightLog.create({
-        entry: `HemoMatch Agency paired you with ${name}. They need the money. You'll take care of them.`,
+        entry: `Crimson Connect Agency paired you with ${name}. They need the money. You'll take care of them.`,
         category: 'interaction',
         intensity: 'moderate'
       });
@@ -94,7 +94,7 @@ export default function DonorSystem({ vampireState, onClose }) {
 
       const outcomes = {
         gentle: `You prepared everything carefully before ${donor.name} arrived. Made sure they were comfortable. Fed gently from their wrist. Checked on them after. "You okay?" you asked softly. They nodded, a small smile forming. "I'm okay. You're... different than I expected."`,
-        scheduled: `${donor.name} arrived at the agreed time. Professional. Efficient. You followed HemoMatch protocol. They left with their payment and a scheduled appointment for next week. Clean. Simple. Safe.`,
+        scheduled: `${donor.name} arrived at the agreed time. Professional. Efficient. You followed Crimson Connect protocol. They left with their payment and a scheduled appointment for next week. Clean. Simple. Safe.`,
         intimate: `${donor.name} sat close to you. No rush. You brushed hair from their neck. "I've got you," you whispered. The feeding was slow. Tender. Their fingers found yours and held tight. When you pulled back, neither of you moved away.`,
         protective: `"How was your day?" you asked ${donor.name} when they arrived. They talked while you prepared everything. You made sure they'd eaten. Fed carefully. Walked them to their car after. "Text me when you get home," you said. They looked surprised. "You care?" "Of course I do."`
       };
@@ -129,7 +129,7 @@ export default function DonorSystem({ vampireState, onClose }) {
     });
 
     const outcomes = {
-      coffee: `You met ${donor.name} at a café. No feeding scheduled. Just... talking. They told you about their struggles. Why they signed up with HemoMatch. You listened. Really listened. When you paid for their coffee and groceries, they teared up. "You don't have to—" "I want to," you said.`,
+      coffee: `You met ${donor.name} at a café. No feeding scheduled. Just... talking. They told you about their struggles. Why they signed up with Crimson Connect. You listened. Really listened. When you paid for their coffee and groceries, they teared up. "You don't have to—" "I want to," you said.`,
       movie: `${donor.name} came over. You'd set up the living room. Blankets. Snacks for them. A movie neither of you really watched. They fell asleep against your shoulder. You stayed perfectly still, not wanting to wake them. Protecting them, even from discomfort.`,
       walk: `You walked with ${donor.name} through the quiet streets. They felt safe with you. Started opening up about their fears. Their dreams. "I never thought a vampire would care," they admitted. You stopped walking. "I do care. More than I should, maybe."`,
       cook: `You made ${donor.name} dinner. Real food. Protein. Vegetables. You couldn't eat it, but watching them enjoy it was enough. "You need to take care of yourself," you said. "Between donations, eat well. Rest." They looked at you with something like wonder. "Why do you care so much?" You didn't have an answer.`
@@ -172,7 +172,7 @@ export default function DonorSystem({ vampireState, onClose }) {
             <div>
               <h2 className="text-2xl font-bold text-white flex items-center gap-2">
                 <Droplets className="w-6 h-6 text-red-400" />
-                HemoMatch Donors
+                Crimson Connect Donors
               </h2>
               <p className="text-gray-400 text-sm">Agency-paired feeding arrangements • Paid & protected</p>
             </div>
@@ -188,14 +188,14 @@ export default function DonorSystem({ vampireState, onClose }) {
                 disabled={finding}
                 className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-800 text-white font-medium py-3 rounded-xl mb-6 disabled:opacity-50 transition-all"
               >
-                {finding ? 'HemoMatch is finding a match...' : '+ Request New Donor from HemoMatch'}
+                {finding ? 'Crimson Connect is finding a match...' : '+ Request New Donor from Crimson Connect'}
               </button>
 
               {donors.length === 0 ? (
                 <div className="text-center py-12">
                   <Droplets className="w-12 h-12 text-gray-600 mx-auto mb-4" />
                   <p className="text-gray-400 mb-2">No donors yet.</p>
-                  <p className="text-gray-500 text-sm">HemoMatch will pair you with someone who needs the money.</p>
+                  <p className="text-gray-500 text-sm">Crimson Connect will pair you with someone who needs the money.</p>
                   <p className="text-gray-500 text-sm">You'll take care of them. They'll trust you.</p>
                 </div>
               ) : (
@@ -210,7 +210,7 @@ export default function DonorSystem({ vampireState, onClose }) {
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="text-white font-bold">{donor.name}</h3>
-                            <p className="text-gray-400 text-sm">{donor.blood_type} • HemoMatch Client • {donor.frequency} schedule</p>
+                            <p className="text-gray-400 text-sm">{donor.blood_type} • Crimson Connect Client • {donor.frequency} schedule</p>
                           </div>
                           <span className="text-2xl">💰</span>
                         </div>
@@ -258,7 +258,7 @@ export default function DonorSystem({ vampireState, onClose }) {
               <div className="bg-gray-800/30 rounded-xl p-6 mb-6 border border-red-900/20">
                 <h3 className="text-white text-2xl font-bold mb-2">{selectedDonor.name}</h3>
                 <p className="text-gray-400 mb-4">
-                  HemoMatch Client • Needs the money • You're responsible for their wellbeing
+                  Crimson Connect Client • Needs the money • You're responsible for their wellbeing
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
