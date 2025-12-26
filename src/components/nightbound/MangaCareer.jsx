@@ -125,20 +125,23 @@ export default function MangaCareer({ servant, onClose }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative"
+        className="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col relative"
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
-          <X className="w-5 h-5" />
-        </button>
+        <div className="p-6 pb-4">
+          <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white z-10">
+            <X className="w-5 h-5" />
+          </button>
 
-        <div className="flex items-center gap-3 mb-6">
-          <BookOpen className="w-8 h-8 text-purple-400" />
-          <div>
-            <h2 className="text-2xl font-bold text-white">Manga Artist</h2>
-            <p className="text-gray-400 text-sm">{servant.name}'s manga career</p>
+          <div className="flex items-center gap-3">
+            <BookOpen className="w-8 h-8 text-purple-400" />
+            <div>
+              <h2 className="text-2xl font-bold text-white">Manga Artist</h2>
+              <p className="text-gray-400 text-sm">{servant.name}'s manga career</p>
+            </div>
           </div>
         </div>
 
+        <div className="px-6 pb-6 overflow-y-auto flex-1">
         {career?.series_name && (
           <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4 mb-4">
             <h3 className="text-purple-300 font-bold text-lg mb-1">{career.series_name}</h3>
@@ -211,6 +214,7 @@ export default function MangaCareer({ servant, onClose }) {
             <p className="text-green-300 text-center">{outcome}</p>
           </div>
         )}
+        </div>
       </motion.div>
     </motion.div>
   );
