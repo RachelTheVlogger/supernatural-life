@@ -1583,7 +1583,18 @@ const INTERACTIONS = {
     gains: [0, 0]
   },
   
-  // Dark option
+  // Dark/Vampire options
+  turn: {
+    icon: Droplets,
+    label: 'Turn them into a vampire',
+    category: 'power',
+    gains: [0, 0],
+    outcomes: {
+      mid: ['You drained them to the edge of death. Fed them your blood. The transformation began.', 'Dying in your arms. You cut your wrist. Made them drink. Changed forever.', 'You turned them. They screamed. Then went silent. Then woke up different.'],
+      high: ['You turned them willingly. They begged for it. Now they\'re yours eternally.', 'The transformation complete. They opened their eyes. Red. Hungry. Vampire.', 'You made them immortal. Forever bound. Forever yours.']
+    },
+    isTurn: true
+  },
   kill: {
     icon: Skull,
     label: 'Kill them',
@@ -1667,6 +1678,16 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     if (type === 'setIdentity') {
       setShowIdentity(true);
       return;
+    }
+    
+    if (type === 'turn') {
+      if (servant.is_turned) {
+        alert('They\'re already a vampire.');
+        return;
+      }
+      if (!confirm(`Turn ${servant.name} into a vampire? This cannot be undone.`)) {
+        return;
+      }
     }
     
     if (type === 'kill') {
@@ -1812,6 +1833,32 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       }
 
       queryClient.invalidateQueries();
+
+      // If turned, mark as vampire
+      if (type === 'turn') {
+        try {
+          await base44.entities.Servant.update(servant.id, {
+            is_turned: true,
+            unlocked_powers: [],
+            teaching_progress: 0
+          });
+          
+          await base44.entities.NightLog.create({
+            entry: `You turned ${servant.name}. They're a vampire now. Immortal. Bound to you forever.`,
+            category: 'interaction',
+            intensity: 'significant'
+          });
+          
+          queryClient.invalidateQueries();
+        } catch (e) {
+          console.error('Failed to turn servant:', e);
+        }
+        
+        setTimeout(() => {
+          onClose();
+        }, 5000);
+        return;
+      }
 
       // If killed, delete the servant and create a new one
       if (type === 'kill') {
