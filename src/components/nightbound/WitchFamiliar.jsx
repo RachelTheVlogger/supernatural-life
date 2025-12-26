@@ -8,7 +8,7 @@ const FAMILIARS = [
   { type: 'cat', name: 'Shadow', icon: '🐱', power: 15, ability: 'Night vision & stealth' },
   { type: 'raven', name: 'Corvus', icon: '🐦‍⬛', power: 20, ability: 'Messenger & prophecy' },
   { type: 'owl', name: 'Athena', icon: '🦉', power: 18, ability: 'Wisdom & insight' },
-  { type: 'snake', name: 'Serpens', icon: '🐍', power: 22, ability: 'Venom & transformation' },
+  { type: 'snake', name: 'Serpent', icon: '🐍', power: 22, ability: 'Venom & transformation' },
   { type: 'toad', name: 'Hemlock', icon: '🐸', power: 16, ability: 'Potion enhancement' },
   { type: 'bat', name: 'Echo', icon: '🦇', power: 19, ability: 'Echo location & night flight' }
 ];
