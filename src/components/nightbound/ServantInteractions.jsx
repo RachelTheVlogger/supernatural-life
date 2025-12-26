@@ -23,48 +23,47 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       id: 'vampire-talk',
       icon: Sparkles,
       label: 'Talk about the vampire',
+      description: 'Let them discuss their feelings about you',
       outcomes: {
         positive: [
-          `"Living with ${pronouns.object}... it's incredible. I never want to leave."`,
-          `"${pronouns.subject === 'they' ? 'They are' : pronouns.subject === 'she' ? 'She\'s' : 'He\'s'} everything. I'd die for ${pronouns.object}."`,
-          `"The way ${pronouns.subject} looks at me... I feel alive. Ironically."`,
-          `"I love serving ${pronouns.object}. Every moment is a gift."`,
-          `"${pronouns.possessive.charAt(0).toUpperCase() + pronouns.possessive.slice(1)} presence... intoxicating. Addictive."`,
+          `${selectedPair?.[0]?.name}: "Living with ${pronouns.object}... it's incredible. I never want to leave."\n${selectedPair?.[1]?.name}: "I know exactly what you mean. ${pronouns.subject === 'they' ? 'They\'re' : pronouns.subject === 'she' ? 'She\'s' : 'He\'s'} everything."`,
+          `${selectedPair?.[0]?.name}: "${pronouns.subject === 'they' ? 'They are' : pronouns.subject === 'she' ? 'She\'s' : 'He\'s'} everything to me. I'd die for ${pronouns.object}."\n${selectedPair?.[1]?.name}: "Same. We're lucky to be chosen."`,
+          `They talk for hours about you. Their devotion matching. A mutual understanding forms.`,
+          `${selectedPair?.[0]?.name}: "The way ${pronouns.subject} looks at me..."\n${selectedPair?.[1]?.name}: "I know that look. It's intoxicating."\nThey bond over their shared addiction to you.`,
         ],
         neutral: [
-          `"It's... different. Living with a vampire."`,
-          `"Some nights are better than others."`,
-          `"I'm still getting used to all of this."`,
+          `${selectedPair?.[0]?.name}: "It's... different. Living with a vampire."\n${selectedPair?.[1]?.name}: "Yeah." Awkward silence.`,
+          `They talk about you politely. No real connection made.`,
+          `${selectedPair?.[0]?.name}: "Some nights are better than others."\n${selectedPair?.[1]?.name} nods but doesn't elaborate.`,
         ],
         negative: [
-          `"Sometimes I wonder if ${pronouns.subject} even sees me."`,
-          `"I want ${pronouns.possessive} attention. Not yours."`,
-          `"Why do you get more time with ${pronouns.object}?"`,
-          `"I should be ${pronouns.possessive} favorite. Not you."`,
+          `${selectedPair?.[0]?.name}: "Sometimes I wonder if ${pronouns.subject} even sees me."\n${selectedPair?.[1]?.name}: "Oh, ${pronouns.subject} sees me just fine. Maybe you're the problem."\nTension rises.`,
+          `${selectedPair?.[0]?.name}: "I want ${pronouns.possessive} attention. Not yours."\n${selectedPair?.[1]?.name} walks away, hurt and angry.`,
+          `${selectedPair?.[1]?.name}: "Why does ${pronouns.subject} spend more time with you?"\n${selectedPair?.[0]?.name}: "Because I'm better at this than you."\nThe rivalry deepens.`,
         ]
       }
     },
     { 
-      id: 'chat', 
+      id: 'deep-conversation', 
       icon: MessageCircle, 
-      label: 'Let them talk',
+      label: 'Have a deep conversation',
+      description: 'Encourage them to open up to each other',
       outcomes: {
         positive: [
-          'They bonded over their shared devotion to you.',
-          'They laughed together. Growing closer.',
-          'They shared stories. Understanding each other better.',
-          'A friendship forming between your servants.',
+          `${selectedPair?.[0]?.name} shares their fears. ${selectedPair?.[1]?.name} listens, really listens. "We're in this together," they say. A bond forms.`,
+          `They talk about their past lives. Before you. Both realize how empty they were. How complete they are now. Understanding blooms.`,
+          `${selectedPair?.[0]?.name}: "Do you ever miss your old life?"\n${selectedPair?.[1]?.name}: "Not for a second. This is where I belong."\nThey smile at each other. United.`,
+          `They share their devotion stories. How they fell for you. Different paths, same destination. Respect grows.`,
         ],
         neutral: [
-          'They talked. Nothing special.',
-          'Small talk. Polite. Distant.',
-          'They exchanged words. Neither impressed.',
+          `They try to connect but the conversation stays surface level. Polite. Safe. Distant.`,
+          `${selectedPair?.[0]?.name} opens up a little. ${selectedPair?.[1]?.name} doesn't reciprocate. It fizzles out.`,
+          `Small talk that goes nowhere. They're too different. Or too similar.`,
         ],
         negative: [
-          'Tension. They don\'t like each other.',
-          'Jealousy brewing. Both want your attention.',
-          'They argued. About you. Always about you.',
-          'Competition. Rivalry. Possessiveness.',
+          `${selectedPair?.[0]?.name} tries to connect. ${selectedPair?.[1]?.name} shuts them down. "I don't need a friend. I need ${pronouns.object}."`,
+          `The conversation turns competitive. Each trying to prove they're more devoted. More worthy. More needed.`,
+          `${selectedPair?.[1]?.name}: "You don't understand ${pronouns.object} like I do."\n${selectedPair?.[0]?.name}: "Keep telling yourself that."\nHostility festers.`,
         ]
       }
     },
@@ -72,71 +71,98 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       id: 'bond', 
       icon: Heart, 
       label: 'Encourage bonding',
+      description: 'Push them to form a connection',
       outcomes: {
         positive: [
-          'They embraced. Your servants becoming allies.',
-          'Understanding bloomed. They accept each other.',
-          'United in their devotion. A bond formed.',
-          'They swore to support each other. For you.',
+          `You tell them they're both important. Both cherished. They look at each other differently now. Allies, not rivals.`,
+          `${selectedPair?.[0]?.name} reaches out. ${selectedPair?.[1]?.name} takes their hand. "We're family now," one whispers. The other agrees.`,
+          `You explain that loving you means accepting each other. They understand. They try. It works.`,
+          `They embrace. Tentatively at first, then genuine. United in their devotion to you.`,
         ],
         neutral: [
-          'They tried. Still awkward.',
-          'Forced smiles. Polite distance remains.',
-          'Some progress. But walls still up.',
+          `They try for your sake. Forced smiles. Stiff hugs. The walls remain, but they're trying.`,
+          `${selectedPair?.[0]?.name}: "For ${pronouns.object}, I'll try."\n${selectedPair?.[1]?.name}: "Same."\nSmall progress.`,
+          `They tolerate each other now. Not friends, but not enemies. It's something.`,
         ],
         negative: [
-          'They resent this. Both want you alone.',
-          'Jealousy intensified. This made it worse.',
-          'They pretended. But hatred festers.',
+          `${selectedPair?.[0]?.name}: "I don't want to share ${pronouns.object}."\n${selectedPair?.[1]?.name}: "Good. Neither do I."\nYour intervention made it worse.`,
+          `They pretend to bond in front of you. The moment you leave, the masks drop. Hatred intensifies.`,
+          `${selectedPair?.[1]?.name} storms off. "I'm not doing this." ${selectedPair?.[0]?.name} looks relieved they left.`,
         ]
       }
     },
     {
       id: 'observe',
       icon: Eye,
-      label: 'Watch them interact',
+      label: 'Secretly observe them',
+      description: 'Watch how they act when you\'re not around',
       outcomes: {
         positive: [
-          'They didn\'t know you were watching. Natural chemistry.',
-          'You saw them laugh together. Genuine connection.',
-          'They spoke fondly of you. Both admiring.',
-          'Comfortable with each other. Good.',
+          `You watch from the shadows. They don't know you're there. ${selectedPair?.[0]?.name} makes ${selectedPair?.[1]?.name} laugh. Genuine. Natural. Beautiful.`,
+          `They talk about you fondly. Both admiring different things about you. No jealousy. Just shared appreciation.`,
+          `${selectedPair?.[0]?.name} helps ${selectedPair?.[1]?.name} with something. A small gesture of kindness. You smile.`,
+          `They're comfortable together. No pretense. No competition. Just... peaceful coexistence.`,
         ],
         neutral: [
-          'They kept their distance. Professional.',
-          'Polite nods. Nothing more.',
-          'They coexist. That\'s all.',
+          `They ignore each other mostly. Polite nods when paths cross. Nothing more.`,
+          `They coexist in silence. Not hostile, not friendly. Just... there.`,
+          `${selectedPair?.[0]?.name} reads. ${selectedPair?.[1]?.name} stares out the window. Separate worlds.`,
         ],
         negative: [
-          'You saw the glares. The tension.',
-          'They compete for your attention. Obviously.',
-          'Silent hostility. They can\'t hide it.',
-          'One clearly jealous of the other.',
+          `You hear ${selectedPair?.[0]?.name} whisper: "I wish ${pronouns.subject}'d turn just me. Send ${selectedPair?.[1]?.name} away."\n${selectedPair?.[1]?.name} glares from across the room. They heard it too.`,
+          `${selectedPair?.[1]?.name} hides something of yours. ${selectedPair?.[0]?.name} sees it. "That's pathetic," they mutter. War brewing.`,
+          `Silent hostility. They can't hide it. Every movement calculated to avoid the other.`,
+          `One deliberately takes your attention from the other. Sabotage. Manipulation. Jealousy uncontained.`,
         ]
       }
     },
     {
       id: 'together',
-      icon: Sparkles,
-      label: 'Spend time together (all 3)',
+      icon: Coffee,
+      label: 'Spend quality time (all 3)',
+      description: 'An evening together - you and both servants',
       outcomes: {
         positive: [
-          'A perfect night. You with both of them.',
-          'They learned to share you. Reluctantly. But they did.',
-          'Together, the three of you felt complete.',
-          'They competed for your affection. You enjoyed every moment.',
-          'Your attention divided. Both satisfied.',
+          `A perfect night. You sit between them. They both lean into you. Content. Safe. Complete.\n"This is enough," ${selectedPair?.[0]?.name} whispers. ${selectedPair?.[1]?.name} agrees.`,
+          `You read to them. They hang on every word. Not competing, just enjoying your presence. Together.`,
+          `They take turns telling you stories. You laugh. They smile at each other. A moment of unity.`,
+          `${selectedPair?.[0]?.name} on your left. ${selectedPair?.[1]?.name} on your right. Both holding your hands. Perfect balance.`,
+          `You watch them learn to share you. It's beautiful. They're learning. For you, they'll do anything.`,
         ],
         neutral: [
-          'Awkward. But manageable.',
-          'They tolerated each other. For you.',
-          'Not perfect. But it worked.',
+          `Awkward but manageable. They're civil for your sake. Stiff. Trying too hard.`,
+          `You talk. They listen. Separately. Not connecting with each other, only with you.`,
+          `It works. Barely. The tension is there but controlled. Baby steps.`,
         ],
         negative: [
-          'They fought over you. Right in front of you.',
-          'Jealousy exploded. This was a mistake.',
-          'One stormed off. Furious.',
-          'They can\'t share you. Not yet.',
+          `${selectedPair?.[0]?.name} reaches for you. ${selectedPair?.[1]?.name} pulls you away. "My turn," they hiss. A fight erupts.`,
+          `You try to give them equal attention. It's not enough. It's never enough. Both want more. Both want all.`,
+          `${selectedPair?.[1]?.name} storms off mid-evening. "I can't do this. I can't watch ${pronouns.object} with someone else."\n${selectedPair?.[0]?.name} looks satisfied. Victory.`,
+          `They fight over you right in front of you. Words become sharp. Jealousy explosive. This was a terrible mistake.`,
+        ]
+      }
+    },
+    {
+      id: 'assign-task',
+      icon: Sparkles,
+      label: 'Assign them a task together',
+      description: 'Make them work as a team',
+      outcomes: {
+        positive: [
+          `They work in sync. ${selectedPair?.[0]?.name} starts something, ${selectedPair?.[1]?.name} finishes it. Natural teamwork. You're impressed.`,
+          `${selectedPair?.[0]?.name}: "Hand me that."\n${selectedPair?.[1]?.name} passes it without hesitation. They're learning each other's rhythms.`,
+          `The task gets done efficiently. They complement each other well. Different strengths. One team.`,
+          `"We make a good team," ${selectedPair?.[0]?.name} admits. ${selectedPair?.[1]?.name} nods. "For ${pronouns.object}, we do."`,
+        ],
+        neutral: [
+          `They complete the task separately. Side by side but not together. It works. Barely.`,
+          `Minimal cooperation. The task gets done but there's no chemistry. Just obligation.`,
+          `They divide the work silently. Efficient but cold. Professional distance.`,
+        ],
+        negative: [
+          `${selectedPair?.[0]?.name} does it one way. ${selectedPair?.[1]?.name} undoes it and does it differently. "You're doing it wrong," they snap at each other.`,
+          `They sabotage each other. Each trying to prove they're better. The task fails. You're disappointed.`,
+          `${selectedPair?.[1]?.name}: "I don't need ${pronouns.possessive} help."\n${selectedPair?.[0]?.name}: "Good. Because I wasn't offering."\nThe task abandoned.`,
         ]
       }
     },
@@ -149,19 +175,32 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       const [servant1, servant2] = selectedPair;
       const interaction = interactions.find(i => i.id === interactionId);
       
-      // Determine outcome based on relationship levels
+      // Determine outcome based on relationship levels and jealousy
       const avgRel = ((servant1.relationship || 0) + (servant2.relationship || 0)) / 2;
       const jealousy1 = servant1.jealousy_level || 0;
       const jealousy2 = servant2.jealousy_level || 0;
       const avgJealousy = (jealousy1 + jealousy2) / 2;
       
+      // More nuanced outcome determination
       let outcomeType;
-      if (avgJealousy > 60 || avgRel < 30) {
-        outcomeType = 'negative';
-      } else if (avgRel > 70 && avgJealousy < 30) {
-        outcomeType = 'positive';
+      const roll = Math.random() * 100;
+      
+      if (avgJealousy > 70 || avgRel < 25) {
+        // Very likely negative
+        outcomeType = roll < 80 ? 'negative' : 'neutral';
+      } else if (avgJealousy > 40 || avgRel < 50) {
+        // Mixed outcomes
+        if (roll < 30) outcomeType = 'negative';
+        else if (roll < 70) outcomeType = 'neutral';
+        else outcomeType = 'positive';
+      } else if (avgRel > 70 && avgJealousy < 25) {
+        // Very likely positive
+        outcomeType = roll < 80 ? 'positive' : 'neutral';
       } else {
-        outcomeType = 'neutral';
+        // Balanced
+        if (roll < 25) outcomeType = 'negative';
+        else if (roll < 60) outcomeType = 'neutral';
+        else outcomeType = 'positive';
       }
       
       const outcomeText = interaction.outcomes[outcomeType][
@@ -170,43 +209,60 @@ export default function ServantInteractions({ servants, vampireState, onClose })
       
       setOutcome(outcomeText);
       
-      // Update jealousy based on outcome
-      let jealousyChange = 0;
+      // Update stats based on outcome and interaction type
+      let jealousyChange1 = 0, jealousyChange2 = 0;
+      let relChange1 = 0, relChange2 = 0;
+      
       if (outcomeType === 'positive') {
-        jealousyChange = -5;
+        jealousyChange1 = Math.floor(Math.random() * 8) - 10; // -10 to -2
+        jealousyChange2 = Math.floor(Math.random() * 8) - 10;
+        relChange1 = Math.floor(Math.random() * 5) + 3; // 3-7
+        relChange2 = Math.floor(Math.random() * 5) + 3;
       } else if (outcomeType === 'negative') {
-        jealousyChange = 5;
+        jealousyChange1 = Math.floor(Math.random() * 8) + 5; // 5-12
+        jealousyChange2 = Math.floor(Math.random() * 8) + 5;
+        relChange1 = Math.floor(Math.random() * 5) - 7; // -7 to -3
+        relChange2 = Math.floor(Math.random() * 5) - 7;
+      } else {
+        jealousyChange1 = Math.floor(Math.random() * 5) - 2; // -2 to 2
+        jealousyChange2 = Math.floor(Math.random() * 5) - 2;
+        relChange1 = Math.floor(Math.random() * 3); // 0-2
+        relChange2 = Math.floor(Math.random() * 3);
+      }
+      
+      // Bonus effects for certain interactions
+      if (interactionId === 'together' && outcomeType === 'positive') {
+        relChange1 += 5;
+        relChange2 += 5;
+      }
+      if (interactionId === 'bond' && outcomeType === 'positive') {
+        jealousyChange1 -= 5;
+        jealousyChange2 -= 5;
+      }
+      if (interactionId === 'assign-task' && outcomeType === 'positive') {
+        relChange1 += 3;
+        relChange2 += 3;
       }
       
       try {
         await Promise.all([
           base44.entities.Servant.update(servant1.id, {
-            jealousy_level: Math.max(0, Math.min(100, (servant1.jealousy_level || 0) + jealousyChange))
+            jealousy_level: Math.max(0, Math.min(100, (jealousy1 + jealousyChange1))),
+            relationship: Math.max(0, Math.min(100, ((servant1.relationship || 0) + relChange1)))
           }),
           base44.entities.Servant.update(servant2.id, {
-            jealousy_level: Math.max(0, Math.min(100, (servant2.jealousy_level || 0) + jealousyChange))
+            jealousy_level: Math.max(0, Math.min(100, (jealousy2 + jealousyChange2))),
+            relationship: Math.max(0, Math.min(100, ((servant2.relationship || 0) + relChange2)))
           })
         ]);
-        
-        // Relationship bonus for spending time together
-        if (interactionId === 'together' && outcomeType !== 'negative') {
-          await Promise.all([
-            base44.entities.Servant.update(servant1.id, {
-              relationship: Math.min(100, (servant1.relationship || 0) + 5)
-            }),
-            base44.entities.Servant.update(servant2.id, {
-              relationship: Math.min(100, (servant2.relationship || 0) + 5)
-            })
-          ]);
-        }
       } catch (e) {
         console.error('Failed to update servants:', e);
       }
       
       await base44.entities.NightLog.create({
-        entry: `${servant1.name} and ${servant2.name}: ${outcomeText}`,
+        entry: outcomeText,
         category: 'interaction',
-        intensity: outcomeType === 'negative' ? 'significant' : 'moderate'
+        intensity: outcomeType === 'negative' ? 'significant' : outcomeType === 'positive' ? 'moderate' : 'subtle'
       });
       
       queryClient.invalidateQueries();
@@ -215,8 +271,8 @@ export default function ServantInteractions({ servants, vampireState, onClose })
         setInteracting(false);
         setOutcome('');
         setSelectedPair(null);
-      }, 3000);
-    }, 2000);
+      }, 4000);
+    }, 2500);
   };
 
   const getServantPairs = () => {
@@ -293,14 +349,16 @@ export default function ServantInteractions({ servants, vampireState, onClose })
             })}
           </div>
         ) : outcome ? (
-          <div className="text-center py-12">
-            <motion.p
+          <div className="py-8 px-4">
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-gray-300 text-lg"
+              className="bg-black/40 rounded-xl p-6 border border-purple-500/30"
             >
-              {outcome}
-            </motion.p>
+              <p className="text-gray-300 text-base leading-relaxed whitespace-pre-line">
+                {outcome}
+              </p>
+            </motion.div>
           </div>
         ) : interacting ? (
           <div className="text-center py-12">
@@ -329,10 +387,15 @@ export default function ServantInteractions({ servants, vampireState, onClose })
               <button
                 key={interaction.id}
                 onClick={() => handleInteraction(interaction.id)}
-                className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left transition-colors"
+                className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left transition-colors touch-manipulation"
               >
-                <interaction.icon className="w-5 h-5 text-purple-400 mb-2" />
-                <h4 className="text-white font-medium">{interaction.label}</h4>
+                <div className="flex items-start gap-3">
+                  <interaction.icon className="w-5 h-5 text-purple-400 mt-1" />
+                  <div>
+                    <h4 className="text-white font-medium mb-1">{interaction.label}</h4>
+                    <p className="text-gray-400 text-xs">{interaction.description}</p>
+                  </div>
+                </div>
               </button>
             ))}
           </div>
