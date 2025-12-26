@@ -4,13 +4,13 @@ import HybridHome from './pages/HybridHome';
 import IncubusHome from './pages/IncubusHome';
 import Index from './pages/Index';
 import Messages from './pages/Messages';
+import NateLilithHome from './pages/NateLilithHome';
 import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
 import SuccubusHome from './pages/SuccubusHome';
 import VampireHome from './pages/VampireHome';
 import WerewolfHome from './pages/WerewolfHome';
 import WitchHome from './pages/WitchHome';
-import NateLilithHome from './pages/NateLilithHome';
 import __Layout from './Layout.jsx';
 
 
@@ -21,13 +21,13 @@ export const PAGES = {
     "IncubusHome": IncubusHome,
     "Index": Index,
     "Messages": Messages,
+    "NateLilithHome": NateLilithHome,
     "Night": Night,
     "ServantHome": ServantHome,
     "SuccubusHome": SuccubusHome,
     "VampireHome": VampireHome,
     "WerewolfHome": WerewolfHome,
     "WitchHome": WitchHome,
-    "NateLilithHome": NateLilithHome,
 }
 
 export const pagesConfig = {

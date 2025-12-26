@@ -28,6 +28,19 @@ const SHOP_ACTIVITIES = [
   { id: 'feed', label: 'Feed in Storage', desc: 'Quick bite in the back', pay: 100 }
 ];
 
+const COUPLE_ACTIVITIES = [
+  { id: 'hunt', label: 'Hunt Together', desc: 'Feed together on the streets', type: 'dark' },
+  { id: 'beach', label: 'Beach Night', desc: 'Ocean air and hunting', type: 'romantic' },
+  { id: 'club', label: 'Vampire Club', desc: 'Feed in the crowd', type: 'dark' },
+  { id: 'journal', label: 'Read His Journal', desc: 'Discover his desires', type: 'intimate' },
+  { id: 'bloodbond', label: 'Blood Bond', desc: 'Cut palms, bind forever', type: 'ritual' },
+  { id: 'shower', label: 'Shower Together', desc: 'Wash the blood away', type: 'intimate' },
+  { id: 'breakfast', label: 'Breakfast Tease', desc: 'Coffee and filthy words', type: 'tease' },
+  { id: 'write', label: 'Write Together', desc: 'One line, honest', type: 'creative' },
+  { id: 'mara', label: 'Deal with Mara', desc: 'The stalker returns', type: 'conflict' },
+  { id: 'bedroom', label: 'Intimate Moment', desc: 'Lose control together', type: 'intimate' }
+];
+
 export default function NateLilithHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -37,6 +50,7 @@ export default function NateLilithHome() {
   const [currentActivity, setCurrentActivity] = useState(null);
   const [outcome, setOutcome] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [coupleActivity, setCoupleActivity] = useState(null);
 
   // Fetch or create couple state
   const { data: coupleData } = useQuery({
@@ -150,6 +164,83 @@ export default function NateLilithHome() {
     }, 2000);
   };
 
+  const handleCoupleActivity = async (activity) => {
+    setProcessing(true);
+
+    const outcomes = {
+      hunt: [
+        'You prowled the streets together. A man stumbled from the bar. You both fed, mouths red, grinding together as blood filled you.',
+        'Alley behind the warehouse. You bit one side, Nate the other. The pulse between you. You kissed with blood on your lips.',
+        'The hunt was quick. You pinned them together, fed together, came together. The body fell. You kept going.'
+      ],
+      beach: [
+        'Ocean air, moonlight, a lone figure on the sand. You fed as waves crashed. Nate bent you over after, salt and blood mixing.',
+        'The beach was empty. You hunted. Fed. Fucked against the rocks with blood still wet on your chin.',
+        'You dragged the body into the surf. Nate took you there, in the shallows, tasting copper and sea.'
+      ],
+      club: [
+        'Bass pounding. Lights flashing. You fed in the crowd, unseen. Nate pulled you to a dark hallway after and fucked you against brick.',
+        'The warehouse club. You both bit the same boy, dancing close. Blood and sweat. You came in the alley after.',
+        'Music drowned out the moans. You fed together. Kissed. His hand in your panties while bodies moved around you.'
+      ],
+      journal: [
+        '"Session Twelve. She crossed her legs. I wanted to ask if her panties were wet." You read his words. Your body answered.',
+        'You found his journal. Every session detailed. Every thought about you. "I wanted to ruin her across that desk." You were soaked.',
+        'His handwriting. His confessions. "Kn eel. Open. Say my name like a prayer." You couldn\'t stop reading. Couldn\'t stop aching.'
+      ],
+      bloodbond: [
+        'He cut your palm. Cut his. Blood to blood. You came together, wound to wound, sealing the vow. Forever.',
+        'The blade was sharp. Blood welled. He pressed your palms together and you felt it—the bond, permanent, eternal.',
+        'You bound yourselves in blood. "Mine," he said. "Yours," you answered. The cuts healed. The vow didn\'t.'
+      ],
+      shower: [
+        'Hot water. Blood washing away. His hands on you, reverent, claiming. You came against the tile as steam filled the room.',
+        'The shower ran red at first. Then clear. Then you were pressed to the wall, his cock inside you, water cascading.',
+        'He washed the blood from your skin. Kissed every inch clean. Then made you dirty again.'
+      ],
+      breakfast: [
+        '"You\'re dripping already," he said over coffee. His foot slid up your calf. You couldn\'t eat. Couldn\'t think. Only ache.',
+        'Breakfast table. His words filthy, his tone calm. "I\'ll fuck you against this counter until you scream." You were wet instantly.',
+        'He described exactly what he\'d do to you. Every detail. You sat there trembling, coffee untouched, pussy throbbing.'
+      ],
+      write: [
+        'One line. Honest. "The fog is a hand over the town\'s mouth." He smiled. "There you are." You wrote more. He watched.',
+        'Your notebook. His eyes on you. "Write what you\'re feeling right now." You wrote: I want you. He pulled you into his lap.',
+        '"One true line." You wrote it. He read it. Kissed you hard. "Perfect. My perfect writer."'
+      ],
+      mara: [
+        'She stood in the dark. "You\'ve poisoned him." Nate stepped forward. "I never wanted you." She left broken.',
+        'Mara appeared at your door. "He was mine first." You smiled, fangs showing. "He was never yours." She ran.',
+        'The restraining order came. Five hundred feet. Nate crumpled it. "Let her try." You kissed him, claiming.'
+      ],
+      bedroom: [
+        'Hair pulled. Throat arched. His cock deep. "Say you\'re mine." You screamed it. Came so hard you saw stars.',
+        'He bent you over the desk. Filled you completely. "You love being mine." Yes. God, yes. Over and over.',
+        'On your knees. His hand in your hair. His voice commanding. You obeyed everything. Came harder than ever before.'
+      ]
+    };
+
+    const randomOutcome = outcomes[activity.id][Math.floor(Math.random() * outcomes[activity.id].length)];
+
+    setTimeout(async () => {
+      setOutcome(randomOutcome);
+      
+      await base44.entities.NightLog.create({
+        entry: `Nate & Lilith: ${randomOutcome}`,
+        category: 'interaction',
+        intensity: activity.type === 'dark' ? 'significant' : 'moderate'
+      });
+      
+      queryClient.invalidateQueries(['nateLilithState', 'lilithState']);
+      
+      setTimeout(() => {
+        setProcessing(false);
+        setCoupleActivity(null);
+        setOutcome('');
+      }, 4000);
+    }, 2000);
+  };
+
   if (!coupleData || !lilithData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -204,8 +295,55 @@ export default function NateLilithHome() {
           </button>
         </div>
 
+        {/* Couple Activities */}
+        {!workMode && !coupleActivity && !processing && (
+          <div className="mb-8">
+            <h3 className="text-white text-xl font-bold mb-4">Together</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {COUPLE_ACTIVITIES.map(activity => (
+                <button
+                  key={activity.id}
+                  onClick={() => setCoupleActivity(activity)}
+                  className={`rounded-xl p-4 text-left transition-all ${
+                    activity.type === 'dark' ? 'bg-red-900/40 hover:bg-red-900/60 border-2 border-red-500/30' :
+                    activity.type === 'intimate' ? 'bg-pink-900/40 hover:bg-pink-900/60 border-2 border-pink-500/30' :
+                    activity.type === 'ritual' ? 'bg-purple-900/40 hover:bg-purple-900/60 border-2 border-purple-500/30' :
+                    activity.type === 'conflict' ? 'bg-orange-900/40 hover:bg-orange-900/60 border-2 border-orange-500/30' :
+                    'bg-gray-800 hover:bg-gray-700'
+                  }`}
+                >
+                  <h4 className="text-white font-medium text-sm mb-1">{activity.label}</h4>
+                  <p className="text-gray-400 text-xs">{activity.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Couple Activity in Progress */}
+        {coupleActivity && !outcome && !processing && (
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h3 className="text-white text-xl font-bold mb-4">{coupleActivity.label}</h3>
+            <p className="text-gray-300 mb-6">{coupleActivity.desc}</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setCoupleActivity(null)}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleCoupleActivity(coupleActivity)}
+                className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white py-3 rounded-xl transition-all"
+              >
+                Begin
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Actions */}
-        {!workMode && !processing && (
+        {!workMode && !coupleActivity && !processing && (
           <div className="space-y-4">
             {activeCharacter === 'nate' && (
               <>
