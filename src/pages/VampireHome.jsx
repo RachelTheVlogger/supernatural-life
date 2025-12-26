@@ -59,6 +59,7 @@ export default function VampireHome() {
   const [showAging, setShowAging] = useState(false);
   const [showTherapist, setShowTherapist] = useState(false);
   const [showSuccubusInteraction, setShowSuccubusInteraction] = useState(false);
+  const [showVampireSelector, setShowVampireSelector] = useState(false);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -270,17 +271,30 @@ export default function VampireHome() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          {servants.length > 0 && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(createPageUrl(`ServantHome?id=${servants[0].id}`));
-              }}
-              className="text-purple-400 hover:text-purple-300 transition-colors text-sm touch-manipulation p-2"
-            >
-              Switch to Servant →
-            </button>
-          )}
+          <div className="flex gap-2">
+            {vampireStates.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowVampireSelector(true);
+                }}
+                className="text-purple-400 hover:text-purple-300 transition-colors text-sm touch-manipulation p-2"
+              >
+                Switch Vampire ({vampireStates.length})
+              </button>
+            )}
+            {servants.length > 0 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(createPageUrl(`ServantHome?id=${servants[0].id}`));
+                }}
+                className="text-purple-400 hover:text-purple-300 transition-colors text-sm touch-manipulation p-2"
+              >
+                Switch to Servant →
+              </button>
+            )}
+          </div>
         </div>
         
         <div className="max-w-4xl mx-auto">
@@ -293,6 +307,14 @@ export default function VampireHome() {
             <h1 className={`text-4xl font-bold mb-2 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>
               {vampireState.vampire_name}
             </h1>
+            {vampireStates.length < 3 && (
+              <button
+                onClick={() => navigate(createPageUrl('Home'))}
+                className="text-purple-400 hover:text-purple-300 text-sm"
+              >
+                + Create Another Vampire
+              </button>
+            )}
           </motion.div>
           
           {/* Day/Night Cycle Toggle */}
@@ -1369,6 +1391,75 @@ export default function VampireHome() {
               >
                 Rise
               </button>
+            </motion.div>
+          </motion.div>
+        )}
+        {showVampireSelector && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowVampireSelector(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative"
+            >
+              <button
+                onClick={() => setShowVampireSelector(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-2xl font-bold text-white mb-4">Your Vampires</h2>
+
+              <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+                {vampireStates.map(vamp => (
+                  <button
+                    key={vamp.id}
+                    onClick={async () => {
+                      if (vamp.id !== vampireState.id) {
+                        // Switch active vampire by updating query
+                        queryClient.setQueryData(['vampireState'], [vamp]);
+                        setShowVampireSelector(false);
+                      }
+                    }}
+                    className={`w-full rounded-xl p-4 text-left transition-all ${
+                      vamp.id === vampireState.id
+                        ? 'bg-purple-600 border-2 border-purple-400'
+                        : 'bg-gray-800 hover:bg-gray-700'
+                    }`}
+                  >
+                    <h3 className="text-white font-bold text-lg">{vamp.vampire_name}</h3>
+                    <div className="flex gap-4 mt-2 text-sm">
+                      <span className="text-gray-400 capitalize">{vamp.gender}</span>
+                      <span className="text-gray-400 capitalize">{vamp.sexuality}</span>
+                      <span className="text-purple-400">Stage {vamp.vampire_stage}</span>
+                    </div>
+                    <div className="flex gap-3 mt-2 text-xs">
+                      <span className="text-gray-400">Humanity: {vamp.humanity}</span>
+                      <span className="text-gray-400">Powers: {vamp.unlocked_powers?.length || 0}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {vampireStates.length < 3 && (
+                <button
+                  onClick={() => {
+                    setShowVampireSelector(false);
+                    navigate(createPageUrl('Home'));
+                  }}
+                  className="w-full mt-4 bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 text-white py-3 rounded-xl transition-colors"
+                >
+                  + Create New Vampire
+                </button>
+              )}
             </motion.div>
           </motion.div>
         )}

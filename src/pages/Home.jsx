@@ -37,10 +37,7 @@ export default function Home() {
       return;
     }
     
-    // Delete old vampire state
-    if (vampireStates.length > 0) {
-      await base44.entities.VampireState.delete(vampireStates[0].id);
-    }
+    // Don't delete old vampires, allow multiple
     
     // Create new vampire
     await base44.entities.VampireState.create({
