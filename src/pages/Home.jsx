@@ -10,6 +10,7 @@ import TutorialSystem from '@/components/nightbound/TutorialSystem';
 export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [vampireName, setVampireName] = useState('');
   const [vampireGender, setVampireGender] = useState('man');
   const [vampireSexuality, setVampireSexuality] = useState('bisexual');
   const [showIntro, setShowIntro] = useState(false);
@@ -31,6 +32,11 @@ export default function Home() {
   const existingGame = vampireStates.length > 0;
   
   const startNewGame = async () => {
+    if (!vampireName.trim()) {
+      alert('Please enter a name for your vampire');
+      return;
+    }
+    
     // Delete old vampire state
     if (vampireStates.length > 0) {
       await base44.entities.VampireState.delete(vampireStates[0].id);
@@ -38,7 +44,7 @@ export default function Home() {
     
     // Create new vampire
     await base44.entities.VampireState.create({
-      vampire_name: 'You',
+      vampire_name: vampireName.trim(),
       gender: vampireGender,
       sexuality: vampireSexuality,
       job: 'Night Shift Nurse',
@@ -145,6 +151,28 @@ export default function Home() {
           >
             {introStep === 0 && (
               <>
+                <h2 className="text-2xl font-bold text-white mb-4">What is your name?</h2>
+                <input
+                  type="text"
+                  value={vampireName}
+                  onChange={(e) => setVampireName(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && vampireName.trim() && setIntroStep(1)}
+                  placeholder="Your name..."
+                  className="w-full bg-gray-900 border border-red-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-6 focus:outline-none focus:border-red-500"
+                  autoFocus
+                />
+                <button
+                  onClick={() => setIntroStep(1)}
+                  disabled={!vampireName.trim()}
+                  className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg py-3 text-white font-medium transition-all disabled:opacity-50"
+                >
+                  Continue
+                </button>
+              </>
+            )}
+
+            {introStep === 1 && (
+              <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your identity</h2>
                 <p className="text-purple-300 text-sm mb-4">How do you see yourself?</p>
                 <div className="space-y-3 mb-6">
@@ -183,7 +211,7 @@ export default function Home() {
                   </button>
                 </div>
                 <button
-                  onClick={() => setIntroStep(1)}
+                  onClick={() => setIntroStep(2)}
                   className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
                 >
                   Continue
@@ -221,7 +249,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setIntroStep(0)}
+                    onClick={() => setIntroStep(1)}
                     className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
                   >
                     Back
