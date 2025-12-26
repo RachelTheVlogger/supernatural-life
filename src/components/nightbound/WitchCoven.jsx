@@ -27,7 +27,6 @@ export default function WitchCoven({ witch, onClose }) {
       const specialties = ['elemental', 'psychic', 'necromancy', 'protection', 'divination', 'dark_magic'];
       const specialty = specialties[Math.floor(Math.random() * specialties.length)];
       
-      // Update witch's coven size instead of creating entities
       await base44.entities.Witch.update(witch.id, {
         coven_size: (witch.coven_size || 0) + 1
       });
@@ -39,7 +38,7 @@ export default function WitchCoven({ witch, onClose }) {
       });
 
       setOutcome(`${name} joined your coven as a ${specialty} specialist.`);
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries(['witches']);
       
       setTimeout(() => {
         setRecruiting(false);
