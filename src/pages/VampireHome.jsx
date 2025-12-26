@@ -513,6 +513,7 @@ export default function VampireHome() {
           </motion.div>
           
           {/* OnlyFangs Management */}
+          {vampireState.content_filter !== 'lite' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -537,6 +538,7 @@ export default function VampireHome() {
               </div>
             </button>
           </motion.div>
+          )}
 
               {/* Crimson Bliss Lab */}
               <motion.div

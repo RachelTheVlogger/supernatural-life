@@ -176,7 +176,7 @@ export default function StalkingSystem({ vampireState, onClose }) {
             <button
               onClick={handleFindTarget}
               disabled={finding}
-              className="w-full bg-gradient-to-r from-purple-900/40 to-red-900/40 hover:from-purple-900/60 hover:to-red-900/60 border-2 border-purple-500/50 rounded-xl p-4 mb-6 transition-all disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-purple-900/40 to-red-900/40 hover:from-purple-900/60 hover:to-red-900/60 border-2 border-purple-500/50 rounded-xl p-4 mb-6 transition-all disabled:opacity-50 text-white font-medium"
             >
               {finding ? 'Searching...' : 'Find Someone to Watch'}
             </button>
