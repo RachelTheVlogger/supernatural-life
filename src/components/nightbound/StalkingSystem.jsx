@@ -450,10 +450,13 @@ export default function StalkingSystem({ vampireState, onClose }) {
               {STALKING_METHODS.map(method => (
                 <button
                   key={method.id}
-                  onClick={() => handleStalk(method)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStalk(method);
+                  }}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-all touch-manipulation active:bg-gray-600"
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start pointer-events-none">
                     <div>
                       <span className="text-white text-sm font-medium block mb-1">{method.label}</span>
                       <p className="text-gray-500 text-xs">{method.desc}</p>
