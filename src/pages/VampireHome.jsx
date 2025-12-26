@@ -27,6 +27,7 @@ import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
 import BloodBondSystem from '@/components/nightbound/BloodBondSystem';
 import VampirePolitics from '@/components/nightbound/VampirePolitics';
 import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
+import SuccubusVampireInteraction from '@/components/nightbound/SuccubusVampireInteraction';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ export default function VampireHome() {
   const [showBloodBonds, setShowBloodBonds] = useState(false);
   const [showPolitics, setShowPolitics] = useState(false);
   const [showAging, setShowAging] = useState(false);
+  const [showSuccubusInteraction, setShowSuccubusInteraction] = useState(false);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -112,6 +114,13 @@ export default function VampireHome() {
     queryKey: ['playerWerewolves'],
     queryFn: () => base44.entities.PlayerWerewolf.list()
   });
+
+  const { data: succubi = [] } = useQuery({
+    queryKey: ['succubi'],
+    queryFn: () => base44.entities.Succubus.list()
+  });
+
+  const succubus = succubi[0];
 
   // Check for jealousy events (only for servants who can be jealous)
   React.useEffect(() => {
@@ -521,6 +530,32 @@ export default function VampireHome() {
                 </button>
               </motion.div>
 
+              {/* Succubus Interaction */}
+              {succubus && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.23 }}
+                className="mb-8"
+              >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowSuccubusInteraction(true);
+                  }}
+                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 border-2 border-pink-400 rounded-2xl py-6 px-6 transition-all shadow-lg touch-manipulation"
+                >
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="text-4xl">💋🦇</span>
+                    <div className="text-left">
+                      <h3 className="text-white font-bold text-xl">Obsessive Romance</h3>
+                      <p className="text-pink-200 text-sm">10 deep interactions with {succubus.name}</p>
+                    </div>
+                  </div>
+                </button>
+              </motion.div>
+              )}
+
               {/* Friends System */}
               {allFriends.length > 0 && (
               <motion.div
@@ -596,10 +631,7 @@ export default function VampireHome() {
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Meet powerful witches</p>
             </button>
 
-            <button onClick={() => navigate(createPageUrl('SuccubusHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-pink-900/40 border-pink-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
-              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>💋 Talk to Succubus</h3>
-              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Seduction & pleasure</p>
-            </button>
+            {/* Succubus interaction moved to separate button below */}
 
             <button onClick={() => navigate(createPageUrl('IncubusHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>😈 Talk to Incubus</h3>
@@ -951,6 +983,13 @@ export default function VampireHome() {
         )}
         {showAging && vampireState && (
           <VampireAgingSystem vampireState={vampireState} onClose={() => setShowAging(false)} />
+        )}
+        {showSuccubusInteraction && succubus && (
+          <SuccubusVampireInteraction
+            succubus={succubus}
+            vampire={vampireState}
+            onClose={() => setShowSuccubusInteraction(false)}
+          />
         )}
         {showVampireIdentity && (
           <motion.div
