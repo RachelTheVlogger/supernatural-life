@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle, Heart } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle, Heart, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
@@ -33,6 +33,7 @@ import BloodBondSystem from '@/components/nightbound/BloodBondSystem';
 import VampirePolitics from '@/components/nightbound/VampirePolitics';
 import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
 import StalkingSystem from '@/components/nightbound/StalkingSystem';
+import PossessionSystem from '@/components/nightbound/PossessionSystem';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ export default function Night() {
   const [showPolitics, setShowPolitics] = useState(false);
   const [showAging, setShowAging] = useState(false);
   const [showStalking, setShowStalking] = useState(false);
+  const [showPossession, setShowPossession] = useState(false);
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -232,6 +234,7 @@ export default function Night() {
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
     { icon: Heart, label: 'Mutual Watch', modal: 'stalking' },
     { icon: Zap, label: 'Powers', modal: 'powers' },
+    { icon: User, label: 'Possess Someone', modal: 'possession' },
     { icon: Users, label: 'Town People', modal: 'npcs' },
     { icon: Home, label: 'Hospital Shift', modal: 'hospital' },
     { icon: BookOpen, label: 'Night Log', modal: 'log' },
@@ -519,6 +522,12 @@ export default function Night() {
         )}
         {activeModal === 'stalking' && (
           <StalkingSystem
+            vampireState={vampireState}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'possession' && (
+          <PossessionSystem
             vampireState={vampireState}
             onClose={() => setActiveModal(null)}
           />
