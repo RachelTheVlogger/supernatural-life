@@ -28,6 +28,37 @@ export default function VampireTherapist({ vampireState, onClose }) {
   const [outcome, setOutcome] = useState('');
   const [processing, setProcessing] = useState(false);
 
+  const { data: servants = [] } = useQuery({
+    queryKey: ['servants'],
+    queryFn: () => base44.entities.Servant.list()
+  });
+
+  // Create Lilith if she doesn't exist
+  React.useEffect(() => {
+    const createLilith = async () => {
+      const lilith = servants.find(s => s.name === 'Lilith Hart');
+      if (!lilith && servants.length < 2) {
+        await base44.entities.Servant.create({
+          name: 'Lilith Hart',
+          gender: 'woman',
+          sexuality: 'bisexual',
+          job: 'Night Shift Shop Worker',
+          variant: 'devoted',
+          obsession_stage: 5,
+          relationship: 100,
+          is_turned: true,
+          vampire_stage: 2,
+          vampire_power_level: 25,
+          unlocked_powers: ['Enhanced Senses', 'Compulsion'],
+          emotional_state: 'reverent',
+          boundaries: 'exclusive'
+        });
+        queryClient.invalidateQueries(['servants']);
+      }
+    };
+    createLilith();
+  }, [servants.length, queryClient]);
+
   if (!vampireState) {
     return null;
   }
@@ -123,10 +154,11 @@ export default function VampireTherapist({ vampireState, onClose }) {
         {!sessionActive ? (
           <div className="space-y-4">
             <div className="bg-blue-950/30 rounded-xl p-4 border border-blue-800/30">
-              <p className="text-blue-300 text-sm mb-2">💡 Dr. Nate Cross - Your Story</p>
+              <p className="text-blue-300 text-sm mb-2">💡 Dr. Nate Cross & Lilith Hart</p>
               <p className="text-gray-300 text-sm">
-                Licensed therapist. You help people by day, feed by night. Lilith Hart was your patient. 
-                A year of tension. You finally gave in. She asked to be turned. Now she's yours forever.
+                You're Dr. Nate Cross. Lilith was your patient. A year of tension. You finally gave in. 
+                You turned her. Now you live together. You're a therapist. She works night shift at a shop. 
+                Both vampires. Both complicated.
               </p>
             </div>
 
