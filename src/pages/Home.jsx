@@ -10,11 +10,12 @@ import TutorialSystem from '@/components/nightbound/TutorialSystem';
 export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [vampireName, setVampireName] = useState('');
-  const [vampireGender, setVampireGender] = useState('man');
-  const [vampireSexuality, setVampireSexuality] = useState('bisexual');
+  const [characterName, setCharacterName] = useState('');
+  const [characterGender, setCharacterGender] = useState('man');
+  const [characterSexuality, setCharacterSexuality] = useState('bisexual');
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
+  const [selectedType, setSelectedType] = useState(null);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -32,30 +33,74 @@ export default function Home() {
   const existingGame = vampireStates.length > 0;
   
   const startNewGame = async () => {
-    if (!vampireName.trim()) {
-      alert('Please enter a name for your vampire');
+    if (!characterName.trim()) {
+      alert('Please enter a name');
       return;
     }
     
-    await base44.entities.VampireState.create({
-      vampire_name: vampireName.trim(),
-      gender: vampireGender,
-      sexuality: vampireSexuality,
-      job: 'Night Shift Nurse',
-      hunger_state: 'calm',
-      emotional_mode: 'feeling',
-      vampire_stage: 2,
-      vampire_power_level: 25,
-      unlocked_powers: ['Enhanced Senses', 'Compulsion'],
-      nights_passed: 0,
-      current_date: new Date().toISOString(),
-      humanity: 50,
-      moral_path: 'balanced',
-      time_of_day: 'night'
-    });
-    
-    queryClient.invalidateQueries();
-    navigate(createPageUrl('Night'));
+    if (selectedType === 'vampire') {
+      await base44.entities.VampireState.create({
+        vampire_name: characterName.trim(),
+        gender: characterGender,
+        sexuality: characterSexuality,
+        job: 'Night Shift Nurse',
+        hunger_state: 'calm',
+        emotional_mode: 'feeling',
+        vampire_stage: 2,
+        vampire_power_level: 25,
+        unlocked_powers: ['Enhanced Senses', 'Compulsion'],
+        nights_passed: 0,
+        current_date: new Date().toISOString(),
+        humanity: 50,
+        moral_path: 'balanced',
+        time_of_day: 'night'
+      });
+      queryClient.invalidateQueries();
+      navigate(createPageUrl('Night'));
+    } else if (selectedType === 'witch') {
+      await base44.entities.Witch.create({
+        name: characterName.trim(),
+        gender: characterGender,
+        sexuality: characterSexuality,
+        magic_level: 20,
+        moon_phase: 'waxing',
+        unlocked_spells: ['Herb Knowledge', 'Moon Reading']
+      });
+      queryClient.invalidateQueries();
+      navigate(createPageUrl('WitchHome'));
+    } else if (selectedType === 'succubus') {
+      await base44.entities.Succubus.create({
+        name: characterName.trim(),
+        gender: 'woman',
+        sexuality: characterSexuality,
+        energy_level: 50,
+        charm_power: 30,
+        unlocked_abilities: ['Allure', 'Energy Drain']
+      });
+      queryClient.invalidateQueries();
+      navigate(createPageUrl('SuccubusHome'));
+    } else if (selectedType === 'incubus') {
+      await base44.entities.Incubus.create({
+        name: characterName.trim(),
+        gender: 'man',
+        sexuality: characterSexuality,
+        terror_level: 40,
+        nightmare_power: 25
+      });
+      queryClient.invalidateQueries();
+      navigate(createPageUrl('IncubusHome'));
+    } else if (selectedType === 'werewolf') {
+      await base44.entities.PlayerWerewolf.create({
+        name: characterName.trim(),
+        gender: characterGender,
+        sexuality: characterSexuality,
+        pack_status: 'lone',
+        wolf_control: 30,
+        human_life_balance: 50
+      });
+      queryClient.invalidateQueries();
+      navigate(createPageUrl('WerewolfHome'));
+    }
   };
   
   const handleContinue = () => {
@@ -121,12 +166,13 @@ export default function Home() {
           <button
             onClick={(e) => {
               e.stopPropagation();
+              setIntroStep(0);
               setShowIntro(true);
             }}
             className="w-full bg-gradient-to-r from-purple-900/60 to-red-900/60 hover:from-purple-900/80 hover:to-red-900/80 border-2 border-purple-500/50 rounded-xl py-4 text-white font-medium text-lg transition-all flex items-center justify-center gap-3"
           >
             <Moon className="w-5 h-5" />
-            New Vampire Game
+            New Game
           </button>
 
 
@@ -149,67 +195,154 @@ export default function Home() {
           >
             {introStep === 0 && (
               <>
-                <h2 className="text-2xl font-bold text-white mb-4">What is your name?</h2>
-                <input
-                  type="text"
-                  value={vampireName}
-                  onChange={(e) => setVampireName(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && vampireName.trim() && setIntroStep(1)}
-                  placeholder="Your name..."
-                  className="w-full bg-gray-900 border border-red-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-6 focus:outline-none focus:border-red-500"
-                  autoFocus
-                />
-                <button
-                  onClick={() => setIntroStep(1)}
-                  disabled={!vampireName.trim()}
-                  className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg py-3 text-white font-medium transition-all disabled:opacity-50"
-                >
-                  Continue
-                </button>
+                <h2 className="text-2xl font-bold text-white mb-4">Choose Your Path</h2>
+                <p className="text-gray-400 text-sm mb-6">What supernatural being will you become?</p>
+                <div className="space-y-3 mb-6 max-h-[60vh] overflow-y-auto">
+                  <button
+                    onClick={() => { setSelectedType('vampire'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🦇</span>
+                      <div>
+                        <span className="font-medium text-white block">Vampire</span>
+                        <p className="text-sm text-gray-400">Blood, power, eternal night</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('witch'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">✨</span>
+                      <div>
+                        <span className="font-medium text-white block">Witch</span>
+                        <p className="text-sm text-gray-400">Magic, herbs, lunar rituals</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('succubus'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">💋</span>
+                      <div>
+                        <span className="font-medium text-white block">Succubus</span>
+                        <p className="text-sm text-gray-400">Seduction, energy, desire</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('incubus'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">😈</span>
+                      <div>
+                        <span className="font-medium text-white block">Incubus</span>
+                        <p className="text-sm text-gray-400">Nightmares, terror, darkness</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('werewolf'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🐺</span>
+                      <div>
+                        <span className="font-medium text-white block">Werewolf</span>
+                        <p className="text-sm text-gray-400">Moon, pack, primal power</p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
               </>
             )}
 
             {introStep === 1 && (
               <>
+                <h2 className="text-2xl font-bold text-white mb-4">What is your name?</h2>
+                <input
+                  type="text"
+                  value={characterName}
+                  onChange={(e) => setCharacterName(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && characterName.trim() && setIntroStep(2)}
+                  placeholder="Your name..."
+                  className="w-full bg-gray-900 border border-red-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-6 focus:outline-none focus:border-red-500"
+                  autoFocus
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIntroStep(0)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={() => setIntroStep(2)}
+                    disabled={!characterName.trim()}
+                    className="flex-1 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg py-3 text-white font-medium transition-all disabled:opacity-50"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
+
+            {introStep === 2 && (
+              <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your identity</h2>
                 <p className="text-purple-300 text-sm mb-4">How do you see yourself?</p>
                 <div className="space-y-3 mb-6">
-                  <button
-                    onClick={() => setVampireGender('man')}
-                    className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                      vampireGender === 'man' 
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
-                    <span className="font-medium">Man</span>
-                    <p className="text-sm opacity-80">He/Him</p>
-                  </button>
-                  <button
-                    onClick={() => setVampireGender('woman')}
-                    className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                      vampireGender === 'woman' 
-                        ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
-                    <span className="font-medium">Woman</span>
-                    <p className="text-sm opacity-80">She/Her</p>
-                  </button>
-                  <button
-                    onClick={() => setVampireGender('custom')}
-                    className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                      vampireGender === 'custom' 
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
-                    <span className="font-medium">Custom</span>
-                    <p className="text-sm opacity-80">They/Them</p>
-                  </button>
+                  {(selectedType !== 'succubus' && selectedType !== 'incubus') && (
+                    <>
+                      <button
+                        onClick={() => setCharacterGender('man')}
+                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                          characterGender === 'man' 
+                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <span className="font-medium">Man</span>
+                        <p className="text-sm opacity-80">He/Him</p>
+                      </button>
+                      <button
+                        onClick={() => setCharacterGender('woman')}
+                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                          characterGender === 'woman' 
+                            ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <span className="font-medium">Woman</span>
+                        <p className="text-sm opacity-80">She/Her</p>
+                      </button>
+                      <button
+                        onClick={() => setCharacterGender('custom')}
+                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                          characterGender === 'custom' 
+                            ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <span className="font-medium">Custom</span>
+                        <p className="text-sm opacity-80">They/Them</p>
+                      </button>
+                    </>
+                  )}
+                  {selectedType === 'succubus' && (
+                    <p className="text-gray-400 text-sm">Succubi are female-presenting beings of desire.</p>
+                  )}
+                  {selectedType === 'incubus' && (
+                    <p className="text-gray-400 text-sm">Incubi are male-presenting beings of nightmares.</p>
+                  )}
                 </div>
                 <button
-                  onClick={() => setIntroStep(2)}
+                  onClick={() => setIntroStep(3)}
                   className="w-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
                 >
                   Continue
@@ -217,7 +350,7 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 2 && (
+            {introStep === 3 && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your sexuality</h2>
                 <p className="text-purple-300 text-sm mb-4">Who are you attracted to?</p>
@@ -233,9 +366,9 @@ export default function Home() {
                   ].map(option => (
                     <button
                       key={option.value}
-                      onClick={() => setVampireSexuality(option.value)}
+                      onClick={() => setCharacterSexuality(option.value)}
                       className={`w-full rounded-lg py-3 px-4 text-left transition-all ${
-                        vampireSexuality === option.value 
+                        characterSexuality === option.value 
                           ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
                           : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                       }`}
@@ -247,7 +380,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setIntroStep(1)}
+                    onClick={() => setIntroStep(2)}
                     className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
                   >
                     Back
