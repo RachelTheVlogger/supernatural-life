@@ -30,6 +30,7 @@ import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
 import VampireTherapist from '@/components/nightbound/VampireTherapist';
 import SuccubusVampireInteraction from '@/components/nightbound/SuccubusVampireInteraction';
 import DonorSystem from '@/components/nightbound/DonorSystem';
+import StalkingSystem from '@/components/nightbound/StalkingSystem';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ export default function VampireHome() {
   const [showSuccubusInteraction, setShowSuccubusInteraction] = useState(false);
   const [showVampireSelector, setShowVampireSelector] = useState(false);
   const [showDonors, setShowDonors] = useState(false);
+  const [showStalking, setShowStalking] = useState(false);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -614,6 +616,32 @@ export default function VampireHome() {
                 </button>
               </motion.div>
 
+              {/* Stalking System */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.23 }}
+                className="mb-8"
+              >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowStalking(true);
+                  }}
+                  className="w-full bg-gradient-to-r from-purple-950/40 to-gray-950/40 hover:from-purple-950/60 hover:to-gray-950/60 border-2 border-purple-500/50 rounded-2xl p-6 transition-all touch-manipulation"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl">👁️</div>
+                      <div className="text-left">
+                        <h3 className="text-white text-xl font-bold mb-1">Stalking</h3>
+                        <p className="text-gray-300 text-sm">Watch humans from the shadows. They secretly love the attention.</p>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </motion.div>
+
               {/* Succubus Interaction */}
               {succubus && (
               <motion.div
@@ -1084,6 +1112,12 @@ export default function VampireHome() {
           <DonorSystem
             vampireState={vampireState}
             onClose={() => setShowDonors(false)}
+          />
+        )}
+        {showStalking && vampireState && (
+          <StalkingSystem
+            vampireState={vampireState}
+            onClose={() => setShowStalking(false)}
           />
         )}
         {showVampireIdentity && (
