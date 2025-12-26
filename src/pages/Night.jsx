@@ -239,7 +239,7 @@ export default function Night() {
   ];
   
   return (
-    <div className="min-h-screen relative p-4 md:p-6">
+    <div className="min-h-screen relative p-4 md:p-6 pb-24">
       {/* Title */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
