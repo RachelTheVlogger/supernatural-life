@@ -11,6 +11,7 @@ const ACTIONS = [
   { id: 'transform', label: 'Shift Form', icon: '🌕', duration: 2000 },
   { id: 'howl', label: 'Howl at the Moon', icon: '🌙', duration: 2500 },
   { id: 'territory', label: 'Mark Territory', icon: '🏔️', duration: 4000 },
+  { id: 'cubs', label: 'Have Cubs', icon: '🐶', duration: 4000 },
   { id: 'recruit', label: 'Recruit Pack Member', icon: '👥', duration: 5000 },
   { id: 'train', label: 'Train Control', icon: '⚡', duration: 3500 }
 ];
@@ -74,6 +75,16 @@ export default function WerewolfHome() {
           } else {
             result = 'New wolf joins your pack.';
           }
+          break;
+        case 'cubs':
+          const numCubs = Math.floor(Math.random() * 3) + 1;
+          updates.cubs = (werewolf.cubs || 0) + numCubs;
+          const cubMessages = [
+            `${numCubs} tiny cubs born! They howl softly, eyes barely open. 🐾`,
+            `Your pack grows! ${numCubs} wolf pup${numCubs > 1 ? 's' : ''} tumbling over each other. So precious! 🐶`,
+            `${numCubs} adorable cub${numCubs > 1 ? 's' : ''}! They nuzzle against you, all fur and tiny paws. 💕`
+          ];
+          result = cubMessages[Math.floor(Math.random() * cubMessages.length)];
           break;
         case 'train':
           updates.transformation_control = Math.min(100, (werewolf.transformation_control || 0) + 5);
@@ -166,6 +177,18 @@ export default function WerewolfHome() {
             <p className={`text-xs ${isDaytime ? 'text-green-700' : 'text-green-300'}`}>Territory</p>
           </div>
         </div>
+
+        {werewolf.cubs > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`${isDaytime ? 'bg-pink-100/70 border-pink-400/50' : 'bg-pink-950/40 border-pink-500/30'} rounded-xl p-4 border mb-6 text-center`}
+          >
+            <p className={`text-3xl mb-2`}>🐶🐾🐶</p>
+            <p className={`text-lg font-bold ${isDaytime ? 'text-pink-900' : 'text-pink-200'}`}>{werewolf.cubs} Adorable Cubs</p>
+            <p className={`text-xs ${isDaytime ? 'text-pink-700' : 'text-pink-300'}`}>Your pack's precious little ones!</p>
+          </motion.div>
+        )}
 
         <motion.button
           initial={{ opacity: 0, y: 20 }}
