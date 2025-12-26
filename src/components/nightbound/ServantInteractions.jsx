@@ -10,17 +10,15 @@ export default function ServantInteractions({ servants, vampireState, onClose })
   const [interacting, setInteracting] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  // Get pronoun helpers
-  const getPronouns = () => {
-    if (!vampireState) return { subject: 'they', object: 'them', possessive: 'their' };
-    if (vampireState.gender === 'female') return { subject: 'she', object: 'her', possessive: 'her' };
-    if (vampireState.gender === 'custom') return { subject: 'they', object: 'them', possessive: 'their' };
-    return { subject: 'he', object: 'him', possessive: 'his' };
-  };
-  const pronouns = getPronouns();
-
   const getInteractions = (pair) => {
-    const p = pronouns;
+    // Get pronoun helpers
+    const getPronouns = () => {
+      if (!vampireState) return { subject: 'they', object: 'them', possessive: 'their' };
+      if (vampireState.gender === 'female') return { subject: 'she', object: 'her', possessive: 'her' };
+      if (vampireState.gender === 'custom') return { subject: 'they', object: 'them', possessive: 'their' };
+      return { subject: 'he', object: 'him', possessive: 'his' };
+    };
+    const p = getPronouns();
     return [
     { 
       id: 'vampire-talk',
