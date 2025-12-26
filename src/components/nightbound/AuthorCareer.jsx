@@ -34,7 +34,6 @@ export default function AuthorCareer({ servant, onClose }) {
   const [showARCModal, setShowARCModal] = useState(false);
   const [newsletterSubscribers, setNewsletterSubscribers] = useState(0);
   const [editingBook, setEditingBook] = useState(null);
-  const [facebookGroupSize, setFacebookGroupSize] = useState(servantCareer?.newsletter_subscribers || 0);
 
   const { data: books = [] } = useQuery({
     queryKey: ['books', servant.id],
@@ -51,6 +50,7 @@ export default function AuthorCareer({ servant, onClose }) {
   });
   
   const servantCareer = career[0];
+  const facebookGroupSize = servantCareer?.newsletter_subscribers || 0;
 
   const handleStartBook = async () => {
     if (!newBook.title || !newBook.genre) return;
@@ -898,10 +898,15 @@ export default function AuthorCareer({ servant, onClose }) {
                   onClick={async () => {
                     const gain = Math.floor(Math.random() * 30) + 15;
                     const newSize = facebookGroupSize + gain;
-                    setFacebookGroupSize(newSize);
                     
                     if (servantCareer) {
                       await base44.entities.ServantCareer.update(servantCareer.id, {
+                        newsletter_subscribers: newSize
+                      });
+                    } else {
+                      await base44.entities.ServantCareer.create({
+                        servant_id: servant.id,
+                        author_career_active: true,
                         newsletter_subscribers: newSize
                       });
                     }
