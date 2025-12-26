@@ -155,8 +155,8 @@ export default function AuthorCareer({ servant, onClose }) {
     setTimeout(async () => {
       clearInterval(interval);
       const wordsWritten = writerBlock 
-        ? Math.floor(Math.random() * 1000) + 500
-        : Math.floor(Math.random() * 3000) + 1500;
+        ? Math.floor(Math.random() * 2000) + 1000
+        : Math.floor(Math.random() * 5000) + 3000;
       const newWordCount = Math.min(book.word_count + wordsWritten, book.target_words);
       const qualityChange = writerBlock ? -1 : Math.floor(Math.random() * 5);
       
@@ -181,7 +181,7 @@ export default function AuthorCareer({ servant, onClose }) {
         setWorking(false);
         setWorkingMessage('');
       }, 2000);
-    }, 4000);
+    }, 2500);
   };
 
   const handleRewrite = async (book) => {
@@ -222,7 +222,7 @@ export default function AuthorCareer({ servant, onClose }) {
         setWorking(false);
         setWorkingMessage('');
       }, 1000);
-    }, 4000);
+    }, 2000);
   };
 
   const handleEdit = async (book) => {
@@ -262,7 +262,7 @@ export default function AuthorCareer({ servant, onClose }) {
         setWorking(false);
         setWorkingMessage('');
       }, 1000);
-    }, 3500);
+    }, 2000);
   };
 
   const handleProofread = async (book) => {
@@ -301,7 +301,7 @@ export default function AuthorCareer({ servant, onClose }) {
         setWorking(false);
         setWorkingMessage('');
       }, 1000);
-    }, 2500);
+    }, 1500);
   };
 
   const handlePublish = async (book, platform) => {

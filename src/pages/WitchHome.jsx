@@ -95,6 +95,43 @@ export default function WitchHome() {
   const witch = witches[0];
   const vampireState = vampireStates[0];
 
+  // Generate additional spells based on power level
+  const getAvailableSpells = () => {
+    const baseSpells = { ...SPELLS };
+    const powerLevel = witch?.power_level || 80;
+
+    if (powerLevel >= 85) {
+      baseSpells.elemental = [...baseSpells.elemental,
+        { name: 'Inferno Storm', icon: '🌋', herbs: 'Dragon\'s blood, sulfur', power: 70, description: 'Rain down meteoric fire', cost: 60, latin: 'Ignis Tempestas' },
+        { name: 'Lightning Strike', icon: '⚡', herbs: 'Storm water, iron', power: 65, description: 'Call lightning from sky', cost: 55, latin: 'Fulmen Caelum' }
+      ];
+      baseSpells.psychic = [...baseSpells.psychic,
+        { name: 'Mind Control', icon: '🧠', herbs: 'Henbane, wormwood', power: 75, description: 'Complete control over mind', cost: 70, latin: 'Mentis Imperio' },
+        { name: 'Mass Hallucination', icon: '👁️', herbs: 'Nightshade, mugwort', power: 70, description: 'Make many see illusions', cost: 65, latin: 'Collective Visio' }
+      ];
+      baseSpells.necromancy = [...baseSpells.necromancy,
+        { name: 'Army of Dead', icon: '💀', herbs: 'Grave dirt, bones', power: 90, description: 'Raise multiple corpses', cost: 85, latin: 'Exercitus Mortuorum' }
+      ];
+      baseSpells.dark_magic = [...baseSpells.dark_magic,
+        { name: 'Soul Extraction', icon: '👻', herbs: 'Black candles, obsidian', power: 85, description: 'Rip soul from body', cost: 80, latin: 'Anima Evulsio' }
+      ];
+    }
+
+    if (powerLevel >= 90) {
+      baseSpells.elemental = [...baseSpells.elemental,
+        { name: 'Elemental Fusion', icon: '🌪️', herbs: 'All elemental herbs', power: 95, description: 'Combine all elements', cost: 90, latin: 'Elementum Unio' }
+      ];
+      baseSpells.necromancy = [...baseSpells.necromancy,
+        { name: 'True Resurrection', icon: '✨', herbs: 'Life essence, moonstone', power: 100, description: 'Fully restore someone to life', cost: 95, latin: 'Vita Restauratio' }
+      ];
+      baseSpells.dark_magic = [...baseSpells.dark_magic,
+        { name: 'Reality Warp', icon: '🌀', herbs: 'Expression sacrifice', power: 100, description: 'Bend reality itself', cost: 95, latin: 'Realitas Mutatio' }
+      ];
+    }
+
+    return baseSpells;
+  };
+
   const handleCastSpell = async (spell) => {
     if (!witch) return;
     if (witch.power_level < spell.cost) {
@@ -502,7 +539,7 @@ export default function WitchHome() {
 
               {/* Category Tabs */}
               <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-                {Object.keys(SPELLS).map(cat => (
+                {Object.keys(getAvailableSpells()).map(cat => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
@@ -517,7 +554,7 @@ export default function WitchHome() {
 
               {/* Spells */}
               <div className="grid md:grid-cols-2 gap-3">
-                {SPELLS[selectedCategory].map(spell => (
+                {getAvailableSpells()[selectedCategory]?.map(spell => (
                   <button
                     key={spell.name}
                     onClick={() => {
