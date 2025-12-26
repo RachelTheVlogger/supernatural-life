@@ -39,7 +39,7 @@ export default function VampireHome() {
   const [showWitchEncounter, setShowWitchEncounter] = useState(false);
   const [showCovenManagement, setShowCovenManagement] = useState(false);
 
-  const { data: vampireStates = [] } = useQuery({
+  const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
     queryFn: async () => {
       try {
@@ -54,10 +54,10 @@ export default function VampireHome() {
 
   // Redirect to Home if no vampire state exists - do this immediately
   useEffect(() => {
-    if (vampireStates.length === 0) {
+    if (vampireStates.length === 0 && !vampireLoading) {
       navigate(createPageUrl('Home'), { replace: true });
     }
-  }, [vampireStates, navigate]);
+  }, [vampireStates, vampireLoading, navigate]);
   
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],

@@ -100,20 +100,39 @@ export default function WitchHome() {
     const baseSpells = { ...SPELLS };
     const powerLevel = witch?.power_level || 80;
 
-    if (powerLevel >= 85) {
+    if (powerLevel >= 82) {
       baseSpells.elemental = [...baseSpells.elemental,
-        { name: 'Inferno Storm', icon: '🌋', herbs: 'Dragon\'s blood, sulfur', power: 70, description: 'Rain down meteoric fire', cost: 60, latin: 'Ignis Tempestas' },
-        { name: 'Lightning Strike', icon: '⚡', herbs: 'Storm water, iron', power: 65, description: 'Call lightning from sky', cost: 55, latin: 'Fulmen Caelum' }
+        { name: 'Inferno Storm', icon: '🌋', herbs: 'Dragon\'s blood, sulfur', power: 70, description: 'Rain down meteoric fire', cost: 60, latin: 'Ignis Tempestas' }
       ];
       baseSpells.psychic = [...baseSpells.psychic,
-        { name: 'Mind Control', icon: '🧠', herbs: 'Henbane, wormwood', power: 75, description: 'Complete control over mind', cost: 70, latin: 'Mentis Imperio' },
-        { name: 'Mass Hallucination', icon: '👁️', herbs: 'Nightshade, mugwort', power: 70, description: 'Make many see illusions', cost: 65, latin: 'Collective Visio' }
+        { name: 'Mind Control', icon: '🧠', herbs: 'Henbane, wormwood', power: 75, description: 'Complete control over mind', cost: 70, latin: 'Mentis Imperio' }
+      ];
+    }
+
+    if (powerLevel >= 84) {
+      baseSpells.elemental = [...baseSpells.elemental,
+        { name: 'Lightning Strike', icon: '⚡', herbs: 'Storm water, iron', power: 65, description: 'Call lightning from sky', cost: 55, latin: 'Fulmen Caelum' }
       ];
       baseSpells.necromancy = [...baseSpells.necromancy,
         { name: 'Army of Dead', icon: '💀', herbs: 'Grave dirt, bones', power: 90, description: 'Raise multiple corpses', cost: 85, latin: 'Exercitus Mortuorum' }
       ];
+    }
+
+    if (powerLevel >= 86) {
+      baseSpells.psychic = [...baseSpells.psychic,
+        { name: 'Mass Hallucination', icon: '👁️', herbs: 'Nightshade, mugwort', power: 70, description: 'Make many see illusions', cost: 65, latin: 'Collective Visio' }
+      ];
       baseSpells.dark_magic = [...baseSpells.dark_magic,
         { name: 'Soul Extraction', icon: '👻', herbs: 'Black candles, obsidian', power: 85, description: 'Rip soul from body', cost: 80, latin: 'Anima Evulsio' }
+      ];
+    }
+
+    if (powerLevel >= 88) {
+      baseSpells.elemental = [...baseSpells.elemental,
+        { name: 'Volcanic Eruption', icon: '🔥', herbs: 'Lava rock, obsidian', power: 80, description: 'Cause volcanic destruction', cost: 75, latin: 'Vulcanus Eruptio' }
+      ];
+      baseSpells.necromancy = [...baseSpells.necromancy,
+        { name: 'Death Wave', icon: '💀', herbs: 'Mass grave dirt', power: 85, description: 'Instant death in wide area', cost: 80, latin: 'Mors Unda' }
       ];
     }
 
@@ -124,8 +143,35 @@ export default function WitchHome() {
       baseSpells.necromancy = [...baseSpells.necromancy,
         { name: 'True Resurrection', icon: '✨', herbs: 'Life essence, moonstone', power: 100, description: 'Fully restore someone to life', cost: 95, latin: 'Vita Restauratio' }
       ];
+    }
+
+    if (powerLevel >= 92) {
       baseSpells.dark_magic = [...baseSpells.dark_magic,
         { name: 'Reality Warp', icon: '🌀', herbs: 'Expression sacrifice', power: 100, description: 'Bend reality itself', cost: 95, latin: 'Realitas Mutatio' }
+      ];
+      baseSpells.psychic = [...baseSpells.psychic,
+        { name: 'World Illusion', icon: '🌐', herbs: 'Ancient crystals', power: 95, description: 'Make everyone see false reality', cost: 90, latin: 'Mundus Illusio' }
+      ];
+    }
+
+    if (powerLevel >= 94) {
+      baseSpells.protection = [...baseSpells.protection,
+        { name: 'Immortality Shield', icon: '✨', herbs: 'Phoenix ash, moonstone', power: 100, description: 'Become invulnerable temporarily', cost: 95, latin: 'Immortalitas Scutum' }
+      ];
+      baseSpells.divination = [...baseSpells.divination,
+        { name: 'Omniscience', icon: '👁️', herbs: 'All-seeing crystal', power: 100, description: 'Know everything happening now', cost: 95, latin: 'Omniscientia' }
+      ];
+    }
+
+    if (powerLevel >= 96) {
+      baseSpells.elemental = [...baseSpells.elemental,
+        { name: 'Apocalypse Storm', icon: '⛈️', herbs: 'End-times herbs', power: 100, description: 'Summon world-ending storm', cost: 98, latin: 'Apocalypsis Tempestas' }
+      ];
+    }
+
+    if (powerLevel >= 98) {
+      baseSpells.dark_magic = [...baseSpells.dark_magic,
+        { name: 'God Killer', icon: '⚡', herbs: 'Divine sacrifice', power: 100, description: 'Kill immortal beings', cost: 99, latin: 'Deus Interfector' }
       ];
     }
 
