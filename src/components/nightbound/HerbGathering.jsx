@@ -33,10 +33,17 @@ export default function HerbGathering({ witch, onClose }) {
   const [tab, setTab] = useState('forage');
   const [gathering, setGathering] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [selectedHerbToSell, setSelectedHerbToSell] = useState(null);
+  const [sellAmount, setSellAmount] = useState(1);
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['witchHerbs'],
     queryFn: () => base44.entities.WitchHerb.filter({ witch_id: witch.id })
+  });
+
+  const { data: customers = [] } = useQuery({
+    queryKey: ['herbCustomers'],
+    queryFn: () => base44.entities.HerbCustomer.filter({ witch_id: witch.id })
   });
 
   const handleForage = async (herb) => {
@@ -109,6 +116,83 @@ export default function HerbGathering({ witch, onClose }) {
     queryClient.invalidateQueries();
   };
 
+  const handleSellHerb = async (herb) => {
+    const herbData = HERBS.find(h => h.name === herb.herb_name);
+    const sellPrice = Math.floor(herbData.price * 2.5);
+    const amountToSell = Math.min(sellAmount, herb.quantity);
+    
+    await base44.entities.WitchHerb.update(herb.id, {
+      quantity: herb.quantity - amountToSell
+    });
+
+    // Maybe generate customer
+    if (customers.length < 5 && Math.random() > 0.6) {
+      const types = ['witch', 'hippie', 'spiritual', 'healer', 'occultist'];
+      const names = ['Luna', 'Sage', 'Crystal', 'Raven', 'Ash', 'Ivy', 'Willow'];
+      await base44.entities.HerbCustomer.create({
+        witch_id: witch.id,
+        customer_name: names[Math.floor(Math.random() * names.length)],
+        customer_type: types[Math.floor(Math.random() * types.length)],
+        favorite_herb: herb.herb_name,
+        loyalty: 50,
+        total_spent: sellPrice * amountToSell
+      });
+    }
+
+    await base44.entities.NightLog.create({
+      entry: `${witch.name} sold ${amountToSell} ${herb.herb_name} for $${sellPrice * amountToSell}.`,
+      category: 'interaction',
+      intensity: 'subtle'
+    });
+
+    queryClient.invalidateQueries();
+    setSelectedHerbToSell(null);
+    setSellAmount(1);
+  };
+
+  const handleConsumeHerb = async (herb) => {
+    const herbData = HERBS.find(h => h.name === herb.herb_name);
+    
+    await base44.entities.WitchHerb.update(herb.id, {
+      quantity: herb.quantity - 1
+    });
+
+    let effect = '';
+    let powerGain = 0;
+
+    if (['Vervain', 'Sage', 'Lavender'].includes(herb.herb_name)) {
+      effect = 'You feel cleansed and protected.';
+      powerGain = 5;
+    } else if (['Belladonna', 'Nightshade', 'Wormwood'].includes(herb.herb_name)) {
+      effect = 'Dark power surges through you. Intoxicating.';
+      powerGain = 15;
+    } else if (['Mugwort', 'Jasmine'].includes(herb.herb_name)) {
+      effect = 'Your mind expands. Visions dance at the edges.';
+      powerGain = 8;
+    } else if (herb.herb_name === 'Moonstone') {
+      effect = 'Lunar energy fills you. You feel the pull of the moon.';
+      powerGain = 20;
+    } else {
+      effect = 'You absorbed the herb\'s essence.';
+      powerGain = 3;
+    }
+
+    await base44.entities.Witch.update(witch.id, {
+      power_level: Math.min((witch.power_level || 80) + powerGain, 100)
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${witch.name} consumed ${herb.herb_name}. ${effect}`,
+      category: 'power',
+      intensity: 'moderate'
+    });
+
+    setOutcome(effect);
+    queryClient.invalidateQueries();
+
+    setTimeout(() => setOutcome(''), 2500);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -131,7 +215,7 @@ export default function HerbGathering({ witch, onClose }) {
         <h2 className="text-2xl font-bold text-white mb-2">Herb Collection</h2>
         <p className="text-gray-400 text-sm mb-6">Gather or buy herbs for your spells</p>
 
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-wrap">
           <button
             onClick={() => setTab('forage')}
             className={`flex-1 px-4 py-2 rounded-lg ${tab === 'forage' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
@@ -152,6 +236,12 @@ export default function HerbGathering({ witch, onClose }) {
           >
             <Leaf className="w-4 h-4 inline mr-2" />
             Inventory
+          </button>
+          <button
+            onClick={() => setTab('sell')}
+            className={`flex-1 px-4 py-2 rounded-lg ${tab === 'sell' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            💰 Sell
           </button>
         </div>
 
@@ -222,7 +312,7 @@ export default function HerbGathering({ witch, onClose }) {
                   const herb = HERBS.find(h => h.name === item.herb_name);
                   return (
                     <div key={item.id} className="bg-gray-800 rounded-xl p-4">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <span className="text-2xl">{herb?.icon || '🌿'}</span>
                           <div>
@@ -231,11 +321,107 @@ export default function HerbGathering({ witch, onClose }) {
                           </div>
                         </div>
                       </div>
+                      <button
+                        onClick={() => handleConsumeHerb(item)}
+                        disabled={item.quantity < 1}
+                        className="w-full bg-purple-900/50 hover:bg-purple-900/70 text-purple-300 px-3 py-1.5 rounded text-sm disabled:opacity-50"
+                      >
+                        Consume (boost power)
+                      </button>
                     </div>
                   );
                 })}
               </div>
             )}
+          </div>
+        )}
+
+        {tab === 'sell' && !selectedHerbToSell && (
+          <div className="space-y-3">
+            <p className="text-gray-400 text-sm mb-4">
+              Sell herbs to other witches, healers, and spiritual seekers
+            </p>
+            {inventory.length === 0 ? (
+              <p className="text-gray-400 text-center py-12">No herbs to sell</p>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-3">
+                {inventory.filter(h => h.quantity > 0).map(item => {
+                  const herb = HERBS.find(h => h.name === item.herb_name);
+                  const sellPrice = Math.floor(herb.price * 2.5);
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setSelectedHerbToSell(item)}
+                      className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-all"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{herb?.icon || '🌿'}</span>
+                          <div>
+                            <h3 className="text-white font-medium">{item.herb_name}</h3>
+                            <p className="text-gray-400 text-xs">×{item.quantity} available</p>
+                          </div>
+                        </div>
+                        <span className="text-green-400 font-bold">${sellPrice}</span>
+                      </div>
+                      <p className="text-gray-500 text-xs">per unit</p>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            {customers.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-gray-800">
+                <h3 className="text-white font-medium mb-3">Regular Customers</h3>
+                <div className="space-y-2">
+                  {customers.map(c => (
+                    <div key={c.id} className="bg-gray-800 rounded-lg p-3 flex justify-between items-center">
+                      <div>
+                        <p className="text-white text-sm">{c.customer_name}</p>
+                        <p className="text-gray-400 text-xs capitalize">{c.customer_type} • Loves {c.favorite_herb}</p>
+                      </div>
+                      <p className="text-green-400 text-xs">${c.total_spent} spent</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {selectedHerbToSell && (
+          <div className="space-y-4">
+            <button
+              onClick={() => setSelectedHerbToSell(null)}
+              className="text-gray-400 hover:text-white text-sm"
+            >
+              ← Back
+            </button>
+            <div className="bg-gray-800 rounded-xl p-6">
+              <h3 className="text-white text-lg font-bold mb-4">Sell {selectedHerbToSell.herb_name}</h3>
+              <p className="text-gray-400 text-sm mb-4">Available: {selectedHerbToSell.quantity}</p>
+              
+              <label className="text-white text-sm block mb-2">Amount to sell:</label>
+              <input
+                type="number"
+                min="1"
+                max={selectedHerbToSell.quantity}
+                value={sellAmount}
+                onChange={(e) => setSellAmount(Math.min(parseInt(e.target.value) || 1, selectedHerbToSell.quantity))}
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white mb-4"
+              />
+
+              <p className="text-green-400 text-xl font-bold mb-4">
+                Total: ${Math.floor(HERBS.find(h => h.name === selectedHerbToSell.herb_name).price * 2.5) * sellAmount}
+              </p>
+
+              <button
+                onClick={() => handleSellHerb(selectedHerbToSell)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium"
+              >
+                Sell
+              </button>
+            </div>
           </div>
         )}
 
