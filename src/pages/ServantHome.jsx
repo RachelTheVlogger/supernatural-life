@@ -477,14 +477,14 @@ export default function ServantHome() {
           {servant.is_turned ? 'Your vampire powers awaken' : 'What will you do?'}
         </h2>
         
-        <button
-          onClick={() => setShowHobbies(true)}
-          className="w-full bg-gradient-to-r from-pink-900/40 to-purple-900/40 hover:from-pink-900/60 hover:to-purple-900/60 border-2 border-pink-500/50 rounded-xl p-3 transition-all mb-3"
-        >
-          <span className="text-white font-medium">❤️ Hobbies & Time Together</span>
-        </button>
+        <div className="space-y-3 max-h-[50vh] overflow-y-auto pb-4">
+          <button
+            onClick={() => setShowHobbies(true)}
+            className="w-full bg-gradient-to-r from-pink-900/40 to-purple-900/40 hover:from-pink-900/60 hover:to-purple-900/60 border-2 border-pink-500/50 rounded-xl p-3 transition-all"
+          >
+            <span className="text-white font-medium">❤️ Hobbies & Time Together</span>
+          </button>
 
-        <div className="space-y-3 max-h-[55vh] overflow-y-auto">
         {activities.map((chore, i) => (
           <motion.button
             key={chore.id}
