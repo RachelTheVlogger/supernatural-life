@@ -33,6 +33,8 @@ export default function AuthorCareer({ servant, onClose }) {
   const [showReview, setShowReview] = useState(null);
   const [showARCModal, setShowARCModal] = useState(false);
   const [newsletterSubscribers, setNewsletterSubscribers] = useState(0);
+  const [editingBook, setEditingBook] = useState(null);
+  const [facebookGroupSize, setFacebookGroupSize] = useState(servantCareer?.newsletter_subscribers || 0);
 
   const { data: books = [] } = useQuery({
     queryKey: ['books', servant.id],
@@ -586,7 +588,10 @@ export default function AuthorCareer({ servant, onClose }) {
             📚 Published ({publishedBooks.length})
           </button>
           <button onClick={() => setTab('marketing')} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${tab === 'marketing' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
-            📣 Marketing
+          📣 Marketing
+          </button>
+          <button onClick={() => setTab('social')} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${tab === 'social' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+          📱 Social
           </button>
           <button onClick={() => setTab('stats')} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${tab === 'stats' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             📊 Stats
@@ -677,6 +682,12 @@ export default function AuthorCareer({ servant, onClose }) {
                         <div style={{ width: `${book.quality}%` }} className="h-2 bg-green-500 rounded-full" />
                       </div>
                     </div>
+                  </div>
+
+                  <div className="flex gap-2 mb-2">
+                    <button onClick={() => setEditingBook(book)} className="text-gray-400 hover:text-white text-xs">
+                      ✏️ Edit Details
+                    </button>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
@@ -874,6 +885,151 @@ export default function AuthorCareer({ servant, onClose }) {
             </motion.div>
           )}
 
+          {tab === 'social' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+              <div className="bg-gray-800 rounded-xl p-4">
+                <h3 className="text-white font-medium mb-2">📘 Facebook Reader Group</h3>
+                <p className="text-gray-400 text-sm mb-3">Build your community and share updates</p>
+                <div className="bg-gray-900 rounded-lg p-3 mb-4">
+                  <p className="text-white text-xl font-bold">{facebookGroupSize} Members</p>
+                </div>
+                
+                <button
+                  onClick={async () => {
+                    const gain = Math.floor(Math.random() * 30) + 15;
+                    const newSize = facebookGroupSize + gain;
+                    setFacebookGroupSize(newSize);
+                    
+                    if (servantCareer) {
+                      await base44.entities.ServantCareer.update(servantCareer.id, {
+                        newsletter_subscribers: newSize
+                      });
+                    }
+                    
+                    await base44.entities.NightLog.create({
+                      entry: `${servant.name} promoted their Facebook reader group. Gained ${gain} new members.`,
+                      category: 'interaction',
+                      intensity: 'subtle'
+                    });
+                    
+                    queryClient.invalidateQueries(['career']);
+                  }}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mb-2"
+                >
+                  Promote Group
+                </button>
+              </div>
+
+              <div className="bg-gray-800 rounded-xl p-4">
+                <h4 className="text-white font-medium mb-3">Post to Group</h4>
+                
+                <button
+                  onClick={async () => {
+                    if (books.length === 0) return;
+                    
+                    const book = books[Math.floor(Math.random() * books.length)];
+                    const excerpts = [
+                      `"His fingers traced my jaw. 'You're mine,' he whispered." - Coming soon in ${book.title}!`,
+                      `Just finished a scene that made me CRY. ${book.title} is going to wreck you all. 💔`,
+                      `Sneak peek from ${book.title}: "The darkness called to me. And I answered."`,
+                      `Writing update: ${book.title} is at ${book.word_count} words! Almost there!`,
+                      `Poll time! What cover vibe for ${book.title}? Drop your thoughts below! 👇`
+                    ];
+                    
+                    const teaser = excerpts[Math.floor(Math.random() * excerpts.length)];
+                    const engagement = Math.floor(facebookGroupSize * (Math.random() * 0.3 + 0.2));
+                    
+                    setWorking(true);
+                    setWorkingMessage('Posting to Facebook group...');
+                    
+                    setTimeout(async () => {
+                      setWorkingMessage(`Posted! ${engagement} likes, ${Math.floor(engagement * 0.3)} comments!`);
+                      
+                      if (book.status === 'published' || book.status === 'ready') {
+                        const salesBoost = Math.floor(Math.random() * 10) + 5;
+                        const revenue = salesBoost * book.price * (PLATFORMS[book.platform]?.royalty || 0.7);
+                        
+                        await base44.entities.Book.update(book.id, {
+                          copies_sold: book.copies_sold + salesBoost,
+                          revenue: book.revenue + revenue,
+                          social_buzz: Math.min(100, (book.social_buzz || 0) + 5)
+                        });
+                      }
+                      
+                      await base44.entities.NightLog.create({
+                        entry: `${servant.name} posted: "${teaser.substring(0, 60)}..." - ${engagement} reactions!`,
+                        category: 'interaction',
+                        intensity: 'subtle'
+                      });
+                      
+                      queryClient.invalidateQueries(['books']);
+                      
+                      setTimeout(() => {
+                        setWorking(false);
+                        setWorkingMessage('');
+                      }, 1500);
+                    }, 1500);
+                  }}
+                  disabled={books.length === 0}
+                  className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white py-2 rounded-lg mb-2 disabled:opacity-50"
+                >
+                  📝 Share Teaser
+                </button>
+
+                <button
+                  onClick={async () => {
+                    if (publishedBooks.length === 0) return;
+                    
+                    const book = publishedBooks[Math.floor(Math.random() * publishedBooks.length)];
+                    const updates = [
+                      `${book.title} just hit ${book.copies_sold} sales! Thank you all so much! ❤️`,
+                      `New 5-star review for ${book.title}: "This book destroyed me in the best way!"`,
+                      `${book.title} is on sale this weekend! Grab it while it's hot! 🔥`,
+                      `Exciting news! ${book.title} audiobook is now available!`,
+                      `Reader question: Who's your favorite character from ${book.title}?`
+                    ];
+                    
+                    const update = updates[Math.floor(Math.random() * updates.length)];
+                    const engagement = Math.floor(facebookGroupSize * (Math.random() * 0.4 + 0.3));
+                    
+                    setWorking(true);
+                    setWorkingMessage('Posting update...');
+                    
+                    setTimeout(async () => {
+                      setWorkingMessage(`${engagement} reactions! Great engagement!`);
+                      
+                      const salesBoost = Math.floor(Math.random() * 15) + 8;
+                      const revenue = salesBoost * book.price * PLATFORMS[book.platform].royalty;
+                      
+                      await base44.entities.Book.update(book.id, {
+                        copies_sold: book.copies_sold + salesBoost,
+                        revenue: book.revenue + revenue,
+                        social_buzz: Math.min(100, (book.social_buzz || 0) + 8)
+                      });
+                      
+                      await base44.entities.NightLog.create({
+                        entry: `${servant.name} posted: "${update}" - Generated ${salesBoost} sales!`,
+                        category: 'interaction',
+                        intensity: 'moderate'
+                      });
+                      
+                      queryClient.invalidateQueries(['books']);
+                      
+                      setTimeout(() => {
+                        setWorking(false);
+                        setWorkingMessage('');
+                      }, 1500);
+                    }, 1500);
+                  }}
+                  disabled={publishedBooks.length === 0}
+                  className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-2 rounded-lg disabled:opacity-50"
+                >
+                  📢 Share News
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           {tab === 'stats' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <div className="grid md:grid-cols-2 gap-4">
@@ -1005,6 +1161,88 @@ export default function AuthorCareer({ servant, onClose }) {
                     <p className="text-gray-400 text-sm">Royalty: {platform.royalty * 100}% • {platform.reach} reach</p>
                   </button>
                 ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {editingBook && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setEditingBook(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full border border-purple-900/50"
+            >
+              <h3 className="text-white text-xl font-bold mb-4">Edit Book Details</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-gray-400 text-sm mb-1 block">Title</label>
+                  <input
+                    type="text"
+                    defaultValue={editingBook.title}
+                    onChange={(e) => setEditingBook({...editingBook, title: e.target.value})}
+                    className="w-full bg-gray-800 text-white rounded-lg px-3 py-2"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-gray-400 text-sm mb-1 block">Target Word Count</label>
+                  <input
+                    type="number"
+                    defaultValue={editingBook.target_words}
+                    onChange={(e) => setEditingBook({...editingBook, target_words: parseInt(e.target.value)})}
+                    className="w-full bg-gray-800 text-white rounded-lg px-3 py-2"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-gray-400 text-sm mb-2 block">Genre</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(BOOK_GENRES).map(([key, genre]) => (
+                      <button
+                        key={key}
+                        onClick={() => setEditingBook({...editingBook, genre: key})}
+                        className={`rounded-lg p-2 text-left text-sm ${
+                          editingBook.genre === key 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300'
+                        }`}
+                      >
+                        {genre.icon} {genre.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setEditingBook(null)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await base44.entities.Book.update(editingBook.id, {
+                        title: editingBook.title,
+                        genre: editingBook.genre,
+                        target_words: editingBook.target_words
+                      });
+                      queryClient.invalidateQueries(['books']);
+                      setEditingBook(null);
+                    }}
+                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg"
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
