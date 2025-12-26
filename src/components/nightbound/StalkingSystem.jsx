@@ -43,7 +43,6 @@ export default function StalkingSystem({ vampireState, onClose }) {
   const [outcome, setOutcome] = useState('');
   const [finding, setFinding] = useState(false);
   const [viewingDetails, setViewingDetails] = useState(null);
-  const [selectingMethod, setSelectingMethod] = useState(null);
   const [evidenceCollected, setEvidenceCollected] = useState([]);
   const [consequence, setConsequence] = useState(null);
 
@@ -96,12 +95,11 @@ export default function StalkingSystem({ vampireState, onClose }) {
     }, 3000);
   };
 
-  const handleStalk = async (location, method) => {
+  const handleStalk = async (method) => {
     setStalking(true);
     
     setTimeout(async () => {
-      const intensity = LOCATIONS.find(l => l.id === location.id).intensity;
-      const baseAwareness = method.awareness || (intensity === 'high' ? 15 : intensity === 'medium' ? 8 : 3);
+      const baseAwareness = method.awareness || 8;
       const awarenessGain = Math.floor(baseAwareness * (selectedTarget.personality_mult || 1));
       const enjoymentGain = Math.floor((Math.random() * 10 + 5) * (selectedTarget.enjoyment_mult || 1));
       const thrillShift = Math.floor(Math.random() * 5) + 2;
@@ -111,22 +109,24 @@ export default function StalkingSystem({ vampireState, onClose }) {
       const newEnjoyment = Math.min(100, selectedTarget.enjoyment + enjoymentGain);
       const newObsession = Math.min(100, selectedTarget.obsession + obsessionGain);
       const newThrill = Math.min(100, selectedTarget.fear_vs_thrill + thrillShift);
+      
+      const randomLocation = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)];
 
       // Generate outcome based on method and target state - MUTUAL DYNAMIC
       let result = '';
       
       if (method.id === 'show') {
         const shows = [
-          `You let ${selectedTarget.name} see you clearly. Their eyes lit up. They waved. Actually waved. Like they'd been waiting for you to show yourself.`,
-          `${selectedTarget.name} spotted you. Stopped walking. Smiled. Mouthed "finally." They've been hoping you'd reveal yourself.`,
-          `You stepped into the light. ${selectedTarget.name} saw you. Their whole face changed. Relief. Joy. "There you are," they breathed.`
+          `You let ${selectedTarget.name} see you clearly at ${randomLocation.label}. Their eyes lit up. They waved. Actually waved. Like they'd been waiting for you to show yourself.`,
+          `${selectedTarget.name} spotted you ${randomLocation.label}. Stopped walking. Smiled. Mouthed "finally." They've been hoping you'd reveal yourself.`,
+          `You stepped into the light ${randomLocation.label}. ${selectedTarget.name} saw you. Their whole face changed. Relief. Joy. "There you are," they breathed.`
         ];
         result = shows[Math.floor(Math.random() * shows.length)];
       } else if (method.id === 'exchange') {
         const exchanges = [
-          `Your eyes met across ${location.label}. ${selectedTarget.name} held your gaze. Neither of you looked away. The moment stretched. Electric.`,
-          `${selectedTarget.name} locked eyes with you. Smiled. Didn't look away. The message was clear: they want you to keep watching.`,
-          `Eye contact. ${selectedTarget.name} bit their lip. Looked you up and down. Deliberate. Inviting. They know exactly what they're doing.`
+          `Your eyes met ${randomLocation.label}. ${selectedTarget.name} held your gaze. Neither of you looked away. The moment stretched. Electric.`,
+          `${selectedTarget.name} locked eyes with you ${randomLocation.label}. Smiled. Didn't look away. The message was clear: they want you to keep watching.`,
+          `Eye contact ${randomLocation.label}. ${selectedTarget.name} bit their lip. Looked you up and down. Deliberate. Inviting. They know exactly what they're doing.`
         ];
         result = exchanges[Math.floor(Math.random() * exchanges.length)];
       } else if (method.id === 'gift') {
@@ -168,7 +168,7 @@ export default function StalkingSystem({ vampireState, onClose }) {
         obsession: newObsession,
         fear_vs_thrill: newThrill,
         times_watched: selectedTarget.times_watched + 1,
-        last_stalk_location: location.label,
+        last_stalk_location: randomLocation.label,
         knows_its_you: newAwareness > 70 ? true : selectedTarget.knows_its_you,
         wants_to_meet: newObsession > 60 ? true : selectedTarget.wants_to_meet
       });
@@ -185,7 +185,7 @@ export default function StalkingSystem({ vampireState, onClose }) {
       setTimeout(() => {
         setStalking(false);
         setOutcome('');
-        setSelectingMethod(null);
+        setSelectedTarget(null);
       }, 4000);
     }, 2500);
   };
@@ -413,8 +413,15 @@ export default function StalkingSystem({ vampireState, onClose }) {
           </>
         )}
 
-        {selectedTarget && !outcome && !selectingMethod && (
+        {selectedTarget && !outcome && (
           <div>
+            <button 
+              onClick={() => setSelectedTarget(null)}
+              className="text-purple-400 hover:text-purple-300 text-sm mb-4"
+            >
+              ← Back
+            </button>
+
             <div className="bg-gray-800 rounded-xl p-4 mb-6">
               <h3 className="text-white font-bold text-lg mb-2">{selectedTarget.name}</h3>
               <p className="text-gray-400 text-sm mb-3">
@@ -438,91 +445,12 @@ export default function StalkingSystem({ vampireState, onClose }) {
               </div>
             </div>
 
-            <h4 className="text-white text-sm font-medium mb-3">Where are they waiting for you?</h4>
+            <h4 className="text-white text-sm font-medium mb-3">How will you interact?</h4>
             <div className="space-y-2 mb-6">
-              {LOCATIONS.map(loc => (
-                <button
-                  key={loc.id}
-                  onClick={() => setSelectingMethod(loc)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-purple-400" />
-                      <span className="text-white text-sm">{loc.label}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-500 text-xs">{loc.time}</span>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        loc.intensity === 'high' ? 'bg-red-900/40 text-red-300' :
-                        loc.intensity === 'medium' ? 'bg-yellow-900/40 text-yellow-300' :
-                        'bg-green-900/40 text-green-300'
-                      }`}>
-                        {loc.intensity} risk
-                      </span>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {selectedTarget.wants_to_meet && selectedTarget.obsession > 70 && (
-              <>
-                <button
-                  onClick={handleMeet}
-                  className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl p-4 transition-all mb-3"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Heart className="w-5 h-5" />
-                    <span className="text-white font-medium">Finally Meet Them</span>
-                  </div>
-                </button>
-
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  <button
-                    onClick={handleConvertToServant}
-                    className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-purple-300 text-sm"
-                  >
-                    Make Servant
-                  </button>
-                  <button
-                    onClick={handleConvertToDonor}
-                    className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg py-3 text-red-300 text-sm"
-                  >
-                    Make Donor
-                  </button>
-                </div>
-              </>
-            )}
-
-            <button
-              onClick={() => setSelectedTarget(null)}
-              className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-2 text-gray-300 text-sm"
-            >
-              Back
-            </button>
-          </div>
-        )}
-
-        {selectingMethod && !outcome && (
-          <div>
-            <button 
-              onClick={() => setSelectingMethod(null)}
-              className="text-purple-400 hover:text-purple-300 text-sm mb-4"
-            >
-              ← Back
-            </button>
-
-            <div className="bg-gray-800 rounded-xl p-4 mb-4">
-              <h3 className="text-white font-bold mb-1">{selectingMethod.label}</h3>
-              <p className="text-gray-400 text-sm">{selectedTarget.name} is here. They're hoping you show up.</p>
-            </div>
-
-            <div className="space-y-2">
               {STALKING_METHODS.map(method => (
                 <button
                   key={method.id}
-                  onClick={() => handleStalk(selectingMethod, method)}
+                  onClick={() => handleStalk(method)}
                   className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                 >
                   <div className="flex justify-between items-start">
@@ -541,8 +469,39 @@ export default function StalkingSystem({ vampireState, onClose }) {
                 </button>
               ))}
             </div>
+
+            {selectedTarget.wants_to_meet && selectedTarget.obsession > 70 && (
+              <>
+                <button
+                  onClick={handleMeet}
+                  className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl p-4 transition-all mb-3"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Heart className="w-5 h-5" />
+                    <span className="text-white font-medium">Finally Meet Them</span>
+                  </div>
+                </button>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={handleConvertToServant}
+                    className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-purple-300 text-sm"
+                  >
+                    Make Servant
+                  </button>
+                  <button
+                    onClick={handleConvertToDonor}
+                    className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg py-3 text-red-300 text-sm"
+                  >
+                    Make Donor
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
+
+
 
         {viewingDetails && (
           <div>
