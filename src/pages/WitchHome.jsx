@@ -95,11 +95,15 @@ export default function WitchHome() {
   const witch = witches[0];
   const vampireState = vampireStates[0];
 
-  // Generate additional spells based on power level
+  // INFINITE spell generation based on power level
+  const [generatedSpells, setGeneratedSpells] = React.useState({});
+  const [generatingSpells, setGeneratingSpells] = React.useState(false);
+
   const getAvailableSpells = () => {
     const baseSpells = { ...SPELLS };
     const powerLevel = witch?.power_level || 80;
 
+    // Base unlocks (82-98)
     if (powerLevel >= 82) {
       baseSpells.elemental = [...baseSpells.elemental,
         { name: 'Inferno Storm', icon: '🌋', herbs: 'Dragon\'s blood, sulfur', power: 70, description: 'Rain down meteoric fire', cost: 60, latin: 'Ignis Tempestas' }
@@ -175,8 +179,89 @@ export default function WitchHome() {
       ];
     }
 
+    // INFINITE GENERATION: Add AI-generated spells for power > 100
+    if (powerLevel > 100 && generatedSpells[powerLevel]) {
+      Object.keys(generatedSpells[powerLevel]).forEach(category => {
+        if (baseSpells[category]) {
+          baseSpells[category] = [...baseSpells[category], ...generatedSpells[powerLevel][category]];
+        }
+      });
+    }
+
     return baseSpells;
   };
+
+  // Generate new spells when power exceeds 100
+  React.useEffect(() => {
+    if (!witch || witch.power_level <= 100 || generatedSpells[witch.power_level] || generatingSpells) return;
+
+    const generateNewSpells = async () => {
+      setGeneratingSpells(true);
+      try {
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `You are generating new ultra-powerful witch spells for a power level of ${witch.power_level}.
+          
+Generate 3 spells across different categories (elemental, psychic, necromancy, dark_magic, protection, divination).
+Each spell should be more powerful than anything before. Power level ${witch.power_level} is godlike.
+
+Return ONLY valid JSON in this exact format:
+{
+  "spells": [
+    {
+      "category": "elemental",
+      "name": "Cosmic Inferno",
+      "icon": "🌌",
+      "herbs": "Stardust, cosmic ash",
+      "power": ${witch.power_level},
+      "description": "Summon fire from dying stars",
+      "cost": ${Math.floor(witch.power_level * 0.95)},
+      "latin": "Cosmicus Incendium"
+    }
+  ]
+}
+
+Make spells creative, powerful, and thematically appropriate for power level ${witch.power_level}.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              spells: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    category: { type: 'string' },
+                    name: { type: 'string' },
+                    icon: { type: 'string' },
+                    herbs: { type: 'string' },
+                    power: { type: 'number' },
+                    description: { type: 'string' },
+                    cost: { type: 'number' },
+                    latin: { type: 'string' }
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        const categorized = {};
+        response.spells.forEach(spell => {
+          if (!categorized[spell.category]) categorized[spell.category] = [];
+          categorized[spell.category].push(spell);
+        });
+
+        setGeneratedSpells(prev => ({
+          ...prev,
+          [witch.power_level]: categorized
+        }));
+      } catch (e) {
+        console.error('Failed to generate spells:', e);
+      }
+      setGeneratingSpells(false);
+    };
+
+    generateNewSpells();
+  }, [witch?.power_level, generatedSpells, generatingSpells]);
 
   const handleCastSpell = async (spell) => {
     if (!witch) return;
@@ -205,7 +290,7 @@ export default function WitchHome() {
       setSpellOutcome(outcome);
 
       const newPower = success 
-        ? Math.min(100, witch.power_level - spell.cost + 5)
+        ? witch.power_level - spell.cost + 5
         : Math.max(0, witch.power_level - spell.cost - 10);
 
       await base44.entities.Witch.update(witch.id, {
@@ -235,7 +320,7 @@ export default function WitchHome() {
       const powerGain = ritual.powerBoost + Math.floor(Math.random() * 10);
       
       await base44.entities.Witch.update(witch.id, {
-        power_level: Math.min(100, witch.power_level + powerGain)
+        power_level: witch.power_level + powerGain
       });
 
       await base44.entities.NightLog.create({
@@ -599,7 +684,9 @@ export default function WitchHome() {
                 <X className="w-5 h-5" />
               </button>
 
-              <h2 className="text-2xl font-bold text-white mb-4">Spellbook</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Spellbook {generatingSpells && <span className="text-purple-400 text-sm ml-2">✨ Generating new spells...</span>}
+              </h2>
 
               {/* Category Tabs */}
               <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
