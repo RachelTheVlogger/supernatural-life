@@ -361,6 +361,38 @@ export default function VampireHome() {
               </div>
           </motion.div>
           
+          {/* Vampire Progression Display */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className="mb-6"
+          >
+            <div className="bg-gradient-to-r from-purple-950/60 to-red-950/60 border-2 border-purple-500/50 rounded-2xl p-6">
+              <h3 className="text-white text-lg font-bold mb-4">Your Vampire Progression</h3>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-black/30 rounded-lg p-3 border border-purple-500/20">
+                  <p className="text-purple-300 text-xs mb-1">Stage</p>
+                  <p className="text-white font-bold">
+                    {(vampireState.vampire_stage || 1) === 1 ? '🩸 Newborn' : 
+                     (vampireState.vampire_stage || 1) === 2 ? '🌙 Fledgling' : 
+                     (vampireState.vampire_stage || 1) === 3 ? '⚡ Established' : '👑 Elder'}
+                  </p>
+                </div>
+                <div className="bg-black/30 rounded-lg p-3 border border-purple-500/20">
+                  <p className="text-purple-300 text-xs mb-1">Power Level</p>
+                  <p className="text-white font-bold">{vampireState.vampire_power_level || 0}/100</p>
+                </div>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div 
+                  style={{ width: `${vampireState.vampire_power_level || 0}%` }}
+                  className="h-2 bg-gradient-to-r from-purple-600 to-red-500 rounded-full"
+                />
+              </div>
+            </div>
+          </motion.div>
+
           {/* Evolution Tree Access */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
