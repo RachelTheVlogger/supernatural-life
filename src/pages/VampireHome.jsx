@@ -886,6 +886,27 @@ export default function VampireHome() {
         {showCovenManagement && (
           <CovenManagement vampireState={vampireState} servants={servants} onClose={() => setShowCovenManagement(false)} />
         )}
+        {showWerewolves && (
+          <WerewolfSystem vampireState={vampireState} onClose={() => setShowWerewolves(false)} />
+        )}
+        {showDaylightRings && (
+          <DaylightRingCrafting vampireState={vampireState} witches={witches} onClose={() => setShowDaylightRings(false)} />
+        )}
+        {showClubs && (
+          <VampireClubScene vampireState={vampireState} onClose={() => setShowClubs(false)} />
+        )}
+        {showArtifacts && (
+          <ArtifactCollection vampireState={vampireState} onClose={() => setShowArtifacts(false)} />
+        )}
+        {showBloodBonds && (
+          <BloodBondSystem vampireState={vampireState} servants={servants} onClose={() => setShowBloodBonds(false)} />
+        )}
+        {showPolitics && (
+          <VampirePolitics vampireState={vampireState} onClose={() => setShowPolitics(false)} />
+        )}
+        {showAging && (
+          <VampireAgingSystem vampireState={vampireState} onClose={() => setShowAging(false)} />
+        )}
         {showVampireIdentity && (
           <motion.div
             initial={{ opacity: 0 }}

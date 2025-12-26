@@ -20,6 +20,7 @@ import TattooStudio from '@/components/nightbound/TattooStudio';
 import AuthorCareer from '@/components/nightbound/AuthorCareer';
 import ServantWitchInteraction from '@/components/nightbound/ServantWitchInteraction';
 import WitchServantInteraction from '@/components/nightbound/WitchServantInteraction';
+import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
 
 const CHORES = [
   { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
@@ -96,6 +97,7 @@ export default function ServantHome() {
   const [showAuthor, setShowAuthor] = useState(false);
   const [showWitchVisit, setShowWitchVisit] = useState(false);
   const [showWitchTalk, setShowWitchTalk] = useState(false);
+  const [showFamily, setShowFamily] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -330,6 +332,12 @@ export default function ServantHome() {
             <MessageCircle className="w-4 h-4" />
             Messages {unreadMessages > 0 && `(${unreadMessages})`}
           </button>
+          <button
+            onClick={() => setShowFamily(true)}
+            className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+          >
+            Family
+          </button>
         </div>
       </motion.div>
       
@@ -520,6 +528,13 @@ export default function ServantHome() {
             servant={servant}
             witch={witches[0]}
             onClose={() => setShowWitchTalk(false)}
+          />
+        )}
+        {showFamily && vampireState && (
+          <ServantFamilySystem
+            servant={servant}
+            vampireState={vampireState}
+            onClose={() => setShowFamily(false)}
           />
         )}
         {!vampireState && (showOnlyFangs || showServantInteractions || showYouTube || showSnapchat || showDating) && (
