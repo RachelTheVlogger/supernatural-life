@@ -29,6 +29,20 @@ export default function Layout({ children, currentPageName }) {
   // Show nav on main game pages only
   const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome'].includes(currentPageName);
   
+  // Fetch killers for killer tab
+  const { data: killers = [] } = useQuery({
+    queryKey: ['serialKillers'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.SerialKiller.list();
+      } catch (e) {
+        return [];
+      }
+    },
+    enabled: showNav,
+    retry: 1
+  });
+  
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
   const currentServantId = urlParams.get('servant') || urlParams.get('id') || (servants.length > 0 ? servants[0].id : null);
@@ -41,11 +55,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vampire', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
-    { name: 'Succubus', icon: Heart, path: 'SuccubusHome' },
-    { name: 'Incubus', icon: Skull, path: 'IncubusHome' },
-    { name: 'Wolf', icon: Zap, path: 'WerewolfHome' },
-    { name: 'Witch', icon: Sparkles, path: 'WitchHome' },
-    { name: 'Killer', icon: Skull, path: 'SerialKillerHome' }
+    { name: 'Killer', icon: Skull, path: 'SerialKillerHome', show: killers.length > 0 }
   ];
   
   return (
@@ -89,7 +99,7 @@ export default function Layout({ children, currentPageName }) {
       {showNav && (
         <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-purple-900/30 z-50">
           <div className="flex justify-around items-center px-4 py-3">
-            {navItems.map(item => {
+            {navItems.filter(item => item.show !== false).map(item => {
               const Icon = item.icon;
               const isActive = currentPageName === item.name;
               return (
