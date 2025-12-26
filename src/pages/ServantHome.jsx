@@ -38,11 +38,7 @@ const BUSINESS_ACTIVITIES = [
   { id: 'onlyfangs', label: 'OnlyFangs (adult content)', icon: Camera, duration: 0, isModal: true },
   { id: 'youtube', label: 'YouTube Channel', icon: Camera, duration: 0, isModal: true },
   { id: 'patreon', label: 'Patreon', icon: Coffee, duration: 0, isModal: true },
-  { id: 'snapchat', label: 'Premium Snapchat', icon: MessageCircle, duration: 0, isModal: true },
-  { id: 'design', label: 'Design new pieces', icon: BookOpen, duration: 2500, outcomes: ['You sketched new designs. Moon phases. Ravens. Thorns.', 'Inspiration struck. You drew late into the night.', 'New designs flow from you. Darker. More beautiful.'] },
-  { id: 'photograph', label: 'Photograph jewelry', icon: Camera, duration: 2000, outcomes: ['You captured the perfect shot. Light and shadow dancing.', 'Each angle tells a story. Your work deserves to be seen.', 'The photos turned out hauntingly beautiful.'] },
-  { id: 'social', label: 'Post on social media', icon: MessageCircle, duration: 1500, outcomes: ['Posted your latest piece. Comments already rolling in.', 'Your followers love the new design. Engagement up.', 'The goth community is obsessed with your work.'] },
-  { id: 'restock', label: 'Buy materials', icon: ShoppingBag, duration: 2500, outcomes: ['Restocked materials. Silver, stones, chains.', 'New supplies arrived. Time to create.', 'Materials acquired. Your workshop is ready.'] }
+  { id: 'snapchat', label: 'Premium Snapchat', icon: MessageCircle, duration: 0, isModal: true }
 ];
 
 export default function ServantHome() {
@@ -58,6 +54,17 @@ export default function ServantHome() {
   const [showYouTube, setShowYouTube] = useState(false);
   const [showPatreon, setShowPatreon] = useState(false);
   const [showSnapchat, setShowSnapchat] = useState(false);
+  const [showCareerSelector, setShowCareerSelector] = useState(false);
+  const [showTattoo, setShowTattoo] = useState(false);
+  const [showAuthor, setShowAuthor] = useState(false);
+  
+  const { data: career = [] } = useQuery({
+    queryKey: ['career', servantId],
+    queryFn: () => base44.entities.ServantCareer.filter({ servant_id: servantId }),
+    enabled: !!servantId
+  });
+  
+  const servantCareer = career[0];
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -117,7 +124,15 @@ export default function ServantHome() {
   const handleChore = async (chore) => {
     if (chore.isModal) {
       if (chore.id === 'manage') {
-        setShowBusinessModal(true);
+        if (!servantCareer || (!servantCareer.jewelry_business_active && !servantCareer.tattoo_business_active && !servantCareer.author_career_active)) {
+          setShowCareerSelector(true);
+        } else if (servantCareer.jewelry_business_active) {
+          setShowBusinessModal(true);
+        } else if (servantCareer.tattoo_business_active) {
+          setShowTattoo(true);
+        } else if (servantCareer.author_career_active) {
+          setShowAuthor(true);
+        }
       } else if (chore.id === 'onlyfangs') {
         setShowOnlyFangs(true);
       } else if (chore.id === 'youtube') {
@@ -395,6 +410,30 @@ export default function ServantHome() {
             servant={servant}
             vampireState={vampireState}
             onClose={() => setShowSnapchat(false)}
+          />
+        )}
+        {showCareerSelector && (
+          <CareerSelector
+            servant={servant}
+            onClose={() => setShowCareerSelector(false)}
+            onSelect={(careerType) => {
+              setShowCareerSelector(false);
+              if (careerType === 'jewelry') setShowBusinessModal(true);
+              else if (careerType === 'tattoo') setShowTattoo(true);
+              else if (careerType === 'author') setShowAuthor(true);
+            }}
+          />
+        )}
+        {showTattoo && (
+          <TattooStudio
+            servant={servant}
+            onClose={() => setShowTattoo(false)}
+          />
+        )}
+        {showAuthor && (
+          <AuthorCareer
+            servant={servant}
+            onClose={() => setShowAuthor(false)}
           />
         )}
         </AnimatePresence>
