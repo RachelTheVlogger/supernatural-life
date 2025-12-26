@@ -961,7 +961,7 @@ export default function VampireHome() {
                 </div>
                 {servants.slice(0, 2).map(servant => (
                   <div key={servant.id}>
-                    <div className="flex justify-between items-center mb-1">
+                    <div className="flex justify-between items-center">
                       <span className="text-gray-400 text-sm">{servant.name}</span>
                       <div className="flex items-center gap-2">
                         <div className="w-20 bg-gray-700 rounded-full h-1.5">
@@ -972,26 +972,6 @@ export default function VampireHome() {
                         </div>
                         <span className="text-white text-xs w-8">{servant.relationship || 0}</span>
                       </div>
-                    </div>
-                    <div className="flex gap-1">
-                     <button
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         setSelectedServantForInteraction(servant);
-                       }}
-                       className="flex-1 bg-pink-950/30 hover:bg-pink-950/50 border border-pink-800/30 rounded-lg py-1.5 text-xs text-pink-300 transition-colors touch-manipulation"
-                     >
-                       Interact
-                     </button>
-                     <button
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         setDateServant(servant);
-                       }}
-                       className="flex-1 bg-purple-950/30 hover:bg-purple-950/50 border border-purple-800/30 rounded-lg py-1.5 text-xs text-purple-300 transition-colors touch-manipulation"
-                     >
-                       Date
-                     </button>
                     </div>
                   </div>
                 ))}
