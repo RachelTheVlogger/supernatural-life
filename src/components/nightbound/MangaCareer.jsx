@@ -140,24 +140,24 @@ export default function MangaCareer({ servant, onClose }) {
         </div>
 
         {career?.series_name && (
-          <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4 mb-6">
-            <h3 className="text-purple-300 font-bold mb-2">{career.series_name}</h3>
-            <p className="text-gray-400 text-sm capitalize mb-3">{career.current_genre} manga</p>
+          <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4 mb-4">
+            <h3 className="text-purple-300 font-bold text-lg mb-1">{career.series_name}</h3>
+            <p className="text-gray-400 text-xs capitalize mb-3">{career.current_genre} manga</p>
             
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="bg-gray-800 rounded-lg p-3">
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="bg-gray-800 rounded-lg p-2">
                 <Users className="w-4 h-4 text-blue-400 mb-1" />
-                <p className="text-white font-bold">{career.fans || 0}</p>
+                <p className="text-white font-bold text-sm">{career.fans || 0}</p>
                 <p className="text-gray-400 text-xs">Fans</p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-gray-800 rounded-lg p-2">
                 <BookOpen className="w-4 h-4 text-green-400 mb-1" />
-                <p className="text-white font-bold">{career.chapters_released || 0}</p>
+                <p className="text-white font-bold text-sm">{career.chapters_released || 0}</p>
                 <p className="text-gray-400 text-xs">Chapters</p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-gray-800 rounded-lg p-2">
                 <TrendingUp className="w-4 h-4 text-yellow-400 mb-1" />
-                <p className="text-white font-bold">${career.income || 0}</p>
+                <p className="text-white font-bold text-sm">${career.income || 0}</p>
                 <p className="text-gray-400 text-xs">Income</p>
               </div>
             </div>
@@ -165,7 +165,7 @@ export default function MangaCareer({ servant, onClose }) {
             <button
               onClick={handleDrawChapter}
               disabled={working}
-              className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50"
+              className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium"
             >
               {working ? 'Drawing...' : 'Draw Next Chapter'}
             </button>
