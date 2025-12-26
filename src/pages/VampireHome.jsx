@@ -886,25 +886,28 @@ export default function VampireHome() {
         {showCovenManagement && (
           <CovenManagement vampireState={vampireState} servants={servants} onClose={() => setShowCovenManagement(false)} />
         )}
-        {showWerewolves && (
+        {showWerewolves && vampireState && (
           <WerewolfSystem vampireState={vampireState} onClose={() => setShowWerewolves(false)} />
         )}
-        {showDaylightRings && (
+        {showDaylightRings && vampireState && (
           <DaylightRingCrafting vampireState={vampireState} witches={witches} onClose={() => setShowDaylightRings(false)} />
         )}
-        {showClubs && (
+        {showClubs && vampireState && (
           <VampireClubScene vampireState={vampireState} onClose={() => setShowClubs(false)} />
         )}
-        {showArtifacts && (
+        {showArtifacts && vampireState && (
           <ArtifactCollection vampireState={vampireState} onClose={() => setShowArtifacts(false)} />
         )}
-        {showBloodBonds && (
+        {showFamily && vampireState && (
+          <ServantFamilySystem servant={servants[0]} vampireState={vampireState} onClose={() => setShowFamily(false)} />
+        )}
+        {showBloodBonds && vampireState && (
           <BloodBondSystem vampireState={vampireState} servants={servants} onClose={() => setShowBloodBonds(false)} />
         )}
-        {showPolitics && (
+        {showPolitics && vampireState && (
           <VampirePolitics vampireState={vampireState} onClose={() => setShowPolitics(false)} />
         )}
-        {showAging && (
+        {showAging && vampireState && (
           <VampireAgingSystem vampireState={vampireState} onClose={() => setShowAging(false)} />
         )}
         {showVampireIdentity && (
