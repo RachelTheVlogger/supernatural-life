@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Video, Users, Eye, TrendingUp, DollarSign, Play, MessageCircle, ThumbsUp, Bell, Award, Flame, Zap, AlertTriangle } from 'lucide-react';
+import { X, Video, Users, Eye, TrendingUp, DollarSign, Play, MessageCircle, ThumbsUp, Bell, Award, Flame, Zap, AlertTriangle, Shield } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import StalkerManagement from './StalkerManagement';
 
 const VIDEO_CATEGORIES = {
   gaming: { icon: '🎮', label: 'Gaming', examples: ['Horror game playthrough', 'Late night gaming stream', 'Scary game reactions', 'Dark souls gameplay'] },
@@ -29,6 +30,7 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
   const [streamChat, setStreamChat] = useState([]);
   const [viewingComments, setViewingComments] = useState(null);
   const [filmWithVampire, setFilmWithVampire] = useState(false);
+  const [showStalkers, setShowStalkers] = useState(false);
 
   const { data: channels = [] } = useQuery({
     queryKey: ['youtube-channel', servant.id],
@@ -49,6 +51,50 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
     enabled: !!channels[0],
     staleTime: 3000
   });
+
+  const { data: stalkers = [] } = useQuery({
+    queryKey: ['stalkers', servant.id],
+    queryFn: () => base44.entities.Stalker.filter({ servant_id: servant.id }),
+    staleTime: 3000
+  });
+
+  // Spawn stalker
+  React.useEffect(() => {
+    if (channel && channel.subscriber_count > 500 && Math.random() > 0.95 && stalkers.filter(s => s.platform === 'youtube').length < 2) {
+      const usernames = ['ObsessedFan', 'AlwaysWatching', 'YourBiggestFan', 'Stalker4Life', 'FoundYou'];
+      const behaviors = ['Comments on every video within minutes', 'Knows your upload schedule', 'References details from old videos', 'Asks personal questions'];
+      
+      base44.entities.Stalker.create({
+        servant_id: servant.id,
+        platform: 'youtube',
+        username: usernames[Math.floor(Math.random() * usernames.length)],
+        obsession_level: Math.floor(Math.random() * 30) + 20,
+        danger_level: 'harmless',
+        behavior_patterns: [behaviors[Math.floor(Math.random() * behaviors.length)]]
+      }).then(() => queryClient.invalidateQueries(['stalkers']));
+    }
+  }, [channel?.subscriber_count]);
+
+  // Escalate stalkers
+  React.useEffect(() => {
+    if (stalkers.length > 0 && Math.random() > 0.92) {
+      const ytStalkers = stalkers.filter(s => s.platform === 'youtube' && !s.blocked);
+      if (ytStalkers.length > 0) {
+        const stalker = ytStalkers[Math.floor(Math.random() * ytStalkers.length)];
+        if (stalker.obsession_level < 90) {
+          const newBehaviors = ['Found your Instagram', 'Mentioned your location', 'Asked where you live', 'Sent creepy DM', 'Showed up in comments of friends'];
+          const newObsession = Math.min(100, stalker.obsession_level + 10);
+          const newDanger = newObsession > 80 ? 'critical' : newObsession > 60 ? 'dangerous' : newObsession > 40 ? 'threatening' : 'concerning';
+          
+          base44.entities.Stalker.update(stalker.id, {
+            obsession_level: newObsession,
+            danger_level: newDanger,
+            behavior_patterns: [...(stalker.behavior_patterns || []), newBehaviors[Math.floor(Math.random() * newBehaviors.length)]].slice(-5)
+          }).then(() => queryClient.invalidateQueries(['stalkers']));
+        }
+      }
+    }
+  }, [videos.length]);
 
   const channel = channels[0];
   const hasChannel = !!channel;
@@ -550,6 +596,23 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           </div>
         </div>
 
+        {/* Stalker Alert */}
+        {stalkers.filter(s => s.platform === 'youtube' && !s.blocked && s.danger_level !== 'harmless').length > 0 && (
+          <div className="mb-4 bg-red-900/40 border-2 border-red-500/50 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
+                <span className="text-red-300 font-medium">
+                  {stalkers.filter(s => s.platform === 'youtube' && !s.blocked && s.danger_level !== 'harmless').length} YouTube Stalker{stalkers.filter(s => s.platform === 'youtube' && !s.blocked && s.danger_level !== 'harmless').length > 1 ? 's' : ''}
+                </span>
+              </div>
+              <button onClick={() => setShowStalkers(true)} className="text-red-400 hover:text-red-300 text-sm">
+                Manage →
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Controversy Warning */}
         {channel.controversy_level > 50 && (
           <motion.div
@@ -572,6 +635,14 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           </button>
           <button onClick={() => setTab('livestream')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'livestream' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             🔴 Livestream
+          </button>
+          <button onClick={() => setTab('stalkers')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm relative ${tab === 'stalkers' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            ⚠️ Stalkers
+            {stalkers.filter(s => s.platform === 'youtube' && !s.blocked && s.danger_level !== 'harmless').length > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                {stalkers.filter(s => s.platform === 'youtube' && !s.blocked && s.danger_level !== 'harmless').length}
+              </span>
+            )}
           </button>
           <button onClick={() => setTab('algorithm')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'algorithm' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             🚀 Algorithm
@@ -874,6 +945,53 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           </div>
         )}
 
+        {/* STALKERS TAB */}
+        {tab === 'stalkers' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            {stalkers.filter(s => s.platform === 'youtube').length === 0 ? (
+              <div className="text-center py-12">
+                <Shield className="w-16 h-16 text-green-400 mx-auto mb-4 opacity-50" />
+                <p className="text-gray-400">No stalkers on YouTube yet.</p>
+              </div>
+            ) : (
+              stalkers.filter(s => s.platform === 'youtube').map(stalker => {
+                const DANGER_COLORS = {
+                  harmless: 'bg-gray-700 text-gray-300',
+                  concerning: 'bg-yellow-900/50 text-yellow-300',
+                  threatening: 'bg-orange-900/50 text-orange-300',
+                  dangerous: 'bg-red-900/50 text-red-300',
+                  critical: 'bg-red-600 text-white'
+                };
+                
+                return (
+                  <div key={stalker.id} className="bg-gray-800 rounded-xl p-4 border-2 border-red-900/30">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="text-white font-bold">{stalker.username}</h3>
+                        {stalker.real_name && <p className="text-red-400 text-sm">Real: {stalker.real_name}</p>}
+                      </div>
+                      <span className={`px-3 py-1 rounded text-xs ${DANGER_COLORS[stalker.danger_level]}`}>
+                        {stalker.danger_level}
+                      </span>
+                    </div>
+                    {stalker.behavior_patterns?.length > 0 && (
+                      <div className="mb-3 bg-black/40 rounded p-2">
+                        <p className="text-red-300 text-xs font-medium mb-1">Behavior:</p>
+                        {stalker.behavior_patterns.slice(-3).map((b, i) => (
+                          <p key={i} className="text-gray-400 text-xs">• {b}</p>
+                        ))}
+                      </div>
+                    )}
+                    <button onClick={() => setShowStalkers(true)} className="w-full bg-red-900/40 hover:bg-red-900/60 text-red-300 py-2 rounded-lg text-sm">
+                      Manage
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+
         {/* ANALYTICS TAB */}
         {tab === 'analytics' && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
@@ -1034,8 +1152,15 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           </div>
         )}
 
-        {/* Comments Modal */}
+        {/* Stalker Modal */}
         <AnimatePresence>
+          {showStalkers && (
+            <StalkerManagement
+              servant={servant}
+              onClose={() => setShowStalkers(false)}
+            />
+          )}
+
           {viewingComments && (
             <motion.div
               initial={{ opacity: 0 }}
