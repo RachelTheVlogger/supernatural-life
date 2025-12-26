@@ -36,11 +36,16 @@ export default function ServantFamilySystem({ servant, vampireState, onClose }) 
   const interactions = {
     vampire: [
       { id: 'meet', label: 'Meet Them', color: 'blue', disabled: (m) => m.knows_secret },
+      { id: 'gift', label: 'Send Expensive Gift', color: 'pink', disabled: () => false },
+      { id: 'save', label: 'Save Them From Danger', color: 'green', disabled: () => false },
       { id: 'talk', label: 'Deep Conversation', color: 'purple', disabled: (m) => !m.knows_secret },
+      { id: 'show-humanity', label: 'Show Your Humanity', color: 'blue', disabled: (m) => !m.knows_secret },
+      { id: 'protect', label: 'Offer Protection', color: 'green', disabled: (m) => !m.knows_secret },
+      { id: 'share-story', label: 'Share Your Story', color: 'yellow', disabled: (m) => !m.knows_secret },
+      { id: 'dinner', label: 'Have Dinner Together', color: 'pink', disabled: (m) => !m.knows_secret },
       { id: 'blood_bond', label: 'Blood Bond', color: 'red', disabled: (m) => !m.knows_secret },
       { id: 'compel', label: 'Compel Silence', color: 'purple', disabled: (m) => !m.knows_secret },
       { id: 'threaten', label: 'Threaten', color: 'gray', disabled: (m) => !m.knows_secret },
-      { id: 'gift', label: 'Give Gift', color: 'pink', disabled: () => false },
     ],
     human: [
       { id: 'visit', label: 'Visit Them', color: 'blue' },
@@ -108,6 +113,46 @@ export default function ServantFamilySystem({ servant, vampireState, onClose }) 
           relationChange = Math.floor(Math.random() * 15) + 10;
           concernChange = Math.floor(Math.random() * 10) - 10;
           message = `You sent ${member.member_name} a gift. Expensive. Thoughtful.\n\nThey called ${servant.name}. "Tell your... tell them thank you. This is... too much."\n\n${servant.name} smiled. "They care about the people I care about."\n\n${member.member_name} softened a little.`;
+        } else if (type === 'save') {
+          relationChange = Math.floor(Math.random() * 40) + 40;
+          concernChange = Math.floor(Math.random() * 30) + 20;
+          const scenarios = [
+            `${member.member_name} was being mugged. Dark alley. Three attackers.\n\nYou appeared. Faster than human. Stronger than possible.\n\nThey scattered. Terrified of you.\n\n${member.member_name} stared. "What... what are you?"\n\n"Someone who protects ${servant.name}'s family."`,
+            `Car accident. ${member.member_name} trapped. Bleeding.\n\nYou tore the door off. Pulled them free.\n\nImpossible strength. Healing their wounds with your blood.\n\n"You saved my life," they whispered. "Why?"\n\n"Because you matter to ${servant.name}."\n\nGratitude. Fear. Respect.`,
+            `${member.member_name} collapsed. Heart attack. Dying.\n\nYou fed them your blood. Ancient. Powerful. Life-giving.\n\nThey gasped back to life. "I saw death. Then I saw you."\n\n"You're not dying today."\n\nDebt unpayable. Connection forged.`
+          ];
+          message = scenarios[Math.floor(Math.random() * scenarios.length)];
+          updates.knows_secret = true;
+        } else if (type === 'show-humanity') {
+          const humanity = vampireState.humanity || 50;
+          const success = humanity > 40;
+          relationChange = success ? Math.floor(Math.random() * 30) + 25 : Math.floor(Math.random() * 15) + 5;
+          concernChange = success ? Math.floor(Math.random() * 20) - 25 : Math.floor(Math.random() * 10);
+          
+          if (success) {
+            message = `You sat with ${member.member_name}. Let them see you. Really see you.\n\nNot the monster. The person.\n\nYou talked about your life before. Your fears. Your love for ${servant.name}.\n\n"You're not what I expected," they said softly. "You're... you're still human. Somehow."\n\n"I try to be."\n\nThey reached out. Touched your hand. "Thank you for making ${servant.name} happy."`;
+          } else {
+            message = `You tried to show humanity. But it's fading.\n\nThe darkness showing through. The hunger. The coldness.\n\n${member.member_name} saw it. "You're trying. I can tell. But... you're not one of us anymore."\n\nA small connection. But walls remain.`;
+          }
+        } else if (type === 'protect') {
+          relationChange = Math.floor(Math.random() * 25) + 20;
+          concernChange = Math.floor(Math.random() * 15) - 15;
+          message = `"There are things in this world," you told ${member.member_name}. "Dangerous things. Hunters. Witches. Other vampires."\n\n"I'm making sure none of them touch you. Or ${servant.name}."\n\n${member.member_name} was quiet. Then: "You'd protect us?"\n\n"With my life. With everything."\n\nThey nodded slowly. "Maybe... maybe this isn't so bad. Having a vampire in the family."`;
+        } else if (type === 'share-story') {
+          relationChange = Math.floor(Math.random() * 35) + 30;
+          concernChange = Math.floor(Math.random() * 20) - 20;
+          message = `You told ${member.member_name} your story.\n\nHow you were turned. The pain. The isolation. The centuries of loneliness.\n\nThen ${servant.name}. Light in the darkness. Purpose. Love.\n\n"I never wanted this life," you said. "But I wouldn't change it now. Not if it means losing ${servant.name}."\n\n${member.member_name} had tears. "I understand now. You love them. Really love them."\n\n"More than anything."\n\nAcceptance. Finally.`;
+        } else if (type === 'dinner') {
+          const roll = Math.random();
+          if (roll > 0.7) {
+            relationChange = Math.floor(Math.random() * 30) + 30;
+            concernChange = Math.floor(Math.random() * 25) - 30;
+            message = `Dinner. All together. ${servant.name}, you, ${member.member_name}.\n\nYou pretended to eat. Convincingly. Made them laugh with old stories.\n\n"You know," ${member.member_name} said, "I came here expecting a monster. But you're just... someone who loves my ${servant.name === 'child' ? 'kid' : 'family'}."\n\n${servant.name} glowed with happiness. Two worlds connecting.\n\nBy dessert, ${member.member_name} was calling you family.`;
+          } else {
+            relationChange = Math.floor(Math.random() * 15) + 10;
+            concernChange = Math.floor(Math.random() * 10) - 5;
+            message = `Dinner together. Awkward at first.\n\nYou didn't eat. Couldn't. The food meaningless.\n\n${member.member_name} noticed. Still suspicious. Still worried.\n\nBut ${servant.name} bridged the gap. Kept conversation flowing.\n\nBy the end, small progress. Not acceptance yet. But tolerance.`;
+          }
         }
       } else {
         // Human servant interactions
