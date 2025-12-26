@@ -29,6 +29,7 @@ import VampirePolitics from '@/components/nightbound/VampirePolitics';
 import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
 import VampireTherapist from '@/components/nightbound/VampireTherapist';
 import SuccubusVampireInteraction from '@/components/nightbound/SuccubusVampireInteraction';
+import DonorSystem from '@/components/nightbound/DonorSystem';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -60,6 +61,7 @@ export default function VampireHome() {
   const [showTherapist, setShowTherapist] = useState(false);
   const [showSuccubusInteraction, setShowSuccubusInteraction] = useState(false);
   const [showVampireSelector, setShowVampireSelector] = useState(false);
+  const [showDonors, setShowDonors] = useState(false);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -586,6 +588,32 @@ export default function VampireHome() {
                 </button>
               </motion.div>
 
+              {/* Donor System */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.225 }}
+                className="mb-8"
+              >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDonors(true);
+                  }}
+                  className="w-full bg-gradient-to-r from-red-950/40 to-rose-950/40 hover:from-red-950/60 hover:to-rose-950/60 border-2 border-red-500/50 rounded-2xl p-6 transition-all touch-manipulation"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl">🩸</div>
+                      <div className="text-left">
+                        <h3 className="text-white text-xl font-bold mb-1">Donors</h3>
+                        <p className="text-gray-300 text-sm">Humans who willingly feed you. Consensual arrangements.</p>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </motion.div>
+
               {/* Succubus Interaction */}
               {succubus && (
               <motion.div
@@ -1050,6 +1078,12 @@ export default function VampireHome() {
             succubus={succubus}
             vampire={vampireState}
             onClose={() => setShowSuccubusInteraction(false)}
+          />
+        )}
+        {showDonors && (
+          <DonorSystem
+            vampireState={vampireState}
+            onClose={() => setShowDonors(false)}
           />
         )}
         {showVampireIdentity && (
