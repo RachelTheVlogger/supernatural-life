@@ -1150,7 +1150,7 @@ export default function VampireHome() {
             onClose={() => setShowStalking(false)}
           />
         )}
-        {showJournal && (
+        {showJournal && vampireState && (
           <JournalSystem
             vampire={vampireState}
             onClose={() => setShowJournal(false)}
