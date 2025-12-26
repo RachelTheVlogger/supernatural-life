@@ -114,10 +114,11 @@ export default function ServantHome() {
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
-    queryFn: () => base44.entities.VampireState.list()
+    queryFn: () => base44.entities.VampireState.list(),
+    staleTime: 5000
   });
-  
-  const vampireState = vampireStates[0];
+
+  const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
   
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', servantId],
@@ -453,6 +454,17 @@ export default function ServantHome() {
             vampireState={vampireState}
             onClose={() => setShowDating(false)}
           />
+        )}
+        {!vampireState && (showOnlyFangs || showServantInteractions || showYouTube || showSnapchat || showDating) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          >
+            <div className="bg-gray-900 rounded-xl p-6 text-center">
+              <p className="text-white">Loading game state...</p>
+            </div>
+          </motion.div>
         )}
         </AnimatePresence>
     </div>
