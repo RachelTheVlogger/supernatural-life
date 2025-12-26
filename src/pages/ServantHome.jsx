@@ -509,7 +509,7 @@ export default function ServantHome() {
               {doingChore === chore.id ? 'Experiencing...' : chore.label}
             </span>
           </motion.button>
-        ))}
+          ))}
         </div>
       </div>
       
