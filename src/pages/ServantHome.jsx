@@ -267,9 +267,16 @@ export default function ServantHome() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8 relative z-10"
       >
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-1">
-          {servant.name}
-        </h1>
+        <div className="flex items-center justify-center gap-3 mb-1">
+          <h1 className="text-3xl md:text-4xl font-bold text-white">
+            {servant.name}
+          </h1>
+          {vampireState?.time_of_day && (
+            <span className="text-2xl">
+              {vampireState.time_of_day === 'day' ? '☀️' : '🌙'}
+            </span>
+          )}
+        </div>
         <p className="text-sm capitalize text-gray-400">
           {servant.is_turned ? '🦇 Vampire' : `${servant.variant} servant`}
         </p>
