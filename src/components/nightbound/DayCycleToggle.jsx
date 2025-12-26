@@ -27,7 +27,7 @@ export default function DayCycleToggle({ vampireState }) {
       intensity: 'subtle'
     });
 
-    await queryClient.invalidateQueries(['vampireState']);
+    await queryClient.refetchQueries(['vampireState']);
     
     setTimeout(() => setTransitioning(false), 500);
   };

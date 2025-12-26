@@ -66,7 +66,10 @@ export default function VampireHome() {
         return [];
       }
     },
-    retry: 2
+    retry: 2,
+    staleTime: 0,
+    cacheTime: 0,
+    refetchOnMount: true
   });
   
   const { data: servants = [] } = useQuery({
