@@ -1805,19 +1805,21 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   setCreating(true);
                   setTimeout(async () => {
                     const collabTypes = [
-                      { type: 'With another vampire creator', earnings: [400, 800], subGain: [50, 100] },
-                      { type: 'Threesome with fans', earnings: [600, 1000], subGain: [80, 150] },
-                      { type: 'Guest appearance on bigger account', earnings: [200, 400], subGain: [100, 200] }
+                      { type: 'video', label: 'With another vampire creator', earnings: [400, 800], subGain: [50, 100], creator: 'VampyreQueen', followers: 50000 },
+                      { type: 'livestream', label: 'Threesome with fans', earnings: [600, 1000], subGain: [80, 150], creator: 'BloodTwins', followers: 80000 },
+                      { type: 'photoshoot', label: 'Guest appearance on bigger account', earnings: [200, 400], subGain: [100, 200], creator: 'DarkGoddess', followers: 150000 }
                     ];
                     const collab = collabTypes[Math.floor(Math.random() * collabTypes.length)];
                     const earnings = Math.floor(Math.random() * (collab.earnings[1] - collab.earnings[0])) + collab.earnings[0];
                     const subs = Math.floor(Math.random() * (collab.subGain[1] - collab.subGain[0])) + collab.subGain[0];
-                    
+
                     await base44.entities.OnlyFangsCollab.create({
                       servant_id: servant.id,
+                      creator_name: collab.creator,
+                      creator_followers: collab.followers,
                       collab_type: collab.type,
                       earnings,
-                      new_subscribers: subs
+                      new_subs: subs
                     });
                     
                     await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
@@ -1827,7 +1829,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     });
                     
                     await base44.entities.NightLog.create({
-                      entry: `Collaboration complete: ${collab.type}. Earned $${earnings} and gained ${subs} new subscribers!`,
+                      entry: `Collaboration complete: ${collab.label}. Earned $${earnings} and gained ${subs} new subscribers!`,
                       category: 'interaction',
                       intensity: 'significant'
                     });
