@@ -38,6 +38,8 @@ export default function HerbGathering({ witch, onClose }) {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [blendName, setBlendName] = useState('');
   const [mixing, setMixing] = useState(false);
+  const [showGiftModal, setShowGiftModal] = useState(false);
+  const [selectedRingRecipient, setSelectedRingRecipient] = useState(null);
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['witchHerbs'],
@@ -53,6 +55,18 @@ export default function HerbGathering({ witch, onClose }) {
     queryKey: ['herbBlends'],
     queryFn: () => base44.entities.HerbBlend.filter({ witch_id: witch.id })
   });
+
+  const { data: vampires = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+
+  const { data: servants = [] } = useQuery({
+    queryKey: ['servants'],
+    queryFn: () => base44.entities.Servant.list()
+  });
+
+  const turnedServants = servants.filter(s => s.is_turned);
 
   const handleForage = async (herb) => {
     setGathering(true);
@@ -324,6 +338,61 @@ export default function HerbGathering({ witch, onClose }) {
     setTimeout(() => setOutcome(''), 2500);
   };
 
+  const handleCraftDaylightRing = async () => {
+    const hasLapisLazuli = inventory.find(h => h.herb_name === 'Moonstone' && h.quantity >= 2);
+    
+    if (!hasLapisLazuli) {
+      alert('Need 2 Moonstone to craft a daylight ring!');
+      return;
+    }
+
+    if (!confirm('Craft Daylight Ring? (Costs 2 Moonstone)')) return;
+
+    await base44.entities.WitchHerb.update(hasLapisLazuli.id, {
+      quantity: hasLapisLazuli.quantity - 2
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${witch.name} crafted a Daylight Ring. Powerful enchantment.`,
+      category: 'power',
+      intensity: 'significant'
+    });
+
+    setOutcome('Crafted Daylight Ring! Ready to gift to a vampire.');
+    queryClient.invalidateQueries();
+    
+    setTimeout(() => {
+      setOutcome('');
+      setShowGiftModal(true);
+    }, 2000);
+  };
+
+  const handleGiftRing = async (recipient) => {
+    await base44.entities.NightLog.create({
+      entry: `${witch.name} gifted a Daylight Ring to ${recipient.name || recipient.vampire_name}. They can now walk in sunlight.`,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    if (recipient.vampire_name) {
+      // Vampire
+      await base44.entities.Witch.update(witch.id, {
+        relationship: Math.min(100, (witch.relationship || 0) + 30)
+      });
+    } else {
+      // Turned servant
+      await base44.entities.Servant.update(recipient.id, {
+        relationship: Math.min(100, (recipient.relationship || 0) + 25)
+      });
+    }
+
+    setOutcome(`Gifted Daylight Ring to ${recipient.name || recipient.vampire_name}!`);
+    setShowGiftModal(false);
+    queryClient.invalidateQueries();
+    
+    setTimeout(() => setOutcome(''), 3000);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -385,6 +454,12 @@ export default function HerbGathering({ witch, onClose }) {
             className={`flex-1 px-4 py-2 rounded-lg ${tab === 'blends' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             ✨ Blends
+          </button>
+          <button
+            onClick={() => setTab('craft')}
+            className={`flex-1 px-4 py-2 rounded-lg ${tab === 'craft' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            💍 Craft
           </button>
         </div>
 
@@ -691,6 +766,49 @@ export default function HerbGathering({ witch, onClose }) {
           </div>
         )}
 
+        {tab === 'craft' && (
+          <div className="space-y-4">
+            <p className="text-gray-400 text-sm mb-4">
+              Craft powerful enchanted items
+            </p>
+
+            <div className="bg-gray-800 rounded-xl p-6 border-2 border-purple-500/30">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-4xl">💍</span>
+                <div>
+                  <h3 className="text-white font-bold text-lg">Daylight Ring</h3>
+                  <p className="text-gray-400 text-sm">Allows vampires to walk in sunlight</p>
+                </div>
+              </div>
+
+              <div className="bg-gray-900 rounded-lg p-3 mb-4">
+                <p className="text-purple-300 text-sm font-medium mb-2">Required:</p>
+                <p className="text-gray-300 text-sm">• 2 Moonstone 🌙</p>
+                <p className="text-gray-300 text-sm">• Witch power 40+</p>
+              </div>
+
+              <p className="text-gray-500 text-xs mb-4 italic">
+                "Phasmatos Solaris" - A powerful enchantment that lets vampires walk in daylight without burning
+              </p>
+
+              <button
+                onClick={handleCraftDaylightRing}
+                disabled={
+                  !inventory.find(h => h.herb_name === 'Moonstone' && h.quantity >= 2) ||
+                  witch.power_level < 40
+                }
+                className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium"
+              >
+                {witch.power_level < 40 
+                  ? 'Need 40+ Power' 
+                  : !inventory.find(h => h.herb_name === 'Moonstone' && h.quantity >= 2)
+                  ? 'Need 2 Moonstone'
+                  : 'Craft Daylight Ring'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {outcome && (
           <div className="text-center py-12">
             <motion.div
@@ -702,6 +820,64 @@ export default function HerbGathering({ witch, onClose }) {
             </motion.div>
             <p className="text-gray-300 text-lg">{outcome}</p>
           </div>
+        )}
+
+        {showGiftModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowGiftModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <h3 className="text-2xl font-bold text-white mb-4">Gift Daylight Ring</h3>
+              <p className="text-gray-400 text-sm mb-6">
+                Who should receive this powerful gift?
+              </p>
+
+              <div className="space-y-3">
+                {vampires.length > 0 && vampires.map(vamp => (
+                  <button
+                    key={vamp.id}
+                    onClick={() => handleGiftRing(vamp)}
+                    className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left"
+                  >
+                    <h4 className="text-white font-medium">🦇 {vamp.vampire_name}</h4>
+                    <p className="text-gray-400 text-sm">The Vampire</p>
+                  </button>
+                ))}
+
+                {turnedServants.map(servant => (
+                  <button
+                    key={servant.id}
+                    onClick={() => handleGiftRing(servant)}
+                    className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left"
+                  >
+                    <h4 className="text-white font-medium">🧛 {servant.name}</h4>
+                    <p className="text-gray-400 text-sm">Turned Servant</p>
+                  </button>
+                ))}
+
+                {vampires.length === 0 && turnedServants.length === 0 && (
+                  <p className="text-gray-400 text-center py-8">
+                    No vampires to gift to
+                  </p>
+                )}
+              </div>
+
+              <button
+                onClick={() => setShowGiftModal(false)}
+                className="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg"
+              >
+                Cancel
+              </button>
+            </motion.div>
+          </motion.div>
         )}
       </motion.div>
     </motion.div>
