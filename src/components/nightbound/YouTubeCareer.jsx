@@ -598,6 +598,9 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           <button onClick={() => setTab('livestream')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'livestream' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             🔴 Livestream
           </button>
+          <button onClick={() => setTab('beauty')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'beauty' ? 'bg-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            💅 Glow Up
+          </button>
           <button onClick={() => setTab('stalkers')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm relative ${tab === 'stalkers' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             ⚠️ Stalkers
             {stalkers.filter(s => s.platform === 'youtube' && !s.blocked && s.danger_level !== 'harmless').length > 0 && (
@@ -743,6 +746,182 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           </div>
         )}
 
+        {/* BEAUTY TAB */}
+        {tab === 'beauty' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-pink-950/40 to-purple-950/40 border-2 border-pink-500/30 rounded-2xl p-6 text-center mb-4">
+              <span className="text-6xl mb-3 block">✨</span>
+              <h3 className="text-white text-2xl font-bold mb-2">Glow Up</h3>
+              <p className="text-pink-300 text-sm">Invest in your look. Level up your content.</p>
+            </div>
+
+            <button
+              onClick={async () => {
+                if (channel.revenue < 300) {
+                  alert('Need $300');
+                  return;
+                }
+                await base44.entities.YouTubeChannel.update(channel.id, {
+                  revenue: channel.revenue - 300,
+                  reputation: Math.min(100, channel.reputation + 5)
+                });
+                await base44.entities.NightLog.create({
+                  entry: `${servant.name} got their nails done. Fresh set. Looking expensive. Thumbnails are about to be 🔥`,
+                  category: 'interaction',
+                  intensity: 'moderate'
+                });
+                queryClient.invalidateQueries();
+              }}
+              disabled={channel.revenue < 300}
+              className="w-full bg-gradient-to-br from-pink-950/40 to-rose-950/40 border-2 border-pink-500/30 hover:border-pink-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">💅</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Get Nails Done</h4>
+                    <p className="text-gray-400 text-sm">Fresh acrylics. Perfect for thumbnails & videos.</p>
+                    <p className="text-pink-400 text-xs mt-1">+5 Reputation</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$300</span>
+              </div>
+            </button>
+
+            <button
+              onClick={async () => {
+                if (channel.revenue < 800) {
+                  alert('Need $800');
+                  return;
+                }
+                await base44.entities.YouTubeChannel.update(channel.id, {
+                  revenue: channel.revenue - 800,
+                  reputation: Math.min(100, channel.reputation + 10)
+                });
+                await base44.entities.NightLog.create({
+                  entry: `${servant.name} got lip filler. Plump. Perfect. The comments are going CRAZY. "What did you do??" Views spiking.`,
+                  category: 'interaction',
+                  intensity: 'moderate'
+                });
+                queryClient.invalidateQueries();
+              }}
+              disabled={channel.revenue < 800}
+              className="w-full bg-gradient-to-br from-rose-950/40 to-red-950/40 border-2 border-rose-500/30 hover:border-rose-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">💋</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Lip Filler</h4>
+                    <p className="text-gray-400 text-sm">Plump lips. Instant glow up. Viewers notice IMMEDIATELY.</p>
+                    <p className="text-rose-400 text-xs mt-1">+10 Reputation</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$800</span>
+              </div>
+            </button>
+
+            <button
+              onClick={async () => {
+                if (channel.revenue < 250) {
+                  alert('Need $250');
+                  return;
+                }
+                await base44.entities.YouTubeChannel.update(channel.id, {
+                  revenue: channel.revenue - 250,
+                  reputation: Math.min(100, channel.reputation + 3)
+                });
+                await base44.entities.NightLog.create({
+                  entry: `${servant.name} got lashes done. Volume set. Eyes popping. Every thumbnail looks better now.`,
+                  category: 'interaction',
+                  intensity: 'moderate'
+                });
+                queryClient.invalidateQueries();
+              }}
+              disabled={channel.revenue < 250}
+              className="w-full bg-gradient-to-br from-purple-950/40 to-pink-950/40 border-2 border-purple-500/30 hover:border-purple-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">👁️</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Lash Extensions</h4>
+                    <p className="text-gray-400 text-sm">Dramatic volume. Eyes pop in every frame.</p>
+                    <p className="text-purple-400 text-xs mt-1">+3 Reputation</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$250</span>
+              </div>
+            </button>
+
+            <button
+              onClick={async () => {
+                if (channel.revenue < 150) {
+                  alert('Need $150');
+                  return;
+                }
+                await base44.entities.YouTubeChannel.update(channel.id, {
+                  revenue: channel.revenue - 150,
+                  reputation: Math.min(100, channel.reputation + 2)
+                });
+                await base44.entities.NightLog.create({
+                  entry: `${servant.name} got a blowout. Hair PERFECT. Looks like they just stepped out of a salon in every video. Professional.`,
+                  category: 'interaction',
+                  intensity: 'subtle'
+                });
+                queryClient.invalidateQueries();
+              }}
+              disabled={channel.revenue < 150}
+              className="w-full bg-gradient-to-br from-yellow-950/40 to-orange-950/40 border-2 border-yellow-500/30 hover:border-yellow-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">💇</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Hair Blowout</h4>
+                    <p className="text-gray-400 text-sm">Salon-quality hair. Every video looks polished.</p>
+                    <p className="text-yellow-400 text-xs mt-1">+2 Reputation</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$150</span>
+              </div>
+            </button>
+
+            <button
+              onClick={async () => {
+                if (channel.revenue < 500) {
+                  alert('Need $500');
+                  return;
+                }
+                await base44.entities.YouTubeChannel.update(channel.id, {
+                  revenue: channel.revenue - 500,
+                  reputation: Math.min(100, channel.reputation + 8)
+                });
+                await base44.entities.NightLog.create({
+                  entry: `${servant.name} did a full spa day. Facial, massage, nails, everything. GLOWING. Next video hits different. Comments: "You look so good!"`,
+                  category: 'interaction',
+                  intensity: 'moderate'
+                });
+                queryClient.invalidateQueries();
+              }}
+              disabled={channel.revenue < 500}
+              className="w-full bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border-2 border-blue-500/30 hover:border-blue-500/50 rounded-xl p-6 text-left transition-all disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">🧖</span>
+                  <div>
+                    <h4 className="text-white font-bold mb-1">Full Spa Day</h4>
+                    <p className="text-gray-400 text-sm">Complete glow up. Facial, massage, the works.</p>
+                    <p className="text-cyan-400 text-xs mt-1">+8 Reputation</p>
+                  </div>
+                </div>
+                <span className="text-green-400 font-bold">$500</span>
+              </div>
+            </button>
+          </div>
+        )}
+
         {/* LIVESTREAM TAB */}
         {tab === 'livestream' && !streaming && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
@@ -759,9 +938,68 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
               
               <button
                 onClick={handleLivestream}
-                className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-bold py-4 rounded-xl"
+                className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-bold py-4 rounded-xl mb-3"
               >
-                START LIVESTREAM
+                START LIVESTREAM (Studio)
+              </button>
+              
+              <button
+                onClick={async () => {
+                  setStreaming(true);
+                  setStreamChat([]);
+
+                  const locations = [
+                    { name: 'Coffee Shop', emoji: '☕', chatMsgs: ['Where is this?', 'Love the vibe', 'Cozy spot', 'I need coffee now'] },
+                    { name: 'Mall', emoji: '🛍️', chatMsgs: ['Shopping haul?', 'What store?', 'Flex', 'Get me something lol'] },
+                    { name: 'Restaurant', emoji: '🍽️', chatMsgs: ['Food looks good', 'What are you eating?', 'Making me hungry', 'Review it!'] },
+                    { name: 'Walking Around', emoji: '🚶', chatMsgs: ['Where you at?', 'Random stream love it', 'Main character energy', 'Just vibing'] },
+                    { name: 'Target', emoji: '🎯', chatMsgs: ['TARGET RUN', 'Get snacks', 'Spending money I see', 'Show us what you get'] }
+                  ];
+
+                  const location = locations[Math.floor(Math.random() * locations.length)];
+                  const chatMessages = [
+                    ...location.chatMsgs,
+                    'Love impromptu streams', 'Phone stream hits different', 'Wait where are you?', 'This is so random',
+                    'Spontaneous content >>>', 'Chat is here!', 'Keep us updated', 'Main character moment'
+                  ];
+
+                  const usernames = ['LiveVibes_', 'PhoneStream99', 'RandomViewer', 'ChatLurker', 'MobileGang', 'OutAndAbout'];
+
+                  for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                      setStreamChat(prev => [...prev.slice(-10), {
+                        username: usernames[Math.floor(Math.random() * usernames.length)] + Math.floor(Math.random() * 999),
+                        message: chatMessages[Math.floor(Math.random() * chatMessages.length)]
+                      }]);
+                    }, i * 1500);
+                  }
+
+                  setTimeout(async () => {
+                    const viewers = Math.floor(Math.random() * 300) + 150;
+                    const newSubs = Math.floor(Math.random() * 25) + 20;
+                    const earnings = Math.floor(Math.random() * 80) + 60;
+
+                    await base44.entities.YouTubeChannel.update(channel.id, {
+                      subscriber_count: channel.subscriber_count + newSubs,
+                      revenue: channel.revenue + earnings
+                    });
+
+                    await base44.entities.NightLog.create({
+                      entry: `${servant.name} went live from their phone at ${location.name} ${location.emoji}. Spontaneous content. ${viewers} viewers. +${newSubs} subs. $${earnings} earned. Chat loved it.`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+
+                    queryClient.invalidateQueries();
+                    setTimeout(() => {
+                      setStreaming(false);
+                      setStreamChat([]);
+                    }, 2000);
+                  }, 12000);
+                }}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 rounded-xl"
+              >
+                📱 GO LIVE FROM YOUR PHONE (While Out)
               </button>
             </div>
           </div>
