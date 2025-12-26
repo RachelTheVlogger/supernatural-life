@@ -20,9 +20,9 @@ const CAREERS = {
     borderColor: 'border-red-500/50'
   },
   author: { 
-    name: 'Dark Romance Author', 
+    name: 'Author', 
     icon: '📚', 
-    description: 'Write gothic and vampire romance novels',
+    description: 'Write and publish books professionally',
     color: 'from-gray-900/40 to-purple-900/40',
     borderColor: 'border-gray-500/50'
   }
