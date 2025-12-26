@@ -43,20 +43,17 @@ export default function HumanHome() {
 
   const human = humans[0];
 
+  const { isLoading: vampireLoading } = useQuery({
+    queryKey: ['vampireState'],
+    enabled: false
+  });
+
   // Redirect to Home if no human exists
   React.useEffect(() => {
     if (humans.length === 0 && !vampireLoading) {
       navigate(createPageUrl('Home'), { replace: true });
     }
   }, [humans, vampireLoading, navigate]);
-
-  if (vampireLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
 
   if (!human) {
     return null;
@@ -333,6 +330,51 @@ export default function HumanHome() {
             <p className="text-xs text-gray-500 mt-1">Risk level</p>
           </div>
         </motion.div>
+
+        {/* High awareness warning */}
+        {human.awareness_level >= 90 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-red-950/40 border border-red-500/30 rounded-xl p-4 mb-6"
+          >
+            <p className="text-red-300 font-medium mb-2">⚠️ You know too much</p>
+            <p className="text-gray-400 text-sm mb-3">
+              The truth is undeniable now. They know you know. This will end one way or another.
+            </p>
+            <p className="text-red-400 text-xs">
+              Your life has changed forever. There's no going back to ignorance.
+            </p>
+          </motion.div>
+        )}
+
+        {/* Medium awareness */}
+        {human.awareness_level >= 50 && human.awareness_level < 90 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-orange-950/40 border border-orange-500/30 rounded-xl p-4 mb-6"
+          >
+            <p className="text-orange-300 font-medium mb-2">👁️ The veil is lifting</p>
+            <p className="text-gray-400 text-sm">
+              You see the patterns now. The missing pieces. Every day brings more clarity. More danger.
+            </p>
+          </motion.div>
+        )}
+
+        {/* High danger warning */}
+        {human.danger_level >= 70 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4 mb-6"
+          >
+            <p className="text-purple-300 font-medium mb-2">💀 You're being hunted</p>
+            <p className="text-gray-400 text-sm">
+              They've noticed you. Marked you. You feel eyes on you constantly. They're deciding what to do with you.
+            </p>
+          </motion.div>
+        )}
 
         {/* Vampire Encounters Warning */}
         {human.vampire_encounters > 0 && (
