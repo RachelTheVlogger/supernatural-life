@@ -551,45 +551,42 @@ export default function Home() {
                 <h2 className="text-2xl font-bold text-white mb-4">Your identity</h2>
                 <p className="text-purple-300 text-sm mb-4">How do you see yourself?</p>
                 <div className="space-y-3 mb-6">
-                  {(selectedType !== 'succubus' && selectedType !== 'incubus') && (
+                  {!['succubus', 'incubus'].includes(selectedType) && (
                     <>
-                      {!['succubus', 'incubus'].includes(selectedType) && (
-                        <>
-                          <button
-                            onClick={() => setCharacterGender('man')}
-                            className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                              characterGender === 'man' 
-                                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
-                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                            }`}
-                          >
-                            <span className="font-medium">Man</span>
-                            <p className="text-sm opacity-80">He/Him</p>
-                          </button>
-                          <button
-                            onClick={() => setCharacterGender('woman')}
-                            className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                              characterGender === 'woman' 
-                                ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
-                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                            }`}
-                          >
-                            <span className="font-medium">Woman</span>
-                            <p className="text-sm opacity-80">She/Her</p>
-                          </button>
-                          <button
-                            onClick={() => setCharacterGender('custom')}
-                            className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
-                              characterGender === 'custom' 
-                                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                            }`}
-                          >
-                            <span className="font-medium">Custom</span>
-                            <p className="text-sm opacity-80">They/Them</p>
-                          </button>
-                        </>
-                      )}
+                      <button
+                        onClick={() => setCharacterGender('man')}
+                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                          characterGender === 'man' 
+                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <span className="font-medium">Man</span>
+                        <p className="text-sm opacity-80">He/Him</p>
+                      </button>
+                      <button
+                        onClick={() => setCharacterGender('woman')}
+                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                          characterGender === 'woman' 
+                            ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <span className="font-medium">Woman</span>
+                        <p className="text-sm opacity-80">She/Her</p>
+                      </button>
+                      <button
+                        onClick={() => setCharacterGender('custom')}
+                        className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                          characterGender === 'custom' 
+                            ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <span className="font-medium">Custom</span>
+                        <p className="text-sm opacity-80">They/Them</p>
+                      </button>
+                    </>
                   )}
                   {selectedType === 'succubus' && (
                     <p className="text-gray-400 text-sm">Succubi are female-presenting beings of desire.</p>
