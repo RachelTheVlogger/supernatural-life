@@ -38,17 +38,20 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
     staleTime: 5000
   });
 
+  const channel = channels[0];
+  const hasChannel = !!channel;
+
   const { data: videos = [], isLoading: videosLoading } = useQuery({
-    queryKey: ['youtube-videos', channels[0]?.id],
-    queryFn: () => base44.entities.YouTubeVideo.filter({ channel_id: channels[0]?.id }, '-created_date'),
-    enabled: !!channels[0],
+    queryKey: ['youtube-videos', channel?.id],
+    queryFn: () => base44.entities.YouTubeVideo.filter({ channel_id: channel.id }, '-created_date'),
+    enabled: !!channel,
     staleTime: 3000
   });
 
   const { data: allComments = [] } = useQuery({
-    queryKey: ['youtube-comments', channels[0]?.id],
+    queryKey: ['youtube-comments', channel?.id],
     queryFn: () => base44.entities.YouTubeComment.list('-created_date'),
-    enabled: !!channels[0],
+    enabled: !!channel,
     staleTime: 3000
   });
 
@@ -57,9 +60,6 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
     queryFn: () => base44.entities.Stalker.filter({ servant_id: servant.id }),
     staleTime: 3000
   });
-
-  const channel = channels[0];
-  const hasChannel = !!channel;
 
   const stats = React.useMemo(() => {
     if (!channel) return { avgViews: 0, totalLikes: 0, viralCount: 0 };
