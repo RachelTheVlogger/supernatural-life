@@ -43,6 +43,8 @@ export default function MangaCareer({ servant, onClose }) {
   }
 
   const handleDrawChapter = async () => {
+    if (!career?.id) return;
+    
     setWorking(true);
     
     setTimeout(async () => {
@@ -78,6 +80,8 @@ export default function MangaCareer({ servant, onClose }) {
   };
 
   const handleStartSeries = async (genre) => {
+    if (!career?.id) return;
+    
     const seriesNames = {
       shonen: ['Battle Chronicles', 'Rising Hero', 'Power Surge'],
       shojo: ['First Love', 'Spring Romance', 'Heart Melody'],
