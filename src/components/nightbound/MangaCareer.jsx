@@ -18,29 +18,12 @@ export default function MangaCareer({ servant, onClose }) {
   const [working, setWorking] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const { data: career, isLoading } = useQuery({
+  const { data: careers = [] } = useQuery({
     queryKey: ['career', servant.id],
-    queryFn: async () => {
-      const careers = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
-      return careers[0];
-    }
+    queryFn: () => base44.entities.ServantCareer.filter({ servant_id: servant.id })
   });
 
-  if (isLoading || !career) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
-        onClick={onClose}
-      >
-        <div className="bg-gray-900 rounded-2xl p-6 text-center">
-          <p className="text-white">Loading...</p>
-        </div>
-      </motion.div>
-    );
-  }
+  const career = careers[0];
 
   const handleDrawChapter = async () => {
     if (!career?.id) return;
@@ -62,6 +45,12 @@ export default function MangaCareer({ servant, onClose }) {
         chapters_released: newChapters
       });
 
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} released chapter ${newChapters}. +${fansGained} fans, +$${incomeGained}`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+
       const outcomes = [
         `Drew an incredible chapter. Fans are going wild. +${fansGained} fans, $${incomeGained}`,
         `Your art improved. The panel work is stunning. +${fansGained} fans, $${incomeGained}`,
@@ -70,7 +59,7 @@ export default function MangaCareer({ servant, onClose }) {
       ];
 
       setOutcome(outcomes[Math.floor(Math.random() * outcomes.length)]);
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries(['career']);
 
       setTimeout(() => {
         setWorking(false);
@@ -80,37 +69,56 @@ export default function MangaCareer({ servant, onClose }) {
   };
 
   const handleStartSeries = async (genre) => {
-    if (!career?.id) return;
-    
     setWorking(true);
     
-    const seriesNames = {
-      shonen: ['Battle Chronicles', 'Rising Hero', 'Power Surge'],
-      shojo: ['First Love', 'Spring Romance', 'Heart Melody'],
-      seinen: ['Dark Society', 'Broken Glass', 'Urban Tales'],
-      josei: ['After Hours', 'Office Affairs', 'Midnight Calls'],
-      isekai: ['Another World', 'Portal Quest', 'Reborn Legend'],
-      'slice-of-life': ['Daily Life', 'Coffee Shop Days', 'Small Town Stories']
-    };
+    setTimeout(async () => {
+      const seriesNames = {
+        shonen: ['Battle Chronicles', 'Rising Hero', 'Power Surge'],
+        shojo: ['First Love', 'Spring Romance', 'Heart Melody'],
+        seinen: ['Dark Society', 'Broken Glass', 'Urban Tales'],
+        josei: ['After Hours', 'Office Affairs', 'Midnight Calls'],
+        isekai: ['Another World', 'Portal Quest', 'Reborn Legend'],
+        'slice-of-life': ['Daily Life', 'Coffee Shop Days', 'Small Town Stories']
+      };
 
-    const names = seriesNames[genre.id];
-    const seriesName = names[Math.floor(Math.random() * names.length)];
+      const names = seriesNames[genre.id];
+      const seriesName = names[Math.floor(Math.random() * names.length)];
 
-    await base44.entities.ServantCareer.update(career.id, {
-      current_genre: genre.id,
-      series_name: seriesName,
-      chapters_released: 0,
-      fans: 0,
-      income: 0
-    });
+      if (!career?.id) {
+        await base44.entities.ServantCareer.create({
+          servant_id: servant.id,
+          manga_career_active: true,
+          current_genre: genre.id,
+          series_name: seriesName,
+          chapters_released: 0,
+          fans: Math.floor(Math.random() * 50) + 20,
+          income: 0
+        });
+      } else {
+        await base44.entities.ServantCareer.update(career.id, {
+          manga_career_active: true,
+          current_genre: genre.id,
+          series_name: seriesName,
+          chapters_released: 0,
+          fans: Math.floor(Math.random() * 50) + 20,
+          income: 0
+        });
+      }
 
-    setOutcome(`Started "${seriesName}" - a ${genre.label} manga series!`);
-    await queryClient.invalidateQueries();
-    
-    setTimeout(() => {
-      setWorking(false);
-      setOutcome('');
-    }, 2000);
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} started "${seriesName}" - a ${genre.label} manga series!`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+
+      setOutcome(`Started "${seriesName}" - a ${genre.label} manga series!`);
+      queryClient.invalidateQueries(['career']);
+      
+      setTimeout(() => {
+        setWorking(false);
+        setOutcome('');
+      }, 2000);
+    }, 1500);
   };
 
   return (
