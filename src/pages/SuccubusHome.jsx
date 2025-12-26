@@ -269,15 +269,18 @@ export default function SuccubusHome() {
           </div>
         </div>
 
-        {vampire && (
+{vampire && (
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={() => setShowVampireInteraction(true)}
-            className="w-full bg-gradient-to-r from-pink-900/60 to-purple-900/60 hover:from-pink-900/80 hover:to-purple-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 mb-4 flex items-center justify-center gap-3 transition-all"
+            className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 border-2 border-pink-400 rounded-xl py-6 px-6 mb-6 flex items-center justify-center gap-3 transition-all shadow-lg"
           >
-            <span className="text-2xl">💋🦇</span>
-            <span className="text-white font-medium">Interact with Vampire</span>
+            <span className="text-4xl">💋🦇</span>
+            <div className="text-left">
+              <h3 className="text-white font-bold text-lg">Obsessive Romance</h3>
+              <p className="text-pink-200 text-sm">10 deep interactions with {vampire.vampire_name}</p>
+            </div>
           </motion.button>
         )}
 
