@@ -38,6 +38,25 @@ export default function HumanHome() {
 
   const human = humans[0];
 
+  // Redirect to Home if no human exists
+  React.useEffect(() => {
+    if (humans.length === 0 && !vampireLoading) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [humans, vampireLoading, navigate]);
+
+  if (vampireLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!human) {
+    return null;
+  }
+
   const handleActivity = async (activity) => {
     if (!human) return;
     setActiveAction(activity.id);

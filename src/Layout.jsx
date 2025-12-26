@@ -22,7 +22,6 @@ export default function Layout({ children, currentPageName }) {
         return [];
       }
     },
-    enabled: ['Night', 'VampireHome', 'ServantHome', 'Messages'].includes(currentPageName),
     retry: 1
   });
   
@@ -41,7 +40,6 @@ export default function Layout({ children, currentPageName }) {
         return [];
       }
     },
-    enabled: showNav,
     retry: 1
   });
 
@@ -54,7 +52,6 @@ export default function Layout({ children, currentPageName }) {
         return [];
       }
     },
-    enabled: showNav,
     retry: 1
   });
 
@@ -67,7 +64,6 @@ export default function Layout({ children, currentPageName }) {
         return [];
       }
     },
-    enabled: showNav,
     retry: 1
   });
 
@@ -80,7 +76,6 @@ export default function Layout({ children, currentPageName }) {
         return [];
       }
     },
-    enabled: showNav,
     retry: 1
   });
 
@@ -93,7 +88,6 @@ export default function Layout({ children, currentPageName }) {
         return [];
       }
     },
-    enabled: showNav,
     retry: 1
   });
   
@@ -109,7 +103,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vampire', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
-    { name: 'Human', icon: UserCircle, path: 'HumanHome', show: humans.length > 0 },
+    { name: 'Human', icon: UserCircle, path: 'HumanHome' },
     { name: 'Succubus', icon: Heart, path: 'SuccubusHome', show: succubi.length > 0 },
     { name: 'Incubus', icon: Skull, path: 'IncubusHome', show: incubi.length > 0 },
     { name: 'Wolf', icon: Zap, path: 'WerewolfHome', show: playerWerewolves.length > 0 },
