@@ -93,10 +93,12 @@ export default function WitchEncounter({ vampireState, onClose }) {
       } else if (action === 'threaten') {
         relChange = -30;
         dispChange = 'hostile';
-        const humanityLoss = -5;
-        await base44.entities.VampireState.update(vampireState.id, {
-          humanity: Math.max(0, vampireState.humanity + humanityLoss)
-        });
+        if (vampireState && vampireState.id) {
+          const humanityLoss = -5;
+          await base44.entities.VampireState.update(vampireState.id, {
+            humanity: Math.max(0, (vampireState.humanity || 50) + humanityLoss)
+          });
+        }
         newOutcome = messages.threaten[Math.floor(Math.random() * messages.threaten.length)];
       } else if (action === 'ally') {
         if (selectedWitch.relationship < 30) {
