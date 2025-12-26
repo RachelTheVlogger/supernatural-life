@@ -19,7 +19,17 @@ const ACTIONS = [
   { id: 'lust_magic', label: 'Cast Lust Spell', icon: '🔮', duration: 3500 },
   { id: 'soul_read', label: 'Read Desires', icon: '👁️', duration: 3000 },
   { id: 'pleasure_curse', label: 'Curse with Pleasure', icon: '😈', duration: 4000 },
-  { id: 'wings', label: 'Manifest Wings', icon: '🦋', duration: 2000 }
+  { id: 'wings', label: 'Manifest Wings', icon: '🦋', duration: 2000 },
+  { id: 'kiss_death', label: 'Kiss of Death', icon: '💀', duration: 5000 },
+  { id: 'enslave', label: 'Enslave Soul', icon: '⛓️', duration: 4500 },
+  { id: 'telepathy', label: 'Seduce from Distance', icon: '📡', duration: 3000 },
+  { id: 'pleasure_wave', label: 'Wave of Ecstasy', icon: '🌊', duration: 3500 },
+  { id: 'beauty_curse', label: 'Curse of Beauty', icon: '✨', duration: 4000 },
+  { id: 'love_poison', label: 'Poison with Love', icon: '💉', duration: 3500 },
+  { id: 'desire_harvest', label: 'Harvest Desires', icon: '🌾', duration: 4000 },
+  { id: 'soul_mate', label: 'False Soulmate Bond', icon: '💞', duration: 5000 },
+  { id: 'dream_prison', label: 'Trap in Dream', icon: '🔒', duration: 4500 },
+  { id: 'addiction', label: 'Create Addiction', icon: '💊', duration: 4000 }
 ];
 
 export default function SuccubusHome() {
@@ -110,6 +120,55 @@ export default function SuccubusHome() {
         case 'wings':
           updates.shapeshifting_level = Math.min(100, (succubus.shapeshifting_level || 0) + 5);
           result = 'Demonic wings unfurl. Your true form revealed.';
+          break;
+        case 'kiss_death':
+          updates.contracts_made = (succubus.contracts_made || 0) + 1;
+          updates.energy_collected = (succubus.energy_collected || 0) + 300;
+          result = 'Your kiss drains their life. Sweet death.';
+          break;
+        case 'enslave':
+          updates.target_count = (succubus.target_count || 0) + 1;
+          updates.energy_collected = (succubus.energy_collected || 0) + 200;
+          result = 'Soul enslaved. They exist only to serve you.';
+          break;
+        case 'telepathy':
+          updates.charm_level = Math.min(100, (succubus.charm_level || 0) + 5);
+          updates.energy_collected = (succubus.energy_collected || 0) + 50;
+          result = 'Seduction across miles. Distance means nothing.';
+          break;
+        case 'pleasure_wave':
+          updates.charm_level = Math.min(100, (succubus.charm_level || 0) + 7);
+          updates.energy_collected = (succubus.energy_collected || 0) + 80;
+          result = 'Wave of pleasure spreads. Everyone affected.';
+          break;
+        case 'beauty_curse':
+          updates.target_count = (succubus.target_count || 0) + 1;
+          updates.charm_level = Math.min(100, (succubus.charm_level || 0) + 6);
+          result = 'Cursed to see only you. Obsession begins.';
+          break;
+        case 'love_poison':
+          updates.contracts_made = (succubus.contracts_made || 0) + 1;
+          updates.energy_collected = (succubus.energy_collected || 0) + 120;
+          result = 'Love becomes poison. They are yours forever.';
+          break;
+        case 'desire_harvest':
+          updates.energy_collected = (succubus.energy_collected || 0) + 150;
+          result = 'Desires harvested. Power flows through you.';
+          break;
+        case 'soul_mate':
+          updates.contracts_made = (succubus.contracts_made || 0) + 1;
+          updates.energy_collected = (succubus.energy_collected || 0) + 250;
+          result = 'False bond created. They believe you are their destiny.';
+          break;
+        case 'dream_prison':
+          updates.dream_walking_mastery = Math.min(100, (succubus.dream_walking_mastery || 0) + 8);
+          updates.energy_collected = (succubus.energy_collected || 0) + 100;
+          result = 'Trapped in eternal dream. They will never wake.';
+          break;
+        case 'addiction':
+          updates.target_count = (succubus.target_count || 0) + 1;
+          updates.energy_collected = (succubus.energy_collected || 0) + 180;
+          result = 'Addicted to you. They cannot resist anymore.';
           break;
       }
       

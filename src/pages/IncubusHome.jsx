@@ -18,7 +18,17 @@ const ACTIONS = [
   { id: 'dark_magic', label: 'Cast Dark Curse', icon: '🔥', duration: 3500 },
   { id: 'soul_devour', label: 'Devour Soul', icon: '👻', duration: 4500 },
   { id: 'pain_curse', label: 'Curse with Pain', icon: '⚡', duration: 4000 },
-  { id: 'horns', label: 'Manifest Horns', icon: '😈', duration: 2000 }
+  { id: 'horns', label: 'Manifest Horns', icon: '😈', duration: 2000 },
+  { id: 'fear_feast', label: 'Feast on Fear', icon: '👹', duration: 3500 },
+  { id: 'soul_shatter', label: 'Shatter Soul', icon: '💥', duration: 5000 },
+  { id: 'torment', label: 'Eternal Torment', icon: '🔥', duration: 4500 },
+  { id: 'madness', label: 'Drive to Madness', icon: '🌀', duration: 4000 },
+  { id: 'blood_rage', label: 'Blood Rage', icon: '🩸', duration: 3000 },
+  { id: 'death_touch', label: 'Touch of Death', icon: '☠️', duration: 4500 },
+  { id: 'nightmare_realm', label: 'Create Nightmare Realm', icon: '🌑', duration: 5000 },
+  { id: 'corrupt', label: 'Corrupt Innocence', icon: '🖤', duration: 4000 },
+  { id: 'shadow_army', label: 'Summon Shadow Army', icon: '👥', duration: 5500 },
+  { id: 'despair', label: 'Induce Despair', icon: '😢', duration: 3500 }
 ];
 
 export default function IncubusHome() {
@@ -103,6 +113,56 @@ export default function IncubusHome() {
         case 'horns':
           updates.illusion_mastery = Math.min(100, (incubus.illusion_mastery || 0) + 5);
           result = 'Demonic horns emerge. Your true nature revealed.';
+          break;
+        case 'fear_feast':
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 140;
+          updates.seduction_power = Math.min(100, (incubus.seduction_power || 0) + 5);
+          result = 'Fear consumed. Terror makes you stronger.';
+          break;
+        case 'soul_shatter':
+          updates.victims = (incubus.victims || 0) + 1;
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 300;
+          result = 'Soul shattered into fragments. They cease to exist.';
+          break;
+        case 'torment':
+          updates.pacts_sealed = (incubus.pacts_sealed || 0) + 1;
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 200;
+          result = 'Eternal torment inflicted. Their suffering is endless.';
+          break;
+        case 'madness':
+          updates.nightmare_control = Math.min(100, (incubus.nightmare_control || 0) + 7);
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 110;
+          result = 'Sanity destroyed. Madness takes hold.';
+          break;
+        case 'blood_rage':
+          updates.seduction_power = Math.min(100, (incubus.seduction_power || 0) + 6);
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 90;
+          result = 'Blood rage unleashed. Violence feeds you.';
+          break;
+        case 'death_touch':
+          updates.victims = (incubus.victims || 0) + 1;
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 250;
+          result = 'Touch of death delivered. Life extinguished instantly.';
+          break;
+        case 'nightmare_realm':
+          updates.nightmare_control = Math.min(100, (incubus.nightmare_control || 0) + 10);
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 180;
+          result = 'Nightmare realm created. They are trapped forever.';
+          break;
+        case 'corrupt':
+          updates.victims = (incubus.victims || 0) + 1;
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 160;
+          result = 'Innocence corrupted. Darkness spreads through them.';
+          break;
+        case 'shadow_army':
+          updates.pacts_sealed = (incubus.pacts_sealed || 0) + 1;
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 220;
+          result = 'Shadow army summoned. Your forces grow.';
+          break;
+        case 'despair':
+          updates.nightmare_control = Math.min(100, (incubus.nightmare_control || 0) + 6);
+          updates.essence_gathered = (incubus.essence_gathered || 0) + 100;
+          result = 'Despair takes root. All hope is lost.';
           break;
       }
       
