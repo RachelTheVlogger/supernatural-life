@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, MessageCircle, BookOpen, Sparkles, Heart, Skull, Zap } from 'lucide-react';
+import { Home, Moon, User, MessageCircle, BookOpen, Sparkles, Heart, Skull, Zap, UserCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -83,6 +83,19 @@ export default function Layout({ children, currentPageName }) {
     enabled: showNav,
     retry: 1
   });
+
+  const { data: humans = [] } = useQuery({
+    queryKey: ['humans'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Human.list();
+      } catch (e) {
+        return [];
+      }
+    },
+    enabled: showNav,
+    retry: 1
+  });
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
@@ -96,6 +109,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vampire', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
+    { name: 'Human', icon: UserCircle, path: 'HumanHome', show: humans.length > 0 },
     { name: 'Succubus', icon: Heart, path: 'SuccubusHome', show: succubi.length > 0 },
     { name: 'Incubus', icon: Skull, path: 'IncubusHome', show: incubi.length > 0 },
     { name: 'Wolf', icon: Zap, path: 'WerewolfHome', show: playerWerewolves.length > 0 },
