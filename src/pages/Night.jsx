@@ -477,8 +477,6 @@ export default function Night() {
           <span className="text-2xl">⏳</span>
           <p className="text-white text-xs mt-1">Aging</p>
         </button>
-
-
         </motion.div>
       
 
