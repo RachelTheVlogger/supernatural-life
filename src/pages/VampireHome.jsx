@@ -1423,14 +1423,14 @@ export default function VampireHome() {
                   <button
                     key={vamp.id}
                     onClick={async () => {
-                      if (vamp.id !== vampireState.id) {
+                      if (vamp.id !== vampireState?.id) {
                         // Switch active vampire by updating query
                         queryClient.setQueryData(['vampireState'], [vamp]);
                         setShowVampireSelector(false);
                       }
                     }}
                     className={`w-full rounded-xl p-4 text-left transition-all ${
-                      vamp.id === vampireState.id
+                      vamp.id === vampireState?.id
                         ? 'bg-purple-600 border-2 border-purple-400'
                         : 'bg-gray-800 hover:bg-gray-700'
                     }`}
