@@ -1963,7 +1963,8 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               
               <div className="space-y-3">
                 <button
-                  onClick={async () => {
+                  onClick={async (e) => {
+                    e.stopPropagation();
                     const fan = topFans[Math.floor(Math.random() * Math.min(3, topFans.length))];
                     setVideoCallFan(fan?.name || 'VampireFan420');
                     setTimeout(async () => {
@@ -1996,7 +1997,8 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 </button>
 
                 <button
-                  onClick={async () => {
+                  onClick={async (e) => {
+                    e.stopPropagation();
                     const fan = topFans[Math.floor(Math.random() * topFans.length)]?.name || 'DarkLover69';
                     setSextingSession(fan);
                     setSextingMessages([]);
@@ -2045,7 +2047,8 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 </button>
 
                 <button
-                  onClick={async () => {
+                  onClick={async (e) => {
+                    e.stopPropagation();
                     const earnings = Math.floor(Math.random() * 50) + 30;
                     await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
                       revenue: servantProfile.revenue + earnings
