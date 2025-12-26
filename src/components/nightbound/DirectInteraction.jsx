@@ -78,6 +78,106 @@ const TURNED_VAMPIRE_INTERACTIONS = {
       mid: ['You stalked prey together. Teaching them your ways.', 'Two predators in the night. Perfectly synchronized.', 'They moved like you now. Supernatural. Deadly.'],
       high: ['You hunted as one. No words needed. Perfect unity.', 'Twin shadows. The city was yours together.', 'They\'ve become your perfect hunting companion.']
     }
+  },
+  vampireRace: {
+    icon: Wind,
+    label: 'Race through the city',
+    category: 'vampire',
+    gains: [20, 30],
+    outcomes: {
+      mid: ['You raced through the streets. Blur speed. They kept up. Almost.', 'Rooftop to rooftop. They\'re learning. Getting faster.', 'You pushed them to their limits. Supernatural speed unleashed.'],
+      high: ['You raced at full speed. They matched you. Exhilarating.', 'Two blurs through the night. Nothing could catch you.', 'Racing together. Wind in your faces. Laughing. Alive. Immortal.', 'They beat you to the destination. Grinning. You\'re proud.']
+    }
+  },
+  vampireSpar: {
+    icon: Flame,
+    label: 'Spar (vampire combat)',
+    category: 'vampire',
+    gains: [18, 28],
+    outcomes: {
+      mid: ['You sparred. Vampire strength against vampire strength.', 'They\'re getting stronger. You pushed them harder.', 'Combat training. They held their own. Impressive.'],
+      high: ['Full force sparring. Supernatural speed and strength unleashed.', 'You fought like equals. Exhilarating. Intense. Perfect.', 'They pinned you. Then you pinned them. Back and forth. Beautiful.', 'Sparring became rough play. Biting. Wrestling. Intense.']
+    }
+  },
+  vampireTelekinesis: {
+    icon: Zap,
+    label: 'Practice powers together',
+    category: 'vampire',
+    gains: [22, 32],
+    outcomes: {
+      mid: ['You practiced compulsion together. Mind games. Getting stronger.', 'Teaching them advanced powers. They\'re a quick learner.', 'Power training. Your abilities growing together.'],
+      high: ['You linked minds. Shared thoughts. Intimate beyond words.', 'Practiced powers until dawn. Exhausted. Powerful. Complete.', 'Your combined powers created something new. Overwhelming.', 'You felt their power surge. Matching yours. Equal. Perfect.']
+    }
+  },
+  vampireCompulsion: {
+    icon: Eye,
+    label: 'Compel each other (play)',
+    category: 'vampire',
+    gains: [25, 35],
+    outcomes: {
+      mid: ['You tried to compel them. They resisted. The sire bond protected.', 'Playful compulsion attempts. Testing boundaries. Fun.', 'They tried to compel you. Adorable attempt. You smiled.'],
+      high: ['Compulsion play. "Kiss me." They obeyed willingly, grinning.', 'You compelled them to tell the truth. They confessed everything.', 'Power games. Compulsion. Control. Surrender. Intoxicating.', 'They compelled you jokingly. You played along. Trust absolute.']
+    }
+  },
+  vampireDaylight: {
+    icon: Sparkles,
+    label: 'Watch sunrise together',
+    category: 'vampire',
+    gains: [30, 40],
+    outcomes: {
+      mid: ['Protected by daylight rings. You watched dawn together. Beautiful.', 'First sunrise as vampires. Safe. Together. Magical.', 'Dawn broke. You didn\'t burn. They held your hand. Wonder.'],
+      high: ['Sunrise together. Impossible before. Now possible. Everything changed.', 'Dawn. You kissed in the light. Vampires touching sun. Miraculous.', 'First time seeing them in daylight. Breathtaking. Worth everything.', 'You danced in the sunrise. Vampires defying nature. Together.']
+    }
+  },
+  vampireEternity: {
+    icon: Heart,
+    label: 'Talk about forever',
+    category: 'vampire',
+    gains: [35, 45],
+    outcomes: {
+      mid: ['You talked about eternity. They said "with you, forever."', 'Immortality discussed. The weight of forever. Together though.', 'They asked "will you tire of me?" Never. Impossible.'],
+      high: ['Forever pledged. Not human promises. Vampire eternity. Real.', '"We have centuries together." They smiled. "Not enough."', 'You promised them forever. Immortal love. Unbreakable.', 'Eternity stretched ahead. Neither of you afraid. Together always.']
+    }
+  },
+  vampireNest: {
+    icon: Moon,
+    label: 'Build a nest together',
+    category: 'vampire',
+    gains: [28, 38],
+    outcomes: {
+      mid: ['You prepared a safe sleeping place. Vampire nest. Shared.', 'Building your lair together. Dark. Safe. Yours.', 'They helped fortify the nest. Home. Finally.'],
+      high: ['Your nest complete. Dark. Secure. Perfect for two vampires.', 'You sleep entwined during the day. Safe. Together. Home.', 'The nest became your sanctuary. Your fortress. Your paradise.', 'Sleeping together in darkness. No vulnerability. Only peace.']
+    }
+  },
+  vampireBond: {
+    icon: Droplets,
+    label: 'Strengthen the blood bond',
+    category: 'vampire',
+    gains: [30, 45],
+    outcomes: {
+      mid: ['Blood exchanged. The sire bond deepened. Connection stronger.', 'You fed them your blood again. Ancient power shared.', 'The bond pulsed between you. Vampire connection. Supernatural.'],
+      high: ['Blood bond absolute. You felt what they felt. One being. Two bodies.', 'You could sense them always. Distance meaningless. Connected forever.', 'The bond became everything. Sire and progeny. Beyond that. Mates.', 'Vampire bond completed. Neither could exist without the other now.']
+    }
+  },
+  vampireTeach: {
+    icon: Book,
+    label: 'Teach them vampire history',
+    category: 'vampire',
+    gains: [20, 30],
+    outcomes: {
+      mid: ['You told them about the old ones. Ancient vampires. History.', 'Teaching them the ways. Vampire culture. Tradition. Laws.', 'They learned about your past. Centuries of life shared.'],
+      high: ['You told them everything. Every century. Every kill. Every love before them.', 'Vampire history became shared history. Your past. Their future.', 'They understood now. What you are. What they\'ve become. Beautiful.', 'You taught them the old language. Dead tongue. Alive between you.']
+    }
+  },
+  vampireDominance: {
+    icon: Flame,
+    label: 'Assert sire dominance',
+    category: 'vampire',
+    gains: [25, 40],
+    outcomes: {
+      mid: ['You asserted yourself. Sire above progeny. They submitted.', 'Dominance play. Vampire hierarchy. They obeyed their sire.', 'You reminded them who turned them. Who owns them. Yours.'],
+      high: ['Complete sire dominance. They couldn\'t resist. Biology. Bond. Power.', 'You commanded with sire authority. They obeyed instantly. Perfect.', 'Vampire dominance. Primal. Supernatural. Absolute. They loved it.', 'Sire bond at full force. Control complete. They wanted it. Begged for it.']
+    }
   }
 };
 
