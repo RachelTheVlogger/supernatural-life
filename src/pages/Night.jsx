@@ -471,6 +471,13 @@ export default function Night() {
           <span className="text-2xl">⏳</span>
           <p className="text-white text-xs mt-1">Aging</p>
         </button>
+        <button
+          onClick={() => setShowStalking(true)}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">👁️</span>
+          <p className="text-white text-xs mt-1">Stalking</p>
+        </button>
         </motion.div>
       
 
