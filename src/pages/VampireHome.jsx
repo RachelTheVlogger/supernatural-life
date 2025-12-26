@@ -1417,32 +1417,51 @@ export default function VampireHome() {
 
               <div className="space-y-3 max-h-[60vh] overflow-y-auto">
                 {vampireStates.map(vamp => (
-                  <button
+                  <div
                     key={vamp.id}
-                    onClick={async () => {
-                      if (vamp.id !== vampireState?.id) {
-                        // Switch active vampire by updating query
-                        queryClient.setQueryData(['vampireState'], [vamp]);
-                        setShowVampireSelector(false);
-                      }
-                    }}
-                    className={`w-full rounded-xl p-4 text-left transition-all ${
+                    className={`w-full rounded-xl p-4 transition-all ${
                       vamp.id === vampireState?.id
                         ? 'bg-purple-600 border-2 border-purple-400'
-                        : 'bg-gray-800 hover:bg-gray-700'
+                        : 'bg-gray-800'
                     }`}
                   >
-                    <h3 className="text-white font-bold text-lg">{vamp.vampire_name}</h3>
-                    <div className="flex gap-4 mt-2 text-sm">
-                      <span className="text-gray-400 capitalize">{vamp.gender}</span>
-                      <span className="text-gray-400 capitalize">{vamp.sexuality}</span>
-                      <span className="text-purple-400">Stage {vamp.vampire_stage}</span>
-                    </div>
-                    <div className="flex gap-3 mt-2 text-xs">
-                      <span className="text-gray-400">Humanity: {vamp.humanity}</span>
-                      <span className="text-gray-400">Powers: {vamp.unlocked_powers?.length || 0}</span>
-                    </div>
-                  </button>
+                    <button
+                      onClick={async () => {
+                        if (vamp.id !== vampireState?.id) {
+                          queryClient.setQueryData(['vampireState'], [vamp]);
+                          setShowVampireSelector(false);
+                        }
+                      }}
+                      className="w-full text-left"
+                    >
+                      <h3 className="text-white font-bold text-lg">{vamp.vampire_name}</h3>
+                      <div className="flex gap-4 mt-2 text-sm">
+                        <span className="text-gray-400 capitalize">{vamp.gender}</span>
+                        <span className="text-gray-400 capitalize">{vamp.sexuality}</span>
+                        <span className="text-purple-400">Stage {vamp.vampire_stage}</span>
+                      </div>
+                      <div className="flex gap-3 mt-2 text-xs">
+                        <span className="text-gray-400">Humanity: {vamp.humanity}</span>
+                        <span className="text-gray-400">Powers: {vamp.unlocked_powers?.length || 0}</span>
+                      </div>
+                    </button>
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Delete ${vamp.vampire_name}? This cannot be undone.`)) {
+                          await base44.entities.VampireState.delete(vamp.id);
+                          queryClient.invalidateQueries(['vampireState']);
+                          if (vamp.id === vampireState?.id) {
+                            setShowVampireSelector(false);
+                            navigate(createPageUrl('Home'));
+                          }
+                        }
+                      }}
+                      className="w-full mt-2 bg-red-900/40 hover:bg-red-900/60 text-red-300 py-2 rounded-lg transition-colors text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 ))}
               </div>
 
