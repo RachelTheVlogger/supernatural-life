@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, BookOpen, DollarSign, Users, TrendingUp, Award, Pen, Star, Book, Edit, CheckCircle, Upload, Mic, Share2, Package, MapPin } from 'lucide-react';
+import { X, BookOpen, DollarSign, Users, TrendingUp, Award, Pen, Star, Book, Edit, CheckCircle, Upload, Mic, Share2, Package, MapPin, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -979,6 +979,73 @@ export default function AuthorCareer({ servant, onClose }) {
                   </button>
                 ))}
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {showARCModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setShowARCModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full border border-purple-900/50"
+            >
+              <h3 className="text-white text-xl font-bold mb-4">Send ARC Copies</h3>
+              <p className="text-gray-400 mb-4">Choose a book to send to your {servantCareer?.arc_team_size} ARC readers</p>
+              
+              <div className="space-y-2 max-h-64 overflow-y-auto mb-4">
+                {books.filter(b => b.status === 'ready' || b.status === 'published').map(book => (
+                  <button
+                    key={book.id}
+                    onClick={async () => {
+                      setWorking(true);
+                      setShowARCModal(false);
+                      setWorkingMessage('Sending ARC copies to readers...');
+                      
+                      setTimeout(async () => {
+                        const reviewsExpected = Math.floor(servantCareer.arc_team_size * 0.7);
+                        setWorkingMessage(`${reviewsExpected}/${servantCareer.arc_team_size} readers left reviews!`);
+                        
+                        const qualityBoost = Math.floor(Math.random() * 10) + 5;
+                        await base44.entities.Book.update(book.id, {
+                          quality: Math.min(100, book.quality + qualityBoost),
+                          social_buzz: Math.min(100, (book.social_buzz || 0) + 20)
+                        });
+                        
+                        await base44.entities.NightLog.create({
+                          entry: `${servant.name} sent ARC copies of "${book.title}" to ${servantCareer.arc_team_size} readers. ${reviewsExpected} early reviews secured.`,
+                          category: 'interaction',
+                          intensity: 'significant'
+                        });
+                        
+                        queryClient.invalidateQueries(['books']);
+                        
+                        setTimeout(() => {
+                          setWorking(false);
+                          setWorkingMessage('');
+                        }, 2000);
+                      }, 3000);
+                    }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left"
+                  >
+                    <p className="text-white font-medium">{book.title}</p>
+                    <p className="text-gray-400 text-sm">{BOOK_GENRES[book.genre].name}</p>
+                  </button>
+                ))}
+              </div>
+              
+              <button
+                onClick={() => setShowARCModal(false)}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg"
+              >
+                Cancel
+              </button>
             </motion.div>
           </motion.div>
         )}
