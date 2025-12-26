@@ -7,6 +7,11 @@ import { useQueryClient } from '@tanstack/react-query';
 export default function DayCycleToggle({ vampireState }) {
   const queryClient = useQueryClient();
   const [transitioning, setTransitioning] = React.useState(false);
+  const [localTime, setLocalTime] = React.useState(vampireState?.time_of_day);
+
+  React.useEffect(() => {
+    setLocalTime(vampireState?.time_of_day);
+  }, [vampireState?.time_of_day]);
 
   const toggleCycle = async () => {
     if (!vampireState || transitioning) return;
@@ -14,15 +19,12 @@ export default function DayCycleToggle({ vampireState }) {
     setTransitioning(true);
     
     const newTime = vampireState.time_of_day === 'night' ? 'day' : 'night';
-    
-    console.log('Toggling from', vampireState.time_of_day, 'to', newTime);
+    setLocalTime(newTime);
     
     try {
-      const updated = await base44.entities.VampireState.update(vampireState.id, {
+      await base44.entities.VampireState.update(vampireState.id, {
         time_of_day: newTime
       });
-      
-      console.log('Update result:', updated);
 
       await base44.entities.NightLog.create({
         entry: newTime === 'day' 
@@ -32,23 +34,20 @@ export default function DayCycleToggle({ vampireState }) {
         intensity: 'subtle'
       });
 
-      // Immediately update cache
-      queryClient.setQueryData(['vampireState'], (old) => {
-        const newData = old?.map(v => v.id === vampireState.id ? { ...v, time_of_day: newTime } : v);
-        console.log('Cache updated:', newData);
-        return newData;
-      });
+      queryClient.setQueryData(['vampireState'], (old) => 
+        old?.map(v => v.id === vampireState.id ? { ...v, time_of_day: newTime } : v)
+      );
       
-      // Force refetch
-      await queryClient.refetchQueries({ queryKey: ['vampireState'] });
+      await queryClient.invalidateQueries({ queryKey: ['vampireState'] });
     } catch (e) {
       console.error('Toggle failed:', e);
+      setLocalTime(vampireState.time_of_day);
     }
     
     setTransitioning(false);
   };
 
-  const isDay = vampireState?.time_of_day === 'day';
+  const isDay = localTime === 'day';
 
   return (
     <motion.button
