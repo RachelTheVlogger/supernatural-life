@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Moon, Zap, Users, MapPin } from 'lucide-react';
+import { ArrowLeft, Moon, Zap, Users, MapPin, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -20,13 +20,21 @@ export default function WerewolfHome() {
   const queryClient = useQueryClient();
   const [acting, setActing] = useState(null);
   const [outcome, setOutcome] = useState('');
+  const [showNameInput, setShowNameInput] = useState(false);
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
     queryFn: () => base44.entities.PlayerWerewolf.list()
   });
 
+  const { data: vampireStates = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+
   const werewolf = werewolves[0];
+  const vampire = vampireStates[0];
+  const isDaytime = vampire?.time_of_day === 'day';
 
   const handleAction = async (action) => {
     if (!werewolf) return;
@@ -116,37 +124,46 @@ export default function WerewolfHome() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-950 via-gray-900 to-amber-950 p-6">
-      <button onClick={() => navigate(createPageUrl('Night'))} className="text-white/60 hover:text-white mb-6">
+    <div className="min-h-screen p-6" style={{ 
+      background: isDaytime 
+        ? 'linear-gradient(to bottom right, #FFE4B5, #FFDAB9, #FFE5CC)' 
+        : 'linear-gradient(to bottom right, #3d1f0a, #1a0f05, #2d1810)' 
+    }}>
+      <button onClick={() => navigate(createPageUrl('Night'))} className={`${isDaytime ? 'text-gray-700 hover:text-gray-900' : 'text-white/60 hover:text-white'} mb-6`}>
         <ArrowLeft className="w-6 h-6" />
       </button>
 
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-orange-300 mb-2">{werewolf.name}</h1>
-          <p className="text-orange-100 text-sm capitalize">{werewolf.pack_rank} • {werewolf.current_form} form</p>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <h1 className={`text-4xl font-bold ${isDaytime ? 'text-orange-900' : 'text-orange-300'}`}>{werewolf.name}</h1>
+            <button onClick={() => setShowNameInput(true)} className={`text-2xl hover:scale-110 transition-transform ${isDaytime ? 'text-orange-700' : 'text-orange-400'}`}>
+              ✏️
+            </button>
+          </div>
+          <p className={`${isDaytime ? 'text-orange-800' : 'text-orange-100'} text-sm capitalize`}>{werewolf.pack_rank} • {werewolf.current_form} form</p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-black/40 rounded-xl p-4 border border-orange-500/30">
+          <div className={`${isDaytime ? 'bg-white/70 border-orange-300/50' : 'bg-black/40 border-orange-500/30'} rounded-xl p-4 border`}>
             <Zap className="w-6 h-6 text-orange-400 mb-2" />
-            <p className="text-2xl font-bold text-white">{werewolf.wolf_strength}</p>
-            <p className="text-xs text-orange-300">Strength</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{werewolf.wolf_strength}</p>
+            <p className={`text-xs ${isDaytime ? 'text-orange-700' : 'text-orange-300'}`}>Strength</p>
           </div>
-          <div className="bg-black/40 rounded-xl p-4 border border-amber-500/30">
+          <div className={`${isDaytime ? 'bg-white/70 border-amber-300/50' : 'bg-black/40 border-amber-500/30'} rounded-xl p-4 border`}>
             <Moon className="w-6 h-6 text-amber-400 mb-2" />
-            <p className="text-2xl font-bold text-white">{werewolf.transformation_control}</p>
-            <p className="text-xs text-amber-300">Control</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{werewolf.transformation_control}</p>
+            <p className={`text-xs ${isDaytime ? 'text-amber-700' : 'text-amber-300'}`}>Control</p>
           </div>
-          <div className="bg-black/40 rounded-xl p-4 border border-red-500/30">
+          <div className={`${isDaytime ? 'bg-white/70 border-red-300/50' : 'bg-black/40 border-red-500/30'} rounded-xl p-4 border`}>
             <Users className="w-6 h-6 text-red-400 mb-2" />
-            <p className="text-2xl font-bold text-white">{werewolf.pack_members}</p>
-            <p className="text-xs text-red-300">Pack Size</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{werewolf.pack_members}</p>
+            <p className={`text-xs ${isDaytime ? 'text-red-700' : 'text-red-300'}`}>Pack Size</p>
           </div>
-          <div className="bg-black/40 rounded-xl p-4 border border-green-500/30">
+          <div className={`${isDaytime ? 'bg-white/70 border-green-300/50' : 'bg-black/40 border-green-500/30'} rounded-xl p-4 border`}>
             <MapPin className="w-6 h-6 text-green-400 mb-2" />
-            <p className="text-2xl font-bold text-white">{werewolf.territory_size}</p>
-            <p className="text-xs text-green-300">Territory</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{werewolf.territory_size}</p>
+            <p className={`text-xs ${isDaytime ? 'text-green-700' : 'text-green-300'}`}>Territory</p>
           </div>
         </div>
 
@@ -186,6 +203,53 @@ export default function WerewolfHome() {
             <div className="bg-orange-900 rounded-xl p-6 text-center">
               <p className="text-white text-lg">{outcome}</p>
             </div>
+          </motion.div>
+        )}
+
+        {showNameInput && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowNameInput(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <button onClick={() => setShowNameInput(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-2xl font-bold text-white mb-4">Change Name</h2>
+              <input
+                type="text"
+                defaultValue={werewolf.name}
+                onKeyPress={async (e) => {
+                  if (e.key === 'Enter' && e.target.value.trim()) {
+                    await base44.entities.PlayerWerewolf.update(werewolf.id, { name: e.target.value.trim() });
+                    queryClient.invalidateQueries();
+                    setShowNameInput(false);
+                  }
+                }}
+                className="w-full bg-gray-800 border border-orange-500/30 rounded-lg px-4 py-3 text-white mb-4"
+                autoFocus
+              />
+              <button
+                onClick={async (e) => {
+                  const input = e.target.parentElement.querySelector('input');
+                  if (input.value.trim()) {
+                    await base44.entities.PlayerWerewolf.update(werewolf.id, { name: input.value.trim() });
+                    queryClient.invalidateQueries();
+                    setShowNameInput(false);
+                  }
+                }}
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-lg"
+              >
+                Save
+              </button>
+            </motion.div>
           </motion.div>
         )}
       </div>

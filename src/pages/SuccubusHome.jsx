@@ -221,9 +221,19 @@ export default function SuccubusHome() {
         ? 'linear-gradient(to bottom right, #FFB6C1, #FFC0CB, #FFD4E5)' 
         : 'linear-gradient(to bottom right, #500724, #5A0A3D, #4A0E24)' 
     }}>
-      <button onClick={() => navigate(createPageUrl('Night'))} className={`${isDaytime ? 'text-gray-700 hover:text-gray-900' : 'text-white/60 hover:text-white'} mb-6`}>
-        <ArrowLeft className="w-6 h-6" />
-      </button>
+      <div className="flex justify-between items-center mb-6">
+        <button onClick={() => navigate(createPageUrl('Night'))} className={`${isDaytime ? 'text-gray-700 hover:text-gray-900' : 'text-white/60 hover:text-white'}`}>
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        {vampire && (
+          <button
+            onClick={() => navigate(createPageUrl('VampireHome'))}
+            className={`${isDaytime ? 'text-pink-700 hover:text-pink-900' : 'text-pink-400 hover:text-pink-300'} text-sm transition-colors`}
+          >
+            Talk to Vampire
+          </button>
+        )}
+      </div>
 
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
