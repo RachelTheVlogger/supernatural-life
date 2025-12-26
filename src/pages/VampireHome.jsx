@@ -138,6 +138,7 @@ export default function VampireHome() {
   }
   
   const handleMeditate = async () => {
+    if (!vampireState) return;
     setMeditating(true);
     setTimeout(async () => {
       try {
@@ -147,7 +148,7 @@ export default function VampireHome() {
           intensity: 'subtle'
         });
         
-        if (vampireState.id && vampireState.hunger_state !== 'sated') {
+        if (vampireState?.id && vampireState.hunger_state !== 'sated') {
           const hungerStates = ['restless', 'heightened', 'lingering', 'calm', 'sated'];
           const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
           if (currentIndex < hungerStates.length - 1) {
@@ -195,7 +196,7 @@ export default function VampireHome() {
 
 
   
-  const isDaytime = vampireState.time_of_day === 'day';
+  const isDaytime = vampireState?.time_of_day === 'day';
 
   return (
     <div className="min-h-screen relative overflow-hidden"
