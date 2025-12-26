@@ -28,49 +28,69 @@ const SHOP_ACTIVITIES = [
   { id: 'feed', label: 'Feed in Storage', desc: 'Quick bite in the back', pay: 100 }
 ];
 
-const COUPLE_ACTIVITIES = [
-  // Dark/Hunting
-  { id: 'hunt', label: 'Hunt Together', desc: 'Feed together on the streets', type: 'dark' },
-  { id: 'beach', label: 'Beach Night', desc: 'Ocean air and hunting', type: 'dark' },
-  { id: 'club', label: 'Vampire Club', desc: 'Feed in the crowd', type: 'dark' },
-  { id: 'forest', label: 'Forest Hunt', desc: 'Chase and catch', type: 'dark' },
-  
-  // Dom/Sub & Kink
-  { id: 'kneel', label: 'Kneel for Him', desc: 'Obey every command', type: 'dom' },
-  { id: 'restraints', label: 'Tied Up', desc: 'He binds your wrists', type: 'dom' },
-  { id: 'edging', label: 'Denial Game', desc: 'He controls your orgasms', type: 'dom' },
-  { id: 'collar', label: 'His Collar', desc: 'Wear his mark', type: 'dom' },
-  { id: 'hairpull', label: 'Hair Pulling', desc: 'He takes control', type: 'dom' },
-  { id: 'throatfuck', label: 'On Your Knees', desc: 'His hand in your hair', type: 'dom' },
-  { id: 'spanking', label: 'Punishment', desc: 'You misbehaved', type: 'dom' },
-  { id: 'public', label: 'Public Control', desc: 'His hand under the table', type: 'dom' },
-  { id: 'commanded', label: 'Orders', desc: 'He tells you exactly what to do', type: 'dom' },
-  { id: 'praise', label: 'Good Girl', desc: 'Earn his praise', type: 'dom' },
-  
-  // Intimate
-  { id: 'bedroom', label: 'Rough Sex', desc: 'Lose control together', type: 'intimate' },
-  { id: 'desk', label: 'Bend Over Desk', desc: 'He takes you hard', type: 'intimate' },
-  { id: 'wall', label: 'Against the Wall', desc: 'Pinned and claimed', type: 'intimate' },
-  { id: 'slow', label: 'Slow and Deep', desc: 'He worships you', type: 'intimate' },
-  { id: 'morning', label: 'Morning After', desc: 'Tangled in sheets', type: 'intimate' },
-  { id: 'bite', label: 'Feed During Sex', desc: 'Blood and pleasure', type: 'intimate' },
-  
-  // Domestic/Romantic
-  { id: 'cooking', label: 'Cook Together', desc: 'Make dinner as a couple', type: 'domestic' },
-  { id: 'movie', label: 'Movie Night', desc: 'Cuddled on the couch', type: 'domestic' },
-  { id: 'reading', label: 'Read Together', desc: 'Quiet evening with books', type: 'domestic' },
-  { id: 'walk', label: 'Evening Walk', desc: 'Stroll through town', type: 'domestic' },
-  { id: 'coffee', label: 'Morning Coffee', desc: 'Domestic bliss', type: 'domestic' },
-  { id: 'bath', label: 'Take a Bath', desc: 'Warm water and him', type: 'domestic' },
-  
-  // Story Events
-  { id: 'journal', label: 'Read His Journal', desc: 'Discover his desires', type: 'story' },
-  { id: 'bloodbond', label: 'Blood Bond', desc: 'Cut palms, bind forever', type: 'story' },
-  { id: 'write', label: 'Write Together', desc: 'One line, honest', type: 'story' },
-  { id: 'mara', label: 'Deal with Mara', desc: 'The stalker returns', type: 'story' },
-  { id: 'shower', label: 'Shower Together', desc: 'Wash the blood away', type: 'story' },
-  { id: 'breakfast', label: 'Breakfast Tease', desc: 'Coffee and filthy words', type: 'story' }
-];
+const ACTIVITY_SECTIONS = {
+  'Hunting & Feeding': [
+    { id: 'hunt', label: 'Hunt Streets' },
+    { id: 'beach', label: 'Beach Hunt' },
+    { id: 'club', label: 'Club Feed' },
+    { id: 'forest', label: 'Forest Chase' },
+    { id: 'alley', label: 'Alley Kill' },
+    { id: 'warehouse', label: 'Warehouse' }
+  ],
+  'Dom/Sub': [
+    { id: 'kneel', label: 'Kneel' },
+    { id: 'restraints', label: 'Tied Up' },
+    { id: 'edging', label: 'Edging' },
+    { id: 'collar', label: 'Collar' },
+    { id: 'hairpull', label: 'Hair Pull' },
+    { id: 'throatfuck', label: 'Throat' },
+    { id: 'spanking', label: 'Spanking' },
+    { id: 'public', label: 'Public' },
+    { id: 'commanded', label: 'Commands' },
+    { id: 'praise', label: 'Praise' },
+    { id: 'begging', label: 'Beg' },
+    { id: 'control', label: 'Control' }
+  ],
+  'Intimate': [
+    { id: 'bedroom', label: 'Rough' },
+    { id: 'desk', label: 'Desk' },
+    { id: 'wall', label: 'Wall' },
+    { id: 'slow', label: 'Slow' },
+    { id: 'morning', label: 'Morning' },
+    { id: 'bite', label: 'Feed+Sex' },
+    { id: 'counter', label: 'Counter' },
+    { id: 'couch', label: 'Couch' },
+    { id: 'floor', label: 'Floor' }
+  ],
+  'Daily Life': [
+    { id: 'cooking', label: 'Cook' },
+    { id: 'movie', label: 'Movie' },
+    { id: 'reading', label: 'Read' },
+    { id: 'walk', label: 'Walk' },
+    { id: 'coffee', label: 'Coffee' },
+    { id: 'bath', label: 'Bath' },
+    { id: 'shopping', label: 'Shopping' },
+    { id: 'cleaning', label: 'Clean House' },
+    { id: 'laundry', label: 'Laundry' },
+    { id: 'grocery', label: 'Groceries' }
+  ],
+  'Work/Admin': [
+    { id: 'bills', label: 'Check Bills' },
+    { id: 'patients', label: 'Review Patients' },
+    { id: 'shopinventory', label: 'Shop Inventory' },
+    { id: 'scheduling', label: 'Scheduling' },
+    { id: 'paperwork', label: 'Paperwork' },
+    { id: 'finances', label: 'Finances' }
+  ],
+  'Story Events': [
+    { id: 'journal', label: 'His Journal' },
+    { id: 'bloodbond', label: 'Blood Bond' },
+    { id: 'write', label: 'Write' },
+    { id: 'mara', label: 'Mara' },
+    { id: 'shower', label: 'Shower' },
+    { id: 'breakfast', label: 'Tease' }
+  ]
+};
 
 export default function NateLilithHome() {
   const navigate = useNavigate();
@@ -203,6 +223,8 @@ export default function NateLilithHome() {
       beach: ['Ocean air, moonlight, a lone figure on the sand. You fed as waves crashed. Nate bent you over after, salt and blood mixing.'],
       club: ['Bass pounding. Lights flashing. You fed in the crowd, unseen. Nate pulled you to a dark hallway after and fucked you against brick.'],
       forest: ['He chased you through the trees. Caught you. Pinned you. Fed from your throat while fucking you against bark.'],
+      alley: ['Dark alley. Drunk victim. You bit together, blood mixing on your lips. He fucked you against the wall after, still dripping red.'],
+      warehouse: ['Abandoned building. Perfect hunting ground. Three victims. You fed until drunk on blood, then each other.'],
       
       kneel: ['"Kneel." You dropped instantly. He stroked your hair. "Good girl. Now open your mouth." You obeyed. Always.'],
       restraints: ['Wrists bound to the bedpost. You tugged, helpless. "Don\'t fight it," he growled, spreading your thighs. "You\'re mine to use."'],
@@ -214,6 +236,8 @@ export default function NateLilithHome() {
       public: ['Restaurant. His hand slid up your thigh under the table. Fingers in your panties. You bit your lip, trying not to moan. "Come. Quietly."'],
       commanded: ['"Strip. Slowly." You obeyed. "Touch yourself. Not there—your breasts first." His voice controlled everything. You were dripping.'],
       praise: ['"Such a good girl for me." His thumb stroked your cheek. "Taking my cock so perfectly." The praise made you clench. "More... please..."'],
+      begging: ['"Please..." you whimpered. "Please what?" His fingers teased. "Say it." "Please fuck me, sir." "Good girl. Since you asked so nicely."'],
+      control: ['He controlled everything. When you breathed. When you moved. When you came. "You don\'t get to decide anymore. I do."'],
       
       bedroom: ['Hair pulled. Throat arched. His cock deep. "Say you\'re mine." You screamed it. Came so hard you saw stars.'],
       desk: ['He bent you over his desk. Papers scattered. One brutal thrust. "You love when I take you like this." "Yes... fuck... yes..."'],
@@ -221,6 +245,9 @@ export default function NateLilithHome() {
       slow: ['He took his time. Every thrust deep, deliberate, worshipful. "I love you." Foreheads pressed together. "I love you too."'],
       morning: ['Sunlight through the curtains. His arms around you. Slow kisses. He slid inside you gently. Morning sex, lazy and perfect.'],
       bite: ['His fangs sank into your throat as he thrust deep. Blood and pleasure exploded. You came screaming, him filling you as he drank.'],
+      counter: ['Kitchen counter. He lifted you up. Thrust into you hard. Dishes clattered. Neither of you cared.'],
+      couch: ['Movie forgotten. You straddled him. Riding slow. His hands on your hips, guiding. "That\'s it. Take what you need."'],
+      floor: ['Didn\'t make it to the bed. Floor. Carpet burn. Worth it. He fucked you until you couldn\'t think.'],
       
       cooking: ['You cooked pasta together. He kissed your neck while you stirred. Domestic and sweet. "I could get used to this."'],
       movie: ['Curled on the couch, his arm around you. Horror movie playing. You barely watched. Just enjoyed being close.'],
@@ -228,6 +255,17 @@ export default function NateLilithHome() {
       walk: ['Evening stroll through Crescent Hollow. Hand in hand. The fog rolled in. "Beautiful," you said. "You are," he replied.'],
       coffee: ['Morning coffee on the balcony. He wrapped a blanket around you. Kissed your temple. "Good morning, love."'],
       bath: ['Warm water. His chest against your back. His hands washing your hair. Gentle. Intimate. Safe.'],
+      shopping: ['Grocery store together. He pushed the cart. You picked out ingredients. So normal. So perfect. You held hands in the checkout line.'],
+      cleaning: ['Cleaning the house together. He vacuumed. You dusted. Mundane. Domestic. You loved it. "Our home," he said. "Our home," you agreed.'],
+      laundry: ['Folding laundry together. His shirts. Your dresses. Clothes tangled like your lives. He kissed your forehead. "I love this."'],
+      grocery: ['Wandering the aisles. Debating what to make for dinner. His hand on your lower back. Simple. Perfect. Yours.'],
+      
+      bills: ['Nate at his desk, reviewing therapy invoices. "Three new patients this week." You kissed his shoulder. "You\'re brilliant."'],
+      patients: ['He read through patient notes. Clinical. Professional. You watched him work. "You help people," you said. "I try," he replied.'],
+      shopinventory: ['You counted inventory at the shop. Nate helped. "You\'re good at this," he said, tallying receipts. Teamwork.'],
+      scheduling: ['Coordinating your work schedules. "I have therapy until 6pm." "I close at 5." "Dinner at 7?" "Perfect."'],
+      paperwork: ['Bills. Forms. Adult responsibilities. He filled them out while you sorted mail. Boring. Necessary. Together.'],
+      finances: ['Bank statements spread across the table. "We\'re doing okay," he said. You nodded. Building a life. Slowly. Surely.'],
       
       journal: ['"Session Twelve. She crossed her legs. I wanted to ask if her panties were wet." You read his words. Your body answered.'],
       bloodbond: ['He cut your palm. Cut his. Blood to blood. You came together, wound to wound, sealing the vow. Forever.'],
@@ -315,50 +353,27 @@ export default function NateLilithHome() {
 
         {/* Couple Activities */}
         {!workMode && !coupleActivity && !processing && (
-          <div className="mb-8">
-            <h3 className="text-white text-xl font-bold mb-4">Together</h3>
-            <div className="grid grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto">
-              {COUPLE_ACTIVITIES.map(activity => (
-                <button
-                  key={activity.id}
-                  onClick={() => setCoupleActivity(activity)}
-                  className={`rounded-lg p-2 text-center transition-all ${
-                    activity.type === 'dark' ? 'bg-red-900/40 hover:bg-red-900/60 border border-red-500/30' :
-                    activity.type === 'dom' ? 'bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30' :
-                    activity.type === 'intimate' ? 'bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30' :
-                    activity.type === 'domestic' ? 'bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30' :
-                    activity.type === 'story' ? 'bg-indigo-900/40 hover:bg-indigo-900/60 border border-indigo-500/30' :
-                    'bg-gray-800 hover:bg-gray-700'
-                  }`}
-                >
-                  <p className="text-white text-xs font-medium">{activity.label}</p>
-                </button>
-              ))}
-            </div>
+          <div className="mb-8 max-h-[65vh] overflow-y-auto">
+            {Object.entries(ACTIVITY_SECTIONS).map(([section, activities]) => (
+              <div key={section} className="mb-6">
+                <h3 className="text-purple-400 text-sm font-bold mb-2">{section}</h3>
+                <div className="grid grid-cols-4 gap-2">
+                  {activities.map(activity => (
+                    <button
+                      key={activity.id}
+                      onClick={() => handleCoupleActivity(activity)}
+                      className="bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-center transition-all"
+                    >
+                      <p className="text-white text-xs">{activity.label}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
-        {/* Couple Activity in Progress */}
-        {coupleActivity && !outcome && !processing && (
-          <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-white text-xl font-bold mb-4">{coupleActivity.label}</h3>
-            <p className="text-gray-300 mb-6">{coupleActivity.desc}</p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setCoupleActivity(null)}
-                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleCoupleActivity(coupleActivity)}
-                className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white py-3 rounded-xl transition-all"
-              >
-                Begin
-              </button>
-            </div>
-          </div>
-        )}
+
 
         {/* Actions */}
         {!workMode && !coupleActivity && !processing && (
