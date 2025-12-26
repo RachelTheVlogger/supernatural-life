@@ -92,7 +92,62 @@ export default function DoppelgangerHome() {
         });
 
         message = `You told them the truth. They're a shadow. A copy. Destined to die for supernatural purposes. They look at you with horror.`;
-      }
+        } else if (action === 'torment') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 15, -100)
+        });
+
+        const torments = [
+          'You appeared in their dreams. Every night. Their nightmares now have your face.',
+          'You killed someone they love. Made them watch. Their screams echo in your mind.',
+          'You took their life. Piece by piece. Job. Friends. Hope. Until nothing remained.',
+          'You compelled them to hurt themselves. Over and over. Breaking them slowly.',
+          'You showed them their future. Death. Suffering. No escape. They wept.'
+        ];
+        message = torments[Math.floor(Math.random() * torments.length)];
+        humanityChange = -8;
+        } else if (action === 'stalk') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 5, -100)
+        });
+
+        const stalks = [
+          'You watched them sleep. Every night. They sense someone watching but see nothing.',
+          'You followed them everywhere. Work. Home. Dates. They feel paranoid now.',
+          'You left them gifts. Cryptic notes. Photos of them they never knew existed.',
+          'You stood outside their window. For hours. Just watching. Breathing.'
+        ];
+        message = stalks[Math.floor(Math.random() * stalks.length)];
+        humanityChange = -3;
+        } else if (action === 'save') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.min((doppelganger.relationship_vampire || 0) + 25, 100),
+          protected_by: vampireState.id
+        });
+
+        const saves = [
+          'Hunters came for them. You slaughtered them all. Blood everywhere. They watched you kill for them.',
+          'A vampire attacked. You tore them apart. Saved the doppelganger from turning. They owe you their life.',
+          'They were dying. Accident. You gave them your blood to heal. Now they know what you are.',
+          'A werewolf stalked them. You fought it off. Nearly died. They saw your monster form protecting them.'
+        ];
+        message = saves[Math.floor(Math.random() * saves.length)];
+        humanityChange = 8;
+        } else if (action === 'manipulate') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: (doppelganger.relationship_vampire || 0) + 10,
+          is_aware: false
+        });
+
+        const manipulations = [
+          'You compelled them. Made them forget their suspicions. Now they trust you completely.',
+          'You orchestrated events. Made yourself their hero. They think you saved them. You created the danger.',
+          'You gaslit them. Made them doubt their memories. Now they believe your version of reality.',
+          'You isolated them from friends. Family. Now you\'re all they have left.'
+        ];
+        message = manipulations[Math.floor(Math.random() * manipulations.length)];
+        humanityChange = -5;
+        }
 
       if (humanityChange !== 0 && vampireState) {
         await base44.entities.VampireState.update(vampireState.id, {
