@@ -1448,10 +1448,11 @@ export default function VampireHome() {
                     <button
                       onClick={async (e) => {
                         e.stopPropagation();
+                        const currentVampId = vampireState?.id;
                         if (confirm(`Delete ${vamp.vampire_name}? This cannot be undone.`)) {
                           await base44.entities.VampireState.delete(vamp.id);
                           queryClient.invalidateQueries(['vampireState']);
-                          if (vamp.id === vampireState?.id) {
+                          if (vamp.id === currentVampId) {
                             setShowVampireSelector(false);
                             navigate(createPageUrl('Home'));
                           }
