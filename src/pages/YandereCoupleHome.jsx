@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Heart, Eye, Lock, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -50,12 +50,10 @@ const ACTIVITY_SECTIONS = {
 export default function YandereCoupleHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [activeCharacter, setActiveCharacter] = useState('him');
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
-  const [vampireStage, setVampireStage] = useState('human'); // 'human', 'deciding', 'vampire'
+  const [vampireStage, setVampireStage] = useState('human');
 
-  // Fetch or create couple state
   const { data: coupleData } = useQuery({
     queryKey: ['yandereCoupleState'],
     queryFn: async () => {
@@ -82,39 +80,30 @@ export default function YandereCoupleHome() {
     setProcessing(true);
 
     const outcomes = {
-      // Obsession
       stalk: 'You followed them from work. They didn\'t notice. You memorized every step. Every breath. Every pause.',
       watch: 'You watched them sleep. So peaceful. So vulnerable. So completely yours.',
       photos: 'Another photo added to the collection. Thousands now. Every angle. Every expression. Perfect.',
       belongings: 'You took their hoodie. It still smells like them. You\'ll sleep in it tonight.',
       jealous: 'Someone looked at them too long. Your blood boiled. They need to know who they belong to.',
       possessive: 'Hickeys. Scratches. Marks they can\'t hide. Everyone needs to see they\'re taken.',
-      
-      // Control
       isolate: 'Convinced them to skip the party. "It\'s just us tonight." Always just us.',
       manipulate: 'Guilt. Love. Fear. You know exactly which buttons to push. They stayed.',
       track: 'Phone tracker installed. You know where they are. Always. It\'s for their safety.',
       threaten: 'That coworker who keeps flirting? Had a little chat. They won\'t make that mistake again.',
       claim: 'Arm around them in public. Hand on their neck. Possessive kiss. Message clear: MINE.',
       punish: 'They talked to someone you didn\'t approve of. Now they\'re apologizing. Begging. Learning.',
-      
-      // Intimate
       rough: 'Nails down their back. Teeth on their throat. Hard. Desperate. Consuming.',
       desperate: 'Couldn\'t wait. Couldn\'t breathe without them. Fucked them until you both forgot where one ended and the other began.',
       worship: 'On your knees. Worshipping every inch. They\'re your god. Your religion. Your everything.',
       marks: 'Bruises blooming on their skin. Your artwork. Your signature. Your claim.',
       'possessive-sex': '"Say you\'re mine." Thrust. "SAY IT." They screamed it. Over and over.',
       gentle: 'Slow. Tender. Worshipful. They deserved gentleness. Sometimes. When they\'ve been good.',
-      
-      // Daily Life
       cooking: 'Made their favorite meal. Watched them eat. Every bite they took felt like love.',
       work: 'Normal day at work. But texted them 47 times. Just to make sure they were thinking of you.',
       shopping: 'Grocery shopping together. Held hands the entire time. They tried to let go once. Once.',
       date: 'Date night. Fancy restaurant. You stared at them the entire time. They blushed. Perfect.',
       movie: 'Movie night. You didn\'t watch the screen. Only them. Their reactions. Their smiles. Theirs.',
       cleaning: 'Cleaned the apartment. Found more of their things mixed with yours. Good. As it should be.',
-      
-      // Communication
       text: '32 texts in an hour. "Miss you." "Love you." "Thinking of you." "Are you okay?" "Who\'s there?"',
       call: 'Video call. Needed to see their face. Needed to know they were alone. Safe. Yours.',
       voicemail: 'Left them another voicemail. "I love you. I need you. I can\'t breathe without you. Call me back."',
@@ -188,7 +177,6 @@ export default function YandereCoupleHome() {
           </p>
         </div>
 
-        {/* Character Names Placeholders - customize these */}
         <div className="grid grid-cols-2 gap-4 mb-8">
           <div className="bg-gray-800 rounded-xl p-6 text-center border-2 border-red-500">
             <Heart className="w-8 h-8 text-red-400 mx-auto mb-2" />
@@ -202,7 +190,6 @@ export default function YandereCoupleHome() {
           </div>
         </div>
 
-        {/* Book Progression */}
         {vampireStage === 'human' && (
           <button
             onClick={() => handleTransition('deciding')}
@@ -223,7 +210,6 @@ export default function YandereCoupleHome() {
           </button>
         )}
 
-        {/* Activities */}
         {!processing && (
           <div className="mb-8 max-h-[65vh] overflow-y-auto">
             {Object.entries(ACTIVITY_SECTIONS).map(([section, activities]) => (
@@ -245,7 +231,6 @@ export default function YandereCoupleHome() {
           </div>
         )}
 
-        {/* Outcome Display */}
         <AnimatePresence>
           {outcome && (
             <motion.div
