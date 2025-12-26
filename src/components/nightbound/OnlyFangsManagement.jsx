@@ -146,13 +146,22 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
       'LustfulNight', 'EternalDesire', 'MidnightCrave', 'CrimsonFan', 'ObsessedOne', 'DevotedSub'
     ];
     
+    const vampireFanNames = [
+      'LordNoctis', 'LadyCrimson', 'ElderDraven', 'VampressNyx', 'CountessVera', 
+      'SireDamien', 'ImmortalLust', 'BloodlineKing', 'NightwalkQueen', 'EternalFang'
+    ];
+    
     const seed = servant.id?.charCodeAt(0) || 0;
-    const shuffled = [...fanNamePool].sort(() => 0.5 - ((seed * 9301 + 49297) % 233280) / 233280);
+    
+    // Mix of regular and vampire fans
+    const allFans = [...fanNamePool.slice(0, 7), ...vampireFanNames.slice(0, 3)];
+    const shuffled = [...allFans].sort(() => 0.5 - ((seed * 9301 + 49297) % 233280) / 233280);
     
     return shuffled.slice(0, 5).map((name, i) => ({
       name,
       spent: Math.floor(servantProfile.revenue * (0.3 - i * 0.05)),
-      tier: i === 0 ? 'VIP' : i < 3 ? 'Premium' : 'Basic'
+      tier: i === 0 ? 'VIP' : i < 3 ? 'Premium' : 'Basic',
+      isVampire: vampireFanNames.includes(name)
     }));
   }, [servantProfile?.revenue, servant.id]);
 
@@ -436,28 +445,42 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     const initialMessages = [];
     const isVampFemale = vampireState.gender === 'woman';
     
+    const vampireMessages = [
+      '🩸 Vampire here. This is exquisite.', 'Fellow vampire watching. Respect.', 'The way you move... supernatural.',
+      'Immortal beauty. Perfect.', 'Your vampire fans love this.', 'We know you\'re one of us. 🦇',
+      'Vampire content hits different. 💀', 'The bloodline approves.', 'Elder vampire here. Impressed.',
+      'You understand the eternal hunger.', 'Vampire to vampire: perfection.', 'We see you. We claim you.',
+      'The coven watches. Continue.', 'Sire would be proud.', 'Vampire excellence.', 'Old blood appreciates this.',
+      'Centuries-old. Still impressed.', 'The eternal ones approve.', 'Fellow predator. Beautiful work.',
+      'Your vampire audience grows. 🦇', 'Undead and loving this.', 'Immortal lust satisfied.'
+    ];
+    
     const explicitMessages = withVampire ? (isVampFemale ? [
       'Oh fuck yes take it', 'So hot together 💦', 'You\'re both so fucking hot', 'Best stream ever', 'Don\'t stop', 'I\'m so wet watching this',
       'Harder!', 'They\'re perfect together', 'Wish I was there', 'This is incredible', 'Keep going!', 'So beautiful', 'Amazing chemistry',
       'I can\'t look away', 'Hottest stream ever', 'You two are fire', 'Need more of this', 'Absolutely stunning', 'My favorite couple',
       'This is art', 'Pure passion', 'I\'m obsessed', 'Never stop streaming', 'Goals honestly', 'Making me feel things',
-      'Touch them more', 'Yes yes yes!', 'Perfection', 'I love this so much', 'Take my money', 'Worth every penny'
+      'Touch them more', 'Yes yes yes!', 'Perfection', 'I love this so much', 'Take my money', 'Worth every penny',
+      ...vampireMessages
     ] : [
       'Oh fuck yes breed her', 'Fill her up 💦', 'She\'s so fucking hot', 'Best stream ever', 'Harder daddy', 'Choke her please',
       'Make her scream', 'God she\'s perfect', 'I want to be her', 'Fuck her harder', 'She loves it', 'Amazing', 'So hot together',
       'Don\'t stop', 'Give it to her', 'She\'s taking it so well', 'Hottest couple ever', 'This is insane', 'Keep going',
       'Her moans 🔥', 'Destroy her', 'She\'s so lucky', 'I\'m so hard rn', 'Best content', 'Need more like this',
-      'Pull her hair', 'She\'s incredible', 'You\'re both perfect', 'I can\'t stop watching', 'Take my money', 'Worth it'
+      'Pull her hair', 'She\'s incredible', 'You\'re both perfect', 'I can\'t stop watching', 'Take my money', 'Worth it',
+      ...vampireMessages
     ]) : [
       'You\'re so fucking sexy', 'Touch yourself for us', 'So hot 🔥🔥', 'I want you so bad', 'Don\'t stop baby',
       'You look amazing', 'Keep going', 'I\'m so turned on', 'Perfect body', 'Show us more', 'You\'re incredible',
       'Best performer ever', 'I need you', 'So beautiful', 'This is everything', 'Can\'t get enough',
       'You\'re driving me crazy', 'Gorgeous', 'I\'m addicted to you', 'More please', 'Absolutely stunning',
       'Your moans 😍', 'I wish I was there', 'So wet watching you', 'You\'re perfect', 'Never stop',
-      'Best stream ever', 'Take my money', 'Worth every second', 'I love you', 'Marry me'
+      'Best stream ever', 'Take my money', 'Worth every second', 'I love you', 'Marry me',
+      ...vampireMessages
     ];
     
-    const usernames = ['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire', 'MidnightCrave', 'ObsessedOne'];
+    const vampireUsernames = ['LordNoctis', 'LadyCrimson', 'ElderDraven', 'VampressNyx', 'CountessVera', 'SireDamien', 'ImmortalLust', 'BloodlineKing'];
+    const usernames = [...['DarkLover69', 'VampireFan420', 'NightStalker', 'BloodThirsty', 'GothKing', 'ShadowQueen', 'LustfulNight', 'EternalDesire', 'MidnightCrave', 'ObsessedOne'], ...vampireUsernames];
     const usedMessages = new Set();
 
     for (let i = 0; i < 6; i++) {
@@ -469,10 +492,14 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
       }
       usedMessages.add(message);
 
+      const username = usernames[Math.floor(Math.random() * usernames.length)];
+      const isVampireUser = vampireUsernames.includes(username);
+      
       initialMessages.push({
-        username: usernames[Math.floor(Math.random() * usernames.length)],
+        username,
         message,
-        tip: Math.random() > 0.6 ? Math.floor(Math.random() * 50) + 5 : 0
+        tip: Math.random() > 0.6 ? Math.floor(Math.random() * (isVampireUser ? 150 : 50)) + (isVampireUser ? 20 : 5) : 0,
+        isVampire: isVampireUser
       });
     }
     
@@ -488,10 +515,14 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           attempts++;
         }
         
+        const username = usernames[Math.floor(Math.random() * usernames.length)];
+        const isVampireUser = vampireUsernames.includes(username);
+        
         const newMsg = {
-          username: usernames[Math.floor(Math.random() * usernames.length)],
+          username,
           message,
-          tip: Math.random() > 0.7 ? Math.floor(Math.random() * 50) + 5 : 0
+          tip: Math.random() > 0.7 ? Math.floor(Math.random() * (isVampireUser ? 150 : 50)) + (isVampireUser ? 20 : 5) : 0,
+          isVampire: isVampireUser
         };
         return [...prev.slice(-10), newMsg];
       });
@@ -1282,10 +1313,12 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     key={i}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-gray-800/60 rounded-lg p-2"
+                    className={`rounded-lg p-2 ${msg.isVampire ? 'bg-red-900/40 border border-red-500/30' : 'bg-gray-800/60'}`}
                   >
                     <div className="flex items-start gap-2">
-                      <span className="text-pink-400 text-xs font-bold">{msg.username}</span>
+                      <span className={`text-xs font-bold ${msg.isVampire ? 'text-red-300' : 'text-pink-400'}`}>
+                        {msg.isVampire && '🦇 '}{msg.username}
+                      </span>
                       {msg.tip > 0 && <span className="text-green-400 text-xs">💵 ${msg.tip}</span>}
                     </div>
                     <p className="text-gray-300 text-sm">{msg.message}</p>
@@ -1421,15 +1454,21 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
               <h3 className="text-white text-xl font-bold mb-4">👑 Top Fans</h3>
               <div className="space-y-2">
                 {topFans.map((fan, i) => (
-                  <div key={fan.name} className="bg-gray-800/50 rounded-lg p-3 flex items-center justify-between">
+                  <div key={fan.name} className={`rounded-lg p-3 flex items-center justify-between ${
+                    fan.isVampire ? 'bg-red-900/30 border border-red-500/30' : 'bg-gray-800/50'
+                  }`}>
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">{i === 0 ? '👑' : '⭐'}</span>
+                      <span className="text-2xl">{fan.isVampire ? '🦇' : i === 0 ? '👑' : '⭐'}</span>
                       <div>
-                        <p className="text-white font-medium">{fan.name}</p>
-                        <p className="text-gray-400 text-xs">{fan.tier}</p>
+                        <p className={`font-medium ${fan.isVampire ? 'text-red-300' : 'text-white'}`}>
+                          {fan.name}
+                        </p>
+                        <p className="text-gray-400 text-xs">{fan.isVampire ? 'Vampire VIP' : fan.tier}</p>
                       </div>
                     </div>
-                    <p className="text-green-400 font-bold">${fan.spent}</p>
+                    <p className={`font-bold ${fan.isVampire ? 'text-red-400' : 'text-green-400'}`}>
+                      ${fan.spent}
+                    </p>
                   </div>
                 ))}
               </div>
