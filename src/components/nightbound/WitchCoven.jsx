@@ -11,12 +11,13 @@ export default function WitchCoven({ witch, onClose }) {
   const [recruiting, setRecruiting] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const { data: covenMembers = [] } = useQuery({
-    queryKey: ['witch-coven', witch.id],
+  const { data: currentWitch } = useQuery({
+    queryKey: ['witch-coven-data', witch.id],
     queryFn: async () => {
-      // For witches, we store coven in a different way - just track count
-      return [];
-    }
+      const witches = await base44.entities.Witch.list();
+      return witches.find(w => w.id === witch.id) || witch;
+    },
+    initialData: witch
   });
 
   const handleRecruit = async () => {
@@ -28,7 +29,7 @@ export default function WitchCoven({ witch, onClose }) {
       const specialty = specialties[Math.floor(Math.random() * specialties.length)];
       
       await base44.entities.Witch.update(witch.id, {
-        coven_size: (witch.coven_size || 0) + 1
+        coven_size: (currentWitch.coven_size || 0) + 1
       });
 
       await base44.entities.NightLog.create({
@@ -38,8 +39,7 @@ export default function WitchCoven({ witch, onClose }) {
       });
 
       await queryClient.invalidateQueries(['witches']);
-      await queryClient.invalidateQueries(['witch-coven']);
-      await queryClient.invalidateQueries();
+      await queryClient.invalidateQueries(['witch-coven-data']);
 
       setOutcome(`${name} joined your coven as a ${specialty} specialist.`);
       
@@ -52,7 +52,7 @@ export default function WitchCoven({ witch, onClose }) {
   };
 
   const handleRitual = async () => {
-    const covenSize = witch.coven_size || 0;
+    const covenSize = currentWitch.coven_size || 0;
     if (covenSize === 0) {
       alert('Need coven members to perform group ritual');
       return;
@@ -64,7 +64,7 @@ export default function WitchCoven({ witch, onClose }) {
       const powerGain = covenSize * 10 + Math.floor(Math.random() * 20);
       
       await base44.entities.Witch.update(witch.id, {
-        power_level: witch.power_level + powerGain
+        power_level: currentWitch.power_level + powerGain
       });
 
       await base44.entities.NightLog.create({
@@ -104,7 +104,7 @@ export default function WitchCoven({ witch, onClose }) {
         )}
 
         <h2 className="text-2xl font-bold text-white mb-2">🔮 Your Coven</h2>
-        <p className="text-gray-400 text-sm mb-6">{witch.coven_size || 0} witches in your circle</p>
+        <p className="text-gray-400 text-sm mb-6">{currentWitch.coven_size || 0} witches in your circle</p>
 
         {!outcome && (
           <>
@@ -118,19 +118,19 @@ export default function WitchCoven({ witch, onClose }) {
               </button>
               <button
                 onClick={handleRitual}
-                disabled={recruiting || (witch.coven_size || 0) === 0}
+                disabled={recruiting || (currentWitch.coven_size || 0) === 0}
                 className="bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 rounded-lg py-3 text-pink-300 disabled:opacity-50"
               >
                 Coven Ritual
               </button>
             </div>
 
-            {(witch.coven_size || 0) === 0 ? (
+            {(currentWitch.coven_size || 0) === 0 ? (
               <p className="text-gray-400 text-center py-8">No coven members yet. Recruit your first witch.</p>
             ) : (
               <div className="bg-gray-800 rounded-xl p-6 text-center">
                 <Sparkles className="w-12 h-12 text-purple-400 mx-auto mb-3" />
-                <p className="text-white text-lg font-bold mb-1">{witch.coven_size} Witches</p>
+                <p className="text-white text-lg font-bold mb-1">{currentWitch.coven_size} Witches</p>
                 <p className="text-gray-400 text-sm">Your coven grows in power and influence</p>
               </div>
             )}
