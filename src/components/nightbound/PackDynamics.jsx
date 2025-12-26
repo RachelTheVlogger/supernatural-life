@@ -28,6 +28,7 @@ export default function PackDynamics({ werewolf, onClose }) {
       
       await base44.entities.Werewolf.create({
         name,
+        pack_name: `${werewolf.name}'s Pack`,
         pack_leader_id: werewolf.id,
         gender: genders[Math.floor(Math.random() * genders.length)],
         pack_rank: ranks[Math.floor(Math.random() * ranks.length)],
