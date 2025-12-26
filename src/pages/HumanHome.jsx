@@ -138,19 +138,19 @@ export default function HumanHome() {
   const dangerColor = human.danger_level > 70 ? 'text-red-400' : human.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+    <div className="min-h-screen bg-black p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <button
             onClick={() => navigate(createPageUrl('Home'))}
-            className="text-gray-600 hover:text-gray-900 transition-colors"
+            className="text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
           {vampireStates.length > 0 && (
             <button
               onClick={() => navigate(createPageUrl('Night'))}
-              className="text-purple-600 hover:text-purple-800 text-sm"
+              className="text-purple-400 hover:text-purple-300 text-sm"
             >
               Switch to Vampire →
             </button>
@@ -162,8 +162,8 @@ export default function HumanHome() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">{human.name}</h1>
-          <p className="text-gray-600 capitalize">{human.job} • {human.gender}</p>
+          <h1 className="text-4xl font-bold text-white mb-2">{human.name}</h1>
+          <p className="text-gray-400 capitalize">{human.job} • {human.gender}</p>
         </motion.div>
 
         {/* Stats */}
@@ -173,12 +173,12 @@ export default function HumanHome() {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-2 gap-4 mb-8"
         >
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-600 text-sm">Awareness</span>
+              <span className="text-gray-400 text-sm">Awareness</span>
               <span className={`font-bold ${awarenessColor}`}>{human.awareness_level || 0}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-800 rounded-full h-2">
               <div 
                 style={{ width: `${human.awareness_level || 0}%` }}
                 className="h-2 bg-gradient-to-r from-green-500 to-red-500 rounded-full"
@@ -187,12 +187,12 @@ export default function HumanHome() {
             <p className="text-xs text-gray-500 mt-1">How much you know</p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-600 text-sm">Danger</span>
+              <span className="text-gray-400 text-sm">Danger</span>
               <span className={`font-bold ${dangerColor}`}>{human.danger_level || 0}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-800 rounded-full h-2">
               <div 
                 style={{ width: `${human.danger_level || 0}%` }}
                 className="h-2 bg-gradient-to-r from-green-500 to-red-500 rounded-full"
@@ -207,10 +207,10 @@ export default function HumanHome() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6"
+            className="bg-red-950/40 border border-red-500/30 rounded-xl p-4 mb-6"
           >
-            <p className="text-red-800 font-medium">⚠️ Vampire Encounters: {human.vampire_encounters}</p>
-            <p className="text-red-600 text-sm mt-1">You've seen things you can't explain. They're watching you.</p>
+            <p className="text-red-400 font-medium">⚠️ Vampire Encounters: {human.vampire_encounters}</p>
+            <p className="text-red-300 text-sm mt-1">You've seen things you can't explain. They're watching you.</p>
           </motion.div>
         )}
 
@@ -221,7 +221,7 @@ export default function HumanHome() {
           transition={{ delay: 0.2 }}
           className="space-y-3 mb-8"
         >
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Daily Life</h2>
+          <h2 className="text-xl font-bold text-white mb-4">Daily Life</h2>
           {HUMAN_ACTIVITIES.map((activity, i) => (
             <motion.button
               key={activity.id}
@@ -230,10 +230,10 @@ export default function HumanHome() {
               transition={{ delay: 0.25 + i * 0.05 }}
               onClick={() => handleActivity(activity)}
               disabled={activeAction}
-              className="w-full bg-white hover:bg-gray-50 rounded-xl p-4 flex items-center gap-3 shadow-sm transition-all disabled:opacity-50"
+              className="w-full bg-gray-900 hover:bg-gray-800 rounded-xl p-4 flex items-center gap-3 border border-gray-800 transition-all disabled:opacity-50"
             >
-              <activity.icon className="w-5 h-5 text-purple-600" />
-              <span className="text-gray-900 font-medium">{activity.label}</span>
+              <activity.icon className="w-5 h-5 text-purple-400" />
+              <span className="text-white font-medium">{activity.label}</span>
             </motion.button>
           ))}
         </motion.div>
@@ -296,9 +296,9 @@ export default function HumanHome() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-2xl p-6 max-w-lg w-full"
+              className="bg-gray-900 rounded-2xl p-6 max-w-lg w-full border border-gray-800"
             >
-              <p className="text-gray-800 leading-relaxed whitespace-pre-line">{outcome}</p>
+              <p className="text-gray-200 leading-relaxed whitespace-pre-line">{outcome}</p>
             </motion.div>
           </motion.div>
         )}
@@ -307,7 +307,7 @@ export default function HumanHome() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
           >
             <motion.div
               animate={{ opacity: [0.5, 1, 0.5] }}
