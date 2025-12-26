@@ -66,11 +66,10 @@ export default function VampireHome() {
         return [];
       }
     },
-    retry: 2,
-    staleTime: 0,
-    cacheTime: 0,
-    refetchOnMount: true
+    retry: 2
   });
+  
+  const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
   
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
@@ -137,8 +136,6 @@ export default function VampireHome() {
   if (vampireStates.length === 0) {
     return null;
   }
-
-  const vampireState = vampireStates[0];
   
   const handleMeditate = async () => {
     setMeditating(true);
