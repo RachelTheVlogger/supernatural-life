@@ -37,7 +37,7 @@ const VAMPIRE_ACTIVITIES = [
 ];
 
 const BUSINESS_ACTIVITIES = [
-  { id: 'manage', label: 'Manage business', icon: Sparkles, duration: 0, isModal: true },
+  { id: 'manage', label: 'Choose Career / Manage Business', icon: Sparkles, duration: 0, isModal: true },
   { id: 'onlyfangs', label: 'OnlyFangs (adult content)', icon: Camera, duration: 0, isModal: true },
   { id: 'youtube', label: 'YouTube Channel', icon: Camera, duration: 0, isModal: true },
   { id: 'patreon', label: 'Patreon', icon: Coffee, duration: 0, isModal: true },
