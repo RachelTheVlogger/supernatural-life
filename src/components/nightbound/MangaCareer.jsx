@@ -197,13 +197,32 @@ export default function MangaCareer({ servant, onClose }) {
             {career.manga_chapters && career.manga_chapters.length > 0 && (
               <div>
                 <h4 className="text-white font-medium text-sm mb-2">Published Chapters</h4>
-                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                <div className="space-y-3 max-h-[300px] overflow-y-auto">
                   {[...career.manga_chapters].reverse().map((chapter) => (
                     <div key={chapter.number} className="bg-gray-800/50 rounded-lg p-3">
-                      <div className="flex justify-between items-start mb-1">
+                      <div className="flex justify-between items-start mb-2">
                         <h5 className="text-white font-medium text-sm">Ch. {chapter.number}: {chapter.title}</h5>
                         <span className="text-xs text-purple-400">{chapter.quality}% quality</span>
                       </div>
+                      
+                      {/* Panel Grid Visual */}
+                      <div className="grid grid-cols-6 gap-1 mb-2">
+                        {Array.from({ length: Math.min(chapter.panels, 18) }).map((_, i) => (
+                          <div
+                            key={i}
+                            className="aspect-square rounded bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30"
+                            style={{
+                              backgroundImage: `linear-gradient(${Math.random() * 360}deg, rgba(147, 51, 234, 0.3) 0%, rgba(236, 72, 153, 0.3) 100%)`
+                            }}
+                          />
+                        ))}
+                        {chapter.panels > 18 && (
+                          <div className="aspect-square rounded bg-gray-700/40 border border-gray-600/30 flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">+{chapter.panels - 18}</span>
+                          </div>
+                        )}
+                      </div>
+                      
                       <div className="flex gap-3 text-xs text-gray-400">
                         <span>📄 {chapter.panels} panels</span>
                         <span>👥 +{chapter.fans_gained} fans</span>
