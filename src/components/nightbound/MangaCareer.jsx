@@ -82,6 +82,8 @@ export default function MangaCareer({ servant, onClose }) {
   const handleStartSeries = async (genre) => {
     if (!career?.id) return;
     
+    setWorking(true);
+    
     const seriesNames = {
       shonen: ['Battle Chronicles', 'Rising Hero', 'Power Surge'],
       shojo: ['First Love', 'Spring Romance', 'Heart Melody'],
@@ -97,10 +99,18 @@ export default function MangaCareer({ servant, onClose }) {
     await base44.entities.ServantCareer.update(career.id, {
       current_genre: genre.id,
       series_name: seriesName,
-      chapters_released: 0
+      chapters_released: 0,
+      fans: 0,
+      income: 0
     });
 
-    queryClient.invalidateQueries();
+    setOutcome(`Started "${seriesName}" - a ${genre.label} manga series!`);
+    await queryClient.invalidateQueries();
+    
+    setTimeout(() => {
+      setWorking(false);
+      setOutcome('');
+    }, 2000);
   };
 
   return (
