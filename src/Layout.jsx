@@ -26,7 +26,7 @@ export default function Layout({ children, currentPageName }) {
   });
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome', 'HumanHome'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome', 'HumanHome', 'DoppelgangerHome'].includes(currentPageName);
   
   // Fetch killers for killer tab
 
@@ -90,6 +90,18 @@ export default function Layout({ children, currentPageName }) {
     },
     retry: 1
   });
+
+  const { data: doppelgangers = [] } = useQuery({
+    queryKey: ['doppelgangers'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Doppelganger.list();
+      } catch (e) {
+        return [];
+      }
+    },
+    retry: 1
+  });
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
@@ -104,6 +116,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Vampire', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
     { name: 'Human', icon: UserCircle, path: 'HumanHome' },
+    { name: 'Doppel', icon: Users, path: `DoppelgangerHome?id=${doppelgangers[0]?.id}`, show: doppelgangers.length > 0 },
     { name: 'Succubus', icon: Heart, path: 'SuccubusHome', show: succubi.length > 0 },
     { name: 'Incubus', icon: Skull, path: 'IncubusHome', show: incubi.length > 0 },
     { name: 'Wolf', icon: Zap, path: 'WerewolfHome', show: playerWerewolves.length > 0 },
