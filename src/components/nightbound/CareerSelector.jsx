@@ -25,6 +25,13 @@ const CAREERS = {
     description: 'Write and publish books professionally',
     color: 'from-gray-900/40 to-purple-900/40',
     borderColor: 'border-gray-500/50'
+  },
+  manga: { 
+    name: 'Manga Artist', 
+    icon: '📖', 
+    description: 'Draw and publish manga series',
+    color: 'from-purple-900/40 to-blue-900/40',
+    borderColor: 'border-purple-500/50'
   }
 };
 
@@ -33,7 +40,8 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
   const [currentCareers, setCurrentCareers] = React.useState({
     jewelry: false,
     tattoo: false,
-    author: false
+    author: false,
+    manga: false
   });
 
   React.useEffect(() => {
@@ -43,7 +51,8 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
         setCurrentCareers({
           jewelry: existing[0].jewelry_business_active || false,
           tattoo: existing[0].tattoo_business_active || false,
-          author: existing[0].author_career_active || false
+          author: existing[0].author_career_active || false,
+          manga: existing[0].manga_career_active || false
         });
       }
     };
@@ -56,7 +65,8 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
       servant_id: servant.id,
       jewelry_business_active: careerType === 'jewelry' ? newState : currentCareers.jewelry,
       tattoo_business_active: careerType === 'tattoo' ? newState : currentCareers.tattoo,
-      author_career_active: careerType === 'author' ? newState : currentCareers.author
+      author_career_active: careerType === 'author' ? newState : currentCareers.author,
+      manga_career_active: careerType === 'manga' ? newState : currentCareers.manga
     };
 
     const existing = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
