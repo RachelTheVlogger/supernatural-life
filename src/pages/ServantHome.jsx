@@ -18,6 +18,7 @@ import CareerSelector from '@/components/nightbound/CareerSelector';
 import ServantDating from '@/components/nightbound/ServantDating';
 import TattooStudio from '@/components/nightbound/TattooStudio';
 import AuthorCareer from '@/components/nightbound/AuthorCareer';
+import ServantWitchInteraction from '@/components/nightbound/ServantWitchInteraction';
 
 const CHORES = [
   { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
@@ -92,6 +93,7 @@ export default function ServantHome() {
   const [showDating, setShowDating] = useState(false);
   const [showTattoo, setShowTattoo] = useState(false);
   const [showAuthor, setShowAuthor] = useState(false);
+  const [showWitchVisit, setShowWitchVisit] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -483,6 +485,12 @@ export default function ServantHome() {
             servant={servant}
             vampireState={vampireState}
             onClose={() => setShowDating(false)}
+          />
+        )}
+        {showWitchVisit && (
+          <ServantWitchInteraction
+            servant={servant}
+            onClose={() => setShowWitchVisit(false)}
           />
         )}
         {!vampireState && (showOnlyFangs || showServantInteractions || showYouTube || showSnapchat || showDating) && (
