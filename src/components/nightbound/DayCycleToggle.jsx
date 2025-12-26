@@ -15,10 +15,14 @@ export default function DayCycleToggle({ vampireState }) {
     
     const newTime = vampireState.time_of_day === 'night' ? 'day' : 'night';
     
+    console.log('Toggling from', vampireState.time_of_day, 'to', newTime);
+    
     try {
-      await base44.entities.VampireState.update(vampireState.id, {
+      const updated = await base44.entities.VampireState.update(vampireState.id, {
         time_of_day: newTime
       });
+      
+      console.log('Update result:', updated);
 
       await base44.entities.NightLog.create({
         entry: newTime === 'day' 
@@ -29,12 +33,14 @@ export default function DayCycleToggle({ vampireState }) {
       });
 
       // Immediately update cache
-      queryClient.setQueryData(['vampireState'], (old) => 
-        old?.map(v => v.id === vampireState.id ? { ...v, time_of_day: newTime } : v)
-      );
+      queryClient.setQueryData(['vampireState'], (old) => {
+        const newData = old?.map(v => v.id === vampireState.id ? { ...v, time_of_day: newTime } : v);
+        console.log('Cache updated:', newData);
+        return newData;
+      });
       
-      // Force refetch to verify
-      queryClient.refetchQueries({ queryKey: ['vampireState'] });
+      // Force refetch
+      await queryClient.refetchQueries({ queryKey: ['vampireState'] });
     } catch (e) {
       console.error('Toggle failed:', e);
     }

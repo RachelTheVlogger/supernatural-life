@@ -60,18 +60,23 @@ export default function VampireHome() {
     queryKey: ['vampireState'],
     queryFn: async () => {
       try {
-        return await base44.entities.VampireState.list();
+        const result = await base44.entities.VampireState.list();
+        console.log('VampireHome fetched state:', result);
+        return result;
       } catch (e) {
         console.error('Failed to fetch vampire state:', e);
         return [];
       }
     },
     retry: 2,
-    staleTime: 0,
-    cacheTime: 0
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 0
   });
   
   const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
+  
+  console.log('VampireHome - isDaytime calculation:', vampireState?.time_of_day, 'isDaytime:', vampireState?.time_of_day === 'day');
   
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
