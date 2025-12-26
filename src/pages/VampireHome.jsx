@@ -201,7 +201,7 @@ export default function VampireHome() {
     <div className="min-h-screen relative overflow-hidden"
          style={{ 
            background: isDaytime 
-             ? 'linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #B0E0E6 100%)' 
+             ? 'linear-gradient(to bottom, #FFB347 0%, #FFCC99 50%, #FFD4A3 100%)' 
              : 'linear-gradient(to bottom, #0a0a14 0%, #1a0a1a 50%, #0a0014 100%)' 
          }}>
 
@@ -210,7 +210,7 @@ export default function VampireHome() {
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className={`absolute w-1 h-1 rounded-full ${isDaytime ? 'bg-yellow-300/40' : 'bg-purple-400/30'}`}
+            className={`absolute w-1 h-1 rounded-full ${isDaytime ? 'bg-orange-300/40' : 'bg-purple-400/30'}`}
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -571,52 +571,52 @@ export default function VampireHome() {
             transition={{ delay: 0.26 }}
             className="mb-8 grid md:grid-cols-3 gap-3"
           >
-            <button onClick={() => setShowWitchEncounter(true)} className={`${isDaytime ? 'bg-blue-100/60 border-blue-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowWitchEncounter(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>✨ Encounter Witch</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Meet powerful witches</p>
             </button>
 
-            <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-purple-100/60 border-purple-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🔄 Become Hybrid</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Merge with wolf</p>
             </button>
 
-            <button onClick={() => setShowWerewolves(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-orange-900/40 border-orange-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowWerewolves(true)} className={`${isDaytime ? 'bg-amber-100/60 border-amber-400/40' : 'bg-orange-900/40 border-orange-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🐺 Werewolves</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Ancient enemies</p>
             </button>
 
-            <button onClick={() => setShowCovenManagement(true)} className={`${isDaytime ? 'bg-purple-100/60 border-purple-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowCovenManagement(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🦇 Coven</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Your vampire family</p>
             </button>
 
-            <button onClick={() => setShowDaylightRings(true)} className={`${isDaytime ? 'bg-yellow-100/60 border-yellow-400/40' : 'bg-yellow-900/40 border-yellow-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowDaylightRings(true)} className={`${isDaytime ? 'bg-amber-100/60 border-amber-400/40' : 'bg-yellow-900/40 border-yellow-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>☀️ Daylight Rings</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Walk in sunlight</p>
             </button>
 
-            <button onClick={() => setShowClubs(true)} className={`${isDaytime ? 'bg-pink-100/60 border-pink-400/40' : 'bg-pink-900/40 border-pink-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowClubs(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-pink-900/40 border-pink-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🍷 Vampire Clubs</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Underground nightlife</p>
             </button>
 
-            <button onClick={() => setShowArtifacts(true)} className={`${isDaytime ? 'bg-red-100/60 border-red-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowArtifacts(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>⚡ Artifacts</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Cursed objects</p>
             </button>
 
-            <button onClick={() => setShowBloodBonds(true)} className={`${isDaytime ? 'bg-red-100/60 border-red-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowBloodBonds(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🩸 Blood Bonds</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Sire lines</p>
             </button>
 
-            <button onClick={() => setShowPolitics(true)} className={`${isDaytime ? 'bg-purple-100/60 border-purple-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowPolitics(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>👑 Politics</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Elections & power</p>
             </button>
 
-            <button onClick={() => setShowAging(true)} className={`${isDaytime ? 'bg-gray-200/60 border-gray-400/40' : 'bg-gray-900/40 border-gray-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+            <button onClick={() => setShowAging(true)} className={`${isDaytime ? 'bg-orange-50/60 border-orange-300/40' : 'bg-gray-900/40 border-gray-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>⏳ Age Forward</h3>
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Pass decades/centuries</p>
             </button>

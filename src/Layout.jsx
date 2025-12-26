@@ -43,7 +43,6 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Succubus', icon: Heart, path: 'SuccubusHome' },
     { name: 'Incubus', icon: Skull, path: 'IncubusHome' },
     { name: 'Wolf', icon: Zap, path: 'WerewolfHome' },
-    { name: 'Hybrid', icon: BookOpen, path: 'HybridHome' },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome' }
   ];
   
