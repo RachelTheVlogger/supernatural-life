@@ -21,7 +21,18 @@ export default function MangaCareer({ servant, onClose }) {
   const { data: career } = useQuery({
     queryKey: ['career', servant.id],
     queryFn: async () => {
-      const careers = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
+      const careers = await base44.entities.ServantCareer.filter({ servant_id: servant.id, career_type: 'manga' });
+      if (careers.length === 0) {
+        // Create initial manga career
+        const newCareer = await base44.entities.ServantCareer.create({
+          servant_id: servant.id,
+          career_type: 'manga',
+          fans: 0,
+          income: 0,
+          chapters_released: 0
+        });
+        return newCareer;
+      }
       return careers[0];
     }
   });
