@@ -18,24 +18,29 @@ export default function MangaCareer({ servant, onClose }) {
   const [working, setWorking] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const { data: career } = useQuery({
+  const { data: career, isLoading } = useQuery({
     queryKey: ['career', servant.id],
     queryFn: async () => {
-      const careers = await base44.entities.ServantCareer.filter({ servant_id: servant.id, career_type: 'manga' });
-      if (careers.length === 0) {
-        // Create initial manga career
-        const newCareer = await base44.entities.ServantCareer.create({
-          servant_id: servant.id,
-          career_type: 'manga',
-          fans: 0,
-          income: 0,
-          chapters_released: 0
-        });
-        return newCareer;
-      }
+      const careers = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
       return careers[0];
     }
   });
+
+  if (isLoading || !career) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+        onClick={onClose}
+      >
+        <div className="bg-gray-900 rounded-2xl p-6 text-center">
+          <p className="text-white">Loading...</p>
+        </div>
+      </motion.div>
+    );
+  }
 
   const handleDrawChapter = async () => {
     setWorking(true);
