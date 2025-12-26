@@ -129,52 +129,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
     staleTime: 3000
   });
 
-  // Randomly spawn stalker
-  React.useEffect(() => {
-    if (servantProfile && servantProfile.subscriber_count > 100 && Math.random() > 0.95 && stalkers.length < 3) {
-      const usernames = ['DarkObsessed', 'NightWatcher99', 'AlwaysWatching', 'YourBiggestFan', 'ShadowFollower'];
-      const behaviors = [
-        'Comments on every single post',
-        'Watches every livestream',
-        'Sends multiple messages daily',
-        'Screenshots all your content'
-      ];
-      
-      base44.entities.Stalker.create({
-        servant_id: servant.id,
-        platform: 'onlyfangs',
-        username: usernames[Math.floor(Math.random() * usernames.length)],
-        obsession_level: Math.floor(Math.random() * 30) + 20,
-        danger_level: 'harmless',
-        behavior_patterns: [behaviors[Math.floor(Math.random() * behaviors.length)]]
-      }).then(() => queryClient.invalidateQueries(['stalkers']));
-    }
-  }, [servantProfile?.subscriber_count]);
 
-  // Escalate existing stalkers
-  React.useEffect(() => {
-    if (stalkers.length > 0 && Math.random() > 0.9) {
-      const stalker = stalkers[Math.floor(Math.random() * stalkers.length)];
-      if (stalker.obsession_level < 90 && !stalker.blocked) {
-        const newBehaviors = [
-          'Asked for personal info',
-          'Tried to find your address',
-          'Mentioned knowing your schedule',
-          'Talked about meeting you',
-          'Got aggressive when ignored'
-        ];
-        
-        const newObsession = Math.min(100, stalker.obsession_level + 10);
-        const newDanger = newObsession > 80 ? 'critical' : newObsession > 60 ? 'dangerous' : newObsession > 40 ? 'threatening' : 'concerning';
-        
-        base44.entities.Stalker.update(stalker.id, {
-          obsession_level: newObsession,
-          danger_level: newDanger,
-          behavior_patterns: [...(stalker.behavior_patterns || []), newBehaviors[Math.floor(Math.random() * newBehaviors.length)]].slice(-5)
-        }).then(() => queryClient.invalidateQueries(['stalkers']));
-      }
-    }
-  }, [videos.length, posts.length]);
 
   const isTabLoading = (tabName) => {
     if (tabName === 'content') return videosLoading || postsLoading;

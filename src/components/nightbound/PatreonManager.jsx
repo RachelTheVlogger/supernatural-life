@@ -38,21 +38,7 @@ export default function PatreonManager({ servant, onClose }) {
     staleTime: 3000
   });
 
-  React.useEffect(() => {
-    if (account && totalPatrons > 30 && Math.random() > 0.96 && stalkers.filter(s => s.platform === 'tiktok').length < 2) {
-      const usernames = ['DevotedPatron', 'TopSupporter', 'ObsessiveFan', 'YourNumber1'];
-      const behaviors = ['Pledges max tier immediately', 'Comments on everything', 'Demands exclusive attention', 'Asks invasive questions'];
-      
-      base44.entities.Stalker.create({
-        servant_id: servant.id,
-        platform: 'tiktok',
-        username: usernames[Math.floor(Math.random() * usernames.length)],
-        obsession_level: Math.floor(Math.random() * 35) + 35,
-        danger_level: 'concerning',
-        behavior_patterns: [behaviors[Math.floor(Math.random() * behaviors.length)]]
-      }).then(() => queryClient.invalidateQueries(['stalkers']));
-    }
-  }, [totalPatrons]);
+
 
   const handleCreateAccount = async () => {
     await base44.entities.PatreonAccount.create({

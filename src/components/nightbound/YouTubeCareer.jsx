@@ -59,42 +59,7 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
   });
 
   // Spawn stalker
-  React.useEffect(() => {
-    if (channel && channel.subscriber_count > 500 && Math.random() > 0.95 && stalkers.filter(s => s.platform === 'youtube').length < 2) {
-      const usernames = ['ObsessedFan', 'AlwaysWatching', 'YourBiggestFan', 'Stalker4Life', 'FoundYou'];
-      const behaviors = ['Comments on every video within minutes', 'Knows your upload schedule', 'References details from old videos', 'Asks personal questions'];
-      
-      base44.entities.Stalker.create({
-        servant_id: servant.id,
-        platform: 'youtube',
-        username: usernames[Math.floor(Math.random() * usernames.length)],
-        obsession_level: Math.floor(Math.random() * 30) + 20,
-        danger_level: 'harmless',
-        behavior_patterns: [behaviors[Math.floor(Math.random() * behaviors.length)]]
-      }).then(() => queryClient.invalidateQueries(['stalkers']));
-    }
-  }, [channel?.subscriber_count]);
 
-  // Escalate stalkers
-  React.useEffect(() => {
-    if (stalkers.length > 0 && Math.random() > 0.92) {
-      const ytStalkers = stalkers.filter(s => s.platform === 'youtube' && !s.blocked);
-      if (ytStalkers.length > 0) {
-        const stalker = ytStalkers[Math.floor(Math.random() * ytStalkers.length)];
-        if (stalker.obsession_level < 90) {
-          const newBehaviors = ['Found your Instagram', 'Mentioned your location', 'Asked where you live', 'Sent creepy DM', 'Showed up in comments of friends'];
-          const newObsession = Math.min(100, stalker.obsession_level + 10);
-          const newDanger = newObsession > 80 ? 'critical' : newObsession > 60 ? 'dangerous' : newObsession > 40 ? 'threatening' : 'concerning';
-          
-          base44.entities.Stalker.update(stalker.id, {
-            obsession_level: newObsession,
-            danger_level: newDanger,
-            behavior_patterns: [...(stalker.behavior_patterns || []), newBehaviors[Math.floor(Math.random() * newBehaviors.length)]].slice(-5)
-          }).then(() => queryClient.invalidateQueries(['stalkers']));
-        }
-      }
-    }
-  }, [videos.length]);
 
   const channel = channels[0];
   const hasChannel = !!channel;

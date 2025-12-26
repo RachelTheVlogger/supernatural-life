@@ -39,21 +39,7 @@ export default function SnapchatPremium({ servant, vampireState, onClose }) {
     staleTime: 3000
   });
 
-  React.useEffect(() => {
-    if (account && account.subscriber_count > 50 && Math.random() > 0.94 && stalkers.filter(s => s.platform === 'snapchat').length < 2) {
-      const usernames = ['SnapStalker', 'AddictedToYou', 'CantStopWatching', 'NeedMore'];
-      const behaviors = ['Screenshots every snap', 'Replies instantly', 'Asks for meetup', 'Sends money constantly'];
-      
-      base44.entities.Stalker.create({
-        servant_id: servant.id,
-        platform: 'snapchat',
-        username: usernames[Math.floor(Math.random() * usernames.length)],
-        obsession_level: Math.floor(Math.random() * 40) + 30,
-        danger_level: 'concerning',
-        behavior_patterns: [behaviors[Math.floor(Math.random() * behaviors.length)]]
-      }).then(() => queryClient.invalidateQueries(['stalkers']));
-    }
-  }, [account?.subscriber_count]);
+
 
   const handleCreateAccount = async () => {
     await base44.entities.SnapchatPremium.create({
