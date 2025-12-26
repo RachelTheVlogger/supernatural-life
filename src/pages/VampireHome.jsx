@@ -238,7 +238,7 @@ export default function VampireHome() {
   return (
     <div 
       key={`vampire-home-${vampireState?.time_of_day}`}
-      className="min-h-screen relative overflow-hidden"
+      className="min-h-screen relative overflow-x-hidden"
          style={{ 
            background: isDaytime 
              ? 'linear-gradient(to bottom, #FFB347 0%, #FFCC99 50%, #FFD4A3 100%)' 
@@ -268,7 +268,7 @@ export default function VampireHome() {
         ))}
       </div>
       
-      <div className="relative z-10 p-6">
+      <div className="relative z-10 p-6 overflow-y-auto pb-24">
         <div className="flex justify-between items-center mb-8">
           <button
             onClick={(e) => {
