@@ -39,10 +39,12 @@ export default function WitchCoven({ witch, onClose }) {
 
       setOutcome(`${name} joined your coven as a ${specialty} specialist.`);
       queryClient.invalidateQueries(['witches']);
+      queryClient.invalidateQueries(['witch-coven']);
       
       setTimeout(() => {
         setRecruiting(false);
         setOutcome('');
+        onClose();
       }, 3000);
     }, 3000);
   };
