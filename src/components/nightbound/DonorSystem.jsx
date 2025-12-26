@@ -51,7 +51,9 @@ export default function DonorSystem({ vampireState, onClose }) {
         frequency: 'weekly',
         boundaries: ['no-pain', 'safe-environment'],
         knows_truth: true,
-        wants_to_be_turned: false
+        wants_to_be_turned: false,
+        days_since_donation: 7,
+        total_donations: 0
       });
 
       await base44.entities.NightLog.create({
@@ -237,7 +239,7 @@ export default function DonorSystem({ vampireState, onClose }) {
                         {donor.attachment > 60 && (
                           <p className="text-pink-400 text-xs">💕 They're getting attached to you</p>
                         )}
-                        {donor.days_since_donation < 7 && (
+                        {donor.total_donations > 0 && donor.days_since_donation < 7 && (
                           <p className="text-yellow-400 text-xs">⚠️ Too soon since last feeding - let them recover</p>
                         )}
                       </button>
@@ -325,7 +327,7 @@ export default function DonorSystem({ vampireState, onClose }) {
                   <button
                     key={style.id}
                     onClick={() => feedFromDonor(selectedDonor, style.id)}
-                    disabled={selectedDonor.days_since_donation < 7 || selectedDonor.health < 30}
+                    disabled={(selectedDonor.total_donations > 0 && selectedDonor.days_since_donation < 7) || selectedDonor.health < 30}
                     className="bg-gray-800/50 hover:bg-gray-700 disabled:bg-gray-900/50 border border-red-900/30 rounded-lg p-3 text-left disabled:opacity-50 transition-all"
                   >
                     <div className="flex justify-between items-start mb-1">
