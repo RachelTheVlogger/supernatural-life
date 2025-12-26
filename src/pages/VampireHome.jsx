@@ -522,16 +522,21 @@ export default function VampireHome() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.26 }}
-            className="mb-8 grid md:grid-cols-2 gap-4"
+            className="mb-8 grid md:grid-cols-3 gap-4"
           >
             <button onClick={() => setShowWitchEncounter(true)} className="bg-purple-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-colors">
-              <h3 className="text-white font-medium mb-1">✨ Witches</h3>
-              <p className="text-gray-400 text-xs">Powerful magic users. Bonnie level.</p>
+              <h3 className="text-white font-medium mb-1">✨ Encounter Witch</h3>
+              <p className="text-gray-400 text-xs">Meet powerful witches</p>
+            </button>
+
+            <button onClick={() => navigate(createPageUrl('WitchHome'))} className="bg-purple-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-colors">
+              <h3 className="text-white font-medium mb-1">🔮 Play as Witch</h3>
+              <p className="text-gray-400 text-xs">Cast spells & rituals</p>
             </button>
 
             <button onClick={() => setShowCovenManagement(true)} className="bg-purple-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-colors">
               <h3 className="text-white font-medium mb-1">🦇 Coven</h3>
-              <p className="text-gray-400 text-xs">Manage your vampire coven</p>
+              <p className="text-gray-400 text-xs">Manage vampire coven</p>
             </button>
           </motion.div>
 
