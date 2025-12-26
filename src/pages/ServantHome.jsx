@@ -44,11 +44,17 @@ const getBusinessActivities = (servantCareer) => {
   
   if (servantCareer?.jewelry_business_active) {
     activities.push({ id: 'jewelry', label: '💎 Jewelry Business', icon: Sparkles, duration: 0, isModal: true });
-  } else if (servantCareer?.tattoo_business_active) {
+  }
+  
+  if (servantCareer?.tattoo_business_active) {
     activities.push({ id: 'tattoo', label: '🎨 Tattoo Studio', icon: Sparkles, duration: 0, isModal: true });
-  } else if (servantCareer?.author_career_active) {
+  }
+  
+  if (servantCareer?.author_career_active) {
     activities.push({ id: 'author', label: '📚 Author Career', icon: BookOpen, duration: 0, isModal: true });
-  } else {
+  }
+  
+  if (!servantCareer?.jewelry_business_active && !servantCareer?.tattoo_business_active && !servantCareer?.author_career_active) {
     activities.push({ id: 'choose_career', label: 'Choose Career', icon: Sparkles, duration: 0, isModal: true });
   }
   
