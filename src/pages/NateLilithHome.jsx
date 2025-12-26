@@ -81,6 +81,12 @@ const ACTIVITY_SECTIONS = {
     { id: 'scheduling', label: 'Scheduling' },
     { id: 'paperwork', label: 'Paperwork' },
     { id: 'finances', label: 'Finances' }
+  ],
+  'Communication': [
+    { id: 'text', label: 'Text Each Other' },
+    { id: 'call', label: 'Quick Call' },
+    { id: 'sext', label: 'Sexting' },
+    { id: 'photo', label: 'Send Photo' }
   ]
 };
 
@@ -259,6 +265,11 @@ export default function NateLilithHome() {
       paperwork: ['Bills. Forms. Adult responsibilities. He filled them out while you sorted mail. Boring. Necessary. Together.'],
       finances: ['Bank statements spread across the table. "We\'re doing okay," he said. You nodded. Building a life. Slowly. Surely.'],
       
+      text: ['"Miss you." He texted during your shift. You smiled, biting your lip. "Miss you too. Can\'t wait to get home."'],
+      call: ['His voice on the phone. "How\'s work?" Just to hear you. "Better now," you said. "Come home soon."'],
+      sext: ['"What are you wearing?" His text made you flush. At work. In public. "Nothing under this dress." "Good girl. Keep it that way."'],
+      photo: ['You sent a photo. Neck exposed. "Bite me later?" His reply: "Count on it. Already hard thinking about it."'],
+      
       journal: ['"Session Twelve. She crossed her legs. I wanted to ask if her panties were wet." You read his words. Your body answered.'],
       bloodbond: ['He cut your palm. Cut his. Blood to blood. You came together, wound to wound, sealing the vow. Forever.'],
       write: ['One line. Honest. "The fog is a hand over the town\'s mouth." He smiled. "There you are." You wrote more. He watched.'],
@@ -371,31 +382,13 @@ export default function NateLilithHome() {
         {!workMode && !coupleActivity && !processing && (
           <div className="space-y-4">
             {activeCharacter === 'nate' && (
-              <>
-                <button
-                  onClick={() => setWorkMode('therapy')}
-                  className="w-full bg-blue-900/40 hover:bg-blue-900/60 border-2 border-blue-500/50 rounded-xl p-6 text-left transition-all"
-                >
-                  <h3 className="text-white text-lg font-bold mb-2">See a Patient</h3>
-                  <p className="text-gray-400 text-sm">Professional therapy... or something darker</p>
-                </button>
-
-                <button
-                  onClick={async () => {
-                    const newTime = coupleData.time_of_day === 'day' ? 'night' : 'day';
-                    await base44.entities.VampireState.update(coupleData.id, { time_of_day: newTime });
-                    queryClient.invalidateQueries(['nateLilithState']);
-                  }}
-                  className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl p-4 text-left transition-all"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-white">
-                      {coupleData.time_of_day === 'day' ? 'End Work Day' : 'Start Work Day'}
-                    </span>
-                    {coupleData.time_of_day === 'day' ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-purple-400" />}
-                  </div>
-                </button>
-              </>
+              <button
+                onClick={() => setWorkMode('therapy')}
+                className="w-full bg-blue-900/40 hover:bg-blue-900/60 border-2 border-blue-500/50 rounded-xl p-6 text-left transition-all"
+              >
+                <h3 className="text-white text-lg font-bold mb-2">See a Patient</h3>
+                <p className="text-gray-400 text-sm">Professional therapy... or something darker</p>
+              </button>
             )}
 
             {activeCharacter === 'lilith' && (
