@@ -59,14 +59,22 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
     fetchCareers();
   }, [servant.id]);
 
-  const handleToggleCareer = async (careerType) => {
-    const newState = !currentCareers[careerType];
+  const handleCareerClick = async (careerType) => {
+    const isActive = currentCareers[careerType];
+    
+    // If already active, open the career modal
+    if (isActive) {
+      onSelect(careerType);
+      return;
+    }
+    
+    // Otherwise, toggle it on
     const careerData = {
       servant_id: servant.id,
-      jewelry_business_active: careerType === 'jewelry' ? newState : currentCareers.jewelry,
-      tattoo_business_active: careerType === 'tattoo' ? newState : currentCareers.tattoo,
-      author_career_active: careerType === 'author' ? newState : currentCareers.author,
-      manga_career_active: careerType === 'manga' ? newState : currentCareers.manga
+      jewelry_business_active: careerType === 'jewelry' ? true : currentCareers.jewelry,
+      tattoo_business_active: careerType === 'tattoo' ? true : currentCareers.tattoo,
+      author_career_active: careerType === 'author' ? true : currentCareers.author,
+      manga_career_active: careerType === 'manga' ? true : currentCareers.manga
     };
 
     const existing = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
@@ -78,13 +86,18 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
     }
 
     await base44.entities.NightLog.create({
-      entry: `${servant.name} ${newState ? 'started' : 'paused'} career: ${CAREERS[careerType].name}`,
+      entry: `${servant.name} started career: ${CAREERS[careerType].name}`,
       category: 'interaction',
       intensity: 'moderate'
     });
 
-    setCurrentCareers(prev => ({...prev, [careerType]: newState}));
+    setCurrentCareers(prev => ({...prev, [careerType]: true}));
     queryClient.invalidateQueries();
+    
+    // Open the modal after activating
+    setTimeout(() => {
+      onSelect(careerType);
+    }, 500);
   };
 
   return (
@@ -116,7 +129,7 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
                 key={key}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleToggleCareer(key);
+                  handleCareerClick(key);
                 }}
                 className={`bg-gradient-to-br ${career.color} border-2 ${isActive ? 'border-green-500' : career.borderColor} rounded-xl p-6 text-center hover:scale-105 transition-all relative`}
               >
