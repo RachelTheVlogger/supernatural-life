@@ -35,6 +35,9 @@ export default function HerbGathering({ witch, onClose }) {
   const [outcome, setOutcome] = useState('');
   const [selectedHerbToSell, setSelectedHerbToSell] = useState(null);
   const [sellAmount, setSellAmount] = useState(1);
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [blendName, setBlendName] = useState('');
+  const [mixing, setMixing] = useState(false);
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['witchHerbs'],
@@ -44,6 +47,11 @@ export default function HerbGathering({ witch, onClose }) {
   const { data: customers = [] } = useQuery({
     queryKey: ['herbCustomers'],
     queryFn: () => base44.entities.HerbCustomer.filter({ witch_id: witch.id })
+  });
+
+  const { data: blends = [] } = useQuery({
+    queryKey: ['herbBlends'],
+    queryFn: () => base44.entities.HerbBlend.filter({ witch_id: witch.id })
   });
 
   const handleForage = async (herb) => {
@@ -193,6 +201,124 @@ export default function HerbGathering({ witch, onClose }) {
     setTimeout(() => setOutcome(''), 2500);
   };
 
+  const toggleIngredient = (herbName) => {
+    if (selectedIngredients.includes(herbName)) {
+      setSelectedIngredients(selectedIngredients.filter(h => h !== herbName));
+    } else {
+      setSelectedIngredients([...selectedIngredients, herbName]);
+    }
+  };
+
+  const generateBlendEffect = (ingredients) => {
+    const effects = [];
+    const darkHerbs = ['Belladonna', 'Nightshade', 'Wormwood', 'Bone Dust'];
+    const lightHerbs = ['Sage', 'Lavender', 'Vervain', 'White Candles'];
+    const psychicHerbs = ['Mugwort', 'Jasmine', 'Moonstone'];
+    const elementalHerbs = ['Bay Leaves', 'Rosemary', 'Dragon\'s Blood Resin'];
+
+    const darkCount = ingredients.filter(h => darkHerbs.includes(h)).length;
+    const lightCount = ingredients.filter(h => lightHerbs.includes(h)).length;
+    const psychicCount = ingredients.filter(h => psychicHerbs.includes(h)).length;
+    const elementalCount = ingredients.filter(h => elementalHerbs.includes(h)).length;
+
+    if (darkCount >= 2) effects.push('Dark power surge');
+    if (lightCount >= 2) effects.push('Protective aura');
+    if (psychicCount >= 2) effects.push('Mind expansion');
+    if (elementalCount >= 2) effects.push('Elemental mastery');
+    if (darkCount && lightCount) effects.push('Chaotic balance');
+    if (ingredients.length >= 5) effects.push('Overwhelming potency');
+
+    const potency = Math.min(10, ingredients.length + darkCount * 2);
+    const basePrice = ingredients.length * 50 + potency * 30;
+
+    return {
+      effect: effects.length > 0 ? effects.join(', ') : 'Mild herbal effect',
+      potency,
+      price: basePrice
+    };
+  };
+
+  const handleMixBlend = async () => {
+    if (selectedIngredients.length < 2 || !blendName.trim()) return;
+
+    setMixing(true);
+
+    // Consume herbs
+    for (const herbName of selectedIngredients) {
+      const herb = inventory.find(h => h.herb_name === herbName);
+      if (herb && herb.quantity > 0) {
+        await base44.entities.WitchHerb.update(herb.id, {
+          quantity: herb.quantity - 1
+        });
+      }
+    }
+
+    const { effect, potency, price } = generateBlendEffect(selectedIngredients);
+
+    await base44.entities.HerbBlend.create({
+      witch_id: witch.id,
+      blend_name: blendName.trim(),
+      ingredients: selectedIngredients,
+      effect,
+      potency,
+      quantity: 1,
+      market_price: price
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${witch.name} created a new blend: ${blendName}. ${effect}.`,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    setOutcome(`Created ${blendName}! ${effect}`);
+    setSelectedIngredients([]);
+    setBlendName('');
+    queryClient.invalidateQueries();
+
+    setTimeout(() => {
+      setMixing(false);
+      setOutcome('');
+    }, 3000);
+  };
+
+  const handleTestBlend = async (blend) => {
+    await base44.entities.HerbBlend.update(blend.id, {
+      quantity: Math.max(0, blend.quantity - 1)
+    });
+
+    await base44.entities.Witch.update(witch.id, {
+      power_level: Math.min((witch.power_level || 80) + blend.potency * 3, 100)
+    });
+
+    setOutcome(`Consumed ${blend.blend_name}. ${blend.effect}. Power ↑${blend.potency * 3}`);
+
+    await base44.entities.NightLog.create({
+      entry: `${witch.name} tested ${blend.blend_name}. ${blend.effect}.`,
+      category: 'power',
+      intensity: 'moderate'
+    });
+
+    queryClient.invalidateQueries();
+    setTimeout(() => setOutcome(''), 3000);
+  };
+
+  const handleSellBlend = async (blend) => {
+    await base44.entities.HerbBlend.update(blend.id, {
+      quantity: Math.max(0, blend.quantity - 1)
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${witch.name} sold ${blend.blend_name} for $${blend.market_price}.`,
+      category: 'interaction',
+      intensity: 'subtle'
+    });
+
+    setOutcome(`Sold ${blend.blend_name} for $${blend.market_price}!`);
+    queryClient.invalidateQueries();
+    setTimeout(() => setOutcome(''), 2500);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -242,6 +368,18 @@ export default function HerbGathering({ witch, onClose }) {
             className={`flex-1 px-4 py-2 rounded-lg ${tab === 'sell' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             💰 Sell
+          </button>
+          <button
+            onClick={() => setTab('mix')}
+            className={`flex-1 px-4 py-2 rounded-lg ${tab === 'mix' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            🧪 Mix
+          </button>
+          <button
+            onClick={() => setTab('blends')}
+            className={`flex-1 px-4 py-2 rounded-lg ${tab === 'blends' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            ✨ Blends
           </button>
         </div>
 
@@ -422,6 +560,116 @@ export default function HerbGathering({ witch, onClose }) {
                 Sell
               </button>
             </div>
+          </div>
+        )}
+
+        {tab === 'mix' && !mixing && !outcome && (
+          <div className="space-y-4">
+            <p className="text-gray-400 text-sm">
+              Combine herbs to create powerful custom blends. Experiment with different combinations!
+            </p>
+
+            <div>
+              <label className="text-white font-medium mb-2 block">Blend Name:</label>
+              <input
+                type="text"
+                value={blendName}
+                onChange={(e) => setBlendName(e.target.value)}
+                placeholder="e.g., Moonlit Elixir"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-500"
+              />
+            </div>
+
+            <div>
+              <label className="text-white font-medium mb-2 block">
+                Select Ingredients ({selectedIngredients.length} selected):
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {inventory.filter(h => h.quantity > 0).map(herb => {
+                  const herbData = HERBS.find(h => h.name === herb.herb_name);
+                  const isSelected = selectedIngredients.includes(herb.herb_name);
+                  return (
+                    <button
+                      key={herb.id}
+                      onClick={() => toggleIngredient(herb.herb_name)}
+                      className={`p-3 rounded-lg border-2 transition-all ${
+                        isSelected 
+                          ? 'bg-purple-600 border-purple-400' 
+                          : 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <span className="text-2xl block mb-1">{herbData?.icon || '🌿'}</span>
+                        <p className="text-white text-xs">{herb.herb_name}</p>
+                        <p className="text-gray-400 text-xs">×{herb.quantity}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {selectedIngredients.length >= 2 && (
+              <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
+                <h3 className="text-purple-300 font-medium mb-2">Predicted Effects:</h3>
+                <p className="text-gray-300 text-sm">{generateBlendEffect(selectedIngredients).effect}</p>
+                <p className="text-purple-400 text-sm mt-2">Potency: {generateBlendEffect(selectedIngredients).potency}/10</p>
+                <p className="text-green-400 text-sm">Market Value: ${generateBlendEffect(selectedIngredients).price}</p>
+              </div>
+            )}
+
+            <button
+              onClick={handleMixBlend}
+              disabled={selectedIngredients.length < 2 || !blendName.trim()}
+              className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium"
+            >
+              Mix Blend
+            </button>
+          </div>
+        )}
+
+        {tab === 'blends' && (
+          <div className="space-y-3">
+            <p className="text-gray-400 text-sm mb-4">
+              Your custom herbal creations
+            </p>
+            {blends.length === 0 ? (
+              <p className="text-gray-400 text-center py-12">No blends created yet</p>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-4">
+                {blends.map(blend => (
+                  <div key={blend.id} className="bg-gray-800 rounded-xl p-4 border-2 border-purple-500/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-white font-bold">{blend.blend_name}</h3>
+                      <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
+                        {blend.potency}/10
+                      </span>
+                    </div>
+                    <p className="text-gray-300 text-sm mb-2">{blend.effect}</p>
+                    <p className="text-gray-500 text-xs mb-3">
+                      🌿 {blend.ingredients.join(', ')}
+                    </p>
+                    <p className="text-gray-400 text-sm mb-3">Quantity: {blend.quantity}</p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleTestBlend(blend)}
+                        disabled={blend.quantity < 1}
+                        className="flex-1 bg-purple-900/50 hover:bg-purple-900/70 text-purple-300 px-3 py-2 rounded text-sm disabled:opacity-50"
+                      >
+                        Test
+                      </button>
+                      <button
+                        onClick={() => handleSellBlend(blend)}
+                        disabled={blend.quantity < 1}
+                        className="flex-1 bg-green-900/50 hover:bg-green-900/70 text-green-300 px-3 py-2 rounded text-sm disabled:opacity-50"
+                      >
+                        Sell ${blend.market_price}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
