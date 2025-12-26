@@ -620,7 +620,7 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
                 </div>
               </div>
             </button>
-          >
+
             <button
               onClick={() => setShowSpellbook(true)}
               className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 hover:from-purple-900/60 hover:to-pink-900/60 border-2 border-purple-500/50 rounded-xl p-6 transition-all"
