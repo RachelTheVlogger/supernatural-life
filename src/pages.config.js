@@ -12,7 +12,6 @@ import VampireHome from './pages/VampireHome';
 import WerewolfHome from './pages/WerewolfHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
-import Stories from './pages/Stories';
 import SerialKillerHome from './pages/SerialKillerHome';
 import ObsessedLoverHome from './pages/ObsessedLoverHome';
 import KillerCouple from './pages/KillerCouple';
@@ -34,7 +33,6 @@ export const PAGES = {
     "WerewolfHome": WerewolfHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
-    "Stories": Stories,
     "SerialKillerHome": SerialKillerHome,
     "ObsessedLoverHome": ObsessedLoverHome,
     "KillerCouple": KillerCouple,
