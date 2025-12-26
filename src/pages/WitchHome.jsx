@@ -12,6 +12,8 @@ import GrimoireStudy from '@/components/nightbound/GrimoireStudy';
 import MoonRitual from '@/components/nightbound/MoonRitual';
 import CurseSystem from '@/components/nightbound/CurseSystem';
 import TeachServants from '@/components/nightbound/TeachServants';
+import WitchCoven from '@/components/nightbound/WitchCoven';
+import WitchFamiliar from '@/components/nightbound/WitchFamiliar';
 
 const SPELLS = {
   elemental: [
@@ -84,6 +86,8 @@ export default function WitchHome() {
   const [showMoonRitual, setShowMoonRitual] = useState(false);
   const [showCurses, setShowCurses] = useState(false);
   const [showTeaching, setShowTeaching] = useState(false);
+  const [showCoven, setShowCoven] = useState(false);
+  const [showFamiliar, setShowFamiliar] = useState(false);
 
   const { data: witches = [], isLoading: witchLoading } = useQuery({
     queryKey: ['witches'],
@@ -710,6 +714,32 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
               </div>
             </button>
 
+            <button
+              onClick={() => setShowCoven(true)}
+              className="bg-gradient-to-r from-indigo-900/40 to-purple-900/40 hover:from-indigo-900/60 hover:to-purple-900/60 border-2 border-indigo-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">👥</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Coven</h3>
+                  <p className="text-gray-400 text-sm">Build your witch circle</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowFamiliar(true)}
+              className="bg-gradient-to-r from-amber-900/40 to-yellow-900/40 hover:from-amber-900/60 hover:to-yellow-900/60 border-2 border-amber-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">🐾</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Familiar</h3>
+                  <p className="text-gray-400 text-sm">Magical companion</p>
+                </div>
+              </div>
+            </button>
+
             {vampireState && (
               <button
                 onClick={() => setShowVampireInteractions(true)}
@@ -908,6 +938,8 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
         {showMoonRitual && <MoonRitual witch={witch} onClose={() => setShowMoonRitual(false)} />}
         {showCurses && <CurseSystem witch={witch} onClose={() => setShowCurses(false)} />}
         {showTeaching && <TeachServants witch={witch} onClose={() => setShowTeaching(false)} />}
+        {showCoven && <WitchCoven witch={witch} onClose={() => setShowCoven(false)} />}
+        {showFamiliar && <WitchFamiliar witch={witch} onClose={() => setShowFamiliar(false)} />}
 
         {showVampireInteractions && vampireState && (
           <motion.div

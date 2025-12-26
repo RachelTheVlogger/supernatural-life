@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import PackDynamics from '@/components/nightbound/PackDynamics';
+import FullMoonEvent from '@/components/nightbound/FullMoonEvent';
 
 const ACTIONS = [
   { id: 'hunt', label: 'Hunt in the Wild', icon: '🐺', duration: 3000 },
@@ -22,6 +24,8 @@ export default function WerewolfHome() {
   const [acting, setActing] = useState(null);
   const [outcome, setOutcome] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
+  const [showPack, setShowPack] = useState(false);
+  const [showFullMoon, setShowFullMoon] = useState(false);
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
@@ -190,6 +194,23 @@ export default function WerewolfHome() {
           </motion.div>
         )}
 
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <button
+            onClick={() => setShowPack(true)}
+            className="bg-gradient-to-r from-orange-900/60 to-yellow-900/60 hover:from-orange-900/80 hover:to-yellow-900/80 border-2 border-orange-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-2 transition-all"
+          >
+            <span className="text-2xl">👥</span>
+            <span className="text-white font-medium text-sm">Pack</span>
+          </button>
+          <button
+            onClick={() => setShowFullMoon(true)}
+            className="bg-gradient-to-r from-yellow-900/60 to-amber-900/60 hover:from-yellow-900/80 hover:to-amber-900/80 border-2 border-yellow-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-2 transition-all"
+          >
+            <span className="text-2xl">🌕</span>
+            <span className="text-white font-medium text-sm">Full Moon</span>
+          </button>
+        </div>
+
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -228,6 +249,9 @@ export default function WerewolfHome() {
             </div>
           </motion.div>
         )}
+
+        {showPack && <PackDynamics werewolf={werewolf} onClose={() => setShowPack(false)} />}
+        {showFullMoon && <FullMoonEvent werewolf={werewolf} onClose={() => setShowFullMoon(false)} />}
 
         {showNameInput && (
           <motion.div
