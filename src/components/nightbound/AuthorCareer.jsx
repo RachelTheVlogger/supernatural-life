@@ -31,6 +31,8 @@ export default function AuthorCareer({ servant, onClose }) {
   const [selectedBook, setSelectedBook] = useState(null);
   const [newBook, setNewBook] = useState({ title: '', genre: null, target_words: 80000 });
   const [showReview, setShowReview] = useState(null);
+  const [showARCModal, setShowARCModal] = useState(false);
+  const [newsletterSubscribers, setNewsletterSubscribers] = useState(0);
 
   const { data: books = [] } = useQuery({
     queryKey: ['books', servant.id],
@@ -38,8 +40,15 @@ export default function AuthorCareer({ servant, onClose }) {
     staleTime: 3000
   });
 
-  const draftBooks = books.filter(b => b.status === 'drafting');
+  const draftBooks = books.filter(b => b.status === 'drafting' || b.status === 'rewriting' || b.status === 'editing' || b.status === 'proofreading' || b.status === 'ready');
   const publishedBooks = books.filter(b => b.status === 'published');
+  
+  const { data: career = [] } = useQuery({
+    queryKey: ['career', servant.id],
+    queryFn: () => base44.entities.ServantCareer.filter({ servant_id: servant.id })
+  });
+  
+  const servantCareer = career[0];
 
   const handleStartBook = async () => {
     if (!newBook.title || !newBook.genre) return;
@@ -549,6 +558,9 @@ export default function AuthorCareer({ servant, onClose }) {
           <button onClick={() => setTab('published')} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${tab === 'published' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             📚 Published ({publishedBooks.length})
           </button>
+          <button onClick={() => setTab('marketing')} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${tab === 'marketing' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            📣 Marketing
+          </button>
           <button onClick={() => setTab('stats')} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${tab === 'stats' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             📊 Stats
           </button>
@@ -743,6 +755,98 @@ export default function AuthorCareer({ servant, onClose }) {
             </motion.div>
           )}
 
+          {tab === 'marketing' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+              <div className="grid md:grid-cols-3 gap-3">
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <p className="text-gray-400 text-xs mb-1">ARC Team</p>
+                  <p className="text-white text-2xl font-bold">{servantCareer?.arc_team_size || 0}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <p className="text-gray-400 text-xs mb-1">Street Team</p>
+                  <p className="text-white text-2xl font-bold">{servantCareer?.street_team_size || 0}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <p className="text-gray-400 text-xs mb-1">Newsletter</p>
+                  <p className="text-white text-2xl font-bold">{servantCareer?.newsletter_subscribers || 0}</p>
+                </div>
+              </div>
+
+              <button
+                onClick={async () => {
+                  if (!servantCareer) {
+                    await base44.entities.ServantCareer.create({
+                      servant_id: servant.id,
+                      author_career_active: true,
+                      arc_team_size: Math.floor(Math.random() * 20) + 10,
+                      newsletter_subscribers: Math.floor(Math.random() * 50) + 20
+                    });
+                  } else {
+                    await base44.entities.ServantCareer.update(servantCareer.id, {
+                      arc_team_size: (servantCareer.arc_team_size || 0) + Math.floor(Math.random() * 10) + 5,
+                      newsletter_subscribers: (servantCareer.newsletter_subscribers || 0) + Math.floor(Math.random() * 30) + 10
+                    });
+                  }
+                  queryClient.invalidateQueries(['career']);
+                }}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl"
+              >
+                📧 Recruit ARC Readers
+              </button>
+
+              <button
+                onClick={async () => {
+                  if (!servantCareer) return;
+                  await base44.entities.ServantCareer.update(servantCareer.id, {
+                    street_team_size: (servantCareer.street_team_size || 0) + Math.floor(Math.random() * 8) + 3
+                  });
+                  queryClient.invalidateQueries(['career']);
+                }}
+                className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-xl"
+              >
+                👥 Build Street Team
+              </button>
+
+              <button
+                onClick={async () => {
+                  setShowARCModal(true);
+                }}
+                disabled={!servantCareer || servantCareer.arc_team_size < 5}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white py-3 rounded-xl disabled:opacity-50"
+              >
+                📦 Send ARC Copies (Need 5+ ARCs)
+              </button>
+
+              <button
+                onClick={async () => {
+                  if (!servantCareer) return;
+                  const gain = Math.floor(Math.random() * 50) + 30;
+                  await base44.entities.ServantCareer.update(servantCareer.id, {
+                    newsletter_subscribers: (servantCareer.newsletter_subscribers || 0) + gain
+                  });
+                  await base44.entities.NightLog.create({
+                    entry: `${servant.name} ran a newsletter campaign. Gained ${gain} new subscribers.`,
+                    category: 'interaction',
+                    intensity: 'moderate'
+                  });
+                  queryClient.invalidateQueries(['career']);
+                }}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl"
+              >
+                ✉️ Newsletter Campaign
+              </button>
+
+              <div className="bg-gray-800 rounded-xl p-4">
+                <h4 className="text-white font-medium mb-2">What ARCs & Street Teams Do:</h4>
+                <ul className="text-gray-300 text-sm space-y-2">
+                  <li>• <span className="text-purple-400">ARC Readers</span> get early copies, leave honest reviews pre-launch</li>
+                  <li>• <span className="text-pink-400">Street Team</span> shares your posts, hypes releases, spreads word-of-mouth</li>
+                  <li>• <span className="text-blue-400">Newsletter</span> direct line to your most loyal fans for announcements</li>
+                </ul>
+              </div>
+            </motion.div>
+          )}
+
           {tab === 'stats' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <div className="grid md:grid-cols-2 gap-4">
@@ -767,6 +871,11 @@ export default function AuthorCareer({ servant, onClose }) {
                     {publishedBooks.length > 0 ? (publishedBooks.reduce((sum, b) => sum + (b.rating || 0), 0) / publishedBooks.length).toFixed(1) : 'N/A'}
                   </p>
                   <p className="text-gray-400 text-sm">Avg Rating</p>
+                </div>
+                <div className="bg-gradient-to-br from-orange-950/40 to-orange-900/40 border border-orange-500/30 rounded-xl p-6">
+                  <Zap className="w-8 h-8 text-orange-400 mb-2" />
+                  <p className="text-2xl font-bold text-white">{servantCareer?.writing_streak || 0}</p>
+                  <p className="text-gray-400 text-sm">Day Writing Streak</p>
                 </div>
               </div>
             </motion.div>
