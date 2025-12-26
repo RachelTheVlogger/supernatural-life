@@ -27,7 +27,7 @@ export default function Layout({ children, currentPageName }) {
   });
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome'].includes(currentPageName);
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
@@ -44,7 +44,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Succubus', icon: Heart, path: 'SuccubusHome' },
     { name: 'Incubus', icon: Skull, path: 'IncubusHome' },
     { name: 'Wolf', icon: Zap, path: 'WerewolfHome' },
-    { name: 'Witch', icon: Sparkles, path: 'WitchHome' }
+    { name: 'Witch', icon: Sparkles, path: 'WitchHome' },
+    { name: 'Killer', icon: Skull, path: 'SerialKillerHome' }
   ];
   
   return (
