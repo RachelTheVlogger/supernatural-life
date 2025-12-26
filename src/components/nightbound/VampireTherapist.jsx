@@ -42,7 +42,7 @@ export default function VampireTherapist({ vampireState, onClose }) {
           name: 'Lilith Hart',
           gender: 'woman',
           sexuality: 'bisexual',
-          job: 'Night Shift Shop Worker',
+          job: 'Shop Worker (9am-5pm)',
           variant: 'devoted',
           obsession_stage: 5,
           relationship: 100,
@@ -157,8 +157,8 @@ export default function VampireTherapist({ vampireState, onClose }) {
               <p className="text-blue-300 text-sm mb-2">💡 Dr. Nate Cross & Lilith Hart</p>
               <p className="text-gray-300 text-sm">
                 You're Dr. Nate Cross. Lilith was your patient. A year of tension. You finally gave in. 
-                You turned her. Now you live together. You're a therapist. She works night shift at a shop. 
-                Both vampires. Both complicated.
+                You turned her. Now you live together. Both work during the day—you as a therapist, she at a shop until 5pm. 
+                Daylight rings let you walk in the sun. Both vampires. Both complicated.
               </p>
             </div>
 
