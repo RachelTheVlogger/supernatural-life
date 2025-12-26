@@ -211,19 +211,22 @@ export default function ServantWitchInteraction({ servant, onClose }) {
           </>
         )}
 
-        {selectedWitch && !interacting && !outcome && (
+        {selectedWitch && !outcome && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="space-y-4"
           >
-            <div className="bg-gray-800 rounded-xl p-6 text-center mb-4">
-              <span className="text-6xl mb-4 block">{SPECIALTIES[selectedWitch.specialty].icon}</span>
-              <h3 className="text-white text-2xl font-bold mb-2">{selectedWitch.name}</h3>
-              <p className="text-gray-400 text-sm capitalize">{selectedWitch.disposition}</p>
-            </div>
+            {!interacting && (
+              <>
+                <div className="bg-gray-800 rounded-xl p-6 text-center mb-4">
+                  <span className="text-6xl mb-4 block">{SPECIALTIES[selectedWitch.specialty].icon}</span>
+                  <h3 className="text-white text-2xl font-bold mb-2">{selectedWitch.name}</h3>
+                  <p className="text-gray-400 text-sm capitalize">{selectedWitch.disposition}</p>
+                  <p className="text-purple-400 text-sm mt-2">Relationship: {selectedWitch.relationship}/100</p>
+                </div>
 
-            <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleInteraction('visit')}
                 className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm"
@@ -280,10 +283,12 @@ export default function ServantWitchInteraction({ servant, onClose }) {
 
             <button
               onClick={() => setSelectedWitch(null)}
-              className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg"
+              className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg mt-4"
             >
               Back
             </button>
+            </>
+            )}
           </motion.div>
         )}
 
