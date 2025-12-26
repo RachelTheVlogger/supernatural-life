@@ -27,9 +27,9 @@ export default function DayCycleToggle({ vampireState }) {
       intensity: 'subtle'
     });
 
-    queryClient.invalidateQueries();
+    await queryClient.invalidateQueries(['vampireState']);
     
-    setTimeout(() => setTransitioning(false), 1000);
+    setTimeout(() => setTransitioning(false), 500);
   };
 
   const isDay = vampireState?.time_of_day === 'day';
