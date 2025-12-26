@@ -347,7 +347,8 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
   };
 
   const handleVampireInteraction = async (type) => {
-    if (!witch || !vampireState) return;
+    const currentVampireState = vampireStates[0];
+    if (!witch || !currentVampireState) return;
 
     setCastingSpell({ name: type, icon: '✨' });
 
@@ -442,7 +443,7 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
       await base44.entities.Witch.update(witch.id, updates);
 
       if (interaction.hungerEffect) {
-        await base44.entities.VampireState.update(vampireState.id, {
+        await base44.entities.VampireState.update(currentVampireState.id, {
           hunger_state: 'calm'
         });
       }
