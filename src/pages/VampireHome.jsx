@@ -16,6 +16,8 @@ import ServantJealousyEvent from '@/components/nightbound/ServantJealousyEvent';
 import CrimsonBlissLab from '@/components/nightbound/CrimsonBlissLab';
 import ServantIdentityRevelation from '@/components/nightbound/ServantIdentityRevelation';
 import FoodSystem from '@/components/nightbound/FoodSystem';
+import WitchEncounter from '@/components/nightbound/WitchEncounter';
+import CovenManagement from '@/components/nightbound/CovenManagement';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -34,6 +36,8 @@ export default function VampireHome() {
   const [identityRevelation, setIdentityRevelation] = useState(null);
   const [showVampireIdentity, setShowVampireIdentity] = useState(false);
   const [showFoodSystem, setShowFoodSystem] = useState(false);
+  const [showWitchEncounter, setShowWitchEncounter] = useState(false);
+  const [showCovenManagement, setShowCovenManagement] = useState(false);
 
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -513,6 +517,24 @@ export default function VampireHome() {
             </button>
           </motion.div>
           
+          {/* Other Supernaturals */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.26 }}
+            className="mb-8 grid md:grid-cols-2 gap-4"
+          >
+            <button onClick={() => setShowWitchEncounter(true)} className="bg-purple-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-colors">
+              <h3 className="text-white font-medium mb-1">✨ Witches</h3>
+              <p className="text-gray-400 text-xs">Powerful magic users. Bonnie level.</p>
+            </button>
+
+            <button onClick={() => setShowCovenManagement(true)} className="bg-purple-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-colors">
+              <h3 className="text-white font-medium mb-1">🦇 Coven</h3>
+              <p className="text-gray-400 text-xs">Manage your vampire coven</p>
+            </button>
+          </motion.div>
+
           {/* Room sections - Interactive */}
           <div className="grid md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto">
             {/* Main chamber */}
@@ -775,6 +797,12 @@ export default function VampireHome() {
             vampireState={vampireState}
             onClose={() => setIdentityRevelation(null)}
           />
+        )}
+        {showWitchEncounter && (
+          <WitchEncounter vampireState={vampireState} onClose={() => setShowWitchEncounter(false)} />
+        )}
+        {showCovenManagement && (
+          <CovenManagement vampireState={vampireState} onClose={() => setShowCovenManagement(false)} />
         )}
         {showVampireIdentity && (
           <motion.div

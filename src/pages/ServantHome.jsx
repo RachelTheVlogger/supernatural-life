@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, ShoppingBag, Settings } from 'lucide-react';
+import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, ShoppingBag, Settings, Heart, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import BusinessManagement from '@/components/nightbound/BusinessManagement';
@@ -20,6 +20,8 @@ import TattooStudio from '@/components/nightbound/TattooStudio';
 import AuthorCareer from '@/components/nightbound/AuthorCareer';
 
 const CHORES = [
+  { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
+  { id: 'npc', label: 'Chat with Friends', icon: User, duration: 0, isModal: true },
   { id: 'clean', label: 'Clean the rooms', icon: Sparkles, duration: 2000, outcomes: ['You tidied the bedroom. Everything feels peaceful.', 'You dusted the shelves. The space feels lighter.', 'You organized their belongings with care.'] },
   { id: 'prepare', label: 'Prepare their space', icon: Home, duration: 2000, outcomes: ['You arranged fresh linens. The bed smells like night air.', 'You lit candles around the room. Shadows dance.', 'You set out their things exactly how they like them.'] },
   { id: 'study', label: 'Study their books', icon: BookOpen, duration: 2500, outcomes: ['You read about the old ways. Some things make sense now.', 'Their books are strange. Beautiful. Terrifying.', 'You found a page marked for you. Your name written in the margin.'] },
@@ -128,7 +130,11 @@ export default function ServantHome() {
   
   const handleChore = async (chore) => {
     if (chore.isModal) {
-      if (chore.id === 'manage') {
+      if (chore.id === 'dating') {
+        setShowDating(true);
+      } else if (chore.id === 'npc') {
+        setShowNPCModal(true);
+      } else if (chore.id === 'manage') {
         if (!servantCareer || (!servantCareer.jewelry_business_active && !servantCareer.tattoo_business_active && !servantCareer.author_career_active)) {
           setShowCareerSelector(true);
         } else if (servantCareer.jewelry_business_active) {
@@ -439,6 +445,13 @@ export default function ServantHome() {
           <AuthorCareer
             servant={servant}
             onClose={() => setShowAuthor(false)}
+          />
+        )}
+        {showDating && (
+          <ServantDating
+            servant={servant}
+            vampireState={vampireState}
+            onClose={() => setShowDating(false)}
           />
         )}
         </AnimatePresence>
