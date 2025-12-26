@@ -19,6 +19,25 @@ const MEALS = [
 ];
 
 export default function FoodSystem({ servants, vampireState, onClose }) {
+  if (!servants || servants.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+        onClick={onClose}
+      >
+        <div className="bg-gray-900 rounded-2xl p-6 text-center">
+          <p className="text-white">No servants to cook with yet.</p>
+          <button onClick={onClose} className="mt-4 bg-gray-800 hover:bg-gray-700 text-white py-2 px-6 rounded-lg">
+            Close
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
+  
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('eat');
   const [ordering, setOrdering] = useState(false);

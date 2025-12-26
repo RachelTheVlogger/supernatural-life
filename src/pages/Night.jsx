@@ -74,14 +74,14 @@ export default function Night() {
   
   const [servantsInitialized, setServantsInitialized] = useState(false);
   
-  const vampireState = vampireStates[0];
+  const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
   
   // Redirect to home if no vampire exists
   useEffect(() => {
-    if (vampireStates.length === 0) {
+    if (!vampireLoading && vampireStates.length === 0) {
       navigate(createPageUrl('Home'), { replace: true });
     }
-  }, [vampireStates, navigate]);
+  }, [vampireStates, vampireLoading, navigate]);
   
   
   if (vampireLoading) {

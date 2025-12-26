@@ -203,6 +203,11 @@ export default function TemptationModal({ vampireState, servants, onClose }) {
   const [outcome, setOutcome] = useState('');
   const queryClient = useQueryClient();
   
+  if (!vampireState) {
+    onClose();
+    return null;
+  }
+  
   const availableTemptations = Object.entries(TEMPTATIONS).filter(([key]) => {
     if (key === 'turn_impulsively' && servants.every(s => s.is_turned)) return false;
     if (key === 'feed_recklessly' && vampireState.hunger_state === 'sated') return false;
