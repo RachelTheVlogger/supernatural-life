@@ -272,6 +272,18 @@ export default function Night() {
             <Home className="w-4 h-4" />
             Your House
           </button>
+          <button
+            onClick={() => navigate(createPageUrl('SuccubusHome'))}
+            className="text-pink-400 hover:text-pink-300 transition-colors text-sm"
+          >
+            Play as Succubus
+          </button>
+          <button
+            onClick={() => navigate(createPageUrl('IncubusHome'))}
+            className="text-red-400 hover:text-red-300 transition-colors text-sm"
+          >
+            Play as Incubus
+          </button>
         </div>
       </motion.div>
       

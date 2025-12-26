@@ -6,6 +6,8 @@ import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
 import VampireHome from './pages/VampireHome';
 import WitchHome from './pages/WitchHome';
+import SuccubusHome from './pages/SuccubusHome';
+import IncubusHome from './pages/IncubusHome';
 import __Layout from './Layout.jsx';
 
 
@@ -18,6 +20,8 @@ export const PAGES = {
     "ServantHome": ServantHome,
     "VampireHome": VampireHome,
     "WitchHome": WitchHome,
+    "SuccubusHome": SuccubusHome,
+    "IncubusHome": IncubusHome,
 }
 
 export const pagesConfig = {
