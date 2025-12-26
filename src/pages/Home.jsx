@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Moon, Play } from 'lucide-react';
+import { Moon, Play, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -193,79 +193,139 @@ export default function Home() {
                 <p className="text-gray-400 text-sm mb-3">Your Characters:</p>
                 <div className="space-y-2">
                   {vampireStates.map(v => (
-                    <button
-                      key={v.id}
-                      onClick={() => navigate(createPageUrl('Night'))}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🦇</span>
-                        <div>
-                          <p className="text-white font-medium">{v.vampire_name}</p>
-                          <p className="text-gray-400 text-xs">Vampire</p>
+                    <div key={v.id} className="flex gap-2">
+                      <button
+                        onClick={() => navigate(createPageUrl('Night'))}
+                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">🦇</span>
+                          <div>
+                            <p className="text-white font-medium">{v.vampire_name}</p>
+                            <p className="text-gray-400 text-xs">Vampire</p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (confirm(`Delete ${v.vampire_name}?`)) {
+                            await base44.entities.VampireState.delete(v.id);
+                            queryClient.invalidateQueries();
+                          }
+                        }}
+                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
+                    </div>
                   ))}
                   {witches.map(w => (
-                    <button
-                      key={w.id}
-                      onClick={() => navigate(createPageUrl('WitchHome'))}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">✨</span>
-                        <div>
-                          <p className="text-white font-medium">{w.name}</p>
-                          <p className="text-gray-400 text-xs">Witch</p>
+                    <div key={w.id} className="flex gap-2">
+                      <button
+                        onClick={() => navigate(createPageUrl('WitchHome'))}
+                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">✨</span>
+                          <div>
+                            <p className="text-white font-medium">{w.name}</p>
+                            <p className="text-gray-400 text-xs">Witch</p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (confirm(`Delete ${w.name}?`)) {
+                            await base44.entities.Witch.delete(w.id);
+                            queryClient.invalidateQueries();
+                          }
+                        }}
+                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
+                    </div>
                   ))}
                   {succubi.map(s => (
-                    <button
-                      key={s.id}
-                      onClick={() => navigate(createPageUrl('SuccubusHome'))}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">💋</span>
-                        <div>
-                          <p className="text-white font-medium">{s.name}</p>
-                          <p className="text-gray-400 text-xs">Succubus</p>
+                    <div key={s.id} className="flex gap-2">
+                      <button
+                        onClick={() => navigate(createPageUrl('SuccubusHome'))}
+                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">💋</span>
+                          <div>
+                            <p className="text-white font-medium">{s.name}</p>
+                            <p className="text-gray-400 text-xs">Succubus</p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (confirm(`Delete ${s.name}?`)) {
+                            await base44.entities.Succubus.delete(s.id);
+                            queryClient.invalidateQueries();
+                          }
+                        }}
+                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
+                    </div>
                   ))}
                   {incubi.map(i => (
-                    <button
-                      key={i.id}
-                      onClick={() => navigate(createPageUrl('IncubusHome'))}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">😈</span>
-                        <div>
-                          <p className="text-white font-medium">{i.name}</p>
-                          <p className="text-gray-400 text-xs">Incubus</p>
+                    <div key={i.id} className="flex gap-2">
+                      <button
+                        onClick={() => navigate(createPageUrl('IncubusHome'))}
+                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">😈</span>
+                          <div>
+                            <p className="text-white font-medium">{i.name}</p>
+                            <p className="text-gray-400 text-xs">Incubus</p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (confirm(`Delete ${i.name}?`)) {
+                            await base44.entities.Incubus.delete(i.id);
+                            queryClient.invalidateQueries();
+                          }
+                        }}
+                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
+                    </div>
                   ))}
                   {playerWerewolves.map(w => (
-                    <button
-                      key={w.id}
-                      onClick={() => navigate(createPageUrl('WerewolfHome'))}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🐺</span>
-                        <div>
-                          <p className="text-white font-medium">{w.name}</p>
-                          <p className="text-gray-400 text-xs">Werewolf</p>
+                    <div key={w.id} className="flex gap-2">
+                      <button
+                        onClick={() => navigate(createPageUrl('WerewolfHome'))}
+                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">🐺</span>
+                          <div>
+                            <p className="text-white font-medium">{w.name}</p>
+                            <p className="text-gray-400 text-xs">Werewolf</p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (confirm(`Delete ${w.name}?`)) {
+                            await base44.entities.PlayerWerewolf.delete(w.id);
+                            queryClient.invalidateQueries();
+                          }
+                        }}
+                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
