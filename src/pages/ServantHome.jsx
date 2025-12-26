@@ -24,6 +24,7 @@ import ServantWitchInteraction from '@/components/nightbound/ServantWitchInterac
 import WitchServantInteraction from '@/components/nightbound/WitchServantInteraction';
 import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
 import TurnedServantProgression from '@/components/nightbound/TurnedServantProgression';
+import JournalSystem from '@/components/nightbound/JournalSystem';
 
 const CHORES = [
   { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
@@ -134,6 +135,7 @@ export default function ServantHome() {
   const [showWitchTalk, setShowWitchTalk] = useState(false);
   const [showFamily, setShowFamily] = useState(false);
   const [showProgression, setShowProgression] = useState(false);
+  const [showJournal, setShowJournal] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -405,6 +407,12 @@ export default function ServantHome() {
             className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
           >
             Family
+          </button>
+          <button
+            onClick={() => setShowJournal(true)}
+            className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
+          >
+            📖 Journal
           </button>
         </div>
       </motion.div>
@@ -700,6 +708,12 @@ export default function ServantHome() {
             servant={servant}
             vampireState={vampireState}
             onClose={() => setShowHobbies(false)}
+          />
+        )}
+        {showJournal && (
+          <JournalSystem
+            servant={servant}
+            onClose={() => setShowJournal(false)}
           />
         )}
         {!vampireState && (showOnlyFangs || showServantInteractions || showYouTube || showSnapchat || showDating) && (
