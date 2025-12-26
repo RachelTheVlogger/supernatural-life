@@ -1837,17 +1837,42 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
       queryClient.invalidateQueries();
 
-      // If turned, mark as vampire
+      // If turned, mark as vampire and create blood bond
       if (type === 'turn') {
         try {
+          const preTurnRel = servant.relationship || 0;
+          
+          // Update servant to vampire
           await base44.entities.Servant.update(servant.id, {
             is_turned: true,
-            unlocked_powers: [],
+            pre_turn_relationship: preTurnRel,
+            vampire_stage: 1,
+            vampire_power_level: Math.floor(preTurnRel / 2), // Higher pre-turn relationship = stronger starting power
+            nights_as_vampire: 0,
+            unlocked_powers: preTurnRel >= 50 ? ['Enhanced Senses'] : [],
             teaching_progress: 0
           });
           
+          // Create blood bond - strength based on human feelings before turn
+          const bondStrength = Math.min(100, preTurnRel + 20); // Pre-turn love creates stronger bond
+          await base44.entities.BloodBond.create({
+            sire_id: vampireState.id,
+            progeny_id: servant.id,
+            bond_strength: bondStrength,
+            bloodline: vampireState.family_bloodline || `House of ${vampireState.vampire_name}`,
+            shared_powers: vampireState.unlocked_powers?.slice(0, 2) || [],
+            can_compel: true,
+            turns_made: 0
+          });
+          
+          const bondDesc = bondStrength >= 80 
+            ? 'The sire bond is absolute. Their human love became eternal devotion.'
+            : bondStrength >= 50
+            ? 'A strong sire bond formed. Their feelings before death anchored deep.'
+            : 'A sire bond exists, but weaker. They didn\'t know you well enough as human.';
+          
           await base44.entities.NightLog.create({
-            entry: `You turned ${servant.name}. They're a vampire now. Immortal. Bound to you forever.`,
+            entry: `You turned ${servant.name}. They're a vampire now. Immortal. Bound to you forever.\n\n${bondDesc}`,
             category: 'interaction',
             intensity: 'significant'
           });
