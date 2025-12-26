@@ -898,7 +898,7 @@ export default function VampireHome() {
         {showArtifacts && vampireState && (
           <ArtifactCollection vampireState={vampireState} onClose={() => setShowArtifacts(false)} />
         )}
-        {showFamily && vampireState && (
+        {showFamily && vampireState && servants.length > 0 && (
           <ServantFamilySystem servant={servants[0]} vampireState={vampireState} onClose={() => setShowFamily(false)} />
         )}
         {showBloodBonds && vampireState && (
