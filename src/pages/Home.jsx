@@ -99,8 +99,7 @@ export default function Home() {
           transition={{ duration: 1 }}
         >
           <Moon className="w-24 h-24 text-red-400 mx-auto mb-6" />
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-wider">NIGHTBOUND</h1>
-          <p className="text-red-300 text-sm italic mb-12">Where immortality begins</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-12 tracking-wider">SUPERNATURAL LIFE</h1>
         </motion.div>
         
         <motion.div
