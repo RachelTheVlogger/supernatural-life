@@ -36,6 +36,7 @@ import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
 import StalkingSystem from '@/components/nightbound/StalkingSystem';
 import PossessionSystem from '@/components/nightbound/PossessionSystem';
 import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
+import RelationshipCoach from '@/components/nightbound/RelationshipCoach';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ export default function Night() {
   const [showStalking, setShowStalking] = useState(false);
   const [showPossession, setShowPossession] = useState(false);
   const [showDoppelgangers, setShowDoppelgangers] = useState(false);
+  const [showCoach, setShowCoach] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
 
   // Fetch vampire state
@@ -496,6 +498,14 @@ export default function Night() {
           <span className="text-2xl">⏳</span>
           <p className="text-white text-xs mt-1">Aging</p>
         </button>
+        <button
+          onClick={() => setShowCoach(true)}
+          disabled={servants.length === 0}
+          className="bg-pink-950/40 hover:bg-pink-950/60 border border-pink-500/30 rounded-lg p-3 text-center transition-colors disabled:opacity-50"
+        >
+          <span className="text-2xl">💝</span>
+          <p className="text-white text-xs mt-1">Coach</p>
+        </button>
         </motion.div>
       
 
@@ -640,6 +650,9 @@ export default function Night() {
         )}
         {showDoppelgangers && (
           <DoppelgangerSystem vampireState={vampireState} onClose={() => setShowDoppelgangers(false)} />
+        )}
+        {showCoach && (
+          <RelationshipCoach vampireState={vampireState} onClose={() => setShowCoach(false)} />
         )}
 
         </AnimatePresence>
