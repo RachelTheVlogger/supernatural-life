@@ -891,7 +891,7 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
               <button onClick={() => setServantBloodMode(false)} className="text-gray-400 text-sm">Cancel</button>
             </div>
             <p className="text-gray-400 text-sm mb-4">Create strains using your servants' blood. Intimate. Personal. Powerful.</p>
-            {servants.map(servant => (
+            {servants.filter(s => s.id).map(servant => (
               <button
                 key={servant.id}
                 onClick={() => handleServantBloodProduction(servant)}
