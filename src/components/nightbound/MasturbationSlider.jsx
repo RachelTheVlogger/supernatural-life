@@ -11,8 +11,8 @@ export default function MasturbationSlider({ onFinish }) {
   const [lastIntensity, setLastIntensity] = useState(0);
 
   const getMoanText = (level, isEdging, isDecreasing, wasHigh) => {
-    // Frustrated gasping/whimpering when pulling back from high intensity
-    if (isDecreasing && wasHigh) {
+    // Frustrated gasping/whimpering when pulling back at any intensity
+    if (isDecreasing && level > 10) {
       return [
         'nnngh...!',
         'ahh... ahh...',
@@ -79,8 +79,8 @@ export default function MasturbationSlider({ onFinish }) {
     setIntensity(value);
     setLastIntensity(value);
     
-    // Add moan immediately on movement if intensity is high enough
-    if (value > 20 || (isDecreasing && wasHigh)) {
+    // Add moan immediately on movement
+    if (value > 10 || isDecreasing) {
       const moanList = getMoanText(value, edging, isDecreasing, wasHigh);
       const randomMoan = moanList[Math.floor(Math.random() * moanList.length)];
       const newMoan = { id: Date.now() + Math.random(), text: randomMoan };
