@@ -1805,10 +1805,11 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   // Always call hooks in the same order - never conditionally
   const { data: interactionProgress = [] } = useQuery({
     queryKey: ['interactionProgress'],
-    queryFn: () => base44.entities.InteractionProgress.list()
+    queryFn: () => base44.entities.InteractionProgress.list(),
+    enabled: !!vampireState
   });
 
-  if (!vampireState) {
+  if (!vampireState || !servant) {
     return null;
   }
 
