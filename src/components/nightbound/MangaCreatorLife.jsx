@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Battery, User, Clock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@tantml:query';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function MangaCreatorLife({ career, entityName, onClose }) {
   const queryClient = useQueryClient();
