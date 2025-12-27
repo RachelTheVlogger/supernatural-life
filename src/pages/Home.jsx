@@ -220,7 +220,10 @@ export default function Home() {
                   {vampireStates.map(v => (
                     <div key={v.id} className="flex gap-2">
                       <button
-                        onClick={() => navigate(createPageUrl('Night'))}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(createPageUrl('Night'));
+                        }}
                         className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                       >
                         <div className="flex items-center gap-2">
@@ -247,7 +250,10 @@ export default function Home() {
                   {witches.map(w => (
                     <div key={w.id} className="flex gap-2">
                       <button
-                        onClick={() => navigate(createPageUrl('WitchHome'))}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(createPageUrl('WitchHome'));
+                        }}
                         className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                       >
                         <div className="flex items-center gap-2">
@@ -274,7 +280,10 @@ export default function Home() {
                   {succubi.map(s => (
                     <div key={s.id} className="flex gap-2">
                       <button
-                        onClick={() => navigate(createPageUrl('SuccubusHome'))}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(createPageUrl('SuccubusHome'));
+                        }}
                         className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                       >
                         <div className="flex items-center gap-2">
@@ -301,7 +310,10 @@ export default function Home() {
                   {incubi.map(i => (
                     <div key={i.id} className="flex gap-2">
                       <button
-                        onClick={() => navigate(createPageUrl('IncubusHome'))}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(createPageUrl('IncubusHome'));
+                        }}
                         className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                       >
                         <div className="flex items-center gap-2">
@@ -328,7 +340,10 @@ export default function Home() {
                   {playerWerewolves.map(w => (
                     <div key={w.id} className="flex gap-2">
                       <button
-                        onClick={() => navigate(createPageUrl('WerewolfHome'))}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(createPageUrl('WerewolfHome'));
+                        }}
                         className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                       >
                         <div className="flex items-center gap-2">
@@ -355,7 +370,10 @@ export default function Home() {
                   {humans.map(h => (
                     <div key={h.id} className="flex gap-2">
                       <button
-                        onClick={() => navigate(createPageUrl('HumanHome'))}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(createPageUrl('HumanHome'));
+                        }}
                         className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                       >
                         <div className="flex items-center gap-2">
