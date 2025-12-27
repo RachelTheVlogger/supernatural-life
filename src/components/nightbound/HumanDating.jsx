@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Heart, MessageCircle, Calendar, AlertTriangle } from 'lucide-react';
+import { X, Heart, MessageCircle, Calendar, AlertTriangle, Flame } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import DatingSexScene from './DatingSexScene';
 
 export default function HumanDating({ human, onClose }) {
   const [matches, setMatches] = useState([]);
   const [currentDate, setCurrentDate] = useState(null);
+  const [showSexScene, setShowSexScene] = useState(false);
+  const [activeDate, setActiveDate] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: vampires = [] } = useQuery({
@@ -229,12 +232,26 @@ export default function HumanDating({ human, onClose }) {
                 <p className="text-gray-400 text-xs mb-3">Dates: {match.dates}</p>
 
                 {match.interested ? (
-                  <button
-                    onClick={() => goOnDate(match)}
-                    className="w-full bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-sm font-bold"
-                  >
-                    Go On Date
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => goOnDate(match)}
+                      className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-sm font-bold"
+                    >
+                      Go On Date
+                    </button>
+                    {match.attraction >= 70 && match.connection >= 70 && match.dates >= 1 && (
+                      <button
+                        onClick={() => {
+                          setActiveDate(match);
+                          setShowSexScene(true);
+                        }}
+                        className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-1"
+                      >
+                        <Flame className="w-4 h-4" />
+                        Get Intimate
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <p className="text-red-400 text-sm text-center">They're not interested anymore</p>
                 )}
