@@ -107,25 +107,21 @@ export default function Codex() {
   const [selectedCategory, setSelectedCategory] = useState('lore');
   const [selectedEntry, setSelectedEntry] = useState(null);
 
+  const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+
   // Redirect to Home if no vampire state exists
   useEffect(() => {
-    const checkGameState = async () => {
-      const states = await base44.entities.VampireState.list();
-      if (states.length === 0) {
-        navigate(createPageUrl('Home'), { replace: true });
-      }
-    };
-    checkGameState();
-  }, [navigate]);
+    if (!vampireLoading && vampireStates.length === 0) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [vampireStates.length, vampireLoading, navigate]);
 
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
     queryFn: () => base44.entities.Servant.list()
-  });
-
-  const { data: vampireStates = [] } = useQuery({
-    queryKey: ['vampireState'],
-    queryFn: () => base44.entities.VampireState.list()
   });
 
   const { data: entries = [] } = useQuery({
