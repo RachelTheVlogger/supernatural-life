@@ -2208,9 +2208,14 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         {tab === 'interactive' && showMasturbation && (
           <div className="max-h-[60vh] overflow-y-auto">
             <MasturbationSlider
-              onFinish={async (type) => {
-                const earnings = type === 'edged' ? Math.floor(Math.random() * 400) + 300 : Math.floor(Math.random() * 300) + 200;
-                const newSubs = type === 'edged' ? Math.floor(Math.random() * 40) + 30 : Math.floor(Math.random() * 25) + 15;
+              gender={servant.gender}
+              vampireWatching={false}
+              onFinish={async (type, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
+                const baseEarnings = type === 'edged' ? Math.floor(Math.random() * 400) + 300 : Math.floor(Math.random() * 300) + 200;
+                const edgeBonus = edgeCount * 50;
+                const desperationBonus = Math.floor(desperationLevel / 2);
+                const earnings = baseEarnings + edgeBonus + desperationBonus;
+                const newSubs = (type === 'edged' ? Math.floor(Math.random() * 40) + 30 : Math.floor(Math.random() * 25) + 15) + Math.floor(edgeCount * 5);
                 
                 await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
                   revenue: servantProfile.revenue + earnings,
@@ -2223,10 +2228,21 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   relationship: Math.min(100, (servant.relationship || 0) + relBonus)
                 });
                 
+                const bodyPartDesc = bodyPart === 'clit' ? ' Rubbing your clit on camera. Close-ups.' :
+                                    bodyPart === 'dick' ? ' Stroking your cock on camera. Full view.' :
+                                    bodyPart === 'breasts' ? ' Playing with your tits. Pinching nipples.' :
+                                    bodyPart === 'fingers' ? ' Fingering yourself deep. Camera angle perfect.' :
+                                    bodyPart === 'balls' ? ' Showing them how you play with your balls.' :
+                                    touchingMultiple ? (servant.gender === 'woman' ? ' Rubbing clit AND playing with tits. Both on camera.' :
+                                                       servant.gender === 'man' ? ' Stroking dick AND squeezing balls. Full show.' :
+                                                       ' Touching everywhere at once. Complete view.') : '';
+                
+                const edgeDesc = edgeCount > 3 ? ` Edged ${edgeCount} times. Chat was begging you to finish. Finally did. Explosive.` :
+                                edgeCount > 1 ? ` Edged ${edgeCount} times for them. Building intensity.` :
+                                type === 'edged' ? ' Edged yourself for the audience.' : '';
+
                 await base44.entities.NightLog.create({
-                  entry: type === 'edged' 
-                    ? `Interactive masturbation session. You edged yourself for the audience. They went wild. Earned $${earnings}, +${newSubs} subscribers.`
-                    : `Interactive masturbation session. You came hard on camera. Chat exploded. Earned $${earnings}, +${newSubs} subscribers.`,
+                  entry: `Interactive masturbation on camera.${bodyPartDesc}${edgeDesc} Chat went wild. Earned $${earnings}, +${newSubs} subscribers.`,
                   category: 'interaction',
                   intensity: 'significant'
                 });

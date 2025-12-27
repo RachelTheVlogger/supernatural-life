@@ -2507,7 +2507,9 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
               className="max-w-lg w-full"
             >
               <MasturbationSlider
-                onFinish={async (edgeType) => {
+                gender={servant.gender}
+                vampireWatching={true}
+                onFinish={async (edgeType, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
                   setShowSlider(false);
                   setSliderType(null);
                   
@@ -2528,16 +2530,23 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
                   let baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
                   
+                  // Add body part specifics
+                  const bodyPartText = bodyPart === 'clit' ? '\n\nYou watched them rub their clit in circles. Faster. Harder. So wet.' :
+                                      bodyPart === 'dick' ? '\n\nYou watched them stroke their hard cock. Grip tight. Up and down. So hard for you.' :
+                                      bodyPart === 'breasts' ? '\n\nThey pinched and played with their nipples. Moaning. Getting so hard.' :
+                                      bodyPart === 'fingers' ? '\n\nFingers deep inside themselves. Two, then three. Fucking themselves for you.' :
+                                      bodyPart === 'balls' ? '\n\nPlaying with their balls while stroking. Squeezing. So full.' :
+                                      touchingMultiple ? (servant.gender === 'woman' ? '\n\nRubbing their clit while playing with their tits. Both spots at once. Overwhelming.' :
+                                                         servant.gender === 'man' ? '\n\nStroking their dick while squeezing their balls. Everything at once. Intense.' :
+                                                         '\n\nTouching everywhere. Multiple spots. Too much sensation.') : '';
+                  
                   // Add edging flavor
-                  if (edgeType === 'edged') {
-                    const edgeAdditions = [
-                      ' You edged them mercilessly. They begged. You denied. Then finally allowed. They shattered.',
-                      ' Denied over and over. When you finally let them cum, they screamed.',
-                      ' You edged them until they were sobbing, begging. The release was explosive.',
-                      ' Brought them to the edge repeatedly. Denied. Denied. Finally allowed. Earth-shattering.',
-                      ' They begged to cum. You said not yet. Again. Again. Finally yes. Overwhelming.'
-                    ];
-                    baseOutcome += edgeAdditions[Math.floor(Math.random() * edgeAdditions.length)];
+                  const intensityText = edgeCount > 3 ? '\n\nYou made them edge over and over. Shaking. Desperate. Begging. Finally allowed.' : 
+                                       edgeCount > 1 ? '\n\nEdged multiple times. Building. Building. Finally released.' : 
+                                       edgeType === 'edged' ? '\n\nEdged them. Made them wait. Denied. Then finally allowed.' : '';
+                  
+                  if (bodyPartText || intensityText) {
+                    baseOutcome += bodyPartText + intensityText;
                   }
                   
                   const finalOutcome = addTitleToOutcome(baseOutcome);
@@ -2548,8 +2557,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                     const [min, max] = interaction.gains;
                     const baseGain = Math.floor(Math.random() * (max - min + 1)) + min;
                     const edgeBonus = edgeType === 'edged' ? Math.floor(baseGain * 0.5) : 0;
+                    const desperationBonus = Math.floor(desperationLevel / 20);
+                    const edgeCountBonus = edgeCount * 2;
                     const modifier = getVariantModifier(servant.variant, interaction.category);
-                    const relationshipGain = Math.round((baseGain + edgeBonus) * modifier);
+                    const relationshipGain = Math.round((baseGain + edgeBonus + desperationBonus + edgeCountBonus) * modifier);
                     const newRel = Math.min((servant.relationship || 0) + relationshipGain, 100);
 
                     const emotionalStates = {
