@@ -11,21 +11,21 @@ export default function MasturbationSlider({ onFinish }) {
   const [lastIntensity, setLastIntensity] = useState(0);
 
   const getMoanText = (level, isEdging, isDecreasing, wasHigh) => {
-    // Frustration text when pulling back from high intensity
+    // Frustrated gasping/whimpering when pulling back from high intensity
     if (isDecreasing && wasHigh) {
       return [
-        'NO! Don\'t stop!',
-        'WHY?! I was so close!',
-        'PLEASE keep going!',
-        'Fuck! Don\'t tease me!',
-        'I need more!',
-        'Don\'t stop now!',
-        'No no no...',
-        'Please don\'t stop!',
-        'I was RIGHT there!',
-        'Keep going please!',
-        'More! I need more!',
-        'Don\'t do this to me!'
+        'nnngh...!',
+        'ahh... ahh...',
+        '*whimper*',
+        'hahh... hahh...',
+        'mmnngh...',
+        '*gasp*',
+        'ahhn...',
+        '*frustrated whimper*',
+        'nngh... nngh...',
+        '*breathless gasp*',
+        'ahh...!',
+        '*desperate whimper*'
       ];
     }
     
