@@ -24,7 +24,7 @@ export default function HealthCheckup({ human, onClose }) {
         tests: [
           { name: 'HIV', result: hasIssue && Math.random() > 0.9 ? 'positive' : 'negative' },
           { name: 'Chlamydia', result: hasIssue && Math.random() > 0.7 ? 'positive' : 'negative' },
-          { name: 'Gonorrhea', result: hasIssue && Math.random() > 0.7 : 'positive' : 'negative' },
+          { name: 'Gonorrhea', result: hasIssue && Math.random() > 0.7 ? 'positive' : 'negative' },
           { name: 'Syphilis', result: hasIssue && Math.random() > 0.85 ? 'positive' : 'negative' },
           { name: 'Hepatitis B', result: hasIssue && Math.random() > 0.9 ? 'positive' : 'negative' },
           { name: 'Hepatitis C', result: hasIssue && Math.random() > 0.9 ? 'positive' : 'negative' }
