@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Flame, Moon, Coffee } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@tantml:react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function DateAtApartment({ human, match, onClose }) {
   const [stage, setStage] = useState('invite');
