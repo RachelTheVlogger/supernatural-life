@@ -26,18 +26,20 @@ const PERSONALITY_TRAITS = [
   { value: 'charming', label: 'Charming', icon: '✨', color: 'from-yellow-500 to-pink-500' }
 ];
 
-export default function PersonalitySelector({ selected, onSelect, filterTraits = null, maxTraits = 3 }) {
+export default function PersonalitySelector({ selected, onSelect, filterTraits = null, maxTraits = 999 }) {
   const traits = filterTraits ? PERSONALITY_TRAITS.filter(t => filterTraits.includes(t.value)) : PERSONALITY_TRAITS;
   const selectedArray = Array.isArray(selected) ? selected : (selected ? [selected] : []);
 
   const handleSelect = (traitValue) => {
     if (selectedArray.includes(traitValue)) {
       // Deselect
-      onSelect(selectedArray.filter(t => t !== traitValue));
+      const newSelected = selectedArray.filter(t => t !== traitValue);
+      onSelect(newSelected);
     } else {
       // Select (up to max)
       if (selectedArray.length < maxTraits) {
-        onSelect([...selectedArray, traitValue]);
+        const newSelected = [...selectedArray, traitValue];
+        onSelect(newSelected);
       }
     }
   };
@@ -45,7 +47,7 @@ export default function PersonalitySelector({ selected, onSelect, filterTraits =
   return (
     <div>
       <label className="text-white font-medium mb-3 block">
-        Personality Traits ({selectedArray.length}/{maxTraits})
+        Personality Traits ({selectedArray.length} selected)
       </label>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[40vh] overflow-y-auto p-1">
         {traits.map(trait => {

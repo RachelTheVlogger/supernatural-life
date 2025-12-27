@@ -18,6 +18,7 @@ const HUMAN_ACTIVITIES = [
   { id: 'party', label: 'Go to a Party', icon: Heart, duration: 5500, awarenessChance: 0.2 },
   { id: 'gym', label: 'Go to the Gym', icon: Users, duration: 4500, awarenessChance: 0.1 },
   { id: 'library', label: 'Study at Library', icon: BookOpen, duration: 5000, awarenessChance: 0.15 },
+  { id: 'sleep', label: 'Go to Bed', icon: Moon, duration: 6000, awarenessChance: 0.2 },
   { id: 'nightwalk', label: 'Walk Alone at Night', icon: Moon, duration: 4500, awarenessChance: 0.4, requiresAwareness: 10 },
   { id: 'research', label: 'Research Vampires', icon: Search, duration: 6000, requiresAwareness: 20 },
   { id: 'investigate', label: 'Investigate Disappearances', icon: Eye, duration: 6500, requiresAwareness: 40 },
@@ -154,6 +155,33 @@ export default function HumanHome() {
           'The book described protection methods. Vervain in tea. Salt at doorways. Invitation rules. You\'re memorizing everything. Just in case.'
         ];
         result = readOutcomes[Math.floor(Math.random() * readOutcomes.length)];
+      } else if (activity.id === 'sleep') {
+        awarenessGain = Math.floor(Math.random() * 10) + 5;
+        const hasVampire = vampireStates.length > 0;
+        const vampire = hasVampire ? vampireStates[0] : null;
+        
+        const sleepOutcomes = hasVampire ? [
+          `You lay in bed. Can't sleep. Keep thinking about them.\n\nTheir eyes. Their voice. The way they move.\n\nYou touch yourself thinking about ${vampire.vampire_name}. Imagine them watching. Wanting them to watch.\n\nYou finish gasping their name into your pillow.\n\nThis obsession is consuming you.`,
+          `Dreams of ${vampire.vampire_name}. Their hands on you. Their teeth.\n\nYou wake up wet/hard, panting.\n\nIt felt so real. You wanted it to be real.\n\nYou touch yourself again, chasing that dream.\n\nWhat's happening to you?`,
+          `You fantasize about meeting them in the dark.\n\nThem pinning you against a wall. Biting your neck while they fuck you.\n\nThe danger. The power. The surrender.\n\nYou come imagining being theirs completely.\n\nYou're addicted to the fantasy.`,
+          `Can't stop thinking about ${vampire.vampire_name}.\n\nYou masturbate three times tonight. Each time to thoughts of them.\n\nTheir darkness. Their control. Being their prey. Their possession.\n\nYou want them. Desperately. Dangerously.`,
+          `You imagine them breaking into your room.\n\nWatching you sleep. Touching you awake.\n\nTaking what they want from you.\n\nYou touch yourself to this fantasy until you're shaking.\n\nPart of you hopes it's not just a fantasy.`,
+          `Dreams blur with fantasy.\n\n${vampire.vampire_name} feeding from you while making you come.\n\nPain and pleasure mixing.\n\nYou wake up moaning, hand between your legs.\n\nYou finish yourself off, wishing they were really there.`
+        ] : [
+          'You sleep fitfully. Dreams of shadows. Teeth. Darkness.',
+          'Nightmares again. You wake up sweating.',
+          'Sleep comes eventually. Dreamless. Empty.',
+          'You toss and turn. Something feels wrong.'
+        ];
+        
+        result = sleepOutcomes[Math.floor(Math.random() * sleepOutcomes.length)];
+        
+        if (hasVampire && (human.awareness_level || 0) > 20) {
+          await base44.entities.Human.update(human.id, {
+            wants_to_be_turned: Math.random() > 0.5,
+            obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 15) + 5)
+          });
+        }
       } else if (activity.id === 'party') {
         awarenessGain = Math.floor(Math.random() * 12) + 5;
         dangerGain = Math.floor(Math.random() * 15) + 5;
@@ -335,6 +363,22 @@ export default function HumanHome() {
             </div>
             <p className="text-xs text-gray-500 mt-1">Risk level</p>
           </div>
+          
+          {(human.obsession_level || 0) > 0 && (
+            <div className="bg-gray-900 rounded-xl p-4 border border-pink-800 col-span-2">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-pink-400 text-sm">💭 Vampire Obsession</span>
+                <span className="font-bold text-pink-400">{human.obsession_level || 0}%</span>
+              </div>
+              <div className="w-full bg-gray-800 rounded-full h-2">
+                <div 
+                  style={{ width: `${human.obsession_level || 0}%` }}
+                  className="h-2 bg-gradient-to-r from-pink-500 to-red-500 rounded-full"
+                />
+              </div>
+              <p className="text-xs text-pink-300 mt-1">You can't stop thinking about them...</p>
+            </div>
+          )}
         </motion.div>
 
         {/* High awareness warning */}
