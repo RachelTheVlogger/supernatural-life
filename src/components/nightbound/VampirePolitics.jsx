@@ -5,6 +5,10 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export default function VampirePolitics({ vampireState, onClose }) {
+  if (!vampireState) {
+    return null;
+  }
+
   const queryClient = useQueryClient();
   const [campaigning, setCampaigning] = useState(false);
 
@@ -30,10 +34,6 @@ export default function VampirePolitics({ vampireState, onClose }) {
       return existing;
     }
   });
-
-  if (!vampireState) {
-    return null;
-  }
 
   const playerCampaign = elections.find(e => e.is_player && e.election_status === 'active');
   const rivalCampaigns = elections.filter(e => !e.is_player && e.election_status === 'active');

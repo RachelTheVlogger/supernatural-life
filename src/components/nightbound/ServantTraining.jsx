@@ -60,13 +60,13 @@ const SPECIALIZATIONS = {
 };
 
 export default function ServantTraining({ servant, onClose }) {
-  const queryClient = useQueryClient();
-  const [training, setTraining] = useState(false);
-  const [outcome, setOutcome] = useState('');
-
   if (!servant) {
     return null;
   }
+
+  const queryClient = useQueryClient();
+  const [training, setTraining] = useState(false);
+  const [outcome, setOutcome] = useState('');
 
   const handleTrain = async (spec) => {
     setTraining(true);

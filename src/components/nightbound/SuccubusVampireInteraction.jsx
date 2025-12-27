@@ -108,13 +108,13 @@ const INTERACTIONS = [
 ];
 
 export default function SuccubusVampireInteraction({ succubus, vampire, onClose }) {
-  const queryClient = useQueryClient();
-  const [interacting, setInteracting] = useState(false);
-  const [outcome, setOutcome] = useState('');
-
   if (!succubus || !vampire) {
     return null;
   }
+
+  const queryClient = useQueryClient();
+  const [interacting, setInteracting] = useState(false);
+  const [outcome, setOutcome] = useState('');
 
   const handleInteraction = async (interaction) => {
     setInteracting(true);
