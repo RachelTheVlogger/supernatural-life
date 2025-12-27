@@ -137,27 +137,28 @@ export default function DancingSlider({ gender, context = 'performance', vampire
             <p className="text-gray-400 text-xs">Intensity</p>
           </div>
           
-          <div className="relative h-64 w-20">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={intensity}
-              onChange={(e) => setIntensity(parseInt(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-              style={{ 
-                WebkitAppearance: 'slider-vertical',
-                writingMode: 'bt-lr',
-                appearance: 'slider-vertical'
-              }}
+          <div 
+            className="relative h-64 w-20 bg-gray-800 rounded-full overflow-hidden cursor-pointer"
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const y = e.clientY - rect.top;
+              const newIntensity = Math.round(100 - (y / rect.height) * 100);
+              setIntensity(Math.max(0, Math.min(100, newIntensity)));
+            }}
+            onTouchMove={(e) => {
+              e.preventDefault();
+              const touch = e.touches[0];
+              const rect = e.currentTarget.getBoundingClientRect();
+              const y = touch.clientY - rect.top;
+              const newIntensity = Math.round(100 - (y / rect.height) * 100);
+              setIntensity(Math.max(0, Math.min(100, newIntensity)));
+            }}
+          >
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-pink-600 via-purple-600 to-red-600"
+              style={{ height: `${intensity}%` }}
             />
-            <div className="absolute inset-0 bg-gray-800 rounded-full overflow-hidden">
-              <motion.div
-                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-pink-600 via-purple-600 to-red-600"
-                style={{ height: `${intensity}%` }}
-              />
-            </div>
-            <div className="absolute inset-0 flex items-end justify-center pb-2">
+            <div className="absolute inset-0 flex items-end justify-center pb-2 pointer-events-none">
               <span className="text-white font-bold text-sm">{intensity}%</span>
             </div>
           </div>
