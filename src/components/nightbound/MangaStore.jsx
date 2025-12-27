@@ -27,7 +27,7 @@ export default function MangaStore({ currentEntityId, onClose }) {
 
   // Get all available series from other creators
   const availableSeries = allCareers
-    .filter(c => c.servant_id !== currentEntityId && c.series_name)
+    .filter(c => c.servant_id !== currentEntityId && c.series_name && c.chapters_released > 0)
     .map(c => ({
       id: c.active_series_id || c.id,
       careerId: c.id,
@@ -264,7 +264,7 @@ export default function MangaStore({ currentEntityId, onClose }) {
             </motion.div>
           </AnimatePresence>
 
-          <div className="absolute bottom-4 left-0 right-0 p-6">
+          <div className="absolute bottom-4 left-0 right-0 p-6" onClick={(e) => e.stopPropagation()}>
             {viewingChapter.panels[currentPanelIndex].dialogue && (
               <div className="bg-gray-900/90 rounded-lg p-4 mb-4 max-w-2xl mx-auto border border-purple-500/30">
                 <p className="text-white text-center">{viewingChapter.panels[currentPanelIndex].dialogue}</p>
@@ -273,7 +273,10 @@ export default function MangaStore({ currentEntityId, onClose }) {
 
             <div className="flex items-center justify-between max-w-2xl mx-auto">
               <button
-                onClick={goToPreviousPanel}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToPreviousPanel();
+                }}
                 disabled={currentPanelIndex === 0}
                 className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-medium"
               >
@@ -281,7 +284,10 @@ export default function MangaStore({ currentEntityId, onClose }) {
               </button>
               <span className="text-white">{currentPanelIndex + 1} / {viewingChapter.panels.length}</span>
               <button
-                onClick={goToNextPanel}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToNextPanel();
+                }}
                 disabled={currentPanelIndex === viewingChapter.panels.length - 1}
                 className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-medium"
               >
