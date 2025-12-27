@@ -83,7 +83,6 @@ Provide a structured analysis with:
 6. Next Milestone Prediction
 
 Be direct, insightful, and tailored to their specific dynamic. ${isServantView ? 'Remember: this is a dangerous relationship. The servant needs advice on navigating their feelings while staying safe. Be protective but honest.' : 'Consider their variant type heavily.'}`;
-
     try {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -185,7 +184,6 @@ ${conversationHistory}
 ${isServantView ? 'SERVANT' : 'VAMPIRE'}'S QUESTION: ${userMessage}
 
 Respond naturally and helpfully. Give specific, actionable advice. Be direct but supportive. Reference specific aspects of their relationship. ${isServantView ? 'Remember this is a dangerous power dynamic - be protective of the servant while respecting their autonomy.' : ''} Keep responses conversational and 2-4 paragraphs max.`;
-
     try {
       const response = await base44.integrations.Core.InvokeLLM({ prompt });
       setMessages(prev => [...prev, { role: 'coach', text: response }]);
