@@ -11,141 +11,173 @@ export default function MangaProgression({ career, entityName, onClose }) {
   const [outcome, setOutcome] = useState('');
 
   const checkAnimeOffer = async () => {
+    if (!career?.id) return;
     setWorking(true);
-    const fanThreshold = 5000;
-    
-    if ((career.fans || 0) >= fanThreshold) {
-      const studios = ['Sunrise Animation', 'Moonlight Studios', 'Crystal Pictures', 'Apex Animation'];
-      const studio = studios[Math.floor(Math.random() * studios.length)];
-      const budget = Math.floor(Math.random() * 500000) + 200000;
+    try {
+      const fanThreshold = 5000;
       
-      const offers = career.anime_offers || [];
-      offers.push({
-        studio,
-        budget,
-        episodes: Math.floor(Math.random() * 13) + 12,
-        date: new Date().toISOString(),
-        status: 'pending'
+      if ((career.fans || 0) >= fanThreshold) {
+        const studios = ['Sunrise Animation', 'Moonlight Studios', 'Crystal Pictures', 'Apex Animation'];
+        const studio = studios[Math.floor(Math.random() * studios.length)];
+        const budget = Math.floor(Math.random() * 500000) + 200000;
+        
+        const offers = career.anime_offers || [];
+        offers.push({
+          studio,
+          budget,
+          episodes: Math.floor(Math.random() * 13) + 12,
+          date: new Date().toISOString(),
+          status: 'pending'
+        });
+
+        await base44.entities.ServantCareer.update(career.id, { anime_offers: offers });
+        
+        await base44.entities.NightLog.create({
+          entry: `📺 ${studio} offered to adapt "${career.series_name}" into anime! Budget: $${budget.toLocaleString()}`,
+          category: 'interaction',
+          intensity: 'significant'
+        });
+
+        setOutcome(`📺 Anime offer from ${studio}!`);
+        queryClient.invalidateQueries(['career']);
+      } else {
+        setOutcome(`Need ${fanThreshold} fans for anime offers (currently ${career.fans || 0})`);
+      }
+    } catch (error) {
+      console.error('Anime offer check failed:', error);
+      setOutcome('Check failed');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 3000);
+    }
+  };
+
+  const acceptAnimeOffer = async (offerIndex) => {
+    if (!career?.id) return;
+    try {
+      const offers = [...(career.anime_offers || [])];
+      const offer = offers[offerIndex];
+      offer.status = 'accepted';
+      
+      const boost = Math.floor(offer.budget / 100);
+      await base44.entities.ServantCareer.update(career.id, {
+        anime_offers: offers,
+        fans: (career.fans || 0) + boost,
+        has_anime: true
       });
 
-      await base44.entities.ServantCareer.update(career.id, { anime_offers: offers });
-      
       await base44.entities.NightLog.create({
-        entry: `📺 ${studio} offered to adapt "${career.series_name}" into anime! Budget: $${budget.toLocaleString()}`,
+        entry: `🎬 "${career.series_name}" anime adaptation confirmed! Production starting!`,
         category: 'interaction',
         intensity: 'significant'
       });
 
-      setOutcome(`📺 Anime offer from ${studio}!`);
       queryClient.invalidateQueries(['career']);
-    } else {
-      setOutcome(`Need ${fanThreshold} fans for anime offers (currently ${career.fans || 0})`);
+      setOutcome(`Anime confirmed! +${boost} fans!`);
+      setTimeout(() => setOutcome(''), 3000);
+    } catch (error) {
+      console.error('Offer acceptance failed:', error);
+      setOutcome('Failed to accept offer');
+      setTimeout(() => setOutcome(''), 2000);
     }
-
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 3000);
-  };
-
-  const acceptAnimeOffer = async (offerIndex) => {
-    const offers = [...(career.anime_offers || [])];
-    const offer = offers[offerIndex];
-    offer.status = 'accepted';
-    
-    const boost = Math.floor(offer.budget / 100);
-    await base44.entities.ServantCareer.update(career.id, {
-      anime_offers: offers,
-      fans: (career.fans || 0) + boost,
-      has_anime: true
-    });
-
-    await base44.entities.NightLog.create({
-      entry: `🎬 "${career.series_name}" anime adaptation confirmed! Production starting!`,
-      category: 'interaction',
-      intensity: 'significant'
-    });
-
-    queryClient.invalidateQueries(['career']);
-    setOutcome(`Anime confirmed! +${boost} fans!`);
-    setTimeout(() => setOutcome(''), 3000);
   };
 
   const hireAssistant = async () => {
+    if (!career?.id) return;
     setWorking(true);
-    const assistantTypes = ['Background Artist', 'Inker', 'Colorist', 'Layout Designer'];
-    const type = assistantTypes[Math.floor(Math.random() * assistantTypes.length)];
-    const cost = Math.floor(Math.random() * 500) + 200;
+    try {
+      const assistantTypes = ['Background Artist', 'Inker', 'Colorist', 'Layout Designer'];
+      const type = assistantTypes[Math.floor(Math.random() * assistantTypes.length)];
+      const cost = Math.floor(Math.random() * 500) + 200;
 
-    if ((career.income || 0) >= cost) {
-      const assistants = career.assistants || [];
-      assistants.push({
-        name: `Assistant ${assistants.length + 1}`,
-        type,
-        skill: Math.floor(Math.random() * 30) + 70,
-        hired: new Date().toISOString()
-      });
+      if ((career.income || 0) >= cost) {
+        const assistants = career.assistants || [];
+        assistants.push({
+          name: `Assistant ${assistants.length + 1}`,
+          type,
+          skill: Math.floor(Math.random() * 30) + 70,
+          hired: new Date().toISOString()
+        });
 
-      await base44.entities.ServantCareer.update(career.id, {
-        assistants,
-        income: (career.income || 0) - cost
-      });
+        await base44.entities.ServantCareer.update(career.id, {
+          assistants,
+          income: (career.income || 0) - cost
+        });
 
-      setOutcome(`Hired ${type}! -$${cost}`);
-      queryClient.invalidateQueries(['career']);
-    } else {
-      setOutcome(`Need $${cost} (have $${career.income || 0})`);
+        setOutcome(`Hired ${type}! -$${cost}`);
+        queryClient.invalidateQueries(['career']);
+      } else {
+        setOutcome(`Need $${cost} (have $${career.income || 0})`);
+      }
+    } catch (error) {
+      console.error('Hiring failed:', error);
+      setOutcome('Failed to hire assistant');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
     }
-
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
   };
 
   const hostConvention = async () => {
+    if (!career?.id) return;
     setWorking(true);
-    const attendance = Math.floor((career.fans || 0) / 10);
-    const boost = Math.floor(Math.random() * 1000) + 500;
-    const income = Math.floor(attendance * 5);
+    try {
+      const attendance = Math.floor((career.fans || 0) / 10);
+      const boost = Math.floor(Math.random() * 1000) + 500;
+      const income = Math.floor(attendance * 5);
 
-    await base44.entities.ServantCareer.update(career.id, {
-      fans: (career.fans || 0) + boost,
-      income: (career.income || 0) + income
-    });
+      await base44.entities.ServantCareer.update(career.id, {
+        fans: (career.fans || 0) + boost,
+        income: (career.income || 0) + income
+      });
 
-    await base44.entities.NightLog.create({
-      entry: `🎪 ${entityName} hosted a convention! ${attendance} attendees, +${boost} fans, +$${income}`,
-      category: 'interaction',
-      intensity: 'moderate'
-    });
+      await base44.entities.NightLog.create({
+        entry: `🎪 ${entityName} hosted a convention! ${attendance} attendees, +${boost} fans, +$${income}`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
 
-    setOutcome(`Convention success! +${boost} fans, +$${income}`);
-    queryClient.invalidateQueries(['career']);
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 3000);
+      setOutcome(`Convention success! +${boost} fans, +$${income}`);
+      queryClient.invalidateQueries(['career']);
+    } catch (error) {
+      console.error('Convention failed:', error);
+      setOutcome('Convention failed');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 3000);
+    }
   };
 
   const translateSeries = async (language) => {
+    if (!career?.id) return;
     setWorking(true);
-    const cost = 1000;
-    
-    if ((career.income || 0) >= cost) {
-      const translations = career.translations || [];
-      const boost = Math.floor(Math.random() * 2000) + 1000;
+    try {
+      const cost = 1000;
       
-      translations.push({
-        language,
-        date: new Date().toISOString(),
-        fans_gained: boost
-      });
+      if ((career.income || 0) >= cost) {
+        const translations = career.translations || [];
+        const boost = Math.floor(Math.random() * 2000) + 1000;
+        
+        translations.push({
+          language,
+          date: new Date().toISOString(),
+          fans_gained: boost
+        });
 
-      await base44.entities.ServantCareer.update(career.id, {
-        translations,
-        fans: (career.fans || 0) + boost,
-        income: (career.income || 0) - cost
-      });
+        await base44.entities.ServantCareer.update(career.id, {
+          translations,
+          fans: (career.fans || 0) + boost,
+          income: (career.income || 0) - cost
+        });
 
-      setOutcome(`${language} translation! +${boost} fans, -$${cost}`);
-      queryClient.invalidateQueries(['career']);
-    } else {
-      setOutcome(`Need $${cost} (have $${career.income || 0})`);
+        setOutcome(`${language} translation! +${boost} fans, -$${cost}`);
+        queryClient.invalidateQueries(['career']);
+      } else {
+        setOutcome(`Need $${cost} (have $${career.income || 0})`);
+      }
+    } catch (error) {
+      console.error('Translation failed:', error);
+      setOutcome('Translation failed');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
     }
-
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
   };
 
   return (

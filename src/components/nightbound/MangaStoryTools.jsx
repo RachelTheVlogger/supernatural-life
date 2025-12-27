@@ -11,6 +11,7 @@ export default function MangaStoryTools({ career, entityName, onClose }) {
   const [outcome, setOutcome] = useState('');
 
   const generateMysteryChapter = async () => {
+    if (!career) return;
     setWorking(true);
     try {
       const genre = career.current_genre || 'shonen';
@@ -28,13 +29,15 @@ export default function MangaStoryTools({ career, entityName, onClose }) {
 
       setOutcome(`📖 Mystery Chapter: "${result.title}"\n\nTwist: ${result.twist}\n\nUse custom chapter creator to make this real!`);
     } catch (error) {
+      console.error('Mystery generation failed:', error);
       setOutcome('Failed to generate mystery chapter');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 5000);
     }
-
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 5000);
   };
 
   const killCharacter = async () => {
+    if (!career?.id) return;
     const characters = career.manga_characters || [];
     if (characters.length === 0) {
       setOutcome('No characters to kill!');
@@ -43,30 +46,37 @@ export default function MangaStoryTools({ career, entityName, onClose }) {
     }
 
     setWorking(true);
-    const randomChar = characters[Math.floor(Math.random() * characters.length)];
-    
-    const updatedChars = characters.map(c =>
-      c.id === randomChar.id ? { ...c, deceased: true, death_date: new Date().toISOString() } : c
-    );
+    try {
+      const randomChar = characters[Math.floor(Math.random() * characters.length)];
+      
+      const updatedChars = characters.map(c =>
+        c.id === randomChar.id ? { ...c, deceased: true, death_date: new Date().toISOString() } : c
+      );
 
-    const boost = Math.floor(Math.random() * 1500) + 1000;
-    await base44.entities.ServantCareer.update(career.id, {
-      manga_characters: updatedChars,
-      fans: (career.fans || 0) + boost
-    });
+      const boost = Math.floor(Math.random() * 1500) + 1000;
+      await base44.entities.ServantCareer.update(career.id, {
+        manga_characters: updatedChars,
+        fans: (career.fans || 0) + boost
+      });
 
-    await base44.entities.NightLog.create({
-      entry: `💀 ${randomChar.name} died in "${career.series_name}"! Fans devastated. +${boost} fans from emotional impact!`,
-      category: 'interaction',
-      intensity: 'significant'
-    });
+      await base44.entities.NightLog.create({
+        entry: `💀 ${randomChar.name} died in "${career.series_name}"! Fans devastated. +${boost} fans from emotional impact!`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
 
-    setOutcome(`💀 ${randomChar.name} has died! Massive emotional impact! +${boost} fans`);
-    queryClient.invalidateQueries(['career']);
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 4000);
+      setOutcome(`💀 ${randomChar.name} has died! Massive emotional impact! +${boost} fans`);
+      queryClient.invalidateQueries(['career']);
+    } catch (error) {
+      console.error('Character death failed:', error);
+      setOutcome('Failed to process character death');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 4000);
+    }
   };
 
   const generatePlotTwist = async () => {
+    if (!career) return;
     setWorking(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
@@ -84,10 +94,11 @@ export default function MangaStoryTools({ career, entityName, onClose }) {
 
       setOutcome(`⚡ Plot Twist Ideas:\n\n${result.twists.map((t, i) => `${i + 1}. ${t}`).join('\n\n')}`);
     } catch (error) {
+      console.error('Twist generation failed:', error);
       setOutcome('Failed to generate twists');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 6000);
     }
-
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 6000);
   };
 
   return (

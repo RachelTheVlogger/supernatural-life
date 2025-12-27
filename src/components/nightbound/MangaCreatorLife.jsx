@@ -11,17 +11,25 @@ export default function MangaCreatorLife({ career, entityName, onClose }) {
   const [outcome, setOutcome] = useState('');
 
   const takeBreak = async () => {
+    if (!career?.id) return;
     setWorking(true);
-    const burnout = Math.max(0, (career.burnout || 0) - 30);
-    
-    await base44.entities.ServantCareer.update(career.id, { burnout });
-    queryClient.invalidateQueries(['career']);
+    try {
+      const burnout = Math.max(0, (career.burnout || 0) - 30);
+      
+      await base44.entities.ServantCareer.update(career.id, { burnout });
+      queryClient.invalidateQueries(['career']);
 
-    setOutcome('Break taken! Energy restored.');
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
+      setOutcome('Break taken! Energy restored.');
+    } catch (error) {
+      console.error('Break failed:', error);
+      setOutcome('Failed to take break');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
+    }
   };
 
   const meetEditor = async () => {
+    if (!career?.id) return;
     setWorking(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
@@ -50,37 +58,45 @@ export default function MangaCreatorLife({ career, entityName, onClose }) {
       queryClient.invalidateQueries(['career']);
       setOutcome(result.feedback);
     } catch (error) {
+      console.error('Editor meeting failed:', error);
       setOutcome('Editor unavailable');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 4000);
     }
-
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 4000);
   };
 
   const workOnDeadline = async () => {
+    if (!career?.id) return;
     setWorking(true);
-    const onTime = Math.random() > 0.3;
-    const burnoutIncrease = Math.floor(Math.random() * 20) + 10;
-    
-    if (onTime) {
-      const bonus = Math.floor(Math.random() * 500) + 300;
-      await base44.entities.ServantCareer.update(career.id, {
-        fans: (career.fans || 0) + bonus,
-        burnout: Math.min(100, (career.burnout || 0) + burnoutIncrease)
-      });
+    try {
+      const onTime = Math.random() > 0.3;
+      const burnoutIncrease = Math.floor(Math.random() * 20) + 10;
+      
+      if (onTime) {
+        const bonus = Math.floor(Math.random() * 500) + 300;
+        await base44.entities.ServantCareer.update(career.id, {
+          fans: (career.fans || 0) + bonus,
+          burnout: Math.min(100, (career.burnout || 0) + burnoutIncrease)
+        });
 
-      setOutcome(`Met deadline! +${bonus} fans (Burnout +${burnoutIncrease}%)`);
-    } else {
-      const penalty = Math.floor(Math.random() * 200) + 100;
-      await base44.entities.ServantCareer.update(career.id, {
-        fans: Math.max(0, (career.fans || 0) - penalty),
-        burnout: Math.min(100, (career.burnout || 0) + burnoutIncrease)
-      });
+        setOutcome(`Met deadline! +${bonus} fans (Burnout +${burnoutIncrease}%)`);
+      } else {
+        const penalty = Math.floor(Math.random() * 200) + 100;
+        await base44.entities.ServantCareer.update(career.id, {
+          fans: Math.max(0, (career.fans || 0) - penalty),
+          burnout: Math.min(100, (career.burnout || 0) + burnoutIncrease)
+        });
 
-      setOutcome(`Missed deadline! -${penalty} fans (Burnout +${burnoutIncrease}%)`);
+        setOutcome(`Missed deadline! -${penalty} fans (Burnout +${burnoutIncrease}%)`);
+      }
+
+      queryClient.invalidateQueries(['career']);
+    } catch (error) {
+      console.error('Deadline work failed:', error);
+      setOutcome('Failed to complete deadline');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 3000);
     }
-
-    queryClient.invalidateQueries(['career']);
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 3000);
   };
 
   const burnoutLevel = career.burnout || 0;

@@ -13,6 +13,7 @@ export default function MangaFanInteraction({ career, onClose }) {
   const [pollOption, setPollOption] = useState('');
 
   const generateComments = async (chapter) => {
+    if (!career?.id) return;
     setWorking(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
@@ -41,42 +42,49 @@ export default function MangaFanInteraction({ career, onClose }) {
         chapters[chapterIndex].comments = result.comments;
         await base44.entities.ServantCareer.update(career.id, { manga_chapters: chapters });
         queryClient.invalidateQueries(['career']);
+        setOutcome('Comments generated!');
       }
-
-      setOutcome('Comments generated!');
-      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
     } catch (error) {
-      setWorking(false);
+      console.error('Comment generation failed:', error);
       setOutcome('Failed to generate comments');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
     }
   };
 
   const checkViralMoment = async (chapter) => {
+    if (!career?.id) return;
     setWorking(true);
-    const viralChance = Math.random();
-    
-    if (viralChance > 0.6) {
-      const boost = Math.floor(Math.random() * 2000) + 1000;
-      await base44.entities.ServantCareer.update(career.id, {
-        fans: (career.fans || 0) + boost
-      });
+    try {
+      const viralChance = Math.random();
+      
+      if (viralChance > 0.6) {
+        const boost = Math.floor(Math.random() * 2000) + 1000;
+        await base44.entities.ServantCareer.update(career.id, {
+          fans: (career.fans || 0) + boost
+        });
 
-      await base44.entities.NightLog.create({
-        entry: `🔥 VIRAL! Chapter ${chapter.number} went viral on social media! +${boost} fans!`,
-        category: 'interaction',
-        intensity: 'significant'
-      });
+        await base44.entities.NightLog.create({
+          entry: `🔥 VIRAL! Chapter ${chapter.number} went viral on social media! +${boost} fans!`,
+          category: 'interaction',
+          intensity: 'significant'
+        });
 
-      setOutcome(`🔥 Chapter ${chapter.number} went VIRAL! +${boost} fans!`);
-      queryClient.invalidateQueries(['career']);
-    } else {
-      setOutcome('No viral moment this time...');
+        setOutcome(`🔥 Chapter ${chapter.number} went VIRAL! +${boost} fans!`);
+        queryClient.invalidateQueries(['career']);
+      } else {
+        setOutcome('No viral moment this time...');
+      }
+    } catch (error) {
+      console.error('Viral check failed:', error);
+      setOutcome('Check failed');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 3000);
     }
-
-    setTimeout(() => { setWorking(false); setOutcome(''); }, 3000);
   };
 
   const generateFanArt = async () => {
+    if (!career?.id) return;
     setWorking(true);
     try {
       const characters = career.manga_characters || [];
@@ -84,7 +92,6 @@ export default function MangaFanInteraction({ career, onClose }) {
       
       if (!randomChar) {
         setOutcome('Need characters first!');
-        setWorking(false);
         return;
       }
 
@@ -103,15 +110,16 @@ export default function MangaFanInteraction({ career, onClose }) {
       queryClient.invalidateQueries(['career']);
 
       setOutcome('New fan art generated!');
-      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
     } catch (error) {
-      setWorking(false);
+      console.error('Fan art generation failed:', error);
       setOutcome('Failed to generate fan art');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
     }
   };
 
   const createPoll = async () => {
-    if (!pollOption.trim()) return;
+    if (!pollOption.trim() || !career?.id) return;
     
     setWorking(true);
     try {
@@ -129,19 +137,25 @@ export default function MangaFanInteraction({ career, onClose }) {
       setPollOption('');
 
       setOutcome('Poll created!');
-      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
     } catch (error) {
-      setWorking(false);
+      console.error('Poll creation failed:', error);
       setOutcome('Failed to create poll');
+    } finally {
+      setTimeout(() => { setWorking(false); setOutcome(''); }, 2000);
     }
   };
 
   const votePoll = async (pollIndex, optionIndex) => {
-    const polls = [...(career.reader_polls || [])];
-    polls[pollIndex].votes[optionIndex] += Math.floor(Math.random() * 100) + 50;
-    
-    await base44.entities.ServantCareer.update(career.id, { reader_polls: polls });
-    queryClient.invalidateQueries(['career']);
+    if (!career?.id) return;
+    try {
+      const polls = [...(career.reader_polls || [])];
+      polls[pollIndex].votes[optionIndex] += Math.floor(Math.random() * 100) + 50;
+      
+      await base44.entities.ServantCareer.update(career.id, { reader_polls: polls });
+      queryClient.invalidateQueries(['career']);
+    } catch (error) {
+      console.error('Vote failed:', error);
+    }
   };
 
   return (
