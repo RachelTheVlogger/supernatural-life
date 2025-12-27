@@ -15,37 +15,75 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
   const [selectedBodyPart, setSelectedBodyPart] = useState(null);
   const [touchingMultiple, setTouchingMultiple] = useState(false);
 
-  // Gender-specific body parts
+  // Gender-specific body parts and positions
   const getBodyParts = () => {
-    if (gender === 'woman') {
-      return [
-        { id: 'clit', label: '✨ Rub Clit', emoji: '💎' },
-        { id: 'breasts', label: '🍒 Touch Breasts', emoji: '🍒' },
-        { id: 'fingers', label: '👆 Finger Yourself', emoji: '💦' },
-        { id: 'multiple', label: '🔥 Multiple Spots', emoji: '🔥' }
-      ];
-    } else if (gender === 'man') {
-      return [
-        { id: 'dick', label: '🍆 Stroke Dick', emoji: '🍆' },
-        { id: 'chest', label: '💪 Touch Chest', emoji: '💪' },
-        { id: 'balls', label: '🥜 Play with Balls', emoji: '⚡' },
-        { id: 'multiple', label: '🔥 Multiple Spots', emoji: '🔥' }
-      ];
+    if (context === 'vampire') {
+      // During sex with vampire - position options
+      if (gender === 'woman') {
+        return [
+          { id: 'ride', label: '🔥 Ride Them', emoji: '💎' },
+          { id: 'thrust', label: '💦 They Thrust Into You', emoji: '💦' },
+          { id: 'oral', label: '👅 Give Oral', emoji: '👅' },
+          { id: 'receive', label: '💋 Receive Oral', emoji: '💋' }
+        ];
+      } else if (gender === 'man') {
+        return [
+          { id: 'thrust', label: '🍆 Thrust Into Them', emoji: '🍆' },
+          { id: 'receive', label: '💦 They Ride You', emoji: '💦' },
+          { id: 'oral', label: '👅 Give Oral', emoji: '👅' },
+          { id: 'receive_oral', label: '💋 Receive Oral', emoji: '💋' }
+        ];
+      } else {
+        return [
+          { id: 'penetrate', label: '🔥 Penetrate Them', emoji: '💎' },
+          { id: 'receive', label: '💦 They Penetrate You', emoji: '💦' },
+          { id: 'oral', label: '👅 Give Oral', emoji: '👅' },
+          { id: 'mutual', label: '💋 Mutual Pleasure', emoji: '💋' }
+        ];
+      }
     } else {
-      return [
-        { id: 'primary', label: '💎 Primary Spot', emoji: '💎' },
-        { id: 'chest', label: '💗 Chest/Breasts', emoji: '💗' },
-        { id: 'secondary', label: '✨ Secondary Spot', emoji: '✨' },
-        { id: 'multiple', label: '🔥 Multiple Spots', emoji: '🔥' }
-      ];
+      // Solo masturbation
+      if (gender === 'woman') {
+        return [
+          { id: 'clit', label: '✨ Rub Clit', emoji: '💎' },
+          { id: 'breasts', label: '🍒 Touch Breasts', emoji: '🍒' },
+          { id: 'fingers', label: '👆 Finger Yourself', emoji: '💦' },
+          { id: 'multiple', label: '🔥 Multiple Spots', emoji: '🔥' }
+        ];
+      } else if (gender === 'man') {
+        return [
+          { id: 'dick', label: '🍆 Stroke Dick', emoji: '🍆' },
+          { id: 'chest', label: '💪 Touch Chest', emoji: '💪' },
+          { id: 'balls', label: '🥜 Play with Balls', emoji: '⚡' },
+          { id: 'multiple', label: '🔥 Multiple Spots', emoji: '🔥' }
+        ];
+      } else {
+        return [
+          { id: 'primary', label: '💎 Primary Spot', emoji: '💎' },
+          { id: 'chest', label: '💗 Chest/Breasts', emoji: '💗' },
+          { id: 'secondary', label: '✨ Secondary Spot', emoji: '✨' },
+          { id: 'multiple', label: '🔥 Multiple Spots', emoji: '🔥' }
+        ];
+      }
     }
   };
 
   const getBodyPartMoans = (level, bodyPart, isEdging, isDecreasing) => {
     const isMale = gender === 'man';
     const isFemale = gender === 'woman';
+    const isSex = context === 'vampire';
 
     if (isDecreasing && level > 10) {
+      if (isSex) {
+        if (bodyPart === 'ride') return isFemale ? 
+          ['ahh slowing down...', 'need more...', 'legs shaking...', 'so deep...'] :
+          ['ngh...', 'keep riding...', 'don\'t stop...', 'fuck...'];
+        if (bodyPart === 'thrust') return isFemale ?
+          ['slower now...', 'ahh...', 'need it harder...', 'please...'] :
+          ['ngh pulling back...', 'fuck...', 'need to go deeper...', 'so tight...'];
+        if (bodyPart === 'oral') return ['mmm...', 'keep going...', 'more...', 'don\'t stop...'];
+        if (bodyPart === 'receive' || bodyPart === 'receive_oral') return ['ahh...', 'so good...', 'more...', 'please...'];
+      }
       if (bodyPart === 'clit' || bodyPart === 'primary') {
         return ['nnngh...!', 'ahh so sensitive...', '*whimper* need more...', 'don\'t stop...'];
       } else if (bodyPart === 'dick') {
@@ -67,6 +105,63 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
         return ['fuck I\'m so close', 'gonna cum thinking of you', 'can\'t hold back', 'about to explode'];
       }
       return ['OH FUCK I\'M SO CLOSE!', 'GONNA CUM SO HARD!', 'CAN\'T HOLD IT!'];
+    }
+
+    // Sex position specific moans
+    if (isSex) {
+      if (bodyPart === 'ride') {
+        if (isFemale) {
+          if (level < 20) return ['mmm...', 'oh...', 'ahh...', 'riding...'];
+          if (level < 40) return ['bouncing on them...', 'feels so good...', 'mmm yes...', 'going deeper...'];
+          if (level < 60) return ['RIDING HARD!', 'OH GOD!', 'SO DEEP!', 'YES!'];
+          if (level < 80) return ['FUCK YES!', 'BOUNCING SO HARD!', 'SO GOOD!', 'LEGS SHAKING!'];
+          return ['CUMMING WHILE RIDING!', 'FUCK!', 'AHHH!', 'YES YES!'];
+        } else {
+          if (level < 20) return ['mmm...', 'riding them...', 'ahh...', 'so tight...'];
+          if (level < 40) return ['bouncing on them...', 'so wet inside...', 'mmm...', 'fuck...'];
+          if (level < 60) return ['RIDING HARD!', 'SO TIGHT!', 'FUCK!', 'YES!'];
+          if (level < 80) return ['GONNA CUM!', 'SO DEEP IN THEM!', 'FUCK YES!', 'AHHH!'];
+          return ['CUMMING!', 'FUCK!', 'FILLING THEM!', 'AHHH!'];
+        }
+      } else if (bodyPart === 'thrust') {
+        if (isFemale) {
+          if (level < 20) return ['ahh...', 'they\'re pushing in...', 'oh...', 'mmm...'];
+          if (level < 40) return ['thrusting into me...', 'feels so good...', 'deeper...', 'yes...'];
+          if (level < 60) return ['FUCK ME!', 'HARDER!', 'OH GOD!', 'POUND ME!'];
+          if (level < 80) return ['FUCK YES!', 'SO DEEP!', 'DON\'T STOP!', 'HARDER!'];
+          return ['CUMMING!', 'FUCK!', 'YES YES YES!', 'AHHH!'];
+        } else {
+          if (level < 20) return ['mmm...', 'pushing in...', 'so tight...', 'ahh...'];
+          if (level < 40) return ['thrusting deep...', 'so wet...', 'fuck...', 'yes...'];
+          if (level < 60) return ['POUNDING THEM!', 'SO TIGHT!', 'FUCK!', 'YES!'];
+          if (level < 80) return ['GONNA CUM!', 'FILLING YOU!', 'FUCK YES!', 'SO TIGHT!'];
+          return ['CUMMING INSIDE!', 'FUCK!', 'AHHH!', 'YES!'];
+        }
+      } else if (bodyPart === 'oral') {
+        if (level < 20) return ['mmm...', 'licking...', 'tasting...', 'ahh...'];
+        if (level < 40) return ['tastes so good...', 'mmm yes...', 'sucking...', 'fuck...'];
+        if (level < 60) return ['SO GOOD!', 'LOVE YOUR TASTE!', 'MMM!', 'YES!'];
+        if (level < 80) return ['GONNA MAKE YOU CUM!', isFemale ? 'SO WET!' : 'SO HARD!', 'FUCK YES!', 'MMM!'];
+        return ['CUM FOR ME!', 'YES!', 'MMM FUCK!', 'AHHH!'];
+      } else if (bodyPart === 'receive' || bodyPart === 'receive_oral') {
+        if (level < 20) return ['mmm...', 'their tongue...', 'ahh...', 'yes...'];
+        if (level < 40) return ['licking me...', 'so good...', 'more...', 'fuck...'];
+        if (level < 60) return ['OH GOD!', 'RIGHT THERE!', 'FUCK!', 'YOUR TONGUE!'];
+        if (level < 80) return ['GONNA CUM!', 'DON\'T STOP!', 'SO CLOSE!', 'FUCK YES!'];
+        return ['CUMMING IN YOUR MOUTH!', 'FUCK!', 'AHHH!', 'YES YES!'];
+      } else if (bodyPart === 'penetrate') {
+        if (level < 20) return ['inside them...', 'so tight...', 'mmm...', 'pushing in...'];
+        if (level < 40) return ['fucking them...', 'so good...', 'deeper...', 'yes...'];
+        if (level < 60) return ['SO TIGHT!', 'FUCK!', 'GOING DEEP!', 'YES!'];
+        if (level < 80) return ['GONNA CUM!', 'FILLING THEM!', 'FUCK YES!', 'POUNDING!'];
+        return ['CUMMING INSIDE!', 'FUCK!', 'AHHH!', 'BREEDING THEM!'];
+      } else if (bodyPart === 'mutual') {
+        if (level < 20) return ['together...', 'mmm...', 'both feeling it...', 'ahh...'];
+        if (level < 40) return ['touching each other...', 'so good...', 'yes...', 'mmm...'];
+        if (level < 60) return ['SO GOOD!', 'TOGETHER!', 'FUCK!', 'BOTH CLOSE!'];
+        if (level < 80) return ['BOTH SO CLOSE!', 'FUCK YES!', 'TOGETHER!', 'AHHH!'];
+        return ['CUMMING TOGETHER!', 'BOTH AT ONCE!', 'FUCK!', 'YES!'];
+      }
     }
 
     // Sex position specific moans
@@ -262,13 +357,96 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
     }
   }, [intensity, particleId]);
 
+  // Haptic feedback
+  const triggerHaptic = (strength = 'medium') => {
+    if (navigator.vibrate) {
+      const patterns = {
+        light: [10],
+        medium: [20],
+        strong: [30],
+        climax: [50, 50, 100]
+      };
+      navigator.vibrate(patterns[strength] || patterns.medium);
+    }
+  };
+
+  // Stamina drain
+  useEffect(() => {
+    if (intensity > 70 && stamina > 0) {
+      const drainRate = (intensity - 70) / 10;
+      const interval = setInterval(() => {
+        setStamina(prev => Math.max(0, prev - drainRate));
+      }, 1000);
+      return () => clearInterval(interval);
+    } else if (intensity < 30 && stamina < 100) {
+      const interval = setInterval(() => {
+        setStamina(prev => Math.min(100, prev + 2));
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [intensity, stamina]);
+
+  // Sweat level
+  useEffect(() => {
+    const sweat = Math.floor((intensity + (100 - stamina)) / 2);
+    setSweatLevel(sweat);
+  }, [intensity, stamina]);
+
+  // Random interruptions
+  useEffect(() => {
+    if (intensity > 50 && !interruptionEvent && Math.random() > 0.98) {
+      const events = [
+        { text: '🚪 Someone\'s at the door!', impact: 'risk' },
+        { text: '📱 Phone ringing!', impact: 'distraction' },
+        { text: '🔊 Noise outside!', impact: 'risk' },
+        { text: '💬 Text notification!', impact: 'distraction' }
+      ];
+      setInterruptionEvent(events[Math.floor(Math.random() * events.length)]);
+      setTimeout(() => setInterruptionEvent(null), 3000);
+    }
+  }, [intensity, interruptionEvent]);
+
+  // Time pressure countdown
+  useEffect(() => {
+    if (timePressure && timeRemaining !== null) {
+      if (timeRemaining <= 0) {
+        handleFinish('ruined');
+        return;
+      }
+      const timer = setInterval(() => {
+        setTimeRemaining(prev => Math.max(0, prev - 1));
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [timePressure, timeRemaining]);
+
   // Show moans as slider moves
   const handleSliderChange = (value) => {
     const isDecreasing = value < lastIntensity;
     const wasHigh = lastIntensity > 60;
     
+    // Stamina check - can't maintain max if exhausted
+    if (stamina < 20 && value > 80) {
+      value = 80;
+    }
+    
     setIntensity(value);
     setLastIntensity(value);
+    
+    // Update heart rate
+    const baseRate = 60;
+    const maxRate = 180;
+    const newRate = Math.floor(baseRate + ((maxRate - baseRate) * (value / 100)));
+    setHeartRate(newRate);
+    
+    // Haptic feedback at thresholds
+    if (value > 70 && lastIntensity <= 70) triggerHaptic('medium');
+    if (value > 85 && lastIntensity <= 85) triggerHaptic('strong');
+    
+    // Update risk level for public
+    if (context === 'audience' || context === 'public') {
+      setRiskLevel(Math.min(100, value + Math.random() * 20));
+    }
     
     // Add moan immediately on movement
     if (value > 10 || isDecreasing) {
@@ -294,10 +472,29 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
     }
   }, [intensity, edging, lastIntensity]);
 
-  const handleFinish = () => {
+  const handleFinish = (type = 'finished') => {
     setIntensity(100);
+    if (type === 'finished') {
+      triggerHaptic('climax');
+      
+      // Calculate performance rank
+      let score = 0;
+      if (edgeCount > 0) score += edgeCount * 10;
+      if (desperationLevel > 50) score += 20;
+      if (stamina > 30) score += 15;
+      if (type === 'finished') score += 30;
+      
+      let rank = 'D';
+      if (score >= 100) rank = 'S';
+      else if (score >= 80) rank = 'A';
+      else if (score >= 60) rank = 'B';
+      else if (score >= 40) rank = 'C';
+      
+      setPerformanceRank(rank);
+    }
     setTimeout(() => {
-      onFinish(edging ? 'edged' : 'finished', edgeCount, desperationLevel, selectedBodyPart, touchingMultiple);
+      const finalType = edging ? 'edged' : type;
+      onFinish(finalType, edgeCount, desperationLevel, selectedBodyPart, touchingMultiple);
     }, 1000);
   };
 
@@ -305,6 +502,8 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
   const screenShake = intensity > 80 ? (Math.sin(Date.now() / 50) * 2) : 0;
   const blurAmount = intensity > 70 ? Math.min((intensity - 70) / 30, 1) * 3 : 0;
   const colorIntensity = intensity / 100;
+  const pulseSpeed = Math.max(0.5, 2 - (intensity / 50));
+  const heatGlow = intensity > 60 ? `0 0 ${20 + intensity}px rgba(236, 72, 153, ${colorIntensity * 0.6})` : 'none';
 
   return (
     <div 
@@ -497,6 +696,13 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
             </motion.div>
             <p className="text-pink-300 text-sm mb-6">
               {context === 'vampire' ? (
+                selectedBodyPart === 'ride' ? (gender === 'woman' ? 'Riding them hard...' : 'Riding them...') :
+                selectedBodyPart === 'thrust' ? (gender === 'woman' ? 'They\'re thrusting into you...' : 'Thrusting into them...') :
+                selectedBodyPart === 'oral' ? (gender === 'woman' ? 'Sucking/licking them...' : 'Going down on them...') :
+                selectedBodyPart === 'receive' ? (gender === 'woman' ? 'They\'re going down on you...' : 'They\'re riding you...') :
+                selectedBodyPart === 'receive_oral' ? 'They\'re sucking you...' :
+                selectedBodyPart === 'penetrate' ? 'Penetrating them...' :
+                selectedBodyPart === 'mutual' ? 'Pleasuring each other...' :
                 selectedBodyPart === 'clit' ? 'They\'re rubbing their clit...' :
                 selectedBodyPart === 'dick' ? 'They\'re stroking their dick...' :
                 selectedBodyPart === 'breasts' ? 'Playing with their breasts...' :
