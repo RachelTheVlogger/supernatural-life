@@ -365,12 +365,41 @@ export default function MangaCareer({ servant, onClose }) {
     }
   };
 
-  const handleDrawChapter = async () => {
+  const handleCreateVolume = async () => {
     if (!career?.id) return;
-    
+
+    const volumeSize = 8; // 8 chapters per volume
     setWorking(true);
-    setGenerationProgress('Creating chapter story...');
-    
+
+    try {
+      for (let vol = 0; vol < volumeSize; vol++) {
+        setGenerationProgress(`Creating Volume 1 - Chapter ${vol + 1}/${volumeSize}...`);
+        await handleDrawChapter(true); // silent mode
+        await new Promise(resolve => setTimeout(resolve, 1000)); // brief pause between chapters
+      }
+
+      setOutcome(`Volume 1 complete! Generated ${volumeSize} chapters!`);
+      setTimeout(() => {
+        setWorking(false);
+        setOutcome('');
+        setGenerationProgress('');
+      }, 3000);
+    } catch (error) {
+      console.error('Volume creation failed:', error);
+      setWorking(false);
+      setOutcome('Volume creation failed');
+      setGenerationProgress('');
+    }
+  };
+
+  const handleDrawChapter = async (silentMode = false) => {
+    if (!career?.id) return;
+
+    if (!silentMode) {
+      setWorking(true);
+      setGenerationProgress('Creating chapter story...');
+    }
+
     try {
       const genre = career.current_genre || 'shonen';
       const artStyle = career.art_style || 'classic';
@@ -487,21 +516,28 @@ Format as JSON:
         intensity: 'moderate'
       });
 
-      setOutcome(`Chapter ${newChapters}: "${title}" complete! +${fansGained} fans, $${incomeGained}`);
+      if (!silentMode) {
+        setOutcome(`Chapter ${newChapters}: "${title}" complete! +${fansGained} fans, $${incomeGained}`);
+      }
       queryClient.invalidateQueries(['career']);
 
-      setTimeout(() => {
-        setWorking(false);
-        setOutcome('');
-        setGenerationProgress('');
-      }, 3000);
-    } catch (error) {
+      if (!silentMode) {
+        setTimeout(() => {
+          setWorking(false);
+          setOutcome('');
+          setGenerationProgress('');
+        }, 3000);
+      }
+      } catch (error) {
       console.error('Failed to generate chapter:', error);
-      setWorking(false);
-      setOutcome('Failed to generate chapter. Please try again.');
-      setGenerationProgress('');
-    }
-  };
+      if (!silentMode) {
+        setWorking(false);
+        setOutcome('Failed to generate chapter. Please try again.');
+        setGenerationProgress('');
+      }
+      throw error; // Re-throw for volume creation to catch
+      }
+      };
 
   const handleCreateCustomChapter = async () => {
     if (!career?.id) return;
@@ -776,6 +812,13 @@ Format as JSON:
                 className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
               >
                 {working ? 'Drawing...' : '✨ Auto Chapter'}
+              </button>
+              <button
+                onClick={() => handleCreateVolume()}
+                disabled={working || generatingCover}
+                className="bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
+              >
+                {working ? 'Creating...' : '📚 Create Volume'}
               </button>
               <button
                 onClick={() => setShowCustomCreator(true)}
