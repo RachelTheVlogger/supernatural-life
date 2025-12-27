@@ -9,7 +9,22 @@ export default function MasturbationSlider({ onFinish }) {
   const [particleId, setParticleId] = useState(0);
   const [moans, setMoans] = useState([]);
 
-  const getMoanText = (level) => {
+  const getMoanText = (level, isEdging) => {
+    if (isEdging && level > 60) {
+      return [
+        'OH GOD I CAN\'T...!',
+        'PLEASE...!',
+        'I NEED TO CUM SO BAD!',
+        'FUCK I\'M RIGHT THERE!',
+        'DON\'T MAKE ME STOP!',
+        'I\'M GONNA EXPLODE!',
+        'PLEASE LET ME FINISH!',
+        'IT\'S TOO MUCH!',
+        'I CAN\'T HOLD IT!',
+        'AHHH FUCK PLEASE!'
+      ];
+    }
+    
     if (level < 20) return ['mmm...', 'ah...', 'oh...'];
     if (level < 40) return ['mmm...', 'ahh...', 'yes...', 'god...'];
     if (level < 60) return ['ohhh...', 'fuck...', 'yes...', 'ahh...', 'more...'];
@@ -40,15 +55,15 @@ export default function MasturbationSlider({ onFinish }) {
   useEffect(() => {
     if (intensity > 20) {
       const interval = setInterval(() => {
-        const moanList = getMoanText(intensity);
+        const moanList = getMoanText(intensity, edging);
         const randomMoan = moanList[Math.floor(Math.random() * moanList.length)];
         const newMoan = { id: Date.now() + Math.random(), text: randomMoan };
         setMoans(prev => [...prev.slice(-5), newMoan]);
-      }, intensity > 70 ? 500 : intensity > 50 ? 1000 : 1500);
+      }, edging && intensity > 60 ? 400 : intensity > 70 ? 500 : intensity > 50 ? 1000 : 1500);
       
       return () => clearInterval(interval);
     }
-  }, [intensity]);
+  }, [intensity, edging]);
 
   const handleFinish = () => {
     setIntensity(100);
