@@ -187,52 +187,6 @@ export default function VampireHome() {
   );
 
   const succubus = succubi[0];
-
-  // Check for jealousy events (only for servants who can be jealous)
-  React.useEffect(() => {
-    if (vampireState && servants.length >= 2) {
-      const jealousServants = servants.filter(s => !['open', 'no-strings'].includes(s.boundaries));
-      const highJealousy = jealousServants.filter(s => (s.jealousy_level || 0) > 60);
-      if (highJealousy.length >= 2 && !jealousyEvent && Math.random() > 0.7) {
-        setJealousyEvent({ s1: highJealousy[0], s2: highJealousy[1] });
-      }
-    }
-  }, [servants, jealousyEvent, vampireState]);
-
-  // Check for identity revelation events
-  React.useEffect(() => {
-    if (vampireState && servants.length > 0) {
-      const needsRevelation = servants.filter(s => !s.identity_revealed && (s.relationship || 0) > 30);
-      if (needsRevelation.length > 0 && !identityRevelation && Math.random() > 0.6) {
-        setIdentityRevelation(needsRevelation[0]);
-      }
-    }
-  }, [servants, identityRevelation, vampireState]);
-
-  // Don't render if still loading or no vampire
-  if (vampireLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
-  if (!vampireState) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <p className="text-gray-400 mb-4">No vampire found</p>
-          <button
-            onClick={() => navigate(createPageUrl('Home'))}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg"
-          >
-            Create Vampire
-          </button>
-        </div>
-      </div>
-    );
-  }
   
   const handleMeditate = React.useCallback(async () => {
     if (!vampireState?.id) return;
@@ -288,6 +242,52 @@ export default function VampireHome() {
       }
     }, 2500);
   }, [vampireState, queryClient]);
+
+  // Check for jealousy events (only for servants who can be jealous)
+  useEffect(() => {
+    if (vampireState && servants.length >= 2) {
+      const jealousServants = servants.filter(s => !['open', 'no-strings'].includes(s.boundaries));
+      const highJealousy = jealousServants.filter(s => (s.jealousy_level || 0) > 60);
+      if (highJealousy.length >= 2 && !jealousyEvent && Math.random() > 0.7) {
+        setJealousyEvent({ s1: highJealousy[0], s2: highJealousy[1] });
+      }
+    }
+  }, [servants, jealousyEvent, vampireState]);
+
+  // Check for identity revelation events
+  useEffect(() => {
+    if (vampireState && servants.length > 0) {
+      const needsRevelation = servants.filter(s => !s.identity_revealed && (s.relationship || 0) > 30);
+      if (needsRevelation.length > 0 && !identityRevelation && Math.random() > 0.6) {
+        setIdentityRevelation(needsRevelation[0]);
+      }
+    }
+  }, [servants, identityRevelation, vampireState]);
+
+  // Don't render if still loading or no vampire
+  if (vampireLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!vampireState) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-center">
+          <p className="text-gray-400 mb-4">No vampire found</p>
+          <button
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg"
+          >
+            Create Vampire
+          </button>
+        </div>
+      </div>
+    );
+  }
   
   const turnedServants = servants.filter(s => s.is_turned);
   const totalRelationship = servants.reduce((sum, s) => sum + (s.relationship || 0), 0);
