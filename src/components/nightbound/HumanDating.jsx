@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Heart, MessageCircle, Calendar, AlertTriangle, Flame } from 'lucide-react';
+import { X, Heart, MessageCircle, Calendar, AlertTriangle, Flame, TrendingUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import DatingSexScene from './DatingSexScene';
+import ReputationSystem from './ReputationSystem';
 
 export default function HumanDating({ human, onClose }) {
   const [matches, setMatches] = useState([]);
   const [currentDate, setCurrentDate] = useState(null);
   const [showSexScene, setShowSexScene] = useState(false);
   const [activeDate, setActiveDate] = useState(null);
+  const [showReputation, setShowReputation] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: vampires = [] } = useQuery({
@@ -33,10 +35,15 @@ export default function HumanDating({ human, onClose }) {
       personality: personalities[Math.floor(Math.random() * personalities.length)],
       attraction: isSpecial ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 40) + 30,
       connection: isSpecial ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 30) + 20,
+      trust: isSpecial ? Math.floor(Math.random() * 30) + 50 : Math.floor(Math.random() * 30) + 20,
+      loyalty: isSpecial ? Math.floor(Math.random() * 30) + 50 : Math.floor(Math.random() * 30) + 20,
       dates: 0,
       interested: true,
       isSpecial: isSpecial,
-      canBreakObsession: isSpecial
+      canBreakObsession: isSpecial,
+      concernLevel: 0,
+      lastDate: null,
+      timesInvitedOver: 0
     };
     
     setMatches([...matches, match]);
@@ -49,6 +56,13 @@ export default function HumanDating({ human, onClose }) {
   const goOnDate = async (match) => {
     setCurrentDate(match);
     match.dates += 1;
+    match.lastDate = new Date().toISOString();
+
+    // Relationship decay if obsession is high
+    if (obsessedWithVampire && !match.isSpecial) {
+      match.trust = Math.max(0, match.trust - 5);
+      match.loyalty = Math.max(0, match.loyalty - 3);
+    }
 
     const outcomes = [];
 
@@ -57,12 +71,17 @@ export default function HumanDating({ human, onClose }) {
         {
           text: `Date with ${match.name}.\n\nThey're nice. Attractive. Normal.\n\nBut you can't stop thinking about ${vampire.vampire_name}.\n\nYou're comparing everything. Everyone.\n\n${match.name} notices you're distracted.`,
           attractionChange: -15,
-          connectionChange: -10
+          connectionChange: -10,
+          trustChange: -8,
+          concernGain: 15
         },
         {
           text: `You tried. Really tried.\n\n${match.name} held your hand. Kissed you.\n\nBut it felt... wrong. Empty.\n\nThey're not ${vampire.vampire_name}.\n\nNothing feels right anymore.`,
           attractionChange: -20,
-          connectionChange: -15
+          connectionChange: -15,
+          trustChange: -12,
+          loyaltyChange: -10,
+          concernGain: 20
         }
       );
     } else if (obsessedWithVampire && match.isSpecial) {
@@ -72,12 +91,16 @@ export default function HumanDating({ human, onClose }) {
           text: `Date with ${match.name}.\n\nYou expected to think about ${vampire.vampire_name}.\n\nBut... you didn't.\n\n${match.name} made you laugh. Really laugh.\n\nFor the first time in weeks, you felt... present.\n\nMaybe there's hope.`,
           attractionChange: 25,
           connectionChange: 30,
+          trustChange: 20,
+          loyaltyChange: 15,
           obsessionReduction: 10
         },
         {
           text: `Something about ${match.name}...\n\nThey kissed you and it felt RIGHT.\n\nNot empty. Not wrong. Real.\n\nYou thought about ${vampire.vampire_name} less tonight.\n\nMaybe... maybe you can move on.`,
           attractionChange: 30,
           connectionChange: 35,
+          trustChange: 25,
+          loyaltyChange: 20,
           obsessionReduction: 15
         }
       );
@@ -86,17 +109,23 @@ export default function HumanDating({ human, onClose }) {
         {
           text: `Great date with ${match.name}!\n\nYou laughed. Connected. They kissed you goodnight.\n\nIt felt... nice. Real.\n\nMaybe this could be something.`,
           attractionChange: 15,
-          connectionChange: 20
+          connectionChange: 20,
+          trustChange: 12,
+          loyaltyChange: 8
         },
         {
           text: `${match.name} is amazing.\n\nYou talked for hours. Lost track of time.\n\nThey make you forget about... everything else.\n\nYou want to see them again.`,
           attractionChange: 20,
-          connectionChange: 25
+          connectionChange: 25,
+          trustChange: 15,
+          loyaltyChange: 10
         },
         {
           text: `Date was okay.\n\n${match.name} is nice, but... something's missing.\n\nNo spark. Just... pleasant.\n\nYou'll give it another shot.`,
           attractionChange: 5,
-          connectionChange: 5
+          connectionChange: 5,
+          trustChange: 3,
+          loyaltyChange: 2
         }
       );
     }
@@ -104,8 +133,11 @@ export default function HumanDating({ human, onClose }) {
     const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
     match.attraction = Math.max(0, Math.min(100, match.attraction + outcome.attractionChange));
     match.connection = Math.max(0, Math.min(100, match.connection + outcome.connectionChange));
+    match.trust = Math.max(0, Math.min(100, match.trust + (outcome.trustChange || 0)));
+    match.loyalty = Math.max(0, Math.min(100, match.loyalty + (outcome.loyaltyChange || 0)));
+    match.concernLevel = Math.max(0, Math.min(100, match.concernLevel + (outcome.concernGain || 0)));
 
-    if (match.attraction < 20 || match.connection < 20) {
+    if (match.attraction < 20 || match.connection < 20 || match.trust < 15) {
       match.interested = false;
     }
 
@@ -178,12 +210,21 @@ export default function HumanDating({ human, onClose }) {
           <p className="text-gray-300 text-sm">Maybe you can find someone... normal</p>
         </div>
 
-        <button
-          onClick={generateMatch}
-          className="w-full bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700 text-white py-3 rounded-xl font-bold mb-6"
-        >
-          Find Match
-        </button>
+        <div className="flex gap-3 mb-6">
+          <button
+            onClick={generateMatch}
+            className="flex-1 bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700 text-white py-3 rounded-xl font-bold"
+          >
+            Find Match
+          </button>
+          <button
+            onClick={() => setShowReputation(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2"
+          >
+            <TrendingUp className="w-5 h-5" />
+            Reputation
+          </button>
+        </div>
 
         {matches.length === 0 ? (
           <p className="text-gray-500 text-center py-8">No matches yet</p>
@@ -208,28 +249,41 @@ export default function HumanDating({ human, onClose }) {
                   {!match.interested && <span className="text-red-400 text-xs">Lost interest</span>}
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                <div className="grid grid-cols-2 gap-2 text-xs mb-2">
                   <div>
                     <p className="text-gray-400">Attraction</p>
                     <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                      <div
-                        style={{ width: `${match.attraction}%` }}
-                        className="h-2 bg-pink-500 rounded-full"
-                      />
+                      <div style={{ width: `${match.attraction}%` }} className="h-2 bg-pink-500 rounded-full" />
                     </div>
                   </div>
                   <div>
                     <p className="text-gray-400">Connection</p>
                     <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                      <div
-                        style={{ width: `${match.connection}%` }}
-                        className="h-2 bg-red-500 rounded-full"
-                      />
+                      <div style={{ width: `${match.connection}%` }} className="h-2 bg-red-500 rounded-full" />
                     </div>
                   </div>
                 </div>
 
-                <p className="text-gray-400 text-xs mb-3">Dates: {match.dates}</p>
+                <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                  <div>
+                    <p className="text-gray-400">Trust</p>
+                    <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
+                      <div style={{ width: `${match.trust}%` }} className="h-2 bg-blue-500 rounded-full" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Loyalty</p>
+                    <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
+                      <div style={{ width: `${match.loyalty}%` }} className="h-2 bg-green-500 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between text-xs mb-3">
+                  <span className="text-gray-400">Dates: {match.dates}</span>
+                  {match.concernLevel > 50 && <span className="text-orange-400">😟 Concerned</span>}
+                  {match.timesInvitedOver > 0 && <span className="text-gray-500">Invited {match.timesInvitedOver}x</span>}
+                </div>
 
                 {match.interested ? (
                   <div className="flex gap-2">
@@ -277,6 +331,15 @@ export default function HumanDating({ human, onClose }) {
             }
             setActiveDate(null);
           }}
+        />
+      )}
+
+      {showReputation && (
+        <ReputationSystem
+          human={human}
+          friends={[]}
+          matches={matches}
+          onClose={() => setShowReputation(false)}
         />
       )}
     </motion.div>

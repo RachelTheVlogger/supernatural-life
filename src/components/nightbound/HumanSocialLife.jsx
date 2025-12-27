@@ -231,6 +231,15 @@ export default function HumanSocialLife({ human, onClose }) {
           </div>
         )}
       </motion.div>
+
+      {showReputation && (
+        <ReputationSystem
+          human={human}
+          friends={friends}
+          matches={[]}
+          onClose={() => setShowReputation(false)}
+        />
+      )}
     </motion.div>
   );
 }
