@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Users, BookOpen, Heart, Eye, Moon, Coffee, School, Home as HomeIcon, Search, Shield, X } from 'lucide-react';
+import { ArrowLeft, Users, BookOpen, Heart, Eye, Moon, Coffee, School, Home as HomeIcon, Search, Shield, X, Camera } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 import MasturbationSlider from '@/components/nightbound/MasturbationSlider';
+import OnlyMortals from '@/components/nightbound/OnlyMortals';
 
 
 const HUMAN_ACTIVITIES = [
+  { id: 'onlymortals', label: '📸 OnlyMortals', icon: Camera, duration: 0, isModal: true },
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
   { id: 'coffee', label: 'Coffee Shop', icon: Coffee, duration: 4000, awarenessChance: 0.15 },
   { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 4500, awarenessChance: 0.05 },
@@ -37,6 +39,7 @@ export default function HumanHome() {
   const [showIdentity, setShowIdentity] = useState(false);
   const [showSlider, setShowSlider] = useState(false);
   const [sliderActivity, setSliderActivity] = useState(null);
+  const [showOnlyMortals, setShowOnlyMortals] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -67,6 +70,13 @@ export default function HumanHome() {
 
   const handleActivity = async (activity) => {
     if (!human?.id) return;
+    
+    if (activity.isModal) {
+      if (activity.id === 'onlymortals') {
+        setShowOnlyMortals(true);
+      }
+      return;
+    }
     
     // Check if activity should use slider
     if (sliderActivities.includes(activity.id) && hasVampire && (human.awareness_level || 0) > 20) {
@@ -793,6 +803,10 @@ export default function HumanHome() {
               />
             </motion.div>
           </motion.div>
+        )}
+
+        {showOnlyMortals && (
+          <OnlyMortals human={human} onClose={() => setShowOnlyMortals(false)} />
         )}
 
         {showIdentity && (
