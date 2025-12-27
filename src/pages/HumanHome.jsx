@@ -36,7 +36,7 @@ export default function HumanHome() {
   const [showManga, setShowManga] = useState(false);
   const [showMangaStore, setShowMangaStore] = useState(false);
 
-  const { data: humans = [] } = useQuery({
+  const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
     queryFn: () => base44.entities.Human.list()
   });
@@ -47,13 +47,6 @@ export default function HumanHome() {
   });
 
   const human = humans[0];
-
-  // Redirect to Home if no human exists
-  React.useEffect(() => {
-    if (humans.length === 0) {
-      navigate(createPageUrl('Home'), { replace: true });
-    }
-  }, [humans.length, navigate]);
 
   const handleActivity = React.useCallback(async (activity) => {
     if (!human) return;
@@ -251,11 +244,22 @@ export default function HumanHome() {
     }, activity.duration);
   }, [human, vampireStates, queryClient, navigate]);
 
+  // Redirect to Home if no human exists
+  React.useEffect(() => {
+    if (!isLoading && humans.length === 0) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [isLoading, humans.length, navigate]);
+
   const awarenessColor = human?.awareness_level > 70 ? 'text-red-400' : human?.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
   const dangerColor = human?.danger_level > 70 ? 'text-red-400' : human?.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
 
-  if (!human) {
-    return null;
+  if (isLoading || !human) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
   }
 
   return (
