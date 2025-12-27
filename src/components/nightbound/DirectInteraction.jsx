@@ -2531,7 +2531,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             >
               <MasturbationSlider
                 gender={servant.gender}
-                context="vampire"
+                context={sliderType === 'videocall' ? 'videocall' : sliderType === 'sexting' ? 'sexting' : 'vampire'}
                 onFinish={async (edgeType, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
                   setShowSlider(false);
                   setSliderType(null);
@@ -2570,6 +2570,11 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                                       bodyPart === 'breasts' ? '\n\nThey pinched and played with their nipples. Moaning. Getting so hard.' :
                                       bodyPart === 'fingers' ? '\n\nFingers deep inside themselves. Two, then three. Fucking themselves. Came hard for you.' :
                                       bodyPart === 'balls' ? '\n\nPlaying with their balls while stroking. Squeezing. So full. Came everywhere.' :
+                                      bodyPart === 'dildo' ? '\n\nFucking themselves with a dildo. Deep. Hard. Came so hard.' :
+                                      bodyPart === 'vibrator' ? '\n\nVibrator buzzing. So intense. They came shaking.' :
+                                      bodyPart === 'fleshlight' ? '\n\nFucking their fleshlight hard. Tight. Came filling it.' :
+                                      bodyPart === 'oral_toy' ? '\n\nOral toy sucking. Felt so real. Came hard.' :
+                                      bodyPart === 'toy' ? '\n\nUsing a toy. Felt amazing. Came intensely.' :
                                       touchingMultiple ? (servant.gender === 'woman' ? '\n\nRubbing their clit while playing with their tits. Both spots at once. They came hard, shaking.' :
                                                          servant.gender === 'man' ? '\n\nStroking their dick while squeezing their balls. Everything at once. Came explosively.' :
                                                          '\n\nTouching everywhere. Multiple spots. Too much sensation. Came hard.') : '';

@@ -194,6 +194,36 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
         if (level < 60) return ['NEED THEM INSIDE ME!', `${vampireName} PLEASE!`, 'FUCK ME!'];
         if (level < 80) return ['FILL ME UP!', `${vampireName}!`, 'NEED YOU!', 'FUCK!'];
         return [`CUMMING FOR ${vampireName}!`, 'FUCK!', 'AHHH!', 'YES!'];
+      } else if (bodyPart === 'dildo') {
+        if (level < 20) return [`pretend it's ${vampireName}...`, 'pushing it in...', 'ahh...'];
+        if (level < 40) return [`fucking myself pretending it's ${vampireName}...`, 'need them...', 'so deep...'];
+        if (level < 60) return [`PRETEND IT'S ${vampireName}!`, 'FUCK ME!', 'NEED THEM!'];
+        if (level < 80) return [`${vampireName} FUCK ME!`, 'PRETENDING IT'S YOU!', 'NEED YOUR COCK!'];
+        return [`CUMMING ON IT THINKING OF ${vampireName}!`, 'FUCK!', 'WISH IT WAS YOU!'];
+      } else if (bodyPart === 'vibrator') {
+        if (level < 20) return [`wish it was ${vampireName}...`, 'buzzing...', 'ahh...'];
+        if (level < 40) return [`thinking of ${vampireName}...`, 'so good...', 'need them...'];
+        if (level < 60) return [`${vampireName}!`, 'WISH YOU WERE HERE!', 'NEED YOU!'];
+        if (level < 80) return [`${vampireName} PLEASE!`, 'VIBRATOR SO GOOD!', 'WANT YOU!'];
+        return [`CUMMING FOR ${vampireName}!`, 'WISH IT WAS YOU!', 'FUCK!'];
+      } else if (bodyPart === 'fleshlight') {
+        if (level < 20) return [`imagining ${vampireName}...`, 'so tight...', 'ahh...'];
+        if (level < 40) return [`pretending it's ${vampireName}...`, 'feels good...', 'need them...'];
+        if (level < 60) return [`PRETEND IT'S ${vampireName}!`, 'SO TIGHT!', 'NEED YOU!'];
+        if (level < 80) return [`${vampireName}!`, 'WISH IT WAS YOUR PUSSY!', 'FUCK!'];
+        return [`CUMMING THINKING OF ${vampireName}!`, 'WISH YOU WERE HERE!', 'AHHH!'];
+      } else if (bodyPart === 'oral_toy') {
+        if (level < 20) return [`wish it was ${vampireName}\'s mouth...`, 'ahh...', 'feels good...'];
+        if (level < 40) return [`pretending it's ${vampireName} sucking me...`, 'mmm...', 'need them...'];
+        if (level < 60) return [`PRETEND IT'S ${vampireName}!`, 'SUCK ME!', 'NEED YOUR MOUTH!'];
+        if (level < 80) return [`${vampireName} PLEASE!`, 'WISH IT WAS YOU!', 'SUCK ME!'];
+        return [`CUMMING FOR ${vampireName}!`, 'WISH IT WAS YOUR MOUTH!', 'FUCK!'];
+      } else if (bodyPart === 'toy') {
+        if (level < 20) return [`thinking of ${vampireName}...`, 'toy feels good...', 'ahh...'];
+        if (level < 40) return [`wish it was ${vampireName}...`, 'mmm...', 'need them...'];
+        if (level < 60) return [`${vampireName}!`, 'NEED YOU!', 'TOY SO GOOD!'];
+        if (level < 80) return [`${vampireName} PLEASE!`, 'WANT YOU!', 'FUCK!'];
+        return [`CUMMING FOR ${vampireName}!`, 'WISH YOU WERE HERE!', 'AHHH!'];
       }
       // Default fantasy moans
       if (level < 20) return ['mmm...', `${vampireName}...`, 'ahh...'];
