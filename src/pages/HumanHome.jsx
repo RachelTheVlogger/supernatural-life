@@ -83,6 +83,7 @@ export default function HumanHome() {
   const [showSubstances, setShowSubstances] = useState(false);
   const [showGroceries, setShowGroceries] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [hadObsession, setHadObsession] = useState((human?.obsession_level || 0) > 0);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -489,6 +490,16 @@ export default function HumanHome() {
       navigate(createPageUrl('Home'), { replace: true });
     }
   }, [isLoading, humans.length, navigate]);
+
+  // Check if obsession was broken
+  React.useEffect(() => {
+    if (human && hadObsession && (human.obsession_level || 0) === 0) {
+      alert(`You woke up this morning... different.\n\nThe constant pull. The ache. The need.\n\nIt's gone.\n\nYou think about ${vampire?.vampire_name || 'them'} and... nothing.\n\nNo racing heart. No desperate longing.\n\nJust... clarity.\n\nYou're free.\n\nYou got your life back.`);
+      setHadObsession(false);
+    } else if (human && (human.obsession_level || 0) > 0) {
+      setHadObsession(true);
+    }
+  }, [human?.obsession_level]);
 
   const awarenessColor = human?.awareness_level > 70 ? 'text-red-400' : human?.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
   const dangerColor = human?.danger_level > 70 ? 'text-red-400' : human?.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
