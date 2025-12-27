@@ -76,6 +76,10 @@ export default function FriendInteraction({ friend, servant, vampireState, onClo
   const [outcome, setOutcome] = useState('');
   const queryClient = useQueryClient();
 
+  if (!friend || !vampireState) {
+    return null;
+  }
+
   const handleInteraction = async (type) => {
     const interaction = VAMPIRE_INTERACTIONS[type];
     

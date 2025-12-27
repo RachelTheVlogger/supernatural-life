@@ -75,8 +75,13 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   // Fetch quests for this servant
   const { data: quests = [] } = useQuery({
     queryKey: ['quests', servant.id],
-    queryFn: () => base44.entities.Quest.filter({ servant_id: servant.id })
+    queryFn: () => base44.entities.Quest.filter({ servant_id: servant.id }),
+    enabled: !!servant?.id
   });
+
+  if (!servant || !vampireState) {
+    return null;
+  }
   
   const activeQuest = quests.find(q => !q.completed);
   

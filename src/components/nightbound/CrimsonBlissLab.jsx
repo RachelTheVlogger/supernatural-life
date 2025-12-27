@@ -44,6 +44,10 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
     queryFn: () => base44.entities.DrugOperation.list()
   });
 
+  if (!vampireState) {
+    return null;
+  }
+
   const operation = operations[0];
 
   const totalRevenue = customers.reduce((sum, c) => sum + c.total_spent, 0);

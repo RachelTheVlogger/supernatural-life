@@ -536,6 +536,10 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
     queryKey: ['powerProgress'],
     queryFn: () => base44.entities.PowerProgress.list()
   });
+
+  if (!vampireState || !servant) {
+    return null;
+  }
   
   const humanity = vampireState.humanity ?? 50;
   const unlockedPowers = vampireState.unlocked_powers || [];

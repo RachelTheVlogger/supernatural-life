@@ -5,6 +5,14 @@ import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function TitleSelection({ vampireState, servant, onClose }) {
+  const [customTitle, setCustomTitle] = useState('');
+  const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
+
+  if (!vampireState || !servant) {
+    return null;
+  }
+
   const isFemale = vampireState.gender === 'female';
   
   const PRESET_TITLES = isFemale ? [
@@ -26,9 +34,6 @@ export default function TitleSelection({ vampireState, servant, onClose }) {
     { value: 'King', label: 'King' },
     { value: 'Boss', label: 'Boss' }
   ];
-  const [customTitle, setCustomTitle] = useState('');
-  const [saving, setSaving] = useState(false);
-  const queryClient = useQueryClient();
 
   const currentTitle = vampireState.preferred_title || null;
 
