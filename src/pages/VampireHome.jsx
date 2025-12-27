@@ -68,7 +68,7 @@ export default function VampireHome() {
   const [showJournal, setShowJournal] = useState(false);
   const [showDoppelgangers, setShowDoppelgangers] = useState(false);
 
-  const { data: vampireStates = [], isLoading: vampireLoading, isSuccess } = useQuery({
+  const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
     queryFn: async () => {
       try {
@@ -83,7 +83,8 @@ export default function VampireHome() {
     retry: 2,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
-    staleTime: 0
+    staleTime: 0,
+    enabled: true
   });
   
   const vampireState = React.useMemo(() => 
@@ -165,12 +166,19 @@ export default function VampireHome() {
     );
   }
 
-  // Redirect to Home if no vampire exists
+  // Show message if no vampire exists - let user navigate manually
   if (!vampireState) {
-    navigate(createPageUrl('Home'), { replace: true });
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
-        <p className="text-gray-400">Redirecting...</p>
+        <div className="text-center">
+          <p className="text-gray-400 mb-4">No vampire found</p>
+          <button
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg"
+          >
+            Go to Home
+          </button>
+        </div>
       </div>
     );
   }
