@@ -83,7 +83,7 @@ export default function HumanHome() {
   const [showSubstances, setShowSubstances] = useState(false);
   const [showGroceries, setShowGroceries] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
-  const [hadObsession, setHadObsession] = useState((human?.obsession_level || 0) > 0);
+  const [hadObsession, setHadObsession] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -493,14 +493,18 @@ export default function HumanHome() {
 
   // Check if obsession was broken
   React.useEffect(() => {
-    if (human && hadObsession && (human.obsession_level || 0) === 0) {
+    if (!human) return;
+    
+    const currentObsession = human.obsession_level || 0;
+    
+    if (hadObsession && currentObsession === 0) {
       const vampireName = vampireStates[0]?.vampire_name || 'them';
       alert(`You woke up this morning... different.\n\nThe constant pull. The ache. The need.\n\nIt's gone.\n\nYou think about ${vampireName} and... nothing.\n\nNo racing heart. No desperate longing.\n\nJust... clarity.\n\nYou're free.\n\nYou got your life back.`);
       setHadObsession(false);
-    } else if (human && (human.obsession_level || 0) > 0) {
+    } else if (currentObsession > 0 && !hadObsession) {
       setHadObsession(true);
     }
-  }, [human?.obsession_level, vampireStates, hadObsession]);
+  }, [human?.obsession_level, vampireStates, hadObsession, human]);
 
   const awarenessColor = human?.awareness_level > 70 ? 'text-red-400' : human?.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
   const dangerColor = human?.danger_level > 70 ? 'text-red-400' : human?.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
