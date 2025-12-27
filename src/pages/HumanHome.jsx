@@ -13,6 +13,10 @@ import ArtCommissions from '@/components/nightbound/ArtCommissions';
 import MusicCareer from '@/components/nightbound/MusicCareer';
 import EscortCareer from '@/components/nightbound/EscortCareer';
 import MakeupSystem from '@/components/nightbound/MakeupSystem';
+import HumanSocialLife from '@/components/nightbound/HumanSocialLife';
+import HumanMentalHealth from '@/components/nightbound/HumanMentalHealth';
+import HumanApartment from '@/components/nightbound/HumanApartment';
+import HumanSkills from '@/components/nightbound/HumanSkills';
 
 
 const HUMAN_ACTIVITIES = [
@@ -22,6 +26,10 @@ const HUMAN_ACTIVITIES = [
   { id: 'music_career', label: '🎵 Music Career', icon: Heart, duration: 0, isModal: true },
   { id: 'escort_work', label: '💋 Escort Work', icon: Heart, duration: 0, isModal: true },
   { id: 'makeup', label: '💄 Do Makeup', icon: Camera, duration: 0, isModal: true },
+  { id: 'social_life', label: '👥 Social Life', icon: Users, duration: 0, isModal: true },
+  { id: 'mental_health', label: '🧠 Mental Health', icon: Heart, duration: 0, isModal: true },
+  { id: 'apartment', label: '🏠 Apartment', icon: HomeIcon, duration: 0, isModal: true },
+  { id: 'skills', label: '⭐ Skills', icon: BookOpen, duration: 0, isModal: true },
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
   { id: 'coffee', label: 'Coffee Shop', icon: Coffee, duration: 4000, awarenessChance: 0.15 },
   { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 4500, awarenessChance: 0.05 },
@@ -56,6 +64,10 @@ export default function HumanHome() {
   const [showEscortWork, setShowEscortWork] = useState(false);
   const [showMakeup, setShowMakeup] = useState(false);
   const [makeupContext, setMakeupContext] = useState('everyday');
+  const [showSocialLife, setShowSocialLife] = useState(false);
+  const [showMentalHealth, setShowMentalHealth] = useState(false);
+  const [showApartment, setShowApartment] = useState(false);
+  const [showSkills, setShowSkills] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -100,6 +112,14 @@ export default function HumanHome() {
         setShowEscortWork(true);
       } else if (activity.id === 'makeup') {
         setShowMakeup(true);
+      } else if (activity.id === 'social_life') {
+        setShowSocialLife(true);
+      } else if (activity.id === 'mental_health') {
+        setShowMentalHealth(true);
+      } else if (activity.id === 'apartment') {
+        setShowApartment(true);
+      } else if (activity.id === 'skills') {
+        setShowSkills(true);
       }
       return;
     }
@@ -853,6 +873,22 @@ export default function HumanHome() {
 
         {showMakeup && (
           <MakeupSystem human={human} context={makeupContext} onClose={() => setShowMakeup(false)} />
+        )}
+
+        {showSocialLife && (
+          <HumanSocialLife human={human} onClose={() => setShowSocialLife(false)} />
+        )}
+
+        {showMentalHealth && (
+          <HumanMentalHealth human={human} onClose={() => setShowMentalHealth(false)} />
+        )}
+
+        {showApartment && (
+          <HumanApartment human={human} onClose={() => setShowApartment(false)} />
+        )}
+
+        {showSkills && (
+          <HumanSkills human={human} onClose={() => setShowSkills(false)} />
         )}
 
         {showIdentity && (
