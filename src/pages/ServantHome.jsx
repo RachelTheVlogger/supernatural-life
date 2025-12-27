@@ -27,7 +27,9 @@ import WitchServantInteraction from '@/components/nightbound/WitchServantInterac
 import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
 import TurnedServantProgression from '@/components/nightbound/TurnedServantProgression';
 import JournalSystem from '@/components/nightbound/JournalSystem';
-import RelationshipCoach from '@/components/nightbound/RelationshipCoach';
+import AICompanion from '@/components/nightbound/AICompanion';
+import MemoryRecorder from '@/components/nightbound/MemoryRecorder';
+import EmotionMonitor from '@/components/nightbound/EmotionMonitor';
 
 const CHORES = [
   { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
@@ -140,7 +142,9 @@ export default function ServantHome() {
   const [showProgression, setShowProgression] = useState(false);
   const [showJournal, setShowJournal] = useState(false);
   const [showMangaStore, setShowMangaStore] = useState(false);
-  const [showCoach, setShowCoach] = useState(false);
+  const [showAI, setShowAI] = useState(false);
+  const [showMemory, setShowMemory] = useState(false);
+  const [showEmotion, setShowEmotion] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -517,13 +521,31 @@ export default function ServantHome() {
             <span className="text-white font-medium">❤️ Hobbies & Time Together</span>
           </button>
           
-          <button
-            onClick={() => setShowCoach(true)}
-            className="w-full bg-gradient-to-r from-blue-900/60 to-purple-900/60 hover:from-blue-900/80 hover:to-purple-900/80 border-2 border-blue-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
-          >
-            <Brain className="w-5 h-5 text-white" />
-            <span className="text-base font-medium text-white">💬 AI Companion (Talk About Anything)</span>
-          </button>
+          <div className="grid grid-cols-1 gap-2">
+            <button
+              onClick={() => setShowAI(true)}
+              className="w-full bg-gradient-to-r from-purple-900/60 to-blue-900/60 hover:from-purple-900/80 hover:to-blue-900/80 border-2 border-purple-500/50 rounded-xl py-3 px-4 flex items-center gap-3 shadow-lg transition-all"
+            >
+              <Brain className="w-5 h-5 text-white" />
+              <span className="text-sm font-medium text-white">🤖 AI Companion</span>
+            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setShowMemory(true)}
+                className="bg-cyan-900/60 hover:bg-cyan-900/80 border-2 border-cyan-500/50 rounded-xl py-3 px-4 flex items-center gap-2 shadow-lg transition-all"
+              >
+                <span className="text-lg">📹</span>
+                <span className="text-xs font-medium text-white">Memory Recorder</span>
+              </button>
+              <button
+                onClick={() => setShowEmotion(true)}
+                className="bg-blue-900/60 hover:bg-blue-900/80 border-2 border-blue-500/50 rounded-xl py-3 px-4 flex items-center gap-2 shadow-lg transition-all"
+              >
+                <span className="text-lg">📊</span>
+                <span className="text-xs font-medium text-white">Emotion Monitor</span>
+              </button>
+            </div>
+          </div>
 
         {activities.map((chore, i) => (
           <motion.button
@@ -704,13 +726,14 @@ export default function ServantHome() {
             onClose={() => setShowDating(false)}
           />
         )}
-        {showCoach && vampireState && (
-          <RelationshipCoach 
-            vampireState={vampireState} 
-            currentServant={servant}
-            viewMode="servant"
-            onClose={() => setShowCoach(false)} 
-          />
+        {showAI && vampireState && (
+          <AICompanion entity={servant} vampireState={vampireState} onClose={() => setShowAI(false)} />
+        )}
+        {showMemory && servant && (
+          <MemoryRecorder entity={servant} onClose={() => setShowMemory(false)} />
+        )}
+        {showEmotion && servant && (
+          <EmotionMonitor entity={servant} onClose={() => setShowEmotion(false)} />
         )}
         {showWitchVisit && (
           <ServantWitchInteraction

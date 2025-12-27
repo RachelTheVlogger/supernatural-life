@@ -36,7 +36,11 @@ import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
 import StalkingSystem from '@/components/nightbound/StalkingSystem';
 import PossessionSystem from '@/components/nightbound/PossessionSystem';
 import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
-import RelationshipCoach from '@/components/nightbound/RelationshipCoach';
+import AICompanion from '@/components/nightbound/AICompanion';
+import MemoryRecorder from '@/components/nightbound/MemoryRecorder';
+import EmotionMonitor from '@/components/nightbound/EmotionMonitor';
+import HolographicCall from '@/components/nightbound/HolographicCall';
+import FuturePredictor from '@/components/nightbound/FuturePredictor';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -54,7 +58,11 @@ export default function Night() {
   const [showStalking, setShowStalking] = useState(false);
   const [showPossession, setShowPossession] = useState(false);
   const [showDoppelgangers, setShowDoppelgangers] = useState(false);
-  const [showCoach, setShowCoach] = useState(false);
+  const [showAI, setShowAI] = useState(false);
+  const [showMemory, setShowMemory] = useState(false);
+  const [showEmotion, setShowEmotion] = useState(false);
+  const [showHolo, setShowHolo] = useState(false);
+  const [showPredictor, setShowPredictor] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
 
   // Fetch vampire state
@@ -499,12 +507,42 @@ export default function Night() {
           <p className="text-white text-xs mt-1">Aging</p>
         </button>
         <button
-          onClick={() => setShowCoach(true)}
-          disabled={servants.length === 0}
-          className="bg-pink-950/40 hover:bg-pink-950/60 border border-pink-500/30 rounded-lg p-3 text-center transition-colors disabled:opacity-50"
+          onClick={() => setShowAI(true)}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
         >
-          <span className="text-2xl">💝</span>
-          <p className="text-white text-xs mt-1">Coach</p>
+          <span className="text-2xl">🤖</span>
+          <p className="text-white text-xs mt-1">AI Companion</p>
+        </button>
+        <button
+          onClick={() => setShowMemory(true)}
+          className="bg-cyan-950/40 hover:bg-cyan-950/60 border border-cyan-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">📹</span>
+          <p className="text-white text-xs mt-1">Memory Recorder</p>
+        </button>
+        <button
+          onClick={() => setShowEmotion(true)}
+          disabled={servants.length === 0}
+          className="bg-blue-950/40 hover:bg-blue-950/60 border border-blue-500/30 rounded-lg p-3 text-center transition-colors disabled:opacity-50"
+        >
+          <span className="text-2xl">📊</span>
+          <p className="text-white text-xs mt-1">Emotion Monitor</p>
+        </button>
+        <button
+          onClick={() => setShowHolo(true)}
+          disabled={servants.length === 0}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors disabled:opacity-50"
+        >
+          <span className="text-2xl">📞</span>
+          <p className="text-white text-xs mt-1">Holographic Call</p>
+        </button>
+        <button
+          onClick={() => setShowPredictor(true)}
+          disabled={servants.length === 0}
+          className="bg-indigo-950/40 hover:bg-indigo-950/60 border border-indigo-500/30 rounded-lg p-3 text-center transition-colors disabled:opacity-50"
+        >
+          <span className="text-2xl">🔮</span>
+          <p className="text-white text-xs mt-1">Future Predictor</p>
         </button>
         </motion.div>
       
@@ -651,8 +689,20 @@ export default function Night() {
         {showDoppelgangers && (
           <DoppelgangerSystem vampireState={vampireState} onClose={() => setShowDoppelgangers(false)} />
         )}
-        {showCoach && (
-          <RelationshipCoach vampireState={vampireState} onClose={() => setShowCoach(false)} />
+        {showAI && vampireState && (
+          <AICompanion entity={vampireState} vampireState={vampireState} onClose={() => setShowAI(false)} />
+        )}
+        {showMemory && vampireState && (
+          <MemoryRecorder entity={vampireState} onClose={() => setShowMemory(false)} />
+        )}
+        {showEmotion && servants[0] && (
+          <EmotionMonitor entity={servants[0]} onClose={() => setShowEmotion(false)} />
+        )}
+        {showHolo && vampireState && (
+          <HolographicCall vampireState={vampireState} entity={vampireState} onClose={() => setShowHolo(false)} />
+        )}
+        {showPredictor && vampireState && (
+          <FuturePredictor vampireState={vampireState} onClose={() => setShowPredictor(false)} />
         )}
 
         </AnimatePresence>
