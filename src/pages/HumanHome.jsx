@@ -321,9 +321,17 @@ export default function HumanHome() {
           'Sat alone with your coffee. Watched people. Wondered which ones were real. Which ones were pretending. You\'re becoming paranoid.',
           'The barista had bite marks on their neck. "Boyfriend," they said quickly. Too quickly. Their eyes were distant. Scared. You didn\'t push.',
           'Someone sat across from you. Didn\'t order anything. Just watched. You tried to leave. They smiled. "Stay," they whispered. You stayed.',
-          'Overheard a conversation. "...at night..." "...don\'t go alone..." "...people are disappearing..." They stopped talking when they saw you listening.'
+          'Overheard a conversation. "...at night..." "...don\'t go alone..." "...people are disappearing..." They stopped talking when they saw you listening.',
+          'You sat in the coffee shop. Normal sounds. Normal people. The mundane comfort of it all. For an hour, you weren\'t thinking about vampires. Just... living.'
         ];
         result = coffeeOutcomes[Math.floor(Math.random() * coffeeOutcomes.length)];
+        
+        // Sometimes peaceful moments help
+        if ((human.obsession_level || 0) > 0 && Math.random() > 0.5) {
+          await base44.entities.Human.update(human.id, {
+            obsession_level: Math.max(0, (human.obsession_level || 0) - 4)
+          });
+        }
       } else if (activity.id === 'friends') {
         awarenessGain = Math.floor(Math.random() * 3);
         const friendOutcomes = [

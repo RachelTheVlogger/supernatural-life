@@ -29,6 +29,13 @@ export default function HumanMentalHealth({ human, onClose }) {
         stressChange = -20;
         outcome = `Therapy session.\n\nYou talked about the anxiety. The fear. The things you can't explain.\n\nThe therapist listened. It helped.\n\n+15 mental health\n-20 stress`;
         setTherapy(true);
+        
+        // Therapy helps with obsession too
+        if ((human.obsession_level || 0) > 0) {
+          await base44.entities.Human.update(human.id, {
+            obsession_level: Math.max(0, (human.obsession_level || 0) - 8)
+          });
+        }
         break;
       case 'meditation':
         mentalGain = 8;
