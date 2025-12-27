@@ -8,6 +8,12 @@ import MangaArcs from './MangaArcs';
 import MangaMerch from './MangaMerch';
 import MangaCollabs from './MangaCollabs';
 import MangaSpecials from './MangaSpecials';
+import MangaFanInteraction from './MangaFanInteraction';
+import MangaCompetition from './MangaCompetition';
+import MangaProgression from './MangaProgression';
+import MangaCreatorLife from './MangaCreatorLife';
+import MangaStoryTools from './MangaStoryTools';
+import MangaMonetization from './MangaMonetization';
 
 const GENRES = [
   { id: 'shonen', label: 'Shonen', icon: '⚔️', desc: 'Action-packed adventures' },
@@ -871,9 +877,18 @@ Format as JSON:
         });
       }
 
-      const quality = Math.floor(Math.random() * 30) + 70;
-      const fansGained = Math.floor(Math.random() * 300) + 150;
+      // Burnout affects quality
+      const burnout = career.burnout || 0;
+      const qualityPenalty = Math.floor(burnout / 5);
+      const quality = Math.max(30, Math.floor(Math.random() * 30) + 70 - qualityPenalty);
+      
+      // Assistants boost production
+      const assistantBonus = (career.assistants || []).reduce((sum, a) => sum + Math.floor(a.skill / 20), 0);
+      const fansGained = Math.floor(Math.random() * 300) + 150 + assistantBonus;
       const incomeGained = Math.floor(Math.random() * 200) + 150;
+      
+      // Increase burnout
+      const newBurnout = Math.min(100, (career.burnout || 0) + Math.floor(Math.random() * 5) + 3);
 
       const newChapter = {
         number: newChapters,
@@ -887,8 +902,11 @@ Format as JSON:
         characters_featured: [],
         rating: 0,
         ratings_count: 0,
-        reviews: []
+        reviews: [],
+        comments: []
       };
+
+      await base44.entities.ServantCareer.update(career.id, { burnout: newBurnout });
 
       await base44.entities.ServantCareer.update(career.id, {
         fans: (career.fans || 0) + fansGained,
@@ -2205,6 +2223,54 @@ Format as JSON:
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <button
+                onClick={() => setSelectedFeature('fans')}
+                className="bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-pink-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">📱</div>
+                <h4 className="text-white font-bold text-sm">Fan Interaction</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('competition')}
+                className="bg-gradient-to-br from-red-900/40 to-orange-900/40 border border-red-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">⚔️</div>
+                <h4 className="text-white font-bold text-sm">Competition</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('progression')}
+                className="bg-gradient-to-br from-blue-900/40 to-cyan-900/40 border border-blue-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">🚀</div>
+                <h4 className="text-white font-bold text-sm">Career Growth</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('creator')}
+                className="bg-gradient-to-br from-orange-900/40 to-yellow-900/40 border border-orange-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">👤</div>
+                <h4 className="text-white font-bold text-sm">Creator Life</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('story')}
+                className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">✨</div>
+                <h4 className="text-white font-bold text-sm">Story Tools</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('monetization')}
+                className="bg-gradient-to-br from-green-900/40 to-emerald-900/40 border border-green-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">💰</div>
+                <h4 className="text-white font-bold text-sm">Monetization</h4>
+              </button>
+
+              <button
                 onClick={() => setSelectedFeature('popularity')}
                 className="bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-pink-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
               >
@@ -2266,14 +2332,6 @@ Format as JSON:
               >
                 <div className="text-3xl mb-2">🔍</div>
                 <h4 className="text-white font-bold text-sm">Consistency Check</h4>
-              </button>
-
-              <button
-                className="bg-gradient-to-br from-gray-900/40 to-slate-900/40 border border-gray-500/30 rounded-xl p-4 text-center opacity-50"
-                disabled
-              >
-                <div className="text-3xl mb-2">🔮</div>
-                <h4 className="text-white font-bold text-sm">More Coming Soon</h4>
               </button>
             </div>
 
@@ -2402,6 +2460,24 @@ Format as JSON:
 
       {/* Feature Sub-Modals - Need to be outside main modal for proper z-index */}
       <AnimatePresence>
+        {selectedFeature === 'fans' && (
+          <MangaFanInteraction career={career} onClose={() => setSelectedFeature(null)} />
+        )}
+        {selectedFeature === 'competition' && (
+          <MangaCompetition career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+        )}
+        {selectedFeature === 'progression' && (
+          <MangaProgression career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+        )}
+        {selectedFeature === 'creator' && (
+          <MangaCreatorLife career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+        )}
+        {selectedFeature === 'story' && (
+          <MangaStoryTools career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+        )}
+        {selectedFeature === 'monetization' && (
+          <MangaMonetization career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+        )}
         {selectedFeature === 'arcs' && (
           <MangaArcs career={career} onClose={() => setSelectedFeature(null)} />
         )}
