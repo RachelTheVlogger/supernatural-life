@@ -61,10 +61,10 @@ export default function HumanDating({ human, onClose }) {
     match.dates += 1;
     match.lastDate = new Date().toISOString();
 
-    // Relationship decay if obsession is high
+    // Relationship decay if obsession is high (reduced penalty)
     if (obsessedWithVampire && !match.isSpecial) {
-      match.trust = Math.max(0, match.trust - 5);
-      match.loyalty = Math.max(0, match.loyalty - 3);
+      match.trust = Math.max(0, match.trust - 2);
+      match.loyalty = Math.max(0, match.loyalty - 1);
     }
 
     const outcomes = [];
@@ -73,18 +73,25 @@ export default function HumanDating({ human, onClose }) {
       outcomes.push(
         {
           text: `Date with ${match.name}.\n\nThey're nice. Attractive. Normal.\n\nBut you can't stop thinking about ${vampire.vampire_name}.\n\nYou're comparing everything. Everyone.\n\n${match.name} notices you're distracted.`,
-          attractionChange: -15,
-          connectionChange: -10,
-          trustChange: -8,
-          concernGain: 15
+          attractionChange: -5,
+          connectionChange: -3,
+          trustChange: -2,
+          concernGain: 10
         },
         {
           text: `You tried. Really tried.\n\n${match.name} held your hand. Kissed you.\n\nBut it felt... wrong. Empty.\n\nThey're not ${vampire.vampire_name}.\n\nNothing feels right anymore.`,
-          attractionChange: -20,
-          connectionChange: -15,
-          trustChange: -12,
-          loyaltyChange: -10,
-          concernGain: 20
+          attractionChange: -8,
+          connectionChange: -6,
+          trustChange: -4,
+          loyaltyChange: -3,
+          concernGain: 15
+        },
+        {
+          text: `${match.name} made you laugh despite everything.\n\nFor a moment, you forgot about ${vampire.vampire_name}.\n\nJust a moment. But it was nice.`,
+          attractionChange: 8,
+          connectionChange: 10,
+          trustChange: 5,
+          loyaltyChange: 3
         }
       );
     } else if (obsessedWithVampire && match.isSpecial) {
@@ -111,24 +118,24 @@ export default function HumanDating({ human, onClose }) {
       outcomes.push(
         {
           text: `Great date with ${match.name}!\n\nYou laughed. Connected. They kissed you goodnight.\n\nIt felt... nice. Real.\n\nMaybe this could be something.`,
-          attractionChange: 15,
-          connectionChange: 20,
-          trustChange: 12,
-          loyaltyChange: 8
-        },
-        {
-          text: `${match.name} is amazing.\n\nYou talked for hours. Lost track of time.\n\nThey make you forget about... everything else.\n\nYou want to see them again.`,
-          attractionChange: 20,
-          connectionChange: 25,
+          attractionChange: 18,
+          connectionChange: 22,
           trustChange: 15,
           loyaltyChange: 10
         },
         {
+          text: `${match.name} is amazing.\n\nYou talked for hours. Lost track of time.\n\nThey make you forget about... everything else.\n\nYou want to see them again.`,
+          attractionChange: 25,
+          connectionChange: 28,
+          trustChange: 18,
+          loyaltyChange: 12
+        },
+        {
           text: `Date was okay.\n\n${match.name} is nice, but... something's missing.\n\nNo spark. Just... pleasant.\n\nYou'll give it another shot.`,
-          attractionChange: 5,
-          connectionChange: 5,
-          trustChange: 3,
-          loyaltyChange: 2
+          attractionChange: 8,
+          connectionChange: 8,
+          trustChange: 5,
+          loyaltyChange: 4
         }
       );
     }
@@ -140,7 +147,7 @@ export default function HumanDating({ human, onClose }) {
     match.loyalty = Math.max(0, Math.min(100, match.loyalty + (outcome.loyaltyChange || 0)));
     match.concernLevel = Math.max(0, Math.min(100, match.concernLevel + (outcome.concernGain || 0)));
 
-    if (match.attraction < 20 || match.connection < 20 || match.trust < 15) {
+    if (match.attraction < 10 || match.connection < 10) {
       match.interested = false;
     }
 
@@ -178,7 +185,7 @@ export default function HumanDating({ human, onClose }) {
     return { stage: 'Getting to Know', color: 'text-gray-400', icon: '💭' };
   };
 
-  const specialMatches = matches.filter(m => (m.attraction + m.connection) / 2 >= 60 && m.interested);
+  const specialMatches = matches.filter(m => (m.attraction + m.connection) / 2 >= 50 && m.interested);
 
   return (
     <motion.div
