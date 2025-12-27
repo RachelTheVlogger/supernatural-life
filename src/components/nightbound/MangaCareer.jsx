@@ -604,7 +604,7 @@ Format as JSON:
           }
         });
         
-        const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, IMPORTANT: maintain exact character appearances and features as described, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs, consistent art style throughout`;
+        const panelPrompt = `FOLLOW THESE EXACT INSTRUCTIONS: ${panels[i].description}. ${characterReminders}YOU MUST show every single detail mentioned in the description. ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition. CRITICAL: Include all characters mentioned, all actions specified, all objects listed, exact scene composition as written. Maintain exact character appearances and features. NO TEXT, NO SPEECH BUBBLES, NO WORDS IN IMAGE, pure visual storytelling only. Do not add or omit anything from the description.`;
         
         const generateParams = { prompt: panelPrompt };
         
