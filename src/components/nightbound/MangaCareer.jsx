@@ -374,8 +374,18 @@ export default function MangaCareer({ servant, onClose }) {
     try {
       for (let vol = 0; vol < volumeSize; vol++) {
         setGenerationProgress(`Creating Volume 1 - Chapter ${vol + 1}/${volumeSize}...`);
-        await handleDrawChapter(true); // silent mode
-        await new Promise(resolve => setTimeout(resolve, 1000)); // brief pause between chapters
+        
+        // Refetch career data to get latest chapter count
+        const latestCareers = await base44.entities.ServantCareer.filter({ servant_id: entityId });
+        const latestCareer = latestCareers[0];
+        
+        if (!latestCareer) {
+          throw new Error('Career not found');
+        }
+        
+        await generateSingleChapter(latestCareer, true);
+        await queryClient.invalidateQueries(['career']);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // brief pause
       }
 
       setOutcome(`Volume 1 complete! Generated ${volumeSize} chapters!`);
@@ -387,26 +397,21 @@ export default function MangaCareer({ servant, onClose }) {
     } catch (error) {
       console.error('Volume creation failed:', error);
       setWorking(false);
-      setOutcome('Volume creation failed');
+      setOutcome('Volume creation failed: ' + error.message);
       setGenerationProgress('');
     }
   };
 
-  const handleDrawChapter = async (silentMode = false) => {
-    if (!career?.id) return;
+  const generateSingleChapter = async (careerData, silentMode = false) => {
+    if (!careerData?.id) return;
 
-    if (!silentMode) {
-      setWorking(true);
-      setGenerationProgress('Creating chapter story...');
-    }
-
-    try {
-      const genre = career.current_genre || 'shonen';
-      const artStyle = career.art_style || 'classic';
-      const seriesName = career.series_name || 'Untitled';
-      const newChapters = (career.chapters_released || 0) + 1;
-      const existingChapters = career.manga_chapters || [];
-      const storySummary = career.story_summary || `A ${genre} manga series about adventure and growth.`;
+    const genre = careerData.current_genre || 'shonen';
+    const artStyle = careerData.art_style || 'classic';
+    const seriesName = careerData.series_name || 'Untitled';
+    const newChapters = (careerData.chapters_released || 0) + 1;
+    const existingChapters = careerData.manga_chapters || [];
+    const storySummary = careerData.story_summary || `A ${genre} manga series about adventure and growth.`;
+    const characters = careerData.manga_characters || [];
 
       // Generate chapter content with AI
       const contentPrompt = `You are writing Chapter ${newChapters} of "${seriesName}", a ${genre} manga.
@@ -502,9 +507,9 @@ Format as JSON:
       // Update story summary for continuity
       const newStorySummary = `${storySummary} Chapter ${newChapters}: ${chapterContent.plot}`;
 
-      await base44.entities.ServantCareer.update(career.id, {
-        fans: (career.fans || 0) + fansGained,
-        income: (career.income || 0) + incomeGained,
+      await base44.entities.ServantCareer.update(careerData.id, {
+        fans: (careerData.fans || 0) + fansGained,
+        income: (careerData.income || 0) + incomeGained,
         chapters_released: newChapters,
         manga_chapters: [...existingChapters, newChapter],
         story_summary: newStorySummary
@@ -519,7 +524,6 @@ Format as JSON:
       if (!silentMode) {
         setOutcome(`Chapter ${newChapters}: "${title}" complete! +${fansGained} fans, $${incomeGained}`);
       }
-      queryClient.invalidateQueries(['career']);
 
       if (!silentMode) {
         setTimeout(() => {
@@ -528,16 +532,26 @@ Format as JSON:
           setGenerationProgress('');
         }, 3000);
       }
-      } catch (error) {
+    } catch (error) {
       console.error('Failed to generate chapter:', error);
       if (!silentMode) {
         setWorking(false);
         setOutcome('Failed to generate chapter. Please try again.');
         setGenerationProgress('');
       }
-      throw error; // Re-throw for volume creation to catch
-      }
-      };
+      throw error;
+    }
+  };
+
+  const handleDrawChapter = async (silentMode = false) => {
+    if (!career?.id) return;
+    if (!silentMode) {
+      setWorking(true);
+      setGenerationProgress('Creating chapter story...');
+    }
+    await generateSingleChapter(career, silentMode);
+    queryClient.invalidateQueries(['career']);
+  };
 
   const handleCreateCustomChapter = async () => {
     if (!career?.id) return;
