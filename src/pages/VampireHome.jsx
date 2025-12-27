@@ -28,7 +28,6 @@ import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
 import BloodBondSystem from '@/components/nightbound/BloodBondSystem';
 import VampirePolitics from '@/components/nightbound/VampirePolitics';
 import VampireAgingSystem from '@/components/nightbound/VampireAgingSystem';
-import VampireTherapist from '@/components/nightbound/VampireTherapist';
 import SuccubusVampireInteraction from '@/components/nightbound/SuccubusVampireInteraction';
 import DonorSystem from '@/components/nightbound/DonorSystem';
 import StalkingSystem from '@/components/nightbound/StalkingSystem';
@@ -62,7 +61,6 @@ export default function VampireHome() {
   const [showBloodBonds, setShowBloodBonds] = useState(false);
   const [showPolitics, setShowPolitics] = useState(false);
   const [showAging, setShowAging] = useState(false);
-  const [showTherapist, setShowTherapist] = useState(false);
   const [showSuccubusInteraction, setShowSuccubusInteraction] = useState(false);
   const [showVampireSelector, setShowVampireSelector] = useState(false);
   const [showDonors, setShowDonors] = useState(false);
@@ -1162,9 +1160,6 @@ export default function VampireHome() {
         )}
         {showAging && vampireState && (
           <VampireAgingSystem vampireState={vampireState} onClose={() => setShowAging(false)} />
-        )}
-        {showTherapist && (
-          <VampireTherapist vampireState={vampireState} onClose={() => setShowTherapist(false)} />
         )}
         {showSuccubusInteraction && succubus && (
           <SuccubusVampireInteraction
