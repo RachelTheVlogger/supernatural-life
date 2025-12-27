@@ -671,21 +671,23 @@ Format as JSON:
 
       if (!silentMode) {
         setOutcome(`Chapter ${newChapters}: "${title}" complete! +${fansGained} fans, $${incomeGained}`);
-      }
-
-      if (!silentMode) {
         setTimeout(() => {
           setWorking(false);
           setOutcome('');
           setGenerationProgress('');
         }, 3000);
       }
+      
+      return true; // Success indicator
     } catch (error) {
       console.error('Failed to generate chapter:', error);
       if (!silentMode) {
-        setWorking(false);
-        setOutcome('Failed to generate chapter. Please try again.');
-        setGenerationProgress('');
+        setOutcome(`Failed to generate chapter: ${error.message}`);
+        setTimeout(() => {
+          setWorking(false);
+          setOutcome('');
+          setGenerationProgress('');
+        }, 3000);
       }
       throw error;
     }
@@ -740,8 +742,18 @@ Format as JSON array of strings.`,
       setWorking(true);
       setGenerationProgress('Creating chapter story...');
     }
-    await generateSingleChapter(career, silentMode);
-    queryClient.invalidateQueries(['career']);
+    try {
+      await generateSingleChapter(career, silentMode);
+      await queryClient.invalidateQueries(['career']);
+    } catch (error) {
+      console.error('Chapter generation error:', error);
+      setOutcome('Chapter generation failed: ' + error.message);
+      setTimeout(() => {
+        setWorking(false);
+        setOutcome('');
+        setGenerationProgress('');
+      }, 3000);
+    }
   };
 
   const handleCreateCustomChapter = async () => {
