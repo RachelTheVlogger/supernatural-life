@@ -156,14 +156,7 @@ export default function VampireHome() {
     }
   }, [servants, identityRevelation, vampireStates.length]);
 
-  // Redirect to Home only if fetch succeeded and confirmed no vampire exists
-  useEffect(() => {
-    if (isSuccess && vampireStates.length === 0) {
-      navigate(createPageUrl('Home'), { replace: true });
-    }
-  }, [isSuccess, vampireStates.length, navigate]);
-
-  // Don't render anything if no vampire state or loading
+  // Don't render anything if loading
   if (vampireLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
@@ -172,10 +165,12 @@ export default function VampireHome() {
     );
   }
 
+  // Redirect to Home if no vampire exists
   if (!vampireState) {
+    navigate(createPageUrl('Home'), { replace: true });
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
-        <p className="text-gray-400">Loading vampire...</p>
+        <p className="text-gray-400">Redirecting...</p>
       </div>
     );
   }
