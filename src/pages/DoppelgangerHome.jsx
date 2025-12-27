@@ -30,6 +30,12 @@ export default function DoppelgangerHome() {
   const vampireState = vampireStates[0];
   const doppelganger = doppelgangers.find(d => d.id === doppelgangerId) || doppelgangers[0];
 
+  React.useEffect(() => {
+    if (doppelgangers.length === 0) {
+      navigate(createPageUrl('Night'), { replace: true });
+    }
+  }, [doppelgangers.length, navigate]);
+
   if (!doppelganger) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 to-black">

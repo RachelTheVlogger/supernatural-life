@@ -130,12 +130,12 @@ export default function WitchHome() {
     retry: 1
   });
 
-  const witch = witches[0];
-  const vampireState = vampireStates[0];
-
   // INFINITE spell generation based on power level
   const [generatedSpells, setGeneratedSpells] = React.useState({});
   const [generatingSpells, setGeneratingSpells] = React.useState(false);
+
+  const witch = witches[0];
+  const vampireState = vampireStates[0];
 
   const getAvailableSpells = () => {
     const baseSpells = { ...SPELLS };

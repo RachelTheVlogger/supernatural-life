@@ -41,6 +41,12 @@ export default function WerewolfHome() {
   const vampire = vampireStates[0];
   const isDaytime = vampire?.time_of_day === 'day';
 
+  React.useEffect(() => {
+    if (!werewolf) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [werewolf, navigate]);
+
   const handleAction = async (action) => {
     if (!werewolf) return;
     

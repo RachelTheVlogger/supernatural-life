@@ -1791,7 +1791,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   if (!vampireState) {
     return null;
   }
-  const isVampFemale = vampireState.gender === 'woman';
+  const queryClient = useQueryClient();
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [interactionType, setInteractionType] = useState('');
@@ -1801,13 +1801,14 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [showIdentity, setShowIdentity] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [liteMode, setLiteMode] = useState(vampireState?.content_filter === 'lite');
-  const queryClient = useQueryClient();
   
   // Always call hooks in the same order - never conditionally
   const { data: interactionProgress = [] } = useQuery({
     queryKey: ['interactionProgress'],
     queryFn: () => base44.entities.InteractionProgress.list()
   });
+
+  const isVampFemale = vampireState.gender === 'woman';
   
   const getRelationshipTier = (rel) => {
     if (rel >= 60) return 'high';

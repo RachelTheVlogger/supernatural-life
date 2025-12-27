@@ -54,6 +54,12 @@ export default function SuccubusHome() {
   const vampire = vampireStates[0];
   const isDaytime = vampire?.time_of_day === 'day';
 
+  React.useEffect(() => {
+    if (!succubus) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [succubus, navigate]);
+
   const handleAction = async (action) => {
     if (!succubus) return;
     
