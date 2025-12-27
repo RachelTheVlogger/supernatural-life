@@ -1764,27 +1764,6 @@ const INTERACTIONS = {
     gains: [0, 0]
   },
   
-  videocall: {
-    icon: Eye,
-    label: 'Video call (watch them)',
-    category: 'social',
-    gains: [15, 25],
-    outcomes: {
-      mid: ['Video call. You watched them touch themselves. They were shy at first.', 'They stripped for you on camera. Distance made it exciting.', 'Video call intimacy. New kind of connection.'],
-      high: ['You watched them masturbate on video call. They came for you. Perfect.', 'Video call. You told them exactly what to do. They obeyed. Hot.', 'Long distance pleasure. They came while you watched. Beautiful.']
-    }
-  },
-  sexting: {
-    icon: MessageCircle,
-    label: 'Sext with them',
-    category: 'social',
-    gains: [12, 20],
-    outcomes: {
-      mid: ['Dirty texts back and forth. They sent photos. You responded.', 'Sexting session. Words became foreplay. Intense.', 'Text after text. Building tension. They were touching themselves.'],
-      high: ['Sexting intensified. They sent videos. You came together over text.', 'Dirty messages. Photos. Videos. They came while texting you.', 'Sexting until late. They begged you to come over. You did.']
-    }
-  },
-
   // Dark/Vampire options
   turn: {
     icon: Droplets,
@@ -1874,8 +1853,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     'oralService', 'rideDom', 'multiple', 'Marathon', 'vampireSex', 'vampireBiteDuringsex',
     'vampireRoughFuck', 'vampireSpeedFuck', 'vampireWallFuck', 'vampireMarathon',
     'roughBehind', 'behindSeduction', 'publicUse', 'casualUse', 'service', 'vampireDoubleFeeding',
-    'tease', 'makeout', 'exhibition', 'vampireBloodPlay', 'vampireRace', 'vampireSpar',
-    'videocall', 'sexting'
+    'tease', 'makeout', 'exhibition', 'vampireBloodPlay', 'vampireRace', 'vampireSpar'
   ];
 
   const handleInteraction = async (type) => {
@@ -2230,7 +2208,12 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     'vampireSex', 'vampireBiteDuringsex', 'vampireRoughFuck', 'vampireBloodPlay',
     'vampireSpeedFuck', 'vampireWallFuck', 'vampireMarathon', 'vampireBiteMark',
     'vampireDoubleFeeding', 'vampireDominance', 'roughBehind', 'whisperDirty',
-    'behindSeduction', 'multiple', 'Marathon', 'service'
+    'behindSeduction', 'multiple', 'Marathon', 'service', 'intimate', 'makeout',
+    'bite', 'tease', 'approachBehind', 'neckKissBehind', 'exhibition', 'vampireFeed',
+    'feedOnEachOther', 'vampireHunt', 'vampireBiteDuringsex', 'vampireRace',
+    'vampireSpar', 'vampireTelekinesis', 'vampireCompulsion', 'vampireDaylight',
+    'vampireEternity', 'vampireNest', 'vampireBond', 'vampireTeach', 'videocall',
+    'sexting'
   ];
 
   // Filter by category and lite mode
