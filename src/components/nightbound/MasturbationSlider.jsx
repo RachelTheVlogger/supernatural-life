@@ -46,9 +46,9 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', vampir
 
     if (isDecreasing && level > 10) {
       if (bodyPart === 'clit' || bodyPart === 'primary') {
-        return ['nnngh my clit...!', 'ahh so sensitive...', '*whimper* need more...'];
+        return ['nnngh...!', 'ahh so sensitive...', '*whimper* need more...', 'don\'t stop...'];
       } else if (bodyPart === 'dick') {
-        return ['fuck my dick...!', 'ahh so hard...', '*groan* need to cum...'];
+        return ['fuck...!', 'ahh so hard...', '*groan* need it...', 'come on...'];
       } else if (bodyPart === 'fingers') {
         return ['ngh need them deeper...', 'ahh empty...', 'fuck put them back...'];
       }
@@ -57,8 +57,8 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', vampir
 
     if (isEdging && level > 60) {
       const desperate = vampireWatching ? [
-        'PLEASE LET ME TOUCH IT!',
-        'I NEED TO CUM SO BAD!',
+        'PLEASE LET ME!',
+        'I NEED IT SO BAD!',
         'CAN I FINISH PLEASE?!'
       ] : [
         'OH FUCK I\'M SO CLOSE!',
@@ -68,43 +68,37 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', vampir
       return desperate;
     }
 
-    // Body part specific moans
+    // Body part specific moans - less repetitive
     if (bodyPart === 'clit' || bodyPart === 'primary') {
-      if (level < 20) return ['mmm my clit...', 'ahh sensitive...', 'oh fuck...'];
-      if (level < 40) return ['yes my clit...', 'god so good...', 'ahh right there...'];
-      if (level < 60) return ['FUCK my clit!', 'YES harder!', 'OH GOD!'];
-      if (level < 80) return ['RUBBING my clit!', 'SO FUCKING GOOD!', 'GONNA CUM!'];
-      return ['CUMMING ON MY FINGERS!', 'FUCK MY CLIT!', 'YES YES YES!'];
+      if (level < 20) return ['mmm...', 'ahh...', 'oh fuck...', 'yes...'];
+      if (level < 40) return ['yes...', 'god so good...', 'ahh right there...', 'mmm...'];
+      if (level < 60) return ['FUCK!', 'YES harder!', 'OH GOD!', 'right there!'];
+      if (level < 80) return ['SO GOOD!', 'FUCK YES!', 'GONNA CUM!', 'DON\'T STOP!'];
+      return ['CUMMING!', 'AHHH!', 'YES YES YES!', 'FUCK!'];
     } else if (bodyPart === 'dick') {
-      if (level < 20) return ['mmm stroking...', 'fuck yeah...', 'so hard...'];
-      if (level < 40) return ['yes stroking my dick...', 'feels so good...', 'getting close...'];
-      if (level < 60) return ['FUCK stroking harder!', 'SO HARD!', 'GONNA BLOW!'];
-      if (level < 80) return ['JERKING so fast!', 'FUCK MY DICK!', 'ABOUT TO CUM!'];
-      return ['CUMMING SO HARD!', 'FUCK YES!', 'SHOOTING!'];
+      if (level < 20) return ['mmm...', 'fuck yeah...', 'so hard...', 'ahh...'];
+      if (level < 40) return ['yes...', 'feels so good...', 'getting close...', 'fuck...'];
+      if (level < 60) return ['FUCK!', 'SO HARD!', 'GONNA BLOW!', 'YES!'];
+      if (level < 80) return ['SO CLOSE!', 'FUCK!', 'ABOUT TO CUM!', 'AHHH!'];
+      return ['CUMMING!', 'FUCK YES!', 'SHOOTING!', 'AHHH!'];
     } else if (bodyPart === 'breasts' || bodyPart === 'chest') {
-      if (level < 40) return ['mmm my nipples...', 'so sensitive...', 'pinching them...'];
-      if (level < 70) return ['fuck my nipples!', 'squeezing my tits!', 'so hard!'];
-      return ['PINCHING SO HARD!', 'MY TITS!', 'FUCK!'];
+      if (level < 40) return ['mmm...', 'so sensitive...', 'ahh...', 'feels good...'];
+      if (level < 70) return ['fuck!', 'yes!', 'so hard!', 'ahh!'];
+      return ['FUCK!', 'YES!', 'AHHH!'];
     } else if (bodyPart === 'fingers') {
-      if (level < 20) return ['mmm one finger...', 'so tight...', 'going deeper...'];
-      if (level < 40) return ['two fingers now...', 'fuck so wet...', 'fingering myself...'];
-      if (level < 60) return ['THREE FINGERS!', 'SO DEEP!', 'FUCKING myself!'];
-      if (level < 80) return ['FINGER FUCKING!', 'SO WET!', 'GONNA CUM ON MY HAND!'];
-      return ['CUMMING ON MY FINGERS!', 'FUCK YES!', 'SQUIRTING!'];
+      if (level < 20) return ['mmm...', 'so tight...', 'going deeper...', 'ahh...'];
+      if (level < 40) return ['yes...', 'fuck so wet...', 'more...', 'deeper...'];
+      if (level < 60) return ['SO DEEP!', 'FUCK!', 'YES!'];
+      if (level < 80) return ['SO WET!', 'GONNA CUM!', 'FUCK YES!'];
+      return ['CUMMING!', 'FUCK!', 'AHHH!'];
     } else if (bodyPart === 'balls') {
-      if (level < 40) return ['mmm my balls...', 'playing with them...', 'so full...'];
-      if (level < 70) return ['squeezing my balls!', 'fuck so tight!', 'need to cum!'];
-      return ['BALLS SO TIGHT!', 'GONNA EXPLODE!', 'FUCK!'];
+      if (level < 40) return ['mmm...', 'feels good...', 'so full...', 'ahh...'];
+      if (level < 70) return ['fuck!', 'so tight!', 'need to cum!', 'yes!'];
+      return ['SO TIGHT!', 'GONNA EXPLODE!', 'FUCK!'];
     } else if (bodyPart === 'multiple' || touchingMultiple) {
-      if (level < 40) return isFemale ? ['touching everywhere...', 'clit and tits...', 'so much...'] : 
-                           isMale ? ['dick and balls...', 'everything at once...', 'fuck...'] :
-                           ['touching everything...', 'so much sensation...', 'overwhelming...'];
-      if (level < 70) return isFemale ? ['RUBBING clit AND nipples!', 'BOTH at once!', 'TOO MUCH!'] :
-                           isMale ? ['STROKING and SQUEEZING!', 'DICK and BALLS!', 'FUCK!'] :
-                           ['EVERYWHERE at once!', 'SO INTENSE!', 'FUCK!'];
-      return isFemale ? ['CUMMING everywhere!', 'CLIT TITS EVERYTHING!', 'AHHH!'] :
-             isMale ? ['CUMMING so hard!', 'DICK EXPLODING!', 'FUCK YES!'] :
-             ['CUMMING everywhere!', 'TOO MUCH!', 'AHHH!'];
+      if (level < 40) return ['touching everywhere...', 'so much...', 'ahh...', 'fuck...'];
+      if (level < 70) return ['BOTH at once!', 'TOO MUCH!', 'FUCK!', 'YES!'];
+      return ['CUMMING everywhere!', 'AHHH!', 'FUCK YES!'];
     }
 
     // Default
