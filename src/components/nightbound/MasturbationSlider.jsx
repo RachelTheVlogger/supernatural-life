@@ -69,6 +69,63 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
       return ['OH FUCK I\'M SO CLOSE!', 'GONNA CUM SO HARD!', 'CAN\'T HOLD IT!'];
     }
 
+    // Sex position specific moans
+    if (isSex) {
+      if (bodyPart === 'ride') {
+        if (isFemale) {
+          if (level < 20) return ['mmm...', 'oh...', 'ahh...', 'yes...'];
+          if (level < 40) return ['bouncing on them...', 'feels so good...', 'mmm yes...', 'going deeper...'];
+          if (level < 60) return ['RIDING hard!', 'OH GOD!', 'SO DEEP!', 'YES!'];
+          if (level < 80) return ['FUCK YES!', 'BOUNCING SO HARD!', 'SO GOOD!', 'LEGS SHAKING!'];
+          return ['CUMMING!', 'FUCK!', 'RIDING TILL I CUM!', 'AHHH!'];
+        } else {
+          if (level < 20) return ['mmm...', 'oh...', 'ahh...', 'yes...'];
+          if (level < 40) return ['riding them...', 'so tight...', 'mmm...', 'fuck...'];
+          if (level < 60) return ['RIDING hard!', 'SO TIGHT!', 'FUCK!', 'YES!'];
+          if (level < 80) return ['GONNA CUM!', 'SO DEEP IN THEM!', 'FUCK YES!', 'AHHH!'];
+          return ['CUMMING!', 'FUCK!', 'FILLING THEM UP!', 'AHHH!'];
+        }
+      } else if (bodyPart === 'thrust') {
+        if (isFemale) {
+          if (level < 20) return ['ahh...', 'they\'re inside...', 'oh...', 'mmm...'];
+          if (level < 40) return ['thrusting into me...', 'feels so good...', 'deeper...', 'yes...'];
+          if (level < 60) return ['FUCK ME!', 'HARDER!', 'OH GOD!', 'YES!'];
+          if (level < 80) return ['FUCK YES!', 'SO DEEP!', 'DON\'T STOP!', 'HARDER!'];
+          return ['CUMMING!', 'FUCK!', 'YES YES YES!', 'AHHH!'];
+        } else {
+          if (level < 20) return ['mmm...', 'inside them...', 'so tight...', 'ahh...'];
+          if (level < 40) return ['thrusting deep...', 'so wet...', 'fuck...', 'yes...'];
+          if (level < 60) return ['POUNDING!', 'SO TIGHT!', 'FUCK!', 'YES!'];
+          if (level < 80) return ['GONNA CUM!', 'FILLING YOU UP!', 'FUCK YES!', 'SO TIGHT!'];
+          return ['CUMMING!', 'FUCK!', 'FILLING YOU!', 'AHHH!'];
+        }
+      } else if (bodyPart === 'oral') {
+        if (level < 20) return ['mmm...', 'sucking...', 'licking...', 'ahh...'];
+        if (level < 40) return ['tastes so good...', 'mmm yes...', 'more...', 'fuck...'];
+        if (level < 60) return ['SO GOOD!', 'LOVE THIS!', 'MMM!', 'YES!'];
+        if (level < 80) return ['GONNA MAKE YOU CUM!', 'SO WET!', 'FUCK YES!', 'MMM!'];
+        return ['CUM FOR ME!', 'YES!', 'MMM FUCK!', 'AHHH!'];
+      } else if (bodyPart === 'receive' || bodyPart === 'receive_oral') {
+        if (level < 20) return ['mmm...', 'feels good...', 'ahh...', 'yes...'];
+        if (level < 40) return ['their tongue...', 'so good...', 'more...', 'fuck...'];
+        if (level < 60) return ['OH GOD!', 'RIGHT THERE!', 'FUCK!', 'YES!'];
+        if (level < 80) return ['GONNA CUM!', 'DON\'T STOP!', 'SO CLOSE!', 'FUCK YES!'];
+        return ['CUMMING!', 'FUCK!', 'AHHH!', 'YES YES!'];
+      } else if (bodyPart === 'penetrate') {
+        if (level < 20) return ['inside them...', 'so tight...', 'mmm...', 'ahh...'];
+        if (level < 40) return ['fucking them...', 'so good...', 'deeper...', 'yes...'];
+        if (level < 60) return ['SO TIGHT!', 'FUCK!', 'GOING DEEP!', 'YES!'];
+        if (level < 80) return ['GONNA CUM!', 'FILLING THEM!', 'FUCK YES!', 'AHHH!'];
+        return ['CUMMING INSIDE!', 'FUCK!', 'AHHH!', 'YES!'];
+      } else if (bodyPart === 'mutual') {
+        if (level < 20) return ['together...', 'mmm...', 'both feeling it...', 'ahh...'];
+        if (level < 40) return ['touching each other...', 'so good...', 'yes...', 'mmm...'];
+        if (level < 60) return ['SO GOOD!', 'TOGETHER!', 'FUCK!', 'YES!'];
+        if (level < 80) return ['BOTH SO CLOSE!', 'FUCK YES!', 'CUMMING TOGETHER!', 'AHHH!'];
+        return ['CUMMING!', 'BOTH AT ONCE!', 'FUCK!', 'YES!'];
+      }
+    }
+
     // Body part specific moans - less repetitive
     if (bodyPart === 'clit' || bodyPart === 'primary') {
       if (level < 20) return ['mmm...', 'ahh...', 'oh fuck...', 'yes...'];
@@ -283,8 +340,59 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
         </AnimatePresence>
       </div>
 
+      {/* Sweat drops */}
+      {sweatLevel > 30 && [...Array(Math.floor(sweatLevel / 15))].map((_, i) => (
+        <motion.div
+          key={`sweat-${i}`}
+          className="absolute text-2xl pointer-events-none"
+          initial={{ x: `${20 + i * 20}%`, y: '20%', opacity: 0 }}
+          animate={{ y: '100%', opacity: [0, 1, 0] }}
+          transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+        >
+          💧
+        </motion.div>
+      ))}
+
+      {/* Interruption events */}
+      <AnimatePresence>
+        {interruptionEvent && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.8 }}
+            className="absolute top-20 left-1/2 -translate-x-1/2 bg-red-900/90 border-2 border-red-500 rounded-xl px-4 py-2 z-50"
+          >
+            <p className="text-white font-bold">{interruptionEvent.text}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Performance rank on finish */}
+      <AnimatePresence>
+        {performanceRank && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1.5 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none z-50"
+          >
+            <div className="text-center">
+              <p className={`text-9xl font-bold ${
+                performanceRank === 'S' ? 'text-yellow-400' :
+                performanceRank === 'A' ? 'text-green-400' :
+                performanceRank === 'B' ? 'text-blue-400' :
+                performanceRank === 'C' ? 'text-purple-400' :
+                'text-gray-400'
+              }`} style={{ textShadow: '0 0 30px currentColor' }}>
+                {performanceRank}
+              </p>
+              <p className="text-white text-xl mt-4">Rank</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Top stats bar */}
-      <div className="absolute top-4 left-0 right-0 flex justify-between items-center px-4 pointer-events-none">
+      <div className="absolute top-4 left-0 right-0 flex justify-between items-center px-4 pointer-events-none z-10">
         {/* Heart rate */}
         <motion.div 
           className="flex items-center gap-2 bg-black/50 rounded-full px-3 py-1"
@@ -293,6 +401,15 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
         >
           <Heart className="w-4 h-4 text-red-500 fill-red-500" />
           <span className="text-white font-bold text-sm">{heartRate} BPM</span>
+        </motion.div>
+
+        {/* Stamina bar */}
+        <motion.div className="bg-black/50 rounded-full px-3 py-1">
+          <div className="flex items-center gap-2">
+            <span className={`text-xs font-bold ${stamina < 30 ? 'text-red-400' : stamina < 60 ? 'text-yellow-400' : 'text-green-400'}`}>
+              💪 {Math.floor(stamina)}%
+            </span>
+          </div>
         </motion.div>
 
         {/* Risk meter for public contexts */}
