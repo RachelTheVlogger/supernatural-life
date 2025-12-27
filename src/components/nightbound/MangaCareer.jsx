@@ -253,6 +253,28 @@ export default function MangaCareer({ servant, onClose }) {
               >
                 🎨
               </button>
+              <button
+                onClick={async () => {
+                  if (confirm(`Delete "${career.series_name}"? This cannot be undone.`)) {
+                    await base44.entities.ServantCareer.update(career.id, {
+                      manga_career_active: false,
+                      series_name: null,
+                      current_genre: null,
+                      chapters_released: 0,
+                      fans: 0,
+                      income: 0,
+                      manga_chapters: [],
+                      art_style: 'classic',
+                      style_reference_image: null
+                    });
+                    queryClient.invalidateQueries(['career']);
+                  }
+                }}
+                disabled={working}
+                className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg px-4 text-white disabled:opacity-50"
+              >
+                🗑️
+              </button>
             </div>
 
             {career.manga_chapters && career.manga_chapters.length > 0 && (
