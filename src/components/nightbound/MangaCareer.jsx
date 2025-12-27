@@ -2348,124 +2348,7 @@ Format as JSON:
               </button>
             </div>
 
-            {selectedFeature === 'popularity' && (
-              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
-                <h4 className="text-white font-bold mb-4">Character Popularity Rankings</h4>
-                {(career?.manga_characters || []).length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No characters yet</p>
-                ) : (
-                  (career.manga_characters || [])
-                    .sort((a, b) => (b.appearances || 0) - (a.appearances || 0))
-                    .map((char, i) => (
-                      <div key={char.id} className="flex items-center gap-3 bg-gray-900/50 rounded-lg p-3 mb-2">
-                        <div className="text-2xl">#{i + 1}</div>
-                        <div className="flex-1">
-                          <h5 className="text-white font-medium">{char.name}</h5>
-                          <p className="text-gray-400 text-sm">{char.appearances || 0} appearances</p>
-                        </div>
-                        <div className="text-yellow-400 font-bold">
-                          {char.appearances > 10 ? '🔥' : char.appearances > 5 ? '⭐' : '✨'}
-                        </div>
-                      </div>
-                    ))
-                )}
-              </div>
-            )}
 
-            {selectedFeature === 'schedule' && (
-              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
-                <h4 className="text-white font-bold mb-4">Release Schedule</h4>
-                <p className="text-gray-400 text-sm mb-4">Set how often you release new chapters</p>
-                <div className="space-y-2">
-                  {['weekly', 'biweekly', 'monthly'].map(schedule => (
-                    <button
-                      key={schedule}
-                      onClick={async () => {
-                        await base44.entities.ServantCareer.update(career.id, {
-                          serialization_schedule: schedule
-                        });
-                        queryClient.invalidateQueries(['career']);
-                      }}
-                      className={`w-full rounded-lg p-3 text-left transition-colors ${
-                        career?.serialization_schedule === schedule
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                      }`}
-                    >
-                      <div className="font-medium capitalize">{schedule}</div>
-                      <div className="text-xs opacity-80">
-                        {schedule === 'weekly' && 'New chapter every week'}
-                        {schedule === 'biweekly' && 'New chapter every 2 weeks'}
-                        {schedule === 'monthly' && 'New chapter every month'}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {selectedFeature === 'analytics' && (
-              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
-                <h4 className="text-white font-bold mb-4">Series Analytics</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-900/50 rounded-lg p-3">
-                    <p className="text-gray-400 text-xs">Total Chapters</p>
-                    <p className="text-white text-2xl font-bold">{career?.chapters_released || 0}</p>
-                  </div>
-                  <div className="bg-gray-900/50 rounded-lg p-3">
-                    <p className="text-gray-400 text-xs">Average Rating</p>
-                    <p className="text-white text-2xl font-bold">
-                      {career?.overall_rating ? `⭐ ${career.overall_rating.toFixed(1)}` : 'N/A'}
-                    </p>
-                  </div>
-                  <div className="bg-gray-900/50 rounded-lg p-3">
-                    <p className="text-gray-400 text-xs">Total Characters</p>
-                    <p className="text-white text-2xl font-bold">{career?.manga_characters?.length || 0}</p>
-                  </div>
-                  <div className="bg-gray-900/50 rounded-lg p-3">
-                    <p className="text-gray-400 text-xs">Fan Base</p>
-                    <p className="text-white text-2xl font-bold">{career?.fans || 0}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {selectedFeature === 'consistency' && (
-              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
-                <h4 className="text-white font-bold mb-4">Plot Consistency Check</h4>
-                <p className="text-gray-400 text-sm mb-4">
-                  AI analyzes your story for continuity errors and plot holes
-                </p>
-                <button
-                  onClick={async () => {
-                    setOutcome('Analyzing story consistency...');
-                    try {
-                      const summary = career?.story_summary || '';
-                      const result = await base44.integrations.Core.InvokeLLM({
-                        prompt: `Analyze this manga story for plot consistency and continuity: ${summary}. List any potential plot holes or inconsistencies.`,
-                        response_json_schema: {
-                          type: "object",
-                          properties: {
-                            issues: { type: "array", items: { type: "string" } },
-                            suggestions: { type: "array", items: { type: "string" } }
-                          }
-                        }
-                      });
-                      setOutcome(result.issues.length > 0 
-                        ? `Found ${result.issues.length} potential issues` 
-                        : 'No major issues found! Story is consistent.');
-                      setTimeout(() => setOutcome(''), 3000);
-                    } catch (e) {
-                      setOutcome('Analysis failed');
-                      setTimeout(() => setOutcome(''), 2000);
-                    }
-                  }}
-                  className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white py-3 rounded-lg font-medium"
-                >
-                  Run Consistency Check
-                </button>
-              </div>
-            )}
 
           </motion.div>
         </motion.div>
@@ -2502,6 +2385,206 @@ Format as JSON:
         )}
         {selectedFeature === 'special' && (
           <MangaSpecials career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+        )}
+        
+        {selectedFeature === 'popularity' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setSelectedFeature(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-white text-2xl font-bold">📊 Character Popularity</h3>
+                <button onClick={() => setSelectedFeature(null)} className="text-gray-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {(career?.manga_characters || []).length === 0 ? (
+                <p className="text-gray-500 text-center py-8">No characters yet</p>
+              ) : (
+                <div className="space-y-2">
+                  {(career.manga_characters || [])
+                    .sort((a, b) => (b.appearances || 0) - (a.appearances || 0))
+                    .map((char, i) => (
+                      <div key={char.id} className="flex items-center gap-3 bg-gray-800/50 rounded-lg p-4">
+                        <div className="text-3xl font-bold text-yellow-400">#{i + 1}</div>
+                        <div className="flex-1">
+                          <h5 className="text-white font-medium text-lg">{char.name}</h5>
+                          <p className="text-gray-400 text-sm">{char.appearances || 0} chapter appearances</p>
+                        </div>
+                        <div className="text-4xl">
+                          {char.appearances > 10 ? '🔥' : char.appearances > 5 ? '⭐' : '✨'}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+
+        {selectedFeature === 'schedule' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setSelectedFeature(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-white text-2xl font-bold">📅 Release Schedule</h3>
+                <button onClick={() => setSelectedFeature(null)} className="text-gray-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <p className="text-gray-400 text-sm mb-4">Set how often you release new chapters</p>
+              <div className="space-y-2">
+                {['weekly', 'biweekly', 'monthly'].map(schedule => (
+                  <button
+                    key={schedule}
+                    onClick={async () => {
+                      await base44.entities.ServantCareer.update(career.id, {
+                        serialization_schedule: schedule
+                      });
+                      queryClient.invalidateQueries(['career']);
+                      setSelectedFeature(null);
+                    }}
+                    className={`w-full rounded-lg p-3 text-left transition-colors ${
+                      career?.serialization_schedule === schedule
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                    }`}
+                  >
+                    <div className="font-medium capitalize">{schedule}</div>
+                    <div className="text-xs opacity-80">
+                      {schedule === 'weekly' && 'New chapter every week'}
+                      {schedule === 'biweekly' && 'New chapter every 2 weeks'}
+                      {schedule === 'monthly' && 'New chapter every month'}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {selectedFeature === 'analytics' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setSelectedFeature(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-white text-2xl font-bold">📈 Series Analytics</h3>
+                <button onClick={() => setSelectedFeature(null)} className="text-gray-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <p className="text-gray-400 text-sm mb-2">Total Chapters</p>
+                  <p className="text-white text-3xl font-bold">{career?.chapters_released || 0}</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <p className="text-gray-400 text-sm mb-2">Average Rating</p>
+                  <p className="text-white text-3xl font-bold">
+                    {career?.overall_rating ? `${career.overall_rating.toFixed(1)} ⭐` : 'N/A'}
+                  </p>
+                </div>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <p className="text-gray-400 text-sm mb-2">Total Characters</p>
+                  <p className="text-white text-3xl font-bold">{career?.manga_characters?.length || 0}</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <p className="text-gray-400 text-sm mb-2">Fan Base</p>
+                  <p className="text-white text-3xl font-bold">{career?.fans || 0}</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {selectedFeature === 'consistency' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setSelectedFeature(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-white text-2xl font-bold">🔍 Consistency Check</h3>
+                <button onClick={() => setSelectedFeature(null)} className="text-gray-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <p className="text-gray-400 text-sm mb-4">
+                AI analyzes your story for continuity errors and plot holes
+              </p>
+              <button
+                onClick={async () => {
+                  setOutcome('Analyzing story consistency...');
+                  try {
+                    const summary = career?.story_summary || '';
+                    const result = await base44.integrations.Core.InvokeLLM({
+                      prompt: `Analyze this manga story for plot consistency and continuity: ${summary}. List any potential plot holes or inconsistencies.`,
+                      response_json_schema: {
+                        type: "object",
+                        properties: {
+                          issues: { type: "array", items: { type: "string" } },
+                          suggestions: { type: "array", items: { type: "string" } }
+                        }
+                      }
+                    });
+                    setOutcome(result.issues.length > 0 
+                      ? `Found ${result.issues.length} potential issues` 
+                      : 'No major issues found! Story is consistent.');
+                    setTimeout(() => setOutcome(''), 3000);
+                  } catch (e) {
+                    setOutcome('Analysis failed');
+                    setTimeout(() => setOutcome(''), 2000);
+                  }
+                }}
+                className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white py-3 rounded-lg font-medium"
+              >
+                Run Consistency Check
+              </button>
+
+              {outcome && (
+                <div className="mt-4 bg-teal-950/40 border border-teal-500/30 rounded-lg p-4">
+                  <p className="text-teal-300 text-center whitespace-pre-line">{outcome}</p>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
