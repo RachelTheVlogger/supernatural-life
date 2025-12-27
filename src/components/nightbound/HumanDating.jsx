@@ -36,10 +36,10 @@ export default function HumanDating({ human, onClose }) {
       id: Date.now(),
       name: names[Math.floor(Math.random() * names.length)],
       personality: personalities[Math.floor(Math.random() * personalities.length)],
-      attraction: isSpecial ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 40) + 30,
-      connection: isSpecial ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 30) + 20,
-      trust: isSpecial ? Math.floor(Math.random() * 30) + 50 : Math.floor(Math.random() * 30) + 20,
-      loyalty: isSpecial ? Math.floor(Math.random() * 30) + 50 : Math.floor(Math.random() * 30) + 20,
+      attraction: isSpecial ? Math.floor(Math.random() * 20) + 75 : Math.floor(Math.random() * 30) + 40,
+      connection: isSpecial ? Math.floor(Math.random() * 20) + 75 : Math.floor(Math.random() * 30) + 40,
+      trust: isSpecial ? Math.floor(Math.random() * 20) + 60 : Math.floor(Math.random() * 30) + 35,
+      loyalty: isSpecial ? Math.floor(Math.random() * 20) + 60 : Math.floor(Math.random() * 30) + 35,
       dates: 0,
       interested: true,
       isSpecial: isSpecial,
@@ -61,10 +61,9 @@ export default function HumanDating({ human, onClose }) {
     match.dates += 1;
     match.lastDate = new Date().toISOString();
 
-    // Relationship decay if obsession is high (reduced penalty)
-    if (obsessedWithVampire && !match.isSpecial) {
-      match.trust = Math.max(0, match.trust - 2);
-      match.loyalty = Math.max(0, match.loyalty - 1);
+    // Minimal decay even with obsession
+    if (obsessedWithVampire && !match.isSpecial && Math.random() > 0.5) {
+      match.trust = Math.max(0, match.trust - 1);
     }
 
     const outcomes = [];
@@ -72,26 +71,25 @@ export default function HumanDating({ human, onClose }) {
     if (obsessedWithVampire && !match.isSpecial) {
       outcomes.push(
         {
-          text: `Date with ${match.name}.\n\nThey're nice. Attractive. Normal.\n\nBut you can't stop thinking about ${vampire.vampire_name}.\n\nYou're comparing everything. Everyone.\n\n${match.name} notices you're distracted.`,
-          attractionChange: -5,
-          connectionChange: -3,
-          trustChange: -2,
-          concernGain: 10
-        },
-        {
-          text: `You tried. Really tried.\n\n${match.name} held your hand. Kissed you.\n\nBut it felt... wrong. Empty.\n\nThey're not ${vampire.vampire_name}.\n\nNothing feels right anymore.`,
-          attractionChange: -8,
-          connectionChange: -6,
-          trustChange: -4,
-          loyaltyChange: -3,
-          concernGain: 15
-        },
-        {
-          text: `${match.name} made you laugh despite everything.\n\nFor a moment, you forgot about ${vampire.vampire_name}.\n\nJust a moment. But it was nice.`,
-          attractionChange: 8,
-          connectionChange: 10,
+          text: `Date with ${match.name}.\n\nThey're nice. Attractive. Normal.\n\nBut you can't stop thinking about ${vampire.vampire_name}.\n\nYou're comparing everything. Everyone.\n\n${match.name} notices you're distracted but stays patient.`,
+          attractionChange: 5,
+          connectionChange: 8,
           trustChange: 5,
-          loyaltyChange: 3
+          concernGain: 5
+        },
+        {
+          text: `${match.name} made you laugh despite everything.\n\nFor a moment, you forgot about ${vampire.vampire_name}.\n\nJust a moment. But it was nice.\n\nThey held your hand. You didn't pull away.`,
+          attractionChange: 12,
+          connectionChange: 15,
+          trustChange: 10,
+          loyaltyChange: 8
+        },
+        {
+          text: `You tried to focus on ${match.name}.\n\nThey're sweet. Understanding. Patient.\n\nMaybe this could work. Maybe you can move on.`,
+          attractionChange: 15,
+          connectionChange: 18,
+          trustChange: 12,
+          loyaltyChange: 10
         }
       );
     } else if (obsessedWithVampire && match.isSpecial) {
@@ -118,24 +116,24 @@ export default function HumanDating({ human, onClose }) {
       outcomes.push(
         {
           text: `Great date with ${match.name}!\n\nYou laughed. Connected. They kissed you goodnight.\n\nIt felt... nice. Real.\n\nMaybe this could be something.`,
-          attractionChange: 18,
-          connectionChange: 22,
-          trustChange: 15,
-          loyaltyChange: 10
+          attractionChange: 20,
+          connectionChange: 25,
+          trustChange: 18,
+          loyaltyChange: 15
         },
         {
           text: `${match.name} is amazing.\n\nYou talked for hours. Lost track of time.\n\nThey make you forget about... everything else.\n\nYou want to see them again.`,
-          attractionChange: 25,
-          connectionChange: 28,
-          trustChange: 18,
-          loyaltyChange: 12
+          attractionChange: 28,
+          connectionChange: 32,
+          trustChange: 22,
+          loyaltyChange: 18
         },
         {
-          text: `Date was okay.\n\n${match.name} is nice, but... something's missing.\n\nNo spark. Just... pleasant.\n\nYou'll give it another shot.`,
-          attractionChange: 8,
-          connectionChange: 8,
-          trustChange: 5,
-          loyaltyChange: 4
+          text: `Date was good.\n\n${match.name} is nice. Sweet. Attentive.\n\nThe chemistry is building.\n\nYou want to see them again.`,
+          attractionChange: 15,
+          connectionChange: 15,
+          trustChange: 12,
+          loyaltyChange: 10
         }
       );
     }
