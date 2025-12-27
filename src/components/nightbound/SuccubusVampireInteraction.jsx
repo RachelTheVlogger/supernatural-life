@@ -112,6 +112,10 @@ export default function SuccubusVampireInteraction({ succubus, vampire, onClose 
   const [interacting, setInteracting] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!succubus || !vampire) {
+    return null;
+  }
+
   const handleInteraction = async (interaction) => {
     setInteracting(true);
 

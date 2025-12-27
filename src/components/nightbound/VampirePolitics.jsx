@@ -31,6 +31,10 @@ export default function VampirePolitics({ vampireState, onClose }) {
     }
   });
 
+  if (!vampireState) {
+    return null;
+  }
+
   const playerCampaign = elections.find(e => e.is_player && e.election_status === 'active');
   const rivalCampaigns = elections.filter(e => !e.is_player && e.election_status === 'active');
 

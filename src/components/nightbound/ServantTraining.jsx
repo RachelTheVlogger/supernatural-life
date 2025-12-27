@@ -64,6 +64,10 @@ export default function ServantTraining({ servant, onClose }) {
   const [training, setTraining] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!servant) {
+    return null;
+  }
+
   const handleTrain = async (spec) => {
     setTraining(true);
 

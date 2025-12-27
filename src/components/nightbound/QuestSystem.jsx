@@ -160,15 +160,18 @@ export default function QuestSystem({ servant, vampireState, onClose }) {
   const [makingChoice, setMakingChoice] = useState(false);
   const queryClient = useQueryClient();
   
-  const questData = QUEST_LIBRARY[servant.variant];
-  
-  // Check if quest exists for this servant
   const { data: quests = [] } = useQuery({
-    queryKey: ['quests', servant.id],
-    queryFn: () => base44.entities.Quest.filter({ servant_id: servant.id })
+    queryKey: ['quests', servant?.id],
+    queryFn: () => base44.entities.Quest.filter({ servant_id: servant.id }),
+    enabled: !!servant?.id
   });
-  
-  const servantQuest = quests.find(q => q.quest_key === questData.key);
+
+  if (!servant || !vampireState) {
+    return null;
+  }
+
+  const questData = QUEST_LIBRARY[servant.variant];
+  const servantQuest = quests.find(q => q.quest_key === questData?.key);
   const currentStage = servantQuest?.stage || 0;
   const isCompleted = servantQuest?.completed || false;
   
