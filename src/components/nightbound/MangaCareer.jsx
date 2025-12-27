@@ -709,12 +709,12 @@ Format as JSON:
       setGenerationProgress(`Generating ${panels.length} manga panels...`);
       
       const stylePrompts = {
-        classic: 'traditional black and white manga art style, classic manga aesthetic, hand-drawn linework',
+        classic: 'traditional black and white manga art style, classic manga aesthetic, hand-drawn linework, monochrome, grayscale only, no color',
         modern: 'modern anime style, vibrant colors, digital anime art, contemporary manga aesthetic',
         chibi: 'chibi style, super deformed cute characters, simplified features, kawaii aesthetic',
         realistic: 'realistic detailed art style, photorealistic manga illustration, high detail',
         watercolor: 'watercolor painting style manga, soft painted aesthetic, artistic brushstrokes',
-        noir: 'noir manga style, high contrast shadows, dark atmosphere, dramatic black and white'
+        noir: 'noir manga style, high contrast shadows, dark atmosphere, dramatic black and white, monochrome, no color'
       };
 
       const panelImages = [];
@@ -732,7 +732,7 @@ Format as JSON:
       for (let i = 0; i < Math.min(panels.length, 6); i++) {
         setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
         
-        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs`;
+        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs, consistent art style throughout`;
         
         const generateParams = { prompt: panelPrompt };
         
