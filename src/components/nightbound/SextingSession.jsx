@@ -6,17 +6,19 @@ import { useQueryClient } from '@tanstack/react-query';
 import MasturbationSlider from './MasturbationSlider';
 
 export default function SextingSession({ servant, vampireState, onClose, onGainRelationship }) {
+  const queryClient = useQueryClient();
+  const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [heatLevel, setHeatLevel] = useState(0);
   const [showSlider, setShowSlider] = useState(false);
   const [sliderAction, setSliderAction] = useState(null);
-  const messagesEndRef = useRef(null);
-  const queryClient = useQueryClient();
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, isTyping]);
 
   const startSession = () => {
