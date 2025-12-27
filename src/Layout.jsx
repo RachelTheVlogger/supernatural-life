@@ -184,7 +184,7 @@ export default function Layout({ children, currentPageName }) {
                     }
                   }}
                   disabled={item.disabled}
-                  className={`flex flex-col items-center gap-1 flex-shrink-0 px-4 min-w-[70px] ${
+                  className={`flex flex-col items-center gap-1 flex-shrink-0 px-4 min-w-[70px] relative ${
                     isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-purple-300'
                   }`}
                 >
