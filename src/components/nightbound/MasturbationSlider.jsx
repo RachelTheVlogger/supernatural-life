@@ -52,14 +52,27 @@ export default function MasturbationSlider({ onFinish }) {
     }
   }, [intensity, particleId]);
 
+  // Show moans as slider moves
+  const handleSliderChange = (value) => {
+    setIntensity(value);
+    
+    // Add moan immediately on movement if intensity is high enough
+    if (value > 20) {
+      const moanList = getMoanText(value, edging);
+      const randomMoan = moanList[Math.floor(Math.random() * moanList.length)];
+      const newMoan = { id: Date.now() + Math.random(), text: randomMoan };
+      setMoans(prev => [...prev.slice(-6), newMoan]);
+    }
+  };
+
   useEffect(() => {
     if (intensity > 20) {
       const interval = setInterval(() => {
         const moanList = getMoanText(intensity, edging);
         const randomMoan = moanList[Math.floor(Math.random() * moanList.length)];
         const newMoan = { id: Date.now() + Math.random(), text: randomMoan };
-        setMoans(prev => [...prev.slice(-5), newMoan]);
-      }, edging && intensity > 60 ? 400 : intensity > 70 ? 500 : intensity > 50 ? 1000 : 1500);
+        setMoans(prev => [...prev.slice(-6), newMoan]);
+      }, edging && intensity > 60 ? 300 : intensity > 70 ? 400 : intensity > 50 ? 800 : 1200);
       
       return () => clearInterval(interval);
     }
