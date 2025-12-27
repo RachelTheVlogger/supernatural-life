@@ -53,7 +53,7 @@ export default function MangaCareer({ servant, onClose }) {
   const [generatingPlots, setGeneratingPlots] = useState(false);
   const [customTitle, setCustomTitle] = useState('');
   const [customPanels, setCustomPanels] = useState([
-    { description: '', dialogue: '' }
+    { description: '', dialogue: '', uploadedImage: null }
   ]);
   const [showSeriesManager, setShowSeriesManager] = useState(false);
   const [showCharacterManager, setShowCharacterManager] = useState(false);
@@ -824,32 +824,42 @@ Format as JSON:
       });
       
       for (let i = 0; i < Math.min(panels.length, 6); i++) {
-        setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
+        setGenerationProgress(`Processing panel ${i + 1}/${panels.length}...`);
         
-        // Build character appearance reminders
-        let characterReminders = '';
-        (career.manga_characters || []).forEach(char => {
-          if (char.description) {
-            characterReminders += `${char.name}: ${char.description}. `;
+        let imageUrl;
+        
+        // Check if panel has an uploaded image
+        if (panels[i].uploadedImage) {
+          imageUrl = panels[i].uploadedImage;
+        } else {
+          // Generate image with AI
+          // Build character appearance reminders
+          let characterReminders = '';
+          (career.manga_characters || []).forEach(char => {
+            if (char.description) {
+              characterReminders += `${char.name}: ${char.description}. `;
+            }
+          });
+          
+          const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, IMPORTANT: maintain exact character appearances and features as described, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs, consistent art style throughout`;
+          
+          const generateParams = { prompt: panelPrompt };
+          
+          // Include all reference images for consistency
+          const refImages = [];
+          if (career.style_reference_image) refImages.push(career.style_reference_image);
+          refImages.push(...characterRefs);
+          
+          if (refImages.length > 0) {
+            generateParams.existing_image_urls = refImages;
           }
-        });
-        
-        const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, IMPORTANT: maintain exact character appearances and features as described, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs, consistent art style throughout`;
-        
-        const generateParams = { prompt: panelPrompt };
-        
-        // Include all reference images for consistency
-        const refImages = [];
-        if (career.style_reference_image) refImages.push(career.style_reference_image);
-        refImages.push(...characterRefs);
-        
-        if (refImages.length > 0) {
-          generateParams.existing_image_urls = refImages;
+          
+          const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
+          imageUrl = imageResult.url;
         }
         
-        const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
         panelImages.push({
-          image: imageResult.url,
+          image: imageUrl,
           description: panels[i].description,
           dialogue: panels[i].dialogue
         });
@@ -893,7 +903,7 @@ Format as JSON:
       setShowCustomCreator(false);
       setChapterPrompt('');
       setCustomTitle('');
-      setCustomPanels([{ description: '', dialogue: '' }]);
+      setCustomPanels([{ description: '', dialogue: '', uploadedImage: null }]);
 
       setTimeout(() => {
         setWorking(false);
@@ -1575,7 +1585,7 @@ Format as JSON:
                     <button
                       onClick={() => {
                         if (customPanels.length < 6) {
-                          setCustomPanels([...customPanels, { description: '', dialogue: '' }]);
+                          setCustomPanels([...customPanels, { description: '', dialogue: '', uploadedImage: null }]);
                         }
                       }}
                       disabled={customPanels.length >= 6 || working}
@@ -1600,6 +1610,51 @@ Format as JSON:
                             </button>
                           )}
                         </div>
+
+                        {panel.uploadedImage && (
+                          <div className="mb-2 relative">
+                            <img src={panel.uploadedImage} alt={`Panel ${i + 1}`} className="w-full h-32 rounded object-cover" />
+                            <button
+                              onClick={() => {
+                                const newPanels = [...customPanels];
+                                newPanels[i].uploadedImage = null;
+                                setCustomPanels(newPanels);
+                              }}
+                              className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        )}
+
+                        {!panel.uploadedImage && (
+                          <label className="w-full bg-blue-900/40 border-2 border-dashed border-blue-500/50 hover:border-blue-500 rounded-lg p-3 cursor-pointer flex flex-col items-center justify-center mb-2">
+                            <span className="text-blue-400 text-xs">📸 Upload Image</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                try {
+                                  const result = await base44.integrations.Core.UploadFile({ file });
+                                  if (result?.file_url) {
+                                    const newPanels = [...customPanels];
+                                    newPanels[i].uploadedImage = result.file_url;
+                                    setCustomPanels(newPanels);
+                                  }
+                                } catch (error) {
+                                  console.error('Upload failed:', error);
+                                  setOutcome('Upload failed');
+                                  setTimeout(() => setOutcome(''), 2000);
+                                }
+                              }}
+                              className="hidden"
+                              disabled={working}
+                            />
+                          </label>
+                        )}
+
                         <textarea
                           value={panel.description}
                           onChange={(e) => {
@@ -1607,7 +1662,7 @@ Format as JSON:
                             newPanels[i].description = e.target.value;
                             setCustomPanels(newPanels);
                           }}
-                          placeholder="Panel description (e.g., 'Character charging up energy attack with dramatic lighting')"
+                          placeholder="Character names & plot description..."
                           className="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none mb-2"
                           rows={2}
                           disabled={working}
