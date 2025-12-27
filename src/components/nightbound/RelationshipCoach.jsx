@@ -178,7 +178,7 @@ Be direct, insightful, and tailored to their specific dynamic. ${isServantView ?
         : 'You are an AI life coach for a vampire. Discuss purpose, meaning, legacy, and navigating immortality.'
     };
 
-    const prompt = modePrompts[conversationMode] || modePrompts.general;
+    const prompt = `${modePrompts[conversationMode] || modePrompts.general}
 
 ${isServantView ? 'YOUR PROFILE (Servant):' : 'SERVANT PROFILE:'}
 - Name: ${selectedServant.name}
@@ -213,6 +213,7 @@ ${conversationHistory}
 ${isServantView ? 'SERVANT' : 'VAMPIRE'}'S QUESTION: ${userMessage}
 
 Respond naturally and helpfully. Give specific, actionable advice. Be direct but supportive. Reference specific aspects of their relationship. ${isServantView ? 'Remember this is a dangerous power dynamic - be protective of the servant while respecting their autonomy.' : ''} Keep responses conversational and 2-4 paragraphs max.`;
+    
     try {
       const response = await base44.integrations.Core.InvokeLLM({ prompt });
       setMessages(prev => [...prev, { role: 'coach', text: response }]);
