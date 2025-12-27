@@ -42,11 +42,11 @@ export default function RelationshipCoach({ vampireState, onClose, viewMode = 'v
       .map(log => log.entry)
       .join('\n');
 
-    const prompt = isServantView 
-      ? `You are an expert relationship coach specializing in vampire-servant dynamics. A human servant is asking about their relationship with their vampire master/mistress. Provide advice from THEIR perspective - help them navigate this intense, dangerous relationship.`
-      : `You are an expert relationship coach specializing in vampire-servant dynamics. Analyze this relationship and provide actionable advice.`;
+    const prompt = `${isServantView 
+      ? 'You are an expert relationship coach specializing in vampire-servant dynamics. A human servant is asking about their relationship with their vampire master/mistress. Provide advice from THEIR perspective - help them navigate this intense, dangerous relationship.'
+      : 'You are an expert relationship coach specializing in vampire-servant dynamics. Analyze this relationship and provide actionable advice.'}
 
-SERVANT PROFILE:
+${isServantView ? 'YOUR PROFILE (Servant):' : 'SERVANT PROFILE:'}
 - Name: ${servant.name}
 - Variant: ${servant.variant} (devoted=worships you, defiant=resists but attracted, dreamer=lost in fantasy)
 - Personality: ${servant.personality}
@@ -62,7 +62,7 @@ ${servant.is_turned ? `- Vampire Stage: ${servant.vampire_stage}/4
 - Vampire Power: ${servant.vampire_power_level}%
 - Nights as Vampire: ${servant.nights_as_vampire}` : ''}
 
-VAMPIRE PROFILE:
+${isServantView ? 'THEIR PROFILE (Your Vampire):' : 'VAMPIRE PROFILE:'}
 - Name: ${vampireState.vampire_name}
 - Gender: ${vampireState.gender}
 - Sexuality: ${vampireState.sexuality}
@@ -148,11 +148,11 @@ Be direct, insightful, and tailored to their specific dynamic. ${isServantView ?
 
     const conversationHistory = messages.map(m => `${m.role === 'user' ? (isServantView ? 'Servant' : 'Vampire') : 'Coach'}: ${m.text}`).join('\n');
 
-    const prompt = isServantView
-      ? `You are an expert relationship coach specializing in vampire-servant dynamics. You're having a conversation with a human servant about their relationship with their vampire master/mistress. Be supportive but honest about the dangers. Help them navigate their feelings while staying safe.`
-      : `You are an expert relationship coach specializing in vampire-servant dynamics. You're having a conversation with a vampire about their relationship with their servant.`;
+    const prompt = `${isServantView
+      ? 'You are an expert relationship coach specializing in vampire-servant dynamics. You\'re having a conversation with a human servant about their relationship with their vampire master/mistress. Be supportive but honest about the dangers. Help them navigate their feelings while staying safe.'
+      : 'You are an expert relationship coach specializing in vampire-servant dynamics. You\'re having a conversation with a vampire about their relationship with their servant.'}
 
-SERVANT PROFILE:
+${isServantView ? 'YOUR PROFILE (Servant):' : 'SERVANT PROFILE:'}
 - Name: ${selectedServant.name}
 - Variant: ${selectedServant.variant} (devoted=worships you, defiant=resists but attracted, dreamer=lost in fantasy)
 - Personality: ${selectedServant.personality}
@@ -168,7 +168,7 @@ ${selectedServant.is_turned ? `- Vampire Stage: ${selectedServant.vampire_stage}
 - Vampire Power: ${selectedServant.vampire_power_level}%
 - Nights as Vampire: ${selectedServant.nights_as_vampire}` : ''}
 
-VAMPIRE PROFILE:
+${isServantView ? 'THEIR PROFILE (Your Vampire):' : 'VAMPIRE PROFILE:'}
 - Name: ${vampireState.vampire_name}
 - Gender: ${vampireState.gender}
 - Sexuality: ${vampireState.sexuality}
