@@ -46,16 +46,16 @@ export default function HumanHome() {
     queryFn: () => base44.entities.VampireState.list()
   });
 
-  // Redirect to Home if no human exists
-  React.useEffect(() => {
-    if (humans.length === 0) {
-      navigate(createPageUrl('Home'), { replace: true });
-    }
-  }, [humans, navigate]);
-
   const human = humans[0];
 
-  const handleActivity = async (activity) => {
+  // Redirect to Home if no human exists
+  React.useEffect(() => {
+    if (!human) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [human, navigate]);
+
+  const handleActivity = React.useCallback(async (activity) => {
     if (!human) return;
     setActiveAction(activity.id);
     
@@ -249,18 +249,14 @@ export default function HumanHome() {
         setOutcome('');
       }, 5000);
     }, activity.duration);
-  };
-
-  const awarenessColor = human?.awareness_level > 70 ? 'text-red-400' : human?.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
-  const dangerColor = human?.danger_level > 70 ? 'text-red-400' : human?.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
+  }, [human, vampireStates, queryClient, navigate]);
 
   if (!human) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400">No human character found...</p>
-      </div>
-    );
+    return null;
   }
+
+  const awarenessColor = human.awareness_level > 70 ? 'text-red-400' : human.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
+  const dangerColor = human.danger_level > 70 ? 'text-red-400' : human.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
 
   return (
     <div className="min-h-screen bg-black p-6">
