@@ -60,6 +60,7 @@ export default function MangaCareer({ servant, onClose }) {
   const [promptReferenceImages, setPromptReferenceImages] = useState([]);
   const [promptPanelImages, setPromptPanelImages] = useState([]);
   const [customTitle, setCustomTitle] = useState('');
+  const [clothingStyle, setClothingStyle] = useState('casual');
   const [customPanels, setCustomPanels] = useState([
     { description: '', dialogue: '', uploadedImage: null }
   ]);
@@ -496,12 +497,12 @@ export default function MangaCareer({ servant, onClose }) {
 
       Create this chapter with:
       1. A compelling chapter title
-      2. EXACTLY 5-6 key manga panels with DETAILED descriptions - describe sexy/revealing clothing, intimate poses, suggestive scenarios
+      2. EXACTLY 5 or 6 key manga panels with DETAILED descriptions - describe sexy/revealing clothing, intimate poses, suggestive scenarios
       3. Brief EXPLICIT dialogue/narration for each panel (dialogue can be fully explicit)
       4. A plot summary
       5. Which characters appear (list their names from: ${characterNames || 'create new characters if needed'})
 
-      CRITICAL: Generate EXACTLY 5 or 6 panels, NOT 7. For panel descriptions, describe characters in revealing outfits, lingerie, swimwear, intimate positions WITH clothing. Dialogue/narration can be fully explicit.
+      CRITICAL: Generate EXACTLY 5 OR 6 panels ONLY (randomly choose 5 or 6, never 7 or 4). For panel descriptions, describe characters in revealing outfits, lingerie, swimwear, intimate positions WITH clothing. Dialogue/narration can be fully explicit.
 
       Format as JSON:
       {
@@ -775,13 +776,15 @@ Format as JSON array of strings.`,
 
         UNCENSORED 18+ MODE: Follow user's request with explicit content.
 
+        CLOTHING STYLE: Characters should be wearing ${clothingStyle} (casual everyday clothes, formal business attire, lingerie/underwear, swimwear/bikinis, nightwear/sleepwear, fantasy costumes, or revealing club outfits).
+
         Create this chapter with:
         1. A compelling chapter title based on their request
-        2. EXACTLY 5-6 key manga panels describing characters in sexy/revealing clothing, lingerie, swimwear, intimate poses and scenarios
+        2. EXACTLY 5 or 6 key manga panels describing characters in ${clothingStyle} with intimate poses and scenarios
         3. Brief FULLY EXPLICIT dialogue/narration for each panel
         4. A plot summary
 
-        CRITICAL: Generate EXACTLY 5 or 6 panels, NOT 7. Panel descriptions should show characters in revealing outfits doing intimate clothed acts - straddling, dominant/submissive positions, pinning, grinding, with clothes on. Dialogue/narration can be completely explicit and graphic.
+        CRITICAL: Generate EXACTLY 5 OR 6 panels ONLY (randomly choose 5 or 6, never 7 or 4). Panel descriptions must include ${clothingStyle} and show characters doing intimate clothed acts - straddling, dominant/submissive positions, pinning, grinding, with clothes on. Dialogue/narration can be completely explicit and graphic.
 
         Format as JSON:
         {
@@ -958,6 +961,7 @@ Format as JSON array of strings.`,
       setShowCustomCreator(false);
       setChapterPrompt('');
       setCustomTitle('');
+      setClothingStyle('casual');
       setCustomPanels([{ description: '', dialogue: '', uploadedImage: null }]);
       setPromptReferenceImages([]);
       setPromptPanelImages([]);
@@ -1638,6 +1642,26 @@ Format as JSON array of strings.`,
                     rows={6}
                     disabled={working}
                   />
+                </div>
+
+                <div>
+                  <label className="text-white text-sm mb-2 block">Clothing Style</label>
+                  <select
+                    value={clothingStyle}
+                    onChange={(e) => setClothingStyle(e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                    disabled={working}
+                  >
+                    <option value="casual">Casual Everyday</option>
+                    <option value="formal">Formal/Business</option>
+                    <option value="lingerie">Lingerie/Underwear</option>
+                    <option value="swimwear">Swimwear/Bikinis</option>
+                    <option value="nightwear">Nightwear/Sleepwear</option>
+                    <option value="fantasy">Fantasy Costumes</option>
+                    <option value="club">Revealing Club Outfits</option>
+                    <option value="athletic">Athletic/Sportswear</option>
+                    <option value="traditional">Traditional Japanese</option>
+                  </select>
                 </div>
 
                 <div>
