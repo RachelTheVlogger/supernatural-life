@@ -50,10 +50,10 @@ export default function HumanHome() {
 
   // Redirect to Home if no human exists
   React.useEffect(() => {
-    if (!human) {
+    if (humans.length === 0) {
       navigate(createPageUrl('Home'), { replace: true });
     }
-  }, [human, navigate]);
+  }, [humans.length, navigate]);
 
   const handleActivity = React.useCallback(async (activity) => {
     if (!human) return;
