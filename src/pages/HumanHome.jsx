@@ -51,10 +51,13 @@ export default function HumanHome() {
   
   // Vampire-specific activities that only show when vampire exists
   const vampireActivities = hasVampire ? [
-    { id: 'stalk_vampire', label: `Stalk ${vampire.vampire_name}`, icon: Eye, duration: 5000, awarenessChance: 0.3, requiresAwareness: 15 },
-    { id: 'visit_vampire', label: `Go to ${vampire.vampire_name}'s House`, icon: Heart, duration: 6000, awarenessChance: 0.5, requiresAwareness: 30 },
-    { id: 'social_stalk', label: `Stalk ${vampire.vampire_name} Online`, icon: Search, duration: 4000, awarenessChance: 0.2, requiresAwareness: 10 },
-    { id: 'confession', label: `Confess to ${vampire.vampire_name}`, icon: Heart, duration: 7000, requiresAwareness: 50 }
+    { id: 'stalk_vampire', label: 'Stalk Them', icon: Eye, duration: 5000, awarenessChance: 0.3, requiresAwareness: 15 },
+    { id: 'visit_vampire', label: 'Visit Their House', icon: Heart, duration: 6000, awarenessChance: 0.5, requiresAwareness: 30 },
+    { id: 'social_stalk', label: 'Stalk Them Online', icon: Search, duration: 4000, awarenessChance: 0.2, requiresAwareness: 10 },
+    { id: 'onlyfangs_search', label: 'Search OnlyFangs for Them', icon: Heart, duration: 4500, awarenessChance: 0.25, requiresAwareness: 20 },
+    { id: 'onlyfangs_record', label: 'Record Yourself for OnlyFangs', icon: Moon, duration: 6000, awarenessChance: 0.3, requiresAwareness: 25 },
+    { id: 'onlyfangs_message', label: 'Message Them on OnlyFangs', icon: Heart, duration: 5000, awarenessChance: 0.35, requiresAwareness: 30 },
+    { id: 'confession', label: 'Confess Your Obsession', icon: Heart, duration: 7000, requiresAwareness: 50 }
   ] : [];
 
   const handleActivity = React.useCallback(async (activity) => {
