@@ -289,7 +289,7 @@ export default function ServantHome() {
     }, chore.duration);
   };
   
-  if (!servant) {
+  if (!entity) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-400">Loading...</p>
@@ -643,7 +643,8 @@ export default function ServantHome() {
         )}
         {showCareerSelector && (
           <CareerSelector
-            servant={servant}
+            servant={servants.find(s => s.id === currentServantId)}
+            human={humans.find(h => h.id === currentServantId)}
             onClose={() => setShowCareerSelector(false)}
             onSelect={(careerType) => {
               setShowCareerSelector(false);

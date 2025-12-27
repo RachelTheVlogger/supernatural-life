@@ -35,7 +35,10 @@ const CAREERS = {
   }
 };
 
-export default function CareerSelector({ servant, onClose, onSelect }) {
+export default function CareerSelector({ servant, human, onClose, onSelect }) {
+  const entityId = servant?.id || human?.id;
+  const entityType = servant ? 'servant' : 'human';
+  const entityName = servant?.name || human?.name;
   const queryClient = useQueryClient();
   const [currentCareers, setCurrentCareers] = React.useState({
     jewelry: false,
@@ -46,7 +49,7 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
 
   React.useEffect(() => {
     const fetchCareers = async () => {
-      const existing = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
+      const existing = await base44.entities.ServantCareer.filter({ servant_id: entityId });
       if (existing.length > 0) {
         setCurrentCareers({
           jewelry: existing[0].jewelry_business_active || false,
@@ -57,7 +60,7 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
       }
     };
     fetchCareers();
-  }, [servant.id]);
+  }, [entityId]);
 
   const handleCareerClick = async (careerType) => {
     const isActive = currentCareers[careerType];
@@ -70,14 +73,14 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
     
     // Otherwise, toggle it on
     const careerData = {
-      servant_id: servant.id,
+      servant_id: entityId,
       jewelry_business_active: careerType === 'jewelry' ? true : currentCareers.jewelry,
       tattoo_business_active: careerType === 'tattoo' ? true : currentCareers.tattoo,
       author_career_active: careerType === 'author' ? true : currentCareers.author,
       manga_career_active: careerType === 'manga' ? true : currentCareers.manga
     };
 
-    const existing = await base44.entities.ServantCareer.filter({ servant_id: servant.id });
+    const existing = await base44.entities.ServantCareer.filter({ servant_id: entityId });
     
     if (existing.length > 0) {
       await base44.entities.ServantCareer.update(existing[0].id, careerData);
@@ -86,7 +89,7 @@ export default function CareerSelector({ servant, onClose, onSelect }) {
     }
 
     await base44.entities.NightLog.create({
-      entry: `${servant.name} started career: ${CAREERS[careerType].name}`,
+      entry: `${entityName} started career: ${CAREERS[careerType].name}`,
       category: 'interaction',
       intensity: 'moderate'
     });

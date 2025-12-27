@@ -52,9 +52,12 @@ export default function MangaCareer({ servant, onClose }) {
   const [exporting, setExporting] = useState(false);
   const [newCharacter, setNewCharacter] = useState({ name: '', description: '', referenceImage: null });
 
+  const entityId = servant?.id;
+  const entityName = servant?.name;
+
   const { data: careers = [] } = useQuery({
-    queryKey: ['career', servant.id],
-    queryFn: () => base44.entities.ServantCareer.filter({ servant_id: servant.id })
+    queryKey: ['career', entityId],
+    queryFn: () => base44.entities.ServantCareer.filter({ servant_id: entityId })
   });
 
   const career = careers[0];
@@ -320,7 +323,7 @@ export default function MangaCareer({ servant, onClose }) {
       });
       
       await base44.entities.NightLog.create({
-        entry: `${servant.name} created stunning cover art for "${seriesName}"!`,
+        entry: `${entityName} created stunning cover art for "${seriesName}"!`,
         category: 'interaction',
         intensity: 'moderate'
       });
@@ -461,7 +464,7 @@ Format as JSON:
       });
 
       await base44.entities.NightLog.create({
-        entry: `${servant.name} released Chapter ${newChapters}: "${title}" with ${panelImages.length} panels! +${fansGained} fans, +$${incomeGained}`,
+        entry: `${entityName} released Chapter ${newChapters}: "${title}" with ${panelImages.length} panels! +${fansGained} fans, +$${incomeGained}`,
         category: 'interaction',
         intensity: 'moderate'
       });
@@ -606,7 +609,7 @@ Format as JSON:
       });
 
       await base44.entities.NightLog.create({
-        entry: `${servant.name} created custom Chapter ${newChapters}: "${title}"! +${fansGained} fans, +$${incomeGained}`,
+        entry: `${entityName} created custom Chapter ${newChapters}: "${title}"! +${fansGained} fans, +$${incomeGained}`,
         category: 'interaction',
         intensity: 'moderate'
       });
@@ -671,7 +674,7 @@ Format as JSON:
       }
 
       await base44.entities.NightLog.create({
-        entry: `${servant.name} started "${seriesName}" - a ${genre.label} manga series!`,
+        entry: `${entityName} started "${seriesName}" - a ${genre.label} manga series!`,
         category: 'interaction',
         intensity: 'moderate'
       });
@@ -709,7 +712,7 @@ Format as JSON:
             <BookOpen className="w-8 h-8 text-purple-400" />
             <div>
               <h2 className="text-2xl font-bold text-white">Manga Artist</h2>
-              <p className="text-gray-400 text-sm">{servant.name}'s manga career</p>
+              <p className="text-gray-400 text-sm">{entityName}'s manga career</p>
             </div>
           </div>
         </div>

@@ -407,6 +407,30 @@ export default function HumanHome() {
           </motion.div>
         )}
 
+        {/* Manga Career Access */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-6"
+        >
+          <button
+            onClick={() => navigate(createPageUrl(`ServantHome?id=${human.id}`))}
+            className="w-full bg-gradient-to-r from-purple-900/40 to-blue-900/40 hover:from-purple-900/60 hover:to-blue-900/60 border border-purple-500/30 rounded-xl p-4 transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <BookOpen className="w-6 h-6 text-purple-400" />
+                <div className="text-left">
+                  <h3 className="text-white font-medium">Manga Career</h3>
+                  <p className="text-gray-400 text-sm">Create your own manga series</p>
+                </div>
+              </div>
+              <span className="text-purple-400">→</span>
+            </div>
+          </button>
+        </motion.div>
+
         {/* Activities */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
