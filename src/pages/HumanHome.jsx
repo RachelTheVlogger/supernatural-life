@@ -22,6 +22,7 @@ import HumanSocialMedia from '@/components/nightbound/HumanSocialMedia';
 import SubstanceSystem from '@/components/nightbound/SubstanceSystem';
 import GroceryShopping from '@/components/nightbound/GroceryShopping';
 import HumanPhone from '@/components/nightbound/HumanPhone';
+import CasualHookups from '@/components/nightbound/CasualHookups';
 
 
 const HUMAN_ACTIVITIES = [
@@ -37,6 +38,7 @@ const HUMAN_ACTIVITIES = [
   { id: 'apartment', label: '🏠 Apartment', icon: HomeIcon, duration: 0, isModal: true },
   { id: 'skills', label: '⭐ Skills', icon: BookOpen, duration: 0, isModal: true },
   { id: 'dating', label: '💕 Dating', icon: Heart, duration: 0, isModal: true },
+  { id: 'hookups', label: '🔥 Casual Hookups', icon: Users, duration: 0, isModal: true },
   { id: 'social_media', label: '📱 Social Media', icon: Eye, duration: 0, isModal: true },
   { id: 'substances', label: '💊 Substances', icon: Shield, duration: 0, isModal: true },
   { id: 'groceries', label: '🛒 Buy Groceries', icon: Coffee, duration: 0, isModal: true },
@@ -83,6 +85,7 @@ export default function HumanHome() {
   const [showSubstances, setShowSubstances] = useState(false);
   const [showGroceries, setShowGroceries] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [showHookups, setShowHookups] = useState(false);
   const [hadObsession, setHadObsession] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
@@ -129,6 +132,8 @@ export default function HumanHome() {
         setShowSkills(true);
       } else if (activity.id === 'dating') {
         setShowDating(true);
+      } else if (activity.id === 'hookups') {
+        setShowHookups(true);
       } else if (activity.id === 'social_media') {
         setShowSocialMedia(true);
       } else if (activity.id === 'substances') {
@@ -997,6 +1002,10 @@ export default function HumanHome() {
 
         {showPhone && (
           <HumanPhone human={human} onClose={() => setShowPhone(false)} />
+        )}
+
+        {showHookups && (
+          <CasualHookups human={human} onClose={() => setShowHookups(false)} />
         )}
 
         {showIdentity && (
