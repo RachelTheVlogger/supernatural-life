@@ -48,6 +48,9 @@ export default function MangaCareer({ servant, onClose }) {
   const [showCustomCreator, setShowCustomCreator] = useState(false);
   const [customMode, setCustomMode] = useState('prompt'); // 'prompt' or 'manual'
   const [chapterPrompt, setChapterPrompt] = useState('');
+  const [showPlotSuggestions, setShowPlotSuggestions] = useState(false);
+  const [plotSuggestions, setPlotSuggestions] = useState([]);
+  const [generatingPlots, setGeneratingPlots] = useState(false);
   const [customTitle, setCustomTitle] = useState('');
   const [customPanels, setCustomPanels] = useState([
     { description: '', dialogue: '' }
@@ -666,6 +669,49 @@ Format as JSON:
     }
   };
 
+  const handleGeneratePlotSuggestions = async () => {
+    setGeneratingPlots(true);
+    try {
+      const genre = career.current_genre || 'shonen';
+      const seriesName = career.series_name || 'Untitled';
+      const storySummary = career.story_summary || '';
+      const characterNames = (career.manga_characters || []).map(c => c.name).join(', ');
+      
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Generate 5 compelling plot ideas for the next chapter of "${seriesName}", a ${genre} manga.
+
+Story so far: ${storySummary}
+${characterNames ? `Main characters: ${characterNames}` : ''}
+
+Create 5 different plot directions. Each should be:
+- Engaging and dramatic
+- Appropriate for ${genre} genre
+- Building on the existing story
+- Between 1-2 sentences
+
+Format as JSON array of strings.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            plots: {
+              type: "array",
+              items: { type: "string" }
+            }
+          }
+        }
+      });
+      
+      setPlotSuggestions(result.plots || []);
+      setShowPlotSuggestions(true);
+    } catch (error) {
+      console.error('Failed to generate plots:', error);
+      setOutcome('Failed to generate plot suggestions');
+      setTimeout(() => setOutcome(''), 2000);
+    } finally {
+      setGeneratingPlots(false);
+    }
+  };
+
   const handleDrawChapter = async (silentMode = false) => {
     if (!career?.id) return;
     if (!silentMode) {
@@ -978,6 +1024,13 @@ Format as JSON:
                 className="bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
               >
                 {working && generationProgress.includes('Volume') ? generationProgress : '📚 Full Volume (8)'}
+              </button>
+              <button
+                onClick={handleGeneratePlotSuggestions}
+                disabled={working || generatingCover || generatingPlots}
+                className="col-span-2 bg-gradient-to-r from-cyan-900/40 to-blue-900/40 hover:from-cyan-900/60 hover:to-blue-900/60 border border-cyan-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
+              >
+                {generatingPlots ? '🤔 Thinking...' : '💡 Generate Plot Ideas'}
               </button>
               <button
                 onClick={() => setShowCustomCreator(true)}
@@ -2219,6 +2272,60 @@ Format as JSON:
       )}
       {selectedFeature === 'special' && (
         <MangaSpecials career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+      )}
+
+      {/* Plot Suggestions Modal */}
+      {showPlotSuggestions && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => setShowPlotSuggestions(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+          >
+            <h3 className="text-white text-2xl font-bold mb-4">💡 Plot Suggestions</h3>
+            <p className="text-gray-400 text-sm mb-6">Pick a plot direction or use as inspiration</p>
+
+            <div className="space-y-3 mb-6">
+              {plotSuggestions.map((plot, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setChapterPrompt(plot);
+                    setShowPlotSuggestions(false);
+                    setShowCustomCreator(true);
+                  }}
+                  className="w-full bg-gradient-to-br from-purple-950/40 to-blue-950/40 hover:from-purple-950/60 hover:to-blue-950/60 border border-purple-500/30 rounded-xl p-4 text-left transition-all"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">📖</span>
+                    <p className="text-white flex-1">{plot}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={handleGeneratePlotSuggestions}
+              disabled={generatingPlots}
+              className="w-full bg-cyan-900/40 hover:bg-cyan-900/60 border border-cyan-500/30 rounded-lg py-3 text-white disabled:opacity-50 mb-3"
+            >
+              {generatingPlots ? 'Generating...' : '🔄 Generate More Ideas'}
+            </button>
+
+            <button
+              onClick={() => setShowPlotSuggestions(false)}
+              className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg"
+            >
+              Close
+            </button>
+          </motion.div>
+        </motion.div>
       )}
 
       {/* Genre Selection Modal */}
