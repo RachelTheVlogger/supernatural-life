@@ -221,8 +221,8 @@ export default function DateAtApartment({ human, match, onClose }) {
               className="space-y-4"
             >
               <div className="bg-gray-800/50 border border-pink-500/30 rounded-xl p-4 mb-4">
-                <p className="text-white text-center">
-                  "{match.name} comes over. You close the door.\n\nThe apartment feels smaller. More intimate.\n\n"Nice place," they say.\n\nYou pour drinks. What now?"
+                <p className="text-white text-center whitespace-pre-line">
+                  {match.name} comes over. You close the door.{'\n\n'}The apartment feels smaller. More intimate.{'\n\n'}"Nice place," they say.{'\n\n'}You pour drinks. What now?
                 </p>
               </div>
 
