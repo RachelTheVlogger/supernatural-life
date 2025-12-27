@@ -134,10 +134,11 @@ export default function MangaCareer({ servant, onClose }) {
     setIsDragging(false);
   };
 
-  const resetPanelView = () => {
+  const resetPanelView = React.useCallback(() => {
     setPanelZoom(1);
     setPanelPosition({ x: 0, y: 0 });
-  };
+    setIsDragging(false);
+  }, []);
 
   const goToNextPanel = () => {
     const maxIndex = (viewingChapter?.panels?.length || 0) - 1;
@@ -1571,13 +1572,16 @@ Format as JSON array of strings.`,
                     e.stopPropagation();
                     e.preventDefault();
                   }}
+                  onTouchStart={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    setPanelZoom(1);
-                    setPanelPosition({ x: 0, y: 0 });
+                    resetPanelView();
                   }}
-                  className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm select-none"
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm select-none cursor-pointer"
                 >
                   Reset
                 </button>
