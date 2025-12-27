@@ -20,6 +20,7 @@ import HobbiesSystem from '@/components/nightbound/HobbiesSystem';
 import CareerSelector from '@/components/nightbound/CareerSelector';
 import ServantDating from '@/components/nightbound/ServantDating';
 import TattooStudio from '@/components/nightbound/TattooStudio';
+import MangaStore from '@/components/nightbound/MangaStore';
 import AuthorCareer from '@/components/nightbound/AuthorCareer';
 import ServantWitchInteraction from '@/components/nightbound/ServantWitchInteraction';
 import WitchServantInteraction from '@/components/nightbound/WitchServantInteraction';
@@ -137,6 +138,7 @@ export default function ServantHome() {
   const [showFamily, setShowFamily] = useState(false);
   const [showProgression, setShowProgression] = useState(false);
   const [showJournal, setShowJournal] = useState(false);
+  const [showMangaStore, setShowMangaStore] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -427,6 +429,12 @@ export default function ServantHome() {
             className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
           >
             📖 Journal
+          </button>
+          <button
+            onClick={() => setShowMangaStore(true)}
+            className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
+          >
+            📚 Manga Store
           </button>
         </div>
       </motion.div>
@@ -729,6 +737,12 @@ export default function ServantHome() {
           <JournalSystem
             servant={servant}
             onClose={() => setShowJournal(false)}
+          />
+        )}
+        {showMangaStore && (
+          <MangaStore
+            currentEntityId={entity?.id}
+            onClose={() => setShowMangaStore(false)}
           />
         )}
         {!vampireState && (showOnlyFangs || showServantInteractions || showYouTube || showSnapchat || showDating) && (
