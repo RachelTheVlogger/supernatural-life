@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 
 const ACTIONS = [
   { id: 'hunt', label: 'Hunt for Prey', icon: '🎯', duration: 3000 },
@@ -37,6 +38,7 @@ export default function IncubusHome() {
   const [acting, setActing] = useState(null);
   const [outcome, setOutcome] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
+  const [showIdentity, setShowIdentity] = useState(false);
 
   const { data: incubi = [] } = useQuery({
     queryKey: ['incubi'],
@@ -341,6 +343,57 @@ export default function IncubusHome() {
               >
                 Save
               </button>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {showIdentity && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowIdentity(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative max-h-[85vh] overflow-y-auto"
+            >
+              <button onClick={() => setShowIdentity(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-2xl font-bold text-white mb-4">Your Identity</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white font-medium mb-2 block">Sexuality</label>
+                  <div className="space-y-2">
+                    {['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'].map(s => (
+                      <button
+                        key={s}
+                        onClick={async () => {
+                          await base44.entities.Incubus.update(incubus.id, { sexuality: s });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm capitalize ${
+                          incubus.sexuality === s ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <PersonalitySelector
+                  selected={Array.isArray(incubus.personality) ? incubus.personality : (incubus.personality ? [incubus.personality] : ['menacing'])}
+                  onSelect={async (personality) => {
+                    await base44.entities.Incubus.update(incubus.id, { personality });
+                    queryClient.invalidateQueries();
+                  }}
+                />
+              </div>
             </motion.div>
           </motion.div>
         )}

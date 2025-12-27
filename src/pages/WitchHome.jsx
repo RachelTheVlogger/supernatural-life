@@ -14,6 +14,7 @@ import CurseSystem from '@/components/nightbound/CurseSystem';
 import TeachServants from '@/components/nightbound/TeachServants';
 import WitchCoven from '@/components/nightbound/WitchCoven';
 import WitchFamiliar from '@/components/nightbound/WitchFamiliar';
+import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 
 const SPELLS = {
   elemental: [
@@ -88,6 +89,7 @@ export default function WitchHome() {
   const [showTeaching, setShowTeaching] = useState(false);
   const [showCoven, setShowCoven] = useState(false);
   const [showFamiliar, setShowFamiliar] = useState(false);
+  const [showIdentity, setShowIdentity] = useState(false);
 
   const { data: witches = [], isLoading: witchLoading } = useQuery({
     queryKey: ['witches'],
@@ -575,6 +577,12 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
             }`}>
               {witch.disposition}
             </p>
+            <button
+              onClick={() => setShowIdentity(true)}
+              className="text-purple-400 hover:text-purple-300 text-sm mt-2"
+            >
+              Edit Identity →
+            </button>
           </motion.div>
 
           {/* Stats */}
@@ -940,6 +948,74 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
         {showTeaching && <TeachServants witch={witch} onClose={() => setShowTeaching(false)} />}
         {showCoven && <WitchCoven witch={witch} onClose={() => setShowCoven(false)} />}
         {showFamiliar && <WitchFamiliar witch={witch} onClose={() => setShowFamiliar(false)} />}
+        
+        {showIdentity && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowIdentity(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative max-h-[85vh] overflow-y-auto"
+            >
+              <button onClick={() => setShowIdentity(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-2xl font-bold text-white mb-4">Your Identity</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white font-medium mb-2 block">Name</label>
+                  <input
+                    type="text"
+                    defaultValue={witch.name}
+                    onBlur={async (e) => {
+                      const newName = e.target.value.trim();
+                      if (newName && newName !== witch.name) {
+                        await base44.entities.Witch.update(witch.id, { name: newName });
+                        queryClient.invalidateQueries();
+                      }
+                    }}
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-white font-medium mb-2 block">Sexuality</label>
+                  <div className="space-y-2">
+                    {['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'].map(s => (
+                      <button
+                        key={s}
+                        onClick={async () => {
+                          await base44.entities.Witch.update(witch.id, { sexuality: s });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm capitalize ${
+                          witch.sexuality === s ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <PersonalitySelector
+                  selected={Array.isArray(witch.personality) ? witch.personality : (witch.personality ? [witch.personality] : ['mysterious'])}
+                  onSelect={async (personality) => {
+                    await base44.entities.Witch.update(witch.id, { personality });
+                    queryClient.invalidateQueries();
+                  }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
 
         {showVampireInteractions && vampireState && (
           <motion.div

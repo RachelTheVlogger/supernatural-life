@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 
 
 const HUMAN_ACTIVITIES = [
@@ -32,6 +33,7 @@ export default function HumanHome() {
   const [showEncounter, setShowEncounter] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
   const [evidenceCollected, setEvidenceCollected] = useState([]);
+  const [showIdentity, setShowIdentity] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -291,6 +293,12 @@ export default function HumanHome() {
         >
           <h1 className="text-4xl font-bold text-white mb-2">{human.name}</h1>
           <p className="text-gray-400 capitalize">{human.job} • {human.gender}</p>
+          <button
+            onClick={() => setShowIdentity(true)}
+            className="text-purple-400 hover:text-purple-300 text-sm mt-2"
+          >
+            Edit Identity →
+          </button>
         </motion.div>
 
         {/* Stats */}
@@ -516,6 +524,81 @@ export default function HumanHome() {
               className="text-white text-xl"
             >
               Living your life...
+            </motion.div>
+          </motion.div>
+        )}
+
+        {showIdentity && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowIdentity(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative max-h-[85vh] overflow-y-auto"
+            >
+              <button onClick={() => setShowIdentity(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-2xl font-bold text-white mb-4">Your Identity</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white font-medium mb-2 block">Gender</label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'man', label: 'Man' },
+                      { value: 'woman', label: 'Woman' },
+                      { value: 'custom', label: 'Custom' }
+                    ].map(g => (
+                      <button
+                        key={g.value}
+                        onClick={async () => {
+                          await base44.entities.Human.update(human.id, { gender: g.value });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors ${
+                          human.gender === g.value ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {g.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-white font-medium mb-2 block">Sexuality</label>
+                  <div className="space-y-2">
+                    {['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'].map(s => (
+                      <button
+                        key={s}
+                        onClick={async () => {
+                          await base44.entities.Human.update(human.id, { sexuality: s });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm capitalize ${
+                          human.sexuality === s ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <PersonalitySelector
+                  selected={Array.isArray(human.personality) ? human.personality : (human.personality ? [human.personality] : ['cautious'])}
+                  onSelect={async (personality) => {
+                    await base44.entities.Human.update(human.id, { personality });
+                    queryClient.invalidateQueries();
+                  }}
+                />
+              </div>
             </motion.div>
           </motion.div>
         )}

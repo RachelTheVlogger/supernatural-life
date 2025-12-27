@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import PackDynamics from '@/components/nightbound/PackDynamics';
 import FullMoonEvent from '@/components/nightbound/FullMoonEvent';
+import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 
 const ACTIONS = [
   { id: 'hunt', label: 'Hunt in the Wild', icon: '🐺', duration: 3000 },
@@ -26,6 +27,7 @@ export default function WerewolfHome() {
   const [showNameInput, setShowNameInput] = useState(false);
   const [showPack, setShowPack] = useState(false);
   const [showFullMoon, setShowFullMoon] = useState(false);
+  const [showIdentity, setShowIdentity] = useState(false);
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
@@ -163,6 +165,12 @@ export default function WerewolfHome() {
             </button>
           </div>
           <p className={`${isDaytime ? 'text-orange-800' : 'text-orange-100'} text-sm capitalize`}>{werewolf.pack_rank} • {werewolf.current_form} form</p>
+          <button
+            onClick={() => setShowIdentity(true)}
+            className={`${isDaytime ? 'text-orange-700 hover:text-orange-900' : 'text-orange-400 hover:text-orange-300'} text-sm mt-2`}
+          >
+            Edit Identity →
+          </button>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -258,6 +266,81 @@ export default function WerewolfHome() {
 
         {showPack && <PackDynamics werewolf={werewolf} onClose={() => setShowPack(false)} />}
         {showFullMoon && <FullMoonEvent werewolf={werewolf} onClose={() => setShowFullMoon(false)} />}
+
+        {showIdentity && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowIdentity(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full relative max-h-[85vh] overflow-y-auto"
+            >
+              <button onClick={() => setShowIdentity(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-2xl font-bold text-white mb-4">Your Identity</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white font-medium mb-2 block">Gender</label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'man', label: 'Man' },
+                      { value: 'woman', label: 'Woman' },
+                      { value: 'custom', label: 'Custom' }
+                    ].map(g => (
+                      <button
+                        key={g.value}
+                        onClick={async () => {
+                          await base44.entities.PlayerWerewolf.update(werewolf.id, { gender: g.value });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors ${
+                          werewolf.gender === g.value ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {g.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-white font-medium mb-2 block">Sexuality</label>
+                  <div className="space-y-2">
+                    {['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'questioning'].map(s => (
+                      <button
+                        key={s}
+                        onClick={async () => {
+                          await base44.entities.PlayerWerewolf.update(werewolf.id, { sexuality: s });
+                          queryClient.invalidateQueries();
+                        }}
+                        className={`w-full rounded-lg py-2 px-3 text-left transition-colors text-sm capitalize ${
+                          werewolf.sexuality === s ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <PersonalitySelector
+                  selected={Array.isArray(werewolf.personality) ? werewolf.personality : (werewolf.personality ? [werewolf.personality] : ['protective'])}
+                  onSelect={async (personality) => {
+                    await base44.entities.PlayerWerewolf.update(werewolf.id, { personality });
+                    queryClient.invalidateQueries();
+                  }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
 
         {showNameInput && (
           <motion.div
