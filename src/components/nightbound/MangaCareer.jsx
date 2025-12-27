@@ -15,7 +15,8 @@ const GENRES = [
   { id: 'seinen', label: 'Seinen', icon: '🌙', desc: 'Mature themes' },
   { id: 'josei', label: 'Josei', icon: '🌸', desc: 'Adult romance & drama' },
   { id: 'isekai', label: 'Isekai', icon: '🌀', desc: 'Transported to another world' },
-  { id: 'slice-of-life', label: 'Slice of Life', icon: '☕', desc: 'Everyday moments' }
+  { id: 'slice-of-life', label: 'Slice of Life', icon: '☕', desc: 'Everyday moments' },
+  { id: 'psychological', label: 'Psychological', icon: '🥀', desc: 'Unsettling, obsessive, morally complex' }
 ];
 
 const ART_STYLES = [
@@ -382,7 +383,8 @@ export default function MangaCareer({ servant, onClose }) {
         seinen: 'dark mature setting with gritty realism',
         josei: 'elegant sophisticated scene with adult themes',
         isekai: 'fantasy world with magic and adventure',
-        'slice-of-life': 'peaceful everyday life scene with warm colors'
+        'slice-of-life': 'peaceful everyday life scene with warm colors',
+        psychological: 'disturbing psychological tension, voyeuristic perspective, uncomfortable intimacy, moral decay, obsessive behavior, unsettling atmosphere'
       };
       
       const styleDescriptions = {
@@ -850,7 +852,8 @@ Format as JSON:
         seinen: ['Dark Society', 'Broken Glass', 'Urban Tales'],
         josei: ['After Hours', 'Office Affairs', 'Midnight Calls'],
         isekai: ['Another World', 'Portal Quest', 'Reborn Legend'],
-        'slice-of-life': ['Daily Life', 'Coffee Shop Days', 'Small Town Stories']
+        'slice-of-life': ['Daily Life', 'Coffee Shop Days', 'Small Town Stories'],
+        psychological: ['Twisted Reality', 'Rotting Petals', 'Distortion']
       };
 
       const names = seriesNames[genre.id];
