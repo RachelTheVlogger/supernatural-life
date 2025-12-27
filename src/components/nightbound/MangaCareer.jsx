@@ -1489,13 +1489,21 @@ Format as JSON array of strings.`,
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="relative max-w-4xl max-h-[80vh] touch-none"
-                onMouseDown={handlePanelDragStart}
-                onMouseMove={handlePanelDrag}
+                className="relative max-w-4xl max-h-[80vh]"
+                onMouseDown={(e) => {
+                  if (panelZoom > 1) handlePanelDragStart(e);
+                }}
+                onMouseMove={(e) => {
+                  if (isDragging) handlePanelDrag(e);
+                }}
                 onMouseUp={handlePanelDragEnd}
                 onMouseLeave={handlePanelDragEnd}
-                onTouchStart={handlePanelDragStart}
-                onTouchMove={handlePanelDrag}
+                onTouchStart={(e) => {
+                  if (panelZoom > 1) handlePanelDragStart(e);
+                }}
+                onTouchMove={(e) => {
+                  if (isDragging) handlePanelDrag(e);
+                }}
                 onTouchEnd={handlePanelDragEnd}
                 onWheel={(e) => {
                   e.preventDefault();
@@ -1568,20 +1576,13 @@ Format as JSON array of strings.`,
                   +
                 </button>
                 <button
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                  }}
-                  onTouchStart={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                  }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    e.preventDefault();
-                    resetPanelView();
+                    setPanelZoom(1);
+                    setPanelPosition({ x: 0, y: 0 });
+                    setIsDragging(false);
                   }}
-                  className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm select-none cursor-pointer"
+                  className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm select-none cursor-pointer"
                 >
                   Reset
                 </button>
