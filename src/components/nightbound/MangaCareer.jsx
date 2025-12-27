@@ -169,19 +169,27 @@ export default function MangaCareer({ servant, onClose }) {
 
   const handleCreateCharacter = async () => {
     if (!career?.id || !newCharacter.name.trim()) return;
-    
+
+    // Check for duplicate names
+    const existingNames = (career.manga_characters || []).map(c => c.name.toLowerCase());
+    if (existingNames.includes(newCharacter.name.toLowerCase())) {
+      setOutcome('Character with this name already exists!');
+      setTimeout(() => setOutcome(''), 2000);
+      return;
+    }
+
     setWorking(true);
     try {
       // Generate character reference image
-      const prompt = `${newCharacter.description}, character reference sheet, ${career.art_style} manga style, full body, multiple angles, character design`;
-      
+      const prompt = `${newCharacter.description}, character reference sheet, ${career.art_style} manga style, full body, multiple angles, character design, unique character design`;
+
       const generateParams = { prompt };
       if (career.style_reference_image) {
         generateParams.existing_image_urls = [career.style_reference_image];
       }
-      
+
       const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
-      
+
       const characters = career.manga_characters || [];
       characters.push({
         id: Date.now().toString(),
@@ -1095,7 +1103,7 @@ Format as JSON:
             </AnimatePresence>
           </div>
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+          <div className="absolute bottom-4 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent p-6 pb-8">
             {viewingChapter.panels[currentPanelIndex].dialogue && (
               <div className="bg-gray-900/90 rounded-lg p-4 mb-4 max-w-2xl mx-auto border border-purple-500/30">
                 <p className="text-white text-center">{viewingChapter.panels[currentPanelIndex].dialogue}</p>
