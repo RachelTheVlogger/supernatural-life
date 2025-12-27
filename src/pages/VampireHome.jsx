@@ -157,28 +157,11 @@ export default function VampireHome() {
     }
   }, [servants, identityRevelation, vampireStates.length]);
 
-  // Don't render anything if loading
-  if (vampireLoading) {
+  // Don't render if still loading or no vampire
+  if (vampireLoading || !vampireState) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
-  // Show message if no vampire exists - let user navigate manually
-  if (!vampireState) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <p className="text-gray-400 mb-4">No vampire found</p>
-          <button
-            onClick={() => navigate(createPageUrl('Home'))}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg"
-          >
-            Go to Home
-          </button>
-        </div>
       </div>
     );
   }
