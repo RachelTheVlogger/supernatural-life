@@ -60,10 +60,6 @@ export default function HumanHome() {
     }
   }, [humans, vampireLoading, navigate]);
 
-  if (!human) {
-    return null;
-  }
-
   const handleActivity = async (activity) => {
     if (!human) return;
     setActiveAction(activity.id);
@@ -260,6 +256,9 @@ export default function HumanHome() {
     }, activity.duration);
   };
 
+  const awarenessColor = human?.awareness_level > 70 ? 'text-red-400' : human?.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
+  const dangerColor = human?.danger_level > 70 ? 'text-red-400' : human?.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
+
   if (!human) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -267,9 +266,6 @@ export default function HumanHome() {
       </div>
     );
   }
-
-  const awarenessColor = human.awareness_level > 70 ? 'text-red-400' : human.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
-  const dangerColor = human.danger_level > 70 ? 'text-red-400' : human.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
 
   return (
     <div className="min-h-screen bg-black p-6">
