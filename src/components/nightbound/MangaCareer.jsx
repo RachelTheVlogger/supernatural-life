@@ -567,9 +567,8 @@ Format as JSON:
 
       const panelImages = [];
       
-      // Collect character reference images for consistency and track which characters appear
+      // Collect character reference images for consistency
       const characterRefs = [];
-      const characterNames = characters.map(c => c.name).join(', ');
       characters.forEach(c => {
         if (c.referenceImages && c.referenceImages.length > 0) {
           characterRefs.push(...c.referenceImages);
