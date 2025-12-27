@@ -59,8 +59,11 @@ export default function DancingSlider({ gender, context = 'performance', vampire
         </p>
       </div>
 
-      {/* Visual feedback */}
-      <div className="relative h-40 bg-black/40 rounded-xl mb-6 overflow-hidden">
+      {/* Visual feedback - Abstract dancer */}
+      <div className="relative h-48 bg-black/40 rounded-xl mb-6 overflow-hidden">
+        {/* Stage floor */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+        
         {/* Background pulse */}
         <motion.div
           animate={{
@@ -71,11 +74,21 @@ export default function DancingSlider({ gender, context = 'performance', vampire
           className="absolute inset-0 bg-gradient-to-t from-pink-600/30 via-purple-600/20 to-transparent"
         />
         
+        {/* Spotlight */}
+        <motion.div
+          animate={{
+            opacity: intensity > 20 ? [0.3, 0.6, 0.3] : 0,
+            scale: [0.8, 1.2, 0.8]
+          }}
+          transition={{ duration: 1, repeat: Infinity }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-yellow-400/20 rounded-full blur-3xl"
+        />
+        
         {/* Particles */}
         <AnimatePresence>
-          {intensity > 20 && (
+          {intensity > 30 && (
             <>
-              {[...Array(Math.floor(intensity / 10))].map((_, i) => (
+              {[...Array(Math.floor(intensity / 15))].map((_, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, scale: 0, y: 100 }}
@@ -88,46 +101,112 @@ export default function DancingSlider({ gender, context = 'performance', vampire
                   transition={{ duration: 2, delay: i * 0.1, repeat: Infinity }}
                   className="absolute bottom-0 left-1/2"
                 >
-                  {i % 3 === 0 ? '🔥' : i % 3 === 1 ? '💋' : '✨'}
+                  <Flame className="w-4 h-4 text-pink-500" />
                 </motion.div>
               ))}
             </>
           )}
         </AnimatePresence>
         
-        {/* Dancing figure */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            animate={{ 
-              scale: [1, 1 + intensity / 80, 1],
-              rotate: intensity > 50 ? [0, -15, 15, -10, 10, 0] : [0, -8, 8, 0],
-              y: moveType === 'drop' || moveType === 'floor' ? [0, 20, 0] : [0, -10, 0],
-              x: moveType === 'sway' || moveType === 'grind' ? [-10, 10, -10] : 0
-            }}
-            transition={{ 
-              duration: intensity > 60 ? 0.5 : 1,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="text-6xl"
-            style={{
-              filter: intensity > 70 ? `drop-shadow(0 0 ${intensity / 5}px #ec4899)` : 'none'
-            }}
-          >
-            {gender === 'woman' ? '💃' : '🕺'}
-          </motion.div>
+        {/* Abstract dancing figure */}
+        <div className="absolute inset-0 flex items-end justify-center pb-4">
+          {/* Body */}
+          <div className="relative">
+            {/* Head */}
+            <motion.div
+              animate={{
+                rotate: moveType === 'sway' || moveType === 'grind' ? [-15, 15, -15] : [0, -10, 10, 0],
+                y: intensity > 60 ? [-5, 5, -5] : [0, -3, 0]
+              }}
+              transition={{ duration: intensity > 60 ? 0.4 : 0.8, repeat: Infinity, ease: "easeInOut" }}
+              className="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full mx-auto mb-1"
+              style={{
+                filter: intensity > 50 ? `drop-shadow(0 0 ${intensity / 5}px #ec4899)` : 'none'
+              }}
+            />
+            
+            {/* Torso */}
+            <motion.div
+              animate={{
+                scaleX: moveType === 'grind' ? [1, 1.1, 1] : [1, 0.95, 1],
+                rotate: moveType === 'sway' ? [-8, 8, -8] : [0, -5, 5, 0],
+                y: moveType === 'drop' || moveType === 'floor' ? [0, 30] : [0, -5, 0]
+              }}
+              transition={{ duration: intensity > 60 ? 0.5 : 1, repeat: Infinity, ease: "easeInOut" }}
+              className="w-16 h-20 bg-gradient-to-b from-pink-500 to-purple-500 rounded-t-3xl rounded-b-lg mx-auto"
+            />
+            
+            {/* Hips (for women) */}
+            {gender === 'woman' && (
+              <motion.div
+                animate={{
+                  scaleX: moveType === 'sway' || moveType === 'grind' ? [1, 1.3, 1] : [1, 1.1, 1],
+                  rotate: moveType === 'sway' ? [-20, 20, -20] : moveType === 'grind' ? [-15, 15, -15] : [0],
+                  y: moveType === 'twerk' ? [-3, 3, -3] : [0]
+                }}
+                transition={{ 
+                  duration: intensity > 60 ? 0.3 : 0.6, 
+                  repeat: Infinity, 
+                  ease: "easeInOut"
+                }}
+                className="w-20 h-8 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full mx-auto -mt-2"
+              />
+            )}
+            
+            {/* Arms */}
+            <motion.div
+              animate={{
+                rotate: intensity > 50 ? [0, 45, -45, 0] : [0, 20, -20, 0]
+              }}
+              transition={{ duration: intensity > 60 ? 0.6 : 1.2, repeat: Infinity }}
+              className="absolute top-14 -left-6 w-2 h-16 bg-gradient-to-b from-pink-400 to-pink-500 rounded-full origin-top"
+              style={{ transformOrigin: 'top center' }}
+            />
+            <motion.div
+              animate={{
+                rotate: intensity > 50 ? [0, -45, 45, 0] : [0, -20, 20, 0]
+              }}
+              transition={{ duration: intensity > 60 ? 0.6 : 1.2, repeat: Infinity }}
+              className="absolute top-14 -right-6 w-2 h-16 bg-gradient-to-b from-pink-400 to-pink-500 rounded-full origin-top"
+              style={{ transformOrigin: 'top center' }}
+            />
+            
+            {/* Legs */}
+            <motion.div
+              animate={{
+                rotate: moveType === 'drop' ? [0, -20] : [-15, 15, -15]
+              }}
+              transition={{ duration: intensity > 60 ? 0.4 : 0.8, repeat: Infinity }}
+              className="absolute -bottom-14 left-2 w-3 h-16 bg-gradient-to-b from-purple-600 to-purple-700 rounded-full origin-top"
+            />
+            <motion.div
+              animate={{
+                rotate: moveType === 'drop' ? [0, 20] : [15, -15, 15]
+              }}
+              transition={{ duration: intensity > 60 ? 0.4 : 0.8, repeat: Infinity }}
+              className="absolute -bottom-14 right-2 w-3 h-16 bg-gradient-to-b from-purple-600 to-purple-700 rounded-full origin-top"
+            />
+          </div>
         </div>
         
-        {/* Spotlight effect */}
-        {intensity > 40 && (
-          <motion.div
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-              scale: [0.8, 1.2, 0.8]
-            }}
-            transition={{ duration: 1, repeat: Infinity }}
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-yellow-400/20 rounded-full blur-3xl"
-          />
+        {/* Energy waves */}
+        {intensity > 60 && (
+          <>
+            {[...Array(3)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0, opacity: 0.8 }}
+                animate={{ scale: 3, opacity: 0 }}
+                transition={{ 
+                  duration: 2,
+                  delay: i * 0.5,
+                  repeat: Infinity,
+                  repeatDelay: 0.5
+                }}
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 w-20 h-20 border-2 border-pink-500 rounded-full"
+              />
+            ))}
+          </>
         )}
 
         {intensity > 50 && vampireName && (
