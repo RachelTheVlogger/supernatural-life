@@ -8,9 +8,18 @@ export default function MusicCareer({ human, onClose }) {
   const [activeTab, setActiveTab] = useState('create');
   const [creating, setCreating] = useState(false);
   const [performing, setPerforming] = useState(false);
-  const [newSong, setNewSong] = useState({ title: '', genre: 'pop', vibe: 'upbeat' });
+  const [newSong, setNewSong] = useState({ 
+    title: '', 
+    genre: 'pop', 
+    vibe: 'upbeat',
+    contentType: 'clean',
+    lyrics: ''
+  });
   const [performanceOutcome, setPerformanceOutcome] = useState(null);
   const [vampireEvent, setVampireEvent] = useState(null);
+  const [tourPlan, setTourPlan] = useState(null);
+  const [fanInteraction, setFanInteraction] = useState(null);
+  const [songs, setSongs] = useState([]);
   const queryClient = useQueryClient();
 
   const { data: vampires = [] } = useQuery({
@@ -24,21 +33,46 @@ export default function MusicCareer({ human, onClose }) {
     if (!newSong.title) return;
     setCreating(true);
 
-    const earnings = Math.floor(Math.random() * 100) + 50;
-    const streams = Math.floor(Math.random() * 5000) + 1000;
+    const baseStreams = newSong.contentType === 'explicit_sexual' ? 8000 : 
+                       newSong.contentType === 'dark' ? 6000 : 
+                       newSong.contentType === 'romantic' ? 4000 : 2000;
+    const streams = Math.floor(Math.random() * 5000) + baseStreams;
+    const earnings = Math.floor(streams / 10);
+
+    const contentDescriptions = {
+      clean: 'radio-friendly track',
+      romantic: 'sensual love song',
+      dark: 'haunting, disturbing piece',
+      explicit_sexual: 'explicit, sexually charged anthem',
+      vampire_themed: 'vampire-obsessed dark song'
+    };
+
+    const newSongData = {
+      ...newSong,
+      streams,
+      earnings,
+      id: Date.now()
+    };
+
+    setSongs(prev => [...prev, newSongData]);
 
     await base44.entities.NightLog.create({
-      entry: `${human.name} released "${newSong.title}" (${newSong.genre}) - ${streams} streams, earned $${earnings}`,
+      entry: `${human.name} released "${newSong.title}" (${contentDescriptions[newSong.contentType]}) - ${streams} streams, $${earnings}. ${newSong.contentType === 'explicit_sexual' ? 'The explicit content is going viral.' : newSong.contentType === 'vampire_themed' ? 'Fans think it\'s about someone specific...' : ''}`,
       category: 'interaction',
-      intensity: 'moderate'
+      intensity: newSong.contentType === 'explicit_sexual' || newSong.contentType === 'vampire_themed' ? 'significant' : 'moderate'
     });
 
+    const obsessionGain = newSong.contentType === 'vampire_themed' ? 15 : 
+                         newSong.contentType === 'explicit_sexual' ? 8 : 3;
+
     await base44.entities.Human.update(human.id, {
-      obsession_level: Math.min(100, (human.obsession_level || 0) + 3)
+      obsession_level: Math.min(100, (human.obsession_level || 0) + obsessionGain),
+      awareness_level: newSong.contentType === 'vampire_themed' ? 
+        Math.min(100, (human.awareness_level || 0) + 10) : (human.awareness_level || 0)
     });
 
     queryClient.invalidateQueries();
-    setNewSong({ title: '', genre: 'pop', vibe: 'upbeat' });
+    setNewSong({ title: '', genre: 'pop', vibe: 'upbeat', contentType: 'clean', lyrics: '' });
     setCreating(false);
   };
 
@@ -82,6 +116,124 @@ export default function MusicCareer({ human, onClose }) {
 
     queryClient.invalidateQueries();
     setPerforming(false);
+  };
+
+  const startTour = () => {
+    const cities = ['New York', 'Los Angeles', 'Chicago', 'Miami', 'Seattle', 'Austin'];
+    const numCities = Math.floor(Math.random() * 3) + 3;
+    const tourCities = cities.sort(() => Math.random() - 0.5).slice(0, numCities);
+    
+    setTourPlan({
+      cities: tourCities,
+      currentCity: 0,
+      totalEarnings: 0
+    });
+  };
+
+  const performTourStop = async () => {
+    if (!tourPlan) return;
+    
+    const city = tourPlan.cities[tourPlan.currentCity];
+    const crowd = Math.floor(Math.random() * 500) + 200;
+    const earnings = Math.floor(Math.random() * 800) + 400;
+    
+    const vampireAttends = vampire && Math.random() > 0.5;
+    
+    const outcome = vampireAttends ?
+      `${city} show SOLD OUT. ${crowd} fans screaming.\n\n${vampire.vampire_name} was in the VIP section. Watching you. Only you.\n\nAfter the show, they came backstage.\n\n"You're captivating on stage," they said.\n\nTheir eyes never left yours.\n\n+$${earnings}` :
+      `${city} show was electric. ${crowd} fans. Your music connects with people.\n\nFans screaming your name. Some threw things on stage.\n\nYou're building something real here.\n\n+$${earnings}`;
+    
+    const newTourPlan = {
+      ...tourPlan,
+      currentCity: tourPlan.currentCity + 1,
+      totalEarnings: tourPlan.totalEarnings + earnings
+    };
+    
+    if (vampireAttends) {
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.min(100, (human.obsession_level || 0) + 12),
+        vampire_encounters: (human.vampire_encounters || 0) + 1
+      });
+    }
+    
+    await base44.entities.NightLog.create({
+      entry: `${human.name} performed in ${city} - ${crowd} fans, $${earnings}${vampireAttends ? `. ${vampire.vampire_name} attended.` : ''}`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+    
+    if (newTourPlan.currentCity >= tourPlan.cities.length) {
+      setPerformanceOutcome(`TOUR COMPLETE!\n\nYou played ${tourPlan.cities.length} cities.\n\nTotal earnings: $${newTourPlan.totalEarnings}\n\nYour fanbase exploded. You're a star now.`);
+      setTourPlan(null);
+    } else {
+      setPerformanceOutcome(outcome);
+      setTourPlan(newTourPlan);
+    }
+    
+    queryClient.invalidateQueries();
+  };
+
+  const handleFanInteraction = () => {
+    const interactions = [
+      {
+        type: 'confession',
+        text: `A fan messaged you: "Your music saved my life. I listen to it every night."\n\nThey're obsessed with you.`,
+        obsessionGain: 5
+      },
+      {
+        type: 'sexual_request',
+        text: `Fan DM: "Can you write a song about us fucking? I'll pay you."\n\nThey attached explicit photos.`,
+        obsessionGain: 10,
+        awareness: 5
+      },
+      {
+        type: 'stalker',
+        text: `Someone's been following you after shows.\n\nThey know where you live.\n\nLeft flowers at your door with a note: "I'm your biggest fan."`,
+        obsessionGain: 8,
+        danger: 15
+      }
+    ];
+    
+    if (vampire && Math.random() > 0.6) {
+      setFanInteraction({
+        type: 'vampire_fan',
+        text: `${vampire.vampire_name} sent you a message:\n\n"I've been to every show. You sing like you're in pain. Like you're hungry for something.\n\nI understand that hunger.\n\nMeet me after the next show."`,
+        obsessionGain: 20,
+        awareness: 15
+      });
+    } else {
+      setFanInteraction(interactions[Math.floor(Math.random() * interactions.length)]);
+    }
+  };
+
+  const respondToFan = async (accept) => {
+    if (!fanInteraction) return;
+    
+    if (fanInteraction.type === 'vampire_fan' && accept) {
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.min(100, (human.obsession_level || 0) + 25),
+        awareness_level: Math.min(100, (human.awareness_level || 0) + 20),
+        vampire_encounters: (human.vampire_encounters || 0) + 1,
+        romance_with_vampire: vampire.id
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: `${human.name} met ${vampire.vampire_name} after the show. The connection is undeniable. Dangerous. Intoxicating.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+      
+      alert(`You met ${vampire.vampire_name} backstage.\n\nThey touched your face.\n\n"Your music speaks to me," they whispered.\n\n"Like you're singing about us."`);
+    } else {
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.min(100, (human.obsession_level || 0) + (fanInteraction.obsessionGain || 0)),
+        awareness_level: Math.min(100, (human.awareness_level || 0) + (fanInteraction.awareness || 0)),
+        danger_level: Math.min(100, (human.danger_level || 0) + (fanInteraction.danger || 0))
+      });
+    }
+    
+    queryClient.invalidateQueries();
+    setFanInteraction(null);
   };
 
   const acceptVampirePatron = async () => {
@@ -131,7 +283,83 @@ export default function MusicCareer({ human, onClose }) {
         </div>
 
         <AnimatePresence mode="wait">
-          {vampireEvent ? (
+          {fanInteraction ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-4"
+            >
+              <div className={`rounded-xl p-6 border-2 ${
+                fanInteraction.type === 'vampire_fan' ? 'bg-red-950/40 border-red-500/50' :
+                fanInteraction.type === 'stalker' ? 'bg-orange-950/40 border-orange-500/50' :
+                'bg-purple-950/40 border-purple-500/50'
+              }`}>
+                <h3 className="text-white font-bold text-lg mb-3">
+                  {fanInteraction.type === 'vampire_fan' ? '🦇 Message from Admirer' :
+                   fanInteraction.type === 'stalker' ? '⚠️ Stalker Alert' :
+                   fanInteraction.type === 'sexual_request' ? '💋 Explicit Fan Request' :
+                   '💌 Fan Message'}
+                </h3>
+                <p className="text-gray-300 whitespace-pre-line mb-4">{fanInteraction.text}</p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => respondToFan(false)}
+                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl"
+                >
+                  Ignore
+                </button>
+                <button
+                  onClick={() => respondToFan(true)}
+                  className={`flex-1 ${
+                    fanInteraction.type === 'vampire_fan' 
+                      ? 'bg-gradient-to-r from-red-600 to-purple-600' 
+                      : 'bg-purple-600'
+                  } hover:opacity-90 text-white py-3 rounded-xl font-bold`}
+                >
+                  {fanInteraction.type === 'vampire_fan' ? 'Meet Them' : 'Respond'}
+                </button>
+              </div>
+            </motion.div>
+          ) : tourPlan && !performanceOutcome ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-4"
+            >
+              <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-6">
+                <h3 className="text-white font-bold text-xl mb-4">
+                  🎸 ON TOUR
+                </h3>
+                <div className="space-y-2 mb-4">
+                  {tourPlan.cities.map((city, i) => (
+                    <div key={city} className={`flex items-center gap-3 ${
+                      i < tourPlan.currentCity ? 'text-green-400' :
+                      i === tourPlan.currentCity ? 'text-white font-bold' :
+                      'text-gray-500'
+                    }`}>
+                      <span>{i < tourPlan.currentCity ? '✓' : i === tourPlan.currentCity ? '▶' : '○'}</span>
+                      <span>{city}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-green-950/40 border border-green-500/30 rounded-lg p-3 mb-4">
+                  <p className="text-green-400 font-bold text-center">
+                    Tour Earnings: ${tourPlan.totalEarnings}
+                  </p>
+                </div>
+                <p className="text-gray-400 text-sm text-center mb-4">
+                  Stop {tourPlan.currentCity + 1} of {tourPlan.cities.length}: {tourPlan.cities[tourPlan.currentCity]}
+                </p>
+              </div>
+              <button
+                onClick={performTourStop}
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold"
+              >
+                🎤 Perform in {tourPlan.cities[tourPlan.currentCity]}
+              </button>
+            </motion.div>
+          ) : vampireEvent ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -193,18 +421,36 @@ export default function MusicCareer({ human, onClose }) {
             </motion.div>
           ) : (
             <div className="space-y-6">
-              <div className="flex gap-2 border-b border-gray-700">
+              <div className="flex gap-2 border-b border-gray-700 overflow-x-auto">
                 <button
                   onClick={() => setActiveTab('create')}
-                  className={`px-4 py-2 ${activeTab === 'create' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'create' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
                 >
                   Create
                 </button>
                 <button
+                  onClick={() => setActiveTab('songs')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'songs' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Songs ({songs.length})
+                </button>
+                <button
                   onClick={() => setActiveTab('perform')}
-                  className={`px-4 py-2 ${activeTab === 'perform' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'perform' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
                 >
                   Perform
+                </button>
+                <button
+                  onClick={() => setActiveTab('tour')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'tour' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Tour
+                </button>
+                <button
+                  onClick={() => setActiveTab('fans')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'fans' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Fans
                 </button>
               </div>
 
@@ -238,13 +484,40 @@ export default function MusicCareer({ human, onClose }) {
                   </div>
 
                   <div>
+                    <label className="text-gray-400 text-sm mb-2 block">Content Type</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'clean', label: 'Clean' },
+                        { value: 'romantic', label: 'Romantic' },
+                        { value: 'dark', label: 'Dark' },
+                        { value: 'explicit_sexual', label: 'Explicit 🔞' },
+                        { value: 'vampire_themed', label: 'Vampire 🦇' }
+                      ].map(type => (
+                        <button
+                          key={type.value}
+                          onClick={() => setNewSong({ ...newSong, contentType: type.value })}
+                          className={`py-2 rounded-lg text-sm ${
+                            newSong.contentType === type.value
+                              ? type.value === 'explicit_sexual' ? 'bg-red-600 text-white' :
+                                type.value === 'vampire_themed' ? 'bg-purple-600 text-white' :
+                                'bg-indigo-600 text-white'
+                              : 'bg-gray-800 text-gray-400'
+                          }`}
+                        >
+                          {type.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
                     <label className="text-gray-400 text-sm mb-2 block">Vibe</label>
                     <div className="grid grid-cols-2 gap-2">
-                      {['upbeat', 'melancholy', 'dark', 'dreamy'].map(vibe => (
+                      {['upbeat', 'melancholy', 'dark', 'dreamy', 'desperate', 'obsessive'].map(vibe => (
                         <button
                           key={vibe}
                           onClick={() => setNewSong({ ...newSong, vibe })}
-                          className={`py-2 rounded-lg capitalize ${
+                          className={`py-2 rounded-lg capitalize text-sm ${
                             newSong.vibe === vibe
                               ? 'bg-purple-600 text-white'
                               : 'bg-gray-800 text-gray-400'
@@ -256,12 +529,105 @@ export default function MusicCareer({ human, onClose }) {
                     </div>
                   </div>
 
+                  <textarea
+                    placeholder="Song lyrics (optional)..."
+                    value={newSong.lyrics}
+                    onChange={(e) => setNewSong({ ...newSong, lyrics: e.target.value })}
+                    rows={4}
+                    className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 border border-indigo-500/30 focus:border-indigo-500 focus:outline-none text-sm"
+                  />
+
                   <button
                     onClick={createSong}
                     disabled={!newSong.title || creating}
                     className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white py-3 rounded-xl font-bold"
                   >
                     {creating ? 'Creating...' : '🎵 Release Song'}
+                  </button>
+
+                  {(newSong.contentType === 'explicit_sexual' || newSong.contentType === 'vampire_themed') && (
+                    <div className="bg-yellow-950/40 border border-yellow-500/30 rounded-xl p-3">
+                      <p className="text-yellow-300 text-xs text-center">
+                        {newSong.contentType === 'explicit_sexual' 
+                          ? '⚠️ Explicit content gets more streams but attracts attention'
+                          : '🦇 Vampire-themed songs might attract... actual vampires'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : activeTab === 'songs' ? (
+                <div className="space-y-3">
+                  {songs.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">No songs released yet</p>
+                  ) : (
+                    songs.map(song => (
+                      <div key={song.id} className="bg-gray-800/50 border border-indigo-500/30 rounded-xl p-4">
+                        <h4 className="text-white font-bold mb-1">{song.title}</h4>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          <span className="text-xs bg-indigo-600 text-white px-2 py-1 rounded">{song.genre}</span>
+                          <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded">{song.vibe}</span>
+                          {song.contentType !== 'clean' && (
+                            <span className={`text-xs px-2 py-1 rounded ${
+                              song.contentType === 'explicit_sexual' ? 'bg-red-600 text-white' :
+                              song.contentType === 'vampire_themed' ? 'bg-purple-600 text-white' :
+                              'bg-gray-600 text-white'
+                            }`}>
+                              {song.contentType === 'explicit_sexual' ? 'Explicit 🔞' :
+                               song.contentType === 'vampire_themed' ? 'Vampire 🦇' :
+                               song.contentType}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Streams: {song.streams.toLocaleString()}</span>
+                          <span className="text-green-400">Earned: ${song.earnings}</span>
+                        </div>
+                        {song.lyrics && (
+                          <p className="text-gray-400 text-xs mt-2 italic">"{song.lyrics.slice(0, 50)}..."</p>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              ) : activeTab === 'tour' ? (
+                <div className="space-y-4">
+                  <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4">
+                    <h3 className="text-white font-bold mb-2">🎸 Go On Tour</h3>
+                    <div className="space-y-1 text-sm text-gray-300">
+                      <p>🌎 Play multiple cities</p>
+                      <p>💰 $400-1200 per show</p>
+                      <p>👥 Massive fanbase growth</p>
+                      <p>⚠️ More visibility = more danger</p>
+                    </div>
+                  </div>
+
+                  {songs.length < 3 ? (
+                    <div className="bg-red-950/40 border border-red-500/30 rounded-xl p-4">
+                      <p className="text-red-300 text-sm text-center">
+                        You need at least 3 songs to go on tour
+                      </p>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={startTour}
+                      className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold"
+                    >
+                      🎤 Start Tour
+                    </button>
+                  )}
+                </div>
+              ) : activeTab === 'fans' ? (
+                <div className="space-y-4">
+                  <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4">
+                    <h3 className="text-white font-bold mb-2">💌 Fan Interactions</h3>
+                    <p className="text-gray-300 text-sm mb-3">Your fans want to connect with you. Some more than others...</p>
+                  </div>
+
+                  <button
+                    onClick={handleFanInteraction}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 rounded-xl font-bold"
+                  >
+                    📬 Check Fan Messages
                   </button>
                 </div>
               ) : (
