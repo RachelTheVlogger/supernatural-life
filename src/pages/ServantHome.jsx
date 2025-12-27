@@ -157,21 +157,23 @@ export default function ServantHome() {
   
   const servantCareer = career[0];
 
+  const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list(),
+    staleTime: 5000
+  });
+
   // Redirect to Night if no servant ID or invalid ID
   useEffect(() => {
-    const checkGameState = async () => {
-      const states = await base44.entities.VampireState.list();
-      if (states.length === 0) {
-        navigate(createPageUrl('Home'), { replace: true });
-        return;
-      }
-      
-      if (!servantId || servantId === 'null' || servantId === 'undefined') {
-        navigate(createPageUrl('Night'), { replace: true });
-      }
-    };
-    checkGameState();
-  }, [navigate, servantId]);
+    if (!vampireLoading && vampireStates.length === 0) {
+      navigate(createPageUrl('Home'), { replace: true });
+      return;
+    }
+    
+    if (!servantId || servantId === 'null' || servantId === 'undefined') {
+      navigate(createPageUrl('Night'), { replace: true });
+    }
+  }, [vampireStates.length, vampireLoading, navigate, servantId]);
   
   const { data: servant } = useQuery({
     queryKey: ['servant', servantId],
@@ -202,12 +204,6 @@ export default function ServantHome() {
   const currentServantId = servantId || (allServants.length > 0 ? allServants[0].id : (humans.length > 0 ? humans[0].id : null));
   const entity = allServants.find(s => s.id === currentServantId) || humans.find(h => h.id === currentServantId);
   
-  const { data: vampireStates = [] } = useQuery({
-    queryKey: ['vampireState'],
-    queryFn: () => base44.entities.VampireState.list(),
-    staleTime: 5000
-  });
-
   const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
 
   const { data: witches = [] } = useQuery({
