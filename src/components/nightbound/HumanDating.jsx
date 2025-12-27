@@ -475,13 +475,13 @@ export default function HumanDating({ human, onClose }) {
                 )}
                 </div>
               ))}
-            </div>
-          )}
-        </>
-      )}
-      </motion.div>
+              </div>
+              )}
+              </>
+              )}
+              </motion.div>
 
-      {showSexScene && activeDate && (
+              {showSexScene && activeDate && (
         <DatingSexScene
           human={human}
           match={activeDate}
