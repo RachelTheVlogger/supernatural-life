@@ -41,6 +41,7 @@ import MemoryRecorder from '@/components/nightbound/MemoryRecorder';
 import EmotionMonitor from '@/components/nightbound/EmotionMonitor';
 import HolographicCall from '@/components/nightbound/HolographicCall';
 import FuturePredictor from '@/components/nightbound/FuturePredictor';
+import BloodAddiction from '@/components/nightbound/BloodAddiction';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ export default function Night() {
   const [showEmotion, setShowEmotion] = useState(false);
   const [showHolo, setShowHolo] = useState(false);
   const [showPredictor, setShowPredictor] = useState(false);
+  const [showAddiction, setShowAddiction] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
 
   // Fetch vampire state
@@ -544,6 +546,13 @@ export default function Night() {
           <span className="text-2xl">🔮</span>
           <p className="text-white text-xs mt-1">Future Predictor</p>
         </button>
+        <button
+          onClick={() => setShowAddiction(true)}
+          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">💉</span>
+          <p className="text-white text-xs mt-1">Addiction</p>
+        </button>
         </motion.div>
       
 
@@ -703,6 +712,9 @@ export default function Night() {
         )}
         {showPredictor && vampireState && (
           <FuturePredictor vampireState={vampireState} onClose={() => setShowPredictor(false)} />
+        )}
+        {showAddiction && vampireState && (
+          <BloodAddiction vampireState={vampireState} onClose={() => setShowAddiction(false)} />
         )}
 
         </AnimatePresence>
