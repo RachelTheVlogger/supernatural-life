@@ -236,7 +236,7 @@ export default function MangaCareer({ servant, onClose }) {
 
     // Check for duplicate names (unless editing)
     if (!editingCharacter) {
-      const existingNames = (career.manga_characters || []).map(c => c.name.toLowerCase());
+      const existingNames = (career?.manga_characters || []).map(c => c?.name?.toLowerCase()).filter(Boolean);
       if (existingNames.includes(newCharacter.name.toLowerCase())) {
         setOutcome('Character with this name already exists!');
         setTimeout(() => setOutcome(''), 2000);
@@ -562,11 +562,12 @@ Format as JSON:
         }
       });
 
-      // Update character appearance counts
-      const updatedCharacters = characters.map(char => {
+      // Update character appearance counts - only if characters exist
+      const updatedCharacters = (characters || []).map(char => {
+        if (!char?.name) return char;
         const appeared = (chapterContent.characters_featured || []).some(name => 
-          name.toLowerCase().includes(char.name.toLowerCase()) || 
-          char.name.toLowerCase().includes(name.toLowerCase())
+          name?.toLowerCase().includes(char.name.toLowerCase()) || 
+          char.name.toLowerCase().includes(name?.toLowerCase())
         );
         if (appeared) {
           return { ...char, appearances: (char.appearances || 0) + 1 };
@@ -593,10 +594,10 @@ Format as JSON:
       
       // Collect character reference images for consistency
       const characterRefs = [];
-      characters.forEach(c => {
-        if (c.referenceImages && c.referenceImages.length > 0) {
+      (characters || []).forEach(c => {
+        if (c?.referenceImages && c.referenceImages.length > 0) {
           characterRefs.push(...c.referenceImages);
-        } else if (c.referenceImage) {
+        } else if (c?.referenceImage) {
           characterRefs.push(c.referenceImage);
         }
       });
@@ -606,8 +607,8 @@ Format as JSON:
         
         // Build character appearance reminders
         let characterReminders = '';
-        characters.forEach(char => {
-          if (char.description) {
+        (characters || []).forEach(char => {
+          if (char?.description && char?.name) {
             characterReminders += `${char.name}: ${char.description}. `;
           }
         });
@@ -1947,14 +1948,30 @@ Format as JSON:
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-white font-medium">Your Characters</h4>
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="text-white font-medium">Your Characters</h4>
+                {(career?.manga_characters || []).length > 0 && (
+                  <button
+                    onClick={async () => {
+                      if (confirm('Clear all characters? This cannot be undone.')) {
+                        await base44.entities.ServantCareer.update(career.id, { manga_characters: [] });
+                        queryClient.invalidateQueries(['career']);
+                      }
+                    }}
+                    className="text-xs bg-red-900/40 hover:bg-red-900/60 text-red-300 px-3 py-1 rounded"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
               {(career?.manga_characters || []).length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No characters yet. Create one above!</p>
               ) : (
-                (career.manga_characters || []).map(char => {
-                  const images = char.referenceImages || [char.referenceImage].filter(Boolean);
+                (career?.manga_characters || []).map(char => {
+                  if (!char) return null;
+                  const images = char?.referenceImages || [char?.referenceImage].filter(Boolean);
                   return (
-                    <div key={char.id} className="bg-gray-800/50 rounded-lg p-3">
+                    <div key={char.id || Math.random()} className="bg-gray-800/50 rounded-lg p-3">
                       <div className="flex gap-3 mb-2">
                         <div className="flex-1">
                           <h5 className="text-white font-medium">{char.name}</h5>
