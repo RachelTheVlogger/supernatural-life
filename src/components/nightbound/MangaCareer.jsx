@@ -432,14 +432,14 @@ export default function MangaCareer({ servant, onClose }) {
   const handleCreateVolume = async () => {
     if (!career?.id) return;
 
-    const volumeSize = 8; // 8 chapters per volume
+    const volumeSize = 8;
     setWorking(true);
+    let successfulChapters = 0;
 
     try {
-      for (let vol = 0; vol < volumeSize; vol++) {
-        setGenerationProgress(`Creating Volume 1 - Chapter ${vol + 1}/${volumeSize}...`);
+      for (let i = 0; i < volumeSize; i++) {
+        setGenerationProgress(`Creating Volume 1 - Chapter ${i + 1}/${volumeSize}...`);
         
-        // Refetch career data to get latest chapter count
         const latestCareers = await base44.entities.ServantCareer.filter({ servant_id: entityId });
         const latestCareer = latestCareers[0];
         
@@ -448,11 +448,12 @@ export default function MangaCareer({ servant, onClose }) {
         }
         
         await generateSingleChapter(latestCareer, true);
+        successfulChapters++;
         await queryClient.invalidateQueries(['career']);
-        await new Promise(resolve => setTimeout(resolve, 1000)); // brief pause
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
-      setOutcome(`Volume 1 complete! Generated ${volumeSize} chapters!`);
+      setOutcome(`Volume complete! Generated ${successfulChapters} chapters!`);
       setTimeout(() => {
         setWorking(false);
         setOutcome('');
@@ -461,7 +462,7 @@ export default function MangaCareer({ servant, onClose }) {
     } catch (error) {
       console.error('Volume creation failed:', error);
       setWorking(false);
-      setOutcome('Volume creation failed: ' + error.message);
+      setOutcome(`Volume creation failed after ${successfulChapters} chapters: ${error.message}`);
       setGenerationProgress('');
     }
   };
