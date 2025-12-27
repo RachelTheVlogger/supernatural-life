@@ -51,6 +51,7 @@ export default function MangaCareer({ servant, onClose }) {
   const [showPlotSuggestions, setShowPlotSuggestions] = useState(false);
   const [plotSuggestions, setPlotSuggestions] = useState([]);
   const [generatingPlots, setGeneratingPlots] = useState(false);
+  const [promptReferenceImages, setPromptReferenceImages] = useState([]);
   const [customTitle, setCustomTitle] = useState('');
   const [customPanels, setCustomPanels] = useState([
     { description: '', dialogue: '', uploadedImage: null }
@@ -850,6 +851,11 @@ Format as JSON:
           if (career.style_reference_image) refImages.push(career.style_reference_image);
           refImages.push(...characterRefs);
           
+          // Add prompt reference images if available
+          if (promptReferenceImages && promptReferenceImages.length > 0) {
+            refImages.push(...promptReferenceImages);
+          }
+          
           if (refImages.length > 0) {
             generateParams.existing_image_urls = refImages;
           }
@@ -904,6 +910,7 @@ Format as JSON:
       setChapterPrompt('');
       setCustomTitle('');
       setCustomPanels([{ description: '', dialogue: '', uploadedImage: null }]);
+      setPromptReferenceImages([]);
 
       setTimeout(() => {
         setWorking(false);
@@ -1550,6 +1557,55 @@ Format as JSON:
                     disabled={working}
                   />
                 </div>
+
+                <div>
+                  <label className="text-white text-sm mb-2 block">Reference Images (Optional)</label>
+                  <p className="text-gray-400 text-xs mb-2">Upload images to help AI understand the style/characters you want</p>
+                  <div className="grid grid-cols-3 gap-2 mb-2">
+                    {promptReferenceImages.map((img, i) => (
+                      <div key={i} className="relative">
+                        <img src={img} alt={`Reference ${i + 1}`} className="w-full h-20 object-cover rounded-lg" />
+                        <button
+                          onClick={() => setPromptReferenceImages(promptReferenceImages.filter((_, idx) => idx !== i))}
+                          className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white w-6 h-6 rounded text-xs"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <label className="w-full bg-blue-900/40 border-2 border-dashed border-blue-500/50 hover:border-blue-500 rounded-lg p-3 cursor-pointer flex flex-col items-center justify-center">
+                    <span className="text-blue-400 text-sm">
+                      {promptReferenceImages.length === 0 ? '📸 Upload reference images' : `Add more (${promptReferenceImages.length}/5)`}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (promptReferenceImages.length >= 5) {
+                          setOutcome('Maximum 5 images');
+                          setTimeout(() => setOutcome(''), 2000);
+                          return;
+                        }
+                        try {
+                          const result = await base44.integrations.Core.UploadFile({ file });
+                          if (result?.file_url) {
+                            setPromptReferenceImages([...promptReferenceImages, result.file_url]);
+                          }
+                        } catch (error) {
+                          console.error('Upload failed:', error);
+                          setOutcome('Upload failed');
+                          setTimeout(() => setOutcome(''), 2000);
+                        }
+                      }}
+                      className="hidden"
+                      disabled={working || promptReferenceImages.length >= 5}
+                    />
+                  </label>
+                </div>
+
                 <p className="text-gray-400 text-sm">
                   The AI will generate a complete chapter with title, plot, 6 panels, descriptions, and dialogue based on your prompt.
                 </p>
