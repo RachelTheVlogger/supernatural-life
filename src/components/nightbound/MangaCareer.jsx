@@ -386,29 +386,49 @@ export default function MangaCareer({ servant, onClose }) {
                 </div>
               )}
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
+              <label className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg py-3 px-4 cursor-pointer text-center block disabled:opacity-50">
+                {uploadingStyle ? 'Uploading...' : 'Upload Style Reference Image'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
 
-                  setUploadingStyle(true);
-                  try {
-                    const result = await base44.integrations.Core.UploadFile({ file });
-                    await base44.entities.ServantCareer.update(career.id, { style_reference_image: result.file_url });
-                    queryClient.invalidateQueries(['career']);
-                    setShowStyleSelect(false);
-                  } catch (error) {
-                    console.error('Upload failed:', error);
-                    alert('Upload failed. Please try again.');
-                  }
-                  setUploadingStyle(false);
-                }}
-                disabled={uploadingStyle}
-                className="w-full bg-gray-800 text-white text-sm rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700 disabled:opacity-50"
-              />
-              {uploadingStyle && <p className="text-purple-400 text-xs mt-2">Uploading style reference...</p>}
+                    setUploadingStyle(true);
+                    setOutcome('Uploading style reference...');
+
+                    try {
+                      const result = await base44.integrations.Core.UploadFile({ file });
+
+                      if (result?.file_url) {
+                        await base44.entities.ServantCareer.update(career.id, { 
+                          style_reference_image: result.file_url 
+                        });
+                        queryClient.invalidateQueries(['career']);
+                        setOutcome('Style reference uploaded!');
+
+                        setTimeout(() => {
+                          setUploadingStyle(false);
+                          setOutcome('');
+                          setShowStyleSelect(false);
+                        }, 2000);
+                      } else {
+                        throw new Error('No file URL returned');
+                      }
+                    } catch (error) {
+                      console.error('Upload failed:', error);
+                      setOutcome('Upload failed. Please try again.');
+                      setTimeout(() => {
+                        setUploadingStyle(false);
+                        setOutcome('');
+                      }, 2000);
+                    }
+                  }}
+                  disabled={uploadingStyle}
+                  className="hidden"
+                />
+              </label>
             </div>
           </motion.div>
         </motion.div>
