@@ -51,7 +51,8 @@ export default function MangaCareer({ servant, onClose }) {
   const [showCharacterManager, setShowCharacterManager] = useState(false);
   const [showPublish, setShowPublish] = useState(false);
   const [publishing, setPublishing] = useState(false);
-  const [newCharacter, setNewCharacter] = useState({ name: '', description: '', referenceImage: null, uploadMode: 'generate' });
+  const [newCharacter, setNewCharacter] = useState({ name: '', description: '', referenceImages: [], uploadMode: 'generate' });
+  const [editingCharacter, setEditingCharacter] = useState(null);
 
   const entityId = servant?.id;
   const entityName = servant?.name;
@@ -214,63 +215,78 @@ export default function MangaCareer({ servant, onClose }) {
   const handleCreateCharacter = async () => {
     if (!career?.id || !newCharacter.name.trim()) return;
 
-    // Check for duplicate names
-    const existingNames = (career.manga_characters || []).map(c => c.name.toLowerCase());
-    if (existingNames.includes(newCharacter.name.toLowerCase())) {
-      setOutcome('Character with this name already exists!');
-      setTimeout(() => setOutcome(''), 2000);
-      return;
+    // Check for duplicate names (unless editing)
+    if (!editingCharacter) {
+      const existingNames = (career.manga_characters || []).map(c => c.name.toLowerCase());
+      if (existingNames.includes(newCharacter.name.toLowerCase())) {
+        setOutcome('Character with this name already exists!');
+        setTimeout(() => setOutcome(''), 2000);
+        return;
+      }
     }
 
     setWorking(true);
     try {
-      let referenceImageUrl;
+      let referenceImages = [];
 
       if (newCharacter.uploadMode === 'upload') {
-        // Use uploaded image
-        if (!newCharacter.referenceImage) {
-          setOutcome('Please upload an image first');
+        if (newCharacter.referenceImages.length === 0) {
+          setOutcome('Please upload at least one image');
           setWorking(false);
           return;
         }
-        referenceImageUrl = newCharacter.referenceImage;
+        referenceImages = newCharacter.referenceImages;
       } else {
         // Generate character reference image
         const prompt = `${newCharacter.description}, character reference sheet, ${career.art_style} manga style, full body, multiple angles, character design, unique character design`;
-
         const generateParams = { prompt };
         if (career.style_reference_image) {
           generateParams.existing_image_urls = [career.style_reference_image];
         }
-
         const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
-        referenceImageUrl = imageResult.url;
+        referenceImages = [imageResult.url];
       }
 
       const characters = career.manga_characters || [];
-      characters.push({
-        id: Date.now().toString(),
-        name: newCharacter.name,
-        description: newCharacter.description || 'Custom character',
-        referenceImage: referenceImageUrl,
-        appearances: 0
-      });
+      
+      if (editingCharacter) {
+        // Update existing character
+        const index = characters.findIndex(c => c.id === editingCharacter.id);
+        if (index !== -1) {
+          characters[index] = {
+            ...characters[index],
+            name: newCharacter.name,
+            description: newCharacter.description || 'Custom character',
+            referenceImages: referenceImages
+          };
+        }
+      } else {
+        // Add new character
+        characters.push({
+          id: Date.now().toString(),
+          name: newCharacter.name,
+          description: newCharacter.description || 'Custom character',
+          referenceImages: referenceImages,
+          appearances: 0
+        });
+      }
       
       await base44.entities.ServantCareer.update(career.id, {
         manga_characters: characters
       });
       
       queryClient.invalidateQueries(['career']);
-      setNewCharacter({ name: '', description: '', referenceImage: null, uploadMode: 'generate' });
-      setOutcome(`Character "${newCharacter.name}" created!`);
+      setNewCharacter({ name: '', description: '', referenceImages: [], uploadMode: 'generate' });
+      setEditingCharacter(null);
+      setOutcome(`Character "${newCharacter.name}" ${editingCharacter ? 'updated' : 'created'}!`);
       setTimeout(() => {
         setWorking(false);
         setOutcome('');
       }, 2000);
     } catch (error) {
-      console.error('Failed to create character:', error);
+      console.error('Failed to save character:', error);
       setWorking(false);
-      setOutcome('Failed to create character');
+      setOutcome('Failed to save character');
     }
   };
 
@@ -522,9 +538,14 @@ Format as JSON:
       const panelImages = [];
       
       // Collect character reference images for consistency
-      const characterRefs = characters
-        .filter(c => c.referenceImage)
-        .map(c => c.referenceImage);
+      const characterRefs = [];
+      characters.forEach(c => {
+        if (c.referenceImages && c.referenceImages.length > 0) {
+          characterRefs.push(...c.referenceImages);
+        } else if (c.referenceImage) {
+          characterRefs.push(c.referenceImage);
+        }
+      });
       
       for (let i = 0; i < Math.min(panels.length, 6); i++) {
         setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
@@ -698,9 +719,14 @@ Format as JSON:
       const panelImages = [];
       
       // Collect character reference images for consistency
-      const characterRefs = (career.manga_characters || [])
-        .filter(c => c.referenceImage)
-        .map(c => c.referenceImage);
+      const characterRefs = [];
+      (career.manga_characters || []).forEach(c => {
+        if (c.referenceImages && c.referenceImages.length > 0) {
+          characterRefs.push(...c.referenceImages);
+        } else if (c.referenceImage) {
+          characterRefs.push(c.referenceImage);
+        }
+      });
       
       for (let i = 0; i < Math.min(panels.length, 6); i++) {
         setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
@@ -1489,11 +1515,24 @@ Format as JSON:
             <p className="text-gray-400 text-sm mb-6">Create recurring characters with consistent AI-generated appearances</p>
 
             <div className="bg-gray-800/50 rounded-lg p-4 mb-6">
-              <h4 className="text-white font-medium mb-3">Create New Character</h4>
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="text-white font-medium">{editingCharacter ? 'Edit Character' : 'Create New Character'}</h4>
+                {editingCharacter && (
+                  <button
+                    onClick={() => {
+                      setEditingCharacter(null);
+                      setNewCharacter({ name: '', description: '', referenceImages: [], uploadMode: 'generate' });
+                    }}
+                    className="text-gray-400 hover:text-white text-sm"
+                  >
+                    Cancel Edit
+                  </button>
+                )}
+              </div>
               
               <div className="flex gap-2 mb-3">
                 <button
-                  onClick={() => setNewCharacter({...newCharacter, uploadMode: 'generate', referenceImage: null})}
+                  onClick={() => setNewCharacter({...newCharacter, uploadMode: 'generate', referenceImages: []})}
                   className={`flex-1 py-2 rounded-lg text-sm ${newCharacter.uploadMode === 'generate' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-400'}`}
                 >
                   AI Generate
@@ -1502,7 +1541,7 @@ Format as JSON:
                   onClick={() => setNewCharacter({...newCharacter, uploadMode: 'upload'})}
                   className={`flex-1 py-2 rounded-lg text-sm ${newCharacter.uploadMode === 'upload' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-400'}`}
                 >
-                  Upload Image
+                  Upload Images
                 </button>
               </div>
 
@@ -1525,50 +1564,73 @@ Format as JSON:
                 />
               ) : (
                 <div className="mb-3">
-                  {newCharacter.referenceImage ? (
-                    <div className="relative">
-                      <img src={newCharacter.referenceImage} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
-                      <button
-                        onClick={() => setNewCharacter({...newCharacter, referenceImage: null})}
-                        className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="w-full bg-gray-900 border-2 border-dashed border-gray-700 hover:border-purple-500 rounded-lg p-6 cursor-pointer flex flex-col items-center justify-center">
-                      <span className="text-gray-400 text-sm">Click to upload character image</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-                          try {
-                            const result = await base44.integrations.Core.UploadFile({ file });
-                            if (result?.file_url) {
-                              setNewCharacter({...newCharacter, referenceImage: result.file_url});
-                            }
-                          } catch (error) {
-                            console.error('Upload failed:', error);
-                            setOutcome('Upload failed');
-                            setTimeout(() => setOutcome(''), 2000);
+                  <div className="grid grid-cols-2 gap-2 mb-2">
+                    {newCharacter.referenceImages.map((img, i) => (
+                      <div key={i} className="relative">
+                        <img src={img} alt={`Reference ${i + 1}`} className="w-full h-24 object-cover rounded-lg" />
+                        <button
+                          onClick={() => setNewCharacter({
+                            ...newCharacter, 
+                            referenceImages: newCharacter.referenceImages.filter((_, idx) => idx !== i)
+                          })}
+                          className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white w-6 h-6 rounded text-xs"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <label className="w-full bg-gray-900 border-2 border-dashed border-gray-700 hover:border-purple-500 rounded-lg p-4 cursor-pointer flex flex-col items-center justify-center">
+                    <span className="text-gray-400 text-sm">
+                      {newCharacter.referenceImages.length === 0 ? 'Upload character images' : `Add more (${newCharacter.referenceImages.length}/5)`}
+                    </span>
+                    <span className="text-gray-500 text-xs mt-1">Multiple poses/expressions recommended</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (newCharacter.referenceImages.length >= 5) {
+                          setOutcome('Maximum 5 images per character');
+                          setTimeout(() => setOutcome(''), 2000);
+                          return;
+                        }
+                        try {
+                          const result = await base44.integrations.Core.UploadFile({ file });
+                          if (result?.file_url) {
+                            setNewCharacter({
+                              ...newCharacter, 
+                              referenceImages: [...newCharacter.referenceImages, result.file_url]
+                            });
                           }
-                        }}
-                        className="hidden"
-                        disabled={working}
-                      />
-                    </label>
-                  )}
+                        } catch (error) {
+                          console.error('Upload failed:', error);
+                          setOutcome('Upload failed');
+                          setTimeout(() => setOutcome(''), 2000);
+                        }
+                      }}
+                      className="hidden"
+                      disabled={working || newCharacter.referenceImages.length >= 5}
+                    />
+                  </label>
+                  <textarea
+                    value={newCharacter.description}
+                    onChange={(e) => setNewCharacter({...newCharacter, description: e.target.value})}
+                    placeholder="Optional: Add character description for context"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white resize-none mt-2"
+                    rows={2}
+                    disabled={working}
+                  />
                 </div>
               )}
 
               <button
                 onClick={handleCreateCharacter}
-                disabled={working || !newCharacter.name.trim() || (newCharacter.uploadMode === 'generate' && !newCharacter.description.trim()) || (newCharacter.uploadMode === 'upload' && !newCharacter.referenceImage)}
+                disabled={working || !newCharacter.name.trim() || (newCharacter.uploadMode === 'generate' && !newCharacter.description.trim()) || (newCharacter.uploadMode === 'upload' && newCharacter.referenceImages.length === 0)}
                 className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg disabled:opacity-50"
               >
-                {working ? 'Creating...' : newCharacter.uploadMode === 'upload' ? 'Add Character' : 'Generate Character'}
+                {working ? (editingCharacter ? 'Updating...' : 'Creating...') : (editingCharacter ? 'Update Character' : (newCharacter.uploadMode === 'upload' ? 'Add Character' : 'Generate Character'))}
               </button>
             </div>
 
@@ -1577,16 +1639,55 @@ Format as JSON:
               {(career?.manga_characters || []).length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No characters yet. Create one above!</p>
               ) : (
-                (career.manga_characters || []).map(char => (
-                  <div key={char.id} className="bg-gray-800/50 rounded-lg p-3 flex gap-3">
-                    <img src={char.referenceImage} alt={char.name} className="w-20 h-20 rounded object-cover" />
-                    <div className="flex-1">
-                      <h5 className="text-white font-medium">{char.name}</h5>
-                      <p className="text-gray-400 text-sm">{char.description}</p>
-                      <p className="text-purple-400 text-xs mt-1">Appeared in {char.appearances || 0} chapters</p>
+                (career.manga_characters || []).map(char => {
+                  const images = char.referenceImages || [char.referenceImage].filter(Boolean);
+                  return (
+                    <div key={char.id} className="bg-gray-800/50 rounded-lg p-3">
+                      <div className="flex gap-3 mb-2">
+                        <div className="flex-1">
+                          <h5 className="text-white font-medium">{char.name}</h5>
+                          <p className="text-gray-400 text-sm">{char.description}</p>
+                          <p className="text-purple-400 text-xs mt-1">
+                            Appeared in {char.appearances || 0} chapters • {images.length} reference image{images.length !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-4 gap-1 mb-2">
+                        {images.map((img, i) => (
+                          <img key={i} src={img} alt={`${char.name} ${i + 1}`} className="w-full h-16 rounded object-cover" />
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingCharacter(char);
+                            setNewCharacter({
+                              name: char.name,
+                              description: char.description || '',
+                              referenceImages: images,
+                              uploadMode: 'upload'
+                            });
+                          }}
+                          className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 text-blue-300 py-1 rounded text-sm"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (confirm(`Delete ${char.name}?`)) {
+                              const characters = (career.manga_characters || []).filter(c => c.id !== char.id);
+                              await base44.entities.ServantCareer.update(career.id, { manga_characters: characters });
+                              queryClient.invalidateQueries(['career']);
+                            }
+                          }}
+                          className="flex-1 bg-red-900/40 hover:bg-red-900/60 text-red-300 py-1 rounded text-sm"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </motion.div>
