@@ -184,12 +184,12 @@ export default function Layout({ children, currentPageName }) {
                     }
                   }}
                   disabled={item.disabled}
-                  className={`flex flex-col items-center gap-1 flex-shrink-0 px-3 min-w-[60px] ${
+                  className={`flex flex-col items-center gap-1 flex-shrink-0 px-4 min-w-[70px] ${
                     isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-purple-300'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-xs whitespace-nowrap">{item.name}</span>
+                  <Icon className="w-6 h-6" />
+                  <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>
                   {item.hasSelector && servants.length > 1 && (
                     <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 text-white text-[10px] rounded-full flex items-center justify-center">
                       {servants.length}
