@@ -16,6 +16,7 @@ export default function AdvanceNight({ vampireState, onClose }) {
   const nextGameDate = addDays(currentGameDate, 1);
   
   const handleAdvance = async () => {
+    if (!vampireState?.id) return;
     setAdvancing(true);
     
     setTimeout(async () => {
@@ -37,12 +38,12 @@ export default function AdvanceNight({ vampireState, onClose }) {
         queryClient.invalidateQueries(['logs']);
       } catch (e) {
         console.error('Failed to advance night:', e);
+      } finally {
+        setTimeout(() => {
+          setAdvancing(false);
+          onClose();
+        }, 2000);
       }
-      
-      setTimeout(() => {
-        setAdvancing(false);
-        onClose();
-      }, 2000);
     }, 1500);
   };
   

@@ -52,50 +52,55 @@ export default function HuntingModal({ onClose, vampireState, servants }) {
   const queryClient = useQueryClient();
   
   const handleHunt = async (scene, withServant = false) => {
+    if (!vampireState?.id) return;
     setSelectedScene(scene);
     setHunting(true);
     setShowServantSelect(false);
     
     setTimeout(async () => {
-      let randomOutcome = scene.outcomes[Math.floor(Math.random() * scene.outcomes.length)];
-      
-      if (withServant && selectedServant) {
-        randomOutcome = `you hunted with ${selectedServant.name}. ${randomOutcome} Your bond deepened.`;
+      try {
+        let randomOutcome = scene.outcomes[Math.floor(Math.random() * scene.outcomes.length)];
         
-        // Update servant obsession
-        await base44.entities.Servant.update(selectedServant.id, {
-          obsession_stage: Math.min(selectedServant.obsession_stage + 1, 5)
+        if (withServant && selectedServant) {
+          randomOutcome = `you hunted with ${selectedServant.name}. ${randomOutcome} Your bond deepened.`;
+          
+          // Update servant obsession
+          await base44.entities.Servant.update(selectedServant.id, {
+            obsession_stage: Math.min(selectedServant.obsession_stage + 1, 5)
+          });
+          
+          // Unlock joint hunting power
+          if (!vampireState.unlocked_powers?.includes('Pack Bond')) {
+            const updatedPowers = [...(vampireState.unlocked_powers || []), 'Pack Bond'];
+            await base44.entities.VampireState.update(vampireState.id, {
+              unlocked_powers: updatedPowers
+            });
+          }
+        }
+        
+        setOutcome(randomOutcome);
+        
+        // Create log entry
+        await base44.entities.NightLog.create({
+          entry: randomOutcome,
+          category: 'hunting',
+          intensity: withServant ? 'significant' : 'moderate'
         });
         
-        // Unlock joint hunting power
-        if (!vampireState.unlocked_powers?.includes('Pack Bond')) {
-          const updatedPowers = [...(vampireState.unlocked_powers || []), 'Pack Bond'];
-          await base44.entities.VampireState.update(vampireState.id, {
-            unlocked_powers: updatedPowers
-          });
-        }
+        queryClient.invalidateQueries(['logs']);
+        queryClient.invalidateQueries(['servants']);
+        queryClient.invalidateQueries(['vampireState']);
+      } catch (e) {
+        console.error('Hunting failed:', e);
+      } finally {
+        setTimeout(() => {
+          setHunting(false);
+          setOutcome(null);
+          setSelectedScene(null);
+          setSelectedServant(null);
+          onClose();
+        }, 3000);
       }
-      
-      setOutcome(randomOutcome);
-      
-      // Create log entry
-      await base44.entities.NightLog.create({
-        entry: randomOutcome,
-        category: 'hunting',
-        intensity: withServant ? 'significant' : 'moderate'
-      });
-      
-      queryClient.invalidateQueries(['logs']);
-      queryClient.invalidateQueries(['servants']);
-      queryClient.invalidateQueries(['vampireState']);
-      
-      setTimeout(() => {
-        setHunting(false);
-        setOutcome(null);
-        setSelectedScene(null);
-        setSelectedServant(null);
-        onClose();
-      }, 3000);
     }, 2500);
   };
   

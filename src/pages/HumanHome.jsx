@@ -46,10 +46,11 @@ export default function HumanHome() {
   const human = humans[0];
 
   const handleActivity = React.useCallback(async (activity) => {
-    if (!human) return;
+    if (!human?.id) return;
     setActiveAction(activity.id);
     
     setTimeout(async () => {
+      try {
       const encounterChance = Math.random();
       const hasVampire = vampireStates.length > 0;
       
@@ -233,11 +234,15 @@ export default function HumanHome() {
 
       setOutcome(result);
       queryClient.invalidateQueries();
-      
-      setTimeout(() => {
-        setActiveAction(null);
-        setOutcome('');
-      }, 5000);
+      } catch (e) {
+        console.error('Activity failed:', e);
+        setOutcome('Something went wrong');
+      } finally {
+        setTimeout(() => {
+          setActiveAction(null);
+          setOutcome('');
+        }, 5000);
+      }
     }, activity.duration);
   }, [human, vampireStates, queryClient, navigate]);
 

@@ -1944,22 +1944,22 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       const relationshipGain = Math.round(baseGain * modifier);
       const newRel = Math.min((servant.relationship || 0) + relationshipGain, 100);
       
-      // Update emotional state based on variant and new relationship
-      const emotionalStates = {
-        devoted: ['shy', 'longing', 'devoted', 'worshipful', 'transcendent'],
-        defiant: ['conflicted', 'resistant', 'surrendering', 'accepting', 'bound'],
-        dreamer: ['distant', 'drifting', 'fading', 'ethereal', 'dissolved']
-      };
-      const stateIndex = Math.min(Math.floor(newRel / 20), 4);
-      const newEmotionalState = emotionalStates[servant.variant][stateIndex];
-      
-      // Reduce/eliminate jealousy gain for physical interactions if boundaries allow
-      let jealousyGain = 0;
-      if (['physical', 'bdsm'].includes(interaction.category) && !['open', 'no-strings'].includes(servant.boundaries)) {
-        jealousyGain = Math.floor(Math.random() * 5) + 2;
-      }
-      
       try {
+        // Update emotional state based on variant and new relationship
+        const emotionalStates = {
+          devoted: ['shy', 'longing', 'devoted', 'worshipful', 'transcendent'],
+          defiant: ['conflicted', 'resistant', 'surrendering', 'accepting', 'bound'],
+          dreamer: ['distant', 'drifting', 'fading', 'ethereal', 'dissolved']
+        };
+        const stateIndex = Math.min(Math.floor(newRel / 20), 4);
+        const newEmotionalState = emotionalStates[servant.variant][stateIndex];
+        
+        // Reduce/eliminate jealousy gain for physical interactions if boundaries allow
+        let jealousyGain = 0;
+        if (['physical', 'bdsm'].includes(interaction.category) && !['open', 'no-strings'].includes(servant.boundaries)) {
+          jealousyGain = Math.floor(Math.random() * 5) + 2;
+        }
+        
         await base44.entities.Servant.update(servant.id, {
           relationship: newRel,
           obsession_stage: Math.min(Math.floor(newRel / 20) + 1, 5),
@@ -2247,14 +2247,18 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
               <div className="space-y-3">
                 <button
                   onClick={async () => {
-                    await base44.entities.Servant.update(servant.id, { boundaries: 'exclusive' });
-                    await base44.entities.NightLog.create({
-                      entry: `You and ${servant.name} agreed to be exclusive. They're yours alone.`,
-                      category: 'interaction',
-                      intensity: 'moderate'
-                    });
-                    queryClient.invalidateQueries();
-                    setShowBoundaries(false);
+                    try {
+                      await base44.entities.Servant.update(servant.id, { boundaries: 'exclusive' });
+                      await base44.entities.NightLog.create({
+                        entry: `You and ${servant.name} agreed to be exclusive. They're yours alone.`,
+                        category: 'interaction',
+                        intensity: 'moderate'
+                      });
+                      queryClient.invalidateQueries();
+                      setShowBoundaries(false);
+                    } catch (e) {
+                      console.error('Failed to set boundaries:', e);
+                    }
                   }}
                   className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left transition-colors"
                 >
@@ -2264,14 +2268,18 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
                 <button
                   onClick={async () => {
-                    await base44.entities.Servant.update(servant.id, { boundaries: 'open' });
-                    await base44.entities.NightLog.create({
-                      entry: `You and ${servant.name} agreed to an open relationship. Sharing is allowed.`,
-                      category: 'interaction',
-                      intensity: 'moderate'
-                    });
-                    queryClient.invalidateQueries();
-                    setShowBoundaries(false);
+                    try {
+                      await base44.entities.Servant.update(servant.id, { boundaries: 'open' });
+                      await base44.entities.NightLog.create({
+                        entry: `You and ${servant.name} agreed to an open relationship. Sharing is allowed.`,
+                        category: 'interaction',
+                        intensity: 'moderate'
+                      });
+                      queryClient.invalidateQueries();
+                      setShowBoundaries(false);
+                    } catch (e) {
+                      console.error('Failed to set boundaries:', e);
+                    }
                   }}
                   className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left transition-colors"
                 >
@@ -2281,14 +2289,18 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
                 <button
                   onClick={async () => {
-                    await base44.entities.Servant.update(servant.id, { boundaries: 'no-strings' });
-                    await base44.entities.NightLog.create({
-                      entry: `You and ${servant.name} agreed it's casual. No strings attached.`,
-                      category: 'interaction',
-                      intensity: 'subtle'
-                    });
-                    queryClient.invalidateQueries();
-                    setShowBoundaries(false);
+                    try {
+                      await base44.entities.Servant.update(servant.id, { boundaries: 'no-strings' });
+                      await base44.entities.NightLog.create({
+                        entry: `You and ${servant.name} agreed it's casual. No strings attached.`,
+                        category: 'interaction',
+                        intensity: 'subtle'
+                      });
+                      queryClient.invalidateQueries();
+                      setShowBoundaries(false);
+                    } catch (e) {
+                      console.error('Failed to set boundaries:', e);
+                    }
                   }}
                   className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl p-4 text-left transition-colors"
                 >
@@ -2480,12 +2492,16 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           </div>
           <button
             onClick={async () => {
-              const newMode = !liteMode;
-              setLiteMode(newMode);
-              await base44.entities.VampireState.update(vampireState.id, {
-                content_filter: newMode ? 'lite' : 'full'
-              });
-              queryClient.invalidateQueries(['vampireState']);
+              try {
+                const newMode = !liteMode;
+                setLiteMode(newMode);
+                await base44.entities.VampireState.update(vampireState.id, {
+                  content_filter: newMode ? 'lite' : 'full'
+                });
+                queryClient.invalidateQueries(['vampireState']);
+              } catch (e) {
+                console.error('Failed to toggle lite mode:', e);
+              }
             }}
             className={`px-4 py-2 rounded-lg transition-colors ${
               liteMode 

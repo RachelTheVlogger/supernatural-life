@@ -41,60 +41,64 @@ export default function FeedingModal({ onClose, vampireState }) {
     setFeeding(true);
     
     setTimeout(async () => {
-      const outcomes = FEEDING_OUTCOMES[method];
-      let randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-      
-      // Modify based on blood type
-      const bloodTypeMods = {
-        bloodbag: { humanity: 2, text: ' (Blood bag. Safe, sterile, unsatisfying.)' },
-        animal: { humanity: 1, text: ' (Animal blood. It sustains, but barely.)' },
-        human: { humanity: 0, text: '' }
-      };
-      const mod = bloodTypeMods[bloodType];
-      randomOutcome = {
-        ...randomOutcome,
-        humanity: randomOutcome.humanity + mod.humanity,
-        log: randomOutcome.log + mod.text
-      };
-      
-      setOutcome(randomOutcome);
-      
-      // Update vampire state with humanity
-      try {
-        if (vampireState.id) {
-          const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + randomOutcome.humanity));
-          let moral_path = 'balanced';
-          if (newHumanity >= 75) moral_path = 'humane';
-          else if (newHumanity >= 25) moral_path = 'balanced';
-          else if (newHumanity >= 10) moral_path = 'ruthless';
-          else moral_path = 'monster';
-          
-          await base44.entities.VampireState.update(vampireState.id, {
-            hunger_state: randomOutcome.state,
-            last_feed: new Date().toISOString(),
-            humanity: newHumanity,
-            moral_path: moral_path
-          });
-        }
-      } catch (e) {
-        console.error('Failed to update vampire state:', e);
-      }
-      
-      // Create log entry
-      await base44.entities.NightLog.create({
-        entry: randomOutcome.log,
-        category: 'feeding',
-        intensity: method === 'brutal' ? 'significant' : 'moderate'
-      });
-      
-      queryClient.invalidateQueries(['vampireState']);
-      queryClient.invalidateQueries(['logs']);
-      
-      setTimeout(() => {
+      if (!vampireState?.id) {
         setFeeding(false);
-        setOutcome(null);
         onClose();
-      }, 3000);
+        return;
+      }
+
+      try {
+        const outcomes = FEEDING_OUTCOMES[method];
+        let randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+        
+        // Modify based on blood type
+        const bloodTypeMods = {
+          bloodbag: { humanity: 2, text: ' (Blood bag. Safe, sterile, unsatisfying.)' },
+          animal: { humanity: 1, text: ' (Animal blood. It sustains, but barely.)' },
+          human: { humanity: 0, text: '' }
+        };
+        const mod = bloodTypeMods[bloodType];
+        randomOutcome = {
+          ...randomOutcome,
+          humanity: randomOutcome.humanity + mod.humanity,
+          log: randomOutcome.log + mod.text
+        };
+        
+        setOutcome(randomOutcome);
+        
+        // Update vampire state with humanity
+        const newHumanity = Math.max(0, Math.min(100, (vampireState.humanity ?? 50) + randomOutcome.humanity));
+        let moral_path = 'balanced';
+        if (newHumanity >= 75) moral_path = 'humane';
+        else if (newHumanity >= 25) moral_path = 'balanced';
+        else if (newHumanity >= 10) moral_path = 'ruthless';
+        else moral_path = 'monster';
+        
+        await base44.entities.VampireState.update(vampireState.id, {
+          hunger_state: randomOutcome.state,
+          last_feed: new Date().toISOString(),
+          humanity: newHumanity,
+          moral_path: moral_path
+        });
+        
+        // Create log entry
+        await base44.entities.NightLog.create({
+          entry: randomOutcome.log,
+          category: 'feeding',
+          intensity: method === 'brutal' ? 'significant' : 'moderate'
+        });
+        
+        queryClient.invalidateQueries(['vampireState']);
+        queryClient.invalidateQueries(['logs']);
+      } catch (e) {
+        console.error('Failed to complete feeding:', e);
+      } finally {
+        setTimeout(() => {
+          setFeeding(false);
+          setOutcome(null);
+          onClose();
+        }, 3000);
+      }
     }, 2000);
   };
   

@@ -312,68 +312,76 @@ export default function MangaCareer({ servant, onClose }) {
   const handleSwitchSeries = async (seriesId) => {
     if (!career?.id) return;
     
-    const allSeries = career.manga_series || [];
-    const selectedSeries = allSeries.find(s => s.id === seriesId);
-    
-    if (selectedSeries) {
-      await base44.entities.ServantCareer.update(career.id, {
-        active_series_id: seriesId,
-        series_name: selectedSeries.name,
-        current_genre: selectedSeries.genre,
-        chapters_released: selectedSeries.chapters_released,
-        fans: selectedSeries.fans,
-        income: selectedSeries.income,
-        manga_chapters: selectedSeries.chapters,
-        story_summary: selectedSeries.story_summary
-      });
+    try {
+      const allSeries = career.manga_series || [];
+      const selectedSeries = allSeries.find(s => s.id === seriesId);
       
-      queryClient.invalidateQueries(['career']);
-      setShowSeriesManager(false);
+      if (selectedSeries) {
+        await base44.entities.ServantCareer.update(career.id, {
+          active_series_id: seriesId,
+          series_name: selectedSeries.name,
+          current_genre: selectedSeries.genre,
+          chapters_released: selectedSeries.chapters_released,
+          fans: selectedSeries.fans,
+          income: selectedSeries.income,
+          manga_chapters: selectedSeries.chapters,
+          story_summary: selectedSeries.story_summary
+        });
+        
+        queryClient.invalidateQueries(['career']);
+        setShowSeriesManager(false);
+      }
+    } catch (e) {
+      console.error('Series switch failed:', e);
     }
   };
 
   const handleCreateNewSeries = async (name, genre) => {
     if (!career?.id) return;
     
-    const allSeries = career.manga_series || [];
-    
-    // Save current series first
-    if (career.series_name) {
-      const currentSeriesIndex = allSeries.findIndex(s => s.id === career.active_series_id);
-      const currentSeries = {
-        id: career.active_series_id || Date.now().toString(),
-        name: career.series_name,
-        genre: career.current_genre,
-        chapters_released: career.chapters_released || 0,
-        fans: career.fans || 0,
-        income: career.income || 0,
-        chapters: career.manga_chapters || [],
-        story_summary: career.story_summary || ''
-      };
+    try {
+      const allSeries = career.manga_series || [];
       
-      if (currentSeriesIndex >= 0) {
-        allSeries[currentSeriesIndex] = currentSeries;
-      } else {
-        allSeries.push(currentSeries);
+      // Save current series first
+      if (career.series_name) {
+        const currentSeriesIndex = allSeries.findIndex(s => s.id === career.active_series_id);
+        const currentSeries = {
+          id: career.active_series_id || Date.now().toString(),
+          name: career.series_name,
+          genre: career.current_genre,
+          chapters_released: career.chapters_released || 0,
+          fans: career.fans || 0,
+          income: career.income || 0,
+          chapters: career.manga_chapters || [],
+          story_summary: career.story_summary || ''
+        };
+        
+        if (currentSeriesIndex >= 0) {
+          allSeries[currentSeriesIndex] = currentSeries;
+        } else {
+          allSeries.push(currentSeries);
+        }
       }
+      
+      // Create new series
+      const newSeriesId = Date.now().toString();
+      await base44.entities.ServantCareer.update(career.id, {
+        manga_series: allSeries,
+        active_series_id: newSeriesId,
+        series_name: name,
+        current_genre: genre,
+        chapters_released: 0,
+        fans: Math.floor(Math.random() * 50) + 20,
+        income: 0,
+        manga_chapters: [],
+        story_summary: `A ${genre} manga series about adventure and growth.`
+      });
+      
+      queryClient.invalidateQueries(['career']);
+      setShowSeriesManager(false);
+    } catch (e) {
+      console.error('Series creation failed:', e);
     }
-    
-    // Create new series
-    const newSeriesId = Date.now().toString();
-    await base44.entities.ServantCareer.update(career.id, {
-      manga_series: allSeries,
-      active_series_id: newSeriesId,
-      series_name: name,
-      current_genre: genre,
-      chapters_released: 0,
-      fans: Math.floor(Math.random() * 50) + 20,
-      income: 0,
-      manga_chapters: [],
-      story_summary: `A ${genre} manga series about adventure and growth.`
-    });
-    
-    queryClient.invalidateQueries(['career']);
-    setShowSeriesManager(false);
   };
 
   const handleGenerateCover = async (useCustomPrompt = false) => {
