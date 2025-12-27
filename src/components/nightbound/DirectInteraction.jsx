@@ -1923,7 +1923,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     setOutcome(outcome);
     
     setTimeout(async () => {
-      // Bourbon - Stefan Salvatore style. Rarely works. Often fails. Temptation wins.
+      // Bourbon as a coping mechanism. Rarely works. Often fails. Temptation wins.
       if (type === 'bourbon' && vampireState.id) {
         const effectiveness = Math.random();
 
