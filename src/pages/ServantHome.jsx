@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, ShoppingBag, Settings, Heart, User, Zap } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import BusinessManagement from '@/components/nightbound/BusinessManagement';
 import NPCInteraction from '@/components/nightbound/NPCInteraction';
@@ -198,9 +198,9 @@ export default function ServantHome() {
   });
   
   const { data: messages = [] } = useQuery({
-    queryKey: ['messages', servantId],
-    queryFn: () => base44.entities.Message.filter({ servant_id: servantId }, '-created_date'),
-    enabled: !!servantId,
+    queryKey: ['messages', currentServantId],
+    queryFn: () => base44.entities.Message.filter({ servant_id: currentServantId }, '-created_date'),
+    enabled: !!currentServantId && !!servant,
     staleTime: 5000
   });
   
@@ -244,7 +244,7 @@ export default function ServantHome() {
       const toBuy = materials[Math.floor(Math.random() * materials.length)];
       const amount = Math.floor(Math.random() * 3) + 2;
 
-      const inventory = await base44.entities.Inventory.filter({ servant_id: servantId });
+      const inventory = await base44.entities.Inventory.filter({ servant_id: currentServantId });
       const existing = inventory.find(i => i.material === toBuy);
       
       if (existing) {
@@ -253,7 +253,7 @@ export default function ServantHome() {
         });
       } else {
         await base44.entities.Inventory.create({
-          servant_id: servantId,
+          servant_id: currentServantId,
           material: toBuy,
           quantity: amount
         });
@@ -267,13 +267,13 @@ export default function ServantHome() {
       // Small relationship gain from doing chores
       const relationshipGain = Math.floor(Math.random() * 3) + 2; // 2-4
       if (servant) {
-        await base44.entities.Servant.update(servantId, {
+        await base44.entities.Servant.update(currentServantId, {
           relationship: Math.min((servant.relationship || 0) + relationshipGain, 100)
         });
       }
       
       await base44.entities.NightLog.create({
-        entry: `${servant?.name}: ${outcome}`,
+        entry: `${entity?.name}: ${outcome}`,
         category: 'interaction',
         intensity: 'subtle'
       });
@@ -397,13 +397,15 @@ export default function ServantHome() {
           >
             Switch to Vampire →
           </button>
-          <button
-            onClick={() => navigate(createPageUrl(`Messages?servant=${servantId}`))}
-            className="text-purple-400 hover:text-purple-300 text-sm transition-colors flex items-center gap-1"
-          >
-            <MessageCircle className="w-4 h-4" />
-            Messages {unreadMessages > 0 && `(${unreadMessages})`}
-          </button>
+          {servant && (
+            <button
+              onClick={() => navigate(createPageUrl(`Messages?servant=${currentServantId}`))}
+              className="text-purple-400 hover:text-purple-300 text-sm transition-colors flex items-center gap-1"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Messages {unreadMessages > 0 && `(${unreadMessages})`}
+            </button>
+          )}
           <button
             onClick={() => setShowFamily(true)}
             className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
