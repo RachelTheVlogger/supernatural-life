@@ -53,6 +53,10 @@ export default function MangaCareer({ servant, onClose }) {
   const [publishing, setPublishing] = useState(false);
   const [newCharacter, setNewCharacter] = useState({ name: '', description: '', referenceImages: [], uploadMode: 'generate' });
   const [editingCharacter, setEditingCharacter] = useState(null);
+  const [showFeatures, setShowFeatures] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState(null);
+  const [ratingChapter, setRatingChapter] = useState(null);
+  const [userRating, setUserRating] = useState(5);
 
   const entityId = servant?.id;
   const entityName = servant?.name;
@@ -484,11 +488,14 @@ export default function MangaCareer({ servant, onClose }) {
 
 Story so far: ${storySummary}
 
+${characters.length > 0 ? `Main characters: ${characterNames}` : ''}
+
 Create this chapter with:
 1. A compelling chapter title
 2. 6 key manga panels with descriptions
 3. Brief dialogue/narration for each panel
 4. A plot summary
+5. Which characters appear (list their names from: ${characterNames || 'create new characters if needed'})
 
 Format as JSON:
 {
@@ -497,7 +504,8 @@ Format as JSON:
   "panels": [
     {"description": "Panel scene description", "dialogue": "Character dialogue or narration"},
     ...
-  ]
+  ],
+  "characters_featured": ["character1", "character2"]
 }`;
 
       const chapterContent = await base44.integrations.Core.InvokeLLM({
@@ -516,9 +524,25 @@ Format as JSON:
                   dialogue: { type: "string" }
                 }
               }
+            },
+            characters_featured: {
+              type: "array",
+              items: { type: "string" }
             }
           }
         }
+      });
+
+      // Update character appearance counts
+      const updatedCharacters = characters.map(char => {
+        const appeared = (chapterContent.characters_featured || []).some(name => 
+          name.toLowerCase().includes(char.name.toLowerCase()) || 
+          char.name.toLowerCase().includes(name.toLowerCase())
+        );
+        if (appeared) {
+          return { ...char, appearances: (char.appearances || 0) + 1 };
+        }
+        return char;
       });
 
       const title = chapterContent.title;
@@ -538,8 +562,9 @@ Format as JSON:
 
       const panelImages = [];
       
-      // Collect character reference images for consistency
+      // Collect character reference images for consistency and track which characters appear
       const characterRefs = [];
+      const characterNames = characters.map(c => c.name).join(', ');
       characters.forEach(c => {
         if (c.referenceImages && c.referenceImages.length > 0) {
           characterRefs.push(...c.referenceImages);
@@ -584,7 +609,11 @@ Format as JSON:
         quality,
         fans_gained: fansGained,
         income: incomeGained,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        characters_featured: chapterContent.characters_featured || [],
+        rating: 0,
+        ratings_count: 0,
+        reviews: []
       };
 
       // Update story summary for continuity
@@ -595,7 +624,8 @@ Format as JSON:
         income: (careerData.income || 0) + incomeGained,
         chapters_released: newChapters,
         manga_chapters: [...existingChapters, newChapter],
-        story_summary: newStorySummary
+        story_summary: newStorySummary,
+        manga_characters: updatedCharacters
       });
 
       await base44.entities.NightLog.create({
@@ -955,6 +985,13 @@ Format as JSON:
               >
                 📚 Series
               </button>
+              <button
+                onClick={() => setShowFeatures(true)}
+                disabled={working || generatingCover}
+                className="bg-gradient-to-r from-cyan-900/40 to-blue-900/40 hover:from-cyan-900/60 hover:to-blue-900/60 border border-cyan-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm col-span-2"
+              >
+                ⭐ More Features
+              </button>
             </div>
 
             <div className="flex gap-2 mb-4">
@@ -1042,13 +1079,33 @@ Format as JSON:
                         </div>
                       )}
 
-                      <div className="flex gap-3 text-xs text-gray-400">
+                      <div className="flex gap-3 text-xs text-gray-400 mb-2">
                         <span>📄 {chapter.panels?.length || chapter.panels || 0} panels</span>
                         <span>👥 +{chapter.fans_gained} fans</span>
                         <span>💰 ${chapter.income}</span>
+                        {chapter.rating > 0 && <span>⭐ {chapter.rating.toFixed(1)}/5</span>}
                       </div>
 
-                      <p className="text-purple-400 text-xs mt-2">Click to read →</p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRatingChapter(chapter);
+                          }}
+                          className="flex-1 bg-yellow-900/40 hover:bg-yellow-900/60 text-yellow-300 py-1 rounded text-xs"
+                        >
+                          {chapter.ratings_count > 0 ? `${chapter.ratings_count} ratings` : 'Rate Chapter'}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setViewingChapter(chapter);
+                          }}
+                          className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 text-purple-300 py-1 rounded text-xs"
+                        >
+                          Read →
+                        </button>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -1852,6 +1909,288 @@ Format as JSON:
                 </button>
               )}
             </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Rating Modal */}
+      {ratingChapter && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => setRatingChapter(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+          >
+            <h3 className="text-white text-xl font-bold mb-4">Rate Chapter {ratingChapter.number}</h3>
+            <p className="text-gray-400 text-sm mb-4">{ratingChapter.title}</p>
+
+            <div className="flex justify-center gap-2 mb-6">
+              {[1, 2, 3, 4, 5].map(star => (
+                <button
+                  key={star}
+                  onClick={() => setUserRating(star)}
+                  className="text-4xl transition-all hover:scale-110"
+                >
+                  {star <= userRating ? '⭐' : '☆'}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={async () => {
+                const chapters = [...(career.manga_chapters || [])];
+                const chapterIndex = chapters.findIndex(c => c.number === ratingChapter.number);
+                if (chapterIndex >= 0) {
+                  const chapter = chapters[chapterIndex];
+                  const newRatingsCount = (chapter.ratings_count || 0) + 1;
+                  const newRating = ((chapter.rating || 0) * (chapter.ratings_count || 0) + userRating) / newRatingsCount;
+                  chapters[chapterIndex] = {
+                    ...chapter,
+                    rating: newRating,
+                    ratings_count: newRatingsCount,
+                    reviews: [...(chapter.reviews || []), { rating: userRating, date: new Date().toISOString() }]
+                  };
+
+                  // Calculate overall rating
+                  const totalRatings = chapters.reduce((sum, c) => sum + (c.rating || 0) * (c.ratings_count || 0), 0);
+                  const totalCount = chapters.reduce((sum, c) => sum + (c.ratings_count || 0), 0);
+                  const overallRating = totalCount > 0 ? totalRatings / totalCount : 0;
+
+                  await base44.entities.ServantCareer.update(career.id, {
+                    manga_chapters: chapters,
+                    overall_rating: overallRating
+                  });
+                  queryClient.invalidateQueries(['career']);
+                  setRatingChapter(null);
+                  setUserRating(5);
+                }
+              }}
+              className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white py-3 rounded-lg font-medium"
+            >
+              Submit Rating
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* More Features Modal */}
+      {showFeatures && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => setShowFeatures(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-3xl w-full max-h-[85vh] overflow-y-auto"
+          >
+            <h3 className="text-white text-2xl font-bold mb-6">Manga Features</h3>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <button
+                onClick={() => setSelectedFeature('popularity')}
+                className="bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-pink-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">📊</div>
+                <h4 className="text-white font-bold text-sm">Character Popularity</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('arcs')}
+                className="bg-gradient-to-br from-blue-900/40 to-cyan-900/40 border border-blue-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">📖</div>
+                <h4 className="text-white font-bold text-sm">Story Arcs</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('collab')}
+                className="bg-gradient-to-br from-green-900/40 to-emerald-900/40 border border-green-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">🤝</div>
+                <h4 className="text-white font-bold text-sm">Collaborations</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('merch')}
+                className="bg-gradient-to-br from-yellow-900/40 to-orange-900/40 border border-yellow-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">🛍️</div>
+                <h4 className="text-white font-bold text-sm">Merchandise</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('special')}
+                className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">✨</div>
+                <h4 className="text-white font-bold text-sm">Special Editions</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('schedule')}
+                className="bg-gradient-to-br from-red-900/40 to-rose-900/40 border border-red-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">📅</div>
+                <h4 className="text-white font-bold text-sm">Schedule</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('analytics')}
+                className="bg-gradient-to-br from-indigo-900/40 to-violet-900/40 border border-indigo-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">📈</div>
+                <h4 className="text-white font-bold text-sm">Analytics</h4>
+              </button>
+
+              <button
+                onClick={() => setSelectedFeature('consistency')}
+                className="bg-gradient-to-br from-teal-900/40 to-cyan-900/40 border border-teal-500/30 rounded-xl p-4 text-center hover:scale-105 transition-all"
+              >
+                <div className="text-3xl mb-2">🔍</div>
+                <h4 className="text-white font-bold text-sm">Consistency Check</h4>
+              </button>
+
+              <button
+                className="bg-gradient-to-br from-gray-900/40 to-slate-900/40 border border-gray-500/30 rounded-xl p-4 text-center opacity-50"
+                disabled
+              >
+                <div className="text-3xl mb-2">🔮</div>
+                <h4 className="text-white font-bold text-sm">More Coming Soon</h4>
+              </button>
+            </div>
+
+            {selectedFeature === 'popularity' && (
+              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
+                <h4 className="text-white font-bold mb-4">Character Popularity Rankings</h4>
+                {(career?.manga_characters || [])
+                  .sort((a, b) => (b.appearances || 0) - (a.appearances || 0))
+                  .map((char, i) => (
+                    <div key={char.id} className="flex items-center gap-3 bg-gray-900/50 rounded-lg p-3 mb-2">
+                      <div className="text-2xl">#{i + 1}</div>
+                      <div className="flex-1">
+                        <h5 className="text-white font-medium">{char.name}</h5>
+                        <p className="text-gray-400 text-sm">{char.appearances || 0} appearances</p>
+                      </div>
+                      <div className="text-yellow-400 font-bold">
+                        {char.appearances > 10 ? '🔥' : char.appearances > 5 ? '⭐' : '✨'}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {selectedFeature === 'schedule' && (
+              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
+                <h4 className="text-white font-bold mb-4">Release Schedule</h4>
+                <p className="text-gray-400 text-sm mb-4">Set how often you release new chapters</p>
+                <div className="space-y-2">
+                  {['weekly', 'biweekly', 'monthly'].map(schedule => (
+                    <button
+                      key={schedule}
+                      onClick={async () => {
+                        await base44.entities.ServantCareer.update(career.id, {
+                          serialization_schedule: schedule
+                        });
+                        queryClient.invalidateQueries(['career']);
+                      }}
+                      className={`w-full rounded-lg p-3 text-left transition-colors ${
+                        career?.serialization_schedule === schedule
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                      }`}
+                    >
+                      <div className="font-medium capitalize">{schedule}</div>
+                      <div className="text-xs opacity-80">
+                        {schedule === 'weekly' && 'New chapter every week'}
+                        {schedule === 'biweekly' && 'New chapter every 2 weeks'}
+                        {schedule === 'monthly' && 'New chapter every month'}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedFeature === 'analytics' && (
+              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
+                <h4 className="text-white font-bold mb-4">Series Analytics</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-900/50 rounded-lg p-3">
+                    <p className="text-gray-400 text-xs">Total Chapters</p>
+                    <p className="text-white text-2xl font-bold">{career?.chapters_released || 0}</p>
+                  </div>
+                  <div className="bg-gray-900/50 rounded-lg p-3">
+                    <p className="text-gray-400 text-xs">Average Rating</p>
+                    <p className="text-white text-2xl font-bold">
+                      {career?.overall_rating ? `⭐ ${career.overall_rating.toFixed(1)}` : 'N/A'}
+                    </p>
+                  </div>
+                  <div className="bg-gray-900/50 rounded-lg p-3">
+                    <p className="text-gray-400 text-xs">Total Characters</p>
+                    <p className="text-white text-2xl font-bold">{career?.manga_characters?.length || 0}</p>
+                  </div>
+                  <div className="bg-gray-900/50 rounded-lg p-3">
+                    <p className="text-gray-400 text-xs">Fan Base</p>
+                    <p className="text-white text-2xl font-bold">{career?.fans || 0}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedFeature === 'consistency' && (
+              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
+                <h4 className="text-white font-bold mb-4">Plot Consistency Check</h4>
+                <p className="text-gray-400 text-sm mb-4">
+                  AI analyzes your story for continuity errors and plot holes
+                </p>
+                <button
+                  onClick={async () => {
+                    setOutcome('Analyzing story consistency...');
+                    try {
+                      const summary = career?.story_summary || '';
+                      const result = await base44.integrations.Core.InvokeLLM({
+                        prompt: `Analyze this manga story for plot consistency and continuity: ${summary}. List any potential plot holes or inconsistencies.`,
+                        response_json_schema: {
+                          type: "object",
+                          properties: {
+                            issues: { type: "array", items: { type: "string" } },
+                            suggestions: { type: "array", items: { type: "string" } }
+                          }
+                        }
+                      });
+                      setOutcome(result.issues.length > 0 
+                        ? `Found ${result.issues.length} potential issues` 
+                        : 'No major issues found! Story is consistent.');
+                      setTimeout(() => setOutcome(''), 3000);
+                    } catch (e) {
+                      setOutcome('Analysis failed');
+                      setTimeout(() => setOutcome(''), 2000);
+                    }
+                  }}
+                  className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white py-3 rounded-lg font-medium"
+                >
+                  Run Consistency Check
+                </button>
+              </div>
+            )}
+
+            {selectedFeature && !['popularity', 'schedule', 'analytics', 'consistency'].includes(selectedFeature) && (
+              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
+                <p className="text-gray-400 text-center py-8">
+                  This feature is under development! Check back soon.
+                </p>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}
