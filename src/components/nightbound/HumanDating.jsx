@@ -243,6 +243,25 @@ export default function HumanDating({ human, onClose }) {
           </div>
         )}
       </motion.div>
+
+      {showSexScene && activeDate && (
+        <DatingSexScene
+          human={human}
+          match={activeDate}
+          onClose={(chemistryGain) => {
+            setShowSexScene(false);
+            if (chemistryGain > 0) {
+              const updatedMatch = {
+                ...activeDate,
+                attraction: Math.min(100, activeDate.attraction + chemistryGain),
+                connection: Math.min(100, activeDate.connection + chemistryGain)
+              };
+              setMatches(matches.map(m => m.id === activeDate.id ? updatedMatch : m));
+            }
+            setActiveDate(null);
+          }}
+        />
+      )}
     </motion.div>
   );
 }
