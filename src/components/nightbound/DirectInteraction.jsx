@@ -1852,7 +1852,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     'intimate', 'dominate', 'worship', 'breeding', 'edging', 'bdsm', 'orgasmControl', 
     'oralService', 'rideDom', 'multiple', 'Marathon', 'vampireSex', 'vampireBiteDuringsex',
     'vampireRoughFuck', 'vampireSpeedFuck', 'vampireWallFuck', 'vampireMarathon',
-    'roughBehind', 'behindSeduction', 'publicUse', 'casualUse', 'service', 'vampireDoubleFeeding'
+    'roughBehind', 'behindSeduction', 'publicUse', 'casualUse', 'service', 'vampireDoubleFeeding',
+    'tease', 'makeout', 'exhibition', 'vampireBloodPlay', 'vampireRace', 'vampireSpar'
   ];
 
   const handleInteraction = async (type) => {

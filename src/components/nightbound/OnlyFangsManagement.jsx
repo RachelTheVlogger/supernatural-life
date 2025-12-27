@@ -97,6 +97,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [sextingSession, setSextingSession] = useState(null);
   const [sextingMessages, setSextingMessages] = useState([]);
   const [showMasturbation, setShowMasturbation] = useState(false);
+  const [callContext, setCallContext] = useState(null);
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -1972,33 +1973,16 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   onClick={async (e) => {
                     e.stopPropagation();
                     const fan = topFans[Math.floor(Math.random() * Math.min(3, topFans.length))];
-                    setVideoCallFan(fan?.name || 'VampireFan420');
-                    setTimeout(async () => {
-                      const earnings = Math.floor(Math.random() * 200) + 100;
-                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                        revenue: servantProfile.revenue + earnings
-                      });
-                      
-                      const relBonus = Math.floor(Math.random() * 8) + 5;
-                      await base44.entities.Servant.update(servant.id, {
-                        relationship: Math.min(100, (servant.relationship || 0) + relBonus)
-                      });
-                      
-                      await base44.entities.NightLog.create({
-                        entry: `Video call with ${videoCallFan}. 15 minutes of private time. Earned $${earnings}.`,
-                        category: 'interaction',
-                        intensity: 'significant'
-                      });
-                      
-                      queryClient.invalidateQueries();
-                      setVideoCallFan(null);
-                    }, 4000);
+                    const fanName = fan?.name || 'VampireFan420';
+                    setVideoCallFan(fanName);
+                    setCallContext('videocall');
+                    setShowMasturbation(true);
                   }}
-                  disabled={!!videoCallFan || servantProfile.reputation < 50}
+                  disabled={!!videoCallFan || servantProfile.reputation < 50 || showMasturbation}
                   className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left disabled:opacity-50"
                 >
                   <h4 className="text-white font-medium mb-1">📹 1-on-1 Video Call</h4>
-                  <p className="text-gray-400 text-sm">15 min private session ($100-300)</p>
+                  <p className="text-gray-400 text-sm">Masturbate for a fan ($150-500)</p>
                   {servantProfile.reputation < 50 && <p className="text-red-400 text-xs mt-1">Need 50+ Rep</p>}
                 </button>
 
@@ -2007,49 +1991,14 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                     e.stopPropagation();
                     const fan = topFans[Math.floor(Math.random() * topFans.length)]?.name || 'DarkLover69';
                     setSextingSession(fan);
-                    setSextingMessages([]);
-                    
-                    const msgs = [
-                      'Hey beautiful, I\'ve been thinking about you all day',
-                      'What are you wearing right now?',
-                      'I want you so bad',
-                      'Tell me what you\'d do to me',
-                      'You\'re making me so hard/wet'
-                    ];
-                    
-                    const interval = setInterval(() => {
-                      setSextingMessages(prev => {
-                        if (prev.length >= 10) {
-                          clearInterval(interval);
-                          return prev;
-                        }
-                        return [...prev, msgs[Math.floor(Math.random() * msgs.length)]];
-                      });
-                    }, 1500);
-                    
-                    setTimeout(async () => {
-                      clearInterval(interval);
-                      const earnings = Math.floor(Math.random() * 100) + 50;
-                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                        revenue: servantProfile.revenue + earnings
-                      });
-                      
-                      await base44.entities.NightLog.create({
-                        entry: `Sexting session with ${fan}. Hot and heavy. Earned $${earnings}.`,
-                        category: 'interaction',
-                        intensity: 'moderate'
-                      });
-                      
-                      queryClient.invalidateQueries();
-                      setSextingSession(null);
-                      setSextingMessages([]);
-                    }, 8000);
+                    setCallContext('sexting');
+                    setShowMasturbation(true);
                   }}
-                  disabled={!!sextingSession}
+                  disabled={!!sextingSession || showMasturbation}
                   className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left disabled:opacity-50"
                 >
                   <h4 className="text-white font-medium mb-1">💬 Sexting Session</h4>
-                  <p className="text-gray-400 text-sm">Text back and forth ($50-150)</p>
+                  <p className="text-gray-400 text-sm">Dirty texting + masturbation ($100-300)</p>
                 </button>
 
                 <button
@@ -2075,39 +2024,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 </button>
               </div>
 
-              {videoCallFan && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-4 bg-black/60 rounded-xl p-4 border border-red-500/50"
-                >
-                  <motion.p
-                    animate={{ opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="text-red-300 text-center"
-                  >
-                    📹 Video call with {videoCallFan} in progress...
-                  </motion.p>
-                </motion.div>
-              )}
 
-              {sextingSession && (
-                <div className="mt-4 bg-black/60 rounded-xl p-4 border border-purple-500/50 max-h-64 overflow-y-auto">
-                  <p className="text-purple-300 font-bold mb-3">💬 Sexting with {sextingSession}...</p>
-                  <div className="space-y-2">
-                    {sextingMessages.map((msg, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="bg-gray-800 rounded-lg p-2"
-                      >
-                        <p className="text-gray-300 text-sm">{msg}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -2209,18 +2126,24 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           <div className="max-h-[60vh] overflow-y-auto">
             <MasturbationSlider
               gender={servant.gender}
-              vampireWatching={false}
+              vampireWatching={callContext === 'videocall'}
               onFinish={async (type, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
-                const baseEarnings = type === 'edged' ? Math.floor(Math.random() * 400) + 300 : Math.floor(Math.random() * 300) + 200;
+                const isVideoCall = callContext === 'videocall';
+                const isSexting = callContext === 'sexting';
+                
+                const baseEarnings = isVideoCall ? Math.floor(Math.random() * 250) + 150 : 
+                                    isSexting ? Math.floor(Math.random() * 200) + 100 :
+                                    type === 'edged' ? Math.floor(Math.random() * 400) + 300 : 
+                                    Math.floor(Math.random() * 300) + 200;
                 const edgeBonus = edgeCount * 50;
                 const desperationBonus = Math.floor(desperationLevel / 2);
                 const earnings = baseEarnings + edgeBonus + desperationBonus;
-                const newSubs = (type === 'edged' ? Math.floor(Math.random() * 40) + 30 : Math.floor(Math.random() * 25) + 15) + Math.floor(edgeCount * 5);
+                const newSubs = (isVideoCall || isSexting) ? 0 : (type === 'edged' ? Math.floor(Math.random() * 40) + 30 : Math.floor(Math.random() * 25) + 15) + Math.floor(edgeCount * 5);
                 
                 await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
                   revenue: servantProfile.revenue + earnings,
                   subscriber_count: servantProfile.subscriber_count + newSubs,
-                  reputation: Math.min(100, servantProfile.reputation + 8)
+                  reputation: Math.min(100, servantProfile.reputation + (isVideoCall || isSexting ? 5 : 8))
                 });
                 
                 const relBonus = Math.floor(Math.random() * 10) + 8;
@@ -2228,27 +2151,35 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                   relationship: Math.min(100, (servant.relationship || 0) + relBonus)
                 });
                 
-                const bodyPartDesc = bodyPart === 'clit' ? ' Rubbing your clit on camera. Close-ups.' :
-                                    bodyPart === 'dick' ? ' Stroking your cock on camera. Full view.' :
-                                    bodyPart === 'breasts' ? ' Playing with your tits. Pinching nipples.' :
-                                    bodyPart === 'fingers' ? ' Fingering yourself deep. Camera angle perfect.' :
-                                    bodyPart === 'balls' ? ' Showing them how you play with your balls.' :
-                                    touchingMultiple ? (servant.gender === 'woman' ? ' Rubbing clit AND playing with tits. Both on camera.' :
-                                                       servant.gender === 'man' ? ' Stroking dick AND squeezing balls. Full show.' :
-                                                       ' Touching everywhere at once. Complete view.') : '';
+                const bodyPartDesc = bodyPart === 'clit' ? ' Close-up. They watched every circle.' :
+                                    bodyPart === 'dick' ? ' Full view. They watched every stroke.' :
+                                    bodyPart === 'breasts' ? ' Nipples. Pinching and teasing.' :
+                                    bodyPart === 'chest' ? ' Chest. Touching and teasing.' :
+                                    bodyPart === 'fingers' ? ' Deep inside. Camera angle perfect.' :
+                                    bodyPart === 'balls' ? ' Showing them. Playing and squeezing.' :
+                                    touchingMultiple ? ' Both spots at once. Full show.' : '';
                 
-                const edgeDesc = edgeCount > 3 ? ` Edged ${edgeCount} times. Chat was begging you to finish. Finally did. Explosive.` :
-                                edgeCount > 1 ? ` Edged ${edgeCount} times for them. Building intensity.` :
-                                type === 'edged' ? ' Edged yourself for the audience.' : '';
+                const edgeDesc = edgeCount > 3 ? ` Edged ${edgeCount}x. ${isVideoCall || isSexting ? 'Begging for permission.' : 'Chat begging.'} Finally allowed. Explosive.` :
+                                edgeCount > 1 ? ` Edged ${edgeCount}x. Building intensity.` :
+                                type === 'edged' ? ' Edged. Made it last.' : '';
+
+                const contextDesc = isVideoCall ? 
+                  `Video call. Masturbated for them.${bodyPartDesc}${edgeDesc} They watched you cum. Earned $${earnings}.` :
+                  isSexting ?
+                  `Sexting session. Masturbated while texting.${bodyPartDesc}${edgeDesc} They came too. Earned $${earnings}.` :
+                  `Live masturbation show.${bodyPartDesc}${edgeDesc} Chat went wild. Earned $${earnings}, +${newSubs} subs.`;
 
                 await base44.entities.NightLog.create({
-                  entry: `Interactive masturbation on camera.${bodyPartDesc}${edgeDesc} Chat went wild. Earned $${earnings}, +${newSubs} subscribers.`,
+                  entry: contextDesc,
                   category: 'interaction',
                   intensity: 'significant'
                 });
                 
                 queryClient.invalidateQueries();
                 setShowMasturbation(false);
+                setCallContext(null);
+                setSextingSession(null);
+                setVideoCallFan(null);
               }}
             />
           </div>
