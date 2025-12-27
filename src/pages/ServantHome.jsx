@@ -183,6 +183,15 @@ export default function ServantHome() {
     queryKey: ['servants'],
     queryFn: () => base44.entities.Servant.list()
   });
+
+  const { data: humans = [] } = useQuery({
+    queryKey: ['humans'],
+    queryFn: () => base44.entities.Human.list()
+  });
+
+  // Get current entity (servant or human)
+  const currentServantId = servantId || (allServants.length > 0 ? allServants[0].id : (humans.length > 0 ? humans[0].id : null));
+  const entity = allServants.find(s => s.id === currentServantId) || humans.find(h => h.id === currentServantId);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -645,7 +654,7 @@ export default function ServantHome() {
         )}
         {showCareerSelector && (
           <CareerSelector
-            servant={servants.find(s => s.id === currentServantId)}
+            servant={allServants.find(s => s.id === currentServantId)}
             human={humans.find(h => h.id === currentServantId)}
             onClose={() => setShowCareerSelector(false)}
             onSelect={(careerType) => {
