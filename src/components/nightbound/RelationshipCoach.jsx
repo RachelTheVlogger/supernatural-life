@@ -4,7 +4,7 @@ import { X, Brain, Sparkles, TrendingUp, Heart, AlertCircle, Send, MessageCircle
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 
-export default function RelationshipCoach({ vampireState, onClose }) {
+export default function RelationshipCoach({ vampireState, onClose, viewMode = 'vampire', currentServant = null }) {
   const [selectedServant, setSelectedServant] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [advice, setAdvice] = useState(null);
@@ -13,6 +13,8 @@ export default function RelationshipCoach({ vampireState, onClose }) {
   const [userInput, setUserInput] = useState('');
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  const isServantView = viewMode === 'servant';
 
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
@@ -40,7 +42,9 @@ export default function RelationshipCoach({ vampireState, onClose }) {
       .map(log => log.entry)
       .join('\n');
 
-    const prompt = `You are an expert relationship coach specializing in vampire-servant dynamics. Analyze this relationship and provide actionable advice.
+    const prompt = isServantView 
+      ? `You are an expert relationship coach specializing in vampire-servant dynamics. A human servant is asking about their relationship with their vampire master/mistress. Provide advice from THEIR perspective - help them navigate this intense, dangerous relationship.`
+      : `You are an expert relationship coach specializing in vampire-servant dynamics. Analyze this relationship and provide actionable advice.`;
 
 SERVANT PROFILE:
 - Name: ${servant.name}
@@ -74,11 +78,11 @@ Provide a structured analysis with:
 1. Relationship Status Assessment
 2. Key Dynamics & Patterns
 3. Growth Opportunities
-4. Specific Interaction Recommendations (which interaction types would work best RIGHT NOW)
-5. Warning Signs (if any - jealousy, pushing too hard, neglect, etc.)
+4. Specific ${isServantView ? 'Actions' : 'Interaction'} Recommendations (what should ${isServantView ? 'you' : 'they'} do RIGHT NOW)
+5. Warning Signs (if any - danger, obsession, losing yourself, etc.)
 6. Next Milestone Prediction
 
-Be direct, insightful, and tailored to their specific dynamic. Consider their variant type heavily.`;
+Be direct, insightful, and tailored to their specific dynamic. ${isServantView ? 'Remember: this is a dangerous relationship. The servant needs advice on navigating their feelings while staying safe. Be protective but honest.' : 'Consider their variant type heavily.'}`;
 
     try {
       const result = await base44.integrations.Core.InvokeLLM({
@@ -120,7 +124,9 @@ Be direct, insightful, and tailored to their specific dynamic. Consider their va
     setMessages([
       {
         role: 'coach',
-        text: `Hi! I'm your AI Relationship Coach. Let's talk about your relationship with ${servant.name}. What would you like to know or discuss?`
+        text: isServantView 
+          ? `Hi ${servant.name}. I'm your AI Relationship Coach. I'm here to help you navigate your relationship with ${vampireState.vampire_name}. This is a safe space - what's on your mind?`
+          : `Hi! I'm your AI Relationship Coach. Let's talk about your relationship with ${servant.name}. What would you like to know or discuss?`
       }
     ]);
   };
@@ -140,9 +146,11 @@ Be direct, insightful, and tailored to their specific dynamic. Consider their va
       .map(log => log.entry)
       .join('\n');
 
-    const conversationHistory = messages.map(m => `${m.role === 'user' ? 'Vampire' : 'Coach'}: ${m.text}`).join('\n');
+    const conversationHistory = messages.map(m => `${m.role === 'user' ? (isServantView ? 'Servant' : 'Vampire') : 'Coach'}: ${m.text}`).join('\n');
 
-    const prompt = `You are an expert relationship coach specializing in vampire-servant dynamics. You're having a conversation with a vampire about their relationship with their servant.
+    const prompt = isServantView
+      ? `You are an expert relationship coach specializing in vampire-servant dynamics. You're having a conversation with a human servant about their relationship with their vampire master/mistress. Be supportive but honest about the dangers. Help them navigate their feelings while staying safe.`
+      : `You are an expert relationship coach specializing in vampire-servant dynamics. You're having a conversation with a vampire about their relationship with their servant.`;
 
 SERVANT PROFILE:
 - Name: ${selectedServant.name}
@@ -174,9 +182,9 @@ ${recentInteractions || 'No recent interactions logged'}
 CONVERSATION HISTORY:
 ${conversationHistory}
 
-VAMPIRE'S QUESTION: ${userMessage}
+${isServantView ? 'SERVANT' : 'VAMPIRE'}'S QUESTION: ${userMessage}
 
-Respond naturally and helpfully. Give specific, actionable advice. Be direct but supportive. Reference specific aspects of their relationship. Keep responses conversational and 2-4 paragraphs max.`;
+Respond naturally and helpfully. Give specific, actionable advice. Be direct but supportive. Reference specific aspects of their relationship. ${isServantView ? 'Remember this is a dangerous power dynamic - be protective of the servant while respecting their autonomy.' : ''} Keep responses conversational and 2-4 paragraphs max.`;
 
     try {
       const response = await base44.integrations.Core.InvokeLLM({ prompt });
@@ -215,11 +223,13 @@ Respond naturally and helpfully. Give specific, actionable advice. Be direct but
           <Brain className="w-8 h-8 text-purple-400" />
           <div>
             <h2 className="text-2xl font-bold text-white">AI Relationship Coach</h2>
-            <p className="text-gray-400 text-sm">Deep relationship analysis & personalized advice</p>
+            <p className="text-gray-400 text-sm">
+              {isServantView ? 'Safe space to discuss your vampire relationship' : 'Deep relationship analysis & personalized advice'}
+            </p>
           </div>
         </div>
 
-        {!selectedServant ? (
+        {!selectedServant && !isServantView ? (
           <div className="space-y-3">
             <p className="text-gray-400 mb-4">Select a servant to discuss:</p>
             {servants.map(s => (
@@ -253,6 +263,33 @@ Respond naturally and helpfully. Give specific, actionable advice. Be direct but
                 </div>
               </div>
             ))}
+          </div>
+        ) : !selectedServant && isServantView ? (
+          // Auto-start for servant view
+          <div className="space-y-3">
+            <div className="bg-pink-950/40 border border-pink-500/30 rounded-xl p-4 mb-4">
+              <p className="text-white text-sm mb-3">
+                This is a confidential space. Talk freely about your relationship with {vampireState.vampire_name}.
+              </p>
+              <p className="text-gray-400 text-xs">
+                The AI coach is here to help you navigate this intense connection.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => analyzeRelationship(currentServant)}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg transition-colors"
+              >
+                📊 Get Relationship Analysis
+              </button>
+              <button
+                onClick={() => startChat(currentServant)}
+                className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Start Chat
+              </button>
+            </div>
           </div>
         ) : chatMode ? (
           <div className="flex flex-col h-[60vh]">
