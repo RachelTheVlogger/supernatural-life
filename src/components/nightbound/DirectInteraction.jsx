@@ -1788,9 +1788,6 @@ const INTERACTIONS = {
 };
 
 export default function DirectInteraction({ servant, vampireState, onClose }) {
-  if (!vampireState) {
-    return null;
-  }
   const queryClient = useQueryClient();
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
@@ -1807,6 +1804,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     queryKey: ['interactionProgress'],
     queryFn: () => base44.entities.InteractionProgress.list()
   });
+
+  if (!vampireState) {
+    return null;
+  }
 
   const isVampFemale = vampireState.gender === 'woman';
   

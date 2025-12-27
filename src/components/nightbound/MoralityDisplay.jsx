@@ -30,6 +30,10 @@ const MORALITY_PATHS = {
 };
 
 export default function MoralityDisplay({ vampireState, compact = false }) {
+  if (!vampireState) {
+    return null;
+  }
+
   const humanity = vampireState.humanity ?? 50;
   const moralPath = vampireState.moral_path || 'balanced';
   const pathData = MORALITY_PATHS[moralPath];

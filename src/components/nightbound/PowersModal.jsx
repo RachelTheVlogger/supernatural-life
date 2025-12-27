@@ -28,6 +28,10 @@ const POWER_ICONS = {
 };
 
 export default function PowersModal({ onClose, vampireState }) {
+  if (!vampireState) {
+    return null;
+  }
+
   const unlockedPowers = vampireState.unlocked_powers || [];
   
   return (
