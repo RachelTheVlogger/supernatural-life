@@ -6,9 +6,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import MasturbationSlider from './MasturbationSlider';
 
 export default function VideoCallSession({ servant, vampireState, onClose, onGainRelationship }) {
+  const queryClient = useQueryClient();
   const [stage, setStage] = useState('start'); // start, watching, slider, end
   const [outcome, setOutcome] = useState('');
-  const queryClient = useQueryClient();
 
   const startCall = () => {
     const intros = [
