@@ -51,17 +51,30 @@ export default function MangaCareer({ servant, onClose }) {
   const [showCharacterManager, setShowCharacterManager] = useState(false);
   const [showPublish, setShowPublish] = useState(false);
   const [publishing, setPublishing] = useState(false);
-  const [newCharacter, setNewCharacter] = useState({ name: '', description: '', referenceImage: null });
+  const [newCharacter, setNewCharacter] = useState({ name: '', description: '', referenceImage: null, uploadMode: 'generate' });
 
   const entityId = servant?.id;
   const entityName = servant?.name;
 
-  const { data: careers = [] } = useQuery({
+  const { data: careers = [], isLoading: careersLoading } = useQuery({
     queryKey: ['career', entityId],
-    queryFn: () => base44.entities.ServantCareer.filter({ servant_id: entityId })
+    queryFn: () => base44.entities.ServantCareer.filter({ servant_id: entityId }),
+    enabled: !!entityId
   });
 
   const career = careers[0];
+
+  if (careersLoading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+      >
+        <div className="text-white">Loading manga career...</div>
+      </motion.div>
+    );
+  }
 
   const saveBookmark = async (chapterNumber, panelIndex) => {
     if (!career?.id) return;
@@ -189,22 +202,35 @@ export default function MangaCareer({ servant, onClose }) {
 
     setWorking(true);
     try {
-      // Generate character reference image
-      const prompt = `${newCharacter.description}, character reference sheet, ${career.art_style} manga style, full body, multiple angles, character design, unique character design`;
+      let referenceImageUrl;
 
-      const generateParams = { prompt };
-      if (career.style_reference_image) {
-        generateParams.existing_image_urls = [career.style_reference_image];
+      if (newCharacter.uploadMode === 'upload') {
+        // Use uploaded image
+        if (!newCharacter.referenceImage) {
+          setOutcome('Please upload an image first');
+          setWorking(false);
+          return;
+        }
+        referenceImageUrl = newCharacter.referenceImage;
+      } else {
+        // Generate character reference image
+        const prompt = `${newCharacter.description}, character reference sheet, ${career.art_style} manga style, full body, multiple angles, character design, unique character design`;
+
+        const generateParams = { prompt };
+        if (career.style_reference_image) {
+          generateParams.existing_image_urls = [career.style_reference_image];
+        }
+
+        const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
+        referenceImageUrl = imageResult.url;
       }
-
-      const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
 
       const characters = career.manga_characters || [];
       characters.push({
         id: Date.now().toString(),
         name: newCharacter.name,
-        description: newCharacter.description,
-        referenceImage: imageResult.url,
+        description: newCharacter.description || 'Custom character',
+        referenceImage: referenceImageUrl,
         appearances: 0
       });
       
@@ -213,7 +239,7 @@ export default function MangaCareer({ servant, onClose }) {
       });
       
       queryClient.invalidateQueries(['career']);
-      setNewCharacter({ name: '', description: '', referenceImage: null });
+      setNewCharacter({ name: '', description: '', referenceImage: null, uploadMode: 'generate' });
       setOutcome(`Character "${newCharacter.name}" created!`);
       setTimeout(() => {
         setWorking(false);
@@ -1442,6 +1468,22 @@ Format as JSON:
 
             <div className="bg-gray-800/50 rounded-lg p-4 mb-6">
               <h4 className="text-white font-medium mb-3">Create New Character</h4>
+              
+              <div className="flex gap-2 mb-3">
+                <button
+                  onClick={() => setNewCharacter({...newCharacter, uploadMode: 'generate', referenceImage: null})}
+                  className={`flex-1 py-2 rounded-lg text-sm ${newCharacter.uploadMode === 'generate' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-400'}`}
+                >
+                  AI Generate
+                </button>
+                <button
+                  onClick={() => setNewCharacter({...newCharacter, uploadMode: 'upload'})}
+                  className={`flex-1 py-2 rounded-lg text-sm ${newCharacter.uploadMode === 'upload' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-400'}`}
+                >
+                  Upload Image
+                </button>
+              </div>
+
               <input
                 value={newCharacter.name}
                 onChange={(e) => setNewCharacter({...newCharacter, name: e.target.value})}
@@ -1449,20 +1491,62 @@ Format as JSON:
                 className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white mb-3"
                 disabled={working}
               />
-              <textarea
-                value={newCharacter.description}
-                onChange={(e) => setNewCharacter({...newCharacter, description: e.target.value})}
-                placeholder="Character description (e.g., 'teenage boy with spiky red hair, green eyes, wears a black jacket')"
-                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white resize-none"
-                rows={3}
-                disabled={working}
-              />
+
+              {newCharacter.uploadMode === 'generate' ? (
+                <textarea
+                  value={newCharacter.description}
+                  onChange={(e) => setNewCharacter({...newCharacter, description: e.target.value})}
+                  placeholder="Character description (e.g., 'teenage boy with spiky red hair, green eyes, wears a black jacket')"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white resize-none mb-3"
+                  rows={3}
+                  disabled={working}
+                />
+              ) : (
+                <div className="mb-3">
+                  {newCharacter.referenceImage ? (
+                    <div className="relative">
+                      <img src={newCharacter.referenceImage} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
+                      <button
+                        onClick={() => setNewCharacter({...newCharacter, referenceImage: null})}
+                        className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="w-full bg-gray-900 border-2 border-dashed border-gray-700 hover:border-purple-500 rounded-lg p-6 cursor-pointer flex flex-col items-center justify-center">
+                      <span className="text-gray-400 text-sm">Click to upload character image</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          try {
+                            const result = await base44.integrations.Core.UploadFile({ file });
+                            if (result?.file_url) {
+                              setNewCharacter({...newCharacter, referenceImage: result.file_url});
+                            }
+                          } catch (error) {
+                            console.error('Upload failed:', error);
+                            setOutcome('Upload failed');
+                            setTimeout(() => setOutcome(''), 2000);
+                          }
+                        }}
+                        className="hidden"
+                        disabled={working}
+                      />
+                    </label>
+                  )}
+                </div>
+              )}
+
               <button
                 onClick={handleCreateCharacter}
-                disabled={working || !newCharacter.name.trim() || !newCharacter.description.trim()}
-                className="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg disabled:opacity-50"
+                disabled={working || !newCharacter.name.trim() || (newCharacter.uploadMode === 'generate' && !newCharacter.description.trim()) || (newCharacter.uploadMode === 'upload' && !newCharacter.referenceImage)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg disabled:opacity-50"
               >
-                {working ? 'Creating...' : 'Generate Character'}
+                {working ? 'Creating...' : newCharacter.uploadMode === 'upload' ? 'Add Character' : 'Generate Character'}
               </button>
             </div>
 
