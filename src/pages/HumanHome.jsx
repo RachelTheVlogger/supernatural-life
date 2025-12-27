@@ -118,6 +118,103 @@ export default function HumanHome() {
         awarenessGain = Math.floor(Math.random() * 25) + 25;
         dangerGain = Math.floor(Math.random() * 30) + 30;
         result = 'You know too much now. You\'re ready to confront the truth. To face them. This could be the end. Or the beginning of something darker.';
+      } else if (activity.id === 'onlyfangs_search') {
+        const searchOutcomes = [
+          `You searched OnlyFangs desperately.\n\nFound ${vampire.vampire_name}'s account.\n\nSubscribed immediately.\n\nWatched everything. Every video. Every photo.\n\nYou came twice just scrolling through their content.\n\nLeft desperate comments. Tipped everything you had.`,
+          `${vampire.vampire_name}'s OnlyFangs is perfect.\n\nYou watch their videos on repeat.\n\nMasturbate to every single one.\n\nScreenshot everything.\n\nYou're their biggest fan and they don't even know.\n\nYet.`,
+          `Found them on OnlyFangs.\n\nThey're doing exactly what you fantasized about.\n\nBiting people. Feeding. Fucking.\n\nYou subscribe to the highest tier.\n\nSend messages. Desperate ones.\n\n"Notice me. Please. I'll do anything."`,
+          `Their OnlyFangs content is addictive.\n\nYou've spent hundreds.\n\nWatched every livestream.\n\nCommented on everything.\n\nThey respond sometimes. Heart emojis.\n\nIt's enough to make you come.`
+        ];
+        result = searchOutcomes[Math.floor(Math.random() * searchOutcomes.length)];
+        awarenessGain = Math.floor(Math.random() * 12) + 8;
+        await base44.entities.Human.update(human.id, {
+          obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 25) + 15)
+        });
+      } else if (activity.id === 'onlyfangs_record') {
+        const recordOutcomes = [
+          `You created an OnlyFangs account.\n\nRecorded yourself masturbating.\n\nSaid their name. Begged for them.\n\nPosted it hoping they'd see.\n\nTagged them.\n\nYou're beyond shame now. You just want their attention.`,
+          `Filmed yourself touching yourself.\n\nMoaning their name.\n\nTalking about what you want them to do to you.\n\nUploaded it to OnlyFangs.\n\nSent them the link.\n\n"This is what you do to me."`,
+          `Made content specifically for them.\n\nShowed everything.\n\nHeld nothing back.\n\nWrote in the description: "I know what you are. I want it."\n\nPosted it publicly.\n\nNow you wait.`,
+          `Recorded yourself in bed.\n\nPretending they're there.\n\nBiting your own neck.\n\nTouching yourself desperately.\n\nUploaded it.\n\n"For ${vampire.vampire_name}" in the title.\n\nYou're not subtle anymore.`
+        ];
+        result = recordOutcomes[Math.floor(Math.random() * recordOutcomes.length)];
+        awarenessGain = Math.floor(Math.random() * 15) + 10;
+        dangerGain = Math.floor(Math.random() * 20) + 15;
+        await base44.entities.Human.update(human.id, {
+          obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 30) + 20)
+        });
+      } else if (activity.id === 'onlyfangs_message') {
+        const messageOutcomes = [
+          `You DMed ${vampire.vampire_name} on OnlyFangs.\n\n"I know what you are. I want you to turn me."\n\nThey read it immediately.\n\nTyping...\n\n"Come to this address. Tonight. Alone."\n\nYour hands are shaking.`,
+          `Sent them message after message.\n\nConfessing everything.\n\nYour obsession. Your fantasies. Your desperation.\n\nThey finally responded.\n\n"You're interesting. Let's meet."\n\nYou came just reading that.`,
+          `Messaged them: "I've been watching you. Following you. I can't stop."\n\nThey responded instantly.\n\n"I know. I've been letting you."\n\nOh god.\n\nThey knew the whole time.`,
+          `You: "Please notice me. I'll do anything."\n\nThem: "Anything?"\n\nYou: "Yes."\n\nThem: "Prove it."\n\nThey sent an address.\n\nYou're going. Of course you're going.`
+        ];
+        result = messageOutcomes[Math.floor(Math.random() * messageOutcomes.length)];
+        awarenessGain = Math.floor(Math.random() * 18) + 12;
+        dangerGain = Math.floor(Math.random() * 25) + 20;
+        await base44.entities.Human.update(human.id, {
+          obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 30) + 20),
+          romance_with_vampire: vampire.id
+        });
+        vampireEncounter = true;
+      } else if (activity.id === 'stalk_vampire') {
+        const stalkOutcomes = [
+          `You followed ${vampire.vampire_name} through the city.\n\nThey went to dark places. Talked to dangerous people.\n\nYou hid in shadows, heart racing.\n\nFor a moment, they turned. Looked right at you.\n\nDid they see you? Did they... smile?`,
+          `Watched ${vampire.vampire_name} from across the street.\n\nSaw them disappear into an alley with someone.\n\nHeard sounds. Gasping. Then silence.\n\nThey emerged alone. Wiping their mouth.\n\nYou touched yourself right there, hidden in the dark.`,
+          `Found where ${vampire.vampire_name} lives.\n\nWatched their window for hours.\n\nSaw them moving inside. So beautiful. So dangerous.\n\nYou want them to catch you watching.\n\nYou want them to come down and claim you.`,
+          `${vampire.vampire_name} fed tonight.\n\nYou watched from the shadows.\n\nSaw them bite. Saw their victim's ecstasy.\n\nYou're so jealous. That should be you.\n\nYou touch yourself imagining it's your neck.`
+        ];
+        result = stalkOutcomes[Math.floor(Math.random() * stalkOutcomes.length)];
+        awarenessGain = Math.floor(Math.random() * 10) + 5;
+        dangerGain = Math.floor(Math.random() * 15) + 10;
+        await base44.entities.Human.update(human.id, {
+          obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 20) + 10)
+        });
+        if (Math.random() > 0.5) vampireEncounter = true;
+      } else if (activity.id === 'visit_vampire') {
+        const visitOutcomes = [
+          `You went to ${vampire.vampire_name}'s house.\n\nKnocked on the door. Heart pounding.\n\nThey answered. "I was wondering when you'd come," they said.\n\nYou talked for hours. Or maybe minutes. Time felt strange.\n\nWhen you left, you couldn't remember half of what was said.\n\nBut you remember the way they looked at you.`,
+          `Showed up at ${vampire.vampire_name}'s door uninvited.\n\n"Brave," they said. "Or stupid."\n\nThey let you in anyway.\n\nYou tried to play it cool. Failed completely.\n\nEnded up confessing how much you think about them.\n\nThey just smiled. "I know."`,
+          `Knocked on ${vampire.vampire_name}'s door at 2 AM.\n\nThey opened it shirtless. Perfect.\n\n"Couldn't sleep?" they asked.\n\nYou shook your head. "Can't stop thinking about you."\n\nThey pulled you inside.\n\nWhat happened next... you'll never forget.`,
+          `Went to ${vampire.vampire_name}'s house.\n\nDoor was unlocked.\n\nYou walked in. Called their name.\n\nThey appeared behind you. "Breaking and entering?"\n\nYou turned. They were so close.\n\n"I needed to see you," you whispered.\n\n"I know," they said. "I've been waiting."`
+        ];
+        result = visitOutcomes[Math.floor(Math.random() * visitOutcomes.length)];
+        awarenessGain = Math.floor(Math.random() * 15) + 10;
+        dangerGain = Math.floor(Math.random() * 25) + 15;
+        await base44.entities.Human.update(human.id, {
+          obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 25) + 15),
+          romance_with_vampire: vampire.id
+        });
+        vampireEncounter = true;
+      } else if (activity.id === 'social_stalk') {
+        const socialOutcomes = [
+          `Spent hours looking at ${vampire.vampire_name} online.\n\nEvery photo. Every post. Every comment.\n\nLearning everything about them.\n\nYou screenshot everything.\n\nYou're obsessed and you know it.`,
+          `Found ${vampire.vampire_name}'s OnlyFangs.\n\nSubscribed immediately.\n\nWatched every video three times.\n\nTipped them. A lot.\n\nLeft comments. Desperate ones.\n\nThey hearted one. You almost died.`,
+          `Searched ${vampire.vampire_name}'s name all night.\n\nFound old photos. Articles. Mentions.\n\nThey've been around a long time.\n\nToo long.\n\nYou know what they are now.\n\nAnd you want them more.`,
+          `Created a fake account to follow ${vampire.vampire_name}.\n\nLiked all their posts.\n\nCommented on everything.\n\nThey followed you back.\n\nYou came just from that notification.`
+        ];
+        result = socialOutcomes[Math.floor(Math.random() * socialOutcomes.length)];
+        awarenessGain = Math.floor(Math.random() * 12) + 5;
+        await base44.entities.Human.update(human.id, {
+          obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 18) + 10)
+        });
+      } else if (activity.id === 'confession') {
+        const confessionOutcomes = [
+          `You found ${vampire.vampire_name}.\n\n"I know what you are," you said.\n\nThey smiled. Dangerous. Beautiful.\n\n"And what do you want?" they asked.\n\n"You," you whispered. "All of you."\n\nThey stepped closer.\n\n"Careful what you wish for."`,
+          `Cornered ${vampire.vampire_name} alone.\n\n"I'm obsessed with you," you confessed.\n\n"I can't eat. Can't sleep. Just think about you."\n\nThey touched your face.\n\n"I know," they said. "I can smell it on you."\n\nYour need. Your desire. Your desperation.`,
+          `You confessed everything to ${vampire.vampire_name}.\n\nYour fantasies. Your stalking. Your obsession.\n\nThey listened. Amused.\n\n"You want to be mine?" they asked.\n\n"Yes," you breathed. "Please."\n\nThey bit their wrist.\n\n"Drink."`,
+          `Told ${vampire.vampire_name} you want them.\n\nNeed them. Dream about them.\n\n"Turn me," you begged. "Make me yours forever."\n\nThey grabbed your throat. Gentle. Firm.\n\n"Are you sure?"\n\nYou nodded.\n\n"Soon," they promised.`
+        ];
+        result = confessionOutcomes[Math.floor(Math.random() * confessionOutcomes.length)];
+        awarenessGain = 20;
+        dangerGain = Math.floor(Math.random() * 30) + 20;
+        await base44.entities.Human.update(human.id, {
+          obsession_level: 100,
+          wants_to_be_turned: true,
+          romance_with_vampire: vampire.id
+        });
+        vampireEncounter = true;
       } else if (activity.id === 'seek' && hasVampire) {
         vampireEncounter = true;
         awarenessGain = Math.floor(Math.random() * 20) + 20;
