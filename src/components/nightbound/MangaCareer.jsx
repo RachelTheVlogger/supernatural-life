@@ -974,6 +974,19 @@ Format as JSON:
               <p className="text-gray-400 text-sm">{entityName}'s manga career</p>
             </div>
           </div>
+
+          {servant && (
+            <button
+              onClick={() => {
+                const { useNavigate } = require('react-router-dom');
+                const { createPageUrl } = require('@/utils');
+                window.location.href = createPageUrl('HumanHome');
+              }}
+              className="absolute top-4 left-4 text-gray-400 hover:text-white text-sm"
+            >
+              Switch to Human →
+            </button>
+          )}
         </div>
 
         <div className="px-6 pb-6 overflow-y-auto flex-1">

@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import MangaCareer from '@/components/nightbound/MangaCareer';
-import MangaStore from '@/components/nightbound/MangaStore';
+
 
 const HUMAN_ACTIVITIES = [
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
@@ -33,8 +32,6 @@ export default function HumanHome() {
   const [showEncounter, setShowEncounter] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
   const [evidenceCollected, setEvidenceCollected] = useState([]);
-  const [showManga, setShowManga] = useState(false);
-  const [showMangaStore, setShowMangaStore] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -272,22 +269,14 @@ export default function HumanHome() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <div className="flex gap-3 items-center">
+          {vampireStates.length > 0 && (
             <button
-              onClick={() => setShowMangaStore(true)}
+              onClick={() => navigate(createPageUrl('Night'))}
               className="text-purple-400 hover:text-purple-300 text-sm"
             >
-              📚 Manga Store
+              Switch to Vampire →
             </button>
-            {vampireStates.length > 0 && (
-              <button
-                onClick={() => navigate(createPageUrl('Night'))}
-                className="text-purple-400 hover:text-purple-300 text-sm"
-              >
-                Switch to Vampire →
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
         <motion.div
@@ -411,29 +400,7 @@ export default function HumanHome() {
           </motion.div>
         )}
 
-        {/* Manga Career Access */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="mb-6"
-        >
-          <button
-            onClick={() => setShowManga(true)}
-            className="w-full bg-gradient-to-r from-purple-900/40 to-blue-900/40 hover:from-purple-900/60 hover:to-blue-900/60 border border-purple-500/30 rounded-xl p-4 transition-all"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <BookOpen className="w-6 h-6 text-purple-400" />
-                <div className="text-left">
-                  <h3 className="text-white font-medium">Manga Career</h3>
-                  <p className="text-gray-400 text-sm">Create your own manga series</p>
-                </div>
-              </div>
-              <span className="text-purple-400">→</span>
-            </div>
-          </button>
-        </motion.div>
+
 
         {/* Activities */}
         <motion.div
@@ -549,21 +516,7 @@ export default function HumanHome() {
         )}
       </AnimatePresence>
 
-      {/* Modals */}
-      <AnimatePresence>
-        {showManga && (
-          <MangaCareer
-            servant={human}
-            onClose={() => setShowManga(false)}
-          />
-        )}
-        {showMangaStore && (
-          <MangaStore
-            currentEntityId={human?.id}
-            onClose={() => setShowMangaStore(false)}
-          />
-        )}
-      </AnimatePresence>
+
     </div>
   );
 }
