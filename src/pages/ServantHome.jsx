@@ -298,19 +298,19 @@ export default function ServantHome() {
   }
   
   const businessActivities = getBusinessActivities(servantCareer, vampireState);
-  const activities = servant.is_turned 
+  const activities = entity.is_turned 
     ? [...VAMPIRE_ACTIVITIES, ...businessActivities] 
     : [...CHORES, ...businessActivities];
   
   return (
     <div className="min-h-screen p-4 md:p-6 pb-24 relative overflow-y-auto" style={{
-      background: servant.is_turned 
+      background: entity.is_turned 
         ? 'linear-gradient(to bottom, #4A0E0E 0%, #2D0A0A 50%, #1A0404 100%)'
         : 'linear-gradient(to bottom, #0a0a14 0%, #1a0a1a 50%, #0a0014 100%)'
     }}>
       
       {/* Blood drop particles for turned servants */}
-      {servant.is_turned && (
+      {entity.is_turned && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(15)].map((_, i) => (
             <motion.div
@@ -342,8 +342,8 @@ export default function ServantHome() {
         className="text-center mb-8 relative z-10"
       >
         <div className="flex items-center justify-center gap-3 mb-1">
-          <h1 className={`text-3xl md:text-4xl font-bold ${servant.is_turned ? 'text-rose-100' : 'text-white'}`}>
-            {servant.name}
+          <h1 className={`text-3xl md:text-4xl font-bold ${entity.is_turned ? 'text-rose-100' : 'text-white'}`}>
+            {entity.name}
           </h1>
           {vampireState?.time_of_day && (
             <span className="text-2xl">
@@ -351,8 +351,8 @@ export default function ServantHome() {
             </span>
           )}
         </div>
-        <p className={`text-sm capitalize ${servant.is_turned ? 'text-rose-300' : 'text-gray-400'}`}>
-          {servant.is_turned ? '🩸 Vampire Progeny' : `${servant.variant} servant`}
+        <p className={`text-sm capitalize ${entity.is_turned ? 'text-rose-300' : 'text-gray-400'}`}>
+          {entity.is_turned ? '🩸 Vampire Progeny' : (servant ? `${servant.variant} servant` : 'Human')}
         </p>
         
         <div className="flex gap-3 justify-center mt-4 flex-wrap">
@@ -425,17 +425,17 @@ export default function ServantHome() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
         className={`max-w-2xl mx-auto rounded-xl p-4 mb-6 relative z-10 ${
-          servant.is_turned 
+          entity.is_turned 
             ? 'bg-gradient-to-br from-rose-950/60 to-red-950/60 border border-rose-500/30' 
             : 'bg-gray-900'
         }`}
       >
-        <p className={`text-sm italic text-center ${servant.is_turned ? 'text-rose-100' : 'text-gray-300'}`}>
-          {servant.is_turned 
+        <p className={`text-sm italic text-center ${entity.is_turned ? 'text-rose-100' : 'text-gray-300'}`}>
+          {entity.is_turned 
             ? 'Every sense heightened. Every emotion deeper. The hunger pulses through you like a second heartbeat. You are vampire.'
-            : "They're out hunting. You wait for them to return."}
+            : (servant ? "They're out hunting. You wait for them to return." : "Living your human life...")}
         </p>
-        {servant.is_turned && (
+        {entity.is_turned && servant && (
           <div className="mt-4">
             <button
               onClick={() => setShowProgression(true)}
@@ -471,7 +471,7 @@ export default function ServantHome() {
             </div>
           </div>
         )}
-        {!servant.is_turned && (
+        {!entity.is_turned && servant && (
           <div className="mt-3 flex justify-between text-xs">
             <span className="text-gray-400">Bond with your sire:</span>
             <span className="text-purple-400">
@@ -483,8 +483,8 @@ export default function ServantHome() {
       
       {/* Activities */}
       <div className="max-w-2xl mx-auto mb-8 relative z-10">
-        <h2 className={`text-sm uppercase mb-4 ${servant.is_turned ? 'text-rose-300' : 'text-gray-400'}`}>
-          {servant.is_turned ? 'Your vampire powers awaken' : 'What will you do?'}
+        <h2 className={`text-sm uppercase mb-4 ${entity.is_turned ? 'text-rose-300' : 'text-gray-400'}`}>
+          {entity.is_turned ? 'Your vampire powers awaken' : 'What will you do?'}
         </h2>
         
         <div className="space-y-3 max-h-[50vh] overflow-y-auto pb-4">
@@ -506,11 +506,11 @@ export default function ServantHome() {
             className={`w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg touch-manipulation ${
               doingChore === chore.id ? 'opacity-70 scale-95' : ''
             } ${!!doingChore && doingChore !== chore.id ? 'opacity-30' : ''} ${
-              servant.is_turned 
+              entity.is_turned 
                 ? 'bg-gradient-to-r from-rose-900/60 to-red-900/60 hover:from-rose-900/80 hover:to-red-900/80 border-2 border-rose-500/50 text-rose-100'
                 : 'bitlife-btn'
             }`}
-            style={servant.is_turned ? {
+            style={entity.is_turned ? {
               transition: 'all 300ms ease'
             } : {}}
           >
@@ -532,7 +532,7 @@ export default function ServantHome() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
             style={{
-              background: servant.is_turned 
+              background: entity.is_turned 
                 ? 'radial-gradient(circle, rgba(139, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%)'
                 : 'rgba(0, 0, 0, 0.7)'
             }}
@@ -545,9 +545,9 @@ export default function ServantHome() {
               transition={{ duration: 1.5, repeat: Infinity }}
               className="text-6xl"
             >
-              {servant.is_turned ? '🩸' : '✨'}
+              {entity.is_turned ? '🩸' : '✨'}
             </motion.div>
-            {servant.is_turned && (
+            {entity.is_turned && (
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 1, 0] }}
@@ -571,11 +571,11 @@ export default function ServantHome() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
           >
             <div className={`rounded-2xl p-6 max-w-md w-full text-center ${
-              servant.is_turned 
+              entity.is_turned 
                 ? 'bg-gradient-to-br from-rose-950/90 to-red-950/90 border-2 border-rose-500/50'
                 : 'bg-gray-900'
             }`}>
-              <p className={`text-lg leading-relaxed ${servant.is_turned ? 'text-rose-100' : 'text-gray-300'}`}>
+              <p className={`text-lg leading-relaxed ${entity.is_turned ? 'text-rose-100' : 'text-gray-300'}`}>
                 {choreOutcome}
               </p>
             </div>
@@ -584,7 +584,7 @@ export default function ServantHome() {
       </AnimatePresence>
 
       {/* Proactive Actions */}
-      <ServantProactiveActions servant={servant} />
+      {servant && <ServantProactiveActions servant={servant} />}
 
       {/* Modals */}
       <AnimatePresence>
@@ -702,7 +702,7 @@ export default function ServantHome() {
         )}
         {showManga && (
           <MangaCareer
-            servant={servant}
+            servant={entity}
             onClose={() => setShowManga(false)}
           />
         )}
