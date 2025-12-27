@@ -341,14 +341,25 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
               {getBodyParts().find(p => p.id === selectedBodyPart)?.emoji || '💖'}
             </motion.div>
             <p className="text-pink-300 text-sm mb-6">
-              {selectedBodyPart === 'clit' ? 'Rubbing your clit...' :
-               selectedBodyPart === 'dick' ? 'Stroking your dick...' :
-               selectedBodyPart === 'breasts' ? 'Playing with your breasts...' :
-               selectedBodyPart === 'chest' ? 'Touching your chest...' :
-               selectedBodyPart === 'fingers' ? 'Fingering yourself...' :
-               selectedBodyPart === 'balls' ? 'Playing with your balls...' :
-               selectedBodyPart === 'multiple' ? 'Touching everywhere...' :
-               'Touching yourself...'}
+              {context === 'vampire' ? (
+                selectedBodyPart === 'clit' ? 'They\'re rubbing their clit...' :
+                selectedBodyPart === 'dick' ? 'They\'re stroking their dick...' :
+                selectedBodyPart === 'breasts' ? 'Playing with their breasts...' :
+                selectedBodyPart === 'chest' ? 'Touching their chest...' :
+                selectedBodyPart === 'fingers' ? 'Fingering themselves...' :
+                selectedBodyPart === 'balls' ? 'Playing with their balls...' :
+                selectedBodyPart === 'multiple' ? 'Touching everywhere...' :
+                'Touching themselves for you...'
+              ) : (
+                selectedBodyPart === 'clit' ? 'Rubbing your clit...' :
+                selectedBodyPart === 'dick' ? 'Stroking your dick...' :
+                selectedBodyPart === 'breasts' ? 'Playing with your breasts...' :
+                selectedBodyPart === 'chest' ? 'Touching your chest...' :
+                selectedBodyPart === 'fingers' ? 'Fingering yourself...' :
+                selectedBodyPart === 'balls' ? 'Playing with your balls...' :
+                selectedBodyPart === 'multiple' ? 'Touching everywhere...' :
+                'Touching yourself...'
+              )}
             </p>
           </>
         )}
