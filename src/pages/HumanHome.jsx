@@ -705,7 +705,9 @@ export default function HumanHome() {
               className="max-w-lg w-full"
             >
               <MasturbationSlider
-                onFinish={async (edgeType) => {
+                gender={human.gender}
+                vampireWatching={hasVampire && (human.awareness_level || 0) > 30}
+                onFinish={async (edgeType, edgeCount, desperationLevel) => {
                   setShowSlider(false);
                   const activity = sliderActivity;
                   setSliderActivity(null);
@@ -715,7 +717,10 @@ export default function HumanHome() {
                     try {
                       let result = '';
                       let awarenessGain = 0;
-                      let obsessionBonus = edgeType === 'edged' ? 15 : 10;
+                      let obsessionBonus = (edgeType === 'edged' ? 15 : 10) + (edgeCount * 5) + Math.floor(desperationLevel / 10);
+                      const intensityText = edgeCount > 3 ? '\n\nYou edged yourself over and over until you were shaking, desperate, completely lost in it.' : 
+                                            edgeCount > 1 ? '\n\nYou edged multiple times, building the intensity.' : 
+                                            edgeType === 'edged' ? '\n\nYou edged yourself, making it last.' : '';
 
                       if (activity.id === 'sleep') {
                         const sleepOutcomes = [
@@ -744,12 +749,12 @@ export default function HumanHome() {
                         awarenessGain = 20;
                       } else if (activity.id === 'visit_vampire') {
                         const visitOutcomes = [
-                          `You went to ${vampire.vampire_name}'s house.\n\nThey let you in. "I've been waiting."\n\nWhat happened next... unforgettable.${edgeType === 'edged' ? '\n\nThey touched you. Made you beg. Edged you until you were crying. Finally allowed you to cum. You saw stars.' : ''}`,
-                          `Showed up at ${vampire.vampire_name}'s door.\n\n"Couldn't stay away?" they asked.\n\nYou shook your head. They pulled you inside.${edgeType === 'edged' ? '\n\nThey made you touch yourself while they watched. Controlled everything. Denied you over and over. When they finally said "cum for me" you obeyed instantly.' : ''}`,
-                          `You went to ${vampire.vampire_name}. Needed to see them.\n\n"I need you," you whispered.\n\n"I know," they said. "Come here."${edgeType === 'edged' ? '\n\nThey made you show them how you touch yourself thinking of them. Made you edge. Beg. Plead. Finally gave permission. You came harder than ever before.' : ''}`
+                          `You went to ${vampire.vampire_name}'s house.\n\nThey let you in. "I've been waiting."\n\nWhat happened next... unforgettable.${intensityText}`,
+                          `Showed up at ${vampire.vampire_name}'s door.\n\n"Couldn't stay away?" they asked.\n\nYou shook your head. They pulled you inside.${intensityText}`,
+                          `You went to ${vampire.vampire_name}. Needed to see them.\n\n"I need you," you whispered.\n\n"I know," they said. "Come here."${intensityText}`
                         ];
                         result = visitOutcomes[Math.floor(Math.random() * visitOutcomes.length)];
-                        awarenessGain = 15;
+                        awarenessGain = 15 + edgeCount * 2;
                       }
 
                       await base44.entities.Human.update(human.id, {
