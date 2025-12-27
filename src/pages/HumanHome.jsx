@@ -6,6 +6,7 @@ import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
+import MasturbationSlider from '@/components/nightbound/MasturbationSlider';
 
 
 const HUMAN_ACTIVITIES = [
@@ -34,6 +35,8 @@ export default function HumanHome() {
   const [showResearch, setShowResearch] = useState(false);
   const [evidenceCollected, setEvidenceCollected] = useState([]);
   const [showIdentity, setShowIdentity] = useState(false);
+  const [showSlider, setShowSlider] = useState(false);
+  const [sliderActivity, setSliderActivity] = useState(null);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -60,8 +63,18 @@ export default function HumanHome() {
     { id: 'confession', label: 'Confess Your Obsession', icon: Heart, duration: 7000, requiresAwareness: 50 }
   ] : [];
 
+  const sliderActivities = ['sleep', 'onlyfangs_record', 'confession', 'visit_vampire'];
+
   const handleActivity = async (activity) => {
     if (!human?.id) return;
+    
+    // Check if activity should use slider
+    if (sliderActivities.includes(activity.id) && hasVampire && (human.awareness_level || 0) > 20) {
+      setSliderActivity(activity);
+      setShowSlider(true);
+      return;
+    }
+    
     setActiveAction(activity.id);
     
     setTimeout(async () => {
@@ -669,6 +682,97 @@ export default function HumanHome() {
               className="text-white text-xl"
             >
               Living your life...
+            </motion.div>
+          </motion.div>
+        )}
+
+        {showSlider && sliderActivity && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95"
+            onClick={() => {
+              setShowSlider(false);
+              setSliderActivity(null);
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="max-w-lg w-full"
+            >
+              <MasturbationSlider
+                onFinish={async (edgeType) => {
+                  setShowSlider(false);
+                  const activity = sliderActivity;
+                  setSliderActivity(null);
+
+                  setActiveAction(activity.id);
+                  setTimeout(async () => {
+                    try {
+                      let result = '';
+                      let awarenessGain = 0;
+                      let obsessionBonus = edgeType === 'edged' ? 15 : 10;
+
+                      if (activity.id === 'sleep') {
+                        const sleepOutcomes = [
+                          `You lay in bed touching yourself thinking about ${vampire.vampire_name}.\n\nImagining them watching you. Their hands on you. Their teeth.\n\nYou came gasping their name into your pillow.${edgeType === 'edged' ? '\n\nYou edged yourself over and over, denying release, imagining them controlling you. When you finally came it was explosive.' : ''}`,
+                          `Dreams of ${vampire.vampire_name} fucking you. Biting you. Using you.\n\nYou woke up wet/hard, panting. Touched yourself right there.\n\nCame thinking of them.${edgeType === 'edged' ? '\n\nYou kept stopping, starting, edging. Begging an imaginary them for permission. Finally allowed yourself. Overwhelming.' : ''}`,
+                          `You fantasized about ${vampire.vampire_name} while masturbating.\n\nTheir darkness. Their power. Being theirs completely.\n\nCame hard.${edgeType === 'edged' ? '\n\nDenied yourself again and again. Imagining them saying "not yet." Finally "yes." You shattered.' : ''}`,
+                          `Can't stop thinking about ${vampire.vampire_name}.\n\nMasturbated thinking of them taking control. Owning you.\n\nYou're addicted to the fantasy.${edgeType === 'edged' ? '\n\nEdged yourself until you were shaking, desperate, begging out loud. The release was earth-shattering.' : ''}`
+                        ];
+                        result = sleepOutcomes[Math.floor(Math.random() * sleepOutcomes.length)];
+                        awarenessGain = 10;
+                      } else if (activity.id === 'onlyfangs_record') {
+                        const recordOutcomes = [
+                          `You recorded yourself masturbating for ${vampire.vampire_name}.\n\nSaid their name. Showed everything. Posted it.\n\n"For ${vampire.vampire_name}" in the title.${edgeType === 'edged' ? '\n\nYou edged yourself on camera, begging them to let you finish. Finally came screaming their name. Uploaded it all.' : ''}`,
+                          `Made content specifically for them.\n\nTouching yourself. Moaning their name. Begging.\n\nUploaded to OnlyFangs. Tagged them.${edgeType === 'edged' ? '\n\nRecorded yourself edging, denying, desperate. "Please let me cum, ${vampire.vampire_name}." Finally released. Perfect video.' : ''}`,
+                          `Filmed yourself in bed pretending they're there.\n\nMasturbating desperately. Whispering their name.\n\nPosted it publicly hoping they see.${edgeType === 'edged' ? '\n\nOn camera: edging yourself over and over. "Not yet... not yet... please... yes!" Explosive finish.' : ''}`
+                        ];
+                        result = recordOutcomes[Math.floor(Math.random() * recordOutcomes.length)];
+                        awarenessGain = 15;
+                      } else if (activity.id === 'confession') {
+                        const confessionOutcomes = [
+                          `You found ${vampire.vampire_name} and confessed everything.\n\n"I touch myself thinking about you. Every night. I need you."\n\nThey smiled. Dangerous. Beautiful.${edgeType === 'edged' ? '\n\n"Show me," they said. You did. Right there. Edged yourself for them. Begged permission. They finally allowed it.' : ''}`,
+                          `"I'm obsessed with you," you told ${vampire.vampire_name}.\n\n"I know," they said. "I can smell it on you."\n\nYour desperate need. Your desire.${edgeType === 'edged' ? '\n\nThey made you touch yourself while they watched. Made you edge. Deny. Beg. Finally allowed you to finish.' : ''}`,
+                          `You confessed to ${vampire.vampire_name} about your fantasies.\n\nAll of them. The dark ones. The desperate ones.\n\nThey listened. Amused. Interested.${edgeType === 'edged' ? '\n\n"Show me what you do when you think of me." You obeyed. Edged yourself under their gaze. Came when they permitted.' : ''}`
+                        ];
+                        result = confessionOutcomes[Math.floor(Math.random() * confessionOutcomes.length)];
+                        awarenessGain = 20;
+                      } else if (activity.id === 'visit_vampire') {
+                        const visitOutcomes = [
+                          `You went to ${vampire.vampire_name}'s house.\n\nThey let you in. "I've been waiting."\n\nWhat happened next... unforgettable.${edgeType === 'edged' ? '\n\nThey touched you. Made you beg. Edged you until you were crying. Finally allowed you to cum. You saw stars.' : ''}`,
+                          `Showed up at ${vampire.vampire_name}'s door.\n\n"Couldn't stay away?" they asked.\n\nYou shook your head. They pulled you inside.${edgeType === 'edged' ? '\n\nThey made you touch yourself while they watched. Controlled everything. Denied you over and over. When they finally said "cum for me" you obeyed instantly.' : ''}`,
+                          `You went to ${vampire.vampire_name}. Needed to see them.\n\n"I need you," you whispered.\n\n"I know," they said. "Come here."${edgeType === 'edged' ? '\n\nThey made you show them how you touch yourself thinking of them. Made you edge. Beg. Plead. Finally gave permission. You came harder than ever before.' : ''}`
+                        ];
+                        result = visitOutcomes[Math.floor(Math.random() * visitOutcomes.length)];
+                        awarenessGain = 15;
+                      }
+
+                      await base44.entities.Human.update(human.id, {
+                        awareness_level: Math.min(100, (human.awareness_level || 0) + awarenessGain),
+                        obsession_level: Math.min(100, (human.obsession_level || 0) + obsessionBonus),
+                        wants_to_be_turned: (human.obsession_level || 0) + obsessionBonus > 70,
+                        romance_with_vampire: vampire.id
+                      });
+
+                      setOutcome(result);
+                      queryClient.invalidateQueries();
+                    } catch (e) {
+                      console.error('Activity failed:', e);
+                      setOutcome('Something went wrong');
+                    } finally {
+                      setTimeout(() => {
+                        setActiveAction(null);
+                        setOutcome('');
+                      }, 5000);
+                    }
+                  }, 1000);
+                }}
+              />
             </motion.div>
           </motion.div>
         )}
