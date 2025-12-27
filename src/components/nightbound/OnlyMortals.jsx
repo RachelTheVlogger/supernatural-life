@@ -39,9 +39,13 @@ export default function OnlyMortals({ human, onClose }) {
   const createAccount = async () => {
     await base44.entities.OnlyFangsProfile.create({
       servant_id: human.id,
+      username: `${human.name.toLowerCase().replace(/\s/g, '_')}_mortal`,
+      bio: 'Just a human living their life...',
+      profile_pic: '👤',
+      is_couple_account: false,
       subscriber_count: 0,
-      total_earnings: 0,
-      content_rating: 'spicy'
+      revenue: 0,
+      reputation: 0
     });
     queryClient.invalidateQueries(['onlymortals']);
   };
@@ -69,7 +73,7 @@ export default function OnlyMortals({ human, onClose }) {
     });
 
     await base44.entities.OnlyFangsProfile.update(myAccount.id, {
-      total_earnings: (myAccount.total_earnings || 0) + (newPost.price * 2)
+      revenue: (myAccount.revenue || 0) + (newPost.price * 2)
     });
 
     await base44.entities.NightLog.create({
@@ -99,7 +103,7 @@ export default function OnlyMortals({ human, onClose }) {
 
     await base44.entities.OnlyFangsProfile.update(myAccount.id, {
       subscriber_count: (myAccount.subscriber_count || 0) + 1,
-      total_earnings: (myAccount.total_earnings || 0) + 15
+      revenue: (myAccount.revenue || 0) + 15
     });
 
     // Update human's vampire encounter stats
@@ -185,7 +189,7 @@ export default function OnlyMortals({ human, onClose }) {
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-pink-950/40 border border-pink-500/30 rounded-xl p-3 text-center">
                 <DollarSign className="w-6 h-6 text-green-400 mx-auto mb-1" />
-                <p className="text-white font-bold">${myAccount.total_earnings || 0}</p>
+                <p className="text-white font-bold">${myAccount.revenue || 0}</p>
                 <p className="text-gray-400 text-xs">Earned</p>
               </div>
               <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-3 text-center">
