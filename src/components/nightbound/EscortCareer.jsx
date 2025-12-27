@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, DollarSign, User, Shield, Star, AlertTriangle, Heart, MessageCircle, Phone, MapPin, CheckCircle, XCircle } from 'lucide-react';
+import { X, DollarSign, User, Shield, Star, AlertTriangle, Heart, MessageCircle, Phone, MapPin, CheckCircle, XCircle, Activity, Building } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import EscortExpanded from './EscortExpanded';
+import HealthCheckup from './HealthCheckup';
 
 export default function EscortCareer({ human, onClose }) {
   const [activeTab, setActiveTab] = useState('profile');
@@ -25,6 +27,8 @@ export default function EscortCareer({ human, onClose }) {
   const [safetyTimer, setSafetyTimer] = useState(null);
   const [dangerousEncounter, setDangerousEncounter] = useState(null);
   const [blockedClients, setBlockedClients] = useState([]);
+  const [showExpanded, setShowExpanded] = useState(false);
+  const [showHealth, setShowHealth] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: vampires = [] } = useQuery({
@@ -666,24 +670,42 @@ export default function EscortCareer({ human, onClose }) {
             </motion.div>
           ) : (
             <div className="space-y-6">
-              <div className="flex gap-2 border-b border-gray-700">
+              <div className="flex gap-2 border-b border-gray-700 overflow-x-auto">
                 <button
                   onClick={() => setActiveTab('profile')}
-                  className={`px-4 py-2 ${activeTab === 'profile' ? 'text-red-400 border-b-2 border-red-400' : 'text-gray-400'}`}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'profile' ? 'text-red-400 border-b-2 border-red-400' : 'text-gray-400'}`}
                 >
                   Profile
                 </button>
                 <button
                   onClick={() => setActiveTab('bookings')}
-                  className={`px-4 py-2 ${activeTab === 'bookings' ? 'text-red-400 border-b-2 border-red-400' : 'text-gray-400'}`}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'bookings' ? 'text-red-400 border-b-2 border-red-400' : 'text-gray-400'}`}
                 >
                   Bookings ({bookings.length})
                 </button>
                 <button
                   onClick={() => setActiveTab('reviews')}
-                  className={`px-4 py-2 ${activeTab === 'reviews' ? 'text-red-400 border-b-2 border-red-400' : 'text-gray-400'}`}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'reviews' ? 'text-red-400 border-b-2 border-red-400' : 'text-gray-400'}`}
                 >
                   Reviews
+                </button>
+              </div>
+
+              {/* Quick action buttons */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <button
+                  onClick={() => setShowExpanded(true)}
+                  className="bg-purple-950/40 border border-purple-500/30 hover:bg-purple-950/60 rounded-xl p-3 flex items-center justify-center gap-2"
+                >
+                  <Building className="w-5 h-5 text-purple-400" />
+                  <span className="text-white text-sm">Business</span>
+                </button>
+                <button
+                  onClick={() => setShowHealth(true)}
+                  className="bg-blue-950/40 border border-blue-500/30 hover:bg-blue-950/60 rounded-xl p-3 flex items-center justify-center gap-2"
+                >
+                  <Activity className="w-5 h-5 text-blue-400" />
+                  <span className="text-white text-sm">Health</span>
                 </button>
               </div>
 
@@ -952,6 +974,21 @@ export default function EscortCareer({ human, onClose }) {
             </div>
           )}
         </AnimatePresence>
+
+        {showExpanded && (
+          <EscortExpanded
+            human={human}
+            onClose={() => setShowExpanded(false)}
+            earnings={earnings}
+            reputation={reputation}
+            setEarnings={setEarnings}
+            setReputation={setReputation}
+          />
+        )}
+
+        {showHealth && (
+          <HealthCheckup human={human} onClose={() => setShowHealth(false)} />
+        )}
       </motion.div>
     </motion.div>
   );
