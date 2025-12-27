@@ -386,16 +386,7 @@ export default function MangaCareer({ servant, onClose }) {
       const genre = career.current_genre || 'shonen';
       const artStyle = career.art_style || 'classic';
       const seriesName = career.series_name || 'Untitled';
-      
-      const genreDescriptions = {
-        shonen: 'action-packed battle scene with dynamic energy',
-        shojo: 'romantic scene with flowers and sparkles, emotional atmosphere',
-        seinen: 'dark mature setting with gritty realism',
-        josei: 'elegant sophisticated scene with adult themes',
-        isekai: 'fantasy world with magic and adventure',
-        'slice-of-life': 'peaceful everyday life scene with warm colors',
-        psychological: 'disturbing psychological tension, voyeuristic perspective, uncomfortable intimacy, moral decay, obsessive behavior, unsettling atmosphere'
-      };
+      const volumeNumber = Math.floor((career.chapters_released || 0) / 8) + 1;
       
       const styleDescriptions = {
         classic: 'traditional manga art style, black and white aesthetic',
@@ -408,9 +399,20 @@ export default function MangaCareer({ servant, onClose }) {
       
       let prompt;
       if (useCustomPrompt && customPrompt.trim()) {
-        prompt = `${customPrompt}, ${styleDescriptions[artStyle]}, manga cover art, professional illustration, title layout space`;
+        // CRITICAL: Use EXACTLY what user typed, include series/volume/title info
+        prompt = `FOLLOW THESE EXACT INSTRUCTIONS: ${customPrompt}. YOU MUST show every single detail mentioned. Include visible text: "${seriesName}" as series title, "Volume ${volumeNumber}" as volume number. ${styleDescriptions[artStyle]}, professional manga cover illustration. DO NOT add or omit anything from the description. Include all elements specified. Manga cover format with space for title text at top.`;
       } else {
-        prompt = `"${seriesName}" manga cover art, ${genreDescriptions[genre]}, ${styleDescriptions[artStyle]}, dramatic composition, professional manga illustration, eye-catching design, title space at top`;
+        // Auto-generate based on genre
+        const genreDescriptions = {
+          shonen: 'action-packed battle scene with dynamic energy',
+          shojo: 'romantic scene with flowers and sparkles, emotional atmosphere',
+          seinen: 'dark mature setting with gritty realism',
+          josei: 'elegant sophisticated scene with adult themes',
+          isekai: 'fantasy world with magic and adventure',
+          'slice-of-life': 'peaceful everyday life scene with warm colors',
+          psychological: 'disturbing psychological tension, voyeuristic perspective, uncomfortable intimacy, moral decay, obsessive behavior, unsettling atmosphere'
+        };
+        prompt = `"${seriesName}" Volume ${volumeNumber} manga cover art, ${genreDescriptions[genre]}, ${styleDescriptions[artStyle]}, dramatic composition, professional manga illustration, eye-catching design, title space at top`;
       }
       
       const generateParams = { prompt };
@@ -425,7 +427,7 @@ export default function MangaCareer({ servant, onClose }) {
       });
       
       await base44.entities.NightLog.create({
-        entry: `${entityName} created stunning cover art for "${seriesName}"!`,
+        entry: `${entityName} created stunning cover art for "${seriesName}" Volume ${volumeNumber}!`,
         category: 'interaction',
         intensity: 'moderate'
       });
