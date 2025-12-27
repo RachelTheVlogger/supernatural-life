@@ -14,8 +14,12 @@ export default function MemoryRecorder({ entity, onClose }) {
   const { data: memories = [] } = useQuery({
     queryKey: ['memories', entity.id],
     queryFn: async () => {
+      // Determine entity type and fetch accordingly
+      const filterKey = entity.vampire_name ? 'vampire_id' : entity.variant ? 'servant_id' : null;
+      if (!filterKey) return []; // Human - no journal support
+      
       const allMemories = await base44.entities.Journal.filter({ 
-        servant_id: entity.id 
+        [filterKey]: entity.id 
       }, '-created_date');
       return allMemories.filter(m => m.title?.startsWith('🎥'));
     }
@@ -39,12 +43,25 @@ export default function MemoryRecorder({ entity, onClose }) {
   const saveMemory = async () => {
     if (!newMemory.title || !newMemory.description) return;
 
-    await base44.entities.Journal.create({
-      servant_id: entity.id,
+    const journalData = {
       title: `🎥 ${newMemory.title}`,
       content: newMemory.description,
       mood: 'content'
-    });
+    };
+
+    // Add appropriate ID field based on entity type
+    if (entity.vampire_name) {
+      journalData.vampire_id = entity.id;
+    } else if (entity.variant) {
+      journalData.servant_id = entity.id;
+    } else {
+      // Human - just clear form without saving
+      setNewMemory({ title: '', description: '' });
+      setRecordingProgress(0);
+      return;
+    }
+
+    await base44.entities.Journal.create(journalData);
 
     queryClient.invalidateQueries(['memories']);
     setNewMemory({ title: '', description: '' });
