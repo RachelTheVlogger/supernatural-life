@@ -60,14 +60,15 @@ export default function HumanHome() {
     { id: 'confession', label: 'Confess Your Obsession', icon: Heart, duration: 7000, requiresAwareness: 50 }
   ] : [];
 
-  const handleActivity = React.useCallback(async (activity) => {
+  const handleActivity = async (activity) => {
     if (!human?.id) return;
     setActiveAction(activity.id);
     
     setTimeout(async () => {
       try {
       const encounterChance = Math.random();
-      const hasVampire = vampireStates.length > 0;
+      const currentVampireStates = vampireStates;
+      const hasVampire = currentVampireStates.length > 0;
       
       let result = '';
       let awarenessGain = 0;
@@ -220,7 +221,7 @@ export default function HumanHome() {
         awarenessGain = Math.floor(Math.random() * 20) + 20;
         dangerGain = Math.floor(Math.random() * 25) + 15;
         
-        const vampire = vampireStates[0];
+        const vampire = currentVampireStates[0];
         const seekOutcomes = [
           `You went to the places they frequent. ${vampire.vampire_name} was there.\n\nThey saw you immediately. "Looking for someone?"\n\nYou couldn't speak. They stepped closer.\n\n"You should stop digging. For your own sake."\n\nBut their eyes said they liked that you were looking.`,
           `You staked out their house. Waited all night.\n\nDawn approached. No sign of them.\n\nThen: "${vampire.vampire_name}. Behind you. "Interesting hobby."\n\nYou spun around. They were inches away.\n\n"Next time, just knock."`,
@@ -266,10 +267,10 @@ export default function HumanHome() {
         result = readOutcomes[Math.floor(Math.random() * readOutcomes.length)];
       } else if (activity.id === 'sleep') {
         awarenessGain = Math.floor(Math.random() * 10) + 5;
-        const hasVampire = vampireStates.length > 0;
-        const vampire = hasVampire ? vampireStates[0] : null;
+        const sleepHasVampire = currentVampireStates.length > 0;
+        const vampire = sleepHasVampire ? currentVampireStates[0] : null;
         
-        const sleepOutcomes = hasVampire ? [
+        const sleepOutcomes = sleepHasVampire ? [
           `You lay in bed. Can't sleep. Keep thinking about them.\n\nTheir eyes. Their voice. The way they move.\n\nYou touch yourself thinking about ${vampire.vampire_name}. Imagine them watching. Wanting them to watch.\n\nYou finish gasping their name into your pillow.\n\nThis obsession is consuming you.`,
           `Dreams of ${vampire.vampire_name}. Their hands on you. Their teeth.\n\nYou wake up wet/hard, panting.\n\nIt felt so real. You wanted it to be real.\n\nYou touch yourself again, chasing that dream.\n\nWhat's happening to you?`,
           `You fantasize about meeting them in the dark.\n\nThem pinning you against a wall. Biting your neck while they fuck you.\n\nThe danger. The power. The surrender.\n\nYou come imagining being theirs completely.\n\nYou're addicted to the fantasy.`,
@@ -285,7 +286,7 @@ export default function HumanHome() {
         
         result = sleepOutcomes[Math.floor(Math.random() * sleepOutcomes.length)];
         
-        if (hasVampire && (human.awareness_level || 0) > 20) {
+        if (sleepHasVampire && (human.awareness_level || 0) > 20) {
           await base44.entities.Human.update(human.id, {
             wants_to_be_turned: Math.random() > 0.5,
             obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 15) + 5)
@@ -307,20 +308,20 @@ export default function HumanHome() {
         awarenessGain = Math.floor(Math.random() * 15) + 10;
         dangerGain = Math.floor(Math.random() * 10) + 5;
         
-        const vampire = vampireStates[0];
+        const vampire = currentVampireStates[0];
         result = `You were walking through a dark alley when you saw them.\n\n${vampire.vampire_name}. Standing impossibly still. Eyes reflecting moonlight like an animal.\n\nThey smiled. "You shouldn't be here."\n\nYou ran. But you felt their eyes on you the entire way home.\n\nSomething's not right about this town.`;
       } else if (activity.id === 'party' && encounterChance > 0.5 && hasVampire) {
         vampireEncounter = true;
         awarenessGain = Math.floor(Math.random() * 20) + 15;
         dangerGain = Math.floor(Math.random() * 15) + 10;
         
-        const vampire = vampireStates[0];
+        const vampire = currentVampireStates[0];
         result = `The party was packed. You noticed them immediately.\n\n${vampire.vampire_name}. They moved through the crowd like water. Everyone drawn to them.\n\nThey approached you. "First time at one of these?"\n\nTheir hand was ice cold. Their smile... predatory.\n\n"I'll be seeing you around," they said.\n\nYou believe them.`;
       } else if (activity.id === 'coffee' && encounterChance > 0.7 && hasVampire) {
         vampireEncounter = true;
         awarenessGain = Math.floor(Math.random() * 10) + 5;
         
-        const vampire = vampireStates[0];
+        const vampire = currentVampireStates[0];
         result = `You were ordering coffee when you noticed them.\n\n${vampire.vampire_name}. Sitting alone. Reading a book that looked centuries old.\n\nThey looked up. Locked eyes with you. Smiled.\n\n"Beautiful night, isn't it?"\n\nIt was 2pm.`;
       } else {
         const normalOutcomes = {
@@ -383,7 +384,7 @@ export default function HumanHome() {
         }, 5000);
       }
     }, activity.duration);
-  }, [human, vampireStates, queryClient, navigate]);
+  };
 
   // Redirect to Home if no human exists
   React.useEffect(() => {
