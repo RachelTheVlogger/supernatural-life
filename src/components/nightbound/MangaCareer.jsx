@@ -491,11 +491,15 @@ export default function MangaCareer({ servant, onClose }) {
       const characterNames = characters.map(c => c.name).join(', ');
 
       // Generate chapter content with AI
+      const genreInstructions = genre === 'psychological' 
+        ? `\n\nIMPORTANT TONE: This is psychological horror/drama. Embrace uncomfortable themes: voyeurism, shame, obsession, moral corruption, guilt, social alienation, sexual tension, perversion, psychological manipulation, self-loathing, and twisted relationships. Make it deeply unsettling yet compelling. Show explicit mature content where relevant - nothing is off limits.`
+        : '';
+
       const contentPrompt = `You are writing Chapter ${newChapters} of "${seriesName}", a ${genre} manga.
 
 Story so far: ${storySummary}
 
-${characters.length > 0 ? `Main characters: ${characterNames}` : ''}
+${characters.length > 0 ? `Main characters: ${characterNames}` : ''}${genreInstructions}
 
 Create this chapter with:
 1. A compelling chapter title
