@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, Trash2, Package, Star, Video, Eye } from 'lucide-react';
+import { ArrowLeft, Send, Trash2, Package, Star, Video, Eye, MessageCircle } from 'lucide-react';
+import SextingSession from '@/components/nightbound/SextingSession';
+import VideoCallSession from '@/components/nightbound/VideoCallSession';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -37,8 +39,8 @@ export default function Messages() {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [tab, setTab] = useState('messages');
-  const [videoCallOutcome, setVideoCallOutcome] = useState('');
-  const [sextingOutcome, setSextingOutcome] = useState('');
+  const [showSexting, setShowSexting] = useState(false);
+  const [showVideoCall, setShowVideoCall] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('servant');
@@ -73,6 +75,13 @@ export default function Messages() {
     enabled: !!servantId && servantId !== 'null' && servantId !== 'undefined',
     retry: 2
   });
+
+  const { data: vampireStates = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+
+  const vampireState = vampireStates[0];
   
   const { data: messages = [], isLoading: messagesLoading } = useQuery({
     queryKey: ['messages', servantId],
@@ -225,6 +234,23 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
   }
   
   return (
+    <>
+      {showSexting && vampireState && (
+        <SextingSession
+          servant={servant}
+          vampireState={vampireState}
+          onClose={() => setShowSexting(false)}
+          onGainRelationship={() => queryClient.invalidateQueries()}
+        />
+      )}
+      {showVideoCall && vampireState && (
+        <VideoCallSession
+          servant={servant}
+          vampireState={vampireState}
+          onClose={() => setShowVideoCall(false)}
+          onGainRelationship={() => queryClient.invalidateQueries()}
+        />
+      )}
     <div className="min-h-screen flex flex-col bg-black">
       {/* Header */}
       <div className="bg-gray-900 p-4 border-b border-gray-800">
@@ -424,122 +450,28 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
             )}
           </>
         ) : tab === 'videocall' ? (
-          <div className="space-y-3">
-            <p className="text-gray-400 text-sm text-center mb-4">Video call with {servant.name}... watch them pleasure themselves for you</p>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { id: 'watch_casual', label: '👀 Watch them casually', gain: [10, 15] },
-                { id: 'watch_strip', label: '👙 Make them strip', gain: [15, 22] },
-                { id: 'watch_touch', label: '✋ Tell them where to touch', gain: [18, 25] },
-                { id: 'watch_masturbate', label: '💦 Watch them masturbate', gain: [25, 35] },
-                { id: 'watch_toy', label: '🎀 Watch them use toys', gain: [28, 38] },
-                { id: 'watch_edge', label: '⚡ Make them edge for you', gain: [30, 40] },
-                { id: 'watch_deny', label: '🚫 Deny their orgasm', gain: [20, 30] },
-                { id: 'watch_cum', label: '💫 Let them cum for you', gain: [35, 45] }
-              ].map(action => (
-                <button
-                  key={action.id}
-                  onClick={async () => {
-                    const outcomes = {
-                      watch_casual: [`Video call started.\n\n${servant.name} sitting there, nervous. Adjusting the camera.\n\n"Hi..." they say softly.\n\nYou watch them. They blush under your gaze.`, `They're on camera for you. Fidgeting. Uncertain.\n\n"What should I do?" they ask.\n\nYou just watch. That's enough for now.`],
-                      watch_strip: [`"Take it off. Slowly."\n\nThey obey. Piece by piece.\n\nShirt first. Then pants. Down to underwear.\n\nThey pause, looking at you through the camera.\n\n"Everything," you say.\n\nThey strip completely. Naked on camera for you.`, `Video call strip tease.\n\nThey undress slowly. Teasingly.\n\nWatching you watch them.\n\nNaked now. Exposed. Yours to see.`],
-                      watch_touch: [`"Touch yourself. Start slow."\n\nTheir hand moves. Hesitant at first.\n\nYou guide them. "There. Like that."\n\nThey obey every command. Touching where you say.\n\nMoaning softly for you.`, `You direct every touch through the camera.\n\n"Slower. Circles. Good."\n\nThey follow your instructions perfectly.\n\nTheir body responding to your voice.`],
-                      watch_masturbate: [`"Show me. Touch yourself for me."\n\nThey spread their legs. Camera angle perfect.\n\nYou watch them pleasure themselves.\n\nTheir eyes on the camera. On you.\n\n"Don't stop," you command.`, `They masturbate while you watch.\n\nFingers moving. Moaning your name.\n\nCamera capturing everything.\n\nYou direct them. They obey.\n\nSo fucking hot.`],
-                      watch_toy: [`"Get your toy."\n\nThey reach off camera. Return with it.\n\nYou watch them use it. Slowly at first.\n\n"Deeper," you command.\n\nThey push it in. Moaning. Taking it all for you.`, `Toy on camera. You're directing the show.\n\n"Fuck yourself with it."\n\nThey obey. In and out. Faster.\n\nMoaning. Gasping. Performing for you.`],
-                      watch_edge: [`"Get close. But don't cum yet."\n\nThey touch themselves faster. Building.\n\n"Stop."\n\nThey whimper but obey.\n\n"Again."\n\nYou edge them over and over through the camera.`, `Edging them remotely.\n\n"Close now?"\n\n"Yes please..."\n\n"Stop."\n\nThey cry out in frustration.\n\nYou're cruel. They love it.`],
-                      watch_deny: [`They're so close. Begging to cum.\n\n"Please can I?!"\n\n"No."\n\nYou end the call.\n\nLeave them desperate. Denied.\n\nPerfect control.`, `"Can I cum please?!"\n\n"No. Stop touching."\n\nThey whimper. Frustrated. Denied.\n\nYou smile and hang up.`],
-                      watch_cum: [`"Cum for me. Now."\n\nThey don't hold back.\n\nMasturbating hard. Moaning loud.\n\nYou watch them come undone.\n\nScreaming your name. Shaking.\n\nPerfect.`, `Permission granted.\n\nThey cum on camera for you.\n\nMoaning. Trembling. Calling your name.\n\nYou watch everything.\n\nSo fucking beautiful.`]
-                    };
-                    const result = outcomes[action.id][Math.floor(Math.random() * outcomes[action.id].length)];
-                    setVideoCallOutcome(result);
-                    
-                    const [min, max] = action.gain;
-                    const gain = Math.floor(Math.random() * (max - min + 1)) + min;
-                    await base44.entities.Servant.update(servantId, {
-                      relationship: Math.min((servant.relationship || 0) + gain, 100)
-                    });
-                    await base44.entities.NightLog.create({
-                      entry: `Video call with ${servant.name}: ${result.split('\n')[0]}`,
-                      category: 'interaction',
-                      intensity: 'significant'
-                    });
-                    queryClient.invalidateQueries();
-                    setTimeout(() => setVideoCallOutcome(''), 5000);
-                  }}
-                  className="bitlife-btn py-3 px-4 rounded-xl text-sm"
-                >
-                  {action.label}
-                </button>
-              ))}
-            </div>
-            {videoCallOutcome && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-pink-950/40 border border-pink-500/30 rounded-xl p-4 mt-4"
-              >
-                <p className="text-gray-300 whitespace-pre-line">{videoCallOutcome}</p>
-              </motion.div>
-            )}
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="text-6xl mb-4">📹</div>
+            <h3 className="text-white text-xl font-bold mb-2">Video Call</h3>
+            <p className="text-gray-400 text-sm mb-6 text-center">Start a video call with {servant.name}.<br/>Watch them. Direct them. Control them.</p>
+            <button
+              onClick={() => setShowVideoCall(true)}
+              className="bitlife-btn px-8 py-3 rounded-xl font-medium"
+            >
+              📹 Start Video Call
+            </button>
           </div>
         ) : tab === 'sexting' ? (
-          <div className="space-y-3">
-            <p className="text-gray-400 text-sm text-center mb-4">Send dirty texts to {servant.name}...</p>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { id: 'flirt', label: '😏 Flirt', gain: [8, 12] },
-                { id: 'tease', label: '😈 Tease them', gain: [12, 18] },
-                { id: 'dirty_text', label: '🔥 Send dirty text', gain: [15, 22] },
-                { id: 'request_pic', label: '📸 Request pic', gain: [18, 25] },
-                { id: 'send_pic', label: '📷 Send your pic', gain: [20, 28] },
-                { id: 'video_request', label: '🎥 Request video', gain: [25, 32] },
-                { id: 'mutual_sext', label: '💕 Mutual sexting', gain: [28, 38] },
-                { id: 'come_over', label: '🏠 Tell them to come over', gain: [35, 45] }
-              ].map(action => (
-                <button
-                  key={action.id}
-                  onClick={async () => {
-                    const outcomes = {
-                      flirt: [`You: "Thinking about you..."\n\nThem: "Yeah? What about me?"\n\nYou: "Your body. Your voice. Everything."\n\nThem: "😳 stop I'm blushing"`, `Flirty texts back and forth.\n\nThem: "You're trouble you know that?"\n\nYou: "You love it."\n\nThem: "...yeah I do 💜"`],
-                      tease: [`You: "Wish you were here right now..."\n\nThem: "Why? What would you do?"\n\nYou: "Things I can't say over text 😈"\n\nThem: "fuck you're making me wet"`, `Teasing them over text.\n\nYou send suggestive messages.\n\nThey respond eagerly. Getting worked up.\n\n"You're driving me crazy" they text.`],
-                      dirty_text: [`You: "I want to bend you over and fuck you hard."\n\nThem: "oh my god"\n\nThem: "I'm touching myself reading this"\n\nYou: "Good. Keep going."`, `Filthy texts sent.\n\nDescribing exactly what you'd do to them.\n\nThey respond: "FUCK 🥵"\n\nThey're definitely touching themselves now.`],
-                      request_pic: [`You: "Send me a pic. Now."\n\nThem: "...okay"\n\n*Photo received*\n\nThey sent it. Naked. Perfect.\n\nYou: "Good. Send more."`, `You requested a pic.\n\nThey hesitated.\n\nThen sent it.\n\nFucking beautiful.\n\nYou save it immediately.`],
-                      send_pic: [`You sent them a pic.\n\nThem: "oh FUCK"\n\nThem: "you can't just send that"\n\nThem: "I'm at work 😳"\n\nYou: "😈"`, `Photo sent.\n\nTheir response immediate:\n\n"holy shit"\n\n"I need you right now"\n\n"please"`],
-                      video_request: [`You: "Send me a video."\n\nThem: "...of what?"\n\nYou: "You know what."\n\n*Video received*\n\nThey sent it. Them touching themselves. Moaning your name.\n\nFuck.`, `Video request sent.\n\nThey recorded themselves masturbating.\n\nSent it to you.\n\nMoaning. Cumming. Saying your name.\n\nYou watch it three times.`],
-                      mutual_sext: [`Both of you sexting.\n\nDescribing what you're doing.\n\n"I'm touching myself" - them\n\n"Me too" - you\n\nBuilding together. Closer. Closer.\n\nBoth cum while texting.`, `Mutual sexting session.\n\nBoth touching yourselves.\n\nTexting what you're doing.\n\n"I'm close"\n\n"Me too"\n\n"Cum with me"\n\nBoth finish together.`],
-                      come_over: [`You: "Come over. Now."\n\nThem: "It's 2am"\n\nYou: "I said now."\n\nThem: "...on my way"\n\nThey arrive in 10 minutes. Eager. Desperate.`, `You text: "Get here. I need you."\n\nThem: "omw 🏃"\n\nThey show up breathless.\n\nYou don't even let them sit down.\n\nPush them against the door immediately.`]
-                    };
-                    const result = outcomes[action.id][Math.floor(Math.random() * outcomes[action.id].length)];
-                    setSextingOutcome(result);
-                    
-                    const [min, max] = action.gain;
-                    const gain = Math.floor(Math.random() * (max - min + 1)) + min;
-                    await base44.entities.Servant.update(servantId, {
-                      relationship: Math.min((servant.relationship || 0) + gain, 100)
-                    });
-                    await base44.entities.NightLog.create({
-                      entry: `Sexting ${servant.name}: ${result.split('\n')[0]}`,
-                      category: 'interaction',
-                      intensity: 'moderate'
-                    });
-                    queryClient.invalidateQueries();
-                    setTimeout(() => setSextingOutcome(''), 5000);
-                  }}
-                  className="bitlife-btn py-3 px-4 rounded-xl text-sm"
-                >
-                  {action.label}
-                </button>
-              ))}
-            </div>
-            {sextingOutcome && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4 mt-4"
-              >
-                <p className="text-gray-300 whitespace-pre-line">{sextingOutcome}</p>
-              </motion.div>
-            )}
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="text-6xl mb-4">💬</div>
+            <h3 className="text-white text-xl font-bold mb-2">Sexting</h3>
+            <p className="text-gray-400 text-sm mb-6 text-center">Send dirty messages back and forth.<br/>Build the heat. Make them desperate.</p>
+            <button
+              onClick={() => setShowSexting(true)}
+              className="bitlife-btn px-8 py-3 rounded-xl font-medium"
+            >
+              💋 Start Sexting
+            </button>
           </div>
         ) : tab === 'reviews' ? (
           <>
@@ -620,5 +552,6 @@ Respond as ${servant.name} texting them. Be natural, emotional, authentic. 1-3 s
         </div>
       </div>
     </div>
+    </>
   );
 }
