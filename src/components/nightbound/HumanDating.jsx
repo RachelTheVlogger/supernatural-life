@@ -473,10 +473,12 @@ export default function HumanDating({ human, onClose }) {
                 ) : (
                   <p className="text-red-400 text-sm text-center">They're not interested anymore</p>
                 )}
-              </div>
-            ))}
-          </div>
-        )}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
       </motion.div>
 
       {showSexScene && activeDate && (
