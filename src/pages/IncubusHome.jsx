@@ -246,6 +246,12 @@ export default function IncubusHome() {
             </button>
           </div>
           <p className={`${isDaytime ? 'text-red-800' : 'text-red-100'} text-sm`}>Incubus • {incubus.domain}</p>
+          <button
+            onClick={() => setShowIdentity(true)}
+            className={`${isDaytime ? 'text-red-700 hover:text-red-900' : 'text-red-400 hover:text-red-300'} text-sm mt-2`}
+          >
+            Edit Identity →
+          </button>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
