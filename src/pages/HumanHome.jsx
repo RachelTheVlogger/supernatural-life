@@ -491,20 +491,24 @@ export default function HumanHome() {
     }
   }, [isLoading, humans.length, navigate]);
 
-  // Check if obsession was broken
+  // Track obsession changes
   React.useEffect(() => {
     if (!human) return;
     
     const currentObsession = human.obsession_level || 0;
     
+    // Set initial state
+    if (currentObsession > 0 && !hadObsession) {
+      setHadObsession(true);
+    }
+    
+    // Check if obsession was broken (only after it was >0 before)
     if (hadObsession && currentObsession === 0) {
       const vampireName = vampireStates[0]?.vampire_name || 'them';
       alert(`You woke up this morning... different.\n\nThe constant pull. The ache. The need.\n\nIt's gone.\n\nYou think about ${vampireName} and... nothing.\n\nNo racing heart. No desperate longing.\n\nJust... clarity.\n\nYou're free.\n\nYou got your life back.`);
       setHadObsession(false);
-    } else if (currentObsession > 0 && !hadObsession) {
-      setHadObsession(true);
     }
-  }, [human?.obsession_level, vampireStates, hadObsession, human]);
+  }, [human?.obsession_level]);
 
   const awarenessColor = human?.awareness_level > 70 ? 'text-red-400' : human?.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
   const dangerColor = human?.danger_level > 70 ? 'text-red-400' : human?.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
