@@ -1085,12 +1085,10 @@ Format as JSON array of strings.`,
             </div>
           </div>
 
-          {servant && (
+          {servant && !servant.is_turned && (
             <button
               onClick={() => {
-                const { useNavigate } = require('react-router-dom');
-                const { createPageUrl } = require('@/utils');
-                window.location.href = createPageUrl('HumanHome');
+                window.location.href = '/HumanHome';
               }}
               className="absolute top-4 left-4 text-gray-400 hover:text-white text-sm"
             >
