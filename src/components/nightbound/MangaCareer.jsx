@@ -159,11 +159,10 @@ export default function MangaCareer({ servant, onClose }) {
 
   React.useEffect(() => {
     if (viewingChapter) {
-      const bookmark = getBookmark(viewingChapter.number);
-      const maxIndex = (viewingChapter?.panels?.length || 1) - 1;
-      const safeIndex = Math.min(bookmark, maxIndex);
-      setCurrentPanelIndex(safeIndex);
-      resetPanelView();
+      // Always start from beginning when opening a chapter
+      setCurrentPanelIndex(0);
+      setPanelZoom(1);
+      setPanelPosition({ x: 0, y: 0 });
     }
   }, [viewingChapter]);
 
@@ -1549,6 +1548,7 @@ Format as JSON array of strings.`,
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    e.preventDefault();
                     handlePanelZoom(-0.5);
                   }}
                   className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg"
@@ -1559,6 +1559,7 @@ Format as JSON array of strings.`,
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    e.preventDefault();
                     handlePanelZoom(0.5);
                   }}
                   className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg"
@@ -1566,13 +1567,17 @@ Format as JSON array of strings.`,
                   +
                 </button>
                 <button
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     setPanelZoom(1);
                     setPanelPosition({ x: 0, y: 0 });
                   }}
-                  className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm"
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm select-none"
                 >
                   Reset
                 </button>
