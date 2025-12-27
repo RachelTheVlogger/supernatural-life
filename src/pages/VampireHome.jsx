@@ -156,12 +156,20 @@ export default function VampireHome() {
     }
   }, [servants, identityRevelation, vampireStates.length]);
 
-  // Redirect to Home if no vampire state exists
+  // Redirect to Home if no vampire state exists (only after initial load completes)
+  const [hasLoaded, setHasLoaded] = React.useState(false);
+  
   useEffect(() => {
-    if (vampireStates.length === 0 && !vampireLoading) {
+    if (!vampireLoading) {
+      setHasLoaded(true);
+    }
+  }, [vampireLoading]);
+
+  useEffect(() => {
+    if (hasLoaded && vampireStates.length === 0) {
       navigate(createPageUrl('Home'), { replace: true });
     }
-  }, [vampireStates, vampireLoading, navigate]);
+  }, [vampireStates, hasLoaded, navigate]);
 
   // Don't render anything if no vampire state or loading
   if (vampireLoading) {
