@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Users, BookOpen, Heart, Eye, Moon, Coffee, School, Home as HomeIcon, Search, Shield } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Users, BookOpen, Heart, Eye, Moon, Coffee, School, Home as HomeIcon, Search, Shield, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -47,6 +46,16 @@ export default function HumanHome() {
   });
 
   const human = humans[0];
+  const hasVampire = vampireStates.length > 0;
+  const vampire = vampireStates[0];
+  
+  // Vampire-specific activities that only show when vampire exists
+  const vampireActivities = hasVampire ? [
+    { id: 'stalk_vampire', label: `Stalk ${vampire.vampire_name}`, icon: Eye, duration: 5000, awarenessChance: 0.3, requiresAwareness: 15 },
+    { id: 'visit_vampire', label: `Go to ${vampire.vampire_name}'s House`, icon: Heart, duration: 6000, awarenessChance: 0.5, requiresAwareness: 30 },
+    { id: 'social_stalk', label: `Stalk ${vampire.vampire_name} Online`, icon: Search, duration: 4000, awarenessChance: 0.2, requiresAwareness: 10 },
+    { id: 'confession', label: `Confess to ${vampire.vampire_name}`, icon: Heart, duration: 7000, requiresAwareness: 50 }
+  ] : [];
 
   const handleActivity = React.useCallback(async (activity) => {
     if (!human?.id) return;
@@ -467,7 +476,7 @@ export default function HumanHome() {
           className="space-y-3 mb-8"
         >
           <h2 className="text-xl font-bold text-white mb-4">Daily Life</h2>
-          {HUMAN_ACTIVITIES.map((activity, i) => {
+          {[...HUMAN_ACTIVITIES, ...vampireActivities].map((activity, i) => {
             const isLocked = activity.requiresAwareness && (human.awareness_level || 0) < activity.requiresAwareness;
             return (
               <motion.button
