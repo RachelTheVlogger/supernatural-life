@@ -34,6 +34,11 @@ export default function MangaCareer({ servant, onClose }) {
   const [customPrompt, setCustomPrompt] = useState('');
   const [viewingChapter, setViewingChapter] = useState(null);
   const [generationProgress, setGenerationProgress] = useState('');
+  const [currentPanelIndex, setCurrentPanelIndex] = useState(0);
+  const [panelZoom, setPanelZoom] = useState(1);
+  const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   const { data: careers = [] } = useQuery({
     queryKey: ['career', servant.id],
@@ -41,6 +46,79 @@ export default function MangaCareer({ servant, onClose }) {
   });
 
   const career = careers[0];
+
+  const saveBookmark = async (chapterNumber, panelIndex) => {
+    if (!career?.id) return;
+    const bookmarks = career.manga_bookmarks || {};
+    bookmarks[`chapter_${chapterNumber}`] = panelIndex;
+    await base44.entities.ServantCareer.update(career.id, {
+      manga_bookmarks: bookmarks
+    });
+    queryClient.invalidateQueries(['career']);
+  };
+
+  const getBookmark = (chapterNumber) => {
+    if (!career?.manga_bookmarks) return 0;
+    return career.manga_bookmarks[`chapter_${chapterNumber}`] || 0;
+  };
+
+  const handlePanelZoom = (delta) => {
+    setPanelZoom(prev => Math.max(1, Math.min(3, prev + delta)));
+  };
+
+  const handlePanelDragStart = (e) => {
+    if (panelZoom > 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.clientX || e.touches?.[0]?.clientX || 0,
+        y: e.clientY || e.touches?.[0]?.clientY || 0
+      });
+    }
+  };
+
+  const handlePanelDrag = (e) => {
+    if (!isDragging) return;
+    const clientX = e.clientX || e.touches?.[0]?.clientX || 0;
+    const clientY = e.clientY || e.touches?.[0]?.clientY || 0;
+    setPanelPosition(prev => ({
+      x: prev.x + (clientX - dragStart.x),
+      y: prev.y + (clientY - dragStart.y)
+    }));
+    setDragStart({ x: clientX, y: clientY });
+  };
+
+  const handlePanelDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  const resetPanelView = () => {
+    setPanelZoom(1);
+    setPanelPosition({ x: 0, y: 0 });
+  };
+
+  const goToNextPanel = () => {
+    if (viewingChapter && currentPanelIndex < (viewingChapter.panels?.length || 0) - 1) {
+      setCurrentPanelIndex(prev => prev + 1);
+      resetPanelView();
+      saveBookmark(viewingChapter.number, currentPanelIndex + 1);
+    }
+  };
+
+  const goToPreviousPanel = () => {
+    if (currentPanelIndex > 0) {
+      setCurrentPanelIndex(prev => prev - 1);
+      resetPanelView();
+      saveBookmark(viewingChapter.number, currentPanelIndex - 1);
+    }
+  };
+
+  React.useEffect(() => {
+    if (viewingChapter) {
+      const bookmark = getBookmark(viewingChapter.number);
+      setCurrentPanelIndex(bookmark);
+      resetPanelView();
+    }
+  }, [viewingChapter]);
 
   const handleGenerateCover = async (useCustomPrompt = false) => {
     if (!career?.id) return;
@@ -616,92 +694,136 @@ Format as JSON:
         </motion.div>
       )}
 
-      {/* Chapter Viewer Modal */}
-      {viewingChapter && (
+      {/* Chapter Viewer Modal with Page Turning */}
+      {viewingChapter && viewingChapter.panels && viewingChapter.panels.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/95"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black"
           onClick={() => setViewingChapter(null)}
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-gray-900 rounded-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
-          >
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-1">
-                  Chapter {viewingChapter.number}: {viewingChapter.title}
-                </h2>
-                <p className="text-gray-400 text-sm">{career.series_name}</p>
-              </div>
-              <button
-                onClick={() => setViewingChapter(null)}
-                className="text-gray-400 hover:text-white"
-              >
-                <X className="w-6 h-6" />
-              </button>
+          <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-start">
+            <div>
+              <h2 className="text-xl font-bold text-white mb-1">
+                Ch. {viewingChapter.number}: {viewingChapter.title}
+              </h2>
+              <p className="text-gray-400 text-sm">
+                Panel {currentPanelIndex + 1} of {viewingChapter.panels.length}
+              </p>
             </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setViewingChapter(null);
+              }}
+              className="bg-gray-900/80 hover:bg-gray-900 rounded-full p-2 text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
 
-            {viewingChapter.plot && (
-              <div className="bg-purple-950/30 border border-purple-500/30 rounded-lg p-4 mb-6">
-                <h3 className="text-purple-300 font-medium mb-2">Plot Summary</h3>
-                <p className="text-gray-300 text-sm">{viewingChapter.plot}</p>
+          <div 
+            className="relative w-full h-full flex items-center justify-center overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentPanelIndex}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="relative max-w-4xl max-h-[80vh] touch-none"
+                onMouseDown={handlePanelDragStart}
+                onMouseMove={handlePanelDrag}
+                onMouseUp={handlePanelDragEnd}
+                onMouseLeave={handlePanelDragEnd}
+                onTouchStart={handlePanelDragStart}
+                onTouchMove={handlePanelDrag}
+                onTouchEnd={handlePanelDragEnd}
+                onWheel={(e) => {
+                  e.preventDefault();
+                  handlePanelZoom(e.deltaY > 0 ? -0.1 : 0.1);
+                }}
+              >
+                <img
+                  src={viewingChapter.panels[currentPanelIndex].image}
+                  alt={`Panel ${currentPanelIndex + 1}`}
+                  className="max-w-full max-h-[80vh] rounded-lg shadow-2xl"
+                  style={{
+                    transform: `scale(${panelZoom}) translate(${panelPosition.x / panelZoom}px, ${panelPosition.y / panelZoom}px)`,
+                    cursor: panelZoom > 1 ? 'grab' : 'default',
+                    transition: isDragging ? 'none' : 'transform 0.3s ease'
+                  }}
+                  draggable={false}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+            {viewingChapter.panels[currentPanelIndex].dialogue && (
+              <div className="bg-gray-900/90 rounded-lg p-4 mb-4 max-w-2xl mx-auto border border-purple-500/30">
+                <p className="text-white text-center">{viewingChapter.panels[currentPanelIndex].dialogue}</p>
               </div>
             )}
 
-            <div className="space-y-6">
-              {viewingChapter.panels && viewingChapter.panels.length > 0 ? (
-                viewingChapter.panels.map((panel, i) => (
-                  <div key={i} className="bg-gray-800/50 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded">
-                        Panel {i + 1}
-                      </span>
-                    </div>
-                    <img
-                      src={panel.image}
-                      alt={`Panel ${i + 1}`}
-                      className="w-full rounded-lg border-2 border-purple-500/30 mb-3"
-                    />
-                    {panel.description && (
-                      <p className="text-gray-400 text-sm italic mb-2">
-                        {panel.description}
-                      </p>
-                    )}
-                    {panel.dialogue && (
-                      <div className="bg-gray-900/50 rounded-lg p-3 border-l-2 border-purple-500">
-                        <p className="text-white text-sm">{panel.dialogue}</p>
-                      </div>
-                    )}
-                  </div>
-                ))
-              ) : viewingChapter.panel_image ? (
-                <div className="bg-gray-800/50 rounded-lg p-4">
-                  <img
-                    src={viewingChapter.panel_image}
-                    alt={viewingChapter.title}
-                    className="w-full rounded-lg border-2 border-purple-500/30"
-                  />
-                </div>
-              ) : null}
-            </div>
+            <div className="flex items-center justify-between max-w-2xl mx-auto">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToPreviousPanel();
+                }}
+                disabled={currentPanelIndex === 0}
+                className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-medium"
+              >
+                ← Previous
+              </button>
 
-            <div className="mt-6 flex gap-3 text-sm">
-              <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded">
-                Quality: {viewingChapter.quality}%
-              </span>
-              <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded">
-                +{viewingChapter.fans_gained} fans
-              </span>
-              <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded">
-                ${viewingChapter.income}
-              </span>
+              <div className="flex gap-2 items-center">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePanelZoom(-0.5);
+                  }}
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg"
+                >
+                  −
+                </button>
+                <span className="text-white text-sm">{Math.round(panelZoom * 100)}%</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePanelZoom(0.5);
+                  }}
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg"
+                >
+                  +
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resetPanelView();
+                  }}
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm"
+                >
+                  Reset
+                </button>
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToNextPanel();
+                }}
+                disabled={currentPanelIndex === viewingChapter.panels.length - 1}
+                className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-medium"
+              >
+                Next →
+              </button>
             </div>
-          </motion.div>
+          </div>
         </motion.div>
       )}
 
