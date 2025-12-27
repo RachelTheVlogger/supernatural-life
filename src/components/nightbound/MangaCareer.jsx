@@ -32,6 +32,8 @@ export default function MangaCareer({ servant, onClose }) {
   const [generatingCover, setGeneratingCover] = useState(false);
   const [showCoverPrompt, setShowCoverPrompt] = useState(false);
   const [customPrompt, setCustomPrompt] = useState('');
+  const [viewingChapter, setViewingChapter] = useState(null);
+  const [generationProgress, setGenerationProgress] = useState('');
 
   const { data: careers = [] } = useQuery({
     queryKey: ['career', servant.id],
@@ -116,35 +118,63 @@ export default function MangaCareer({ servant, onClose }) {
     if (!career?.id) return;
     
     setWorking(true);
+    setGenerationProgress('Creating chapter story...');
     
     try {
-      const quality = Math.floor(Math.random() * 30) + 50;
-      const fansGained = Math.floor(Math.random() * 200) + 100;
-      const incomeGained = Math.floor(Math.random() * 150) + 100;
-      const panels = Math.floor(Math.random() * 10) + 15;
-
-      const newFans = (career.fans || 0) + fansGained;
-      const newIncome = (career.income || 0) + incomeGained;
-      const newChapters = (career.chapters_released || 0) + 1;
-
-      const chapterTitles = [
-        'New Beginning', 'Dark Truth', 'Confrontation', 'Revelation', 'Battle',
-        'Aftermath', 'Rising Tension', 'Breaking Point', 'Destiny', 'Choice'
-      ];
-      const title = chapterTitles[Math.floor(Math.random() * chapterTitles.length)];
-
-      // Generate AI panel images
-      const genrePrompts = {
-        shonen: 'action-packed manga panel with dynamic fight scene, intense battle, bold linework, high energy',
-        shojo: 'romantic manga panel with flowers and sparkles, shoujo style, soft emotional scene',
-        seinen: 'dark mature manga panel, gritty realistic art style, dramatic shadows',
-        josei: 'elegant mature manga panel, sophisticated adult romance scene, detailed backgrounds',
-        isekai: 'fantasy manga panel with magic and adventure, otherworldly setting, epic scale',
-        'slice-of-life': 'cozy everyday manga panel, peaceful daily life scene, warm atmosphere'
-      };
-
       const genre = career.current_genre || 'shonen';
       const artStyle = career.art_style || 'classic';
+      const seriesName = career.series_name || 'Untitled';
+      const newChapters = (career.chapters_released || 0) + 1;
+      const existingChapters = career.manga_chapters || [];
+      const storySummary = career.story_summary || `A ${genre} manga series about adventure and growth.`;
+
+      // Generate chapter content with AI
+      const contentPrompt = `You are writing Chapter ${newChapters} of "${seriesName}", a ${genre} manga.
+
+Story so far: ${storySummary}
+
+Create this chapter with:
+1. A compelling chapter title
+2. 6 key manga panels with descriptions
+3. Brief dialogue/narration for each panel
+4. A plot summary
+
+Format as JSON:
+{
+  "title": "Chapter Title",
+  "plot": "Brief plot summary",
+  "panels": [
+    {"description": "Panel scene description", "dialogue": "Character dialogue or narration"},
+    ...
+  ]
+}`;
+
+      const chapterContent = await base44.integrations.Core.InvokeLLM({
+        prompt: contentPrompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            plot: { type: "string" },
+            panels: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  description: { type: "string" },
+                  dialogue: { type: "string" }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      const title = chapterContent.title;
+      const panels = chapterContent.panels || [];
+      
+      // Generate images for each panel
+      setGenerationProgress(`Generating ${panels.length} manga panels...`);
       
       const stylePrompts = {
         classic: 'traditional black and white manga art style, classic manga aesthetic, hand-drawn linework',
@@ -155,54 +185,70 @@ export default function MangaCareer({ servant, onClose }) {
         noir: 'noir manga style, high contrast shadows, dark atmosphere, dramatic black and white'
       };
 
-      const prompt = `${genrePrompts[genre]}, ${stylePrompts[artStyle]}, dramatic composition, professional manga illustration`;
-
-      setOutcome('Generating manga panels...');
-      
-      const generateParams = { prompt };
-      if (career.style_reference_image) {
-        generateParams.existing_image_urls = [career.style_reference_image];
+      const panelImages = [];
+      for (let i = 0; i < Math.min(panels.length, 6); i++) {
+        setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
+        
+        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition`;
+        
+        const generateParams = { prompt: panelPrompt };
+        if (career.style_reference_image) {
+          generateParams.existing_image_urls = [career.style_reference_image];
+        }
+        
+        const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
+        panelImages.push({
+          image: imageResult.url,
+          description: panels[i].description,
+          dialogue: panels[i].dialogue
+        });
       }
-      
-      const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
-      const panelImage = imageResult.url;
 
-      const existingChapters = career.manga_chapters || [];
+      const quality = Math.floor(Math.random() * 30) + 70;
+      const fansGained = Math.floor(Math.random() * 300) + 150;
+      const incomeGained = Math.floor(Math.random() * 200) + 150;
+
       const newChapter = {
         number: newChapters,
         title,
-        panels,
+        plot: chapterContent.plot,
+        panels: panelImages,
         quality,
         fans_gained: fansGained,
         income: incomeGained,
-        date: new Date().toISOString(),
-        panel_image: panelImage
+        date: new Date().toISOString()
       };
 
+      // Update story summary for continuity
+      const newStorySummary = `${storySummary} Chapter ${newChapters}: ${chapterContent.plot}`;
+
       await base44.entities.ServantCareer.update(career.id, {
-        fans: newFans,
-        income: newIncome,
+        fans: (career.fans || 0) + fansGained,
+        income: (career.income || 0) + incomeGained,
         chapters_released: newChapters,
-        manga_chapters: [...existingChapters, newChapter]
+        manga_chapters: [...existingChapters, newChapter],
+        story_summary: newStorySummary
       });
 
       await base44.entities.NightLog.create({
-        entry: `${servant.name} released Chapter ${newChapters}: "${title}" (${panels} panels). +${fansGained} fans, +$${incomeGained}`,
+        entry: `${servant.name} released Chapter ${newChapters}: "${title}" with ${panelImages.length} panels! +${fansGained} fans, +$${incomeGained}`,
         category: 'interaction',
         intensity: 'moderate'
       });
 
-      setOutcome(`Chapter ${newChapters}: "${title}" - ${panels} panels drawn! +${fansGained} fans, $${incomeGained}`);
+      setOutcome(`Chapter ${newChapters}: "${title}" complete! +${fansGained} fans, $${incomeGained}`);
       queryClient.invalidateQueries(['career']);
 
       setTimeout(() => {
         setWorking(false);
         setOutcome('');
+        setGenerationProgress('');
       }, 3000);
     } catch (error) {
       console.error('Failed to generate chapter:', error);
       setWorking(false);
       setOutcome('Failed to generate chapter. Please try again.');
+      setGenerationProgress('');
     }
   };
 
@@ -378,14 +424,30 @@ export default function MangaCareer({ servant, onClose }) {
                 <h4 className="text-white font-medium text-sm mb-2">Published Chapters</h4>
                 <div className="space-y-3 max-h-[300px] overflow-y-auto">
                   {[...career.manga_chapters].reverse().map((chapter) => (
-                    <div key={chapter.number} className="bg-gray-800/50 rounded-lg p-3">
+                    <button
+                      key={chapter.number}
+                      onClick={() => setViewingChapter(chapter)}
+                      className="w-full bg-gray-800/50 hover:bg-gray-800/70 rounded-lg p-3 text-left transition-colors"
+                    >
                       <div className="flex justify-between items-start mb-2">
                         <h5 className="text-white font-medium text-sm">Ch. {chapter.number}: {chapter.title}</h5>
                         <span className="text-xs text-purple-400">{chapter.quality}% quality</span>
                       </div>
-                      
-                      {/* AI Generated Panel Image */}
-                      {chapter.panel_image && (
+
+                      {chapter.panels && chapter.panels.length > 0 && (
+                        <div className="mb-2 grid grid-cols-3 gap-1">
+                          {chapter.panels.slice(0, 3).map((panel, i) => (
+                            <img 
+                              key={i}
+                              src={panel.image} 
+                              alt={`Panel ${i + 1}`}
+                              className="w-full h-16 rounded border border-purple-500/30 object-cover"
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {chapter.panel_image && !chapter.panels && (
                         <div className="mb-2">
                           <img 
                             src={chapter.panel_image} 
@@ -394,13 +456,15 @@ export default function MangaCareer({ servant, onClose }) {
                           />
                         </div>
                       )}
-                      
+
                       <div className="flex gap-3 text-xs text-gray-400">
-                        <span>📄 {chapter.panels} panels</span>
+                        <span>📄 {chapter.panels?.length || chapter.panels || 0} panels</span>
                         <span>👥 +{chapter.fans_gained} fans</span>
                         <span>💰 ${chapter.income}</span>
                       </div>
-                    </div>
+
+                      <p className="text-purple-400 text-xs mt-2">Click to read →</p>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -430,7 +494,7 @@ export default function MangaCareer({ servant, onClose }) {
               transition={{ duration: 1.5, repeat: Infinity }}
               className="text-purple-400"
             >
-              Working on the chapter...
+              {generationProgress || 'Working on the chapter...'}
             </motion.div>
           </div>
         )}
@@ -547,6 +611,95 @@ export default function MangaCareer({ servant, onClose }) {
                   className="hidden"
                 />
               </label>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Chapter Viewer Modal */}
+      {viewingChapter && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/95"
+          onClick={() => setViewingChapter(null)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-1">
+                  Chapter {viewingChapter.number}: {viewingChapter.title}
+                </h2>
+                <p className="text-gray-400 text-sm">{career.series_name}</p>
+              </div>
+              <button
+                onClick={() => setViewingChapter(null)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {viewingChapter.plot && (
+              <div className="bg-purple-950/30 border border-purple-500/30 rounded-lg p-4 mb-6">
+                <h3 className="text-purple-300 font-medium mb-2">Plot Summary</h3>
+                <p className="text-gray-300 text-sm">{viewingChapter.plot}</p>
+              </div>
+            )}
+
+            <div className="space-y-6">
+              {viewingChapter.panels && viewingChapter.panels.length > 0 ? (
+                viewingChapter.panels.map((panel, i) => (
+                  <div key={i} className="bg-gray-800/50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded">
+                        Panel {i + 1}
+                      </span>
+                    </div>
+                    <img
+                      src={panel.image}
+                      alt={`Panel ${i + 1}`}
+                      className="w-full rounded-lg border-2 border-purple-500/30 mb-3"
+                    />
+                    {panel.description && (
+                      <p className="text-gray-400 text-sm italic mb-2">
+                        {panel.description}
+                      </p>
+                    )}
+                    {panel.dialogue && (
+                      <div className="bg-gray-900/50 rounded-lg p-3 border-l-2 border-purple-500">
+                        <p className="text-white text-sm">{panel.dialogue}</p>
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : viewingChapter.panel_image ? (
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <img
+                    src={viewingChapter.panel_image}
+                    alt={viewingChapter.title}
+                    className="w-full rounded-lg border-2 border-purple-500/30"
+                  />
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mt-6 flex gap-3 text-sm">
+              <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded">
+                Quality: {viewingChapter.quality}%
+              </span>
+              <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded">
+                +{viewingChapter.fans_gained} fans
+              </span>
+              <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded">
+                ${viewingChapter.income}
+              </span>
             </div>
           </motion.div>
         </motion.div>
