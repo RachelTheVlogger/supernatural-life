@@ -763,18 +763,26 @@ Format as JSON array of strings.`,
 
 User's custom request: ${chapterPrompt}
 
+CRITICAL: Follow the user's request EXACTLY. Include every detail they mentioned. Do not add elements they didn't ask for.
+
 Create this chapter with:
-1. A compelling chapter title
-2. 6 key manga panels with descriptions
+1. A compelling chapter title based on their request
+2. 6 key manga panels with DETAILED descriptions that match their prompt exactly
 3. Brief dialogue/narration for each panel
 4. A plot summary
+
+IMPORTANT: Your panel descriptions must be detailed and specific - they will be used to generate images. Include:
+- Character names and their exact actions
+- Precise scene composition and camera angles
+- Specific objects, locations, or background elements mentioned
+- Emotional tone and atmosphere
 
 Format as JSON:
 {
   "title": "Chapter Title",
   "plot": "Brief plot summary",
   "panels": [
-    {"description": "Panel scene description", "dialogue": "Character dialogue or narration"},
+    {"description": "DETAILED panel scene description with all specifics", "dialogue": "Character dialogue or narration"},
     ...
   ]
 }`;
@@ -853,7 +861,7 @@ Format as JSON:
             }
           });
           
-          const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, IMPORTANT: maintain exact character appearances and features as described, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs, consistent art style throughout`;
+          const panelPrompt = `FOLLOW THESE EXACT INSTRUCTIONS: ${panels[i].description}. ${characterReminders}YOU MUST show every single detail mentioned in the description. ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition. CRITICAL: Include all characters mentioned, all actions specified, all objects listed, exact scene composition as written. Maintain exact character appearances and features. NO TEXT, NO SPEECH BUBBLES, NO WORDS IN IMAGE, pure visual storytelling only. Do not add or omit anything from the description.`;
           
           const generateParams = { prompt: panelPrompt };
           
