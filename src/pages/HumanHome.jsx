@@ -8,8 +8,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import MangaCareer from '@/components/nightbound/MangaCareer';
 import MangaStore from '@/components/nightbound/MangaStore';
-import CareerSelector from '@/components/nightbound/CareerSelector';
-import ServantDating from '@/components/nightbound/ServantDating';
 
 const HUMAN_ACTIVITIES = [
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
@@ -37,8 +35,6 @@ export default function HumanHome() {
   const [evidenceCollected, setEvidenceCollected] = useState([]);
   const [showManga, setShowManga] = useState(false);
   const [showMangaStore, setShowMangaStore] = useState(false);
-  const [showCareerSelector, setShowCareerSelector] = useState(false);
-  const [showDating, setShowDating] = useState(false);
 
   const { data: humans = [] } = useQuery({
     queryKey: ['humans'],
