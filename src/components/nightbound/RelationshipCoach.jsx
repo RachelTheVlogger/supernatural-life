@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Brain, Sparkles, TrendingUp, Heart, AlertCircle } from 'lucide-react';
+import { X, Brain, Sparkles, TrendingUp, Heart, AlertCircle, Send, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -8,6 +8,11 @@ export default function RelationshipCoach({ vampireState, onClose }) {
   const [selectedServant, setSelectedServant] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [advice, setAdvice] = useState(null);
+  const [chatMode, setChatMode] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [userInput, setUserInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
@@ -18,6 +23,12 @@ export default function RelationshipCoach({ vampireState, onClose }) {
     queryKey: ['recent-logs'],
     queryFn: () => base44.entities.NightLog.list('-created_date', 20)
   });
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   const analyzeRelationship = async (servant) => {
     setAnalyzing(true);
@@ -103,6 +114,81 @@ Be direct, insightful, and tailored to their specific dynamic. Consider their va
     setAnalyzing(false);
   };
 
+  const startChat = (servant) => {
+    setSelectedServant(servant);
+    setChatMode(true);
+    setMessages([
+      {
+        role: 'coach',
+        text: `Hi! I'm your AI Relationship Coach. Let's talk about your relationship with ${servant.name}. What would you like to know or discuss?`
+      }
+    ]);
+  };
+
+  const sendMessage = async () => {
+    if (!userInput.trim() || sending) return;
+
+    const userMessage = userInput.trim();
+    setUserInput('');
+    setSending(true);
+
+    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+
+    const recentInteractions = nightLogs
+      .filter(log => log.entry.includes(selectedServant.name))
+      .slice(0, 5)
+      .map(log => log.entry)
+      .join('\n');
+
+    const conversationHistory = messages.map(m => `${m.role === 'user' ? 'Vampire' : 'Coach'}: ${m.text}`).join('\n');
+
+    const prompt = `You are an expert relationship coach specializing in vampire-servant dynamics. You're having a conversation with a vampire about their relationship with their servant.
+
+SERVANT PROFILE:
+- Name: ${selectedServant.name}
+- Variant: ${selectedServant.variant} (devoted=worships you, defiant=resists but attracted, dreamer=lost in fantasy)
+- Personality: ${selectedServant.personality}
+- Gender: ${selectedServant.gender}
+- Sexuality: ${selectedServant.sexuality}
+- Current Relationship: ${selectedServant.relationship || 0}%
+- Obsession Stage: ${selectedServant.obsession_stage}/5
+- Emotional State: ${selectedServant.emotional_state}
+- Jealousy Level: ${selectedServant.jealousy_level || 0}%
+- Boundaries: ${selectedServant.boundaries || 'not set'}
+- Is Turned: ${selectedServant.is_turned ? 'Yes - now a vampire' : 'No - still human'}
+${selectedServant.is_turned ? `- Vampire Stage: ${selectedServant.vampire_stage}/4
+- Vampire Power: ${selectedServant.vampire_power_level}%
+- Nights as Vampire: ${selectedServant.nights_as_vampire}` : ''}
+
+VAMPIRE PROFILE:
+- Name: ${vampireState.vampire_name}
+- Gender: ${vampireState.gender}
+- Sexuality: ${vampireState.sexuality}
+- Personality: ${vampireState.personality?.join(', ')}
+- Humanity: ${vampireState.humanity}%
+- Moral Path: ${vampireState.moral_path}
+
+RECENT INTERACTIONS:
+${recentInteractions || 'No recent interactions logged'}
+
+CONVERSATION HISTORY:
+${conversationHistory}
+
+VAMPIRE'S QUESTION: ${userMessage}
+
+Respond naturally and helpfully. Give specific, actionable advice. Be direct but supportive. Reference specific aspects of their relationship. Keep responses conversational and 2-4 paragraphs max.`;
+
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({ prompt });
+      setMessages(prev => [...prev, { role: 'coach', text: response }]);
+    } catch (e) {
+      console.error('Failed to send message:', e);
+      setMessages(prev => [...prev, { role: 'coach', text: 'Sorry, I had trouble processing that. Could you rephrase?' }]);
+    }
+
+    setSending(false);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -135,14 +221,10 @@ Be direct, insightful, and tailored to their specific dynamic. Consider their va
 
         {!selectedServant ? (
           <div className="space-y-3">
-            <p className="text-gray-400 mb-4">Select a servant to analyze:</p>
+            <p className="text-gray-400 mb-4">Select a servant to discuss:</p>
             {servants.map(s => (
-              <button
-                key={s.id}
-                onClick={() => analyzeRelationship(s)}
-                className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
-              >
-                <div className="flex justify-between items-start">
+              <div key={s.id} className="bg-gray-800 rounded-xl p-4">
+                <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="text-white font-medium">{s.name}</h3>
                     <p className="text-gray-400 text-sm capitalize">
@@ -154,8 +236,105 @@ Be direct, insightful, and tailored to their specific dynamic. Consider their va
                     <p className="text-gray-500 text-xs">Bond</p>
                   </div>
                 </div>
-              </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => analyzeRelationship(s)}
+                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm transition-colors"
+                  >
+                    📊 Full Analysis
+                  </button>
+                  <button
+                    onClick={() => startChat(s)}
+                    className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Chat
+                  </button>
+                </div>
+              </div>
             ))}
+          </div>
+        ) : chatMode ? (
+          <div className="flex flex-col h-[60vh]">
+            <button
+              onClick={() => {
+                setSelectedServant(null);
+                setChatMode(false);
+                setMessages([]);
+              }}
+              className="text-purple-400 hover:text-purple-300 text-sm mb-4"
+            >
+              ← Back to servant selection
+            </button>
+
+            <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-3 mb-4">
+              <p className="text-white font-medium">💝 Chatting about {selectedServant.name}</p>
+              <p className="text-gray-400 text-xs">Bond: {selectedServant.relationship || 0}% • {selectedServant.variant}</p>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3 mb-4">
+              {messages.map((msg, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[85%] rounded-xl px-4 py-3 ${
+                      msg.role === 'user'
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-800 text-gray-200'
+                    }`}
+                  >
+                    {msg.role === 'coach' && (
+                      <div className="flex items-center gap-2 mb-1">
+                        <Brain className="w-4 h-4 text-pink-400" />
+                        <span className="text-xs text-pink-400 font-medium">AI Coach</span>
+                      </div>
+                    )}
+                    <p className="text-sm whitespace-pre-line">{msg.text}</p>
+                  </div>
+                </motion.div>
+              ))}
+              {sending && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-start"
+                >
+                  <div className="bg-gray-800 rounded-xl px-4 py-3">
+                    <motion.p
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="text-gray-400 text-sm"
+                    >
+                      Coach is thinking...
+                    </motion.p>
+                  </div>
+                </motion.div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                placeholder="Ask about your relationship..."
+                disabled={sending}
+                className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+              />
+              <button
+                onClick={sendMessage}
+                disabled={!userInput.trim() || sending}
+                className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg transition-colors"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         ) : analyzing ? (
           <div className="text-center py-12">
