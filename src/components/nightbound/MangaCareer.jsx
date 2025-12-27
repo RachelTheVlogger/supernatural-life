@@ -920,18 +920,18 @@ Format as JSON:
 
             <div className="grid grid-cols-2 gap-2 mb-4">
               <button
-                onClick={handleDrawChapter}
+                onClick={() => handleDrawChapter(false)}
                 disabled={working || generatingCover}
                 className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
               >
-                {working ? 'Drawing...' : '✨ Auto Chapter'}
+                {working && !generationProgress.includes('Volume') ? 'Drawing...' : '✨ Single Chapter'}
               </button>
               <button
                 onClick={() => handleCreateVolume()}
                 disabled={working || generatingCover}
                 className="bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
               >
-                {working ? 'Creating...' : '📚 Create Volume'}
+                {working && generationProgress.includes('Volume') ? generationProgress : '📚 Full Volume (8)'}
               </button>
               <button
                 onClick={() => setShowCustomCreator(true)}
