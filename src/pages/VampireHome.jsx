@@ -171,6 +171,14 @@ export default function VampireHome() {
       </div>
     );
   }
+
+  if (!vampireState) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <p className="text-gray-400">Loading vampire...</p>
+      </div>
+    );
+  }
   
   const handleMeditate = React.useCallback(async () => {
     if (!vampireState?.id) return;
@@ -231,14 +239,6 @@ export default function VampireHome() {
   const totalRelationship = servants.reduce((sum, s) => sum + (s.relationship || 0), 0);
   const avgRelationship = servants.length > 0 ? Math.round(totalRelationship / servants.length) : 0;
   const isDaytime = vampireState?.time_of_day === 'day';
-
-  if (!vampireState) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <p className="text-gray-400">Loading vampire...</p>
-      </div>
-    );
-  }
 
   return (
     <div 
