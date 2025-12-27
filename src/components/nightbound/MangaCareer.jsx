@@ -4,6 +4,10 @@ import { AnimatePresence } from 'framer-motion';
 import { X, BookOpen, TrendingUp, Users } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import MangaArcs from './MangaArcs';
+import MangaMerch from './MangaMerch';
+import MangaCollabs from './MangaCollabs';
+import MangaSpecials from './MangaSpecials';
 
 const GENRES = [
   { id: 'shonen', label: 'Shonen', icon: '⚔️', desc: 'Action-packed adventures' },
@@ -482,6 +486,7 @@ export default function MangaCareer({ servant, onClose }) {
       const existingChapters = careerData.manga_chapters || [];
       const storySummary = careerData.story_summary || `A ${genre} manga series about adventure and growth.`;
       const characters = careerData.manga_characters || [];
+      const characterNames = characters.map(c => c.name).join(', ');
 
       // Generate chapter content with AI
       const contentPrompt = `You are writing Chapter ${newChapters} of "${seriesName}", a ${genre} manga.
@@ -795,7 +800,11 @@ Format as JSON:
         quality,
         fans_gained: fansGained,
         income: incomeGained,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        characters_featured: [],
+        rating: 0,
+        ratings_count: 0,
+        reviews: []
       };
 
       await base44.entities.ServantCareer.update(career.id, {
@@ -2072,20 +2081,24 @@ Format as JSON:
             {selectedFeature === 'popularity' && (
               <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
                 <h4 className="text-white font-bold mb-4">Character Popularity Rankings</h4>
-                {(career?.manga_characters || [])
-                  .sort((a, b) => (b.appearances || 0) - (a.appearances || 0))
-                  .map((char, i) => (
-                    <div key={char.id} className="flex items-center gap-3 bg-gray-900/50 rounded-lg p-3 mb-2">
-                      <div className="text-2xl">#{i + 1}</div>
-                      <div className="flex-1">
-                        <h5 className="text-white font-medium">{char.name}</h5>
-                        <p className="text-gray-400 text-sm">{char.appearances || 0} appearances</p>
+                {(career?.manga_characters || []).length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No characters yet</p>
+                ) : (
+                  (career.manga_characters || [])
+                    .sort((a, b) => (b.appearances || 0) - (a.appearances || 0))
+                    .map((char, i) => (
+                      <div key={char.id} className="flex items-center gap-3 bg-gray-900/50 rounded-lg p-3 mb-2">
+                        <div className="text-2xl">#{i + 1}</div>
+                        <div className="flex-1">
+                          <h5 className="text-white font-medium">{char.name}</h5>
+                          <p className="text-gray-400 text-sm">{char.appearances || 0} appearances</p>
+                        </div>
+                        <div className="text-yellow-400 font-bold">
+                          {char.appearances > 10 ? '🔥' : char.appearances > 5 ? '⭐' : '✨'}
+                        </div>
                       </div>
-                      <div className="text-yellow-400 font-bold">
-                        {char.appearances > 10 ? '🔥' : char.appearances > 5 ? '⭐' : '✨'}
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                )}
               </div>
             )}
 
@@ -2184,15 +2197,22 @@ Format as JSON:
               </div>
             )}
 
-            {selectedFeature && !['popularity', 'schedule', 'analytics', 'consistency'].includes(selectedFeature) && (
-              <div className="mt-6 bg-gray-800/50 rounded-xl p-4">
-                <p className="text-gray-400 text-center py-8">
-                  This feature is under development! Check back soon.
-                </p>
-              </div>
-            )}
           </motion.div>
         </motion.div>
+      )}
+
+      {/* Feature Sub-Modals */}
+      {selectedFeature === 'arcs' && (
+        <MangaArcs career={career} onClose={() => setSelectedFeature(null)} />
+      )}
+      {selectedFeature === 'merch' && (
+        <MangaMerch career={career} characters={career?.manga_characters || []} onClose={() => setSelectedFeature(null)} />
+      )}
+      {selectedFeature === 'collab' && (
+        <MangaCollabs career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+      )}
+      {selectedFeature === 'special' && (
+        <MangaSpecials career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
       )}
 
       {/* Genre Selection Modal */}
