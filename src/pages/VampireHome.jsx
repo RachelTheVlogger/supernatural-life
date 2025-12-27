@@ -88,7 +88,10 @@ export default function VampireHome() {
     staleTime: 0
   });
   
-  const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
+  const vampireState = React.useMemo(() => 
+    vampireStates.length > 0 ? vampireStates[0] : null, 
+    [vampireStates]
+  );
   
   console.log('VampireHome - isDaytime calculation:', vampireState?.time_of_day, 'isDaytime:', vampireState?.time_of_day === 'day');
   
@@ -171,7 +174,7 @@ export default function VampireHome() {
     );
   }
   
-  const handleMeditate = async () => {
+  const handleMeditate = React.useCallback(async () => {
     if (!vampireState?.id) return;
     setMeditating(true);
     setTimeout(async () => {
@@ -201,13 +204,13 @@ export default function VampireHome() {
         setActiveAction(null);
       }
     }, 3000);
-  };
+  }, [vampireState, queryClient]);
   
-  const handleReadLore = () => {
+  const handleReadLore = React.useCallback(() => {
     setActiveAction('lore');
-  };
+  }, []);
   
-  const handlePracticePower = async () => {
+  const handlePracticePower = React.useCallback(async () => {
     if (!vampireState?.id) return;
     setActiveAction('practice');
     setTimeout(async () => {
@@ -224,7 +227,7 @@ export default function VampireHome() {
         setActiveAction(null);
       }
     }, 2500);
-  };
+  }, [vampireState, queryClient]);
   
   const turnedServants = servants.filter(s => s.is_turned);
   const totalRelationship = servants.reduce((sum, s) => sum + (s.relationship || 0), 0);
