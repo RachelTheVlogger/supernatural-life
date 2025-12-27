@@ -14,6 +14,16 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
   const [desperationLevel, setDesperationLevel] = useState(0);
   const [selectedBodyPart, setSelectedBodyPart] = useState(null);
   const [touchingMultiple, setTouchingMultiple] = useState(false);
+  const [denialStreak, setDenialStreak] = useState(0);
+  const [riskLevel, setRiskLevel] = useState(0);
+  const [heartRate, setHeartRate] = useState(60);
+  const [timePressure, setTimePressure] = useState(null);
+  const [timeRemaining, setTimeRemaining] = useState(null);
+  const [stamina, setStamina] = useState(100);
+  const [sweatLevel, setSweatLevel] = useState(0);
+  const [interruptionEvent, setInterruptionEvent] = useState(null);
+  const [performanceRank, setPerformanceRank] = useState(null);
+  const vampireWatching = context === 'vampire';
 
   // Gender-specific body parts and positions
   const getBodyParts = () => {
