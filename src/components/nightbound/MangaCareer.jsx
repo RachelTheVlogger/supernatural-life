@@ -29,6 +29,9 @@ export default function MangaCareer({ servant, onClose }) {
   const [showGenreSelect, setShowGenreSelect] = useState(false);
   const [showStyleSelect, setShowStyleSelect] = useState(false);
   const [uploadingStyle, setUploadingStyle] = useState(false);
+  const [generatingCover, setGeneratingCover] = useState(false);
+  const [showCoverPrompt, setShowCoverPrompt] = useState(false);
+  const [customPrompt, setCustomPrompt] = useState('');
 
   const { data: careers = [] } = useQuery({
     queryKey: ['career', servant.id],
@@ -36,6 +39,78 @@ export default function MangaCareer({ servant, onClose }) {
   });
 
   const career = careers[0];
+
+  const handleGenerateCover = async (useCustomPrompt = false) => {
+    if (!career?.id) return;
+    
+    setGeneratingCover(true);
+    setOutcome('Generating cover art...');
+    
+    try {
+      const genre = career.current_genre || 'shonen';
+      const artStyle = career.art_style || 'classic';
+      const seriesName = career.series_name || 'Untitled';
+      
+      const genreDescriptions = {
+        shonen: 'action-packed battle scene with dynamic energy',
+        shojo: 'romantic scene with flowers and sparkles, emotional atmosphere',
+        seinen: 'dark mature setting with gritty realism',
+        josei: 'elegant sophisticated scene with adult themes',
+        isekai: 'fantasy world with magic and adventure',
+        'slice-of-life': 'peaceful everyday life scene with warm colors'
+      };
+      
+      const styleDescriptions = {
+        classic: 'traditional manga art style, black and white aesthetic',
+        modern: 'modern anime style, vibrant digital colors',
+        chibi: 'cute chibi style characters',
+        realistic: 'realistic detailed illustration',
+        watercolor: 'watercolor painted style',
+        noir: 'noir high contrast dramatic shadows'
+      };
+      
+      let prompt;
+      if (useCustomPrompt && customPrompt.trim()) {
+        prompt = `${customPrompt}, ${styleDescriptions[artStyle]}, manga cover art, professional illustration, title layout space`;
+      } else {
+        prompt = `"${seriesName}" manga cover art, ${genreDescriptions[genre]}, ${styleDescriptions[artStyle]}, dramatic composition, professional manga illustration, eye-catching design, title space at top`;
+      }
+      
+      const generateParams = { prompt };
+      if (career.style_reference_image) {
+        generateParams.existing_image_urls = [career.style_reference_image];
+      }
+      
+      const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
+      
+      await base44.entities.ServantCareer.update(career.id, {
+        cover_art: imageResult.url
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} created stunning cover art for "${seriesName}"!`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
+      setOutcome('Cover art generated!');
+      queryClient.invalidateQueries(['career']);
+      
+      setTimeout(() => {
+        setGeneratingCover(false);
+        setOutcome('');
+        setShowCoverPrompt(false);
+        setCustomPrompt('');
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to generate cover:', error);
+      setOutcome('Failed to generate cover. Please try again.');
+      setTimeout(() => {
+        setGeneratingCover(false);
+        setOutcome('');
+      }, 2000);
+    }
+  };
 
   const handleDrawChapter = async () => {
     if (!career?.id) return;
@@ -217,6 +292,16 @@ export default function MangaCareer({ servant, onClose }) {
         <div className="px-6 pb-6 overflow-y-auto flex-1">
         {career?.series_name && (
           <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4 mb-4">
+            {career.cover_art && (
+              <div className="mb-4">
+                <img 
+                  src={career.cover_art} 
+                  alt={`${career.series_name} cover`}
+                  className="w-full rounded-lg border-2 border-purple-500/50 object-cover"
+                />
+              </div>
+            )}
+
             <h3 className="text-purple-300 font-bold text-lg mb-1">{career.series_name}</h3>
             <p className="text-gray-400 text-xs capitalize mb-3">{career.current_genre} manga</p>
             
@@ -241,15 +326,24 @@ export default function MangaCareer({ servant, onClose }) {
             <div className="flex gap-2 mb-4">
               <button
                 onClick={handleDrawChapter}
-                disabled={working}
+                disabled={working || generatingCover}
                 className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium"
               >
                 {working ? 'Drawing...' : 'Draw Next Chapter'}
               </button>
               <button
+                onClick={() => setShowCoverPrompt(true)}
+                disabled={working || generatingCover}
+                className="bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 rounded-lg px-4 text-white disabled:opacity-50"
+                title="Generate Cover Art"
+              >
+                🖼️
+              </button>
+              <button
                 onClick={() => setShowStyleSelect(true)}
-                disabled={working}
+                disabled={working || generatingCover}
                 className="bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg px-4 text-white disabled:opacity-50"
+                title="Change Art Style"
               >
                 🎨
               </button>
@@ -265,13 +359,15 @@ export default function MangaCareer({ servant, onClose }) {
                       income: 0,
                       manga_chapters: [],
                       art_style: 'classic',
-                      style_reference_image: null
+                      style_reference_image: null,
+                      cover_art: null
                     });
                     queryClient.invalidateQueries(['career']);
                   }
                 }}
-                disabled={working}
+                disabled={working || generatingCover}
                 className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg px-4 text-white disabled:opacity-50"
+                title="Delete Series"
               >
                 🗑️
               </button>
@@ -451,6 +547,60 @@ export default function MangaCareer({ servant, onClose }) {
                   className="hidden"
                 />
               </label>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Cover Art Prompt Modal */}
+      {showCoverPrompt && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => !generatingCover && setShowCoverPrompt(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+          >
+            <h3 className="text-white text-xl font-bold mb-4">Generate Cover Art</h3>
+
+            <div className="mb-4">
+              <p className="text-gray-400 text-sm mb-3">
+                Create a stunning cover for "{career.series_name}"
+              </p>
+
+              <label className="text-white text-sm mb-2 block">Custom Prompt (Optional)</label>
+              <textarea
+                value={customPrompt}
+                onChange={(e) => setCustomPrompt(e.target.value)}
+                placeholder="Describe your ideal cover... (or leave blank for auto-generated)"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"
+                rows={3}
+                disabled={generatingCover}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <button
+                onClick={() => handleGenerateCover(true)}
+                disabled={generatingCover}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-lg disabled:opacity-50"
+              >
+                {generatingCover ? 'Generating...' : customPrompt.trim() ? 'Generate with Custom Prompt' : 'Auto-Generate Cover'}
+              </button>
+
+              {!generatingCover && (
+                <button
+                  onClick={() => setShowCoverPrompt(false)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg"
+                >
+                  Cancel
+                </button>
+              )}
             </div>
           </motion.div>
         </motion.div>
