@@ -403,6 +403,10 @@ export default function EvolutionTree({ vampireState, servants, onClose }) {
   const [selectedPath, setSelectedPath] = useState(null);
   const [unlocking, setUnlocking] = useState(null);
   const queryClient = useQueryClient();
+
+  if (!vampireState) {
+    return null;
+  }
   
   const calculateStats = () => {
     const totalRelationship = servants.reduce((sum, s) => sum + (s.relationship || 0), 0);

@@ -13,6 +13,10 @@ export default function DayCycleToggle({ vampireState }) {
     setLocalTime(vampireState?.time_of_day);
   }, [vampireState?.time_of_day]);
 
+  if (!vampireState) {
+    return null;
+  }
+
   const toggleCycle = async () => {
     if (!vampireState || transitioning) return;
     
