@@ -59,11 +59,8 @@ export default function DancingSlider({ gender, context = 'performance', vampire
         </p>
       </div>
 
-      {/* Visual feedback - Abstract dancer */}
+      {/* Visual feedback - Swirly rope */}
       <div className="relative h-48 bg-black/40 rounded-xl mb-6 overflow-hidden">
-        {/* Stage floor */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-        
         {/* Background pulse */}
         <motion.div
           animate={{
@@ -72,16 +69,6 @@ export default function DancingSlider({ gender, context = 'performance', vampire
           }}
           transition={{ duration: 1 + (1 - intensity / 100), repeat: Infinity }}
           className="absolute inset-0 bg-gradient-to-t from-pink-600/30 via-purple-600/20 to-transparent"
-        />
-        
-        {/* Spotlight */}
-        <motion.div
-          animate={{
-            opacity: intensity > 20 ? [0.3, 0.6, 0.3] : 0,
-            scale: [0.8, 1.2, 0.8]
-          }}
-          transition={{ duration: 1, repeat: Infinity }}
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-yellow-400/20 rounded-full blur-3xl"
         />
         
         {/* Particles */}
@@ -108,86 +95,60 @@ export default function DancingSlider({ gender, context = 'performance', vampire
           )}
         </AnimatePresence>
         
-        {/* Abstract dancing figure */}
-        <div className="absolute inset-0 flex items-end justify-center pb-4">
-          {/* Body */}
-          <div className="relative">
-            {/* Head */}
-            <motion.div
-              animate={{
-                rotate: moveType === 'sway' || moveType === 'grind' ? [-15, 15, -15] : [0, -10, 10, 0],
-                y: intensity > 60 ? [-5, 5, -5] : [0, -3, 0]
-              }}
-              transition={{ duration: intensity > 60 ? 0.4 : 0.8, repeat: Infinity, ease: "easeInOut" }}
-              className="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full mx-auto mb-1"
-              style={{
-                filter: intensity > 50 ? `drop-shadow(0 0 ${intensity / 5}px #ec4899)` : 'none'
-              }}
-            />
-            
-            {/* Torso */}
-            <motion.div
-              animate={{
-                scaleX: moveType === 'grind' ? [1, 1.1, 1] : [1, 0.95, 1],
-                rotate: moveType === 'sway' ? [-8, 8, -8] : [0, -5, 5, 0],
-                y: moveType === 'drop' || moveType === 'floor' ? [0, 30] : [0, -5, 0]
-              }}
-              transition={{ duration: intensity > 60 ? 0.5 : 1, repeat: Infinity, ease: "easeInOut" }}
-              className="w-16 h-20 bg-gradient-to-b from-pink-500 to-purple-500 rounded-t-3xl rounded-b-lg mx-auto"
-            />
-            
-            {/* Hips (for women) */}
-            {gender === 'woman' && (
-              <motion.div
-                animate={{
-                  scaleX: moveType === 'sway' || moveType === 'grind' ? [1, 1.3, 1] : [1, 1.1, 1],
-                  rotate: moveType === 'sway' ? [-20, 20, -20] : moveType === 'grind' ? [-15, 15, -15] : [0],
-                  y: moveType === 'twerk' ? [-3, 3, -3] : [0]
-                }}
-                transition={{ 
-                  duration: intensity > 60 ? 0.3 : 0.6, 
-                  repeat: Infinity, 
-                  ease: "easeInOut"
-                }}
-                className="w-20 h-8 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full mx-auto -mt-2"
-              />
-            )}
-            
-            {/* Arms */}
-            <motion.div
-              animate={{
-                rotate: intensity > 50 ? [0, 45, -45, 0] : [0, 20, -20, 0]
-              }}
-              transition={{ duration: intensity > 60 ? 0.6 : 1.2, repeat: Infinity }}
-              className="absolute top-14 -left-6 w-2 h-16 bg-gradient-to-b from-pink-400 to-pink-500 rounded-full origin-top"
-              style={{ transformOrigin: 'top center' }}
-            />
-            <motion.div
-              animate={{
-                rotate: intensity > 50 ? [0, -45, 45, 0] : [0, -20, 20, 0]
-              }}
-              transition={{ duration: intensity > 60 ? 0.6 : 1.2, repeat: Infinity }}
-              className="absolute top-14 -right-6 w-2 h-16 bg-gradient-to-b from-pink-400 to-pink-500 rounded-full origin-top"
-              style={{ transformOrigin: 'top center' }}
-            />
-            
-            {/* Legs */}
-            <motion.div
-              animate={{
-                rotate: moveType === 'drop' ? [0, -20] : [-15, 15, -15]
-              }}
-              transition={{ duration: intensity > 60 ? 0.4 : 0.8, repeat: Infinity }}
-              className="absolute -bottom-14 left-2 w-3 h-16 bg-gradient-to-b from-purple-600 to-purple-700 rounded-full origin-top"
-            />
-            <motion.div
-              animate={{
-                rotate: moveType === 'drop' ? [0, 20] : [15, -15, 15]
-              }}
-              transition={{ duration: intensity > 60 ? 0.4 : 0.8, repeat: Infinity }}
-              className="absolute -bottom-14 right-2 w-3 h-16 bg-gradient-to-b from-purple-600 to-purple-700 rounded-full origin-top"
-            />
-          </div>
-        </div>
+        {/* Swirly rope */}
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 200">
+          <motion.path
+            d={moveType === 'sway' ? 
+              "M 150 0 Q 120 50 150 100 T 150 200" :
+              moveType === 'grind' ?
+              "M 150 0 Q 130 40 150 80 Q 170 120 150 160 Q 130 180 150 200" :
+              moveType === 'drop' || moveType === 'floor' ?
+              "M 150 0 L 150 80 Q 120 120 150 160 Q 180 180 150 200" :
+              moveType === 'twerk' ?
+              "M 150 0 Q 140 30 150 60 Q 160 90 150 120 Q 140 150 150 180 Q 160 190 150 200" :
+              "M 150 0 Q 140 50 150 100 Q 160 150 150 200"
+            }
+            stroke="url(#rope-gradient)"
+            strokeWidth={8 + intensity / 10}
+            fill="none"
+            strokeLinecap="round"
+            animate={{
+              d: moveType === 'sway' ? [
+                "M 150 0 Q 120 50 150 100 T 150 200",
+                "M 150 0 Q 180 50 150 100 T 150 200",
+                "M 150 0 Q 120 50 150 100 T 150 200"
+              ] : moveType === 'grind' ? [
+                "M 150 0 Q 130 40 150 80 Q 170 120 150 160 Q 130 180 150 200",
+                "M 150 0 Q 170 40 150 80 Q 130 120 150 160 Q 170 180 150 200",
+                "M 150 0 Q 130 40 150 80 Q 170 120 150 160 Q 130 180 150 200"
+              ] : moveType === 'drop' || moveType === 'floor' ? [
+                "M 150 0 L 150 80 Q 120 120 150 160 Q 180 180 150 200",
+                "M 150 0 L 150 80 Q 180 120 150 160 Q 120 180 150 200",
+                "M 150 0 L 150 80 Q 120 120 150 160 Q 180 180 150 200"
+              ] : moveType === 'twerk' ? [
+                "M 150 0 Q 140 30 150 60 Q 160 90 150 120 Q 140 150 150 180 Q 160 190 150 200",
+                "M 150 0 Q 160 30 150 60 Q 140 90 150 120 Q 160 150 150 180 Q 140 190 150 200",
+                "M 150 0 Q 140 30 150 60 Q 160 90 150 120 Q 140 150 150 180 Q 160 190 150 200"
+              ] : [
+                "M 150 0 Q 140 50 150 100 Q 160 150 150 200",
+                "M 150 0 Q 160 50 150 100 Q 140 150 150 200",
+                "M 150 0 Q 140 50 150 100 Q 160 150 150 200"
+              ]
+            }}
+            transition={{ 
+              duration: intensity > 60 ? 0.4 : 0.8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <defs>
+            <linearGradient id="rope-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ec4899" stopOpacity={0.8 + intensity / 500} />
+              <stop offset="50%" stopColor="#a855f7" stopOpacity={1} />
+              <stop offset="100%" stopColor="#ec4899" stopOpacity={0.8 + intensity / 500} />
+            </linearGradient>
+          </defs>
+        </svg>
         
         {/* Energy waves */}
         {intensity > 60 && (
