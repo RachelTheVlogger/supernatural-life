@@ -10,12 +10,14 @@ import MasturbationSlider from '@/components/nightbound/MasturbationSlider';
 import OnlyMortals from '@/components/nightbound/OnlyMortals';
 import BloodBankCareer from '@/components/nightbound/BloodBankCareer';
 import ArtCommissions from '@/components/nightbound/ArtCommissions';
+import MusicCareer from '@/components/nightbound/MusicCareer';
 
 
 const HUMAN_ACTIVITIES = [
   { id: 'onlymortals', label: '📸 OnlyMortals', icon: Camera, duration: 0, isModal: true },
   { id: 'blood_bank', label: '🩸 Blood Bank Job', icon: Shield, duration: 0, isModal: true },
   { id: 'art_commissions', label: '🎨 Art Commissions', icon: BookOpen, duration: 0, isModal: true },
+  { id: 'music_career', label: '🎵 Music Career', icon: Heart, duration: 0, isModal: true },
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
   { id: 'coffee', label: 'Coffee Shop', icon: Coffee, duration: 4000, awarenessChance: 0.15 },
   { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 4500, awarenessChance: 0.05 },
@@ -46,6 +48,7 @@ export default function HumanHome() {
   const [showOnlyMortals, setShowOnlyMortals] = useState(false);
   const [showBloodBank, setShowBloodBank] = useState(false);
   const [showArtCommissions, setShowArtCommissions] = useState(false);
+  const [showMusicCareer, setShowMusicCareer] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -84,6 +87,8 @@ export default function HumanHome() {
         setShowBloodBank(true);
       } else if (activity.id === 'art_commissions') {
         setShowArtCommissions(true);
+      } else if (activity.id === 'music_career') {
+        setShowMusicCareer(true);
       }
       return;
     }
@@ -825,6 +830,10 @@ export default function HumanHome() {
 
         {showArtCommissions && (
           <ArtCommissions human={human} onClose={() => setShowArtCommissions(false)} />
+        )}
+
+        {showMusicCareer && (
+          <MusicCareer human={human} onClose={() => setShowMusicCareer(false)} />
         )}
 
         {showIdentity && (
