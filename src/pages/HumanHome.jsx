@@ -416,7 +416,7 @@ export default function HumanHome() {
           className="mb-6"
         >
           <button
-            onClick={() => navigate(createPageUrl(`ServantHome?id=${human.id}`))}
+            onClick={() => setShowManga(true)}
             className="w-full bg-gradient-to-r from-purple-900/40 to-blue-900/40 hover:from-purple-900/60 hover:to-blue-900/60 border border-purple-500/30 rounded-xl p-4 transition-all"
           >
             <div className="flex items-center justify-between">

@@ -2260,19 +2260,21 @@ Format as JSON:
         </motion.div>
       )}
 
-      {/* Feature Sub-Modals */}
-      {selectedFeature === 'arcs' && (
-        <MangaArcs career={career} onClose={() => setSelectedFeature(null)} />
-      )}
-      {selectedFeature === 'merch' && (
-        <MangaMerch career={career} characters={career?.manga_characters || []} onClose={() => setSelectedFeature(null)} />
-      )}
-      {selectedFeature === 'collab' && (
-        <MangaCollabs career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
-      )}
-      {selectedFeature === 'special' && (
-        <MangaSpecials career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
-      )}
+      {/* Feature Sub-Modals - Need to be outside main modal for proper z-index */}
+      <AnimatePresence>
+        {selectedFeature === 'arcs' && (
+          <MangaArcs career={career} onClose={() => setSelectedFeature(null)} />
+        )}
+        {selectedFeature === 'merch' && (
+          <MangaMerch career={career} characters={career?.manga_characters || []} onClose={() => setSelectedFeature(null)} />
+        )}
+        {selectedFeature === 'collab' && (
+          <MangaCollabs career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+        )}
+        {selectedFeature === 'special' && (
+          <MangaSpecials career={career} entityName={entityName} onClose={() => setSelectedFeature(null)} />
+        )}
+      </AnimatePresence>
 
       {/* Plot Suggestions Modal */}
       {showPlotSuggestions && (
