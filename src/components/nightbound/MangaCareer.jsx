@@ -398,15 +398,17 @@ export default function MangaCareer({ servant, onClose }) {
                     const result = await base44.integrations.Core.UploadFile({ file });
                     await base44.entities.ServantCareer.update(career.id, { style_reference_image: result.file_url });
                     queryClient.invalidateQueries(['career']);
+                    setShowStyleSelect(false);
                   } catch (error) {
                     console.error('Upload failed:', error);
+                    alert('Upload failed. Please try again.');
                   }
                   setUploadingStyle(false);
                 }}
                 disabled={uploadingStyle}
-                className="w-full bg-gray-800 text-white text-sm rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700"
+                className="w-full bg-gray-800 text-white text-sm rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700 disabled:opacity-50"
               />
-              {uploadingStyle && <p className="text-gray-400 text-xs mt-2">Uploading...</p>}
+              {uploadingStyle && <p className="text-purple-400 text-xs mt-2">Uploading style reference...</p>}
             </div>
           </motion.div>
         </motion.div>
