@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import OnlyFangsMerch from './OnlyFangsMerch';
 import StalkerManagement from './StalkerManagement';
+import MasturbationSlider from './MasturbationSlider';
 
 const getGenderExamples = (vampireGender) => {
   const isFemale = vampireGender === 'woman';
@@ -95,6 +96,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [videoCallFan, setVideoCallFan] = useState(null);
   const [sextingSession, setSextingSession] = useState(null);
   const [sextingMessages, setSextingMessages] = useState([]);
+  const [showMasturbation, setShowMasturbation] = useState(false);
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -1025,6 +1027,9 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </button>
           <button onClick={() => setTab('promo')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'promo' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             💰 Promos
+          </button>
+          <button onClick={() => setTab('interactive')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'interactive' ? 'bg-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            💦 Interactive
           </button>
           <button onClick={() => setTab('profile')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             ⚙️ Settings
@@ -2177,6 +2182,59 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* INTERACTIVE TAB */}
+        {tab === 'interactive' && !showMasturbation && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6 text-center">
+              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }} className="text-6xl mb-4">
+                💦
+              </motion.div>
+              <h3 className="text-white text-2xl font-bold mb-2">Interactive Masturbation</h3>
+              <p className="text-gray-300 mb-6">Let your fans watch you pleasure yourself. Live. Interactive. Intense.</p>
+              
+              <button
+                onClick={() => setShowMasturbation(true)}
+                className="w-full bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700 text-white font-bold py-4 rounded-xl"
+              >
+                🔴 Start Session
+              </button>
+            </div>
+          </div>
+        )}
+
+        {tab === 'interactive' && showMasturbation && (
+          <div className="max-h-[60vh] overflow-y-auto">
+            <MasturbationSlider
+              onFinish={async (type) => {
+                const earnings = type === 'edged' ? Math.floor(Math.random() * 400) + 300 : Math.floor(Math.random() * 300) + 200;
+                const newSubs = type === 'edged' ? Math.floor(Math.random() * 40) + 30 : Math.floor(Math.random() * 25) + 15;
+                
+                await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                  revenue: servantProfile.revenue + earnings,
+                  subscriber_count: servantProfile.subscriber_count + newSubs,
+                  reputation: Math.min(100, servantProfile.reputation + 8)
+                });
+                
+                const relBonus = Math.floor(Math.random() * 10) + 8;
+                await base44.entities.Servant.update(servant.id, {
+                  relationship: Math.min(100, (servant.relationship || 0) + relBonus)
+                });
+                
+                await base44.entities.NightLog.create({
+                  entry: type === 'edged' 
+                    ? `Interactive masturbation session. You edged yourself for the audience. They went wild. Earned $${earnings}, +${newSubs} subscribers.`
+                    : `Interactive masturbation session. You came hard on camera. Chat exploded. Earned $${earnings}, +${newSubs} subscribers.`,
+                  category: 'interaction',
+                  intensity: 'significant'
+                });
+                
+                queryClient.invalidateQueries();
+                setShowMasturbation(false);
+              }}
+            />
           </div>
         )}
 
