@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import MangaCareer from '@/components/nightbound/MangaCareer';
+import MangaStore from '@/components/nightbound/MangaStore';
+import CareerSelector from '@/components/nightbound/CareerSelector';
+import ServantDating from '@/components/nightbound/ServantDating';
 
 const HUMAN_ACTIVITIES = [
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
@@ -31,6 +35,10 @@ export default function HumanHome() {
   const [showEncounter, setShowEncounter] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
   const [evidenceCollected, setEvidenceCollected] = useState([]);
+  const [showManga, setShowManga] = useState(false);
+  const [showMangaStore, setShowMangaStore] = useState(false);
+  const [showCareerSelector, setShowCareerSelector] = useState(false);
+  const [showDating, setShowDating] = useState(false);
 
   const { data: humans = [] } = useQuery({
     queryKey: ['humans'],
@@ -277,14 +285,22 @@ export default function HumanHome() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          {vampireStates.length > 0 && (
+          <div className="flex gap-3 items-center">
             <button
-              onClick={() => navigate(createPageUrl('Night'))}
+              onClick={() => setShowMangaStore(true)}
               className="text-purple-400 hover:text-purple-300 text-sm"
             >
-              Switch to Vampire →
+              📚 Manga Store
             </button>
-          )}
+            {vampireStates.length > 0 && (
+              <button
+                onClick={() => navigate(createPageUrl('Night'))}
+                className="text-purple-400 hover:text-purple-300 text-sm"
+              >
+                Switch to Vampire →
+              </button>
+            )}
+          </div>
         </div>
 
         <motion.div
@@ -543,6 +559,39 @@ export default function HumanHome() {
               Living your life...
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modals */}
+      <AnimatePresence>
+        {showManga && (
+          <MangaCareer
+            servant={human}
+            onClose={() => setShowManga(false)}
+          />
+        )}
+        {showMangaStore && (
+          <MangaStore
+            currentEntityId={human?.id}
+            onClose={() => setShowMangaStore(false)}
+          />
+        )}
+        {showCareerSelector && (
+          <CareerSelector
+            human={human}
+            onClose={() => setShowCareerSelector(false)}
+            onSelect={(careerType) => {
+              setShowCareerSelector(false);
+              if (careerType === 'manga') setShowManga(true);
+            }}
+          />
+        )}
+        {showDating && vampireStates.length > 0 && (
+          <ServantDating
+            servant={human}
+            vampireState={vampireStates[0]}
+            onClose={() => setShowDating(false)}
+          />
         )}
       </AnimatePresence>
     </div>
