@@ -8,10 +8,14 @@ import { base44 } from '@/api/base44Client';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 import MasturbationSlider from '@/components/nightbound/MasturbationSlider';
 import OnlyMortals from '@/components/nightbound/OnlyMortals';
+import BloodBankCareer from '@/components/nightbound/BloodBankCareer';
+import ArtCommissions from '@/components/nightbound/ArtCommissions';
 
 
 const HUMAN_ACTIVITIES = [
   { id: 'onlymortals', label: '📸 OnlyMortals', icon: Camera, duration: 0, isModal: true },
+  { id: 'blood_bank', label: '🩸 Blood Bank Job', icon: Shield, duration: 0, isModal: true },
+  { id: 'art_commissions', label: '🎨 Art Commissions', icon: BookOpen, duration: 0, isModal: true },
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
   { id: 'coffee', label: 'Coffee Shop', icon: Coffee, duration: 4000, awarenessChance: 0.15 },
   { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 4500, awarenessChance: 0.05 },
@@ -40,6 +44,8 @@ export default function HumanHome() {
   const [showSlider, setShowSlider] = useState(false);
   const [sliderActivity, setSliderActivity] = useState(null);
   const [showOnlyMortals, setShowOnlyMortals] = useState(false);
+  const [showBloodBank, setShowBloodBank] = useState(false);
+  const [showArtCommissions, setShowArtCommissions] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -74,6 +80,10 @@ export default function HumanHome() {
     if (activity.isModal) {
       if (activity.id === 'onlymortals') {
         setShowOnlyMortals(true);
+      } else if (activity.id === 'blood_bank') {
+        setShowBloodBank(true);
+      } else if (activity.id === 'art_commissions') {
+        setShowArtCommissions(true);
       }
       return;
     }
@@ -807,6 +817,14 @@ export default function HumanHome() {
 
         {showOnlyMortals && (
           <OnlyMortals human={human} onClose={() => setShowOnlyMortals(false)} />
+        )}
+
+        {showBloodBank && (
+          <BloodBankCareer human={human} onClose={() => setShowBloodBank(false)} />
+        )}
+
+        {showArtCommissions && (
+          <ArtCommissions human={human} onClose={() => setShowArtCommissions(false)} />
         )}
 
         {showIdentity && (
