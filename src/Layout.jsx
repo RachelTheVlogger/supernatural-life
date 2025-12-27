@@ -5,6 +5,7 @@ import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import AutoErrorRecovery from '@/components/AutoErrorRecovery';
 import { motion } from 'framer-motion';
 
 export default function Layout({ children, currentPageName }) {
@@ -125,6 +126,7 @@ export default function Layout({ children, currentPageName }) {
   
   return (
     <ErrorBoundary>
+    <AutoErrorRecovery>
     <div className="min-h-screen bg-black relative pb-20 overflow-x-hidden">
       <style>{`
         * {
@@ -237,6 +239,7 @@ export default function Layout({ children, currentPageName }) {
         </motion.div>
       )}
     </div>
+    </AutoErrorRecovery>
     </ErrorBoundary>
-  );
-}
+    );
+    }
