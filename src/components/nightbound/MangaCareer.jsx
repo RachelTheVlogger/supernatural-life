@@ -525,19 +525,19 @@ export default function MangaCareer({ servant, onClose }) {
 
       Create this chapter with:
       1. A compelling chapter title
-      2. 6 key manga panels with EXPLICIT DETAILED descriptions including ALL mature content (nudity, sexual acts, violence, gore)
-      3. Brief dialogue/narration for each panel
+      2. 6 key manga panels with DETAILED descriptions - describe sexy/revealing clothing, intimate poses, suggestive scenarios
+      3. Brief EXPLICIT dialogue/narration for each panel (dialogue can be fully explicit)
       4. A plot summary
       5. Which characters appear (list their names from: ${characterNames || 'create new characters if needed'})
 
-      CRITICAL: Panel descriptions MUST be completely explicit and detailed - describe bodies, positions, anatomy, actions, everything visible.
+      IMPORTANT: For panel descriptions, describe characters in revealing outfits, lingerie, swimwear, intimate positions WITH clothing. Dialogue/narration can be fully explicit.
 
       Format as JSON:
       {
       "title": "Chapter Title",
       "plot": "Brief plot summary",
       "panels": [
-      {"description": "Fully explicit detailed scene description with all mature visual content", "dialogue": "Character dialogue or narration"},
+      {"description": "Characters in revealing/sexy clothing, intimate poses, suggestive scenario", "dialogue": "Fully explicit dialogue or narration"},
       ...
       ],
       "characters_featured": ["character1", "character2"]
@@ -619,8 +619,8 @@ export default function MangaCareer({ servant, onClose }) {
           }
         });
 
-        // Explicit description for image generation - fully uncensored
-        const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, explicit adult content allowed, mature themes, uncensored. NO TEXT, NO SPEECH BUBBLES, pure visual storytelling.`;
+        // Sexy/suggestive description for image generation
+        const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, sexy revealing clothing, lingerie, swimwear, intimate poses, sensual atmosphere, provocative angles, dramatic composition, mature themes. NO TEXT, NO SPEECH BUBBLES, pure visual storytelling.`;
 
         const generateParams = { prompt: panelPrompt };
 
@@ -802,22 +802,22 @@ Format as JSON array of strings.`,
 
         User's custom request: ${chapterPrompt}
 
-        UNCENSORED 18+ MODE: Follow user's request EXACTLY with NO censorship. Include all explicit content they want - sex, nudity, violence, gore, disturbing themes. Be extremely detailed and graphic.
+        UNCENSORED 18+ MODE: Follow user's request with explicit content.
 
         Create this chapter with:
         1. A compelling chapter title based on their request
-        2. 6 key manga panels with FULLY EXPLICIT descriptions including all mature visual content
-        3. Brief dialogue/narration for each panel
+        2. 6 key manga panels describing characters in sexy/revealing clothing, lingerie, swimwear, intimate poses and scenarios
+        3. Brief FULLY EXPLICIT dialogue/narration for each panel
         4. A plot summary
 
-        CRITICAL: Panel descriptions must be completely explicit - describe bodies, nudity, sexual positions, violence, gore, everything visible in extreme detail.
+        IMPORTANT: Panel descriptions should show characters in revealing outfits, intimate positions WITH clothing. Dialogue/narration can be completely explicit and graphic.
 
         Format as JSON:
         {
         "title": "Chapter Title",
         "plot": "Brief plot summary",
         "panels": [
-        {"description": "Fully explicit detailed scene description with all mature visual content", "dialogue": "Character dialogue or narration"},
+        {"description": "Characters in revealing clothing/lingerie, sexy poses, intimate scenario", "dialogue": "Fully explicit dialogue or narration"},
         ...
         ]
         }`;
