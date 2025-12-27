@@ -3,6 +3,10 @@ import { motion } from 'framer-motion';
 import { X, Activity, Heart, Zap, Brain } from 'lucide-react';
 
 export default function EmotionMonitor({ entity, onClose }) {
+  // Don't render for humans or entities without proper ID
+  if (!entity.id || (!entity.vampire_name && !entity.variant)) {
+    return null;
+  }
   const [currentEmotion, setCurrentEmotion] = useState('neutral');
   const [heartRate, setHeartRate] = useState(72);
   const [intensity, setIntensity] = useState(50);

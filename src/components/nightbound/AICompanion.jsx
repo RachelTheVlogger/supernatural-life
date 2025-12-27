@@ -4,6 +4,10 @@ import { X, Brain, Send } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function AICompanion({ entity, vampireState, onClose }) {
+  // Don't render for humans without journal support
+  if (!entity.vampire_name && !entity.variant) {
+    return null;
+  }
   const [messages, setMessages] = useState([
     {
       role: 'ai',
