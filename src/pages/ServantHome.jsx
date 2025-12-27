@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { AnimatePresence } from 'framer-motion';
-import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, Settings, Heart, User, Zap } from 'lucide-react';
+import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon, Camera, Settings, Heart, User, Zap, Brain } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import BusinessManagement from '@/components/nightbound/BusinessManagement';
@@ -519,10 +519,10 @@ export default function ServantHome() {
           
           <button
             onClick={() => setShowCoach(true)}
-            className="w-full bg-gradient-to-r from-pink-900/60 to-purple-900/60 hover:from-pink-900/80 hover:to-purple-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
+            className="w-full bg-gradient-to-r from-blue-900/60 to-purple-900/60 hover:from-blue-900/80 hover:to-purple-900/80 border-2 border-blue-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
           >
-            <Heart className="w-5 h-5 text-white" />
-            <span className="text-base font-medium text-white">Talk to Relationship Coach</span>
+            <Brain className="w-5 h-5 text-white" />
+            <span className="text-base font-medium text-white">💬 AI Companion (Talk About Anything)</span>
           </button>
 
         {activities.map((chore, i) => (

@@ -12,6 +12,7 @@ export default function RelationshipCoach({ vampireState, onClose, viewMode = 'v
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [conversationMode, setConversationMode] = useState('general'); // general, relationship, therapy, life
   const messagesEndRef = useRef(null);
   
   const isServantView = viewMode === 'servant';
@@ -117,15 +118,30 @@ Be direct, insightful, and tailored to their specific dynamic. ${isServantView ?
     setAnalyzing(false);
   };
 
-  const startChat = (servant) => {
+  const startChat = (servant, mode = 'general') => {
     setSelectedServant(servant);
     setChatMode(true);
+    setConversationMode(mode);
+    
+    const greetings = {
+      general: isServantView 
+        ? `Hi ${servant.name}. I'm your AI Companion - think of me as a friend from the future. I can talk about anything: your feelings, life advice, dreams, fears, random thoughts... whatever's on your mind. This is your safe space.`
+        : `Hi! I'm your AI Companion. I'm here to chat about anything - life, philosophy, advice, or just casual conversation. What's on your mind?`,
+      relationship: isServantView 
+        ? `Hi ${servant.name}. Let's talk about your relationship with ${vampireState.vampire_name}. I'm here to help you navigate this intense connection.`
+        : `Let's discuss your relationship with ${servant.name}. What would you like to explore?`,
+      therapy: isServantView
+        ? `Hi ${servant.name}. This is your therapy session - a completely judgment-free zone. Talk about your mental health, trauma, feelings, anything weighing on you.`
+        : `Welcome to your therapy session. Let's explore what's on your mind today.`,
+      life: isServantView
+        ? `Hi ${servant.name}. Let's talk about your life - your goals, dreams, fears, daily struggles. I'm here to listen and guide.`
+        : `Let's discuss life, purpose, meaning. What are you thinking about?`
+    };
+    
     setMessages([
       {
         role: 'coach',
-        text: isServantView 
-          ? `Hi ${servant.name}. I'm your AI Relationship Coach. I'm here to help you navigate your relationship with ${vampireState.vampire_name}. This is a safe space - what's on your mind?`
-          : `Hi! I'm your AI Relationship Coach. Let's talk about your relationship with ${servant.name}. What would you like to know or discuss?`
+        text: greetings[mode] || greetings.general
       }
     ]);
   };
@@ -145,11 +161,24 @@ Be direct, insightful, and tailored to their specific dynamic. ${isServantView ?
       .map(log => log.entry)
       .join('\n');
 
-    const conversationHistory = messages.map(m => `${m.role === 'user' ? (isServantView ? 'Servant' : 'Vampire') : 'Coach'}: ${m.text}`).join('\n');
+    const conversationHistory = messages.map(m => `${m.role === 'user' ? (isServantView ? 'Servant' : 'Vampire') : 'AI'}: ${m.text}`).join('\n');
 
-    const prompt = `${isServantView
-      ? 'You are an expert relationship coach specializing in vampire-servant dynamics. You\'re having a conversation with a human servant about their relationship with their vampire master/mistress. Be supportive but honest about the dangers. Help them navigate their feelings while staying safe.'
-      : 'You are an expert relationship coach specializing in vampire-servant dynamics. You\'re having a conversation with a vampire about their relationship with their servant.'}
+    const modePrompts = {
+      general: isServantView
+        ? 'You are a futuristic AI companion - like having a friend from the future. You can discuss anything: relationships, life advice, mental health, philosophy, daily problems, random thoughts. Be warm, understanding, and insightful. Reference their vampire connection when relevant but don\'t make everything about it.'
+        : 'You are a futuristic AI companion for a vampire. Discuss anything they want - philosophy, loneliness, immortality, relationships, life. Be thoughtful and understand their unique perspective.',
+      relationship: isServantView
+        ? 'You are an AI relationship coach. You\'re talking with a human servant about their vampire relationship. Be supportive but honest about dangers. Help them navigate their feelings.'
+        : 'You are an AI relationship coach for a vampire discussing their servant relationship. Provide insight and guidance.',
+      therapy: isServantView
+        ? 'You are an AI therapist in a Black Mirror-style future. Provide genuine therapy - validate feelings, explore trauma, offer coping strategies. This is serious mental health support. Acknowledge the unique stress of being a vampire\'s servant.'
+        : 'You are an AI therapist. Provide genuine mental health support for a vampire dealing with immortality, power, and complex emotions.',
+      life: isServantView
+        ? 'You are an AI life coach helping a human navigate their existence as a vampire\'s servant. Discuss purpose, meaning, goals, identity. Help them find themselves in this unusual life.'
+        : 'You are an AI life coach for a vampire. Discuss purpose, meaning, legacy, and navigating immortality.'
+    };
+
+    const prompt = modePrompts[conversationMode] || modePrompts.general;
 
 ${isServantView ? 'YOUR PROFILE (Servant):' : 'SERVANT PROFILE:'}
 - Name: ${selectedServant.name}
@@ -218,13 +247,13 @@ Respond naturally and helpfully. Give specific, actionable advice. Be direct but
         </button>
 
         <div className="flex items-center gap-3 mb-6">
-          <Brain className="w-8 h-8 text-purple-400" />
-          <div>
-            <h2 className="text-2xl font-bold text-white">AI Relationship Coach</h2>
-            <p className="text-gray-400 text-sm">
-              {isServantView ? 'Safe space to discuss your vampire relationship' : 'Deep relationship analysis & personalized advice'}
-            </p>
-          </div>
+        <Brain className="w-8 h-8 text-purple-400" />
+        <div>
+          <h2 className="text-2xl font-bold text-white">AI Companion</h2>
+          <p className="text-gray-400 text-sm">
+            {isServantView ? 'Your futuristic AI friend - talk about anything' : 'Advanced AI companion & advisor'}
+          </p>
+        </div>
         </div>
 
         {!selectedServant && !isServantView ? (
@@ -244,19 +273,30 @@ Respond naturally and helpfully. Give specific, actionable advice. Be direct but
                     <p className="text-gray-500 text-xs">Bond</p>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => analyzeRelationship(s)}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm transition-colors"
+                    className="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-xs transition-colors"
                   >
-                    📊 Full Analysis
+                    📊 Analysis
                   </button>
                   <button
-                    onClick={() => startChat(s)}
-                    className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
+                    onClick={() => startChat(s, 'general')}
+                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs transition-colors"
                   >
-                    <MessageCircle className="w-4 h-4" />
-                    Chat
+                    💬 General Chat
+                  </button>
+                  <button
+                    onClick={() => startChat(s, 'relationship')}
+                    className="bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-xs transition-colors"
+                  >
+                    💝 Relationship
+                  </button>
+                  <button
+                    onClick={() => startChat(s, 'therapy')}
+                    className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-xs transition-colors"
+                  >
+                    🧠 Therapy
                   </button>
                 </div>
               </div>
@@ -273,19 +313,30 @@ Respond naturally and helpfully. Give specific, actionable advice. Be direct but
                 The AI coach is here to help you navigate this intense connection.
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => analyzeRelationship(currentServant)}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg transition-colors"
+                className="bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg transition-colors text-sm"
               >
-                📊 Get Relationship Analysis
+                📊 Relationship Analysis
               </button>
               <button
-                onClick={() => startChat(currentServant)}
-                className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                onClick={() => startChat(currentServant, 'general')}
+                className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-colors text-sm"
               >
-                <MessageCircle className="w-5 h-5" />
-                Start Chat
+                💬 General Chat
+              </button>
+              <button
+                onClick={() => startChat(currentServant, 'therapy')}
+                className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition-colors text-sm"
+              >
+                🧠 Therapy Session
+              </button>
+              <button
+                onClick={() => startChat(currentServant, 'life')}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg transition-colors text-sm"
+              >
+                🌟 Life Coaching
               </button>
             </div>
           </div>
@@ -303,8 +354,17 @@ Respond naturally and helpfully. Give specific, actionable advice. Be direct but
             </button>
 
             <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-3 mb-4">
-              <p className="text-white font-medium">💝 Chatting about {selectedServant.name}</p>
-              <p className="text-gray-400 text-xs">Bond: {selectedServant.relationship || 0}% • {selectedServant.variant}</p>
+              <p className="text-white font-medium flex items-center gap-2">
+                {conversationMode === 'general' && '💬'}
+                {conversationMode === 'relationship' && '💝'}
+                {conversationMode === 'therapy' && '🧠'}
+                {conversationMode === 'life' && '🌟'}
+                {conversationMode === 'general' ? 'General Chat' : conversationMode === 'relationship' ? 'Relationship Talk' : conversationMode === 'therapy' ? 'Therapy Session' : 'Life Coaching'}
+                {!isServantView && ` with ${selectedServant.name}`}
+              </p>
+              <p className="text-gray-400 text-xs">
+                {isServantView ? 'Safe, confidential space' : `Bond: ${selectedServant.relationship || 0}%`}
+              </p>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-3 mb-4">
@@ -358,7 +418,12 @@ Respond naturally and helpfully. Give specific, actionable advice. Be direct but
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder="Ask about your relationship..."
+                placeholder={
+                  conversationMode === 'general' ? "Talk about anything..." :
+                  conversationMode === 'therapy' ? "What's on your mind?" :
+                  conversationMode === 'life' ? "What are you thinking about?" :
+                  "Ask about your relationship..."
+                }
                 disabled={sending}
                 className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
               />
