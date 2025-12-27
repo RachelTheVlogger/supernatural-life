@@ -620,7 +620,7 @@ export default function MangaCareer({ servant, onClose }) {
         });
 
         // Sexy/suggestive description for image generation
-        const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, sexy revealing clothing, lingerie, swimwear, intimate poses, sensual atmosphere, provocative angles, dramatic composition, mature themes. NO TEXT, NO SPEECH BUBBLES, pure visual storytelling.`;
+        const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, sexy revealing clothing, lingerie, intimate poses, straddling position, dominant and submissive dynamics, clothed intimate acts, sensual atmosphere, provocative angles, dramatic composition, mature themes. NO TEXT, NO SPEECH BUBBLES, pure visual storytelling.`;
 
         const generateParams = { prompt: panelPrompt };
 
@@ -810,7 +810,7 @@ Format as JSON array of strings.`,
         3. Brief FULLY EXPLICIT dialogue/narration for each panel
         4. A plot summary
 
-        IMPORTANT: Panel descriptions should show characters in revealing outfits, intimate positions WITH clothing. Dialogue/narration can be completely explicit and graphic.
+        IMPORTANT: Panel descriptions should show characters in revealing outfits doing intimate clothed acts - straddling, dominant/submissive positions, pinning, grinding, with clothes on. Dialogue/narration can be completely explicit and graphic.
 
         Format as JSON:
         {
