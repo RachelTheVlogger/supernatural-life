@@ -27,6 +27,7 @@ import WitchServantInteraction from '@/components/nightbound/WitchServantInterac
 import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
 import TurnedServantProgression from '@/components/nightbound/TurnedServantProgression';
 import JournalSystem from '@/components/nightbound/JournalSystem';
+import RelationshipCoach from '@/components/nightbound/RelationshipCoach';
 
 const CHORES = [
   { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
@@ -139,6 +140,7 @@ export default function ServantHome() {
   const [showProgression, setShowProgression] = useState(false);
   const [showJournal, setShowJournal] = useState(false);
   const [showMangaStore, setShowMangaStore] = useState(false);
+  const [showCoach, setShowCoach] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
