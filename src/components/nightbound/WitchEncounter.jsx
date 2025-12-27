@@ -23,6 +23,10 @@ export default function WitchEncounter({ vampireState, onClose }) {
     queryFn: () => base44.entities.Witch.list('-created_date')
   });
 
+  if (!vampireState) {
+    return null;
+  }
+
   const handleEncounter = async () => {
     if (witches.length === 0) {
       // Generate first witch

@@ -18,6 +18,10 @@ export default function HobbiesSystem({ servant, vampireState, onClose }) {
   const [doing, setDoing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!servant) {
+    return null;
+  }
+
   const handleDoHobby = async (hobby) => {
     setDoing(true);
 
