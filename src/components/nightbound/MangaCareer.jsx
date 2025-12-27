@@ -49,8 +49,8 @@ export default function MangaCareer({ servant, onClose }) {
   ]);
   const [showSeriesManager, setShowSeriesManager] = useState(false);
   const [showCharacterManager, setShowCharacterManager] = useState(false);
-  const [showExport, setShowExport] = useState(false);
-  const [exporting, setExporting] = useState(false);
+  const [showPublish, setShowPublish] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [newCharacter, setNewCharacter] = useState({ name: '', description: '', referenceImage: null });
 
   const entityId = servant?.id;
@@ -136,35 +136,44 @@ export default function MangaCareer({ servant, onClose }) {
     }
   }, [viewingChapter]);
 
-  const handleExportChapter = async (chapter, format) => {
-    setExporting(true);
+  const handlePublishSeries = async () => {
+    if (!career?.id || !career.manga_chapters?.length) return;
+
+    setPublishing(true);
     try {
-      if (format === 'images') {
-        // Export as individual images
-        for (let i = 0; i < chapter.panels.length; i++) {
-          const link = document.createElement('a');
-          link.href = chapter.panels[i].image;
-          link.download = `${career.series_name}_Ch${chapter.number}_Panel${i + 1}.png`;
-          link.click();
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-      } else if (format === 'pdf') {
-        // Create a simple text export (browser will handle download)
-        const exportText = `${career.series_name} - Chapter ${chapter.number}: ${chapter.title}\n\n${chapter.plot}\n\n${chapter.panels.map((p, i) => `Panel ${i + 1}:\n${p.description}\n${p.dialogue}\nImage: ${p.image}\n`).join('\n')}`;
-        const blob = new Blob([exportText], { type: 'text/plain' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `${career.series_name}_Ch${chapter.number}.txt`;
-        link.click();
-      }
-      
-      setOutcome('Chapter exported successfully!');
-      setTimeout(() => setOutcome(''), 2000);
+      const totalChapters = career.chapters_released;
+      const totalFans = career.fans;
+      const seriesName = career.series_name;
+
+      // Mark series as published and gain bonus fans
+      const publishBonus = Math.floor(totalChapters * 100 + Math.random() * 500);
+
+      await base44.entities.ServantCareer.update(career.id, {
+        fans: totalFans + publishBonus
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `${entityName} officially published "${seriesName}" with ${totalChapters} chapters! Gained ${publishBonus} new fans!`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      setOutcome(`"${seriesName}" published! +${publishBonus} fans!`);
+      queryClient.invalidateQueries(['career']);
+
+      setTimeout(() => {
+        setPublishing(false);
+        setOutcome('');
+        setShowPublish(false);
+      }, 3000);
     } catch (error) {
-      console.error('Export failed:', error);
-      setOutcome('Export failed');
+      console.error('Publishing failed:', error);
+      setOutcome('Publishing failed');
+      setTimeout(() => {
+        setPublishing(false);
+        setOutcome('');
+      }, 2000);
     }
-    setExporting(false);
   };
 
   const handleCreateCharacter = async () => {
@@ -807,11 +816,11 @@ Format as JSON:
                 🎨 Style
               </button>
               <button
-                onClick={() => setShowExport(true)}
+                onClick={() => setShowPublish(true)}
                 disabled={working || generatingCover || !career.manga_chapters?.length}
                 className="flex-1 bg-cyan-900/40 hover:bg-cyan-900/60 border border-cyan-500/30 rounded-lg py-2 text-white disabled:opacity-50 text-sm"
               >
-                📤 Export
+                📤 Publish
               </button>
               <button
                 onClick={async () => {
@@ -1458,53 +1467,45 @@ Format as JSON:
         </motion.div>
       )}
 
-      {/* Export Modal */}
-      {showExport && (
+      {/* Publish Modal */}
+      {showPublish && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
-          onClick={() => !exporting && setShowExport(false)}
+          onClick={() => !publishing && setShowPublish(false)}
         >
           <motion.div
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full text-center"
           >
-            <h3 className="text-white text-2xl font-bold mb-4">Export Chapters</h3>
-            <p className="text-gray-400 text-sm mb-6">Choose chapters to export</p>
+            <h3 className="text-white text-2xl font-bold mb-4">📤 Publish Manga Series</h3>
+            <p className="text-gray-400 text-sm mb-6">
+              Officially publish "{career.series_name}" to gain a massive fan boost!
+            </p>
 
-            <div className="space-y-3 max-h-[50vh] overflow-y-auto mb-6">
-              {(career?.manga_chapters || []).map(chapter => (
-                <div key={chapter.number} className="bg-gray-800/50 rounded-lg p-3">
-                  <h5 className="text-white font-medium mb-2">Ch. {chapter.number}: {chapter.title}</h5>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleExportChapter(chapter, 'images')}
-                      disabled={exporting}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm disabled:opacity-50"
-                    >
-                      📷 Images
-                    </button>
-                    <button
-                      onClick={() => handleExportChapter(chapter, 'pdf')}
-                      disabled={exporting}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded text-sm disabled:opacity-50"
-                    >
-                      📄 Text
-                    </button>
-                  </div>
-                </div>
-              ))}
+            <div className="bg-purple-950/40 border border-purple-500/30 rounded-lg p-4 mb-6">
+              <p className="text-purple-300 text-sm mb-2">Series Stats:</p>
+              <p className="text-white font-bold">{career.chapters_released} Chapters</p>
+              <p className="text-gray-400 text-sm">{career.fans} Current Fans</p>
             </div>
 
-            {!exporting && (
+            <button
+              onClick={handlePublishSeries}
+              disabled={publishing}
+              className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white py-3 rounded-lg font-medium disabled:opacity-50 mb-3"
+            >
+              {publishing ? 'Publishing...' : 'Publish Series'}
+            </button>
+
+            {!publishing && (
               <button
-                onClick={() => setShowExport(false)}
+                onClick={() => setShowPublish(false)}
                 className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg"
               >
-                Close
+                Cancel
               </button>
             )}
           </motion.div>
