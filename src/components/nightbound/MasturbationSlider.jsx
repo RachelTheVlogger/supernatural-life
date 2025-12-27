@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, Heart } from 'lucide-react';
 
-export default function MasturbationSlider({ onFinish, gender = 'custom', context = 'private' }) {
-  // context: 'private', 'vampire', 'audience', 'videocall', 'sexting'
+export default function MasturbationSlider({ onFinish, gender = 'custom', context = 'private', vampireName = null }) {
+  // context: 'private', 'vampire', 'audience', 'videocall', 'sexting', 'fantasy'
   const [intensity, setIntensity] = useState(0);
   const [edging, setEdging] = useState(false);
   const [particles, setParticles] = useState([]);
@@ -125,13 +125,13 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
           if (level < 40) return ['bouncing on them...', 'feels so good...', 'mmm yes...', 'going deeper...'];
           if (level < 60) return ['RIDING HARD!', 'OH GOD!', 'SO DEEP!', 'YES!'];
           if (level < 80) return ['FUCK YES!', 'BOUNCING SO HARD!', 'SO GOOD!', 'LEGS SHAKING!'];
-          return ['CUMMING WHILE RIDING!', 'FUCK!', 'AHHH!', 'YES YES!'];
+          return ['CUMMING WHILE RIDING!', 'FUCK!', 'AHHH!', 'WE\'RE BOTH CUMMING!'];
         } else {
           if (level < 20) return ['mmm...', 'riding them...', 'ahh...', 'so tight...'];
           if (level < 40) return ['bouncing on them...', 'so wet inside...', 'mmm...', 'fuck...'];
           if (level < 60) return ['RIDING HARD!', 'SO TIGHT!', 'FUCK!', 'YES!'];
           if (level < 80) return ['GONNA CUM!', 'SO DEEP IN THEM!', 'FUCK YES!', 'AHHH!'];
-          return ['CUMMING!', 'FUCK!', 'FILLING THEM!', 'AHHH!'];
+          return ['CUMMING!', 'FUCK!', 'WE\'RE BOTH CUMMING!', 'AHHH!'];
         }
       } else if (bodyPart === 'thrust') {
         if (isFemale) {
@@ -139,32 +139,32 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
           if (level < 40) return ['thrusting into me...', 'feels so good...', 'deeper...', 'yes...'];
           if (level < 60) return ['FUCK ME!', 'HARDER!', 'OH GOD!', 'POUND ME!'];
           if (level < 80) return ['FUCK YES!', 'SO DEEP!', 'DON\'T STOP!', 'HARDER!'];
-          return ['CUMMING!', 'FUCK!', 'YES YES YES!', 'AHHH!'];
+          return ['CUMMING TOGETHER!', 'FUCK!', 'YES YES YES!', 'BOTH CUMMING!'];
         } else {
           if (level < 20) return ['mmm...', 'pushing in...', 'so tight...', 'ahh...'];
           if (level < 40) return ['thrusting deep...', 'so wet...', 'fuck...', 'yes...'];
           if (level < 60) return ['POUNDING THEM!', 'SO TIGHT!', 'FUCK!', 'YES!'];
           if (level < 80) return ['GONNA CUM!', 'FILLING YOU!', 'FUCK YES!', 'SO TIGHT!'];
-          return ['CUMMING INSIDE!', 'FUCK!', 'AHHH!', 'YES!'];
+          return ['CUMMING INSIDE!', 'FUCK!', 'WE\'RE BOTH CUMMING!', 'AHHH!'];
         }
       } else if (bodyPart === 'oral') {
         if (level < 20) return ['mmm...', 'licking...', 'tasting...', 'ahh...'];
         if (level < 40) return ['tastes so good...', 'mmm yes...', 'sucking...', 'fuck...'];
         if (level < 60) return ['SO GOOD!', 'LOVE YOUR TASTE!', 'MMM!', 'YES!'];
         if (level < 80) return ['GONNA MAKE YOU CUM!', isFemale ? 'SO WET!' : 'SO HARD!', 'FUCK YES!', 'MMM!'];
-        return ['CUM FOR ME!', 'YES!', 'MMM FUCK!', 'AHHH!'];
+        return ['CUM FOR ME!', 'YES!', 'YOU\'RE CUMMING!', 'AHHH!'];
       } else if (bodyPart === 'receive' || bodyPart === 'receive_oral') {
         if (level < 20) return ['mmm...', 'their tongue...', 'ahh...', 'yes...'];
         if (level < 40) return ['licking me...', 'so good...', 'more...', 'fuck...'];
         if (level < 60) return ['OH GOD!', 'RIGHT THERE!', 'FUCK!', 'YOUR TONGUE!'];
         if (level < 80) return ['GONNA CUM!', 'DON\'T STOP!', 'SO CLOSE!', 'FUCK YES!'];
-        return ['CUMMING IN YOUR MOUTH!', 'FUCK!', 'AHHH!', 'YES YES!'];
+        return ['CUMMING!', 'FUCK!', 'AHHH!', 'YES YES!'];
       } else if (bodyPart === 'penetrate') {
         if (level < 20) return ['inside them...', 'so tight...', 'mmm...', 'pushing in...'];
         if (level < 40) return ['fucking them...', 'so good...', 'deeper...', 'yes...'];
         if (level < 60) return ['SO TIGHT!', 'FUCK!', 'GOING DEEP!', 'YES!'];
         if (level < 80) return ['GONNA CUM!', 'FILLING THEM!', 'FUCK YES!', 'POUNDING!'];
-        return ['CUMMING INSIDE!', 'FUCK!', 'AHHH!', 'BREEDING THEM!'];
+        return ['CUMMING INSIDE!', 'FUCK!', 'WE\'RE BOTH CUMMING!', 'BREEDING THEM!'];
       } else if (bodyPart === 'mutual') {
         if (level < 20) return ['together...', 'mmm...', 'both feeling it...', 'ahh...'];
         if (level < 40) return ['touching each other...', 'so good...', 'yes...', 'mmm...'];
@@ -172,6 +172,35 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
         if (level < 80) return ['BOTH SO CLOSE!', 'FUCK YES!', 'TOGETHER!', 'AHHH!'];
         return ['CUMMING TOGETHER!', 'BOTH AT ONCE!', 'FUCK!', 'YES!'];
       }
+    }
+    
+    // Fantasy moans when alone thinking about vampire
+    if (context === 'fantasy' && vampireName) {
+      if (bodyPart === 'clit' || bodyPart === 'primary') {
+        if (level < 20) return ['mmm... thinking of them...', `wish ${vampireName} was here...`, 'ahh...'];
+        if (level < 40) return [`${vampireName}...`, 'want them so bad...', 'need them...', 'fuck...'];
+        if (level < 60) return [`${vampireName} PLEASE!`, 'WANT THEM TO BITE ME!', 'NEED THEM!', 'FUCK!'];
+        if (level < 80) return [`${vampireName}!`, 'BITE ME WHILE I CUM!', 'TAKE ME!', 'MAKE ME YOURS!'];
+        return [`CUMMING FOR ${vampireName}!`, 'FUCK!', 'WANT THEM SO BAD!', 'AHHH!'];
+      } else if (bodyPart === 'dick') {
+        if (level < 20) return ['mmm... thinking of them...', `wish ${vampireName} was here...`, 'so hard...'];
+        if (level < 40) return [`${vampireName}...`, 'want them to suck me...', 'need them...', 'fuck...'];
+        if (level < 60) return [`${vampireName} PLEASE!`, 'WANT THEM ON ME!', 'NEED THEM!', 'SO HARD!'];
+        if (level < 80) return [`${vampireName}!`, 'FUCK MY MOUTH!', 'USE ME!', 'PLEASE!'];
+        return [`CUMMING FOR ${vampireName}!`, 'FUCK!', 'AHHH!', 'YES!'];
+      } else if (bodyPart === 'fingers') {
+        if (level < 20) return ['mmm...', `imagining ${vampireName}\'s fingers...`, 'ahh...'];
+        if (level < 40) return ['want them inside me...', `${vampireName}...`, 'need them...'];
+        if (level < 60) return ['NEED THEM INSIDE ME!', `${vampireName} PLEASE!`, 'FUCK ME!'];
+        if (level < 80) return ['FILL ME UP!', `${vampireName}!`, 'NEED YOU!', 'FUCK!'];
+        return [`CUMMING FOR ${vampireName}!`, 'FUCK!', 'AHHH!', 'YES!'];
+      }
+      // Default fantasy moans
+      if (level < 20) return ['mmm...', `${vampireName}...`, 'ahh...'];
+      if (level < 40) return [`want ${vampireName}...`, 'need them...', 'fuck...'];
+      if (level < 60) return [`${vampireName} PLEASE!`, 'NEED THEM!', 'FUCK!'];
+      if (level < 80) return [`${vampireName}!`, 'TAKE ME!', 'BITE ME!', 'AHHH!'];
+      return [`CUMMING FOR ${vampireName}!`, 'FUCK!', 'YES!', 'AHHH!'];
     }
 
     // Sex position specific moans
@@ -900,6 +929,15 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
             className="text-purple-400 text-sm italic mt-2"
           >
             They're watching you...
+          </motion.p>
+        )}
+        {context === 'fantasy' && vampireName && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-pink-400 text-sm italic mt-2"
+          >
+            🌙 Solo Session • Fantasizing about {vampireName}
           </motion.p>
         )}
         {context === 'audience' && (
