@@ -254,8 +254,11 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
       className="relative bg-gradient-to-b from-pink-950/60 to-purple-950/60 rounded-2xl p-8 border-2 border-pink-500/50 overflow-hidden min-h-[500px]"
       style={{
         transform: `translate(${screenShake}px, ${screenShake}px)`,
-        filter: `blur(${blurAmount}px)`,
-        boxShadow: `0 0 ${20 + colorIntensity * 40}px rgba(236, 72, 153, ${colorIntensity * 0.6})`
+        filter: `blur(${blurAmount}px) saturate(${1 + colorIntensity * 0.5}) hue-rotate(${colorIntensity * 10}deg)`,
+        boxShadow: heatGlow,
+        background: intensity > 70 
+          ? `linear-gradient(to bottom, rgba(219, 39, 119, ${colorIntensity * 0.4}), rgba(168, 85, 247, ${colorIntensity * 0.4}))`
+          : undefined
       }}
     >
       {/* Floating particles */}
@@ -280,8 +283,43 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
         </AnimatePresence>
       </div>
 
+      {/* Top stats bar */}
+      <div className="absolute top-4 left-0 right-0 flex justify-between items-center px-4 pointer-events-none">
+        {/* Heart rate */}
+        <motion.div 
+          className="flex items-center gap-2 bg-black/50 rounded-full px-3 py-1"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 60 / heartRate, repeat: Infinity }}
+        >
+          <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+          <span className="text-white font-bold text-sm">{heartRate} BPM</span>
+        </motion.div>
+
+        {/* Risk meter for public contexts */}
+        {(context === 'audience' || context === 'public') && (
+          <motion.div className="bg-black/50 rounded-full px-3 py-1">
+            <span className={`font-bold text-sm ${riskLevel > 70 ? 'text-red-400' : riskLevel > 40 ? 'text-yellow-400' : 'text-green-400'}`}>
+              ⚠️ Risk: {Math.floor(riskLevel)}%
+            </span>
+          </motion.div>
+        )}
+
+        {/* Time pressure */}
+        {timePressure && timeRemaining !== null && (
+          <motion.div 
+            className="bg-black/50 rounded-full px-3 py-1"
+            animate={{ scale: timeRemaining < 10 ? [1, 1.2, 1] : 1 }}
+            transition={{ duration: 0.5, repeat: timeRemaining < 10 ? Infinity : 0 }}
+          >
+            <span className={`font-bold text-sm ${timeRemaining < 10 ? 'text-red-400' : 'text-white'}`}>
+              ⏱️ {timeRemaining}s
+            </span>
+          </motion.div>
+        )}
+      </div>
+
       {/* Moaning text overlay */}
-      <div className="absolute top-4 left-0 right-0 flex flex-col items-center gap-1 pointer-events-none">
+      <div className="absolute top-16 left-0 right-0 flex flex-col items-center gap-1 pointer-events-none">
         <AnimatePresence mode="popLayout">
           {moans.slice(-3).map((moan, i) => (
             <motion.p
@@ -365,7 +403,7 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
         )}
 
         {selectedBodyPart && (
-          <div className="w-full max-w-md mb-6">
+          <div className="w-full max-w-md mb-6 relative">
             <div className="flex justify-between text-white mb-2">
               <span className="text-sm">Intensity</span>
               <span className="font-bold text-lg">{intensity}%</span>
@@ -381,38 +419,64 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
                 background: `linear-gradient(to right, #ec4899 0%, #a855f7 ${intensity}%, #374151 ${intensity}%, #374151 100%)`
               }}
             />
+            {/* Particle trail on slider */}
+            {intensity > 20 && (
+              <motion.div
+                className="absolute top-8 pointer-events-none"
+                style={{ left: `${intensity}%` }}
+                animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.6, 1, 0.6] }}
+                transition={{ duration: pulseSpeed, repeat: Infinity }}
+              >
+                <div className="w-4 h-4 bg-pink-500 rounded-full blur-sm" />
+              </motion.div>
+            )}
           </div>
         )}
 
-        {/* Desperation meter */}
-        {desperationLevel > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 w-full max-w-md"
-          >
-            <div className="flex justify-between text-xs text-pink-400 mb-1">
-              <span>Desperation</span>
-              <span>{desperationLevel}%</span>
-            </div>
-            <div className="w-full bg-gray-800 rounded-full h-2">
-              <motion.div 
-                animate={{ width: `${desperationLevel}%` }}
-                className="h-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"
-              />
-            </div>
-          </motion.div>
-        )}
+        {/* Desperation & Denial Streak */}
+        <div className="flex gap-3 mb-4 w-full max-w-md">
+          {desperationLevel > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex-1"
+            >
+              <div className="flex justify-between text-xs text-pink-400 mb-1">
+                <span>Desperation</span>
+                <span>{desperationLevel}%</span>
+              </div>
+              <div className="w-full bg-gray-800 rounded-full h-2">
+                <motion.div 
+                  animate={{ width: `${desperationLevel}%` }}
+                  className="h-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"
+                />
+              </div>
+            </motion.div>
+          )}
+
+          {denialStreak > 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-purple-900/60 rounded-lg px-3 py-2 border border-purple-500/30"
+            >
+              <p className="text-purple-300 text-xs font-bold">
+                🚫 Denied: {denialStreak}x
+              </p>
+            </motion.div>
+          )}
+        </div>
 
         {selectedBodyPart && (
           <>
-            <div className="flex gap-3 mb-4">
+            <div className="flex flex-wrap gap-3 mb-4">
               <button
                 onClick={() => {
                   setEdging(!edging);
                   if (!edging) {
                     setEdgeCount(prev => prev + 1);
                     setDesperationLevel(prev => Math.min(100, prev + 20));
+                    triggerHaptic('medium');
                   }
                 }}
                 className={`px-6 py-3 rounded-xl font-medium transition-all ${
@@ -423,9 +487,9 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
               >
                 {edging ? `⚡ Edging... (${edgeCount}x)` : 'Edge'}
               </button>
-              
+
               <button
-                onClick={handleFinish}
+                onClick={() => handleFinish('finished')}
                 disabled={intensity < 50}
                 className={`px-6 py-3 rounded-xl font-bold transition-all ${
                   intensity >= 50
@@ -435,6 +499,36 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', contex
               >
                 💦 Finish
               </button>
+
+              {intensity >= 70 && edgeCount > 0 && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  onClick={() => {
+                    setDenialStreak(prev => prev + 1);
+                    handleFinish('ruined');
+                  }}
+                  className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-gray-300 shadow-lg transition-all"
+                >
+                  💔 Ruin It
+                </motion.button>
+              )}
+
+              {context === 'vampire' && intensity >= 60 && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  onClick={() => {
+                    setIntensity(30);
+                    setDesperationLevel(prev => Math.min(100, prev + 30));
+                    setDenialStreak(prev => prev + 1);
+                    triggerHaptic('light');
+                  }}
+                  className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-purple-900 to-purple-800 hover:from-purple-800 hover:to-purple-700 text-purple-200 shadow-lg transition-all"
+                >
+                  🧠 Denied (Telepathic)
+                </motion.button>
+              )}
             </div>
 
             <button
