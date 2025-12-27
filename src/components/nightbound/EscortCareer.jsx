@@ -292,6 +292,7 @@ export default function EscortCareer({ human, onClose }) {
     let obsessionGain = 5;
     let dangerGain = 0;
     let awarenessGain = 0;
+    let becameRomanticInterest = false;
 
     if (currentMeet.isVampire) {
       if (outcome === 'good') {
@@ -314,7 +315,36 @@ export default function EscortCareer({ human, onClose }) {
       }
     } else {
       if (outcome === 'good') {
-        resultText = `Session went well. ${currentMeet.name} was ${currentMeet.personality}.\n\nProfessional. Safe. Good tipper.\n\n+$${pay}`;
+        // Good clients with low danger + high reputation = potential romance
+        if (currentMeet.danger < 20 && reputation > 60 && currentMeet.verified && Math.random() > 0.6) {
+          becameRomanticInterest = true;
+          resultText = `Session went amazing. ${currentMeet.name} was ${currentMeet.personality}.\n\nBut then... they asked if you'd want to get coffee sometime.\n\n"Not as a client," they clarified. "As... me."\n\nThey gave you their real number.\n\n+$${pay}\n\n💕 They want to see you outside of work!`;
+          
+          // Add to human's dating matches
+          const { data: datingMatches = [] } = await base44.entities.DatingMatch.list();
+          const existingMatch = datingMatches.find(m => m.human_id === human.id && m.name === currentMeet.name);
+          
+          if (!existingMatch) {
+            await base44.entities.DatingMatch.create({
+              human_id: human.id,
+              name: currentMeet.name,
+              personality: currentMeet.personality,
+              attraction: 65,
+              connection: 55,
+              trust: 60,
+              loyalty: 50,
+              dates: 0,
+              interested: true,
+              isSpecial: true,
+              canBreakObsession: true,
+              concernLevel: 0,
+              timesInvitedOver: 0,
+              metThroughEscort: true
+            });
+          }
+        } else {
+          resultText = `Session went well. ${currentMeet.name} was ${currentMeet.personality}.\n\nProfessional. Safe. Good tipper.\n\n+$${pay}`;
+        }
         setEarnings(prev => prev + pay);
         setReputation(prev => Math.min(100, prev + 5));
       } else if (outcome === 'bad') {
