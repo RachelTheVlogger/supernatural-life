@@ -496,12 +496,12 @@ export default function MangaCareer({ servant, onClose }) {
 
       Create this chapter with:
       1. A compelling chapter title
-      2. 6 key manga panels with DETAILED descriptions - describe sexy/revealing clothing, intimate poses, suggestive scenarios
+      2. EXACTLY 5-6 key manga panels with DETAILED descriptions - describe sexy/revealing clothing, intimate poses, suggestive scenarios
       3. Brief EXPLICIT dialogue/narration for each panel (dialogue can be fully explicit)
       4. A plot summary
       5. Which characters appear (list their names from: ${characterNames || 'create new characters if needed'})
 
-      IMPORTANT: For panel descriptions, describe characters in revealing outfits, lingerie, swimwear, intimate positions WITH clothing. Dialogue/narration can be fully explicit.
+      CRITICAL: Generate EXACTLY 5 or 6 panels, NOT 7. For panel descriptions, describe characters in revealing outfits, lingerie, swimwear, intimate positions WITH clothing. Dialogue/narration can be fully explicit.
 
       Format as JSON:
       {
@@ -777,11 +777,11 @@ Format as JSON array of strings.`,
 
         Create this chapter with:
         1. A compelling chapter title based on their request
-        2. 6 key manga panels describing characters in sexy/revealing clothing, lingerie, swimwear, intimate poses and scenarios
+        2. EXACTLY 5-6 key manga panels describing characters in sexy/revealing clothing, lingerie, swimwear, intimate poses and scenarios
         3. Brief FULLY EXPLICIT dialogue/narration for each panel
         4. A plot summary
 
-        IMPORTANT: Panel descriptions should show characters in revealing outfits doing intimate clothed acts - straddling, dominant/submissive positions, pinning, grinding, with clothes on. Dialogue/narration can be completely explicit and graphic.
+        CRITICAL: Generate EXACTLY 5 or 6 panels, NOT 7. Panel descriptions should show characters in revealing outfits doing intimate clothed acts - straddling, dominant/submissive positions, pinning, grinding, with clothes on. Dialogue/narration can be completely explicit and graphic.
 
         Format as JSON:
         {
@@ -1737,7 +1737,7 @@ Format as JSON array of strings.`,
                   </div>
 
                   <p className="text-gray-400 text-sm">
-                  The AI will generate a complete chapter with title, plot, 6 panels, descriptions, and dialogue based on your prompt.
+                  The AI will generate a complete chapter with title, plot, 5-6 panels, descriptions, and dialogue based on your prompt.
                   </p>
               </div>
             ) : (
