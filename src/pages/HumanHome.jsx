@@ -251,12 +251,12 @@ export default function HumanHome() {
     }, activity.duration);
   }, [human, vampireStates, queryClient, navigate]);
 
+  const awarenessColor = human?.awareness_level > 70 ? 'text-red-400' : human?.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
+  const dangerColor = human?.danger_level > 70 ? 'text-red-400' : human?.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
+
   if (!human) {
     return null;
   }
-
-  const awarenessColor = human.awareness_level > 70 ? 'text-red-400' : human.awareness_level > 40 ? 'text-yellow-400' : 'text-green-400';
-  const dangerColor = human.danger_level > 70 ? 'text-red-400' : human.danger_level > 40 ? 'text-orange-400' : 'text-green-400';
 
   return (
     <div className="min-h-screen bg-black p-6">
