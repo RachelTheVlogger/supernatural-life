@@ -72,9 +72,7 @@ export default function VampireHome() {
     queryKey: ['vampireState'],
     queryFn: async () => {
       try {
-        const result = await base44.entities.VampireState.list();
-        console.log('VampireHome fetched state:', result);
-        return result;
+        return await base44.entities.VampireState.list();
       } catch (e) {
         console.error('Failed to fetch vampire state:', e);
         return [];
@@ -83,85 +81,154 @@ export default function VampireHome() {
     retry: 2,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
-    staleTime: 0,
-    enabled: true
+    staleTime: 0
   });
-  
-  const vampireState = React.useMemo(() => 
-    vampireStates.length > 0 ? vampireStates[0] : null, 
-    [vampireStates]
-  );
-  
-  console.log('VampireHome - isDaytime calculation:', vampireState?.time_of_day, 'isDaytime:', vampireState?.time_of_day === 'day');
   
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
-    queryFn: () => base44.entities.Servant.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.Servant.list();
+      } catch (e) {
+        console.error('Failed to fetch servants:', e);
+        return [];
+      }
+    }
   });
   
   const { data: logs = [] } = useQuery({
     queryKey: ['logs'],
-    queryFn: () => base44.entities.NightLog.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.NightLog.list();
+      } catch (e) {
+        console.error('Failed to fetch logs:', e);
+        return [];
+      }
+    }
   });
 
   const { data: allFriends = [] } = useQuery({
     queryKey: ['allFriends'],
-    queryFn: () => base44.entities.PotentialServant.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.PotentialServant.list();
+      } catch (e) {
+        console.error('Failed to fetch friends:', e);
+        return [];
+      }
+    }
   });
 
   const { data: powerProgress = [] } = useQuery({
     queryKey: ['powerProgress'],
-    queryFn: () => base44.entities.PowerProgress.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.PowerProgress.list();
+      } catch (e) {
+        console.error('Failed to fetch power progress:', e);
+        return [];
+      }
+    }
   });
 
   const { data: witches = [] } = useQuery({
     queryKey: ['witches'],
-    queryFn: () => base44.entities.Witch.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.Witch.list();
+      } catch (e) {
+        console.error('Failed to fetch witches:', e);
+        return [];
+      }
+    }
   });
 
   const { data: hybrids = [] } = useQuery({
     queryKey: ['hybrids'],
-    queryFn: () => base44.entities.Hybrid.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.Hybrid.list();
+      } catch (e) {
+        console.error('Failed to fetch hybrids:', e);
+        return [];
+      }
+    }
   });
 
   const { data: playerWerewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
-    queryFn: () => base44.entities.PlayerWerewolf.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.PlayerWerewolf.list();
+      } catch (e) {
+        console.error('Failed to fetch werewolves:', e);
+        return [];
+      }
+    }
   });
 
   const { data: succubi = [] } = useQuery({
     queryKey: ['succubi'],
-    queryFn: () => base44.entities.Succubus.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.Succubus.list();
+      } catch (e) {
+        console.error('Failed to fetch succubi:', e);
+        return [];
+      }
+    }
   });
+
+  const vampireState = React.useMemo(() => 
+    vampireStates.length > 0 ? vampireStates[0] : null, 
+    [vampireStates]
+  );
 
   const succubus = succubi[0];
 
   // Check for jealousy events (only for servants who can be jealous)
   React.useEffect(() => {
-    if (vampireStates.length > 0 && servants.length >= 2) {
+    if (vampireState && servants.length >= 2) {
       const jealousServants = servants.filter(s => !['open', 'no-strings'].includes(s.boundaries));
       const highJealousy = jealousServants.filter(s => (s.jealousy_level || 0) > 60);
       if (highJealousy.length >= 2 && !jealousyEvent && Math.random() > 0.7) {
         setJealousyEvent({ s1: highJealousy[0], s2: highJealousy[1] });
       }
     }
-  }, [servants, jealousyEvent, vampireStates.length]);
+  }, [servants, jealousyEvent, vampireState]);
 
   // Check for identity revelation events
   React.useEffect(() => {
-    if (vampireStates.length > 0 && servants.length > 0) {
+    if (vampireState && servants.length > 0) {
       const needsRevelation = servants.filter(s => !s.identity_revealed && (s.relationship || 0) > 30);
       if (needsRevelation.length > 0 && !identityRevelation && Math.random() > 0.6) {
         setIdentityRevelation(needsRevelation[0]);
       }
     }
-  }, [servants, identityRevelation, vampireStates.length]);
+  }, [servants, identityRevelation, vampireState]);
 
   // Don't render if still loading or no vampire
-  if (vampireLoading || !vampireState) {
+  if (vampireLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!vampireState) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-center">
+          <p className="text-gray-400 mb-4">No vampire found</p>
+          <button
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg"
+          >
+            Create Vampire
+          </button>
+        </div>
       </div>
     );
   }
