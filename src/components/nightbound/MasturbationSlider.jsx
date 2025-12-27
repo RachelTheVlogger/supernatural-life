@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, Heart } from 'lucide-react';
 
-export default function MasturbationSlider({ onFinish }) {
+export default function MasturbationSlider({ onFinish, gender = 'custom', vampireWatching = false }) {
   const [intensity, setIntensity] = useState(0);
   const [edging, setEdging] = useState(false);
   const [particles, setParticles] = useState([]);
   const [particleId, setParticleId] = useState(0);
   const [moans, setMoans] = useState([]);
   const [lastIntensity, setLastIntensity] = useState(0);
+  const [edgeCount, setEdgeCount] = useState(0);
+  const [desperationLevel, setDesperationLevel] = useState(0);
 
   const getMoanText = (level, isEdging, isDecreasing, wasHigh) => {
     // Frustrated gasping/whimpering when pulling back at any intensity
@@ -29,26 +31,55 @@ export default function MasturbationSlider({ onFinish }) {
       ];
     }
     
+    // Context-aware desperate edging moans
     if (isEdging && level > 60) {
-      return [
+      const desperate = vampireWatching ? [
+        'PLEASE LET ME...!',
+        'CAN I CUM PLEASE?!',
+        'I\'LL DO ANYTHING!',
+        'PLEASE I NEED IT!',
+        'LET ME FINISH PLEASE!'
+      ] : [
         'OH GOD I CAN\'T...!',
-        'PLEASE...!',
         'I NEED TO CUM SO BAD!',
         'FUCK I\'M RIGHT THERE!',
-        'DON\'T MAKE ME STOP!',
         'I\'M GONNA EXPLODE!',
-        'PLEASE LET ME FINISH!',
-        'IT\'S TOO MUCH!',
-        'I CAN\'T HOLD IT!',
-        'AHHH FUCK PLEASE!'
+        'I CAN\'T HOLD IT!'
       ];
+      return desperate;
     }
     
-    if (level < 20) return ['mmm...', 'ah...', 'oh...'];
-    if (level < 40) return ['mmm...', 'ahh...', 'yes...', 'god...'];
-    if (level < 60) return ['ohhh...', 'fuck...', 'yes...', 'ahh...', 'more...'];
-    if (level < 80) return ['FUCK...', 'YES...', 'OH GOD...', 'AHHH...', 'DON\'T STOP...'];
-    return ['FUCK YES!', 'OH FUCK!', 'I\'M SO CLOSE!', 'AHHHHH!', 'YES YES YES!', 'FUCK ME!'];
+    // Gender-specific moans
+    const isMale = gender === 'man';
+    const isFemale = gender === 'woman';
+    
+    if (level < 20) {
+      return isMale ? ['mmm...', 'ahh...', 'fuck...'] : 
+             isFemale ? ['mmm...', 'oh...', 'ahhn...'] : 
+             ['mmm...', 'ah...', 'oh...'];
+    }
+    
+    if (level < 40) {
+      return isMale ? ['fuck yeah...', 'mmm...', 'god...', 'ahh...'] : 
+             isFemale ? ['yes...', 'mmm...', 'ahhn...', 'oh god...'] : 
+             ['mmm...', 'ahh...', 'yes...', 'god...'];
+    }
+    
+    if (level < 60) {
+      return isMale ? ['shit...', 'fuck...', 'so good...', 'yeah...'] : 
+             isFemale ? ['ohhh yes...', 'fuck...', 'right there...', 'more...'] : 
+             ['ohhh...', 'fuck...', 'yes...', 'ahh...', 'more...'];
+    }
+    
+    if (level < 80) {
+      return isMale ? ['FUCK...', 'YES...', 'SHIT...', 'SO CLOSE...'] : 
+             isFemale ? ['OH GOD...', 'YES YES...', 'FUCK...', 'DON\'T STOP...'] : 
+             ['FUCK...', 'YES...', 'OH GOD...', 'AHHH...', 'DON\'T STOP...'];
+    }
+    
+    return isMale ? ['FUCK YES!', 'GONNA CUM!', 'OH FUCK!', 'AHHH!'] : 
+           isFemale ? ['OH FUCK!', 'I\'M CUMMING!', 'YES YES YES!', 'AHHHHH!'] : 
+           ['FUCK YES!', 'OH FUCK!', 'I\'M SO CLOSE!', 'AHHHHH!', 'YES YES YES!'];
   };
 
   useEffect(() => {
@@ -106,12 +137,24 @@ export default function MasturbationSlider({ onFinish }) {
   const handleFinish = () => {
     setIntensity(100);
     setTimeout(() => {
-      onFinish(edging ? 'edged' : 'finished');
+      onFinish(edging ? 'edged' : 'finished', edgeCount, desperationLevel);
     }, 1000);
   };
 
+  // Visual effects based on intensity
+  const screenShake = intensity > 80 ? (Math.sin(Date.now() / 50) * 2) : 0;
+  const blurAmount = intensity > 70 ? Math.min((intensity - 70) / 30, 1) * 3 : 0;
+  const colorIntensity = intensity / 100;
+
   return (
-    <div className="relative bg-gradient-to-b from-pink-950/60 to-purple-950/60 rounded-2xl p-8 border-2 border-pink-500/50 overflow-hidden min-h-[500px]">
+    <div 
+      className="relative bg-gradient-to-b from-pink-950/60 to-purple-950/60 rounded-2xl p-8 border-2 border-pink-500/50 overflow-hidden min-h-[500px]"
+      style={{
+        transform: `translate(${screenShake}px, ${screenShake}px)`,
+        filter: `blur(${blurAmount}px)`,
+        boxShadow: `0 0 ${20 + colorIntensity * 40}px rgba(236, 72, 153, ${colorIntensity * 0.6})`
+      }}
+    >
       {/* Floating particles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <AnimatePresence>
@@ -186,16 +229,42 @@ export default function MasturbationSlider({ onFinish }) {
           />
         </div>
 
+        {/* Desperation meter */}
+        {desperationLevel > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 w-full max-w-md"
+          >
+            <div className="flex justify-between text-xs text-pink-400 mb-1">
+              <span>Desperation</span>
+              <span>{desperationLevel}%</span>
+            </div>
+            <div className="w-full bg-gray-800 rounded-full h-2">
+              <motion.div 
+                animate={{ width: `${desperationLevel}%` }}
+                className="h-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"
+              />
+            </div>
+          </motion.div>
+        )}
+
         <div className="flex gap-3 mb-4">
           <button
-            onClick={() => setEdging(!edging)}
+            onClick={() => {
+              setEdging(!edging);
+              if (!edging) {
+                setEdgeCount(prev => prev + 1);
+                setDesperationLevel(prev => Math.min(100, prev + 20));
+              }
+            }}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
               edging 
                 ? 'bg-gradient-to-r from-yellow-600 to-orange-600 text-white shadow-lg' 
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
             }`}
           >
-            {edging ? '⚡ Edging...' : 'Edge'}
+            {edging ? `⚡ Edging... (${edgeCount}x)` : 'Edge'}
           </button>
           
           <button
@@ -218,7 +287,19 @@ export default function MasturbationSlider({ onFinish }) {
             transition={{ duration: 0.5, repeat: Infinity }}
             className="text-pink-400 font-bold text-lg"
           >
-            {edging ? 'Holding back... so close...' : 'Almost there...'}
+            {vampireWatching && edging ? 'Waiting for permission...' : 
+             edging ? `Holding back... so close... (${edgeCount}x)` : 
+             'Almost there...'}
+          </motion.p>
+        )}
+
+        {vampireWatching && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-purple-400 text-sm italic mt-2"
+          >
+            They're watching you...
           </motion.p>
         )}
 
