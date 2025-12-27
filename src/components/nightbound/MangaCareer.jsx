@@ -39,6 +39,13 @@ export default function MangaCareer({ servant, onClose }) {
   const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [showCustomCreator, setShowCustomCreator] = useState(false);
+  const [customMode, setCustomMode] = useState('prompt'); // 'prompt' or 'manual'
+  const [customPrompt, setCustomPrompt] = useState('');
+  const [customTitle, setCustomTitle] = useState('');
+  const [customPanels, setCustomPanels] = useState([
+    { description: '', dialogue: '' }
+  ]);
 
   const { data: careers = [] } = useQuery({
     queryKey: ['career', servant.id],
@@ -330,6 +337,155 @@ Format as JSON:
     }
   };
 
+  const handleCreateCustomChapter = async () => {
+    if (!career?.id) return;
+    
+    setWorking(true);
+    setGenerationProgress('Processing your custom chapter...');
+    
+    try {
+      const genre = career.current_genre || 'shonen';
+      const artStyle = career.art_style || 'classic';
+      const seriesName = career.series_name || 'Untitled';
+      const newChapters = (career.chapters_released || 0) + 1;
+      const existingChapters = career.manga_chapters || [];
+
+      let chapterData;
+
+      if (customMode === 'prompt') {
+        // Generate from custom prompt
+        const contentPrompt = `You are writing Chapter ${newChapters} of "${seriesName}", a ${genre} manga.
+
+User's custom request: ${customPrompt}
+
+Create this chapter with:
+1. A compelling chapter title
+2. 6 key manga panels with descriptions
+3. Brief dialogue/narration for each panel
+4. A plot summary
+
+Format as JSON:
+{
+  "title": "Chapter Title",
+  "plot": "Brief plot summary",
+  "panels": [
+    {"description": "Panel scene description", "dialogue": "Character dialogue or narration"},
+    ...
+  ]
+}`;
+
+        chapterData = await base44.integrations.Core.InvokeLLM({
+          prompt: contentPrompt,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              plot: { type: "string" },
+              panels: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    description: { type: "string" },
+                    dialogue: { type: "string" }
+                  }
+                }
+              }
+            }
+          }
+        });
+      } else {
+        // Use manually entered panels
+        chapterData = {
+          title: customTitle || `Chapter ${newChapters}`,
+          plot: customPrompt || 'Custom chapter',
+          panels: customPanels.filter(p => p.description.trim())
+        };
+      }
+
+      const title = chapterData.title;
+      const panels = chapterData.panels || [];
+      
+      // Generate images for each panel
+      setGenerationProgress(`Generating ${panels.length} manga panels...`);
+      
+      const stylePrompts = {
+        classic: 'traditional black and white manga art style, classic manga aesthetic, hand-drawn linework',
+        modern: 'modern anime style, vibrant colors, digital anime art, contemporary manga aesthetic',
+        chibi: 'chibi style, super deformed cute characters, simplified features, kawaii aesthetic',
+        realistic: 'realistic detailed art style, photorealistic manga illustration, high detail',
+        watercolor: 'watercolor painting style manga, soft painted aesthetic, artistic brushstrokes',
+        noir: 'noir manga style, high contrast shadows, dark atmosphere, dramatic black and white'
+      };
+
+      const panelImages = [];
+      for (let i = 0; i < Math.min(panels.length, 6); i++) {
+        setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
+        
+        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition`;
+        
+        const generateParams = { prompt: panelPrompt };
+        if (career.style_reference_image) {
+          generateParams.existing_image_urls = [career.style_reference_image];
+        }
+        
+        const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
+        panelImages.push({
+          image: imageResult.url,
+          description: panels[i].description,
+          dialogue: panels[i].dialogue
+        });
+      }
+
+      const quality = Math.floor(Math.random() * 30) + 70;
+      const fansGained = Math.floor(Math.random() * 300) + 150;
+      const incomeGained = Math.floor(Math.random() * 200) + 150;
+
+      const newChapter = {
+        number: newChapters,
+        title,
+        plot: chapterData.plot,
+        panels: panelImages,
+        quality,
+        fans_gained: fansGained,
+        income: incomeGained,
+        date: new Date().toISOString()
+      };
+
+      await base44.entities.ServantCareer.update(career.id, {
+        fans: (career.fans || 0) + fansGained,
+        income: (career.income || 0) + incomeGained,
+        chapters_released: newChapters,
+        manga_chapters: [...existingChapters, newChapter],
+        story_summary: (career.story_summary || '') + ` Chapter ${newChapters}: ${chapterData.plot}`
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} created custom Chapter ${newChapters}: "${title}"! +${fansGained} fans, +$${incomeGained}`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+
+      setOutcome(`Custom chapter "${title}" complete! +${fansGained} fans, $${incomeGained}`);
+      queryClient.invalidateQueries(['career']);
+      setShowCustomCreator(false);
+      setCustomPrompt('');
+      setCustomTitle('');
+      setCustomPanels([{ description: '', dialogue: '' }]);
+
+      setTimeout(() => {
+        setWorking(false);
+        setOutcome('');
+        setGenerationProgress('');
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to create custom chapter:', error);
+      setWorking(false);
+      setOutcome('Failed to create custom chapter. Please try again.');
+      setGenerationProgress('');
+    }
+  };
+
   const handleStartSeries = async (genre) => {
     setWorking(true);
     
@@ -453,7 +609,14 @@ Format as JSON:
                 disabled={working || generatingCover}
                 className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium"
               >
-                {working ? 'Drawing...' : 'Draw Next Chapter'}
+                {working ? 'Drawing...' : 'Auto Chapter'}
+              </button>
+              <button
+                onClick={() => setShowCustomCreator(true)}
+                disabled={working || generatingCover}
+                className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium"
+              >
+                Custom Chapter
               </button>
               <button
                 onClick={() => setShowCoverPrompt(true)}
@@ -824,6 +987,170 @@ Format as JSON:
               </button>
             </div>
           </div>
+        </motion.div>
+      )}
+
+      {/* Custom Chapter Creator Modal */}
+      {showCustomCreator && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => !working && setShowCustomCreator(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-3xl w-full max-h-[85vh] overflow-y-auto"
+          >
+            <h3 className="text-white text-2xl font-bold mb-4">Create Custom Chapter</h3>
+
+            <div className="flex gap-2 mb-6">
+              <button
+                onClick={() => setCustomMode('prompt')}
+                className={`flex-1 py-2 rounded-lg transition-colors ${
+                  customMode === 'prompt'
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-800 text-gray-400'
+                }`}
+              >
+                AI from Prompt
+              </button>
+              <button
+                onClick={() => setCustomMode('manual')}
+                className={`flex-1 py-2 rounded-lg transition-colors ${
+                  customMode === 'manual'
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-800 text-gray-400'
+                }`}
+              >
+                Manual Entry
+              </button>
+            </div>
+
+            {customMode === 'prompt' ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white text-sm mb-2 block">Chapter Idea/Prompt</label>
+                  <textarea
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    placeholder="Describe what happens in this chapter... (e.g., 'The protagonist faces their rival in an epic showdown at the tournament finals')"
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"
+                    rows={6}
+                    disabled={working}
+                  />
+                </div>
+                <p className="text-gray-400 text-sm">
+                  The AI will generate a complete chapter with title, plot, 6 panels, descriptions, and dialogue based on your prompt.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white text-sm mb-2 block">Chapter Title</label>
+                  <input
+                    value={customTitle}
+                    onChange={(e) => setCustomTitle(e.target.value)}
+                    placeholder="Chapter title..."
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    disabled={working}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-white text-sm mb-2 block">Plot Summary</label>
+                  <textarea
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    placeholder="Brief summary of what happens..."
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"
+                    rows={3}
+                    disabled={working}
+                  />
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-white text-sm">Panels (Max 6)</label>
+                    <button
+                      onClick={() => {
+                        if (customPanels.length < 6) {
+                          setCustomPanels([...customPanels, { description: '', dialogue: '' }]);
+                        }
+                      }}
+                      disabled={customPanels.length >= 6 || working}
+                      className="text-purple-400 hover:text-purple-300 text-sm disabled:opacity-50"
+                    >
+                      + Add Panel
+                    </button>
+                  </div>
+
+                  <div className="space-y-3 max-h-[40vh] overflow-y-auto">
+                    {customPanels.map((panel, i) => (
+                      <div key={i} className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-purple-400 text-sm font-medium">Panel {i + 1}</span>
+                          {customPanels.length > 1 && (
+                            <button
+                              onClick={() => setCustomPanels(customPanels.filter((_, idx) => idx !== i))}
+                              disabled={working}
+                              className="text-red-400 hover:text-red-300 text-xs"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                        <textarea
+                          value={panel.description}
+                          onChange={(e) => {
+                            const newPanels = [...customPanels];
+                            newPanels[i].description = e.target.value;
+                            setCustomPanels(newPanels);
+                          }}
+                          placeholder="Panel description (e.g., 'Character charging up energy attack with dramatic lighting')"
+                          className="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none mb-2"
+                          rows={2}
+                          disabled={working}
+                        />
+                        <textarea
+                          value={panel.dialogue}
+                          onChange={(e) => {
+                            const newPanels = [...customPanels];
+                            newPanels[i].dialogue = e.target.value;
+                            setCustomPanels(newPanels);
+                          }}
+                          placeholder="Dialogue/narration (optional)"
+                          className="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"
+                          rows={2}
+                          disabled={working}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleCreateCustomChapter}
+                disabled={working || (customMode === 'prompt' ? !customPrompt.trim() : !customPanels.some(p => p.description.trim()))}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 rounded-lg font-medium disabled:opacity-50"
+              >
+                {working ? generationProgress || 'Creating...' : 'Generate Chapter'}
+              </button>
+              {!working && (
+                <button
+                  onClick={() => setShowCustomCreator(false)}
+                  className="px-6 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </motion.div>
         </motion.div>
       )}
 
