@@ -6,6 +6,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import TutorialSystem from '@/components/nightbound/TutorialSystem';
+import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function Home() {
   const [characterName, setCharacterName] = useState('');
   const [characterGender, setCharacterGender] = useState('man');
   const [characterSexuality, setCharacterSexuality] = useState('bisexual');
+  const [characterPersonality, setCharacterPersonality] = useState('charming');
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
   const [selectedType, setSelectedType] = useState(null);
@@ -68,6 +70,7 @@ export default function Home() {
         vampire_name: characterName.trim(),
         gender: characterGender,
         sexuality: characterSexuality,
+        personality: characterPersonality,
         job: 'Night Shift Nurse',
         hunger_state: 'calm',
         emotional_mode: 'feeling',
@@ -87,6 +90,7 @@ export default function Home() {
         name: characterName.trim(),
         gender: characterGender,
         sexuality: characterSexuality,
+        personality: characterPersonality,
         magic_level: 20,
         moon_phase: 'waxing',
         unlocked_spells: ['Herb Knowledge', 'Moon Reading']
@@ -98,6 +102,7 @@ export default function Home() {
         name: characterName.trim(),
         gender: 'woman',
         sexuality: characterSexuality,
+        personality: characterPersonality,
         energy_level: 50,
         charm_power: 30,
         unlocked_abilities: ['Allure', 'Energy Drain']
@@ -109,6 +114,7 @@ export default function Home() {
         name: characterName.trim(),
         gender: 'man',
         sexuality: characterSexuality,
+        personality: characterPersonality,
         terror_level: 40,
         nightmare_power: 25
       });
@@ -119,6 +125,7 @@ export default function Home() {
         name: characterName.trim(),
         gender: characterGender,
         sexuality: characterSexuality,
+        personality: characterPersonality,
         pack_status: 'lone',
         wolf_control: 30,
         human_life_balance: 50
@@ -130,6 +137,7 @@ export default function Home() {
         name: characterName.trim(),
         gender: characterGender,
         sexuality: characterSexuality,
+        personality: characterPersonality,
         job: 'Student',
         awareness_level: 0,
         danger_level: 0
@@ -635,6 +643,33 @@ export default function Home() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setIntroStep(2)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={() => setIntroStep(4)}
+                    className="flex-1 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
+
+            {introStep === 4 && (
+              <>
+                <h2 className="text-2xl font-bold text-white mb-4">Your personality</h2>
+                <p className="text-purple-300 text-sm mb-4">Who are you at your core?</p>
+                <div className="mb-6">
+                  <PersonalitySelector
+                    selected={characterPersonality}
+                    onSelect={setCharacterPersonality}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIntroStep(3)}
                     className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
                   >
                     Back
