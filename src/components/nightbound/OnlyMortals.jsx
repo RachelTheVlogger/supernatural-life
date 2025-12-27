@@ -11,6 +11,9 @@ export default function OnlyMortals({ human, onClose }) {
   const [interactingVampire, setInteractingVampire] = useState(null);
   const [customRequestModal, setCustomRequestModal] = useState(false);
   const [tipAmount, setTipAmount] = useState(0);
+  const [livestreaming, setLivestreaming] = useState(false);
+  const [liveViewers, setLiveViewers] = useState(0);
+  const [liveTips, setLiveTips] = useState(0);
   const queryClient = useQueryClient();
 
   const { data: account = [] } = useQuery({
@@ -177,6 +180,46 @@ export default function OnlyMortals({ human, onClose }) {
     setCustomRequestModal(false);
   };
 
+  const startLivestream = () => {
+    setLivestreaming(true);
+    setLiveViewers(Math.floor(Math.random() * 20) + 5);
+    setLiveTips(0);
+
+    const interval = setInterval(() => {
+      setLiveViewers(prev => Math.max(1, prev + Math.floor(Math.random() * 5) - 2));
+      if (Math.random() > 0.7) {
+        const tip = Math.floor(Math.random() * 20) + 5;
+        setLiveTips(prev => prev + tip);
+      }
+    }, 3000);
+
+    setTimeout(() => {
+      clearInterval(interval);
+    }, 30000);
+  };
+
+  const endLivestream = async () => {
+    await base44.entities.OnlyFangsProfile.update(myAccount.id, {
+      revenue: (myAccount.revenue || 0) + liveTips
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${human.name} went live on OnlyMortals - ${liveViewers} peak viewers, earned $${liveTips} in tips`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+
+    if (vampire && Math.random() > 0.5) {
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.min(100, (human.obsession_level || 0) + 15)
+      });
+      alert(`${vampire.vampire_name} was watching your livestream the entire time...\n\n"You're even more captivating live," they messaged.`);
+    }
+
+    queryClient.invalidateQueries();
+    setLivestreaming(false);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -280,6 +323,18 @@ export default function OnlyMortals({ human, onClose }) {
                 className={`px-4 py-2 ${activeTab === 'subscribers' ? 'text-pink-400 border-b-2 border-pink-400' : 'text-gray-400'}`}
               >
                 Subscribers
+              </button>
+              <button
+                onClick={() => setActiveTab('live')}
+                className={`px-4 py-2 ${activeTab === 'live' ? 'text-pink-400 border-b-2 border-pink-400' : 'text-gray-400'}`}
+              >
+                🔴 Live
+              </button>
+              <button
+                onClick={() => setActiveTab('analytics')}
+                className={`px-4 py-2 ${activeTab === 'analytics' ? 'text-pink-400 border-b-2 border-pink-400' : 'text-gray-400'}`}
+              >
+                Analytics
               </button>
             </div>
 
@@ -435,6 +490,123 @@ export default function OnlyMortals({ human, onClose }) {
                 {!interactingVampire && !vampire && (
                   <p className="text-gray-500 text-center py-8">No active subscribers yet</p>
                 )}
+              </div>
+            )}
+
+            {/* Live Tab */}
+            {activeTab === 'live' && (
+              <div className="space-y-4">
+                {livestreaming ? (
+                  <>
+                    <div className="bg-red-950/40 border-2 border-red-500/50 rounded-xl p-6">
+                      <div className="flex items-center justify-center gap-2 mb-4">
+                        <span className="animate-pulse text-red-500 text-2xl">🔴</span>
+                        <h3 className="text-white text-xl font-bold">LIVE NOW</h3>
+                      </div>
+                      <div className="space-y-3 mb-4">
+                        <div className="flex justify-between items-center bg-black/40 rounded-lg p-3">
+                          <span className="text-gray-300">👁️ Viewers</span>
+                          <span className="text-white font-bold">{liveViewers}</span>
+                        </div>
+                        <div className="flex justify-between items-center bg-black/40 rounded-lg p-3">
+                          <span className="text-gray-300">💰 Tips</span>
+                          <span className="text-green-400 font-bold">${liveTips}</span>
+                        </div>
+                      </div>
+                      <div className="bg-purple-950/40 border border-purple-500/30 rounded-lg p-3 mb-4">
+                        <p className="text-purple-300 text-sm text-center">
+                          {vampire ? '🦇 A vampire is watching...' : 'Viewers are engaged!'}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={endLivestream}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-xl font-bold"
+                    >
+                      End Stream
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-pink-950/40 border border-pink-500/30 rounded-xl p-4">
+                      <h3 className="text-white font-bold mb-2">🔴 Go Live</h3>
+                      <div className="space-y-1 text-sm text-gray-300">
+                        <p>📹 Stream live content</p>
+                        <p>💰 Earn tips in real-time</p>
+                        <p>👥 Connect with subscribers</p>
+                        <p>⚠️ Vampires love watching live...</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={startLivestream}
+                      className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white py-4 rounded-xl font-bold"
+                    >
+                      🔴 Start Livestream
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Analytics Tab */}
+            {activeTab === 'analytics' && (
+              <div className="space-y-4">
+                <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4">
+                  <h3 className="text-white font-bold mb-4">📊 Revenue Analytics</h3>
+                  <div className="space-y-3">
+                    <div className="bg-black/40 rounded-lg p-3">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-gray-400 text-sm">Total Revenue</span>
+                        <span className="text-green-400 font-bold">${myAccount.revenue || 0}</span>
+                      </div>
+                      <div className="w-full bg-gray-800 rounded-full h-2">
+                        <div
+                          className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+                          style={{ width: `${Math.min(100, ((myAccount.revenue || 0) / 1000) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-black/40 rounded-lg p-3">
+                        <p className="text-gray-400 text-xs mb-1">Avg per post</p>
+                        <p className="text-white font-bold">
+                          ${posts.length > 0 ? Math.floor((myAccount.revenue || 0) / posts.length) : 0}
+                        </p>
+                      </div>
+                      <div className="bg-black/40 rounded-lg p-3">
+                        <p className="text-gray-400 text-xs mb-1">Total views</p>
+                        <p className="text-white font-bold">
+                          {posts.reduce((sum, p) => sum + (p.views || 0), 0)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-pink-950/40 border border-pink-500/30 rounded-xl p-4">
+                  <h3 className="text-white font-bold mb-3">🎯 Milestones</h3>
+                  <div className="space-y-2">
+                    {[
+                      { amount: 100, label: 'First $100', unlocked: (myAccount.revenue || 0) >= 100 },
+                      { amount: 500, label: '$500 Club', unlocked: (myAccount.revenue || 0) >= 500 },
+                      { amount: 1000, label: '$1K Earned', unlocked: (myAccount.revenue || 0) >= 1000 },
+                      { amount: 5000, label: 'Top Creator', unlocked: (myAccount.revenue || 0) >= 5000 }
+                    ].map(milestone => (
+                      <div
+                        key={milestone.amount}
+                        className={`flex items-center justify-between p-2 rounded-lg ${
+                          milestone.unlocked ? 'bg-green-950/40' : 'bg-gray-800/50'
+                        }`}
+                      >
+                        <span className={milestone.unlocked ? 'text-green-400' : 'text-gray-500'}>
+                          {milestone.unlocked ? '✅' : '🔒'} {milestone.label}
+                        </span>
+                        <span className="text-gray-400 text-sm">${milestone.amount}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </div>
