@@ -12,6 +12,8 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const location = useLocation();
   
+  const [showServantSelector, setShowServantSelector] = React.useState(false);
+  
   // Fetch servants for navigation
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
@@ -25,12 +27,6 @@ export default function Layout({ children, currentPageName }) {
     },
     retry: 1
   });
-  
-  // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome', 'HumanHome', 'DoppelgangerHome'].includes(currentPageName);
-  
-  // Fetch killers for killer tab
-
 
   const { data: witches = [] } = useQuery({
     queryKey: ['witches'],
@@ -38,6 +34,7 @@ export default function Layout({ children, currentPageName }) {
       try {
         return await base44.entities.Witch.list();
       } catch (e) {
+        console.error('Failed to fetch witches:', e);
         return [];
       }
     },
@@ -50,6 +47,7 @@ export default function Layout({ children, currentPageName }) {
       try {
         return await base44.entities.Succubus.list();
       } catch (e) {
+        console.error('Failed to fetch succubi:', e);
         return [];
       }
     },
@@ -62,6 +60,7 @@ export default function Layout({ children, currentPageName }) {
       try {
         return await base44.entities.Incubus.list();
       } catch (e) {
+        console.error('Failed to fetch incubi:', e);
         return [];
       }
     },
@@ -74,6 +73,7 @@ export default function Layout({ children, currentPageName }) {
       try {
         return await base44.entities.PlayerWerewolf.list();
       } catch (e) {
+        console.error('Failed to fetch werewolves:', e);
         return [];
       }
     },
@@ -86,6 +86,7 @@ export default function Layout({ children, currentPageName }) {
       try {
         return await base44.entities.Human.list();
       } catch (e) {
+        console.error('Failed to fetch humans:', e);
         return [];
       }
     },
@@ -98,19 +99,21 @@ export default function Layout({ children, currentPageName }) {
       try {
         return await base44.entities.Doppelganger.list();
       } catch (e) {
+        console.error('Failed to fetch doppelgangers:', e);
         return [];
       }
     },
     retry: 1
   });
   
+  // Show nav on main game pages only
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome', 'HumanHome', 'DoppelgangerHome'].includes(currentPageName);
+  
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
   const currentServantId = urlParams.get('servant') || urlParams.get('id') || (servants.length > 0 ? servants[0].id : null);
   const currentServant = servants.find(s => s.id === currentServantId) || servants[0];
   const firstServantId = currentServant?.id;
-  
-  const [showServantSelector, setShowServantSelector] = React.useState(false);
   
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },

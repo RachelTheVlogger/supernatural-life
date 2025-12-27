@@ -53,6 +53,8 @@ export default function Night() {
   const [showStalking, setShowStalking] = useState(false);
   const [showPossession, setShowPossession] = useState(false);
   const [showDoppelgangers, setShowDoppelgangers] = useState(false);
+  const [servantsInitialized, setServantsInitialized] = useState(false);
+
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -66,7 +68,7 @@ export default function Night() {
     },
     retry: 2
   });
-  
+
   // Fetch servants
   const { data: servants = [] } = useQuery({
     queryKey: ['servants'],
@@ -80,12 +82,19 @@ export default function Night() {
     },
     retry: 2
   });
-  
+
   const { data: witches = [] } = useQuery({
     queryKey: ['witches'],
-    queryFn: () => base44.entities.Witch.list()
+    queryFn: async () => {
+      try {
+        return await base44.entities.Witch.list();
+      } catch (e) {
+        console.error('Failed to fetch witches:', e);
+        return [];
+      }
+    }
   });
-  
+
   // Fetch recent logs
   const { data: logs = [] } = useQuery({
     queryKey: ['logs'],
@@ -99,9 +108,7 @@ export default function Night() {
     },
     retry: 1
   });
-  
-  const [servantsInitialized, setServantsInitialized] = useState(false);
-  
+
   const vampireState = vampireStates.length > 0 ? vampireStates[0] : null;
   
   // Random name generator with duplicate checking - unique pool for servants
@@ -175,14 +182,26 @@ export default function Night() {
   
   if (vampireLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <p className="text-gray-400">Loading...</p>
       </div>
     );
   }
-  
+
   if (!vampireState) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-center">
+          <p className="text-gray-400 mb-4">No vampire found</p>
+          <button
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg"
+          >
+            Create Vampire
+          </button>
+        </div>
+      </div>
+    );
   }
   
   const hungerColor = {
