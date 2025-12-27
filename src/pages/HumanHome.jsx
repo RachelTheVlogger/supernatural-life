@@ -158,6 +158,13 @@ export default function HumanHome() {
         awarenessGain = Math.floor(Math.random() * 5);
         dangerGain = Math.floor(Math.random() * 3);
         result = 'You worked out. Stayed healthy. Normal life. But you kept looking over your shoulder. Can\'t shake the feeling you\'re being watched.';
+        
+        // Gym helps clear your head a bit
+        if ((human.obsession_level || 0) > 0) {
+          await base44.entities.Human.update(human.id, {
+            obsession_level: Math.max(0, (human.obsession_level || 0) - 3)
+          });
+        }
       } else if (activity.id === 'library') {
         awarenessGain = Math.floor(Math.random() * 8) + 2;
         result = 'Studied for hours. Tried to focus. But your eyes kept drifting to books about folklore. Mythology. Creatures that shouldn\'t exist.';
