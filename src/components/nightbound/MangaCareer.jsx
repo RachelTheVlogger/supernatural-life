@@ -41,7 +41,7 @@ export default function MangaCareer({ servant, onClose }) {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [showCustomCreator, setShowCustomCreator] = useState(false);
   const [customMode, setCustomMode] = useState('prompt'); // 'prompt' or 'manual'
-  const [customPrompt, setCustomPrompt] = useState('');
+  const [chapterPrompt, setChapterPrompt] = useState('');
   const [customTitle, setCustomTitle] = useState('');
   const [customPanels, setCustomPanels] = useState([
     { description: '', dialogue: '' }
@@ -356,7 +356,7 @@ Format as JSON:
         // Generate from custom prompt
         const contentPrompt = `You are writing Chapter ${newChapters} of "${seriesName}", a ${genre} manga.
 
-User's custom request: ${customPrompt}
+User's custom request: ${chapterPrompt}
 
 Create this chapter with:
 1. A compelling chapter title
@@ -398,7 +398,7 @@ Format as JSON:
         // Use manually entered panels
         chapterData = {
           title: customTitle || `Chapter ${newChapters}`,
-          plot: customPrompt || 'Custom chapter',
+          plot: chapterPrompt || 'Custom chapter',
           panels: customPanels.filter(p => p.description.trim())
         };
       }
@@ -469,7 +469,7 @@ Format as JSON:
       setOutcome(`Custom chapter "${title}" complete! +${fansGained} fans, $${incomeGained}`);
       queryClient.invalidateQueries(['career']);
       setShowCustomCreator(false);
-      setCustomPrompt('');
+      setChapterPrompt('');
       setCustomTitle('');
       setCustomPanels([{ description: '', dialogue: '' }]);
 
@@ -1034,8 +1034,8 @@ Format as JSON:
                 <div>
                   <label className="text-white text-sm mb-2 block">Chapter Idea/Prompt</label>
                   <textarea
-                    value={customPrompt}
-                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    value={chapterPrompt}
+                    onChange={(e) => setChapterPrompt(e.target.value)}
                     placeholder="Describe what happens in this chapter... (e.g., 'The protagonist faces their rival in an epic showdown at the tournament finals')"
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"
                     rows={6}
@@ -1062,8 +1062,8 @@ Format as JSON:
                 <div>
                   <label className="text-white text-sm mb-2 block">Plot Summary</label>
                   <textarea
-                    value={customPrompt}
-                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    value={chapterPrompt}
+                    onChange={(e) => setChapterPrompt(e.target.value)}
                     placeholder="Brief summary of what happens..."
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"
                     rows={3}
@@ -1136,7 +1136,7 @@ Format as JSON:
             <div className="flex gap-3 mt-6">
               <button
                 onClick={handleCreateCustomChapter}
-                disabled={working || (customMode === 'prompt' ? !customPrompt.trim() : !customPanels.some(p => p.description.trim()))}
+                disabled={working || (customMode === 'prompt' ? !chapterPrompt.trim() : !customPanels.some(p => p.description.trim()))}
                 className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 rounded-lg font-medium disabled:opacity-50"
               >
                 {working ? generationProgress || 'Creating...' : 'Generate Chapter'}
