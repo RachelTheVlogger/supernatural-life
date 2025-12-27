@@ -423,7 +423,7 @@ Format as JSON:
       for (let i = 0; i < Math.min(panels.length, 6); i++) {
         setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
         
-        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition`;
+        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling`;
         
         const generateParams = { prompt: panelPrompt };
         if (career.style_reference_image) {
@@ -571,7 +571,7 @@ Format as JSON:
       for (let i = 0; i < Math.min(panels.length, 6); i++) {
         setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
         
-        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition`;
+        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling`;
         
         const generateParams = { prompt: panelPrompt };
         if (career.style_reference_image) {
