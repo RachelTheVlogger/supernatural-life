@@ -165,18 +165,14 @@ export default function VampireHome() {
   // Don't render anything if no vampire state or loading
   if (vampireLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <p className="text-gray-400">Loading...</p>
       </div>
     );
   }
-
-  if (!vampireState) {
-    return null;
-  }
   
   const handleMeditate = async () => {
-    if (!vampireState) return;
+    if (!vampireState?.id) return;
     setMeditating(true);
     setTimeout(async () => {
       try {
@@ -186,7 +182,7 @@ export default function VampireHome() {
           intensity: 'subtle'
         });
         
-        if (vampireState?.id && vampireState.hunger_state !== 'sated') {
+        if (vampireState.hunger_state !== 'sated') {
           const hungerStates = ['restless', 'heightened', 'lingering', 'calm', 'sated'];
           const currentIndex = hungerStates.indexOf(vampireState.hunger_state);
           if (currentIndex < hungerStates.length - 1) {
@@ -200,10 +196,10 @@ export default function VampireHome() {
         queryClient.invalidateQueries(['logs']);
       } catch (e) {
         console.error('Failed to meditate:', e);
+      } finally {
+        setMeditating(false);
+        setActiveAction(null);
       }
-      
-      setMeditating(false);
-      setActiveAction(null);
     }, 3000);
   };
   
@@ -212,6 +208,7 @@ export default function VampireHome() {
   };
   
   const handlePracticePower = async () => {
+    if (!vampireState?.id) return;
     setActiveAction('practice');
     setTimeout(async () => {
       try {
@@ -223,18 +220,24 @@ export default function VampireHome() {
         queryClient.invalidateQueries(['logs']);
       } catch (e) {
         console.error('Failed to practice:', e);
+      } finally {
+        setActiveAction(null);
       }
-      setActiveAction(null);
     }, 2500);
   };
   
   const turnedServants = servants.filter(s => s.is_turned);
   const totalRelationship = servants.reduce((sum, s) => sum + (s.relationship || 0), 0);
   const avgRelationship = servants.length > 0 ? Math.round(totalRelationship / servants.length) : 0;
-
-
-  
   const isDaytime = vampireState?.time_of_day === 'day';
+
+  if (!vampireState) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <p className="text-gray-400">Loading vampire...</p>
+      </div>
+    );
+  }
 
   return (
     <div 
