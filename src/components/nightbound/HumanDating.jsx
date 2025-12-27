@@ -156,6 +156,13 @@ export default function HumanDating({ human, onClose }) {
       });
     }
 
+    // Even regular good dates help reduce obsession a bit
+    if (!outcome.obsessionReduction && vampire && (human.obsession_level || 0) > 0 && Math.random() > 0.6) {
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.max(0, (human.obsession_level || 0) - 3)
+      });
+    }
+
     await base44.entities.NightLog.create({
       entry: `${human.name} went on date with ${match.name}${obsessedWithVampire ? ` - distracted by thoughts of ${vampire.vampire_name}` : ''}`,
       category: 'interaction',

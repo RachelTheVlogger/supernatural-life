@@ -330,9 +330,17 @@ export default function HumanHome() {
           'Your friends laughed about the "vampire rumors." You didn\'t. They noticed. Asked if you were okay. You lied. Said you were fine.',
           'One friend seemed different. Quieter. Paler. Wearing high collars. Avoiding sunlight. You wanted to ask. Didn\'t dare.',
           'Everyone talking about the missing student. Police said runaway. Your friends believed it. You knew better. Stayed quiet.',
-          'Normal hangout. Normal conversation. But you kept thinking about what you\'d seen. What you knew. You\'re changing. They don\'t notice yet.'
+          'Normal hangout. Normal conversation. But you kept thinking about what you\'d seen. What you knew. You\'re changing. They don\'t notice yet.',
+          'You spent time with your friends. Laughed. Talked about normal things. For a few hours, you forgot about... them. It felt good to be normal again.'
         ];
         result = friendOutcomes[Math.floor(Math.random() * friendOutcomes.length)];
+
+        // Friends help ground you
+        if ((human.obsession_level || 0) > 0 && Math.random() > 0.4) {
+          await base44.entities.Human.update(human.id, {
+            obsession_level: Math.max(0, (human.obsession_level || 0) - 5)
+          });
+        }
       } else if (activity.id === 'read') {
         awarenessGain = Math.floor(Math.random() * 8) + 3;
         const readOutcomes = [
