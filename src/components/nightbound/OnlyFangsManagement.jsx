@@ -61,15 +61,6 @@ const WISHLIST_ITEMS = [
 export default function OnlyFangsManagement({ servant, vampireState, onClose }) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('content');
-  
-  const genderExamples = getGenderExamples(vampireState.gender);
-  const updatedCategories = {
-    ...VIDEO_CATEGORIES,
-    couple: { ...VIDEO_CATEGORIES.couple, examples: genderExamples.couple },
-    filmed: { ...VIDEO_CATEGORIES.filmed, examples: genderExamples.filmed },
-    vampiresolo: { ...VIDEO_CATEGORIES.vampiresolo, examples: genderExamples.vampiresolo }
-  };
-
   const [contentType, setContentType] = useState(null);
   const [creating, setCreating] = useState(false);
   const [filming, setFilming] = useState(false);
@@ -799,6 +790,16 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
       category: 'interaction',
       intensity: 'subtle'
     });
+  };
+
+  const genderExamples = vampireState ? getGenderExamples(vampireState.gender) : {
+    couple: [], filmed: [], vampiresolo: []
+  };
+  const updatedCategories = {
+    ...VIDEO_CATEGORIES,
+    couple: { ...VIDEO_CATEGORIES.couple, examples: genderExamples.couple },
+    filmed: { ...VIDEO_CATEGORIES.filmed, examples: genderExamples.filmed },
+    vampiresolo: { ...VIDEO_CATEGORIES.vampiresolo, examples: genderExamples.vampiresolo }
   };
 
   if (!hasProfile && !editingProfile) {

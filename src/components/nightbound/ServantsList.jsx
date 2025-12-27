@@ -29,6 +29,11 @@ const getRelationshipLevel = (value) => {
 
 export default function ServantsList({ onClose, servants, vampireState }) {
   const [selectedServant, setSelectedServant] = useState(null);
+
+  if (!servants || servants.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <motion.div

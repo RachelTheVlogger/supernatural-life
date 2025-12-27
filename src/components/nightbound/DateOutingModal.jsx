@@ -63,6 +63,10 @@ export default function DateOutingModal({ servant, vampireState, onClose }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!servant) {
+    return null;
+  }
+
   const handleDate = async (dateType) => {
     setProcessing(true);
     setSelectedDate(dateType);
