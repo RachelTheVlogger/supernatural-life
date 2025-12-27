@@ -641,11 +641,16 @@ Format as JSON:
         characters_featured: chapterContent.characters_featured || [],
         rating: 0,
         ratings_count: 0,
-        reviews: []
+        reviews: [],
+        comments: []
       };
 
       // Update story summary for continuity
       const newStorySummary = `${storySummary} Chapter ${newChapters}: ${chapterContent.plot}`;
+      
+      // Increase burnout
+      const newBurnout = Math.min(100, (careerData.burnout || 0) + Math.floor(Math.random() * 5) + 3);
+      await base44.entities.ServantCareer.update(careerData.id, { burnout: newBurnout });
 
       await base44.entities.ServantCareer.update(careerData.id, {
         fans: (careerData.fans || 0) + fansGained,
