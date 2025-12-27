@@ -1568,7 +1568,9 @@ Format as JSON array of strings.`,
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    resetPanelView();
+                    e.preventDefault();
+                    setPanelZoom(1);
+                    setPanelPosition({ x: 0, y: 0 });
                   }}
                   className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm"
                 >
