@@ -971,28 +971,21 @@ Format as JSON:
   };
 
   const handleStartSeries = async (genre) => {
-    setWorking(true);
+    const seriesName = prompt(`Enter your ${genre.label} manga series title:`);
     
+    if (!seriesName || !seriesName.trim()) {
+      return;
+    }
+    
+    setWorking(true);
+
     setTimeout(async () => {
-      const seriesNames = {
-        shonen: ['Battle Chronicles', 'Rising Hero', 'Power Surge'],
-        shojo: ['First Love', 'Spring Romance', 'Heart Melody'],
-        seinen: ['Dark Society', 'Broken Glass', 'Urban Tales'],
-        josei: ['After Hours', 'Office Affairs', 'Midnight Calls'],
-        isekai: ['Another World', 'Portal Quest', 'Reborn Legend'],
-        'slice-of-life': ['Daily Life', 'Coffee Shop Days', 'Small Town Stories'],
-        psychological: ['Twisted Reality', 'Rotting Petals', 'Distortion']
-      };
-
-      const names = seriesNames[genre.id];
-      const seriesName = names[Math.floor(Math.random() * names.length)];
-
       if (!career?.id) {
         await base44.entities.ServantCareer.create({
           servant_id: servant.id,
           manga_career_active: true,
           current_genre: genre.id,
-          series_name: seriesName,
+          series_name: seriesName.trim(),
           chapters_released: 0,
           fans: Math.floor(Math.random() * 50) + 20,
           income: 0,
@@ -1002,7 +995,7 @@ Format as JSON:
         await base44.entities.ServantCareer.update(career.id, {
           manga_career_active: true,
           current_genre: genre.id,
-          series_name: seriesName,
+          series_name: seriesName.trim(),
           chapters_released: 0,
           fans: Math.floor(Math.random() * 50) + 20,
           income: 0,
