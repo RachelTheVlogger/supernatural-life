@@ -514,6 +514,14 @@ export default function ServantHome() {
           >
             <span className="text-white font-medium">❤️ Hobbies & Time Together</span>
           </button>
+          
+          <button
+            onClick={() => setShowCoach(true)}
+            className="w-full bg-gradient-to-r from-pink-900/60 to-purple-900/60 hover:from-pink-900/80 hover:to-purple-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all"
+          >
+            <Heart className="w-5 h-5 text-white" />
+            <span className="text-base font-medium text-white">Talk to Relationship Coach</span>
+          </button>
 
         {activities.map((chore, i) => (
           <motion.button
@@ -692,6 +700,14 @@ export default function ServantHome() {
             servant={servant}
             vampireState={vampireState}
             onClose={() => setShowDating(false)}
+          />
+        )}
+        {showCoach && vampireState && (
+          <RelationshipCoach 
+            vampireState={vampireState} 
+            currentServant={servant}
+            viewMode="servant"
+            onClose={() => setShowCoach(false)} 
           />
         )}
         {showWitchVisit && (
