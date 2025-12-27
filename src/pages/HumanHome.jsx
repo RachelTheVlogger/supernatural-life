@@ -707,7 +707,7 @@ export default function HumanHome() {
               <MasturbationSlider
                 gender={human.gender}
                 vampireWatching={hasVampire && (human.awareness_level || 0) > 30}
-                onFinish={async (edgeType, edgeCount, desperationLevel) => {
+                onFinish={async (edgeType, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
                   setShowSlider(false);
                   const activity = sliderActivity;
                   setSliderActivity(null);
@@ -721,37 +721,47 @@ export default function HumanHome() {
                       const intensityText = edgeCount > 3 ? '\n\nYou edged yourself over and over until you were shaking, desperate, completely lost in it.' : 
                                             edgeCount > 1 ? '\n\nYou edged multiple times, building the intensity.' : 
                                             edgeType === 'edged' ? '\n\nYou edged yourself, making it last.' : '';
+                      
+                      const bodyPartText = bodyPart === 'clit' ? '\n\nRubbing your clit in circles, faster and faster. So sensitive. So good.' :
+                                          bodyPart === 'dick' ? '\n\nStroking your hard dick, grip tight, up and down. Felt so fucking good.' :
+                                          bodyPart === 'breasts' ? '\n\nPinching and playing with your nipples. They got so hard. Aching.' :
+                                          bodyPart === 'chest' ? '\n\nTouching your chest, tracing your muscles. Wanting their hands there.' :
+                                          bodyPart === 'fingers' ? '\n\nFingers deep inside yourself. Two, then three. Fucking yourself hard.' :
+                                          bodyPart === 'balls' ? '\n\nPlaying with your balls, squeezing them. They felt so full, ready to burst.' :
+                                          touchingMultiple ? (human.gender === 'woman' ? '\n\nRubbing your clit while playing with your tits. Both at once. Too much sensation.' :
+                                                             human.gender === 'man' ? '\n\nStroking your dick while squeezing your balls. Everything at once. Overwhelming.' :
+                                                             '\n\nTouching everywhere at once. So much stimulation. Couldn\'t think straight.') : '';
 
                       if (activity.id === 'sleep') {
                         const sleepOutcomes = [
-                          `You lay in bed touching yourself thinking about ${vampire.vampire_name}.\n\nImagining them watching you. Their hands on you. Their teeth.\n\nYou came gasping their name into your pillow.${intensityText}`,
-                          `Dreams of ${vampire.vampire_name} fucking you. Biting you. Using you.\n\nYou woke up ${human.gender === 'woman' ? 'wet' : human.gender === 'man' ? 'hard' : 'wet/hard'}, panting. Touched yourself right there.\n\nCame thinking of them.${intensityText}`,
-                          `You fantasized about ${vampire.vampire_name} while masturbating.\n\nTheir darkness. Their power. Being theirs completely.\n\nCame hard.${intensityText}`,
-                          `Can't stop thinking about ${vampire.vampire_name}.\n\nMasturbated thinking of them taking control. Owning you.\n\nYou're addicted to the fantasy.${intensityText}`
+                          `You lay in bed touching yourself thinking about ${vampire.vampire_name}.\n\nImagining them watching you. Their hands on you. Their teeth.${bodyPartText}\n\nYou came gasping their name into your pillow.${intensityText}`,
+                          `Dreams of ${vampire.vampire_name} fucking you. Biting you. Using you.\n\nYou woke up ${human.gender === 'woman' ? 'wet' : human.gender === 'man' ? 'hard' : 'wet/hard'}, panting. Touched yourself right there.${bodyPartText}\n\nCame thinking of them.${intensityText}`,
+                          `You fantasized about ${vampire.vampire_name} while masturbating.\n\nTheir darkness. Their power. Being theirs completely.${bodyPartText}\n\nCame hard.${intensityText}`,
+                          `Can't stop thinking about ${vampire.vampire_name}.\n\nMasturbated thinking of them taking control. Owning you.${bodyPartText}\n\nYou're addicted to the fantasy.${intensityText}`
                         ];
                         result = sleepOutcomes[Math.floor(Math.random() * sleepOutcomes.length)];
                         awarenessGain = 10 + edgeCount;
                       } else if (activity.id === 'onlyfangs_record') {
                         const recordOutcomes = [
-                          `You recorded yourself masturbating for ${vampire.vampire_name}.\n\nSaid their name. Showed everything. Posted it.\n\n"For ${vampire.vampire_name}" in the title.${intensityText}`,
-                          `Made content specifically for them.\n\nTouching yourself. Moaning their name. Begging.\n\nUploaded to OnlyFangs. Tagged them.${intensityText}`,
-                          `Filmed yourself in bed pretending they're there.\n\nMasturbating desperately. Whispering their name.\n\nPosted it publicly hoping they see.${intensityText}`
+                          `You recorded yourself masturbating for ${vampire.vampire_name}.\n\nCamera focused right on it. Showed everything.${bodyPartText}\n\nSaid their name. Moaned it.\n\n"For ${vampire.vampire_name}" in the title.${intensityText}\n\nUploaded. No shame left.`,
+                          `Made content specifically for them.\n\nClose-up shots. Nothing hidden.${bodyPartText}\n\nMoaning their name. Begging for them.\n\nUploaded to OnlyFangs. Tagged them.${intensityText}`,
+                          `Filmed yourself in bed pretending they're there.\n\nCamera angle perfect.${bodyPartText}\n\nMasturbating desperately. Whispering their name.\n\nPosted it publicly hoping they see.${intensityText}`
                         ];
                         result = recordOutcomes[Math.floor(Math.random() * recordOutcomes.length)];
                         awarenessGain = 15 + edgeCount * 2;
                       } else if (activity.id === 'confession') {
                         const confessionOutcomes = [
-                          `You found ${vampire.vampire_name} and confessed everything.\n\n"I touch myself thinking about you. Every night. I need you."\n\nThey smiled. Dangerous. Beautiful.${intensityText}`,
-                          `"I'm obsessed with you," you told ${vampire.vampire_name}.\n\n"I know," they said. "I can smell it on you."\n\nYour desperate need. Your desire.${intensityText}`,
-                          `You confessed to ${vampire.vampire_name} about your fantasies.\n\nAll of them. The dark ones. The desperate ones.\n\nThey listened. Amused. Interested.${intensityText}`
+                          `You found ${vampire.vampire_name} and confessed everything.\n\n"I touch myself thinking about you. Every night. I need you."\n\nThey smiled. Dangerous. Beautiful.\n\n"Show me," they said.${bodyPartText}\n\nYou obeyed. Right there in front of them.${intensityText}`,
+                          `"I'm obsessed with you," you told ${vampire.vampire_name}.\n\n"I know," they said. "I can smell it on you."\n\nYour desperate need. Your desire.\n\n"Touch yourself for me," they commanded.${bodyPartText}${intensityText}`,
+                          `You confessed to ${vampire.vampire_name} about your fantasies.\n\nAll of them. The dark ones. The desperate ones.\n\nThey listened. Amused. Interested.\n\n"Show me what you do when you think of me."${bodyPartText}\n\nYou came under their gaze.${intensityText}`
                         ];
                         result = confessionOutcomes[Math.floor(Math.random() * confessionOutcomes.length)];
                         awarenessGain = 20 + edgeCount * 3;
                       } else if (activity.id === 'visit_vampire') {
                         const visitOutcomes = [
-                          `You went to ${vampire.vampire_name}'s house.\n\nThey let you in. "I've been waiting."\n\nWhat happened next... unforgettable.${intensityText}`,
-                          `Showed up at ${vampire.vampire_name}'s door.\n\n"Couldn't stay away?" they asked.\n\nYou shook your head. They pulled you inside.${intensityText}`,
-                          `You went to ${vampire.vampire_name}. Needed to see them.\n\n"I need you," you whispered.\n\n"I know," they said. "Come here."${intensityText}`
+                          `You went to ${vampire.vampire_name}'s house.\n\nThey let you in. "I've been waiting."\n\nTheir hands on you immediately.${bodyPartText}\n\nWhat happened next... unforgettable.${intensityText}`,
+                          `Showed up at ${vampire.vampire_name}'s door.\n\n"Couldn't stay away?" they asked.\n\nYou shook your head. They pulled you inside.\n\n"Touch yourself for me," they said.${bodyPartText}${intensityText}`,
+                          `You went to ${vampire.vampire_name}. Needed to see them.\n\n"I need you," you whispered.\n\n"I know," they said. "Come here."\n\nTheir hands exploring.${bodyPartText}\n\nYou came so hard.${intensityText}`
                         ];
                         result = visitOutcomes[Math.floor(Math.random() * visitOutcomes.length)];
                         awarenessGain = 15 + edgeCount * 2;
