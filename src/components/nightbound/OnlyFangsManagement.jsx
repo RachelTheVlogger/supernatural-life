@@ -2126,7 +2126,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           <div className="max-h-[60vh] overflow-y-auto">
             <MasturbationSlider
               gender={servant.gender}
-              vampireWatching={callContext === 'videocall'}
+              context={callContext || 'audience'}
               onFinish={async (type, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
                 const isVideoCall = callContext === 'videocall';
                 const isSexting = callContext === 'sexting';

@@ -706,7 +706,7 @@ export default function HumanHome() {
             >
               <MasturbationSlider
                 gender={human.gender}
-                vampireWatching={hasVampire && (human.awareness_level || 0) > 30}
+                context={sliderActivity.id === 'onlyfangs_record' ? 'audience' : hasVampire && (human.awareness_level || 0) > 30 ? 'vampire' : 'private'}
                 onFinish={async (edgeType, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
                   setShowSlider(false);
                   const activity = sliderActivity;

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, Heart } from 'lucide-react';
 
-export default function MasturbationSlider({ onFinish, gender = 'custom', vampireWatching = false }) {
+export default function MasturbationSlider({ onFinish, gender = 'custom', context = 'private' }) {
+  // context: 'private', 'vampire', 'audience', 'videocall', 'sexting'
   const [intensity, setIntensity] = useState(0);
   const [edging, setEdging] = useState(false);
   const [particles, setParticles] = useState([]);
@@ -56,16 +57,16 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', vampir
     }
 
     if (isEdging && level > 60) {
-      const desperate = vampireWatching ? [
-        'PLEASE LET ME!',
-        'I NEED IT SO BAD!',
-        'CAN I FINISH PLEASE?!'
-      ] : [
-        'OH FUCK I\'M SO CLOSE!',
-        'GONNA CUM SO HARD!',
-        'CAN\'T HOLD IT!'
-      ];
-      return desperate;
+      if (context === 'vampire') {
+        return ['PLEASE LET ME!', 'I NEED IT SO BAD!', 'CAN I FINISH PLEASE?!', 'PLEASE I\'M SO CLOSE!'];
+      } else if (context === 'videocall') {
+        return ['Can I cum for you?!', 'Please let me finish!', 'I\'m so close!', 'Please please!'];
+      } else if (context === 'audience') {
+        return ['SHOULD I CUM?!', 'EDGE OR FINISH?!', 'CHAT DECIDE!', 'I CAN\'T HOLD IT!'];
+      } else if (context === 'sexting') {
+        return ['fuck I\'m so close', 'gonna cum thinking of you', 'can\'t hold back', 'about to explode'];
+      }
+      return ['OH FUCK I\'M SO CLOSE!', 'GONNA CUM SO HARD!', 'CAN\'T HOLD IT!'];
     }
 
     // Body part specific moans - less repetitive
@@ -446,19 +447,48 @@ export default function MasturbationSlider({ onFinish, gender = 'custom', vampir
             transition={{ duration: 0.5, repeat: Infinity }}
             className="text-pink-400 font-bold text-lg"
           >
-            {vampireWatching && edging ? 'Waiting for permission...' : 
+            {context === 'vampire' && edging ? 'Waiting for permission...' : 
+             context === 'videocall' && edging ? 'Asking if you can finish...' :
+             context === 'audience' && edging ? 'Chat voting...' :
              edging ? `Holding back... so close... (${edgeCount}x)` : 
              'Almost there...'}
           </motion.p>
         )}
 
-        {vampireWatching && (
+        {context === 'vampire' && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-purple-400 text-sm italic mt-2"
           >
             They're watching you...
+          </motion.p>
+        )}
+        {context === 'audience' && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-pink-400 text-sm italic mt-2"
+          >
+            🔴 LIVE • {Math.floor(Math.random() * 500) + 200} watching
+          </motion.p>
+        )}
+        {context === 'videocall' && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-red-400 text-sm italic mt-2"
+          >
+            📹 Private call • They're watching intently
+          </motion.p>
+        )}
+        {context === 'sexting' && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-purple-400 text-sm italic mt-2"
+          >
+            💬 Texting them what you're doing...
           </motion.p>
         )}
 

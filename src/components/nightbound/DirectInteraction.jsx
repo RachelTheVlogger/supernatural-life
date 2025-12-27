@@ -2509,7 +2509,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             >
               <MasturbationSlider
                 gender={servant.gender}
-                vampireWatching={true}
+                context="vampire"
                 onFinish={async (edgeType, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
                   setShowSlider(false);
                   setSliderType(null);
