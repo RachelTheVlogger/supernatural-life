@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Music, DollarSign, Users, Heart, Flame } from 'lucide-react';
+import { X, Music, DollarSign, Users, Heart, Flame, ShoppingBag, Award, Mic, Video, Newspaper } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import MusicEquipment from './MusicEquipment';
 
 export default function MusicCareer({ human, onClose }) {
   const [activeTab, setActiveTab] = useState('create');
@@ -20,6 +21,12 @@ export default function MusicCareer({ human, onClose }) {
   const [tourPlan, setTourPlan] = useState(null);
   const [fanInteraction, setFanInteraction] = useState(null);
   const [songs, setSongs] = useState([]);
+  const [equipment, setEquipment] = useState([]);
+  const [albums, setAlbums] = useState([]);
+  const [interviews, setInterviews] = useState([]);
+  const [showEquipment, setShowEquipment] = useState(false);
+  const [creatingAlbum, setCreatingAlbum] = useState(false);
+  const [newAlbum, setNewAlbum] = useState({ title: '', selectedSongs: [] });
   const queryClient = useQueryClient();
 
   const { data: vampires = [] } = useQuery({
@@ -33,10 +40,11 @@ export default function MusicCareer({ human, onClose }) {
     if (!newSong.title) return;
     setCreating(true);
 
+    const equipmentBonus = equipment.reduce((sum, item) => sum + item.quality, 0);
     const baseStreams = newSong.contentType === 'explicit_sexual' ? 8000 : 
                        newSong.contentType === 'dark' ? 6000 : 
                        newSong.contentType === 'romantic' ? 4000 : 2000;
-    const streams = Math.floor(Math.random() * 5000) + baseStreams;
+    const streams = Math.floor((Math.random() * 5000) + baseStreams) * (1 + equipmentBonus / 100);
     const earnings = Math.floor(streams / 10);
 
     const contentDescriptions = {
@@ -255,6 +263,66 @@ export default function MusicCareer({ human, onClose }) {
     alert(`${vampire.vampire_name} is now your patron! +$${vampireEvent.pay}\n\n"I'll be at every show," they whispered.`);
   };
 
+  const doInterview = async () => {
+    const interviewTypes = [
+      {
+        outlet: 'Rolling Stone',
+        question: 'What inspires your dark, obsessive lyrics?',
+        options: ['Someone I can\'t have', 'The night', 'My demons', 'A dangerous love']
+      },
+      {
+        outlet: 'Pitchfork',
+        question: 'Your music has sexual and violent undertones. What\'s the story?',
+        options: ['It\'s personal', 'Art imitates life', 'I\'m exploring darkness', 'No comment']
+      },
+      {
+        outlet: 'Late Night Show',
+        question: 'Fans say you sing about vampires. Is that true?',
+        options: ['It\'s metaphorical', 'Maybe...', 'I sing about obsession', 'You\'ll have to listen']
+      }
+    ];
+
+    const interview = interviewTypes[Math.floor(Math.random() * interviewTypes.length)];
+    setInterviews([...interviews, interview]);
+  };
+
+  const createAlbum = async () => {
+    if (!newAlbum.title || newAlbum.selectedSongs.length < 3) return;
+
+    const albumData = {
+      id: Date.now(),
+      title: newAlbum.title,
+      songs: newAlbum.selectedSongs,
+      streams: 0,
+      earnings: 0
+    };
+
+    const totalStreams = newAlbum.selectedSongs.reduce((sum, songId) => {
+      const song = songs.find(s => s.id === songId);
+      return sum + (song?.streams || 0);
+    }, 0);
+
+    albumData.streams = totalStreams * 2;
+    albumData.earnings = Math.floor(albumData.streams / 5);
+
+    setAlbums([...albums, albumData]);
+
+    await base44.entities.NightLog.create({
+      entry: `${human.name} released album "${newAlbum.title}" with ${newAlbum.selectedSongs.length} songs - ${albumData.streams} streams, $${albumData.earnings}`,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+    setNewAlbum({ title: '', selectedSongs: [] });
+    setCreatingAlbum(false);
+  };
+
+  const purchaseEquipment = (item) => {
+    setEquipment([...equipment, item]);
+    alert(`Purchased ${item.name}! +${item.quality}% recording quality`);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -452,6 +520,24 @@ export default function MusicCareer({ human, onClose }) {
                 >
                   Fans
                 </button>
+                <button
+                  onClick={() => setActiveTab('equipment')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'equipment' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Equipment
+                </button>
+                <button
+                  onClick={() => setActiveTab('album')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'album' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Albums
+                </button>
+                <button
+                  onClick={() => setActiveTab('press')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'press' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Press
+                </button>
               </div>
 
               {activeTab === 'create' ? (
@@ -630,6 +716,190 @@ export default function MusicCareer({ human, onClose }) {
                     📬 Check Fan Messages
                   </button>
                 </div>
+              ) : activeTab === 'equipment' ? (
+                <div className="space-y-4">
+                  <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4">
+                    <h3 className="text-white font-bold mb-2">🎸 Your Equipment</h3>
+                    <p className="text-gray-300 text-sm mb-3">
+                      Better equipment = better sound quality = more streams
+                    </p>
+                    {equipment.length > 0 && (
+                      <div className="bg-green-950/40 border border-green-500/30 rounded-lg p-3">
+                        <p className="text-green-400 font-bold text-center">
+                          Total Quality Bonus: +{equipment.reduce((sum, item) => sum + item.quality, 0)}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => setShowEquipment(true)}
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold"
+                  >
+                    🛒 Browse Equipment Store
+                  </button>
+
+                  {equipment.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="text-white font-bold text-sm">Owned Equipment:</h4>
+                      {equipment.map((item, i) => (
+                        <div key={i} className="bg-gray-800/50 border border-green-500/30 rounded-lg p-3">
+                          <p className="text-white text-sm">{item.name}</p>
+                          <p className="text-green-400 text-xs">+{item.quality}% quality</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : activeTab === 'album' ? (
+                <div className="space-y-4">
+                  {creatingAlbum ? (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="Album title..."
+                        value={newAlbum.title}
+                        onChange={(e) => setNewAlbum({ ...newAlbum, title: e.target.value })}
+                        className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 border border-indigo-500/30 focus:border-indigo-500 focus:outline-none"
+                      />
+                      <div>
+                        <p className="text-gray-400 text-sm mb-2">Select songs (min 3):</p>
+                        <div className="space-y-2 max-h-60 overflow-y-auto">
+                          {songs.map(song => (
+                            <button
+                              key={song.id}
+                              onClick={() => {
+                                if (newAlbum.selectedSongs.includes(song.id)) {
+                                  setNewAlbum({
+                                    ...newAlbum,
+                                    selectedSongs: newAlbum.selectedSongs.filter(id => id !== song.id)
+                                  });
+                                } else {
+                                  setNewAlbum({
+                                    ...newAlbum,
+                                    selectedSongs: [...newAlbum.selectedSongs, song.id]
+                                  });
+                                }
+                              }}
+                              className={`w-full text-left p-3 rounded-lg ${
+                                newAlbum.selectedSongs.includes(song.id)
+                                  ? 'bg-indigo-600 text-white'
+                                  : 'bg-gray-800 text-gray-300'
+                              }`}
+                            >
+                              {song.title}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setCreatingAlbum(false)}
+                          className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={createAlbum}
+                          disabled={!newAlbum.title || newAlbum.selectedSongs.length < 3}
+                          className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white py-3 rounded-xl font-bold"
+                        >
+                          Release Album
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4">
+                        <h3 className="text-white font-bold mb-2">💿 Create Album/EP</h3>
+                        <p className="text-gray-300 text-sm">
+                          Group your songs into albums for bigger releases
+                        </p>
+                      </div>
+
+                      {songs.length < 3 ? (
+                        <div className="bg-red-950/40 border border-red-500/30 rounded-xl p-4">
+                          <p className="text-red-300 text-sm text-center">
+                            You need at least 3 songs to create an album
+                          </p>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setCreatingAlbum(true)}
+                          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold"
+                        >
+                          💿 Create New Album
+                        </button>
+                      )}
+
+                      {albums.length > 0 && (
+                        <div className="space-y-3">
+                          <h4 className="text-white font-bold">Released Albums:</h4>
+                          {albums.map(album => (
+                            <div key={album.id} className="bg-gray-800/50 border border-indigo-500/30 rounded-xl p-4">
+                              <h4 className="text-white font-bold mb-2">{album.title}</h4>
+                              <p className="text-gray-400 text-sm mb-2">{album.songs.length} tracks</p>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-400">Streams: {album.streams.toLocaleString()}</span>
+                                <span className="text-green-400">Earned: ${album.earnings}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              ) : activeTab === 'press' ? (
+                <div className="space-y-4">
+                  <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4">
+                    <h3 className="text-white font-bold mb-2">📰 Press & Interviews</h3>
+                    <div className="space-y-1 text-sm text-gray-300">
+                      <p>🎤 Press junkets</p>
+                      <p>📺 TV interviews</p>
+                      <p>📰 Magazine features</p>
+                      <p>⚠️ Your answers affect your image</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={doInterview}
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold"
+                  >
+                    🎙️ Do Press Interview
+                  </button>
+
+                  {interviews.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="text-white font-bold">Recent Interviews:</h4>
+                      {interviews.map((interview, i) => (
+                        <div key={i} className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4">
+                          <p className="text-purple-300 font-bold text-sm mb-2">{interview.outlet}</p>
+                          <p className="text-white text-sm mb-3">"{interview.question}"</p>
+                          <div className="space-y-2">
+                            {interview.options.map((option, j) => (
+                              <button
+                                key={j}
+                                onClick={async () => {
+                                  await base44.entities.NightLog.create({
+                                    entry: `${human.name} interviewed by ${interview.outlet}. Response: "${option}"`,
+                                    category: 'interaction',
+                                    intensity: 'moderate'
+                                  });
+                                  queryClient.invalidateQueries();
+                                  alert(`Your answer: "${option}"\n\nFans are talking about it.`);
+                                }}
+                                className="w-full bg-gray-700 hover:bg-gray-600 text-white text-sm py-2 px-3 rounded-lg text-left"
+                              >
+                                "{option}"
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="space-y-4">
                   <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4">
@@ -662,6 +932,13 @@ export default function MusicCareer({ human, onClose }) {
             </div>
           )}
         </AnimatePresence>
+
+        {showEquipment && (
+          <MusicEquipment
+            onClose={() => setShowEquipment(false)}
+            onPurchase={purchaseEquipment}
+          />
+        )}
       </motion.div>
     </motion.div>
   );
