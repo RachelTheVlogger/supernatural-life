@@ -21,9 +21,11 @@ import HumanDating from '@/components/nightbound/HumanDating';
 import HumanSocialMedia from '@/components/nightbound/HumanSocialMedia';
 import SubstanceSystem from '@/components/nightbound/SubstanceSystem';
 import GroceryShopping from '@/components/nightbound/GroceryShopping';
+import HumanPhone from '@/components/nightbound/HumanPhone';
 
 
 const HUMAN_ACTIVITIES = [
+  { id: 'phone', label: '📱 Phone', icon: Camera, duration: 0, isModal: true },
   { id: 'onlymortals', label: '📸 OnlyMortals', icon: Camera, duration: 0, isModal: true },
   { id: 'blood_bank', label: '🩸 Blood Bank Job', icon: Shield, duration: 0, isModal: true },
   { id: 'art_commissions', label: '🎨 Art Commissions', icon: BookOpen, duration: 0, isModal: true },
@@ -80,6 +82,7 @@ export default function HumanHome() {
   const [showSocialMedia, setShowSocialMedia] = useState(false);
   const [showSubstances, setShowSubstances] = useState(false);
   const [showGroceries, setShowGroceries] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -101,7 +104,9 @@ export default function HumanHome() {
     if (!human?.id) return;
     
     if (activity.isModal) {
-      if (activity.id === 'onlymortals') {
+      if (activity.id === 'phone') {
+        setShowPhone(true);
+      } else if (activity.id === 'onlymortals') {
         setShowOnlyMortals(true);
       } else if (activity.id === 'blood_bank') {
         setShowBloodBank(true);
@@ -968,6 +973,10 @@ export default function HumanHome() {
 
         {showGroceries && (
           <GroceryShopping human={human} onClose={() => setShowGroceries(false)} />
+        )}
+
+        {showPhone && (
+          <HumanPhone human={human} onClose={() => setShowPhone(false)} />
         )}
 
         {showIdentity && (
