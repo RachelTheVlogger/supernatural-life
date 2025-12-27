@@ -589,7 +589,15 @@ Format as JSON:
       for (let i = 0; i < Math.min(panels.length, 6); i++) {
         setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
         
-        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs, consistent art style throughout`;
+        // Build character appearance reminders
+        let characterReminders = '';
+        characters.forEach(char => {
+          if (char.description) {
+            characterReminders += `${char.name}: ${char.description}. `;
+          }
+        });
+        
+        const panelPrompt = `${panels[i].description}. ${characterReminders}${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, IMPORTANT: maintain exact character appearances and features as described, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs, consistent art style throughout`;
         
         const generateParams = { prompt: panelPrompt };
         
