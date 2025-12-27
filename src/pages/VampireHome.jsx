@@ -33,6 +33,7 @@ import DonorSystem from '@/components/nightbound/DonorSystem';
 import StalkingSystem from '@/components/nightbound/StalkingSystem';
 import JournalSystem from '@/components/nightbound/JournalSystem';
 import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
+import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -1359,6 +1360,20 @@ export default function VampireHome() {
                       </button>
                     ))}
                   </div>
+                </div>
+
+                <div>
+                  <PersonalitySelector
+                    selected={vampireState.personality || 'charming'}
+                    onSelect={async (personality) => {
+                      try {
+                        await base44.entities.VampireState.update(vampireState.id, { personality });
+                        queryClient.invalidateQueries();
+                      } catch (e) {
+                        console.error('Failed to update personality:', e);
+                      }
+                    }}
+                  />
                 </div>
 
                 <button
