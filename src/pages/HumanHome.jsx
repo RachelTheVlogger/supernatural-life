@@ -568,23 +568,6 @@ export default function HumanHome() {
             onClose={() => setShowMangaStore(false)}
           />
         )}
-        {showCareerSelector && (
-          <CareerSelector
-            human={human}
-            onClose={() => setShowCareerSelector(false)}
-            onSelect={(careerType) => {
-              setShowCareerSelector(false);
-              if (careerType === 'manga') setShowManga(true);
-            }}
-          />
-        )}
-        {showDating && vampireStates.length > 0 && (
-          <ServantDating
-            servant={human}
-            vampireState={vampireStates[0]}
-            onClose={() => setShowDating(false)}
-          />
-        )}
       </AnimatePresence>
     </div>
   );
