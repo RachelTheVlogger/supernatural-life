@@ -18,20 +18,29 @@ export default function HumanDating({ human, onClose }) {
   const obsessedWithVampire = vampire && (human.obsession_level || 0) > 50;
 
   const generateMatch = () => {
-    const names = ['Alex', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Sam'];
+    const names = ['Alex', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Sam', 'Blake', 'Charlie', 'Avery'];
     const personalities = ['sweet', 'funny', 'intense', 'chill', 'nerdy', 'adventurous', 'mysterious'];
+    
+    // Rare chance to meet someone truly special
+    const isSpecial = Math.random() > 0.85;
     
     const match = {
       id: Date.now(),
       name: names[Math.floor(Math.random() * names.length)],
       personality: personalities[Math.floor(Math.random() * personalities.length)],
-      attraction: Math.floor(Math.random() * 40) + 30,
-      connection: Math.floor(Math.random() * 30) + 20,
+      attraction: isSpecial ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 40) + 30,
+      connection: isSpecial ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 30) + 20,
       dates: 0,
-      interested: true
+      interested: true,
+      isSpecial: isSpecial,
+      canBreakObsession: isSpecial
     };
     
     setMatches([...matches, match]);
+
+    if (isSpecial) {
+      alert(`You matched with ${match.name}.\n\nSomething about them feels... different.\n\nSpecial.`);
+    }
   };
 
   const goOnDate = async (match) => {
@@ -40,7 +49,7 @@ export default function HumanDating({ human, onClose }) {
 
     const outcomes = [];
 
-    if (obsessedWithVampire) {
+    if (obsessedWithVampire && !match.isSpecial) {
       outcomes.push(
         {
           text: `Date with ${match.name}.\n\nThey're nice. Attractive. Normal.\n\nBut you can't stop thinking about ${vampire.vampire_name}.\n\nYou're comparing everything. Everyone.\n\n${match.name} notices you're distracted.`,
@@ -51,6 +60,22 @@ export default function HumanDating({ human, onClose }) {
           text: `You tried. Really tried.\n\n${match.name} held your hand. Kissed you.\n\nBut it felt... wrong. Empty.\n\nThey're not ${vampire.vampire_name}.\n\nNothing feels right anymore.`,
           attractionChange: -20,
           connectionChange: -15
+        }
+      );
+    } else if (obsessedWithVampire && match.isSpecial) {
+      // Special person can break through obsession
+      outcomes.push(
+        {
+          text: `Date with ${match.name}.\n\nYou expected to think about ${vampire.vampire_name}.\n\nBut... you didn't.\n\n${match.name} made you laugh. Really laugh.\n\nFor the first time in weeks, you felt... present.\n\nMaybe there's hope.`,
+          attractionChange: 25,
+          connectionChange: 30,
+          obsessionReduction: 10
+        },
+        {
+          text: `Something about ${match.name}...\n\nThey kissed you and it felt RIGHT.\n\nNot empty. Not wrong. Real.\n\nYou thought about ${vampire.vampire_name} less tonight.\n\nMaybe... maybe you can move on.`,
+          attractionChange: 30,
+          connectionChange: 35,
+          obsessionReduction: 15
         }
       );
     } else {
@@ -79,6 +104,13 @@ export default function HumanDating({ human, onClose }) {
 
     if (match.attraction < 20 || match.connection < 20) {
       match.interested = false;
+    }
+
+    // Special person can reduce vampire obsession
+    if (outcome.obsessionReduction && vampire) {
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.max(0, (human.obsession_level || 0) - outcome.obsessionReduction)
+      });
     }
 
     await base44.entities.NightLog.create({
@@ -156,12 +188,19 @@ export default function HumanDating({ human, onClose }) {
           <div className="space-y-3">
             {matches.map(match => (
               <div key={match.id} className={`rounded-xl p-4 border ${
+                match.isSpecial ? 'bg-gradient-to-br from-pink-950/60 to-purple-950/60 border-pink-400/50' :
                 match.interested ? 'bg-gray-800/50 border-pink-500/30' : 'bg-red-950/40 border-red-500/30'
               }`}>
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h4 className="text-white font-bold">{match.name}</h4>
+                    <h4 className="text-white font-bold flex items-center gap-2">
+                      {match.name}
+                      {match.isSpecial && <span className="text-yellow-400">✨</span>}
+                    </h4>
                     <p className="text-gray-400 text-sm capitalize">{match.personality}</p>
+                    {match.isSpecial && (
+                      <p className="text-pink-400 text-xs mt-1">Something special about them...</p>
+                    )}
                   </div>
                   {!match.interested && <span className="text-red-400 text-xs">Lost interest</span>}
                 </div>
