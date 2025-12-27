@@ -1364,7 +1364,7 @@ export default function VampireHome() {
 
                 <div>
                   <PersonalitySelector
-                    selected={vampireState.personality || 'charming'}
+                    selected={vampireState.personality || ['charming']}
                     onSelect={async (personality) => {
                       try {
                         await base44.entities.VampireState.update(vampireState.id, { personality });

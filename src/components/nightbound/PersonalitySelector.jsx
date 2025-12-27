@@ -26,34 +26,52 @@ const PERSONALITY_TRAITS = [
   { value: 'charming', label: 'Charming', icon: '✨', color: 'from-yellow-500 to-pink-500' }
 ];
 
-export default function PersonalitySelector({ selected, onSelect, filterTraits = null }) {
+export default function PersonalitySelector({ selected, onSelect, filterTraits = null, maxTraits = 3 }) {
   const traits = filterTraits ? PERSONALITY_TRAITS.filter(t => filterTraits.includes(t.value)) : PERSONALITY_TRAITS;
+  const selectedArray = Array.isArray(selected) ? selected : (selected ? [selected] : []);
+
+  const handleSelect = (traitValue) => {
+    if (selectedArray.includes(traitValue)) {
+      // Deselect
+      onSelect(selectedArray.filter(t => t !== traitValue));
+    } else {
+      // Select (up to max)
+      if (selectedArray.length < maxTraits) {
+        onSelect([...selectedArray, traitValue]);
+      }
+    }
+  };
 
   return (
     <div>
-      <label className="text-white font-medium mb-3 block">Personality</label>
+      <label className="text-white font-medium mb-3 block">
+        Personality Traits ({selectedArray.length}/{maxTraits})
+      </label>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[40vh] overflow-y-auto p-1">
-        {traits.map(trait => (
-          <motion.button
-            key={trait.value}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onSelect(trait.value)}
-            className={`relative rounded-xl p-3 text-center transition-all ${
-              selected === trait.value
-                ? `bg-gradient-to-br ${trait.color} text-white shadow-lg ring-2 ring-white`
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
-          >
-            <div className="text-2xl mb-1">{trait.icon}</div>
-            <div className="text-xs font-medium">{trait.label}</div>
-            {selected === trait.value && (
-              <div className="absolute -top-1 -right-1 bg-white text-purple-600 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                ✓
-              </div>
-            )}
-          </motion.button>
-        ))}
+        {traits.map(trait => {
+          const isSelected = selectedArray.includes(trait.value);
+          return (
+            <motion.button
+              key={trait.value}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleSelect(trait.value)}
+              className={`relative rounded-xl p-3 text-center transition-all ${
+                isSelected
+                  ? `bg-gradient-to-br ${trait.color} text-white shadow-lg ring-2 ring-white`
+                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              }`}
+            >
+              <div className="text-2xl mb-1">{trait.icon}</div>
+              <div className="text-xs font-medium">{trait.label}</div>
+              {isSelected && (
+                <div className="absolute -top-1 -right-1 bg-white text-purple-600 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                  ✓
+                </div>
+              )}
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );

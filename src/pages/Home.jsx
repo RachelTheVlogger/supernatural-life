@@ -14,7 +14,7 @@ export default function Home() {
   const [characterName, setCharacterName] = useState('');
   const [characterGender, setCharacterGender] = useState('man');
   const [characterSexuality, setCharacterSexuality] = useState('bisexual');
-  const [characterPersonality, setCharacterPersonality] = useState('charming');
+  const [characterPersonality, setCharacterPersonality] = useState(['charming']);
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
   const [selectedType, setSelectedType] = useState(null);
