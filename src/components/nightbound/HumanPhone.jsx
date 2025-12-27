@@ -36,6 +36,7 @@ export default function HumanPhone({ human, onClose }) {
   const apps = [
     { id: 'messages', name: 'Messages', icon: MessageCircle, color: 'bg-green-500' },
     { id: 'calls', name: 'Phone', icon: Phone, color: 'bg-blue-500' },
+    { id: 'video', name: 'FaceTime', icon: Camera, color: 'bg-green-600' },
     { id: 'dating', name: 'Tinder', icon: Heart, color: 'bg-pink-500' },
     { id: 'social', name: 'Instagram', icon: Camera, color: 'bg-purple-500' },
     { id: 'music', name: 'Spotify', icon: Music, color: 'bg-green-600' },
@@ -445,6 +446,76 @@ export default function HumanPhone({ human, onClose }) {
                     </button>
                   )}
                 </div>
+              </div>
+            </motion.div>
+          ) : activeApp === 'video' ? (
+            <motion.div
+              initial={{ x: 300 }}
+              animate={{ x: 0 }}
+              exit={{ x: -300 }}
+              className="px-6 h-full"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <button onClick={() => setActiveApp(null)} className="text-blue-500">
+                  Back
+                </button>
+                <h2 className="text-white text-xl font-bold">Video Call</h2>
+                <div className="w-12" />
+              </div>
+
+              <div className="space-y-2">
+                {contacts.map(contact => (
+                  <button
+                    key={contact.id}
+                    onClick={async () => {
+                      const outcomes = contact.id === 'vampire' ? [
+                        `Video call with ${contact.name}.\n\nThey appeared on screen. Perfect. Magnetic.\n\n"I was hoping you'd call," they purred.\n\nYou talked. Flirted. The screen barely contains their presence.`,
+                        `FaceTime with ${contact.name}.\n\nTheir face filled your screen. Impossibly beautiful.\n\nYou could barely focus on words.\n\nJust... them. Always them.`,
+                      ] : contact.id === 'mom' ? [
+                        `Video call with Mom.\n\nShe smiled seeing your face.\n\nAsked about everything. Worried about you.\n\nNormal mom stuff. It helped.`,
+                      ] : contact.id === 'friend1' ? [
+                        `FaceTime with your best friend.\n\nThey made you laugh.\n\nGossiped. Caught up.\n\nFor a bit, you felt normal again.`,
+                      ] : [
+                        `Video call with ${contact.name}.\n\nQuick chat. Saw their face.\n\nIt was nice.`,
+                      ];
+                      
+                      const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+                      
+                      let obsessionChange = 0;
+                      if (contact.id === 'vampire') obsessionChange = 15;
+                      else if (contact.id === 'mom') obsessionChange = -5;
+                      else if (contact.id === 'friend1') obsessionChange = -4;
+                      else obsessionChange = -2;
+
+                      if (obsessionChange !== 0) {
+                        await base44.entities.Human.update(human.id, {
+                          obsession_level: Math.max(0, Math.min(100, (human.obsession_level || 0) + obsessionChange))
+                        });
+                        queryClient.invalidateQueries();
+                      }
+
+                      alert(outcome);
+                    }}
+                    className={`w-full bg-gray-800 rounded-xl p-4 ${
+                      contact.type === 'vampire' ? 'border-2 border-purple-500' : ''
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
+                          contact.type === 'vampire' ? 'bg-purple-600' :
+                          contact.type === 'family' ? 'bg-blue-600' :
+                          contact.type === 'friend' ? 'bg-green-600' :
+                          'bg-gray-600'
+                        }`}>
+                          {contact.emoji}
+                        </div>
+                        <p className="text-white font-bold">{contact.name}</p>
+                      </div>
+                      <Camera className="w-5 h-5 text-green-500" />
+                    </div>
+                  </button>
+                ))}
               </div>
             </motion.div>
           ) : activeApp === 'calls' ? (
