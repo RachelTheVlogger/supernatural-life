@@ -167,8 +167,8 @@ export default function Layout({ children, currentPageName }) {
       {children}
 
       {showNav && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-purple-900/30 z-50">
-          <div className="flex items-center px-2 py-3 overflow-x-auto gap-1 scrollbar-hide">
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-purple-900/30 z-50 overflow-x-auto">
+          <div className="flex items-center justify-start px-2 py-3 gap-2 min-w-max">
             {navItems.filter(item => item.show !== false).map(item => {
               const Icon = item.icon;
               const isActive = currentPageName === item.name;
@@ -184,12 +184,12 @@ export default function Layout({ children, currentPageName }) {
                     }
                   }}
                   disabled={item.disabled}
-                  className={`flex flex-col items-center gap-1 touch-manipulation relative flex-shrink-0 px-3 ${
+                  className={`flex flex-col items-center gap-1 touch-manipulation relative px-4 ${
                     isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-purple-300'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
-                  <span className="text-[10px] whitespace-nowrap">{item.name}</span>
+                  <span className="text-xs whitespace-nowrap">{item.name}</span>
                   {item.hasSelector && servants.length > 1 && (
                     <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 text-white text-[10px] rounded-full flex items-center justify-center">
                       {servants.length}
@@ -199,15 +199,6 @@ export default function Layout({ children, currentPageName }) {
               );
             })}
           </div>
-          <style>{`
-            .scrollbar-hide::-webkit-scrollbar {
-              display: none;
-            }
-            .scrollbar-hide {
-              -ms-overflow-style: none;
-              scrollbar-width: none;
-            }
-          `}</style>
         </div>
       )}
       
