@@ -46,19 +46,14 @@ export default function HumanHome() {
     queryFn: () => base44.entities.VampireState.list()
   });
 
-  const human = humans[0];
-
-  const { isLoading: vampireLoading } = useQuery({
-    queryKey: ['vampireState'],
-    enabled: false
-  });
-
   // Redirect to Home if no human exists
   React.useEffect(() => {
-    if (humans.length === 0 && !vampireLoading) {
+    if (humans.length === 0) {
       navigate(createPageUrl('Home'), { replace: true });
     }
-  }, [humans, vampireLoading, navigate]);
+  }, [humans, navigate]);
+
+  const human = humans[0];
 
   const handleActivity = async (activity) => {
     if (!human) return;
