@@ -635,14 +635,26 @@ Format as JSON:
       };
 
       const panelImages = [];
+      
+      // Collect character reference images for consistency
+      const characterRefs = (career.manga_characters || [])
+        .filter(c => c.referenceImage)
+        .map(c => c.referenceImage);
+      
       for (let i = 0; i < Math.min(panels.length, 6); i++) {
         setGenerationProgress(`Generating panel ${i + 1}/${panels.length}...`);
         
-        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling`;
+        const panelPrompt = `${panels[i].description}, ${stylePrompts[artStyle]}, manga panel, professional manga illustration, dramatic composition, NO TEXT, NO SPEECH BUBBLES, NO WORDS, pure visual storytelling, consistent character designs`;
         
         const generateParams = { prompt: panelPrompt };
-        if (career.style_reference_image) {
-          generateParams.existing_image_urls = [career.style_reference_image];
+        
+        // Include all reference images for consistency
+        const refImages = [];
+        if (career.style_reference_image) refImages.push(career.style_reference_image);
+        refImages.push(...characterRefs);
+        
+        if (refImages.length > 0) {
+          generateParams.existing_image_urls = refImages;
         }
         
         const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
