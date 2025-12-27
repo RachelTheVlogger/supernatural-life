@@ -9,6 +9,10 @@ export default function ServantJealousyEvent({ servant1, servant2, onClose }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!servant1 || !servant2) {
+    return null;
+  }
+
   const handleResolve = async (choice) => {
     setProcessing(true);
 

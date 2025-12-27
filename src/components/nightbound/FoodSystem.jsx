@@ -19,6 +19,19 @@ const MEALS = [
 ];
 
 export default function FoodSystem({ servants, vampireState, onClose }) {
+  const queryClient = useQueryClient();
+  const [tab, setTab] = useState('eat');
+  const [ordering, setOrdering] = useState(false);
+  const [cooking, setCooking] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState(null);
+  const [selectedServant, setSelectedServant] = useState(null);
+  const [outcome, setOutcome] = useState('');
+
+  const { data: inventory = [] } = useQuery({
+    queryKey: ['foodInventory'],
+    queryFn: () => base44.entities.Inventory.filter({ item_type: 'food' })
+  });
+
   if (!servants || servants.length === 0) {
     return (
       <motion.div
@@ -37,19 +50,6 @@ export default function FoodSystem({ servants, vampireState, onClose }) {
       </motion.div>
     );
   }
-  
-  const queryClient = useQueryClient();
-  const [tab, setTab] = useState('eat');
-  const [ordering, setOrdering] = useState(false);
-  const [cooking, setCooking] = useState(false);
-  const [selectedMeal, setSelectedMeal] = useState(null);
-  const [selectedServant, setSelectedServant] = useState(null);
-  const [outcome, setOutcome] = useState('');
-
-  const { data: inventory = [] } = useQuery({
-    queryKey: ['foodInventory'],
-    queryFn: () => base44.entities.Inventory.filter({ item_type: 'food' })
-  });
 
   const totalServings = inventory.reduce((sum, item) => sum + (item.quantity || 0), 0);
 

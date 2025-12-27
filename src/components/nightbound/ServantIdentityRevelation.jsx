@@ -4,10 +4,14 @@ import { Heart, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
-export default function ServantIdentityRevelation({ servant, onClose }) {
+export default function ServantIdentityRevelation({ servant, vampireState, onClose }) {
   const queryClient = useQueryClient();
   const [revealing, setRevealing] = useState(false);
   const [revealed, setRevealed] = useState(false);
+
+  if (!servant) {
+    return null;
+  }
   
   // Generate identity if not set
   const gender = servant.gender || ['man', 'woman', 'custom'][Math.floor(Math.random() * 3)];

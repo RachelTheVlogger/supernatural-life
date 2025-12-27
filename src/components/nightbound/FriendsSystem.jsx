@@ -86,9 +86,14 @@ export default function FriendsSystem({ servant, onClose }) {
   const queryClient = useQueryClient();
   
   const { data: potentialServants = [] } = useQuery({
-    queryKey: ['potentialServants', servant.id],
-    queryFn: () => base44.entities.PotentialServant.filter({ met_through_servant_id: servant.id })
+    queryKey: ['potentialServants', servant?.id],
+    queryFn: () => base44.entities.PotentialServant.filter({ met_through_servant_id: servant.id }),
+    enabled: !!servant?.id
   });
+
+  if (!servant) {
+    return null;
+  }
   
   const handleMeetNewPerson = async (e) => {
     if (e) e.stopPropagation();

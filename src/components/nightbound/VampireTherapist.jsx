@@ -33,6 +33,10 @@ export default function VampireTherapist({ vampireState, onClose }) {
     queryFn: () => base44.entities.Servant.list()
   });
 
+  if (!vampireState) {
+    return null;
+  }
+
   // Create Lilith if she doesn't exist
   React.useEffect(() => {
     const createLilith = async () => {
@@ -58,10 +62,6 @@ export default function VampireTherapist({ vampireState, onClose }) {
     };
     createLilith();
   }, [servants.length, queryClient]);
-
-  if (!vampireState) {
-    return null;
-  }
 
   const startSession = (client) => {
     setCurrentClient(client);
