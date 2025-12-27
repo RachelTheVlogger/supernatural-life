@@ -1889,15 +1889,32 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       : INTERACTIONS;
     
     const interaction = allInteractions[type];
+    if (!interaction) {
+      console.error('Unknown interaction type:', type);
+      setProcessing(false);
+      return;
+    }
+
     const rel = servant.relationship || 0;
     const tier = getRelationshipTier(rel);
     
     // Handle dynamic outcomes for gender-specific interactions
-    const outcomes = interaction.getDynamicOutcomes 
-      ? (['worship', 'oralService', 'rideDom', 'dominate', 'breeding'].includes(type) 
-          ? interaction.getDynamicOutcomes(vampireState.gender)[tier] 
-          : interaction.getDynamicOutcomes(servant.name)[tier])
-      : (interaction.outcomes[tier] || interaction.outcomes.low);
+    let outcomes;
+    if (interaction.getDynamicOutcomes) {
+      const dynamicOutcomes = ['worship', 'oralService', 'rideDom', 'dominate', 'breeding'].includes(type) 
+        ? interaction.getDynamicOutcomes(vampireState.gender) 
+        : interaction.getDynamicOutcomes(servant.name);
+      outcomes = dynamicOutcomes?.[tier] || dynamicOutcomes?.mid || dynamicOutcomes?.low;
+    } else if (interaction.outcomes) {
+      outcomes = interaction.outcomes[tier] || interaction.outcomes.mid || interaction.outcomes.low;
+    }
+
+    if (!outcomes || outcomes.length === 0) {
+      console.error('No outcomes found for interaction:', type);
+      setProcessing(false);
+      return;
+    }
+
     const baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
     
     // Add title if set
