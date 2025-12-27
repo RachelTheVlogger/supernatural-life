@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Users, Heart, MessageCircle, Calendar, Star, Coffee } from 'lucide-react';
+import { X, Users, Heart, MessageCircle, Calendar, Star, Coffee, TrendingUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import ReputationSystem from './ReputationSystem';
 
 export default function HumanSocialLife({ human, onClose }) {
   const [friends, setFriends] = useState([]);
   const [activeTab, setActiveTab] = useState('friends');
+  const [showReputation, setShowReputation] = useState(false);
   const queryClient = useQueryClient();
 
   const generateFriend = () => {
-    const names = ['Emma', 'Sarah', 'Jake', 'Alex', 'Morgan', 'Riley', 'Jordan'];
-    const personalities = ['supportive', 'party-animal', 'nerdy', 'dramatic', 'chill', 'gossipy'];
+    const names = ['Emma', 'Sarah', 'Jake', 'Alex', 'Morgan', 'Riley', 'Jordan', 'Taylor', 'Casey', 'Blake'];
+    const personalities = ['supportive', 'party-animal', 'nerdy', 'dramatic', 'chill', 'gossipy', 'loyal', 'protective'];
     
     const friend = {
       id: Date.now(),
@@ -19,30 +21,79 @@ export default function HumanSocialLife({ human, onClose }) {
       personality: personalities[Math.floor(Math.random() * personalities.length)],
       closeness: Math.floor(Math.random() * 30) + 20,
       trust: Math.floor(Math.random() * 40) + 30,
+      loyalty: Math.floor(Math.random() * 40) + 30,
       knowsSecret: false,
-      lastHangout: null
+      lastHangout: null,
+      timesInvitedOver: 0,
+      concernLevel: 0,
+      hasGossiped: false
     };
     
     setFriends([...friends, friend]);
   };
 
   const inviteOver = async (friend) => {
-    friend.closeness = Math.min(100, friend.closeness + 15);
+    const obsessionLevel = human.obsession_level || 0;
+    friend.timesInvitedOver += 1;
     friend.lastHangout = Date.now();
 
-    const outcomes = [
-      `${friend.name} came over to your apartment.\n\nYou cooked dinner together. Laughed. Watched movies.\n\nIt felt normal. Safe. Like old times.\n\n+15 closeness`,
-      `${friend.name} spent the evening at your place.\n\nYou talked for hours. About life. Dreams. Fears.\n\nThey noticed you seem... different lately.\n\n+15 closeness`,
-      `Movie night with ${friend.name}.\n\nPizza. Wine. Comfort.\n\nFor a few hours, you forgot about everything else.\n\n+15 closeness`,
-      `${friend.name} came over unexpectedly.\n\n"I was worried about you," they said.\n\nYou talked. Really talked. It helped.\n\n+15 closeness`
-    ];
+    const outcomes = [];
+
+    if (friend.trust < 40) {
+      outcomes.push({
+        text: `${friend.name} came over but seemed uncomfortable.\n\n"Nice place," they said, but left early.\n\nThey don't trust you enough yet.`,
+        closenessChange: 5,
+        trustChange: 2
+      });
+    } else if (friend.closeness > 60 && friend.trust > 60) {
+      outcomes.push(
+        {
+          text: `${friend.name} came over. You cooked together, watched movies.\n\nIt felt... normal. Like before.\n\n"I've missed this," they said.\n\nYou have too.`,
+          closenessChange: 15,
+          trustChange: 10,
+          loyaltyChange: 8
+        },
+        {
+          text: `Great night with ${friend.name}.\n\nYou laughed at old memories, talked about life.\n\nThey noticed something though. Photos on your wall.\n\n"Who's that?" they asked.\n\nYou changed the subject.`,
+          closenessChange: 10,
+          trustChange: -5,
+          concernGain: 10
+        }
+      );
+    } else {
+      outcomes.push({
+        text: `${friend.name} came over. You watched TV, ordered food.\n\nNice evening. Simple.\n\nThey're comfortable here now.`,
+        closenessChange: 10,
+        trustChange: 5,
+        loyaltyChange: 3
+      });
+    }
+
+    if (obsessionLevel > 70 && friend.timesInvitedOver > 2) {
+      outcomes.push({
+        text: `${friend.name} came over.\n\nSaw your obsession wall. Photos. Notes. Research.\n\n"What the FUCK is this?" they demanded.\n\nYou tried to explain. Couldn't.\n\nThey left. Fast.`,
+        closenessChange: -30,
+        trustChange: -40,
+        loyaltyChange: -20,
+        concernGain: 50,
+        willGossip: friend.personality === 'gossipy'
+      });
+    }
 
     const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+    friend.closeness = Math.max(0, Math.min(100, friend.closeness + (outcome.closenessChange || 0)));
+    friend.trust = Math.max(0, Math.min(100, friend.trust + (outcome.trustChange || 0)));
+    friend.loyalty = Math.max(0, Math.min(100, friend.loyalty + (outcome.loyaltyChange || 0)));
+    friend.concernLevel = Math.max(0, Math.min(100, friend.concernLevel + (outcome.concernGain || 0)));
+
+    if (outcome.willGossip) {
+      friend.hasGossiped = true;
+    }
 
     await base44.entities.NightLog.create({
-      entry: `${human.name} invited ${friend.name} over to their apartment`,
+      entry: `${human.name} invited ${friend.name} over - ${outcome.text.split('\n')[0]}`,
       category: 'interaction',
-      intensity: 'subtle'
+      intensity: outcome.closenessChange < -20 ? 'significant' : 'subtle'
     });
 
     await base44.entities.Human.update(human.id, {
@@ -50,81 +101,142 @@ export default function HumanSocialLife({ human, onClose }) {
     });
 
     queryClient.invalidateQueries();
-    alert(outcome);
+    alert(outcome.text);
     setFriends([...friends]);
   };
 
   const hangOut = async (friend) => {
-    const activities = ['coffee', 'movies', 'dinner', 'bar', 'shopping', 'gaming'];
-    const activity = activities[Math.floor(Math.random() * activities.length)];
-    
-    friend.closeness = Math.min(100, friend.closeness + Math.floor(Math.random() * 10) + 5);
+    const obsessionLevel = human.obsession_level || 0;
+    const daysSinceLastHangout = friend.lastHangout ? Math.floor((Date.now() - friend.lastHangout) / (1000 * 60 * 60 * 24)) : 999;
     friend.lastHangout = Date.now();
-    
-    // Chance they notice something's different
-    const noticeChance = (human.awareness_level || 0) / 100;
-    const noticed = Math.random() < noticeChance * 0.5;
-    
-    let outcome = `You went ${activity === 'coffee' ? 'for coffee' : activity === 'movies' ? 'to the movies' : `out for ${activity}`} with ${friend.name}.\n\n`;
-    
-    if (noticed && !friend.knowsSecret) {
-      outcome += `${friend.name} noticed you're... different lately.\n\n"Are you okay?" they asked. "You seem distracted."\n\nThey're starting to notice something's off.`;
-      friend.trust -= 5;
-    } else {
-      outcome += `Had a great time. Laughed. Talked. Normal life stuff.\n\nIt felt good to be... normal.`;
+
+    // Relationship decay if too long since last hangout
+    if (daysSinceLastHangout > 14) {
+      friend.closeness = Math.max(0, friend.closeness - 5);
+      friend.trust = Math.max(0, friend.trust - 3);
     }
-    
-    outcome += `\n\n+${friend.closeness - Math.floor(friend.closeness * 0.9)} closeness`;
-    
+
+    const outcomes = [];
+
+    if (obsessionLevel > 60) {
+      outcomes.push(
+        {
+          text: `You hung out with ${friend.name}.\n\nBut you were distracted. Distant.\n\nThey noticed. "Are you okay? You've been... different lately."\n\nYou lied. Said you're fine.\n\nThey don't believe you.`,
+          closenessChange: -10,
+          trustChange: -8,
+          concernGain: 15
+        },
+        {
+          text: `${friend.name} tried to talk to you.\n\nBut you kept checking your phone. Looking around.\n\n"Who are you looking for?" they asked.\n\nYou couldn't answer.\n\nThey're worried about you.`,
+          closenessChange: -15,
+          trustChange: -10,
+          concernGain: 20
+        }
+      );
+    } else {
+      outcomes.push(
+        {
+          text: `Great time with ${friend.name}!\n\nYou laughed. Talked. Felt normal.\n\nMaybe things can be okay.`,
+          closenessChange: 15,
+          trustChange: 10,
+          loyaltyChange: 5
+        },
+        {
+          text: `${friend.name} is a good friend.\n\nYou needed this. Normal human connection.\n\nIt helped. A little.`,
+          closenessChange: 10,
+          trustChange: 8,
+          loyaltyChange: 3
+        }
+      );
+    }
+
+    const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+    friend.closeness = Math.max(0, Math.min(100, friend.closeness + (outcome.closenessChange || 0)));
+    friend.trust = Math.max(0, Math.min(100, friend.trust + (outcome.trustChange || 0)));
+    friend.loyalty = Math.max(0, Math.min(100, friend.loyalty + (outcome.loyaltyChange || 0)));
+    friend.concernLevel = Math.max(0, Math.min(100, friend.concernLevel + (outcome.concernGain || 0)));
+
+    // Gossipy friends might spread word about your behavior
+    if (friend.personality === 'gossipy' && obsessionLevel > 50) {
+      friend.hasGossiped = true;
+    }
+
     await base44.entities.NightLog.create({
-      entry: `${human.name} hung out with friend ${friend.name} - ${activity}`,
+      entry: `${human.name} hung out with ${friend.name}${obsessionLevel > 60 ? ' - distracted and distant' : ' - had a good time'}`,
       category: 'interaction',
       intensity: 'subtle'
     });
-    
+
     await base44.entities.Human.update(human.id, {
       danger_level: Math.max(0, (human.danger_level || 0) - 2)
     });
-    
+
     queryClient.invalidateQueries();
-    alert(outcome);
+    alert(outcome.text);
     setFriends([...friends]);
   };
 
   const confideIn = async (friend) => {
-    if (friend.trust < 70) {
+    const obsessionLevel = human.obsession_level || 0;
+
+    if (friend.trust < 40) {
       alert(`${friend.name}'s trust is too low to confide in them.\n\nBuild your friendship more first.`);
       return;
     }
-    
+
+    if (obsessionLevel < 30) {
+      alert(`You don't really have anything heavy to confide in ${friend.name} about.`);
+      return;
+    }
+
     const outcomes = [
       {
-        text: `You told ${friend.name} about the... strangeness.\n\nThe things you've seen. The people who aren't people.\n\n"You're scaring me," they said.\n\nBut they listened.`,
-        reaction: 'supportive',
-        trustChange: 10
+        text: `You confided in ${friend.name} about your... feelings.\n\n"I can't stop thinking about someone," you admitted.\n\n${friend.name} listened. Worried.\n\n"That doesn't sound healthy," they said gently.\n\nBut they don't understand. They CAN'T understand.`,
+        closenessChange: 10,
+        trustChange: 15,
+        loyaltyChange: 5,
+        knowsPartial: true
       },
       {
-        text: `${friend.name} thinks you're losing it.\n\n"You need help," they said. "Professional help."\n\nThey're worried. About you. Your sanity.`,
-        reaction: 'concerned',
-        trustChange: -15
-      },
-      {
-        text: `"I believe you," ${friend.name} said quietly.\n\n"I've seen things too. Felt things."\n\nYou're not alone.`,
-        reaction: 'believer',
-        trustChange: 20
+        text: `You told ${friend.name} about your obsession.\n\nNot everything. Not the vampire part.\n\nJust... how you can't stop thinking about them.\n\n"You need help," ${friend.name} said.\n\nYou don't want help. You want them.`,
+        closenessChange: 5,
+        trustChange: 8,
+        knowsPartial: true
       }
     ];
-    
+
+    if (obsessionLevel > 70 && friend.closeness > 60 && friend.trust > 60) {
+      outcomes.push({
+        text: `You told ${friend.name} EVERYTHING.\n\nThe obsession. The stalking. The fantasies.\n\nThey looked horrified. Scared.\n\n"You need to stay away from them," they begged.\n\nBut you can't. You won't.`,
+        closenessChange: -20,
+        trustChange: -30,
+        loyaltyChange: friend.personality === 'loyal' ? 10 : -20,
+        knowsSecret: true,
+        willGossip: friend.personality === 'gossipy',
+        concernGain: 40
+      });
+    }
+
     const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-    friend.knowsSecret = true;
-    friend.trust = Math.max(0, Math.min(100, friend.trust + outcome.trustChange));
+    friend.closeness = Math.max(0, Math.min(100, friend.closeness + (outcome.closenessChange || 0)));
+    friend.trust = Math.max(0, Math.min(100, friend.trust + (outcome.trustChange || 0)));
+    friend.loyalty = Math.max(0, Math.min(100, friend.loyalty + (outcome.loyaltyChange || 0)));
+    friend.concernLevel = Math.max(0, Math.min(100, friend.concernLevel + (outcome.concernGain || 0)));
     
+    if (outcome.knowsSecret) {
+      friend.knowsSecret = true;
+    }
+
+    if (outcome.willGossip) {
+      friend.hasGossiped = true;
+    }
+
     await base44.entities.NightLog.create({
-      entry: `${human.name} confided in ${friend.name} about the supernatural - Reaction: ${outcome.reaction}`,
+      entry: `${human.name} confided in ${friend.name} about their obsession${outcome.knowsSecret ? ' - told them everything' : ' - partial truth'}`,
       category: 'interaction',
-      intensity: 'moderate'
+      intensity: outcome.knowsSecret ? 'significant' : 'moderate'
     });
-    
+
     queryClient.invalidateQueries();
     alert(outcome.text);
     setFriends([...friends]);
@@ -162,69 +274,90 @@ export default function HumanSocialLife({ human, onClose }) {
           <p className="text-gray-300 text-sm">Maintain friendships to stay grounded</p>
         </div>
 
-        <button
-          onClick={generateFriend}
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold mb-6"
-        >
-          Meet New Friend
-        </button>
+        <div className="flex gap-3 mb-6">
+          <button
+            onClick={generateFriend}
+            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold"
+          >
+            Meet New Friend
+          </button>
+          <button
+            onClick={() => setShowReputation(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2"
+          >
+            <TrendingUp className="w-5 h-5" />
+            Rep
+          </button>
+        </div>
 
         {friends.length === 0 ? (
           <p className="text-gray-500 text-center py-8">No friends yet</p>
         ) : (
           <div className="space-y-3">
             {friends.map(friend => (
-              <div key={friend.id} className="bg-gray-800/50 border border-blue-500/30 rounded-xl p-4">
-                <div className="flex justify-between items-start mb-3">
+              <div key={friend.id} className={`border rounded-xl p-4 ${
+                friend.hasGossiped ? 'bg-red-950/40 border-red-500/30' :
+                friend.concernLevel > 60 ? 'bg-orange-950/40 border-orange-500/30' :
+                'bg-gray-800/50 border-blue-500/30'
+              }`}>
+                <div className="flex justify-between items-start mb-2">
                   <div>
                     <h4 className="text-white font-bold">{friend.name}</h4>
                     <p className="text-gray-400 text-sm capitalize">{friend.personality}</p>
                   </div>
-                  {friend.knowsSecret && <span className="text-purple-400 text-xs">Knows your secret</span>}
+                  <div className="text-right">
+                    {friend.hasGossiped && <span className="text-red-400 text-xs block">💬 Gossiping</span>}
+                    {friend.concernLevel > 70 && <span className="text-orange-400 text-xs block">😟 Very Concerned</span>}
+                    {friend.knowsSecret && <span className="text-purple-400 text-xs block">Knows secret</span>}
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                <div className="grid grid-cols-3 gap-2 mb-2 text-xs">
                   <div>
-                    <p className="text-gray-400">Closeness</p>
-                    <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                      <div
-                        style={{ width: `${friend.closeness}%` }}
-                        className="h-2 bg-blue-500 rounded-full"
-                      />
+                    <p className="text-gray-400">Close</p>
+                    <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
+                      <div style={{ width: `${friend.closeness}%` }} className="h-1.5 bg-blue-500 rounded-full" />
                     </div>
                   </div>
                   <div>
                     <p className="text-gray-400">Trust</p>
-                    <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                      <div
-                        style={{ width: `${friend.trust}%` }}
-                        className="h-2 bg-purple-500 rounded-full"
-                      />
+                    <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
+                      <div style={{ width: `${friend.trust}%` }} className="h-1.5 bg-purple-500 rounded-full" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Loyal</p>
+                    <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
+                      <div style={{ width: `${friend.loyalty}%` }} className="h-1.5 bg-green-500 rounded-full" />
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                {friend.timesInvitedOver > 0 && (
+                  <p className="text-gray-500 text-xs mb-2">Invited over {friend.timesInvitedOver}x</p>
+                )}
+
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={() => hangOut(friend)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-bold"
+                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs"
                   >
                     Hang Out
                   </button>
                   <button
                     onClick={() => inviteOver(friend)}
-                    className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-bold"
+                    disabled={friend.trust < 30}
+                    className="bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:text-gray-500 text-white py-2 rounded-lg text-xs"
                   >
-                    Invite Over
+                    Invite
                   </button>
-                  {friend.trust >= 70 && !friend.knowsSecret && (
-                    <button
-                      onClick={() => confideIn(friend)}
-                      className="col-span-2 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm font-bold"
-                    >
-                      Confide In
-                    </button>
-                  )}
+                  <button
+                    onClick={() => confideIn(friend)}
+                    disabled={friend.trust < 40}
+                    className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:text-gray-500 text-white py-2 rounded-lg text-xs"
+                  >
+                    Confide
+                  </button>
                 </div>
               </div>
             ))}
