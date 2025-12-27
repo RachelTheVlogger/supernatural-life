@@ -168,10 +168,12 @@ export default function MangaCareer({ servant, onClose }) {
   };
 
   const goToNextPanel = () => {
-    if (viewingChapter && currentPanelIndex < (viewingChapter.panels?.length || 0) - 1) {
-      setCurrentPanelIndex(prev => prev + 1);
+    const maxIndex = (viewingChapter?.panels?.length || 0) - 1;
+    if (viewingChapter && currentPanelIndex < maxIndex) {
+      const nextIndex = currentPanelIndex + 1;
+      setCurrentPanelIndex(nextIndex);
       resetPanelView();
-      saveBookmark(viewingChapter.number, currentPanelIndex + 1);
+      saveBookmark(viewingChapter.number, nextIndex);
     }
   };
 
@@ -186,7 +188,9 @@ export default function MangaCareer({ servant, onClose }) {
   React.useEffect(() => {
     if (viewingChapter) {
       const bookmark = getBookmark(viewingChapter.number);
-      setCurrentPanelIndex(bookmark);
+      const maxIndex = (viewingChapter?.panels?.length || 1) - 1;
+      const safeIndex = Math.min(bookmark, maxIndex);
+      setCurrentPanelIndex(safeIndex);
       resetPanelView();
     }
   }, [viewingChapter]);
@@ -1519,7 +1523,7 @@ Format as JSON:
           </div>
 
           <div className="absolute bottom-4 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent p-6 pb-8">
-            {viewingChapter.panels[currentPanelIndex].dialogue && (
+            {viewingChapter.panels[currentPanelIndex]?.dialogue && (
               <div className="bg-gray-900/90 rounded-lg p-4 mb-4 max-w-2xl mx-auto border border-purple-500/30">
                 <p className="text-white text-center">{viewingChapter.panels[currentPanelIndex].dialogue}</p>
               </div>
