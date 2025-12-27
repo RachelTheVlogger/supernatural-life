@@ -1764,6 +1764,27 @@ const INTERACTIONS = {
     gains: [0, 0]
   },
   
+  videocall: {
+    icon: Eye,
+    label: 'Video call (watch them)',
+    category: 'social',
+    gains: [15, 25],
+    outcomes: {
+      mid: ['Video call. You watched them touch themselves. They were shy at first.', 'They stripped for you on camera. Distance made it exciting.', 'Video call intimacy. New kind of connection.'],
+      high: ['You watched them masturbate on video call. They came for you. Perfect.', 'Video call. You told them exactly what to do. They obeyed. Hot.', 'Long distance pleasure. They came while you watched. Beautiful.']
+    }
+  },
+  sexting: {
+    icon: MessageCircle,
+    label: 'Sext with them',
+    category: 'social',
+    gains: [12, 20],
+    outcomes: {
+      mid: ['Dirty texts back and forth. They sent photos. You responded.', 'Sexting session. Words became foreplay. Intense.', 'Text after text. Building tension. They were touching themselves.'],
+      high: ['Sexting intensified. They sent videos. You came together over text.', 'Dirty messages. Photos. Videos. They came while texting you.', 'Sexting until late. They begged you to come over. You did.']
+    }
+  },
+
   // Dark/Vampire options
   turn: {
     icon: Droplets,
@@ -1853,7 +1874,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     'oralService', 'rideDom', 'multiple', 'Marathon', 'vampireSex', 'vampireBiteDuringsex',
     'vampireRoughFuck', 'vampireSpeedFuck', 'vampireWallFuck', 'vampireMarathon',
     'roughBehind', 'behindSeduction', 'publicUse', 'casualUse', 'service', 'vampireDoubleFeeding',
-    'tease', 'makeout', 'exhibition', 'vampireBloodPlay', 'vampireRace', 'vampireSpar'
+    'tease', 'makeout', 'exhibition', 'vampireBloodPlay', 'vampireRace', 'vampireSpar',
+    'videocall', 'sexting'
   ];
 
   const handleInteraction = async (type) => {
@@ -2531,15 +2553,26 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
                   let baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
                   
-                  // Add body part specifics
-                  const bodyPartText = bodyPart === 'clit' ? '\n\nYou watched them rub their clit in circles. Faster. Harder. So wet.' :
-                                      bodyPart === 'dick' ? '\n\nYou watched them stroke their hard cock. Grip tight. Up and down. So hard for you.' :
+                  // Add body part specifics - sex positions include both orgasms
+                  const bodyPartText = bodyPart === 'ride' ? (servant.gender === 'woman' ? 
+                    '\n\nThey rode you hard, bouncing, taking you deep. Moaning loudly. You both came together, crying out.' :
+                    '\n\nThey rode them desperately. Grinding. Fucking. You both came, shaking.') :
+                                      bodyPart === 'thrust' ? (servant.gender === 'woman' ?
+                    '\n\nThey pounded into them hard. Deep thrusts. Both moaning. You both came together, trembling.' :
+                    '\n\nYou thrust into them relentlessly. Hard. Deep. Both of you came, gasping.') :
+                                      bodyPart === 'oral' ? '\n\nTheir mouth worked perfectly. You both were lost in pleasure. They made you cum hard.' :
+                                      bodyPart === 'receive' ? '\n\nYour tongue worked them. They came in your mouth, moaning. You both satisfied.' :
+                                      bodyPart === 'receive_oral' ? '\n\nThey sucked you perfectly. You came hard. They swallowed, both satisfied.' :
+                                      bodyPart === 'penetrate' ? '\n\nYou penetrated them deep. Both moaning. Came together, bodies shaking.' :
+                                      bodyPart === 'mutual' ? '\n\nPleasuring each other simultaneously. Both came at once. Perfect.' :
+                                      bodyPart === 'clit' ? '\n\nYou watched them rub their clit in circles. Faster. Harder. So wet. They came for you.' :
+                                      bodyPart === 'dick' ? '\n\nYou watched them stroke their hard cock. Grip tight. Up and down. They came hard.' :
                                       bodyPart === 'breasts' ? '\n\nThey pinched and played with their nipples. Moaning. Getting so hard.' :
-                                      bodyPart === 'fingers' ? '\n\nFingers deep inside themselves. Two, then three. Fucking themselves for you.' :
-                                      bodyPart === 'balls' ? '\n\nPlaying with their balls while stroking. Squeezing. So full.' :
-                                      touchingMultiple ? (servant.gender === 'woman' ? '\n\nRubbing their clit while playing with their tits. Both spots at once. Overwhelming.' :
-                                                         servant.gender === 'man' ? '\n\nStroking their dick while squeezing their balls. Everything at once. Intense.' :
-                                                         '\n\nTouching everywhere. Multiple spots. Too much sensation.') : '';
+                                      bodyPart === 'fingers' ? '\n\nFingers deep inside themselves. Two, then three. Fucking themselves. Came hard for you.' :
+                                      bodyPart === 'balls' ? '\n\nPlaying with their balls while stroking. Squeezing. So full. Came everywhere.' :
+                                      touchingMultiple ? (servant.gender === 'woman' ? '\n\nRubbing their clit while playing with their tits. Both spots at once. They came hard, shaking.' :
+                                                         servant.gender === 'man' ? '\n\nStroking their dick while squeezing their balls. Everything at once. Came explosively.' :
+                                                         '\n\nTouching everywhere. Multiple spots. Too much sensation. Came hard.') : '';
                   
                   // Add edging flavor
                   const intensityText = edgeCount > 3 ? '\n\nYou made them edge over and over. Shaking. Desperate. Begging. Finally allowed.' : 
