@@ -61,6 +61,17 @@ export default function DancingSlider({ gender, context = 'performance', vampire
 
       {/* Visual feedback */}
       <div className="relative h-40 bg-black/40 rounded-xl mb-6 overflow-hidden">
+        {/* Background pulse */}
+        <motion.div
+          animate={{
+            opacity: [0.2, 0.5, 0.2],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{ duration: 1 + (1 - intensity / 100), repeat: Infinity }}
+          className="absolute inset-0 bg-gradient-to-t from-pink-600/30 via-purple-600/20 to-transparent"
+        />
+        
+        {/* Particles */}
         <AnimatePresence>
           {intensity > 20 && (
             <>
@@ -77,25 +88,47 @@ export default function DancingSlider({ gender, context = 'performance', vampire
                   transition={{ duration: 2, delay: i * 0.1, repeat: Infinity }}
                   className="absolute bottom-0 left-1/2"
                 >
-                  <Flame className="w-6 h-6 text-pink-500" />
+                  {i % 3 === 0 ? '🔥' : i % 3 === 1 ? '💋' : '✨'}
                 </motion.div>
               ))}
             </>
           )}
         </AnimatePresence>
         
+        {/* Dancing figure */}
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
             animate={{ 
-              scale: [1, 1 + intensity / 100, 1],
-              rotate: [0, intensity / 10, 0, -intensity / 10, 0]
+              scale: [1, 1 + intensity / 80, 1],
+              rotate: intensity > 50 ? [0, -15, 15, -10, 10, 0] : [0, -8, 8, 0],
+              y: moveType === 'drop' || moveType === 'floor' ? [0, 20, 0] : [0, -10, 0],
+              x: moveType === 'sway' || moveType === 'grind' ? [-10, 10, -10] : 0
             }}
-            transition={{ duration: 2, repeat: Infinity }}
+            transition={{ 
+              duration: intensity > 60 ? 0.5 : 1,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
             className="text-6xl"
+            style={{
+              filter: intensity > 70 ? `drop-shadow(0 0 ${intensity / 5}px #ec4899)` : 'none'
+            }}
           >
-            💃
+            {gender === 'woman' ? '💃' : '🕺'}
           </motion.div>
         </div>
+        
+        {/* Spotlight effect */}
+        {intensity > 40 && (
+          <motion.div
+            animate={{
+              opacity: [0.3, 0.6, 0.3],
+              scale: [0.8, 1.2, 0.8]
+            }}
+            transition={{ duration: 1, repeat: Infinity }}
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-yellow-400/20 rounded-full blur-3xl"
+          />
+        )}
 
         {intensity > 50 && vampireName && (
           <motion.div
