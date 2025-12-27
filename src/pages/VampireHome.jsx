@@ -68,7 +68,7 @@ export default function VampireHome() {
   const [showJournal, setShowJournal] = useState(false);
   const [showDoppelgangers, setShowDoppelgangers] = useState(false);
 
-  const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
+  const { data: vampireStates = [], isLoading: vampireLoading, isSuccess } = useQuery({
     queryKey: ['vampireState'],
     queryFn: async () => {
       try {
@@ -156,20 +156,12 @@ export default function VampireHome() {
     }
   }, [servants, identityRevelation, vampireStates.length]);
 
-  // Redirect to Home if no vampire state exists (only after initial load completes)
-  const [hasLoaded, setHasLoaded] = React.useState(false);
-  
+  // Redirect to Home only if fetch succeeded and confirmed no vampire exists
   useEffect(() => {
-    if (!vampireLoading) {
-      setHasLoaded(true);
-    }
-  }, [vampireLoading]);
-
-  useEffect(() => {
-    if (hasLoaded && vampireStates.length === 0) {
+    if (isSuccess && vampireStates.length === 0) {
       navigate(createPageUrl('Home'), { replace: true });
     }
-  }, [vampireStates, hasLoaded, navigate]);
+  }, [isSuccess, vampireStates.length, navigate]);
 
   // Don't render anything if no vampire state or loading
   if (vampireLoading) {
