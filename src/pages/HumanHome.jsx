@@ -17,6 +17,8 @@ import HumanSocialLife from '@/components/nightbound/HumanSocialLife';
 import HumanMentalHealth from '@/components/nightbound/HumanMentalHealth';
 import HumanApartment from '@/components/nightbound/HumanApartment';
 import HumanSkills from '@/components/nightbound/HumanSkills';
+import HumanDating from '@/components/nightbound/HumanDating';
+import HumanSocialMedia from '@/components/nightbound/HumanSocialMedia';
 
 
 const HUMAN_ACTIVITIES = [
@@ -30,6 +32,8 @@ const HUMAN_ACTIVITIES = [
   { id: 'mental_health', label: '🧠 Mental Health', icon: Heart, duration: 0, isModal: true },
   { id: 'apartment', label: '🏠 Apartment', icon: HomeIcon, duration: 0, isModal: true },
   { id: 'skills', label: '⭐ Skills', icon: BookOpen, duration: 0, isModal: true },
+  { id: 'dating', label: '💕 Dating', icon: Heart, duration: 0, isModal: true },
+  { id: 'social_media', label: '📱 Social Media', icon: Eye, duration: 0, isModal: true },
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
   { id: 'coffee', label: 'Coffee Shop', icon: Coffee, duration: 4000, awarenessChance: 0.15 },
   { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 4500, awarenessChance: 0.05 },
@@ -68,6 +72,8 @@ export default function HumanHome() {
   const [showMentalHealth, setShowMentalHealth] = useState(false);
   const [showApartment, setShowApartment] = useState(false);
   const [showSkills, setShowSkills] = useState(false);
+  const [showDating, setShowDating] = useState(false);
+  const [showSocialMedia, setShowSocialMedia] = useState(false);
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -120,6 +126,10 @@ export default function HumanHome() {
         setShowApartment(true);
       } else if (activity.id === 'skills') {
         setShowSkills(true);
+      } else if (activity.id === 'dating') {
+        setShowDating(true);
+      } else if (activity.id === 'social_media') {
+        setShowSocialMedia(true);
       }
       return;
     }
@@ -889,6 +899,14 @@ export default function HumanHome() {
 
         {showSkills && (
           <HumanSkills human={human} onClose={() => setShowSkills(false)} />
+        )}
+
+        {showDating && (
+          <HumanDating human={human} onClose={() => setShowDating(false)} />
+        )}
+
+        {showSocialMedia && (
+          <HumanSocialMedia human={human} onClose={() => setShowSocialMedia(false)} />
         )}
 
         {showIdentity && (

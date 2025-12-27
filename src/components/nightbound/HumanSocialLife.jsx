@@ -26,6 +26,34 @@ export default function HumanSocialLife({ human, onClose }) {
     setFriends([...friends, friend]);
   };
 
+  const inviteOver = async (friend) => {
+    friend.closeness = Math.min(100, friend.closeness + 15);
+    friend.lastHangout = Date.now();
+
+    const outcomes = [
+      `${friend.name} came over to your apartment.\n\nYou cooked dinner together. Laughed. Watched movies.\n\nIt felt normal. Safe. Like old times.\n\n+15 closeness`,
+      `${friend.name} spent the evening at your place.\n\nYou talked for hours. About life. Dreams. Fears.\n\nThey noticed you seem... different lately.\n\n+15 closeness`,
+      `Movie night with ${friend.name}.\n\nPizza. Wine. Comfort.\n\nFor a few hours, you forgot about everything else.\n\n+15 closeness`,
+      `${friend.name} came over unexpectedly.\n\n"I was worried about you," they said.\n\nYou talked. Really talked. It helped.\n\n+15 closeness`
+    ];
+
+    const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+
+    await base44.entities.NightLog.create({
+      entry: `${human.name} invited ${friend.name} over to their apartment`,
+      category: 'interaction',
+      intensity: 'subtle'
+    });
+
+    await base44.entities.Human.update(human.id, {
+      danger_level: Math.max(0, (human.danger_level || 0) - 3)
+    });
+
+    queryClient.invalidateQueries();
+    alert(outcome);
+    setFriends([...friends]);
+  };
+
   const hangOut = async (friend) => {
     const activities = ['coffee', 'movies', 'dinner', 'bar', 'shopping', 'gaming'];
     const activity = activities[Math.floor(Math.random() * activities.length)];
@@ -176,17 +204,23 @@ export default function HumanSocialLife({ human, onClose }) {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => hangOut(friend)}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-bold"
+                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-bold"
                   >
                     Hang Out
+                  </button>
+                  <button
+                    onClick={() => inviteOver(friend)}
+                    className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-bold"
+                  >
+                    Invite Over
                   </button>
                   {friend.trust >= 70 && !friend.knowsSecret && (
                     <button
                       onClick={() => confideIn(friend)}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm font-bold"
+                      className="col-span-2 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm font-bold"
                     >
                       Confide In
                     </button>

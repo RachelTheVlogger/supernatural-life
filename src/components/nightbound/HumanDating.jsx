@@ -1,0 +1,209 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { X, Heart, MessageCircle, Calendar, AlertTriangle } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+export default function HumanDating({ human, onClose }) {
+  const [matches, setMatches] = useState([]);
+  const [currentDate, setCurrentDate] = useState(null);
+  const queryClient = useQueryClient();
+
+  const { data: vampires = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+
+  const vampire = vampires[0];
+  const obsessedWithVampire = vampire && (human.obsession_level || 0) > 50;
+
+  const generateMatch = () => {
+    const names = ['Alex', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Sam'];
+    const personalities = ['sweet', 'funny', 'intense', 'chill', 'nerdy', 'adventurous', 'mysterious'];
+    
+    const match = {
+      id: Date.now(),
+      name: names[Math.floor(Math.random() * names.length)],
+      personality: personalities[Math.floor(Math.random() * personalities.length)],
+      attraction: Math.floor(Math.random() * 40) + 30,
+      connection: Math.floor(Math.random() * 30) + 20,
+      dates: 0,
+      interested: true
+    };
+    
+    setMatches([...matches, match]);
+  };
+
+  const goOnDate = async (match) => {
+    setCurrentDate(match);
+    match.dates += 1;
+
+    const outcomes = [];
+
+    if (obsessedWithVampire) {
+      outcomes.push(
+        {
+          text: `Date with ${match.name}.\n\nThey're nice. Attractive. Normal.\n\nBut you can't stop thinking about ${vampire.vampire_name}.\n\nYou're comparing everything. Everyone.\n\n${match.name} notices you're distracted.`,
+          attractionChange: -15,
+          connectionChange: -10
+        },
+        {
+          text: `You tried. Really tried.\n\n${match.name} held your hand. Kissed you.\n\nBut it felt... wrong. Empty.\n\nThey're not ${vampire.vampire_name}.\n\nNothing feels right anymore.`,
+          attractionChange: -20,
+          connectionChange: -15
+        }
+      );
+    } else {
+      outcomes.push(
+        {
+          text: `Great date with ${match.name}!\n\nYou laughed. Connected. They kissed you goodnight.\n\nIt felt... nice. Real.\n\nMaybe this could be something.`,
+          attractionChange: 15,
+          connectionChange: 20
+        },
+        {
+          text: `${match.name} is amazing.\n\nYou talked for hours. Lost track of time.\n\nThey make you forget about... everything else.\n\nYou want to see them again.`,
+          attractionChange: 20,
+          connectionChange: 25
+        },
+        {
+          text: `Date was okay.\n\n${match.name} is nice, but... something's missing.\n\nNo spark. Just... pleasant.\n\nYou'll give it another shot.`,
+          attractionChange: 5,
+          connectionChange: 5
+        }
+      );
+    }
+
+    const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+    match.attraction = Math.max(0, Math.min(100, match.attraction + outcome.attractionChange));
+    match.connection = Math.max(0, Math.min(100, match.connection + outcome.connectionChange));
+
+    if (match.attraction < 20 || match.connection < 20) {
+      match.interested = false;
+    }
+
+    await base44.entities.NightLog.create({
+      entry: `${human.name} went on date with ${match.name}${obsessedWithVampire ? ` - distracted by thoughts of ${vampire.vampire_name}` : ''}`,
+      category: 'interaction',
+      intensity: 'moderate'
+    });
+
+    if (obsessedWithVampire) {
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.min(100, (human.obsession_level || 0) + 5)
+      });
+    }
+
+    queryClient.invalidateQueries();
+    alert(outcome.text);
+    setCurrentDate(null);
+    setMatches([...matches]);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-gradient-to-br from-pink-900/30 to-red-900/30 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-pink-500/30"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <Heart className="w-8 h-8 text-pink-400" />
+            <div>
+              <h2 className="text-2xl font-bold text-white">Dating</h2>
+              <p className="text-gray-400 text-sm">Try to move on... or fail trying</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {obsessedWithVampire && (
+          <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4 mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="w-5 h-5 text-purple-400" />
+              <h3 className="text-white font-bold">Obsession Warning</h3>
+            </div>
+            <p className="text-purple-300 text-sm">
+              You're obsessed with {vampire.vampire_name}. Dating others will be... difficult.
+            </p>
+          </div>
+        )}
+
+        <div className="bg-pink-950/40 border border-pink-500/30 rounded-xl p-4 mb-6">
+          <h3 className="text-white font-bold mb-2">💕 Dating Pool</h3>
+          <p className="text-gray-300 text-sm">Maybe you can find someone... normal</p>
+        </div>
+
+        <button
+          onClick={generateMatch}
+          className="w-full bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700 text-white py-3 rounded-xl font-bold mb-6"
+        >
+          Find Match
+        </button>
+
+        {matches.length === 0 ? (
+          <p className="text-gray-500 text-center py-8">No matches yet</p>
+        ) : (
+          <div className="space-y-3">
+            {matches.map(match => (
+              <div key={match.id} className={`rounded-xl p-4 border ${
+                match.interested ? 'bg-gray-800/50 border-pink-500/30' : 'bg-red-950/40 border-red-500/30'
+              }`}>
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="text-white font-bold">{match.name}</h4>
+                    <p className="text-gray-400 text-sm capitalize">{match.personality}</p>
+                  </div>
+                  {!match.interested && <span className="text-red-400 text-xs">Lost interest</span>}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                  <div>
+                    <p className="text-gray-400">Attraction</p>
+                    <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
+                      <div
+                        style={{ width: `${match.attraction}%` }}
+                        className="h-2 bg-pink-500 rounded-full"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Connection</p>
+                    <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
+                      <div
+                        style={{ width: `${match.connection}%` }}
+                        className="h-2 bg-red-500 rounded-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-gray-400 text-xs mb-3">Dates: {match.dates}</p>
+
+                {match.interested ? (
+                  <button
+                    onClick={() => goOnDate(match)}
+                    className="w-full bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-sm font-bold"
+                  >
+                    Go On Date
+                  </button>
+                ) : (
+                  <p className="text-red-400 text-sm text-center">They're not interested anymore</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
