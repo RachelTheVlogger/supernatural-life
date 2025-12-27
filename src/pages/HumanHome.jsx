@@ -374,7 +374,7 @@ export default function HumanHome() {
       } else if (activity.id === 'sleep') {
         awarenessGain = Math.floor(Math.random() * 10) + 5;
         
-        const sleepOutcomes = hasVampire && vampire ? [
+        const sleepOutcomes = hasVampire && vampire && (human.obsession_level || 0) > 0 ? [
           `You lay in bed. Can't sleep. Keep thinking about them.\n\nTheir eyes. Their voice. The way they move.\n\nYou touch yourself thinking about ${vampire.vampire_name}. Imagine them watching. Wanting them to watch.\n\nYou finish gasping their name into your pillow.\n\nThis obsession is consuming you.`,
           `Dreams of ${vampire.vampire_name}. Their hands on you. Their teeth.\n\nYou wake up wet/hard, panting.\n\nIt felt so real. You wanted it to be real.\n\nYou touch yourself again, chasing that dream.\n\nWhat's happening to you?`,
           `You fantasize about meeting them in the dark.\n\nThem pinning you against a wall. Biting your neck while they fuck you.\n\nThe danger. The power. The surrender.\n\nYou come imagining being theirs completely.\n\nYou're addicted to the fantasy.`,
@@ -390,7 +390,7 @@ export default function HumanHome() {
         
         result = sleepOutcomes[Math.floor(Math.random() * sleepOutcomes.length)];
         
-        if (hasVampire && (human.awareness_level || 0) > 20) {
+        if (hasVampire && (human.obsession_level || 0) > 0) {
           await base44.entities.Human.update(human.id, {
             wants_to_be_turned: Math.random() > 0.5,
             obsession_level: Math.min(100, (human.obsession_level || 0) + Math.floor(Math.random() * 15) + 5)
