@@ -4,6 +4,7 @@ import { X, Music, DollarSign, Users, Heart, Flame, ShoppingBag, Award, Mic, Vid
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import MusicEquipment from './MusicEquipment';
+import DancingSlider from './DancingSlider';
 
 export default function MusicCareer({ human, onClose }) {
   const [activeTab, setActiveTab] = useState('create');
@@ -27,6 +28,7 @@ export default function MusicCareer({ human, onClose }) {
   const [showEquipment, setShowEquipment] = useState(false);
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const [newAlbum, setNewAlbum] = useState({ title: '', selectedSongs: [] });
+  const [showDancing, setShowDancing] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: vampires = [] } = useQuery({
@@ -85,18 +87,36 @@ export default function MusicCareer({ human, onClose }) {
   };
 
   const performLive = async () => {
+    setShowDancing(true);
+  };
+
+  const finishPerformance = async (danceData) => {
+    setShowDancing(false);
     setPerforming(true);
 
     const venues = ['small bar', 'coffee shop', 'club', 'concert hall', 'underground venue'];
     const venue = venues[Math.floor(Math.random() * venues.length)];
     const crowd = Math.floor(Math.random() * 200) + 20;
-    const tips = Math.floor(Math.random() * 150) + 50;
+    const performanceBonus = Math.floor((danceData.performance / 100) * 100);
+    const seductionBonus = Math.floor((danceData.seduction / 100) * 80);
+    const tips = Math.floor(Math.random() * 150) + 50 + performanceBonus + seductionBonus;
+
+    const moveDescriptions = {
+      sway: 'swaying your hips slowly, sensually',
+      grind: 'grinding, body rolling',
+      drop: 'dropping to the floor, crawling',
+      twerk: 'bouncing, twerking',
+      pole: 'spinning on the pole',
+      floor: 'doing floor work',
+      jump: 'jumping with high energy',
+      strip: 'teasing, slowly stripping'
+    };
 
     const outcomes = [
-      `You performed at a ${venue}. ${crowd} people showed up. The energy was electric. You lost yourself in the music. Earned $${tips} in tips.`,
-      `Show at ${venue} went amazing. ${crowd} people singing along. Some recorded it. Posted online. You're gaining followers. +$${tips}`,
-      `Performed at ${venue}. ${crowd} in the crowd. Someone in the back watched you the entire set. Never looked away. Intense. Earned $${tips}.`,
-      `Show at ${venue} was packed. ${crowd} people. The vibe was dark. Perfect. Some people in the crowd seemed... different. Too perfect. +$${tips}`
+      `You performed at ${venue}. ${crowd} people showed up.\n\nYou danced ${moveDescriptions[danceData.moveType]}.\n\nThe crowd went WILD. Eyes on you. All of you.\n\nEarned $${tips} in tips.`,
+      `Show at ${venue}.\n\n${crowd} people watching you move.\n\nYou were ${moveDescriptions[danceData.moveType]}.\n\nPeople recording. Posted everywhere.\n\n+$${tips}`,
+      `${venue} was PACKED. ${crowd} fans.\n\nYou danced like you were possessed. ${moveDescriptions[danceData.moveType]}.\n\nSomeone in VIP never took their eyes off you.\n\n+$${tips}`,
+      `Performed at ${venue}.\n\n${crowd} people. You were ${moveDescriptions[danceData.moveType]}.\n\nThe way you moved... hypnotic. Dangerous.\n\nEarned $${tips}`
     ];
 
     const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
@@ -335,7 +355,7 @@ export default function MusicCareer({ human, onClose }) {
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-indigo-500/30"
+        className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-indigo-500/30"
       >
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
@@ -939,6 +959,32 @@ export default function MusicCareer({ human, onClose }) {
             onPurchase={purchaseEquipment}
           />
         )}
+
+        <AnimatePresence>
+          {showDancing && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/95 flex items-center justify-center z-[60] p-4"
+              onClick={() => setShowDancing(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.95 }}
+                animate={{ scale: 1 }}
+                onClick={(e) => e.stopPropagation()}
+                className="max-w-lg w-full"
+              >
+                <DancingSlider
+                  gender={human.gender}
+                  context="stage"
+                  vampireName={vampire?.vampire_name}
+                  onFinish={finishPerformance}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>}
       </motion.div>
     </motion.div>
   );
