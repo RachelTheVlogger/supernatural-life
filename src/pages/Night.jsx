@@ -467,15 +467,14 @@ export default function Night() {
           <span className="text-2xl">⚡</span>
           <p className="text-white text-xs mt-1">Artifacts</p>
         </button>
-        {servants.length > 0 && (
-          <button
-            onClick={() => setShowFamily(true)}
-            className="bg-blue-950/40 hover:bg-blue-950/60 border border-blue-500/30 rounded-lg p-3 text-center transition-colors"
-          >
-            <span className="text-2xl">👨‍👩‍👧</span>
-            <p className="text-white text-xs mt-1">Family</p>
-          </button>
-        )}
+        <button
+          onClick={() => setShowFamily(true)}
+          disabled={servants.length === 0}
+          className="bg-blue-950/40 hover:bg-blue-950/60 border border-blue-500/30 rounded-lg p-3 text-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="text-2xl">👨‍👩‍👧</span>
+          <p className="text-white text-xs mt-1">Family</p>
+        </button>
         <button
           onClick={() => setShowBloodBonds(true)}
           className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
