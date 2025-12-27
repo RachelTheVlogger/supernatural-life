@@ -58,11 +58,33 @@ export default function MangaCareer({ servant, onClose }) {
 
   const { data: careers = [], isLoading: careersLoading } = useQuery({
     queryKey: ['career', entityId],
-    queryFn: () => base44.entities.ServantCareer.filter({ servant_id: entityId }),
-    enabled: !!entityId
+    queryFn: async () => {
+      if (!entityId) return [];
+      return await base44.entities.ServantCareer.filter({ servant_id: entityId });
+    },
+    enabled: !!entityId,
+    retry: 1
   });
 
   const career = careers[0];
+
+  if (!entityId) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+        onClick={onClose}
+      >
+        <div className="bg-gray-900 rounded-xl p-6 text-center">
+          <p className="text-white mb-4">No character data found</p>
+          <button onClick={onClose} className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg text-white">
+            Close
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
 
   if (careersLoading) {
     return (
