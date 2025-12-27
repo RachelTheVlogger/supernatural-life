@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Music, DollarSign, Users, Heart, Flame, ShoppingBag, Award, Mic, Video, Newspaper } from 'lucide-react';
+import { X, Music, DollarSign, Users, Heart, Flame, ShoppingBag, Award, Mic, Video, Newspaper, Brain, Trophy, Star } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import MusicEquipment from './MusicEquipment';
@@ -29,6 +29,15 @@ export default function MusicCareer({ human, onClose }) {
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const [newAlbum, setNewAlbum] = useState({ title: '', selectedSongs: [] });
   const [showDancing, setShowDancing] = useState(false);
+  const [aiHelper, setAiHelper] = useState(null);
+  const [musicVideos, setMusicVideos] = useState([]);
+  const [creatingVideo, setCreatingVideo] = useState(null);
+  const [recordLabel, setRecordLabel] = useState(null);
+  const [labelOffers, setLabelOffers] = useState([]);
+  const [collaborations, setCollaborations] = useState([]);
+  const [awards, setAwards] = useState([]);
+  const [nominations, setNominations] = useState([]);
+  const [reputation, setReputation] = useState(0);
   const queryClient = useQueryClient();
 
   const { data: vampires = [] } = useQuery({
@@ -343,6 +352,191 @@ export default function MusicCareer({ human, onClose }) {
     alert(`Purchased ${item.name}! +${item.quality}% recording quality`);
   };
 
+  // AI Songwriting Helper
+  const useAIHelper = async () => {
+    const prompts = {
+      lyrics: `Write ${newSong.contentType} ${newSong.genre} song lyrics about ${newSong.vibe} emotions`,
+      melody: `Suggest a ${newSong.genre} melody structure that feels ${newSong.vibe}`,
+      structure: `What song structure works best for ${newSong.genre} music?`
+    };
+
+    const response = await base44.integrations.Core.InvokeLLM({
+      prompt: prompts[aiHelper.type],
+      response_json_schema: {
+        type: 'object',
+        properties: {
+          content: { type: 'string' },
+          tips: { type: 'array', items: { type: 'string' } }
+        }
+      }
+    });
+
+    setAiHelper({ ...aiHelper, result: response });
+  };
+
+  // Music Video Production
+  const createMusicVideo = async (song) => {
+    setCreatingVideo(song);
+    const budget = Math.floor(Math.random() * 5000) + 2000;
+    const views = Math.floor(Math.random() * 50000) + 10000;
+    
+    const video = {
+      id: Date.now(),
+      songId: song.id,
+      songTitle: song.title,
+      budget,
+      views,
+      earnings: Math.floor(views / 20),
+      viralPotential: Math.random() > 0.7
+    };
+
+    setMusicVideos([...musicVideos, video]);
+    
+    await base44.entities.NightLog.create({
+      entry: `${human.name} released music video for "${song.title}" - $${budget} budget, ${views} views${video.viralPotential ? '. It\'s going VIRAL!' : ''}`,
+      category: 'interaction',
+      intensity: video.viralPotential ? 'significant' : 'moderate'
+    });
+
+    if (vampire && Math.random() > 0.6) {
+      alert(`${vampire.vampire_name} watched your music video 47 times.\n\nThey commented: "You're mesmerizing on screen."`);
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.min(100, (human.obsession_level || 0) + 15)
+      });
+    }
+
+    setReputation(prev => prev + (video.viralPotential ? 20 : 10));
+    queryClient.invalidateQueries();
+    setCreatingVideo(null);
+  };
+
+  // Record Label System
+  const generateLabelOffer = () => {
+    const labels = [
+      { name: 'Atlantic Records', advance: 50000, royalty: 15, distribution: 95 },
+      { name: 'Warner Music', advance: 80000, royalty: 12, distribution: 100 },
+      { name: 'Indie Dark Records', advance: 20000, royalty: 30, distribution: 60 },
+      { name: 'Night Vision Music', advance: 40000, royalty: 20, distribution: 75 }
+    ];
+
+    const offer = labels[Math.floor(Math.random() * labels.length)];
+    setLabelOffers([...labelOffers, offer]);
+  };
+
+  const signLabel = async (offer) => {
+    setRecordLabel(offer);
+    
+    await base44.entities.NightLog.create({
+      entry: `${human.name} signed with ${offer.name}! $${offer.advance} advance, ${offer.royalty}% royalties, ${offer.distribution}% distribution`,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    alert(`Signed with ${offer.name}!\n\nAdvance: $${offer.advance}\nRoyalty: ${offer.royalty}%\nDistribution: ${offer.distribution}%`);
+    setLabelOffers([]);
+    setReputation(prev => prev + 30);
+    queryClient.invalidateQueries();
+  };
+
+  // Collaboration System
+  const findCollaborator = () => {
+    const artists = [
+      { name: 'Dark Wave Artist', genre: 'dark', fame: 70, chemistry: Math.random() * 50 + 50 },
+      { name: 'Pop Sensation', genre: 'pop', fame: 90, chemistry: Math.random() * 50 + 50 },
+      { name: 'Underground Rapper', genre: 'hip-hop', fame: 40, chemistry: Math.random() * 50 + 50 },
+      { name: 'Indie Darling', genre: 'indie', fame: 60, chemistry: Math.random() * 50 + 50 }
+    ];
+
+    if (vampire && Math.random() > 0.5) {
+      artists.push({
+        name: `${vampire.vampire_name} (Mysterious Producer)`,
+        genre: 'dark',
+        fame: 100,
+        chemistry: 100,
+        isVampire: true
+      });
+    }
+
+    const collab = artists[Math.floor(Math.random() * artists.length)];
+    setCollaborations([...collaborations, { ...collab, status: 'pending' }]);
+  };
+
+  const acceptCollab = async (collab) => {
+    const updatedCollab = { ...collab, status: 'completed' };
+    setCollaborations(collaborations.map(c => c.name === collab.name ? updatedCollab : c));
+
+    const fameGain = Math.floor(collab.fame / 5);
+    const streams = Math.floor(collab.chemistry * 1000);
+
+    await base44.entities.NightLog.create({
+      entry: `${human.name} collaborated with ${collab.name} - ${streams} streams, chemistry: ${Math.floor(collab.chemistry)}%${collab.isVampire ? '. The studio sessions felt... intimate.' : ''}`,
+      category: 'interaction',
+      intensity: collab.isVampire ? 'significant' : 'moderate'
+    });
+
+    if (collab.isVampire) {
+      await base44.entities.Human.update(human.id, {
+        obsession_level: Math.min(100, (human.obsession_level || 0) + 25),
+        vampire_encounters: (human.vampire_encounters || 0) + 1
+      });
+    }
+
+    setReputation(prev => prev + fameGain);
+    queryClient.invalidateQueries();
+    alert(`Collaboration complete!\n\n+${streams} streams\n+${fameGain} reputation${collab.isVampire ? '\n\n"We make beautiful music together," they whispered.' : ''}`);
+  };
+
+  // Award Shows System
+  const attendAwardShow = () => {
+    const shows = [
+      { name: 'Music Video Awards', categories: ['Best New Artist', 'Best Dark Video', 'Best Performance'] },
+      { name: 'Alternative Music Awards', categories: ['Rising Star', 'Song of the Year', 'Artist of the Year'] },
+      { name: 'Underground Music Festival', categories: ['Best Independent', 'Cult Following', 'Most Original'] }
+    ];
+
+    const show = shows[Math.floor(Math.random() * shows.length)];
+    const category = show.categories[Math.floor(Math.random() * show.categories.length)];
+    const nominated = { show: show.name, category, winChance: reputation / 200 };
+    
+    setNominations([...nominations, nominated]);
+  };
+
+  const awardShowResult = async (nomination) => {
+    const won = Math.random() < nomination.winChance;
+    
+    if (won) {
+      setAwards([...awards, nomination]);
+      setReputation(prev => prev + 50);
+      
+      await base44.entities.NightLog.create({
+        entry: `${human.name} WON "${nomination.category}" at ${nomination.show}! Their speech was emotional. Everyone's talking about it.`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      if (vampire) {
+        alert(`YOU WON!\n\n"${nomination.category}" - ${nomination.show}\n\n${vampire.vampire_name} was in the audience. They watched you accept your award.\n\nBackstage, they found you.\n\n"I'm so proud of you."`);
+        await base44.entities.Human.update(human.id, {
+          obsession_level: Math.min(100, (human.obsession_level || 0) + 20)
+        });
+      } else {
+        alert(`YOU WON!\n\n"${nomination.category}" - ${nomination.show}\n\nYour career is taking off!`);
+      }
+    } else {
+      await base44.entities.NightLog.create({
+        entry: `${human.name} was nominated for "${nomination.category}" at ${nomination.show} but didn't win. Still, being nominated is huge.`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
+      alert(`You didn't win... but being nominated is still amazing.\n\n+10 reputation`);
+      setReputation(prev => prev + 10);
+    }
+
+    setNominations(nominations.filter(n => n !== nomination));
+    queryClient.invalidateQueries();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -557,6 +751,36 @@ export default function MusicCareer({ human, onClose }) {
                   className={`px-4 py-2 whitespace-nowrap ${activeTab === 'press' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
                 >
                   Press
+                </button>
+                <button
+                  onClick={() => setActiveTab('ai')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'ai' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  AI Helper
+                </button>
+                <button
+                  onClick={() => setActiveTab('videos')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'videos' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Videos
+                </button>
+                <button
+                  onClick={() => setActiveTab('label')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'label' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Label
+                </button>
+                <button
+                  onClick={() => setActiveTab('collab')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'collab' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Collabs
+                </button>
+                <button
+                  onClick={() => setActiveTab('awards')}
+                  className={`px-4 py-2 whitespace-nowrap ${activeTab === 'awards' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-gray-400'}`}
+                >
+                  Awards
                 </button>
               </div>
 
@@ -915,6 +1139,345 @@ export default function MusicCareer({ human, onClose }) {
                               </button>
                             ))}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : activeTab === 'ai' ? (
+                <div className="space-y-4">
+                  <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Brain className="w-6 h-6 text-purple-400" />
+                      <h3 className="text-white font-bold">🤖 AI Songwriting Assistant</h3>
+                    </div>
+                    <p className="text-gray-300 text-sm">Get AI help with lyrics, melodies, and song structure</p>
+                  </div>
+
+                  {!aiHelper ? (
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => setAiHelper({ type: 'lyrics' })}
+                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 rounded-xl font-bold"
+                      >
+                        ✍️ Generate Lyrics
+                      </button>
+                      <button
+                        onClick={() => setAiHelper({ type: 'melody' })}
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 rounded-xl font-bold"
+                      >
+                        🎵 Suggest Melody
+                      </button>
+                      <button
+                        onClick={() => setAiHelper({ type: 'structure' })}
+                        className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white py-4 rounded-xl font-bold"
+                      >
+                        📐 Song Structure Tips
+                      </button>
+                    </div>
+                  ) : !aiHelper.result ? (
+                    <>
+                      <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-6 text-center">
+                        <p className="text-white mb-3">AI is analyzing your song concept...</p>
+                        <button
+                          onClick={useAIHelper}
+                          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold"
+                        >
+                          🧠 Generate
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => setAiHelper(null)}
+                        className="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-xl"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4">
+                        <h4 className="text-purple-300 font-bold mb-2">AI Suggestions:</h4>
+                        <p className="text-white mb-3 whitespace-pre-line">{aiHelper.result.content}</p>
+                        {aiHelper.result.tips && (
+                          <div className="space-y-1">
+                            {aiHelper.result.tips.map((tip, i) => (
+                              <p key={i} className="text-gray-300 text-sm">• {tip}</p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => {
+                            if (aiHelper.type === 'lyrics') {
+                              setNewSong({ ...newSong, lyrics: aiHelper.result.content });
+                            }
+                            setAiHelper(null);
+                          }}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold"
+                        >
+                          Use This
+                        </button>
+                        <button
+                          onClick={() => setAiHelper(null)}
+                          className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl"
+                        >
+                          Back
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : activeTab === 'videos' ? (
+                <div className="space-y-4">
+                  <div className="bg-red-950/40 border border-red-500/30 rounded-xl p-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Video className="w-6 h-6 text-red-400" />
+                      <h3 className="text-white font-bold">🎬 Music Video Production</h3>
+                    </div>
+                    <p className="text-gray-300 text-sm mb-3">Create music videos to boost your songs</p>
+                    <div className="bg-green-950/40 border border-green-500/30 rounded-lg p-3">
+                      <p className="text-green-400 text-sm text-center">
+                        💰 Videos cost $2,000-$7,000 but generate massive views
+                      </p>
+                    </div>
+                  </div>
+
+                  {songs.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">Release songs first</p>
+                  ) : creatingVideo ? (
+                    <div className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-6 text-center">
+                      <p className="text-white mb-3">Creating music video for "{creatingVideo.title}"...</p>
+                      <p className="text-gray-400 text-sm">This may take a moment</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {songs.filter(s => !musicVideos.find(v => v.songId === s.id)).map(song => (
+                          <button
+                            key={song.id}
+                            onClick={() => createMusicVideo(song)}
+                            className="w-full bg-gray-800 hover:bg-gray-700 text-left p-3 rounded-xl"
+                          >
+                            <p className="text-white font-bold">{song.title}</p>
+                            <p className="text-gray-400 text-sm">Create music video</p>
+                          </button>
+                        ))}
+                      </div>
+
+                      {musicVideos.length > 0 && (
+                        <div className="space-y-3">
+                          <h4 className="text-white font-bold">Released Videos:</h4>
+                          {musicVideos.map(video => (
+                            <div key={video.id} className="bg-gray-800/50 border border-red-500/30 rounded-xl p-4">
+                              <h4 className="text-white font-bold mb-2">{video.songTitle}</h4>
+                              <div className="space-y-1 text-sm">
+                                <p className="text-gray-400">Budget: ${video.budget.toLocaleString()}</p>
+                                <p className="text-purple-400">Views: {video.views.toLocaleString()}</p>
+                                <p className="text-green-400">Earned: ${video.earnings}</p>
+                                {video.viralPotential && (
+                                  <p className="text-pink-400 font-bold">🔥 VIRAL!</p>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              ) : activeTab === 'label' ? (
+                <div className="space-y-4">
+                  <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Star className="w-6 h-6 text-yellow-400" />
+                      <h3 className="text-white font-bold">🎙️ Record Label</h3>
+                    </div>
+                    <p className="text-gray-300 text-sm mb-3">Get signed for advances, better distribution, and industry support</p>
+                    {recordLabel && (
+                      <div className="bg-green-950/40 border border-green-500/30 rounded-lg p-3">
+                        <p className="text-green-400 font-bold text-center">Signed: {recordLabel.name}</p>
+                        <div className="grid grid-cols-3 gap-2 mt-2 text-xs text-center">
+                          <div>
+                            <p className="text-gray-400">Royalty</p>
+                            <p className="text-white font-bold">{recordLabel.royalty}%</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400">Distribution</p>
+                            <p className="text-white font-bold">{recordLabel.distribution}%</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400">Advance</p>
+                            <p className="text-white font-bold">${recordLabel.advance.toLocaleString()}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {!recordLabel && songs.length < 5 && (
+                    <div className="bg-yellow-950/40 border border-yellow-500/30 rounded-xl p-4">
+                      <p className="text-yellow-300 text-sm text-center">
+                        Release at least 5 songs to attract label offers
+                      </p>
+                    </div>
+                  )}
+
+                  {!recordLabel && songs.length >= 5 && (
+                    <button
+                      onClick={generateLabelOffer}
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 rounded-xl font-bold"
+                    >
+                      📧 Check for Label Offers
+                    </button>
+                  )}
+
+                  {labelOffers.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="text-white font-bold">Label Offers:</h4>
+                      {labelOffers.map((offer, i) => (
+                        <div key={i} className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4">
+                          <h4 className="text-white font-bold mb-3">{offer.name}</h4>
+                          <div className="grid grid-cols-3 gap-3 mb-3 text-sm">
+                            <div className="bg-green-950/40 rounded-lg p-2 text-center">
+                              <p className="text-gray-400 text-xs">Advance</p>
+                              <p className="text-green-400 font-bold">${offer.advance.toLocaleString()}</p>
+                            </div>
+                            <div className="bg-blue-950/40 rounded-lg p-2 text-center">
+                              <p className="text-gray-400 text-xs">Royalty</p>
+                              <p className="text-blue-400 font-bold">{offer.royalty}%</p>
+                            </div>
+                            <div className="bg-purple-950/40 rounded-lg p-2 text-center">
+                              <p className="text-gray-400 text-xs">Distribution</p>
+                              <p className="text-purple-400 font-bold">{offer.distribution}%</p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => signLabel(offer)}
+                            className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white py-3 rounded-xl font-bold"
+                          >
+                            Sign Contract
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : activeTab === 'collab' ? (
+                <div className="space-y-4">
+                  <div className="bg-pink-950/40 border border-pink-500/30 rounded-xl p-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Users className="w-6 h-6 text-pink-400" />
+                      <h3 className="text-white font-bold">🎤 Collaborations</h3>
+                    </div>
+                    <p className="text-gray-300 text-sm">Work with other artists to grow your fanbase and skills</p>
+                  </div>
+
+                  <button
+                    onClick={findCollaborator}
+                    className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold"
+                  >
+                    🔍 Find Collaborator
+                  </button>
+
+                  {collaborations.length > 0 && (
+                    <div className="space-y-3">
+                      {collaborations.map((collab, i) => (
+                        <div key={i} className={`border rounded-xl p-4 ${
+                          collab.isVampire ? 'bg-red-950/40 border-red-500/50' :
+                          collab.status === 'completed' ? 'bg-green-950/40 border-green-500/30' :
+                          'bg-purple-950/40 border-purple-500/30'
+                        }`}>
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h4 className="text-white font-bold">{collab.name}</h4>
+                              <p className="text-gray-400 text-sm capitalize">{collab.genre} • Fame: {collab.fame}</p>
+                            </div>
+                            {collab.isVampire && <span className="text-xl">🦇</span>}
+                          </div>
+                          <div className="bg-black/30 rounded-lg p-2 mb-3">
+                            <div className="flex justify-between text-xs">
+                              <span className="text-gray-400">Chemistry</span>
+                              <span className="text-pink-400 font-bold">{Math.floor(collab.chemistry)}%</span>
+                            </div>
+                          </div>
+                          {collab.status === 'pending' ? (
+                            <button
+                              onClick={() => acceptCollab(collab)}
+                              className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white py-2 rounded-lg font-bold"
+                            >
+                              Start Collaboration
+                            </button>
+                          ) : (
+                            <p className="text-green-400 text-sm text-center font-bold">✓ Completed</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : activeTab === 'awards' ? (
+                <div className="space-y-4">
+                  <div className="bg-yellow-950/40 border border-yellow-500/30 rounded-xl p-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Trophy className="w-6 h-6 text-yellow-400" />
+                      <h3 className="text-white font-bold">🏆 Award Shows</h3>
+                    </div>
+                    <p className="text-gray-300 text-sm mb-3">Attend ceremonies and win awards to boost reputation</p>
+                    <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-lg p-3">
+                      <p className="text-indigo-300 text-sm text-center">
+                        Current Reputation: {reputation}/200 (affects win chance)
+                      </p>
+                    </div>
+                  </div>
+
+                  {reputation < 50 && (
+                    <div className="bg-red-950/40 border border-red-500/30 rounded-xl p-4">
+                      <p className="text-red-300 text-sm text-center">
+                        Build more reputation first (release music, collabs, videos)
+                      </p>
+                    </div>
+                  )}
+
+                  {reputation >= 50 && (
+                    <button
+                      onClick={attendAwardShow}
+                      className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white py-4 rounded-xl font-bold"
+                    >
+                      🎭 Attend Award Show
+                    </button>
+                  )}
+
+                  {nominations.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="text-white font-bold">🎯 Nominations:</h4>
+                      {nominations.map((nom, i) => (
+                        <div key={i} className="bg-purple-950/40 border border-purple-500/30 rounded-xl p-4">
+                          <h4 className="text-white font-bold mb-1">{nom.category}</h4>
+                          <p className="text-gray-400 text-sm mb-3">{nom.show}</p>
+                          <div className="bg-yellow-950/40 rounded-lg p-2 mb-3">
+                            <p className="text-yellow-300 text-xs text-center">
+                              Win Chance: {Math.floor(nom.winChance * 100)}%
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => awardShowResult(nom)}
+                            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-xl font-bold"
+                          >
+                            🎬 See Result
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {awards.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="text-white font-bold">🏆 Awards Won:</h4>
+                      {awards.map((award, i) => (
+                        <div key={i} className="bg-yellow-950/40 border border-yellow-500/30 rounded-xl p-3">
+                          <p className="text-yellow-300 font-bold">🏆 {award.category}</p>
+                          <p className="text-gray-400 text-sm">{award.show}</p>
                         </div>
                       ))}
                     </div>
