@@ -12,6 +12,7 @@ import BloodBankCareer from '@/components/nightbound/BloodBankCareer';
 import ArtCommissions from '@/components/nightbound/ArtCommissions';
 import MusicCareer from '@/components/nightbound/MusicCareer';
 import EscortCareer from '@/components/nightbound/EscortCareer';
+import MakeupSystem from '@/components/nightbound/MakeupSystem';
 
 
 const HUMAN_ACTIVITIES = [
@@ -20,6 +21,7 @@ const HUMAN_ACTIVITIES = [
   { id: 'art_commissions', label: '🎨 Art Commissions', icon: BookOpen, duration: 0, isModal: true },
   { id: 'music_career', label: '🎵 Music Career', icon: Heart, duration: 0, isModal: true },
   { id: 'escort_work', label: '💋 Escort Work', icon: Heart, duration: 0, isModal: true },
+  { id: 'makeup', label: '💄 Do Makeup', icon: Camera, duration: 0, isModal: true },
   { id: 'school', label: 'Go to School/Work', icon: School, duration: 5000, awarenessChance: 0.1 },
   { id: 'coffee', label: 'Coffee Shop', icon: Coffee, duration: 4000, awarenessChance: 0.15 },
   { id: 'friends', label: 'Hang with Friends', icon: Users, duration: 4500, awarenessChance: 0.05 },
@@ -52,6 +54,8 @@ export default function HumanHome() {
   const [showArtCommissions, setShowArtCommissions] = useState(false);
   const [showMusicCareer, setShowMusicCareer] = useState(false);
   const [showEscortWork, setShowEscortWork] = useState(false);
+  const [showMakeup, setShowMakeup] = useState(false);
+  const [makeupContext, setMakeupContext] = useState('everyday');
 
   const { data: humans = [], isLoading } = useQuery({
     queryKey: ['humans'],
@@ -94,6 +98,8 @@ export default function HumanHome() {
         setShowMusicCareer(true);
       } else if (activity.id === 'escort_work') {
         setShowEscortWork(true);
+      } else if (activity.id === 'makeup') {
+        setShowMakeup(true);
       }
       return;
     }
@@ -843,6 +849,10 @@ export default function HumanHome() {
 
         {showEscortWork && (
           <EscortCareer human={human} onClose={() => setShowEscortWork(false)} />
+        )}
+
+        {showMakeup && (
+          <MakeupSystem human={human} context={makeupContext} onClose={() => setShowMakeup(false)} />
         )}
 
         {showIdentity && (

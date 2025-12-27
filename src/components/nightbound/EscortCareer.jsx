@@ -798,6 +798,14 @@ export default function EscortCareer({ human, onClose }) {
                     <p className="text-gray-300 text-sm">Accept clients and meet for sessions</p>
                   </div>
 
+                  {blockedClients.length > 0 && (
+                    <div className="bg-red-950/40 border border-red-500/30 rounded-xl p-3">
+                      <p className="text-red-300 text-sm text-center">
+                        🚫 {blockedClients.length} client{blockedClients.length > 1 ? 's' : ''} blocked
+                      </p>
+                    </div>
+                  )}
+
                   <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4 mb-4">
                     <h4 className="text-white font-bold text-sm mb-2">💡 Reputation Effects</h4>
                     <div className="space-y-1 text-xs text-gray-300">
