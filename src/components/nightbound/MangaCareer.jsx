@@ -46,6 +46,11 @@ export default function MangaCareer({ servant, onClose }) {
   const [customPanels, setCustomPanels] = useState([
     { description: '', dialogue: '' }
   ]);
+  const [showSeriesManager, setShowSeriesManager] = useState(false);
+  const [showCharacterManager, setShowCharacterManager] = useState(false);
+  const [showExport, setShowExport] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [newCharacter, setNewCharacter] = useState({ name: '', description: '', referenceImage: null });
 
   const { data: careers = [] } = useQuery({
     queryKey: ['career', servant.id],
@@ -126,6 +131,146 @@ export default function MangaCareer({ servant, onClose }) {
       resetPanelView();
     }
   }, [viewingChapter]);
+
+  const handleExportChapter = async (chapter, format) => {
+    setExporting(true);
+    try {
+      if (format === 'images') {
+        // Export as individual images
+        for (let i = 0; i < chapter.panels.length; i++) {
+          const link = document.createElement('a');
+          link.href = chapter.panels[i].image;
+          link.download = `${career.series_name}_Ch${chapter.number}_Panel${i + 1}.png`;
+          link.click();
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      } else if (format === 'pdf') {
+        // Create a simple text export (browser will handle download)
+        const exportText = `${career.series_name} - Chapter ${chapter.number}: ${chapter.title}\n\n${chapter.plot}\n\n${chapter.panels.map((p, i) => `Panel ${i + 1}:\n${p.description}\n${p.dialogue}\nImage: ${p.image}\n`).join('\n')}`;
+        const blob = new Blob([exportText], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${career.series_name}_Ch${chapter.number}.txt`;
+        link.click();
+      }
+      
+      setOutcome('Chapter exported successfully!');
+      setTimeout(() => setOutcome(''), 2000);
+    } catch (error) {
+      console.error('Export failed:', error);
+      setOutcome('Export failed');
+    }
+    setExporting(false);
+  };
+
+  const handleCreateCharacter = async () => {
+    if (!career?.id || !newCharacter.name.trim()) return;
+    
+    setWorking(true);
+    try {
+      // Generate character reference image
+      const prompt = `${newCharacter.description}, character reference sheet, ${career.art_style} manga style, full body, multiple angles, character design`;
+      
+      const generateParams = { prompt };
+      if (career.style_reference_image) {
+        generateParams.existing_image_urls = [career.style_reference_image];
+      }
+      
+      const imageResult = await base44.integrations.Core.GenerateImage(generateParams);
+      
+      const characters = career.manga_characters || [];
+      characters.push({
+        id: Date.now().toString(),
+        name: newCharacter.name,
+        description: newCharacter.description,
+        referenceImage: imageResult.url,
+        appearances: 0
+      });
+      
+      await base44.entities.ServantCareer.update(career.id, {
+        manga_characters: characters
+      });
+      
+      queryClient.invalidateQueries(['career']);
+      setNewCharacter({ name: '', description: '', referenceImage: null });
+      setOutcome(`Character "${newCharacter.name}" created!`);
+      setTimeout(() => {
+        setWorking(false);
+        setOutcome('');
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to create character:', error);
+      setWorking(false);
+      setOutcome('Failed to create character');
+    }
+  };
+
+  const handleSwitchSeries = async (seriesId) => {
+    if (!career?.id) return;
+    
+    const allSeries = career.manga_series || [];
+    const selectedSeries = allSeries.find(s => s.id === seriesId);
+    
+    if (selectedSeries) {
+      await base44.entities.ServantCareer.update(career.id, {
+        active_series_id: seriesId,
+        series_name: selectedSeries.name,
+        current_genre: selectedSeries.genre,
+        chapters_released: selectedSeries.chapters_released,
+        fans: selectedSeries.fans,
+        income: selectedSeries.income,
+        manga_chapters: selectedSeries.chapters,
+        story_summary: selectedSeries.story_summary
+      });
+      
+      queryClient.invalidateQueries(['career']);
+      setShowSeriesManager(false);
+    }
+  };
+
+  const handleCreateNewSeries = async (name, genre) => {
+    if (!career?.id) return;
+    
+    const allSeries = career.manga_series || [];
+    
+    // Save current series first
+    if (career.series_name) {
+      const currentSeriesIndex = allSeries.findIndex(s => s.id === career.active_series_id);
+      const currentSeries = {
+        id: career.active_series_id || Date.now().toString(),
+        name: career.series_name,
+        genre: career.current_genre,
+        chapters_released: career.chapters_released || 0,
+        fans: career.fans || 0,
+        income: career.income || 0,
+        chapters: career.manga_chapters || [],
+        story_summary: career.story_summary || ''
+      };
+      
+      if (currentSeriesIndex >= 0) {
+        allSeries[currentSeriesIndex] = currentSeries;
+      } else {
+        allSeries.push(currentSeries);
+      }
+    }
+    
+    // Create new series
+    const newSeriesId = Date.now().toString();
+    await base44.entities.ServantCareer.update(career.id, {
+      manga_series: allSeries,
+      active_series_id: newSeriesId,
+      series_name: name,
+      current_genre: genre,
+      chapters_released: 0,
+      fans: Math.floor(Math.random() * 50) + 20,
+      income: 0,
+      manga_chapters: [],
+      story_summary: `A ${genre} manga series about adventure and growth.`
+    });
+    
+    queryClient.invalidateQueries(['career']);
+    setShowSeriesManager(false);
+  };
 
   const handleGenerateCover = async (useCustomPrompt = false) => {
     if (!career?.id) return;
@@ -603,36 +748,58 @@ Format as JSON:
               </div>
             </div>
 
-            <div className="flex gap-2 mb-4">
+            <div className="grid grid-cols-2 gap-2 mb-4">
               <button
                 onClick={handleDrawChapter}
                 disabled={working || generatingCover}
-                className="flex-1 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium"
+                className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
               >
-                {working ? 'Drawing...' : 'Auto Chapter'}
+                {working ? 'Drawing...' : '✨ Auto Chapter'}
               </button>
               <button
                 onClick={() => setShowCustomCreator(true)}
                 disabled={working || generatingCover}
-                className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium"
+                className="bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
               >
-                Custom Chapter
+                ✍️ Custom Chapter
               </button>
+              <button
+                onClick={() => setShowCharacterManager(true)}
+                disabled={working || generatingCover}
+                className="bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
+              >
+                👥 Characters
+              </button>
+              <button
+                onClick={() => setShowSeriesManager(true)}
+                disabled={working || generatingCover}
+                className="bg-orange-900/40 hover:bg-orange-900/60 border border-orange-500/30 rounded-lg py-3 text-white disabled:opacity-50 font-medium text-sm"
+              >
+                📚 Series
+              </button>
+            </div>
+
+            <div className="flex gap-2 mb-4">
               <button
                 onClick={() => setShowCoverPrompt(true)}
                 disabled={working || generatingCover}
-                className="bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 rounded-lg px-4 text-white disabled:opacity-50"
-                title="Generate Cover Art"
+                className="flex-1 bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 rounded-lg py-2 text-white disabled:opacity-50 text-sm"
               >
-                🖼️
+                🖼️ Cover
               </button>
               <button
                 onClick={() => setShowStyleSelect(true)}
                 disabled={working || generatingCover}
-                className="bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg px-4 text-white disabled:opacity-50"
-                title="Change Art Style"
+                className="flex-1 bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg py-2 text-white disabled:opacity-50 text-sm"
               >
-                🎨
+                🎨 Style
+              </button>
+              <button
+                onClick={() => setShowExport(true)}
+                disabled={working || generatingCover || !career.manga_chapters?.length}
+                className="flex-1 bg-cyan-900/40 hover:bg-cyan-900/60 border border-cyan-500/30 rounded-lg py-2 text-white disabled:opacity-50 text-sm"
+              >
+                📤 Export
               </button>
               <button
                 onClick={async () => {
@@ -653,10 +820,9 @@ Format as JSON:
                   }
                 }}
                 disabled={working || generatingCover}
-                className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg px-4 text-white disabled:opacity-50"
-                title="Delete Series"
+                className="flex-1 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg py-2 text-white disabled:opacity-50 text-sm"
               >
-                🗑️
+                🗑️ Delete
               </button>
             </div>
 
@@ -1150,6 +1316,185 @@ Format as JSON:
                 </button>
               )}
             </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Character Manager Modal */}
+      {showCharacterManager && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => !working && setShowCharacterManager(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+          >
+            <h3 className="text-white text-2xl font-bold mb-4">Character Manager</h3>
+            <p className="text-gray-400 text-sm mb-6">Create recurring characters with consistent AI-generated appearances</p>
+
+            <div className="bg-gray-800/50 rounded-lg p-4 mb-6">
+              <h4 className="text-white font-medium mb-3">Create New Character</h4>
+              <input
+                value={newCharacter.name}
+                onChange={(e) => setNewCharacter({...newCharacter, name: e.target.value})}
+                placeholder="Character name..."
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white mb-3"
+                disabled={working}
+              />
+              <textarea
+                value={newCharacter.description}
+                onChange={(e) => setNewCharacter({...newCharacter, description: e.target.value})}
+                placeholder="Character description (e.g., 'teenage boy with spiky red hair, green eyes, wears a black jacket')"
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white resize-none"
+                rows={3}
+                disabled={working}
+              />
+              <button
+                onClick={handleCreateCharacter}
+                disabled={working || !newCharacter.name.trim() || !newCharacter.description.trim()}
+                className="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg disabled:opacity-50"
+              >
+                {working ? 'Creating...' : 'Generate Character'}
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-white font-medium">Your Characters</h4>
+              {(career?.manga_characters || []).length === 0 ? (
+                <p className="text-gray-500 text-center py-4">No characters yet. Create one above!</p>
+              ) : (
+                (career.manga_characters || []).map(char => (
+                  <div key={char.id} className="bg-gray-800/50 rounded-lg p-3 flex gap-3">
+                    <img src={char.referenceImage} alt={char.name} className="w-20 h-20 rounded object-cover" />
+                    <div className="flex-1">
+                      <h5 className="text-white font-medium">{char.name}</h5>
+                      <p className="text-gray-400 text-sm">{char.description}</p>
+                      <p className="text-purple-400 text-xs mt-1">Appeared in {char.appearances || 0} chapters</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Series Manager Modal */}
+      {showSeriesManager && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => setShowSeriesManager(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+          >
+            <h3 className="text-white text-2xl font-bold mb-4">Manga Series Manager</h3>
+
+            <button
+              onClick={() => {
+                const name = prompt('New series name:');
+                const genre = prompt('Genre (shonen/shojo/seinen/josei/isekai/slice-of-life):');
+                if (name && genre) {
+                  handleCreateNewSeries(name, genre);
+                }
+              }}
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg mb-6"
+            >
+              + Create New Series
+            </button>
+
+            <div className="space-y-3">
+              <h4 className="text-white font-medium">All Series</h4>
+              {career?.series_name && (
+                <div className={`bg-purple-900/40 border-2 border-purple-500 rounded-lg p-4`}>
+                  <h5 className="text-white font-bold">{career.series_name} (Active)</h5>
+                  <p className="text-gray-400 text-sm capitalize">{career.current_genre}</p>
+                  <div className="flex gap-4 mt-2 text-xs">
+                    <span className="text-purple-400">{career.chapters_released} chapters</span>
+                    <span className="text-blue-400">{career.fans} fans</span>
+                    <span className="text-green-400">${career.income}</span>
+                  </div>
+                </div>
+              )}
+              {(career?.manga_series || []).filter(s => s.id !== career.active_series_id).map(series => (
+                <button
+                  key={series.id}
+                  onClick={() => handleSwitchSeries(series.id)}
+                  className="w-full bg-gray-800/50 hover:bg-gray-800 rounded-lg p-4 text-left transition-colors"
+                >
+                  <h5 className="text-white font-bold">{series.name}</h5>
+                  <p className="text-gray-400 text-sm capitalize">{series.genre}</p>
+                  <div className="flex gap-4 mt-2 text-xs">
+                    <span className="text-purple-400">{series.chapters_released} chapters</span>
+                    <span className="text-blue-400">{series.fans} fans</span>
+                    <span className="text-green-400">${series.income}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Export Modal */}
+      {showExport && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+          onClick={() => !exporting && setShowExport(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+          >
+            <h3 className="text-white text-2xl font-bold mb-4">Export Chapters</h3>
+            <p className="text-gray-400 text-sm mb-6">Choose chapters to export</p>
+
+            <div className="space-y-3 max-h-[50vh] overflow-y-auto mb-6">
+              {(career?.manga_chapters || []).map(chapter => (
+                <div key={chapter.number} className="bg-gray-800/50 rounded-lg p-3">
+                  <h5 className="text-white font-medium mb-2">Ch. {chapter.number}: {chapter.title}</h5>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleExportChapter(chapter, 'images')}
+                      disabled={exporting}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm disabled:opacity-50"
+                    >
+                      📷 Images
+                    </button>
+                    <button
+                      onClick={() => handleExportChapter(chapter, 'pdf')}
+                      disabled={exporting}
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded text-sm disabled:opacity-50"
+                    >
+                      📄 Text
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {!exporting && (
+              <button
+                onClick={() => setShowExport(false)}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg"
+              >
+                Close
+              </button>
+            )}
           </motion.div>
         </motion.div>
       )}
