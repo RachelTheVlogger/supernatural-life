@@ -16,7 +16,7 @@ const GENRES = [
 const ART_STYLES = [
   { id: 'classic', label: 'Classic Manga', desc: 'Traditional black & white manga style' },
   { id: 'modern', label: 'Modern Anime', desc: 'Contemporary anime aesthetic' },
-  { id: 'chibi', label: 'Chibi', desc: 'Cute super-deformed style' },
+  { id: 'chibi', label: 'Chibi', desc: 'A cute style' },
   { id: 'realistic', label: 'Realistic', desc: 'Detailed realistic art' },
   { id: 'watercolor', label: 'Watercolor', desc: 'Soft painted style' },
   { id: 'noir', label: 'Noir', desc: 'High contrast dark style' }
