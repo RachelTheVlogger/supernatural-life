@@ -537,7 +537,7 @@ export default function MangaCareer({ servant, onClose }) {
       "title": "Chapter Title",
       "plot": "Brief plot summary",
       "panels": [
-      {"description": "Characters in revealing/sexy clothing, intimate poses, suggestive scenario", "dialogue": "Fully explicit dialogue or narration"},
+        {"description": "Characters in revealing/sexy clothing doing intimate clothed acts - straddling, dominant/submissive positions, pinning, grinding", "dialogue": "Fully explicit dialogue or narration"},
       ...
       ],
       "characters_featured": ["character1", "character2"]
