@@ -88,17 +88,6 @@ export default function HumanHome() {
   const human = humans[0];
   const hasVampire = vampireStates.length > 0;
   const vampire = vampireStates[0];
-  
-  // Vampire-specific activities that only show when vampire exists
-  const vampireActivities = hasVampire ? [
-    { id: 'stalk_vampire', label: 'Stalk Them', icon: Eye, duration: 5000, awarenessChance: 0.3, requiresAwareness: 15 },
-    { id: 'visit_vampire', label: 'Visit Their House', icon: Heart, duration: 6000, awarenessChance: 0.5, requiresAwareness: 30 },
-    { id: 'social_stalk', label: 'Stalk Them Online', icon: Search, duration: 4000, awarenessChance: 0.2, requiresAwareness: 10 },
-    { id: 'onlyfangs_search', label: 'Search OnlyFangs for Them', icon: Heart, duration: 4500, awarenessChance: 0.25, requiresAwareness: 20 },
-    { id: 'onlyfangs_record', label: 'Record Yourself for OnlyFangs', icon: Moon, duration: 6000, awarenessChance: 0.3, requiresAwareness: 25 },
-    { id: 'onlyfangs_message', label: 'Message Them on OnlyFangs', icon: Heart, duration: 5000, awarenessChance: 0.35, requiresAwareness: 30 },
-    { id: 'confession', label: 'Confess Your Obsession', icon: Heart, duration: 7000, requiresAwareness: 50 }
-  ] : [];
 
   const sliderActivities = ['sleep', 'onlyfangs_record', 'confession', 'visit_vampire'];
 
@@ -647,7 +636,7 @@ export default function HumanHome() {
           className="space-y-3 mb-8"
         >
           <h2 className="text-xl font-bold text-white mb-4">Daily Life</h2>
-          {[...HUMAN_ACTIVITIES, ...vampireActivities].map((activity, i) => {
+          {HUMAN_ACTIVITIES.map((activity, i) => {
             const isLocked = activity.requiresAwareness && (human.awareness_level || 0) < activity.requiresAwareness;
             return (
               <motion.button
@@ -655,6 +644,37 @@ export default function HumanHome() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.25 + i * 0.05 }}
+                onClick={() => !isLocked && handleActivity(activity)}
+                disabled={activeAction || isLocked}
+                className={`w-full bg-gray-900 hover:bg-gray-800 rounded-xl p-4 flex items-center justify-between border border-gray-800 transition-all disabled:opacity-50 ${isLocked ? 'cursor-not-allowed' : ''}`}
+              >
+                <div className="flex items-center gap-3">
+                  <activity.icon className="w-5 h-5 text-purple-400" />
+                  <span className="text-white font-medium">{activity.label}</span>
+                </div>
+                {isLocked && (
+                  <span className="text-xs text-gray-500">Requires {activity.requiresAwareness}% awareness</span>
+                )}
+              </motion.button>
+            );
+          })}
+          
+          {hasVampire && [
+            { id: 'stalk_vampire', label: 'Stalk Them', icon: Eye, duration: 5000, awarenessChance: 0.3, requiresAwareness: 15 },
+            { id: 'visit_vampire', label: 'Visit Their House', icon: Heart, duration: 6000, awarenessChance: 0.5, requiresAwareness: 30 },
+            { id: 'social_stalk', label: 'Stalk Them Online', icon: Search, duration: 4000, awarenessChance: 0.2, requiresAwareness: 10 },
+            { id: 'onlyfangs_search', label: 'Search OnlyFangs for Them', icon: Heart, duration: 4500, awarenessChance: 0.25, requiresAwareness: 20 },
+            { id: 'onlyfangs_record', label: 'Record Yourself for OnlyFangs', icon: Moon, duration: 6000, awarenessChance: 0.3, requiresAwareness: 25 },
+            { id: 'onlyfangs_message', label: 'Message Them on OnlyFangs', icon: Heart, duration: 5000, awarenessChance: 0.35, requiresAwareness: 30 },
+            { id: 'confession', label: 'Confess Your Obsession', icon: Heart, duration: 7000, requiresAwareness: 50 }
+          ].map((activity, i) => {
+            const isLocked = activity.requiresAwareness && (human.awareness_level || 0) < activity.requiresAwareness;
+            return (
+              <motion.button
+                key={activity.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.25 + (HUMAN_ACTIVITIES.length + i) * 0.05 }}
                 onClick={() => !isLocked && handleActivity(activity)}
                 disabled={activeAction || isLocked}
                 className={`w-full bg-gray-900 hover:bg-gray-800 rounded-xl p-4 flex items-center justify-between border border-gray-800 transition-all disabled:opacity-50 ${isLocked ? 'cursor-not-allowed' : ''}`}
