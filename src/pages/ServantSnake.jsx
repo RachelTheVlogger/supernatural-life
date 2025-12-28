@@ -96,6 +96,27 @@ export default function ServantSnake() {
       return;
     }
 
+    // If snake exists, update it instead of creating
+    if (snake) {
+      await base44.entities.SnakeFamiliar.update(snake.id, {
+        custom_name: customName.trim(),
+        gender: selectedGender,
+        pattern: selectedPattern,
+        eye_color: selectedEyeColor
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} customized their snake familiar. New appearance: ${selectedGender} ${selectedPattern} pattern with ${selectedEyeColor} eyes.`,
+        category: 'interaction',
+        intensity: 'subtle'
+      });
+
+      queryClient.invalidateQueries();
+      setShowAdoptModal(false);
+      setCustomName('');
+      return;
+    }
+
     await base44.entities.SnakeFamiliar.create({
       vampire_id: servantId,
       custom_name: customName.trim(),
@@ -415,6 +436,18 @@ export default function ServantSnake() {
                 {carrying ? '🐍 Carrying with you' : 'Leave snake here'}
               </button>
               <button
+                onClick={() => {
+                  setCustomName(snake.custom_name);
+                  setSelectedGender(snake.gender);
+                  setSelectedPattern(snake.pattern);
+                  setSelectedEyeColor(snake.eye_color);
+                  setShowAdoptModal(true);
+                }}
+                className="px-6 py-2 rounded-lg font-medium bg-purple-600 hover:bg-purple-700 text-white transition-all"
+              >
+                ✏️ Customize
+              </button>
+              <button
                 onClick={() => setShowBreeding(true)}
                 className="px-6 py-2 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all"
               >
@@ -451,32 +484,64 @@ export default function ServantSnake() {
               {/* Snake Visualization with Size */}
               <div className="text-center mb-4">
                 <div className="relative inline-block">
-                  {/* Size-based display */}
-                  {snake.size === 'small' && (
-                    <div className="text-6xl">
-                      {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
-                    </div>
-                  )}
-                  {snake.size === 'medium' && (
-                    <div className="text-8xl">
-                      {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
-                    </div>
-                  )}
-                  {snake.size === 'large' && (
-                    <div className="flex items-center gap-2">
-                      <div className="text-9xl">
+                  {/* Eye Glow Effect */}
+                  <div 
+                    className="absolute inset-0 blur-xl opacity-60"
+                    style={{
+                      background: `radial-gradient(circle, ${snake.eye_color} 0%, transparent 70%)`,
+                      filter: 'blur(20px)'
+                    }}
+                  />
+                  
+                  {/* Size-based display with pattern overlay */}
+                  <div className="relative">
+                    {/* Pattern overlay */}
+                    {snake.pattern === 'striped' && (
+                      <div className="absolute inset-0 pointer-events-none" style={{
+                        background: 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)'
+                      }} />
+                    )}
+                    {snake.pattern === 'spotted' && (
+                      <div className="absolute inset-0 pointer-events-none" style={{
+                        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 2px, transparent 2px)',
+                        backgroundSize: '20px 20px'
+                      }} />
+                    )}
+                    {snake.pattern === 'iridescent' && (
+                      <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 animate-pulse" />
+                    )}
+                    {snake.pattern === 'scales_of_night' && (
+                      <div className="absolute inset-0 pointer-events-none opacity-40" style={{
+                        background: 'repeating-conic-gradient(from 0deg, transparent 0deg 30deg, rgba(0,0,0,0.3) 30deg 60deg)'
+                      }} />
+                    )}
+                    
+                    {snake.size === 'small' && (
+                      <div className="text-6xl relative z-10">
                         {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
                       </div>
-                      <div className="text-4xl opacity-70">
+                    )}
+                    {snake.size === 'medium' && (
+                      <div className="text-8xl relative z-10">
                         {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
                       </div>
-                    </div>
-                  )}
-                  {snake.size === 'massive' && (
-                    <div className="text-[10rem] leading-none">
-                      {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
-                    </div>
-                  )}
+                    )}
+                    {snake.size === 'large' && (
+                      <div className="flex items-center gap-2 relative z-10">
+                        <div className="text-9xl">
+                          {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
+                        </div>
+                        <div className="text-4xl opacity-70">
+                          {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
+                        </div>
+                      </div>
+                    )}
+                    {snake.size === 'massive' && (
+                      <div className="text-[10rem] leading-none relative z-10">
+                        {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
+                      </div>
+                    )}
+                  </div>
 
 
 
@@ -702,7 +767,7 @@ export default function ServantSnake() {
               onClick={(e) => e.stopPropagation()}
               className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-md w-full border-2 border-green-500/50"
             >
-              <h2 className="text-2xl font-bold text-white mb-4">Customize Your Snake</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">{snake ? 'Customize Snake' : 'Customize Your Snake'}</h2>
 
               {/* Name Input */}
               <div className="mb-4">
@@ -801,7 +866,7 @@ export default function ServantSnake() {
                   disabled={!customName.trim()}
                   className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all"
                 >
-                  Adopt Snake
+                  {snake ? 'Save Changes' : 'Adopt Snake'}
                 </button>
               </div>
             </motion.div>
