@@ -1032,9 +1032,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           <button onClick={() => setTab('interactive')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'interactive' ? 'bg-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             💦 Interactive
           </button>
-          <button onClick={() => setTab('games')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'games' ? 'bg-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
-            🎮 Games
-          </button>
+
           <button onClick={() => setTab('profile')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             ⚙️ Settings
           </button>
@@ -2108,19 +2106,95 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         {/* INTERACTIVE TAB */}
         {tab === 'interactive' && !showMasturbation && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
-            <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6 text-center">
-              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }} className="text-6xl mb-4">
-                💦
-              </motion.div>
-              <h3 className="text-white text-2xl font-bold mb-2">Interactive Masturbation</h3>
-              <p className="text-gray-300 mb-6">Let your fans watch you pleasure yourself. Live. Interactive. Intense.</p>
+            <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-2xl font-bold mb-2">🎮 Interactive Sliders</h3>
+              <p className="text-gray-300 text-sm mb-6">Fully interactive experiences - fans watch you in real-time</p>
               
-              <button
-                onClick={() => setShowMasturbation(true)}
-                className="w-full bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700 text-white font-bold py-4 rounded-xl"
-              >
-                🔴 Start Session
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setCallContext('audience');
+                    setShowMasturbation(true);
+                  }}
+                  className="w-full bg-gradient-to-br from-pink-900/40 to-red-900/40 border border-pink-500/30 rounded-xl p-4 text-left hover:bg-pink-900/60 transition-all"
+                >
+                  <h4 className="text-white font-medium mb-1">💦 Live Masturbation</h4>
+                  <p className="text-gray-400 text-sm">Pleasure yourself for your audience. Full interactive slider.</p>
+                  <p className="text-pink-400 text-xs mt-1">$200-500 earnings</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCallContext('striptease');
+                    setShowMasturbation(true);
+                  }}
+                  className="w-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all"
+                >
+                  <h4 className="text-white font-medium mb-1">💃 Strip Tease Slider</h4>
+                  <p className="text-gray-400 text-sm">Slow tease. Every piece of clothing tracked.</p>
+                  <p className="text-purple-400 text-xs mt-1">$200-500 earnings</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCallContext('dirtytalk');
+                    setShowMasturbation(true);
+                  }}
+                  className="w-full bg-gradient-to-br from-red-900/40 to-pink-900/40 border border-red-500/30 rounded-xl p-4 text-left hover:bg-red-900/60 transition-all"
+                >
+                  <h4 className="text-white font-medium mb-1">🗣️ Dirty Talk Slider</h4>
+                  <p className="text-gray-400 text-sm">Say filthy things. Build intensity.</p>
+                  <p className="text-red-400 text-xs mt-1">$150-400 earnings</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCallContext('teasing');
+                    setShowMasturbation(true);
+                  }}
+                  className="w-full bg-gradient-to-br from-purple-900/40 to-red-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all"
+                >
+                  <h4 className="text-white font-medium mb-1">😈 Edging Tease Slider</h4>
+                  <p className="text-gray-400 text-sm">Almost there... but not yet. Interactive edging.</p>
+                  <p className="text-purple-400 text-xs mt-1">$300-700 earnings</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCallContext('toys');
+                    setShowMasturbation(true);
+                  }}
+                  className="w-full bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-pink-500/30 rounded-xl p-4 text-left hover:bg-pink-900/60 transition-all"
+                >
+                  <h4 className="text-white font-medium mb-1">🔥 Toy Play Slider</h4>
+                  <p className="text-gray-400 text-sm">Use toys. Fans control speed and intensity.</p>
+                  <p className="text-pink-400 text-xs mt-1">$250-600 earnings</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCallContext('orgasm');
+                    setShowMasturbation(true);
+                  }}
+                  className="w-full bg-gradient-to-br from-red-900/40 to-rose-900/40 border border-red-500/30 rounded-xl p-4 text-left hover:bg-red-900/60 transition-all"
+                >
+                  <h4 className="text-white font-medium mb-1">💦 Orgasm Slider</h4>
+                  <p className="text-gray-400 text-sm">Build to climax. Track every moment.</p>
+                  <p className="text-red-400 text-xs mt-1">$350-800 earnings</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCallContext('vampire_together');
+                    setShowMasturbation(true);
+                  }}
+                  className="w-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all"
+                >
+                  <h4 className="text-white font-medium mb-1">🦇💕 Couple Intimacy Slider</h4>
+                  <p className="text-gray-400 text-sm">With your vampire. Full interactive session.</p>
+                  <p className="text-pink-400 text-xs mt-1">$400-900 earnings • Bond increase</p>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -2188,95 +2262,7 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </div>
         )}
 
-        {/* GAMES TAB */}
-        {tab === 'games' && (
-          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
-            <div className="bg-gradient-to-br from-pink-950/40 to-purple-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
-              <h3 className="text-white text-xl font-bold mb-4">🎮 Interactive Sliders</h3>
-              <p className="text-gray-400 text-sm mb-6">Fully interactive experiences - fans watch you in real-time</p>
-              
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    setCallContext('striptease');
-                    setShowMasturbation(true);
-                  }}
-                  disabled={showMasturbation}
-                  className="w-full bg-gradient-to-br from-pink-900/40 to-red-900/40 border border-pink-500/30 rounded-xl p-4 text-left hover:bg-pink-900/60 transition-all disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium mb-1">💃 Strip Tease Slider</h4>
-                  <p className="text-gray-400 text-sm">Slow tease. Every piece of clothing tracked. Fully interactive.</p>
-                  <p className="text-pink-400 text-xs mt-1">$200-500 earnings</p>
-                </button>
 
-                <button
-                  onClick={() => {
-                    setCallContext('dirtytalk');
-                    setShowMasturbation(true);
-                  }}
-                  disabled={showMasturbation}
-                  className="w-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium mb-1">🗣️ Dirty Talk Slider</h4>
-                  <p className="text-gray-400 text-sm">Say filthy things. Build intensity. Chat controls the pace.</p>
-                  <p className="text-purple-400 text-xs mt-1">$150-400 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('teasing');
-                    setShowMasturbation(true);
-                  }}
-                  disabled={showMasturbation}
-                  className="w-full bg-gradient-to-br from-red-900/40 to-pink-900/40 border border-red-500/30 rounded-xl p-4 text-left hover:bg-red-900/60 transition-all disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium mb-1">😈 Edging Tease Slider</h4>
-                  <p className="text-gray-400 text-sm">Almost there... but not yet. Denial game. Interactive edging.</p>
-                  <p className="text-red-400 text-xs mt-1">$300-700 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('toys');
-                    setShowMasturbation(true);
-                  }}
-                  disabled={showMasturbation}
-                  className="w-full bg-gradient-to-br from-purple-900/40 to-red-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium mb-1">🔥 Toy Play Slider</h4>
-                  <p className="text-gray-400 text-sm">Use toys. Fans control speed and intensity. Full show.</p>
-                  <p className="text-purple-400 text-xs mt-1">$250-600 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('orgasm');
-                    setShowMasturbation(true);
-                  }}
-                  disabled={showMasturbation}
-                  className="w-full bg-gradient-to-br from-red-900/40 to-rose-900/40 border border-red-500/30 rounded-xl p-4 text-left hover:bg-red-900/60 transition-all disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium mb-1">💦 Orgasm Slider</h4>
-                  <p className="text-gray-400 text-sm">Build to climax. Track every moment. Interactive finish.</p>
-                  <p className="text-red-400 text-xs mt-1">$350-800 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('vampire_together');
-                    setShowMasturbation(true);
-                  }}
-                  disabled={showMasturbation}
-                  className="w-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium mb-1">🦇💕 Couple Intimacy Slider</h4>
-                  <p className="text-gray-400 text-sm">With your vampire. Full interactive session. Live together.</p>
-                  <p className="text-pink-400 text-xs mt-1">$400-900 earnings • Bond increase</p>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* PROFILE/SETTINGS TAB */}
         {tab === 'profile' && (
