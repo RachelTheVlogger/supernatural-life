@@ -118,6 +118,31 @@ export default function ServantInteractions({ servants, vampireState, currentSer
       }
     },
     {
+      id: 'confide',
+      icon: Heart,
+      label: 'Share secrets & vulnerabilities',
+      description: 'Deep emotional connection - let them be vulnerable',
+      outcomes: {
+        positive: [
+          `${pair?.[0]?.name} shares a childhood fear. ${pair?.[1]?.name} reaches out, squeezes their hand. "Me too," they whisper. Walls crumbling.`,
+          `They talk about what scares them most. Losing you. Losing themselves. Being alone again. Understanding blooms between them.`,
+          `${pair?.[0]?.name} cries. ${pair?.[1]?.name} doesn't judge. Just holds them. "We're the same," they say. Beautiful.`,
+          `They share their deepest insecurities. Both feel the same fears. The same desperate need to be chosen. To be enough. United in vulnerability.`,
+          `Raw honesty. Tears. Laughter. They see each other now. Really see each other. A true bond forms.`
+        ],
+        neutral: [
+          `They try to open up but it's hard. Small steps. Surface vulnerability. Progress, but slow.`,
+          `${pair?.[0]?.name} shares something small. ${pair?.[1]?.name} nods but doesn't reciprocate yet. One-sided but starting.`,
+          `Tentative emotional steps. They're learning to trust each other. Awkward but genuine effort.`
+        ],
+        negative: [
+          `${pair?.[0]?.name} opens up. ${pair?.[1]?.name} uses it against them later. "At least I'm not THAT pathetic."`,
+          `Vulnerability becomes weaponized. Each using the other's fears to hurt them. Trust destroyed.`,
+          `${pair?.[1]?.name}: "You think YOU have problems? Try being the less favorite one." Competition even here.`
+        ]
+      }
+    },
+    {
       id: 'together',
       icon: Coffee,
       label: 'Spend quality time (all 3)',
@@ -140,6 +165,30 @@ export default function ServantInteractions({ servants, vampireState, currentSer
           `You try to give them equal attention. It's not enough. It's never enough. Both want more. Both want all.`,
           `${pair?.[1]?.name} storms off mid-evening. "I can't do this. I can't watch ${p.object} with someone else."\n${pair?.[0]?.name} looks satisfied. Victory.`,
           `They fight over you right in front of you. Words become sharp. Jealousy explosive. This was a terrible mistake.`,
+        ]
+      }
+    },
+    {
+      id: 'heart-to-heart',
+      icon: Heart,
+      label: 'Facilitate heart-to-heart',
+      description: 'Create space for genuine emotional connection',
+      outcomes: {
+        positive: [
+          `You give them space. Leave the room. When you return, they're talking softly. Smiling. Connected.`,
+          `${pair?.[0]?.name}: "I was jealous of you." ${pair?.[1]?.name}: "I was jealous of YOU." They laugh. Understanding achieved.`,
+          `They bond over shared experiences. Both changed by you. Both devoted. Different paths, same love.`,
+          `Real friendship forming. Not forced. Natural. Beautiful. You smile watching them.`
+        ],
+        neutral: [
+          `They talk but stay guarded. Small connection made but walls remain up. Baby steps.`,
+          `Polite conversation that scratches the surface. Not deep but not hostile. Progress.`,
+          `They try but struggle to truly open up. The effort is there. That matters.`
+        ],
+        negative: [
+          `${pair?.[0]?.name} tries to connect. ${pair?.[1]?.name}: "Stop pretending. We both know you want ${p.object} all to yourself."`,
+          `The conversation becomes passive aggressive. Each subtly putting the other down. Failed attempt.`,
+          `They can't do it. Too much jealousy. Too much competition. They walk away angry.`
         ]
       }
     },
