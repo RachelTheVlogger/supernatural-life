@@ -76,7 +76,6 @@ export default function WerewolfHome() {
           result = `Shifted to ${updates.current_form} form`;
           break;
         case 'howl':
-          updates.pack_members = (werewolf.pack_members || 0) + (Math.random() > 0.7 ? 1 : 0);
           result = 'Your howl echoes through the night. Others may hear.';
           break;
         case 'territory':
@@ -84,12 +83,17 @@ export default function WerewolfHome() {
           result = 'Territory expanded. This land is yours.';
           break;
         case 'recruit':
-          updates.pack_members = (werewolf.pack_members || 0) + 1;
-          if (werewolf.pack_members >= 5 && werewolf.pack_rank === 'lone_wolf') {
-            updates.pack_rank = 'alpha';
-            result = 'Pack member recruited. You are now an Alpha!';
+          const newMember = {
+            name: ['Marcus', 'Luna', 'Kai', 'Raven', 'Ash', 'Storm', 'Shadow'][Math.floor(Math.random() * 7)],
+            loyalty: 60,
+            strength: Math.floor(Math.random() * 50) + 30
+          };
+          updates.pack_members = [...(werewolf.pack_members || []), newMember];
+          if (updates.pack_members.length >= 5 && werewolf.pack_status === 'lone') {
+            updates.pack_status = 'alpha';
+            result = `${newMember.name} joins your pack. You are now an Alpha!`;
           } else {
-            result = 'New wolf joins your pack.';
+            result = `${newMember.name} joins your pack.`;
           }
           break;
         case 'cubs':
@@ -190,7 +194,7 @@ export default function WerewolfHome() {
           </div>
           <div className={`${isDaytime ? 'bg-white/70 border-red-300/50' : 'bg-black/40 border-red-500/30'} rounded-xl p-4 border`}>
             <Users className="w-6 h-6 text-red-400 mb-2" />
-            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{werewolf.pack_members}</p>
+            <p className={`text-2xl font-bold ${isDaytime ? 'text-gray-800' : 'text-white'}`}>{Array.isArray(werewolf.pack_members) ? werewolf.pack_members.length : 0}</p>
             <p className={`text-xs ${isDaytime ? 'text-red-700' : 'text-red-300'}`}>Pack Size</p>
           </div>
           <div className={`${isDaytime ? 'bg-white/70 border-green-300/50' : 'bg-black/40 border-green-500/30'} rounded-xl p-4 border`}>
