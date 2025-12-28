@@ -60,8 +60,8 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
                 />
               </h3>
               <div className="flex gap-2">
-                <button onClick={onCustomize} className="text-purple-400 hover:text-purple-300 text-sm px-2 py-1">✏️</button>
-                <button onClick={onDelete} className="text-red-400 hover:text-red-300 text-sm px-2 py-1">🗑️</button>
+               <button onClick={(e) => { e.stopPropagation(); onCustomize(); }} className="text-purple-400 hover:text-purple-300 text-sm px-2 py-1 touch-manipulation">✏️</button>
+               <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="text-red-400 hover:text-red-300 text-sm px-2 py-1 touch-manipulation">🗑️</button>
               </div>
             </div>
             <p className="text-gray-400 text-sm capitalize flex items-center gap-2">
@@ -77,9 +77,9 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
 
           {/* Quick Actions */}
           <div className="flex gap-2 mt-3 flex-wrap">
-            <button onClick={onBreed} className="px-3 py-1 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all text-xs">💕 Breed</button>
-            <button onClick={onPlayDate} className="px-3 py-1 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all text-xs">🎮 Play Date</button>
-            <button onClick={onShowProgression} className="px-3 py-1 rounded-lg font-medium bg-purple-600 hover:bg-purple-700 text-white transition-all text-xs">⚡ Evolution</button>
+            <button onClick={(e) => { e.stopPropagation(); onBreed(); }} className="px-3 py-1 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all text-xs touch-manipulation">💕 Breed</button>
+            <button onClick={(e) => { e.stopPropagation(); onPlayDate(); }} className="px-3 py-1 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all text-xs touch-manipulation">🎮 Play Date</button>
+            <button onClick={(e) => { e.stopPropagation(); onShowProgression(); }} className="px-3 py-1 rounded-lg font-medium bg-purple-600 hover:bg-purple-700 text-white transition-all text-xs touch-manipulation">⚡ Evolution</button>
           </div>
         </div>
       </div>
@@ -100,9 +100,9 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
 
       {/* Basic Actions - Compact */}
       <div className="grid grid-cols-3 gap-2 mb-4">
-        <button onClick={() => onInteraction('feed', snake)} disabled={interacting} className="bg-red-900/40 border border-red-500/30 rounded-lg p-2 text-xs text-white">🩸 Feed</button>
-        <button onClick={() => onInteraction('train', snake)} disabled={interacting} className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-2 text-xs text-white">⚡ Train</button>
-        <button onClick={() => onInteraction('bond', snake)} disabled={interacting} className="bg-green-900/40 border border-green-500/30 rounded-lg p-2 text-xs text-white">💚 Bond</button>
+        <button onClick={(e) => { e.stopPropagation(); onInteraction('feed', snake); }} disabled={interacting} className="bg-red-900/40 border border-red-500/30 rounded-lg p-2 text-xs text-white touch-manipulation">🩸 Feed</button>
+        <button onClick={(e) => { e.stopPropagation(); onInteraction('train', snake); }} disabled={interacting} className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-2 text-xs text-white touch-manipulation">⚡ Train</button>
+        <button onClick={(e) => { e.stopPropagation(); onInteraction('bond', snake); }} disabled={interacting} className="bg-green-900/40 border border-green-500/30 rounded-lg p-2 text-xs text-white touch-manipulation">💚 Bond</button>
       </div>
 
       {/* Special Abilities - Compact */}
@@ -115,9 +115,9 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
               return (
                 <button
                   key={ability.id}
-                  onClick={() => unlocked && onUseAbility(ability, snake)}
+                  onClick={(e) => { e.stopPropagation(); unlocked && onUseAbility(ability, snake); }}
                   disabled={!unlocked}
-                  className={`rounded-lg p-2 text-xs transition-colors ${
+                  className={`rounded-lg p-2 text-xs transition-colors touch-manipulation ${
                     unlocked 
                       ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border border-green-500/30 text-white' 
                       : 'bg-gray-800/40 border border-gray-600/30 opacity-50 text-gray-500'
