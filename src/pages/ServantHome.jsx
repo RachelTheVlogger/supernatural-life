@@ -168,26 +168,6 @@ export default function ServantHome() {
     queryFn: () => base44.entities.VampireState.list(),
     staleTime: 5000
   });
-
-  // Redirect to Night if no servant ID or invalid ID
-  useEffect(() => {
-    if (!vampireLoading && vampireStates.length === 0) {
-      navigate(createPageUrl('Home'), { replace: true });
-      return;
-    }
-    
-    if (!servantId || servantId === 'null' || servantId === 'undefined') {
-      navigate(createPageUrl('Night'), { replace: true });
-      return;
-    }
-
-    // If servant loaded but not found, redirect to first available servant or Night
-    if (!servantLoading && servantId && !servant && allServants.length > 0) {
-      navigate(createPageUrl(`ServantHome?id=${allServants[0].id}`), { replace: true });
-    } else if (!servantLoading && servantId && !servant && allServants.length === 0) {
-      navigate(createPageUrl('Night'), { replace: true });
-    }
-  }, [vampireStates.length, vampireLoading, navigate, servantId, servantLoading, servant, allServants]);
   
   const { data: servant, isLoading: servantLoading } = useQuery({
     queryKey: ['servant', servantId],
@@ -224,6 +204,26 @@ export default function ServantHome() {
     queryKey: ['witches'],
     queryFn: () => base44.entities.Witch.list()
   });
+
+  // Redirect to Night if no servant ID or invalid ID
+  useEffect(() => {
+    if (!vampireLoading && vampireStates.length === 0) {
+      navigate(createPageUrl('Home'), { replace: true });
+      return;
+    }
+    
+    if (!servantId || servantId === 'null' || servantId === 'undefined') {
+      navigate(createPageUrl('Night'), { replace: true });
+      return;
+    }
+
+    // If servant loaded but not found, redirect to first available servant or Night
+    if (!servantLoading && servantId && !servant && allServants.length > 0) {
+      navigate(createPageUrl(`ServantHome?id=${allServants[0].id}`), { replace: true });
+    } else if (!servantLoading && servantId && !servant && allServants.length === 0) {
+      navigate(createPageUrl('Night'), { replace: true });
+    }
+  }, [vampireStates.length, vampireLoading, navigate, servantId, servantLoading, servant, allServants]);
   
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', currentServantId],
