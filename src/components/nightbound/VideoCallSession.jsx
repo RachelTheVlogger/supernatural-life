@@ -3,11 +3,10 @@ import { motion } from 'framer-motion';
 import { X, Eye } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
-import MasturbationSlider from './MasturbationSlider';
 
 export default function VideoCallSession({ servant, vampireState, onClose, onGainRelationship }) {
   const queryClient = useQueryClient();
-  const [stage, setStage] = useState('start'); // start, watching, slider, end
+  const [stage, setStage] = useState('start'); // start, watching, end
   const [outcome, setOutcome] = useState('');
 
   const startCall = () => {
@@ -43,39 +42,29 @@ export default function VideoCallSession({ servant, vampireState, onClose, onGai
       id: 'masturbate',
       label: '💦 Watch them masturbate',
       outcome: `"Show me. Touch yourself for me."\n\nThey spread their legs. Camera focused.\n\nYou watch them pleasure themselves.\n\nMoaning your name.`,
-      gain: 25,
-      usesSlider: true
+      gain: 25
     },
     {
       id: 'toy',
       label: '🎀 Make them use toys',
       outcome: `"Get your toy."\n\nThey grab it. Hold it up.\n\n"Use it. I want to watch."\n\nThey push it in. Moaning.`,
-      gain: 30,
-      usesSlider: true
+      gain: 30
     },
     {
       id: 'edge',
       label: '⚡ Edge them',
       outcome: `"Get close. Don't cum yet."\n\nThey touch faster. Building.\n\n"Stop."\n\nThey whimper. Denied.\n\nYou're in control.`,
-      gain: 28,
-      usesSlider: true
+      gain: 28
     },
     {
       id: 'cum',
       label: '✨ Let them cum',
       outcome: `"Cum for me. Now."\n\nThey don't hold back.\n\nMasturbating hard. Moaning.\n\nYou watch them finish.\n\nPerfect.`,
-      gain: 35,
-      usesSlider: true
+      gain: 35
     }
   ];
 
   const handleAction = async (action) => {
-    if (action.usesSlider) {
-      setStage('slider');
-      setOutcome(action.outcome);
-      return;
-    }
-
     setOutcome(action.outcome);
     
     await base44.entities.Servant.update(servant.id, {
@@ -95,50 +84,6 @@ export default function VideoCallSession({ servant, vampireState, onClose, onGai
       setStage('end');
     }, 4000);
   };
-
-  const handleSliderFinish = async (edgeType, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
-    const bonus = edgeCount * 5 + Math.floor(desperationLevel / 10);
-    const gain = 35 + bonus;
-
-    const bodyPartText = bodyPart === 'clit' ? 'Rubbing their clit for you.' :
-                        bodyPart === 'dick' ? 'Stroking hard for you.' :
-                        bodyPart === 'dildo' ? 'Fucking themselves with a dildo on camera.' :
-                        bodyPart === 'vibrator' ? 'Vibrator buzzing. They\'re shaking.' :
-                        'Touching themselves everywhere.';
-
-    const finalOutcome = `${outcome}\n\n${bodyPartText}\n\nThey came ${edgeType === 'edged' ? 'after edging' : 'hard'} for you on camera.\n\nPerfect show.`;
-
-    await base44.entities.Servant.update(servant.id, {
-      relationship: Math.min((servant.relationship || 0) + gain, 100)
-    });
-
-    await base44.entities.NightLog.create({
-      entry: `Video call with ${servant.name}: ${finalOutcome}`,
-      category: 'interaction',
-      intensity: 'significant'
-    });
-
-    queryClient.invalidateQueries();
-    onGainRelationship?.(gain);
-    onClose();
-  };
-
-  if (stage === 'slider') {
-    return (
-      <div className="fixed inset-0 z-50 bg-black flex items-center justify-center p-4">
-        <div className="max-w-lg w-full">
-          <div className="text-center mb-4">
-            <p className="text-purple-400 text-sm">📹 They're on camera for you...</p>
-          </div>
-          <MasturbationSlider
-            gender={servant.gender}
-            context="videocall"
-            onFinish={handleSliderFinish}
-          />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <motion.div
