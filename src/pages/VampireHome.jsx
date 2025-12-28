@@ -761,31 +761,7 @@ export default function VampireHome() {
                 </button>
               </motion.div>
 
-              {/* Succubus Interaction */}
-              {succubus && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.23 }}
-                className="mb-8"
-              >
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowSuccubusInteraction(true);
-                  }}
-                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 border-2 border-pink-400 rounded-2xl py-6 px-6 transition-all shadow-lg touch-manipulation"
-                >
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="text-4xl">💋🦇</span>
-                    <div className="text-left">
-                      <h3 className="text-white font-bold text-xl">Obsessive Romance</h3>
-                      <p className="text-pink-200 text-sm">10 deep interactions with {succubus.name}</p>
-                    </div>
-                  </div>
-                </button>
-              </motion.div>
-              )}
+
 
               {/* Friends System */}
               {allFriends.length > 0 && (

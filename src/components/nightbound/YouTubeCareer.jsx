@@ -618,6 +618,9 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
           <button onClick={() => setTab('monetize')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'monetize' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             💰 Monetize
           </button>
+          <button onClick={() => setTab('assistant')} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'assistant' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
+            🤖 Assistant
+          </button>
         </div>
 
         {/* CREATE TAB */}
@@ -1142,6 +1145,210 @@ export default function YouTubeCareer({ servant, vampireState, onClose }) {
                 <span className="text-green-400 font-bold">$1,500</span>
               </div>
             </button>
+          </div>
+        )}
+
+        {/* ASSISTANT TAB */}
+        {tab === 'assistant' && (
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-purple-950/40 to-indigo-950/40 border-2 border-purple-500/30 rounded-2xl p-6">
+              <h3 className="text-white text-2xl font-bold mb-2 flex items-center gap-2">
+                🤖 Personal Assistant
+              </h3>
+              <p className="text-gray-400 text-sm mb-6">Automate your channel. Let AI handle the work.</p>
+              
+              <div className="space-y-3">
+                <button
+                  onClick={async () => {
+                    if (channel.revenue < 1000) {
+                      alert('Need $1,000 to hire assistant');
+                      return;
+                    }
+                    
+                    setCreating(true);
+                    setTimeout(async () => {
+                      const videosCreated = Math.floor(Math.random() * 4) + 3;
+                      let totalViews = 0;
+                      let totalSubs = 0;
+                      let totalEarnings = 0;
+                      
+                      for (let i = 0; i < videosCreated; i++) {
+                        const views = Math.floor(Math.random() * 8000) + 4000;
+                        const subs = Math.floor(views * 0.025);
+                        const earnings = Math.floor(views * 0.004);
+                        
+                        totalViews += views;
+                        totalSubs += subs;
+                        totalEarnings += earnings;
+                        
+                        await base44.entities.YouTubeVideo.create({
+                          channel_id: channel.id,
+                          title: `AI-Generated Video ${i + 1}`,
+                          category: channel.niche,
+                          content_description: 'AI assistant created this',
+                          views,
+                          likes: Math.floor(views * 0.1),
+                          earnings,
+                          is_viral: false,
+                          controversy_score: 0,
+                          featured_vampire: false
+                        });
+                      }
+                      
+                      await base44.entities.YouTubeChannel.update(channel.id, {
+                        subscriber_count: channel.subscriber_count + totalSubs,
+                        total_views: channel.total_views + totalViews,
+                        revenue: channel.revenue - 1000 + totalEarnings,
+                        reputation: Math.min(100, channel.reputation + 12)
+                      });
+                      
+                      await base44.entities.NightLog.create({
+                        entry: `AI assistant worked overnight. Created ${videosCreated} videos. +${totalSubs.toLocaleString()} subs, +${totalViews.toLocaleString()} views. Passive income flowing.`,
+                        category: 'interaction',
+                        intensity: 'significant'
+                      });
+                      
+                      queryClient.invalidateQueries();
+                      setCreating(false);
+                    }, 4000);
+                  }}
+                  disabled={creating || channel.revenue < 1000}
+                  className="w-full bg-gradient-to-br from-purple-900/40 to-blue-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all disabled:opacity-50"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🤖</span>
+                      <div>
+                        <h4 className="text-white font-medium mb-1">Hire AI Video Creator</h4>
+                        <p className="text-gray-400 text-sm">AI makes 3-6 videos automatically</p>
+                        <p className="text-purple-400 text-xs mt-1">Passive content generation</p>
+                      </div>
+                    </div>
+                    <span className="text-green-400 font-bold">$1,000</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    if (channel.revenue < 500) {
+                      alert('Need $500');
+                      return;
+                    }
+                    
+                    const responsesGenerated = Math.floor(Math.random() * 150) + 100;
+                    const earnings = Math.floor(Math.random() * 100) + 80;
+                    
+                    await base44.entities.YouTubeChannel.update(channel.id, {
+                      revenue: channel.revenue - 500 + earnings,
+                      reputation: Math.min(100, channel.reputation + 5)
+                    });
+                    
+                    await base44.entities.NightLog.create({
+                      entry: `AI handled ${responsesGenerated} comment replies. Fans feel heard. Engagement spiking. Earned $${earnings} from increased activity.`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+                    
+                    queryClient.invalidateQueries();
+                  }}
+                  disabled={channel.revenue < 500}
+                  className="w-full bg-gradient-to-br from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 rounded-xl p-4 text-left hover:bg-cyan-900/60 transition-all disabled:opacity-50"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">💬</span>
+                      <div>
+                        <h4 className="text-white font-medium mb-1">AI Comment Manager</h4>
+                        <p className="text-gray-400 text-sm">Auto-reply to comments. Keep engagement high.</p>
+                        <p className="text-cyan-400 text-xs mt-1">100-250 replies handled</p>
+                      </div>
+                    </div>
+                    <span className="text-green-400 font-bold">$500</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    if (channel.revenue < 800) {
+                      alert('Need $800');
+                      return;
+                    }
+                    
+                    const videosScheduled = Math.floor(Math.random() * 5) + 7;
+                    
+                    await base44.entities.YouTubeChannel.update(channel.id, {
+                      revenue: channel.revenue - 800
+                    });
+                    
+                    await base44.entities.NightLog.create({
+                      entry: `AI scheduled ${videosScheduled} videos for optimal posting times. Algorithm loves consistency. Growth incoming.`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+                    
+                    queryClient.invalidateQueries();
+                  }}
+                  disabled={channel.revenue < 800}
+                  className="w-full bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 rounded-xl p-4 text-left hover:bg-indigo-900/60 transition-all disabled:opacity-50"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">📅</span>
+                      <div>
+                        <h4 className="text-white font-medium mb-1">AI Scheduler & Optimizer</h4>
+                        <p className="text-gray-400 text-sm">Auto-post at peak times. Maximize reach.</p>
+                        <p className="text-indigo-400 text-xs mt-1">7-12 videos queued</p>
+                      </div>
+                    </div>
+                    <span className="text-green-400 font-bold">$800</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    if (channel.revenue < 1500) {
+                      alert('Need $1,500');
+                      return;
+                    }
+                    
+                    setCreating(true);
+                    setTimeout(async () => {
+                      const newSubs = Math.floor(Math.random() * 8000) + 5000;
+                      const earnings = Math.floor(Math.random() * 600) + 400;
+                      
+                      await base44.entities.YouTubeChannel.update(channel.id, {
+                        subscriber_count: channel.subscriber_count + newSubs,
+                        revenue: channel.revenue - 1500 + earnings,
+                        reputation: Math.min(100, channel.reputation + 15)
+                      });
+                      
+                      await base44.entities.NightLog.create({
+                        entry: `AI ran entire viral campaign. Targeted ads, optimal thumbnails, trending topics. +${newSubs.toLocaleString()} subs. Channel EXPLODED.`,
+                        category: 'interaction',
+                        intensity: 'significant'
+                      });
+                      
+                      queryClient.invalidateQueries();
+                      setCreating(false);
+                    }, 5000);
+                  }}
+                  disabled={creating || channel.revenue < 1500}
+                  className="w-full bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-pink-500/30 rounded-xl p-4 text-left hover:bg-pink-900/60 transition-all disabled:opacity-50"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🚀</span>
+                      <div>
+                        <h4 className="text-white font-medium mb-1">Full AI Growth Campaign</h4>
+                        <p className="text-gray-400 text-sm">Let AI manage everything for 1 week. Full automation.</p>
+                        <p className="text-pink-400 text-xs mt-1">+5-13k subs guaranteed</p>
+                      </div>
+                    </div>
+                    <span className="text-green-400 font-bold">$1,500</span>
+                  </div>
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

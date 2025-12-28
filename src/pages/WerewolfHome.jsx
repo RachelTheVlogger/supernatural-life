@@ -105,18 +105,28 @@ export default function WerewolfHome() {
           result = 'Territory expanded. This land is yours.';
           break;
         case 'recruit':
-          const newMember = {
-            name: ['Marcus', 'Luna', 'Kai', 'Raven', 'Ash', 'Storm', 'Shadow'][Math.floor(Math.random() * 7)],
-            loyalty: 60,
-            strength: Math.floor(Math.random() * 50) + 30
-          };
-          const currentMembers = Array.isArray(werewolf.pack_members) ? werewolf.pack_members : [];
-          updates.pack_members = [...currentMembers, newMember];
-          if (updates.pack_members.length >= 5 && werewolf.pack_status === 'lone') {
+          const newMemberName = ['Marcus', 'Luna', 'Kai', 'Raven', 'Ash', 'Storm', 'Shadow'][Math.floor(Math.random() * 7)];
+          const loyalty = 60;
+          const strength = Math.floor(Math.random() * 50) + 30;
+          
+          // Create actual PackMember entity
+          await base44.entities.PackMember.create({
+            pack_id: werewolf.id,
+            name: newMemberName,
+            role: 'warrior',
+            loyalty,
+            strength,
+            relationship: 50
+          });
+          
+          // Fetch all pack members to update count
+          const packMembers = await base44.entities.PackMember.filter({ pack_id: werewolf.id });
+          
+          if (packMembers.length >= 5 && werewolf.pack_status === 'lone') {
             updates.pack_status = 'alpha';
-            result = `${newMember.name} joins your pack. You are now an Alpha!`;
+            result = `${newMemberName} joins your pack. You are now an Alpha!`;
           } else {
-            result = `${newMember.name} joins your pack.`;
+            result = `${newMemberName} joins your pack.`;
           }
           break;
         case 'cubs':
