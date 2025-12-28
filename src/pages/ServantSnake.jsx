@@ -620,29 +620,30 @@ export default function ServantSnake() {
                 </p>
               </div>
             </div>
-            <div className="bg-gray-800 rounded-lg p-3 mb-3">
-              <p className="text-gray-400 text-xs mb-1">Size</p>
-              <p className="text-white capitalize">{snake.size}</p>
-            </div>
-
-            {/* Abilities Section */}
-            <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-lg p-4">
-              <h3 className="text-purple-200 font-bold mb-3 flex items-center gap-2">
-                <Zap className="w-4 h-4" />
-                Unlocked Abilities
-              </h3>
-              <div className="space-y-2">
-                {(snake.unlocked_abilities || EVOLUTION_PATHS[snake.type][0].abilities).map((ability, i) => (
-                  <div key={i} className="bg-black/30 rounded-lg p-2 border border-purple-500/20">
-                    <p className="text-purple-100 text-sm font-medium">✨ {ability}</p>
-                  </div>
-                ))}
+              <div className="bg-gray-800 rounded-lg p-3 mb-3">
+                <p className="text-gray-400 text-xs mb-1">Size</p>
+                <p className="text-white capitalize">{snake.size}</p>
               </div>
-              {getEvolutionStage(snake.power_level) < 3 && (
-                <p className="text-purple-300 text-xs mt-3">
-                  Next evolution at {getEvolutionStage(snake.power_level) === 1 ? '40' : '70'} power
-                </p>
-              )}
+
+              {/* Abilities Section */}
+              <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-lg p-4">
+                <h3 className="text-purple-200 font-bold mb-3 flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  Unlocked Abilities
+                </h3>
+                <div className="space-y-2">
+                  {(snake.unlocked_abilities || EVOLUTION_PATHS[snake.type][0].abilities).map((ability, i) => (
+                    <div key={i} className="bg-black/30 rounded-lg p-2 border border-purple-500/20">
+                      <p className="text-purple-100 text-sm font-medium">✨ {ability}</p>
+                    </div>
+                  ))}
+                </div>
+                {getEvolutionStage(snake.power_level) < 3 && (
+                  <p className="text-purple-300 text-xs mt-3">
+                    Next evolution at {getEvolutionStage(snake.power_level) === 1 ? '40' : '70'} power
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
