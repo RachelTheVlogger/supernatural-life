@@ -29,7 +29,7 @@ export default function ServantIdentityRevelation({ servant, vampireState, onClo
         });
         
         await base44.entities.NightLog.create({
-          entry: `${servant.name} opened up about who they are. Gender: ${gender}. Sexuality: ${sexuality}. You listened. You understood.`,
+          entry: `${servant.name} opened up about who they are. ${gender === 'man' ? 'He' : gender === 'woman' ? 'She' : 'They'}'re ${sexuality}. You listened. You understood.`,
           category: 'interaction',
           intensity: 'moderate'
         });
