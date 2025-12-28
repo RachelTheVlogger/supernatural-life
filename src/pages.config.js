@@ -2,7 +2,6 @@ import Codex from './pages/Codex';
 import DoppelgangerHome from './pages/DoppelgangerHome';
 import Home from './pages/Home';
 import HumanHome from './pages/HumanHome';
-import HybridHome from './pages/HybridHome';
 import IncubusHome from './pages/IncubusHome';
 import Index from './pages/Index';
 import Messages from './pages/Messages';
@@ -11,7 +10,6 @@ import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
 import SuccubusHome from './pages/SuccubusHome';
 import VampireHome from './pages/VampireHome';
-import WerewolfHome from './pages/WerewolfHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
 import __Layout from './Layout.jsx';
@@ -22,7 +20,6 @@ export const PAGES = {
     "DoppelgangerHome": DoppelgangerHome,
     "Home": Home,
     "HumanHome": HumanHome,
-    "HybridHome": HybridHome,
     "IncubusHome": IncubusHome,
     "Index": Index,
     "Messages": Messages,
@@ -31,7 +28,6 @@ export const PAGES = {
     "ServantHome": ServantHome,
     "SuccubusHome": SuccubusHome,
     "VampireHome": VampireHome,
-    "WerewolfHome": WerewolfHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
 }
