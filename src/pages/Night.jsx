@@ -44,6 +44,7 @@ import FuturePredictor from '@/components/nightbound/FuturePredictor';
 import BloodAddiction from '@/components/nightbound/BloodAddiction';
 import FeedingParty from '@/components/nightbound/FeedingParty';
 import WitchLivingTogether from '@/components/nightbound/WitchLivingTogether';
+import VampireSnakeFamiliar from '@/components/nightbound/VampireSnakeFamiliar';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -69,6 +70,7 @@ export default function Night() {
   const [showAddiction, setShowAddiction] = useState(false);
   const [showFeedingParty, setShowFeedingParty] = useState(false);
   const [showWitchHome, setShowWitchHome] = useState(false);
+  const [showSnake, setShowSnake] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
 
   // Fetch vampire state
@@ -564,6 +566,13 @@ export default function Night() {
           <span className="text-2xl">🍷</span>
           <p className="text-white text-xs mt-1">Feeding Party</p>
         </button>
+        <button
+          onClick={() => setShowSnake(true)}
+          className="bg-green-950/40 hover:bg-green-950/60 border border-green-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🐍</span>
+          <p className="text-white text-xs mt-1">Snake Familiar</p>
+        </button>
         {witches.length > 0 && witches[0].relationship >= 70 && !witches[0].living_with_vampire && (
           <button
             onClick={async () => {
@@ -760,6 +769,9 @@ export default function Night() {
         )}
         {showWitchHome && witches[0] && (
           <WitchLivingTogether witch={witches[0]} vampireState={vampireState} onClose={() => setShowWitchHome(false)} />
+        )}
+        {showSnake && vampireState && (
+          <VampireSnakeFamiliar vampireState={vampireState} onClose={() => setShowSnake(false)} />
         )}
 
         </AnimatePresence>

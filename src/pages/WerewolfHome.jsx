@@ -8,6 +8,7 @@ import { base44 } from '@/api/base44Client';
 import PackDynamics from '@/components/nightbound/PackDynamics';
 import FullMoonEvent from '@/components/nightbound/FullMoonEvent';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
+import WolfPackDynamics from '@/components/nightbound/WolfPackDynamics';
 
 const ACTIONS = [
   { id: 'hunt', label: 'Hunt in the Wild', icon: '🐺', duration: 3000 },
@@ -28,6 +29,7 @@ export default function WerewolfHome() {
   const [showPack, setShowPack] = useState(false);
   const [showFullMoon, setShowFullMoon] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
+  const [showPackDynamics, setShowPackDynamics] = useState(false);
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
@@ -223,6 +225,13 @@ export default function WerewolfHome() {
             <span className="text-2xl">🌕</span>
             <span className="text-white font-medium text-sm">Full Moon</span>
           </button>
+          <button
+            onClick={() => setShowPackDynamics(true)}
+            className="bg-gradient-to-r from-blue-900/60 to-cyan-900/60 hover:from-blue-900/80 hover:to-cyan-900/80 border-2 border-blue-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-2 transition-all col-span-2"
+          >
+            <span className="text-2xl">🐺</span>
+            <span className="text-white font-medium text-sm">Manage Pack Members</span>
+          </button>
         </div>
 
         <motion.button
@@ -266,6 +275,7 @@ export default function WerewolfHome() {
 
         {showPack && <PackDynamics werewolf={werewolf} onClose={() => setShowPack(false)} />}
         {showFullMoon && <FullMoonEvent werewolf={werewolf} onClose={() => setShowFullMoon(false)} />}
+        {showPackDynamics && <WolfPackDynamics werewolf={werewolf} onClose={() => setShowPackDynamics(false)} />}
 
         {showIdentity && (
           <motion.div
