@@ -1163,7 +1163,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </motion.div>
             )}
           </div>
-        ) : !mySnake || !showAdoptModal ? (
+        ) : snakes.length === 0 && !showAdoptModal ? (
           <div className="space-y-3">
             <p className="text-gray-300 mb-4">Choose your serpent familiar:</p>
             {snakeTypes.map(snake => (
@@ -1189,7 +1189,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </button>
             ))}
           </div>
-        ) : mySnake && showAdoptModal ? null : (
+        ) : mySnake && !showAdoptModal ? (
           <div>
             {/* Visual Snake Display */}
             <div className={`rounded-xl p-6 mb-4 border-2 relative overflow-hidden`} style={{
