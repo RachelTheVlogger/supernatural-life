@@ -2131,33 +2131,34 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
               <div className="space-y-3">
                 <p className="text-gray-400 text-sm mb-4">Grow blood plants to create organic strains</p>
                 {BLOOD_PLANTS.map(plant => (
-                  <button
-                    key={plant.type}
-                    onClick={async () => {
-                      await base44.entities.BloodPlant.create({
-                        plant_type: plant.type,
-                        growth_stage: 1,
-                        health: 100,
-                        potency: 50,
-                        planted_date: new Date().toISOString(),
-                        last_watered: new Date().toISOString()
-                      });
-                      await base44.entities.NightLog.create({
-                        entry: `Planted ${plant.name}. Let it grow.`,
-                        category: 'interaction',
-                        intensity: 'moderate'
-                      });
-                      queryClient.invalidateQueries();
-                    }}
-                    className="w-full bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 rounded-xl p-4 text-left"
-                  >
-                    <h4 className="text-white font-bold mb-1">{plant.name}</h4>
-                    <p className="text-gray-400 text-sm mb-2">{plant.description}</p>
-                    <div className="flex gap-3 text-xs text-gray-500">
-                      <span>Grow time: {plant.growTime} days</span>
-                      <span>Yield: {plant.baseYield} doses</span>
-                    </div>
-                  </button>
+                 <button
+                   key={plant.type}
+                   onClick={async (e) => {
+                     e.stopPropagation();
+                     await base44.entities.BloodPlant.create({
+                       plant_type: plant.type,
+                       growth_stage: 1,
+                       health: 100,
+                       potency: 50,
+                       planted_date: new Date().toISOString(),
+                       last_watered: new Date().toISOString()
+                     });
+                     await base44.entities.NightLog.create({
+                       entry: `Planted ${plant.name}. Let it grow.`,
+                       category: 'interaction',
+                       intensity: 'moderate'
+                     });
+                     queryClient.invalidateQueries();
+                   }}
+                   className="w-full bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 rounded-xl p-4 text-left touch-manipulation"
+                 >
+                   <h4 className="text-white font-bold mb-1">{plant.name}</h4>
+                   <p className="text-gray-400 text-sm mb-2">{plant.description}</p>
+                   <div className="flex gap-3 text-xs text-gray-500">
+                     <span>Grow time: {plant.growTime} days</span>
+                     <span>Yield: {plant.baseYield} doses</span>
+                   </div>
+                 </button>
                 ))}
               </div>
             ) : (
@@ -2193,19 +2194,21 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <button
-                        onClick={async () => {
+                        onClick={async (e) => {
+                          e.stopPropagation();
                           await base44.entities.BloodPlant.update(plant.id, {
                             health: Math.min(100, plant.health + 20),
                             last_watered: new Date().toISOString()
                           });
                           queryClient.invalidateQueries();
                         }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm"
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm touch-manipulation"
                       >
                         Water
                       </button>
                       <button
-                        onClick={async () => {
+                        onClick={async (e) => {
+                          e.stopPropagation();
                           await base44.entities.BloodPlant.update(plant.id, {
                             health: Math.min(100, plant.health + 30),
                             potency: Math.min(100, plant.potency + 15),
@@ -2213,27 +2216,29 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                           });
                           queryClient.invalidateQueries();
                         }}
-                        className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm"
+                        className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm touch-manipulation"
                       >
                         Feed Blood
                       </button>
                       {plant.growth_stage < 5 && (
                         <button
-                          onClick={async () => {
+                          onClick={async (e) => {
+                            e.stopPropagation();
                             await base44.entities.BloodPlant.update(plant.id, {
                               growth_stage: plant.growth_stage + 1,
                               harvest_ready: plant.growth_stage + 1 === 5
                             });
                             queryClient.invalidateQueries();
                           }}
-                          className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm"
+                          className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm touch-manipulation"
                         >
                           Advance Growth
                         </button>
                       )}
                       {plant.harvest_ready && (
                        <button
-                         onClick={async () => {
+                         onClick={async (e) => {
+                           e.stopPropagation();
                            const baseYield = plantInfo?.baseYield || 5;
                            const yield_ = Math.floor(Math.random() * 3) + baseYield;
                            const strainName = plant.hybrid_name ? `${plant.hybrid_name} Extract` : `${plantInfo.name} Extract`;
@@ -2263,7 +2268,7 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
 
                            queryClient.invalidateQueries();
                          }}
-                         className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm col-span-2"
+                         className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm col-span-2 touch-manipulation"
                        >
                          🌿 Harvest
                        </button>
@@ -2300,14 +2305,15 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                   }`}
                 >
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       if (selectedPlants.includes(plant.id)) {
                         setSelectedPlants(selectedPlants.filter(id => id !== plant.id));
                       } else if (selectedPlants.length < 2) {
                         setSelectedPlants([...selectedPlants, plant.id]);
                       }
                     }}
-                    className="w-full text-left"
+                    className="w-full text-left touch-manipulation"
                   >
                     <h4 className="text-white font-bold mb-1">{displayName}</h4>
                     <p className="text-gray-400 text-xs">Potency: {plant.potency}% | Stage: {plant.growth_stage}/5</p>
@@ -2317,9 +2323,12 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
             })}
 
             <button
-              onClick={handlePlantCrossBreed}
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePlantCrossBreed();
+              }}
               disabled={selectedPlants.length !== 2}
-              className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-3 rounded-lg transition-colors disabled:opacity-50"
+              className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-3 rounded-lg transition-colors disabled:opacity-50 touch-manipulation"
             >
               Cross-Breed ({selectedPlants.length}/2 selected)
             </button>
