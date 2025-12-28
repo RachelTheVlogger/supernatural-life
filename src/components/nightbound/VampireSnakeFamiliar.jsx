@@ -1212,23 +1212,22 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
               <div className="relative z-10">
                 <div className="text-center mb-3">
-                  <div className="relative inline-block">
-                    <div className="text-7xl mb-2">
-                      {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
-                    </div>
-                    {/* Eye color indicator */}
-                    <div 
-                      className="absolute top-4 right-2 w-4 h-4 rounded-full border-2 border-white"
-                      style={{ 
-                        backgroundColor: mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color,
-                        boxShadow: `0 0 8px ${mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color}`
-                      }}
-                    />
+                  <div className="text-7xl mb-2">
+                    🐍
                   </div>
                 </div>
                 <div className="mb-2">
                   <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-white font-bold text-xl">{mySnake.custom_name}</h3>
+                    <h3 className="text-white font-bold text-xl flex items-center gap-2">
+                      {mySnake.custom_name}
+                      <span 
+                        className="inline-block w-3 h-3 rounded-full"
+                        style={{ 
+                          backgroundColor: mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color,
+                          boxShadow: `0 0 6px ${mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color}`
+                        }}
+                      />
+                    </h3>
                     <button
                       onClick={() => {
                         setCustomName(mySnake.custom_name);
