@@ -59,6 +59,12 @@ export default function ServantSnake() {
   const [carrying, setCarrying] = useState(false);
   const [showBreeding, setShowBreeding] = useState(false);
   const [selectedMate, setSelectedMate] = useState(null);
+  const [showAdoptModal, setShowAdoptModal] = useState(false);
+  const [adoptingType, setAdoptingType] = useState(null);
+  const [customName, setCustomName] = useState('');
+  const [selectedGender, setSelectedGender] = useState('male');
+  const [selectedPattern, setSelectedPattern] = useState('solid');
+  const [selectedEyeColor, setSelectedEyeColor] = useState('red');
 
   const urlParams = new URLSearchParams(location.search);
   const servantId = urlParams.get('id');
@@ -83,18 +89,20 @@ export default function ServantSnake() {
 
   const snake = snakes[0];
 
-  const handleAdopt = async (type) => {
-    const patterns = ['solid', 'striped', 'spotted', 'iridescent', 'scales_of_night'];
-    const eyeColors = ['red', 'gold', 'green', 'purple', 'blue', 'silver'];
-    const genders = ['male', 'female'];
-    
+  const handleAdopt = async () => {
+    if (!customName.trim()) {
+      setOutcome('Please enter a name for your snake');
+      setTimeout(() => setOutcome(''), 2000);
+      return;
+    }
+
     await base44.entities.SnakeFamiliar.create({
       vampire_id: servantId,
-      custom_name: `${servant.name}'s Serpent`,
-      gender: genders[Math.floor(Math.random() * genders.length)],
-      type: type,
-      pattern: patterns[Math.floor(Math.random() * patterns.length)],
-      eye_color: eyeColors[Math.floor(Math.random() * eyeColors.length)],
+      custom_name: customName.trim(),
+      gender: selectedGender,
+      type: adoptingType,
+      pattern: selectedPattern,
+      eye_color: selectedEyeColor,
       bond_level: 10,
       power_level: 20,
       loyalty: 50,
@@ -116,13 +124,17 @@ export default function ServantSnake() {
     });
 
     await base44.entities.NightLog.create({
-      entry: `${servant.name} adopted a ${SNAKE_TYPES.find(s => s.type === type).name}. A familiar bond begins.`,
+      entry: `${servant.name} adopted ${customName}, a ${SNAKE_TYPES.find(s => s.type === adoptingType).name}. A familiar bond begins.`,
       category: 'interaction',
       intensity: 'significant'
     });
 
     queryClient.invalidateQueries();
-    setShowAdopt(false);
+    setShowAdoptModal(false);
+    setCustomName('');
+    setSelectedGender('male');
+    setSelectedPattern('solid');
+    setSelectedEyeColor('red');
   };
 
   const handleBreed = async (mate) => {
@@ -366,7 +378,10 @@ export default function ServantSnake() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
-                onClick={() => handleAdopt(type.type)}
+                onClick={() => {
+                  setAdoptingType(type.type);
+                  setShowAdoptModal(true);
+                }}
                 className={`w-full bg-gradient-to-r ${type.color} border-2 border-green-500/50 rounded-xl p-6 text-left hover:scale-105 transition-transform`}
               >
                 <h3 className="text-white text-xl font-bold mb-2">{type.name}</h3>
@@ -556,6 +571,130 @@ export default function ServantSnake() {
           )}
         </div>
       )}
+
+      {/* Adoption Customization Modal */}
+      <AnimatePresence>
+        {showAdoptModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowAdoptModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-md w-full border-2 border-green-500/50"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">Customize Your Snake</h2>
+
+              {/* Name Input */}
+              <div className="mb-4">
+                <label className="text-gray-400 text-sm mb-2 block">Name</label>
+                <input
+                  type="text"
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  placeholder="Enter snake name..."
+                  className="w-full bg-gray-800 border border-green-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500"
+                  autoFocus
+                />
+              </div>
+
+              {/* Gender Selection */}
+              <div className="mb-4">
+                <label className="text-gray-400 text-sm mb-2 block">Gender</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setSelectedGender('male')}
+                    className={`py-3 rounded-lg font-medium transition-all ${
+                      selectedGender === 'male'
+                        ? 'bg-blue-600 text-white border-2 border-blue-400'
+                        : 'bg-gray-800 text-gray-400 border border-gray-700'
+                    }`}
+                  >
+                    ♂️ Male
+                  </button>
+                  <button
+                    onClick={() => setSelectedGender('female')}
+                    className={`py-3 rounded-lg font-medium transition-all ${
+                      selectedGender === 'female'
+                        ? 'bg-pink-600 text-white border-2 border-pink-400'
+                        : 'bg-gray-800 text-gray-400 border border-gray-700'
+                    }`}
+                  >
+                    ♀️ Female
+                  </button>
+                </div>
+              </div>
+
+              {/* Pattern Selection */}
+              <div className="mb-4">
+                <label className="text-gray-400 text-sm mb-2 block">Scale Pattern</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['solid', 'striped', 'spotted', 'iridescent', 'scales_of_night'].map(pattern => (
+                    <button
+                      key={pattern}
+                      onClick={() => setSelectedPattern(pattern)}
+                      className={`py-2 rounded-lg text-sm font-medium capitalize transition-all ${
+                        selectedPattern === pattern
+                          ? 'bg-green-600 text-white border-2 border-green-400'
+                          : 'bg-gray-800 text-gray-400 border border-gray-700'
+                      }`}
+                    >
+                      {pattern.replace('_', ' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Eye Color Selection */}
+              <div className="mb-6">
+                <label className="text-gray-400 text-sm mb-2 block">Eye Color</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['red', 'gold', 'green', 'purple', 'blue', 'silver'].map(color => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedEyeColor(color)}
+                      className={`py-2 rounded-lg text-sm font-medium capitalize transition-all ${
+                        selectedEyeColor === color
+                          ? `bg-${color === 'red' ? 'red' : color === 'gold' ? 'yellow' : color === 'silver' ? 'gray' : color}-600 text-white border-2 border-${color === 'red' ? 'red' : color === 'gold' ? 'yellow' : color === 'silver' ? 'gray' : color}-400`
+                          : 'bg-gray-800 text-gray-400 border border-gray-700'
+                      }`}
+                      style={selectedEyeColor === color ? {
+                        backgroundColor: color === 'gold' ? '#ca8a04' : color === 'silver' ? '#6b7280' : color,
+                        borderColor: color === 'gold' ? '#fbbf24' : color === 'silver' ? '#9ca3af' : color
+                      } : {}}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowAdoptModal(false)}
+                  className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg font-medium transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAdopt}
+                  disabled={!customName.trim()}
+                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all"
+                >
+                  Adopt Snake
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Breeding Modal */}
       <AnimatePresence>
