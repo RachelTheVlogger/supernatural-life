@@ -426,29 +426,128 @@ export default function ServantSnake() {
             )}
           </motion.div>
 
-          <div className={`bg-gradient-to-br ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].color} rounded-xl p-6 mb-6 border-2 border-green-500/50`}>
-            {/* Visual Traits */}
-            <div className="bg-black/30 rounded-lg p-3 mb-4 border border-green-500/20">
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div>
-                  <p className="text-gray-400 text-xs">Gender</p>
-                  <p className="text-white font-bold">{snake.gender === 'male' ? '♂️' : '♀️'} {snake.gender}</p>
+          {/* Visual Snake Display */}
+          <div className={`bg-gradient-to-br ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].color} rounded-xl p-6 mb-6 border-2 border-green-500/50 relative overflow-hidden`}>
+            {/* Aura Effect */}
+            <div className={`absolute inset-0 opacity-${Math.min(50 + snake.power_level / 2, 90)}`} style={{
+              background: `radial-gradient(circle at center, ${
+                snake.type === 'shadow' ? 'rgba(75, 85, 99, 0.4)' :
+                snake.type === 'venom' ? 'rgba(34, 197, 94, 0.4)' :
+                snake.type === 'blood' ? 'rgba(239, 68, 68, 0.4)' :
+                'rgba(147, 51, 234, 0.4)'
+              }, transparent 70%)`
+            }} />
+
+            {/* Background Scene */}
+            <div className="absolute top-2 right-2 text-4xl opacity-30">
+              {snake.favorite_spot === 'rock' && '🪨'}
+              {snake.favorite_spot === 'water_bowl' && '💧'}
+              {snake.favorite_spot === 'heated_stone' && '🔥'}
+              {snake.favorite_spot === 'nest' && '🌿'}
+              {snake.favorite_spot === 'perch' && '🌙'}
+            </div>
+
+            <div className="relative z-10">
+              {/* Snake Visualization with Size */}
+              <div className="text-center mb-4">
+                <div className="relative inline-block">
+                  {/* Size-based display */}
+                  {snake.size === 'small' && (
+                    <div className="text-6xl">
+                      {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
+                    </div>
+                  )}
+                  {snake.size === 'medium' && (
+                    <div className="text-8xl">
+                      {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
+                    </div>
+                  )}
+                  {snake.size === 'large' && (
+                    <div className="flex items-center gap-2">
+                      <div className="text-9xl">
+                        {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
+                      </div>
+                      <div className="text-4xl opacity-70">
+                        {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
+                      </div>
+                    </div>
+                  )}
+                  {snake.size === 'massive' && (
+                    <div className="text-[10rem] leading-none">
+                      {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emoji}
+                    </div>
+                  )}
+
+                  {/* Eye Glow based on mood */}
+                  <div className="absolute -top-2 -right-2 text-2xl">
+                    {snake.mood === 'content' && '😊💫'}
+                    {snake.mood === 'playful' && '😄✨'}
+                    {snake.mood === 'aggressive' && '😠💢'}
+                    {snake.mood === 'sleepy' && '😴💤'}
+                    {snake.mood === 'affectionate' && '🥰💕'}
+                    {snake.mood === 'curious' && '🤔💭'}
+                  </div>
+
+                  {/* Accessories */}
+                  {snake.accessories && snake.accessories.length > 0 && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex gap-1">
+                      {snake.accessories.includes('crown') && <span className="text-xl">👑</span>}
+                      {snake.accessories.includes('collar') && <span className="text-xl">📿</span>}
+                      {snake.accessories.includes('jewelry') && <span className="text-xl">💎</span>}
+                    </div>
+                  )}
+
+                  {/* Battle Scars */}
+                  {snake.scars && snake.scars.length > 0 && (
+                    <div className="absolute -bottom-2 -left-2 flex gap-1">
+                      {snake.scars.slice(0, 3).map((scar, i) => (
+                        <span key={i} className="text-sm">⚔️</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <p className="text-gray-400 text-xs">Pattern</p>
-                  <p className="text-white font-bold capitalize">{snake.pattern}</p>
-                </div>
-                <div>
-                  <p className="text-gray-400 text-xs">Eyes</p>
-                  <p className="text-white font-bold capitalize">{snake.eye_color}</p>
+
+                {/* Position State */}
+                <div className="mt-2 text-sm text-gray-300">
+                  {snake.position === 'coiled' && '🔵 Coiled (Defensive)'}
+                  {snake.position === 'stretched' && '🟢 Stretched (Alert)'}
+                  {snake.position === 'wrapped' && '🟡 Wrapped Around Arm'}
+                  {snake.position === 'hiding' && '🟣 Hiding'}
+                  {snake.position === 'sleeping' && '⚫ Sleeping'}
                 </div>
               </div>
-              {snake.parent_ids && snake.parent_ids.length > 0 && (
-                <p className="text-purple-300 text-xs mt-2 text-center">
-                  🧬 Offspring of breeding pair
-                </p>
-              )}
-            </div>
+
+              {/* Visual Traits */}
+              <div className="bg-black/30 rounded-lg p-3 mb-4 border border-green-500/20">
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div>
+                    <p className="text-gray-400 text-xs">Gender</p>
+                    <p className="text-white font-bold">{snake.gender === 'male' ? '♂️' : '♀️'} {snake.gender}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-xs">Pattern</p>
+                    <p className="text-white font-bold capitalize flex items-center justify-center gap-1">
+                      {snake.pattern === 'striped' && '━'}
+                      {snake.pattern === 'spotted' && '•'}
+                      {snake.pattern === 'iridescent' && '✨'}
+                      {snake.pattern === 'scales_of_night' && '🌑'}
+                      {snake.pattern.replace('_', ' ')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-xs">Eyes</p>
+                    <p className="text-white font-bold capitalize flex items-center justify-center gap-1">
+                      <span style={{ color: snake.eye_color }}>●</span>
+                      {snake.eye_color}
+                    </p>
+                  </div>
+                </div>
+                {snake.parent_ids && snake.parent_ids.length > 0 && (
+                  <p className="text-purple-300 text-xs mt-2 text-center">
+                    🧬 Offspring of breeding pair
+                  </p>
+                )}
+              </div>
             
             <div className="mb-4">
               <p className="text-gray-400 text-xs mb-1">Evolution Stage {getEvolutionStage(snake.power_level)}/3</p>
@@ -472,32 +571,41 @@ export default function ServantSnake() {
               <div>
                 <p className="text-gray-400 text-xs">Bond</p>
                 <p className="text-white text-xl font-bold">{snake.bond_level}%</p>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                  <div style={{ width: `${snake.bond_level}%` }} className="h-2 bg-gradient-to-r from-pink-500 to-red-500 rounded-full" />
+                <div className="w-full bg-gray-700 rounded-full h-2 mt-1 overflow-hidden">
+                  <div style={{ width: `${snake.bond_level}%` }} className="h-2 bg-gradient-to-r from-pink-500 to-red-500 rounded-full shadow-lg shadow-pink-500/50" />
                 </div>
               </div>
               <div>
                 <p className="text-gray-400 text-xs">Power</p>
                 <p className="text-white text-xl font-bold">{snake.power_level}%</p>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                  <div style={{ width: `${snake.power_level}%` }} className="h-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full" />
+                <div className="w-full bg-gray-700 rounded-full h-2 mt-1 overflow-hidden">
+                  <div style={{ width: `${snake.power_level}%` }} className="h-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full shadow-lg shadow-purple-500/50" />
                 </div>
               </div>
               <div>
                 <p className="text-gray-400 text-xs">Loyalty</p>
                 <p className="text-white text-xl font-bold">{snake.loyalty}%</p>
+                <div className="w-full bg-gray-700 rounded-full h-2 mt-1 overflow-hidden">
+                  <div style={{ width: `${snake.loyalty}%` }} className="h-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full shadow-lg shadow-green-500/50" />
+                </div>
               </div>
               <div>
                 <p className="text-gray-400 text-xs">Missions</p>
-                <p className="text-white text-xl font-bold">{snake.missions_completed}</p>
+                <p className="text-white text-xl font-bold flex items-center gap-1">
+                  {snake.missions_completed} {snake.missions_completed >= 10 && '🏆'}
+                </p>
               </div>
               <div>
                 <p className="text-gray-400 text-xs">Happiness</p>
-                <p className="text-white text-xl font-bold">{snake.happiness || 50}%</p>
+                <p className="text-white text-xl font-bold flex items-center gap-1">
+                  {snake.happiness || 50}% {(snake.happiness || 50) >= 80 && '😊'}
+                </p>
               </div>
               <div>
                 <p className="text-gray-400 text-xs">Health</p>
-                <p className="text-white text-xl font-bold">{snake.health || 100}%</p>
+                <p className="text-white text-xl font-bold flex items-center gap-1">
+                  {snake.health || 100}% {(snake.health || 100) < 50 && '🩹'}
+                </p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-3">
