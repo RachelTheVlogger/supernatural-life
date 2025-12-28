@@ -92,7 +92,6 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [showCollabs, setShowCollabs] = useState(false);
   const [audioRecording, setAudioRecording] = useState(false);
   const [activeStory, setActiveStory] = useState(null);
-  const [creatingInteractive, setCreatingInteractive] = useState(false);
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -1024,10 +1023,6 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           <button onClick={() => setTab('promo')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'promo' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             💰 Promos
           </button>
-          <button onClick={() => setTab('interactive')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'interactive' ? 'bg-pink-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
-            💦 Interactive
-          </button>
-
           <button onClick={() => setTab('profile')} className={`px-3 py-2 rounded-lg whitespace-nowrap text-sm ${tab === 'profile' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}>
             ⚙️ Settings
           </button>
@@ -2065,54 +2060,6 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
             </div>
           </div>
         )}
-
-        {/* INTERACTIVE TAB - simplified */}
-        {tab === 'interactive' && (
-          <div className="space-y-4 max-h-[55vh] overflow-y-auto">
-            {creatingInteractive ? (
-              <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6 text-center">
-                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="text-6xl mb-4">
-                  💦
-                </motion.div>
-                <p className="text-white text-lg">Creating interactive session...</p>
-              </div>
-            ) : (
-              <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6 text-center">
-                <h3 className="text-white text-2xl font-bold mb-2">🎮 Interactive Content</h3>
-                <p className="text-gray-400 mb-6">This section has been simplified</p>
-                <button
-                  onClick={async () => {
-                    setCreatingInteractive(true);
-                    setTimeout(async () => {
-                      const earnings = Math.floor(Math.random() * 400) + 200;
-                      const newSubs = Math.floor(Math.random() * 30) + 20;
-                      
-                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                        revenue: servantProfile.revenue + earnings,
-                        subscriber_count: servantProfile.subscriber_count + newSubs,
-                        reputation: Math.min(100, servantProfile.reputation + 8)
-                      });
-                      
-                      await base44.entities.NightLog.create({
-                        entry: `Posted interactive content. Earned $${earnings}, +${newSubs} subs.`,
-                        category: 'interaction',
-                        intensity: 'significant'
-                      });
-                      
-                      queryClient.invalidateQueries();
-                      setCreatingInteractive(false);
-                    }, 2500);
-                  }}
-                  disabled={creatingInteractive}
-                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white py-4 rounded-xl font-bold disabled:opacity-50"
-                >
-                  Create Interactive Content
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
 
 
         {/* PROFILE/SETTINGS TAB */}
