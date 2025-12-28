@@ -16,7 +16,7 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
     return colors[type] || '#6b7280';
   };
 
-  const abilities = getAbilities();
+  const abilities = getAbilities(snake);
 
   return (
     <motion.div
@@ -100,10 +100,37 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
 
       {/* Basic Actions - Compact */}
       <div className="grid grid-cols-3 gap-2 mb-4">
-        <button onClick={() => onInteraction('feed')} disabled={interacting} className="bg-red-900/40 border border-red-500/30 rounded-lg p-2 text-xs text-white">🩸 Feed</button>
-        <button onClick={() => onInteraction('train')} disabled={interacting} className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-2 text-xs text-white">⚡ Train</button>
-        <button onClick={() => onInteraction('bond')} disabled={interacting} className="bg-green-900/40 border border-green-500/30 rounded-lg p-2 text-xs text-white">💚 Bond</button>
+        <button onClick={() => onInteraction('feed', snake)} disabled={interacting} className="bg-red-900/40 border border-red-500/30 rounded-lg p-2 text-xs text-white">🩸 Feed</button>
+        <button onClick={() => onInteraction('train', snake)} disabled={interacting} className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-2 text-xs text-white">⚡ Train</button>
+        <button onClick={() => onInteraction('bond', snake)} disabled={interacting} className="bg-green-900/40 border border-green-500/30 rounded-lg p-2 text-xs text-white">💚 Bond</button>
       </div>
+
+      {/* Special Abilities - Compact */}
+      {abilities.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-white font-bold text-sm">Special Abilities</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {abilities.slice(0, 4).map(ability => {
+              const unlocked = snake.bond_level >= ability.reqBond;
+              return (
+                <button
+                  key={ability.id}
+                  onClick={() => unlocked && onUseAbility(ability, snake)}
+                  disabled={!unlocked}
+                  className={`rounded-lg p-2 text-xs transition-colors ${
+                    unlocked 
+                      ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border border-green-500/30 text-white' 
+                      : 'bg-gray-800/40 border border-gray-600/30 opacity-50 text-gray-500'
+                  }`}
+                >
+                  <span className="block text-lg mb-1">{ability.icon}</span>
+                  {ability.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -205,8 +232,8 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     { id: 'nightmare', name: 'Nightmare Cobra', power: 'Fear & Mind Games', icon: '🐍', color: 'from-purple-900 to-violet-900' }
   ];
 
-  const getAbilities = () => {
-    if (!mySnake) return [];
+  const getAbilities = (snake) => {
+    if (!snake) return [];
     
     const baseAbilities = {
       shadow: [
@@ -235,7 +262,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       ]
     };
 
-    return baseAbilities[mySnake.type] || [];
+    return baseAbilities[snake.type] || [];
   };
 
   const getPatternColor = (pattern, baseColor) => {
@@ -266,8 +293,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       return;
     }
 
-    if (mySnake && !adoptingType) {
-      await base44.entities.SnakeFamiliar.update(mySnake.id, {
+    const editingSnake = snakes[selectedSnakeIndex];
+    
+    if (editingSnake && !adoptingType) {
+      await base44.entities.SnakeFamiliar.update(editingSnake.id, {
         custom_name: customName.trim(),
         gender: selectedGender,
         pattern: selectedPattern,
@@ -277,6 +306,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       queryClient.invalidateQueries();
       setShowAdoptModal(false);
       setCustomName('');
+      setAdoptingType(null);
       return;
     }
 
@@ -319,9 +349,14 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     setSelectedGender('male');
     setSelectedPattern('solid');
     setSelectedEyeColor('red');
+    setAdoptingType(null);
+    setActiveTab('snakes');
   };
 
   const handlePlayDate = async (mate) => {
+    const snake = snakes[selectedSnakeIndex];
+    if (!snake) return;
+    
     setShowPlayDate(false);
     setInteracting(true);
     setCurrentAction('playdate');
@@ -329,7 +364,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     setTimeout(async () => {
       try {
         const response = await base44.integrations.Core.InvokeLLM({
-          prompt: `Two vampire snake familiars have a play date. Snake 1: ${mySnake.custom_name} (${mySnake.type}, ${mySnake.gender}, ${mySnake.personality_traits?.join(', ') || 'mysterious'}). Snake 2: ${mate.custom_name} (${mate.type}, ${mate.gender}, ${mate.personality_traits?.join(', ') || 'mysterious'}). Write a vivid, detailed scene of their social interaction. Are they playful? Competitive? Affectionate? Do they fight or bond? 150 words. Make it engaging and snake-like.`,
+          prompt: `Two vampire snake familiars have a play date. Snake 1: ${snake.custom_name} (${snake.type}, ${snake.gender}, ${snake.personality_traits?.join(', ') || 'mysterious'}). Snake 2: ${mate.custom_name} (${mate.type}, ${mate.gender}, ${mate.personality_traits?.join(', ') || 'mysterious'}). Write a vivid, detailed scene of their social interaction. Are they playful? Competitive? Affectionate? Do they fight or bond? 150 words. Make it engaging and snake-like.`,
           response_json_schema: {
             type: 'object',
             properties: {
@@ -341,9 +376,9 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
           }
         });
 
-        await base44.entities.SnakeFamiliar.update(mySnake.id, {
-          bond_level: Math.min(100, (mySnake.bond_level || 0) + response.bond_change_1),
-          happiness: Math.min(100, (mySnake.happiness || 50) + 10)
+        await base44.entities.SnakeFamiliar.update(snake.id, {
+          bond_level: Math.min(100, (snake.bond_level || 0) + response.bond_change_1),
+          happiness: Math.min(100, (snake.happiness || 50) + 10)
         });
 
         await base44.entities.SnakeFamiliar.update(mate.id, {
@@ -351,10 +386,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
           happiness: Math.min(100, (mate.happiness || 50) + 10)
         });
 
-        setPlayDateOutcome(`${response.scene}\n\n🐍 Relationship: ${response.relationship}\n${mySnake.custom_name}: ${response.bond_change_1 > 0 ? '+' : ''}${response.bond_change_1} bond\n${mate.custom_name}: ${response.bond_change_2 > 0 ? '+' : ''}${response.bond_change_2} bond`);
+        setPlayDateOutcome(`${response.scene}\n\n🐍 Relationship: ${response.relationship}\n${snake.custom_name}: ${response.bond_change_1 > 0 ? '+' : ''}${response.bond_change_1} bond\n${mate.custom_name}: ${response.bond_change_2 > 0 ? '+' : ''}${response.bond_change_2} bond`);
 
         await base44.entities.NightLog.create({
-          entry: `${mySnake.custom_name} and ${mate.custom_name} had a play date. ${response.relationship}.`,
+          entry: `${snake.custom_name} and ${mate.custom_name} had a play date. ${response.relationship}.`,
           category: 'interaction',
           intensity: 'moderate'
         });
@@ -362,15 +397,15 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         queryClient.invalidateQueries();
       } catch (e) {
         const fallbackScenes = [
-          `${mySnake.custom_name} and ${mate.custom_name} coil around each other. Testing strength. ${mySnake.custom_name} is faster. ${mate.custom_name} is stronger. They hiss playfully. This is bonding. Snake style.`,
-          `The two serpents meet. Cautious at first. Then ${mate.custom_name} flicks tongue at ${mySnake.custom_name}. A game begins. Chase through shadows. They're having fun. Pure reptilian joy.`,
-          `${mySnake.custom_name} shows off abilities. ${mate.custom_name} watches. Impressed. They exchange knowledge. Snake wisdom passed between them. A friendship forming.`
+          `${snake.custom_name} and ${mate.custom_name} coil around each other. Testing strength. ${snake.custom_name} is faster. ${mate.custom_name} is stronger. They hiss playfully. This is bonding. Snake style.`,
+          `The two serpents meet. Cautious at first. Then ${mate.custom_name} flicks tongue at ${snake.custom_name}. A game begins. Chase through shadows. They're having fun. Pure reptilian joy.`,
+          `${snake.custom_name} shows off abilities. ${mate.custom_name} watches. Impressed. They exchange knowledge. Snake wisdom passed between them. A friendship forming.`
         ];
         setPlayDateOutcome(fallbackScenes[Math.floor(Math.random() * fallbackScenes.length)]);
         
-        await base44.entities.SnakeFamiliar.update(mySnake.id, {
-          bond_level: Math.min(100, (mySnake.bond_level || 0) + 5),
-          happiness: Math.min(100, (mySnake.happiness || 50) + 10)
+        await base44.entities.SnakeFamiliar.update(snake.id, {
+          bond_level: Math.min(100, (snake.bond_level || 0) + 5),
+          happiness: Math.min(100, (snake.happiness || 50) + 10)
         });
         await base44.entities.SnakeFamiliar.update(mate.id, {
           bond_level: Math.min(100, (mate.bond_level || 0) + 5),
@@ -388,31 +423,34 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   };
 
   const handleBreed = async (mate) => {
-    if (mySnake.bond_level < 60 || mySnake.loyalty < 60 || mate.bond_level < 60 || mate.loyalty < 60) {
+    const snake = snakes[selectedSnakeIndex];
+    if (!snake) return;
+    
+    if (snake.bond_level < 60 || snake.loyalty < 60 || mate.bond_level < 60 || mate.loyalty < 60) {
       setOutcome('Both snakes need 60+ bond and loyalty to breed safely.');
       setTimeout(() => setOutcome(''), 3000);
       return;
     }
 
-    if (!mySnake.breeding_ready || !mate.breeding_ready) {
+    if (!snake.breeding_ready || !mate.breeding_ready) {
       setOutcome('One or both snakes are not ready to breed yet.');
       setTimeout(() => setOutcome(''), 3000);
       return;
     }
 
-    const inheritType = Math.random() > 0.5 ? mySnake.type : mate.type;
-    const inheritPattern = Math.random() > 0.5 ? mySnake.pattern : mate.pattern;
-    const inheritEyeColor = Math.random() > 0.5 ? mySnake.eye_color : mate.eye_color;
+    const inheritType = Math.random() > 0.5 ? snake.type : mate.type;
+    const inheritPattern = Math.random() > 0.5 ? snake.pattern : mate.pattern;
+    const inheritEyeColor = Math.random() > 0.5 ? snake.eye_color : mate.eye_color;
     const inheritGender = Math.random() > 0.5 ? 'male' : 'female';
     
-    const combinedTraits = [...new Set([...(mySnake.personality_traits || []), ...(mate.personality_traits || [])])];
+    const combinedTraits = [...new Set([...(snake.personality_traits || []), ...(mate.personality_traits || [])])];
     const inheritedTraits = combinedTraits.slice(0, 2);
     
-    const avgPower = Math.floor((mySnake.power_level + mate.power_level) / 2) + Math.floor(Math.random() * 20 - 10);
-    const avgBond = Math.floor((mySnake.bond_level + mate.bond_level) / 2);
+    const avgPower = Math.floor((snake.power_level + mate.power_level) / 2) + Math.floor(Math.random() * 20 - 10);
+    const avgBond = Math.floor((snake.bond_level + mate.bond_level) / 2);
     
     const babyPrefixes = ['Little', 'Baby', 'Mini', 'Tiny'];
-    const parentName = mySnake.custom_name.split(' ')[0];
+    const parentName = snake.custom_name.split(' ')[0];
     const offspringName = `${babyPrefixes[Math.floor(Math.random() * babyPrefixes.length)]} ${parentName}`;
 
     await base44.entities.SnakeFamiliar.create({
@@ -438,17 +476,17 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       accessories: [],
       scars: [],
       breeding_ready: false,
-      parent_ids: [mySnake.id, mate.id],
+      parent_ids: [snake.id, mate.id],
       personality_traits: inheritedTraits
     });
 
-    await base44.entities.SnakeFamiliar.update(mySnake.id, { breeding_ready: false });
+    await base44.entities.SnakeFamiliar.update(snake.id, { breeding_ready: false });
     await base44.entities.SnakeFamiliar.update(mate.id, { breeding_ready: false });
 
     const babyEmoji = EVOLUTION_PATHS[inheritType][0].emoji;
     
     await base44.entities.NightLog.create({
-      entry: `${babyEmoji} ${mySnake.custom_name} and ${mate.custom_name} had a baby! ${offspringName} was born - a tiny ${inheritGender} ${inheritType} with ${inheritPattern} pattern and ${inheritEyeColor} eyes. Adorable!`,
+      entry: `${babyEmoji} ${snake.custom_name} and ${mate.custom_name} had a baby! ${offspringName} was born - a tiny ${inheritGender} ${inheritType} with ${inheritPattern} pattern and ${inheritEyeColor} eyes. Adorable!`,
       category: 'interaction',
       intensity: 'significant'
     });
@@ -460,7 +498,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     setTimeout(() => setOutcome(''), 6000);
   };
 
-  const handleCareAction = async (action) => {
+  const handleCareAction = async (action, targetSnake) => {
+    const snake = targetSnake || snakes[selectedSnakeIndex];
+    if (!snake) return;
+    
     setInteracting(true);
     setCurrentAction(action);
 
@@ -471,62 +512,62 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       switch (action) {
         case 'feed_meal':
           const feedOutcomes = [
-            `You prepare fresh meat for ${mySnake.custom_name}. The snake approaches cautiously. Sniffs. Then strikes! Teeth sink into flesh. Eating slowly. Savoring each bite. You watch fondly as your familiar feeds. When finished, ${mySnake.custom_name} coils contentedly, belly full. A satisfied hiss. The bond between you grows.`,
-            `Feeding time. ${mySnake.custom_name} hasn't eaten in days. You can see the hunger in those glowing eyes. You offer the meal. The serpent lunges—FAST. Powerful jaws clamp down. Swallowing methodically. You stroke its scales as it eats. "Good," you whisper. The snake's tail wraps around your wrist. Grateful.`,
-            `${mySnake.custom_name} is RAVENOUS. You present the food. Your familiar's eyes lock onto it. Predator mode activated. The strike is lightning-quick. A blur of scales and fangs. Minutes pass as the snake consumes its prey. Finally sated, ${mySnake.custom_name} slides over to you. Presses its head against your palm. Thank you.`
+            `You prepare fresh meat for ${snake.custom_name}. The snake approaches cautiously. Sniffs. Then strikes! Teeth sink into flesh. Eating slowly. Savoring each bite. You watch fondly as your familiar feeds. When finished, ${snake.custom_name} coils contentedly, belly full. A satisfied hiss. The bond between you grows.`,
+            `Feeding time. ${snake.custom_name} hasn't eaten in days. You can see the hunger in those glowing eyes. You offer the meal. The serpent lunges—FAST. Powerful jaws clamp down. Swallowing methodically. You stroke its scales as it eats. "Good," you whisper. The snake's tail wraps around your wrist. Grateful.`,
+            `${snake.custom_name} is RAVENOUS. You present the food. Your familiar's eyes lock onto it. Predator mode activated. The strike is lightning-quick. A blur of scales and fangs. Minutes pass as the snake consumes its prey. Finally sated, ${snake.custom_name} slides over to you. Presses its head against your palm. Thank you.`
           ];
-          updates.hunger = Math.max(0, (mySnake.hunger || 30) - 50);
-          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 5);
+          updates.hunger = Math.max(0, (snake.hunger || 30) - 50);
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 5);
           message = feedOutcomes[Math.floor(Math.random() * feedOutcomes.length)];
           break;
 
         case 'give_water':
           const waterOutcomes = [
-            `You fill ${mySnake.custom_name}'s water bowl with fresh, cool water. The snake glides over immediately. Dips its snout in. Drinks for a long time—must have been thirsty. You watch the rhythmic movements of its throat. When done, the serpent looks up at you. Eyes brighter. More alert. Refreshed. It flicks its tongue gratefully.`,
-            `Time for fresh water. ${mySnake.custom_name} watches as you clean the old bowl, refill it. The water glistens. Your familiar approaches and begins drinking. Slow. Deliberate. You sit beside it. Run your hand along its scales. The snake continues drinking, completely at ease with your presence. Trust.`,
-            `${mySnake.custom_name} hasn't had water in a while. You notice the dryness in its scales. Quickly, you bring fresh water. The snake drinks DEEPLY. Relief visible in every movement. After, it coils in the water dish—just resting there. Cool and comfortable. You smile. Taking care of your familiar feels right.`
+            `You fill ${snake.custom_name}'s water bowl with fresh, cool water. The snake glides over immediately. Dips its snout in. Drinks for a long time—must have been thirsty. You watch the rhythmic movements of its throat. When done, the serpent looks up at you. Eyes brighter. More alert. Refreshed. It flicks its tongue gratefully.`,
+            `Time for fresh water. ${snake.custom_name} watches as you clean the old bowl, refill it. The water glistens. Your familiar approaches and begins drinking. Slow. Deliberate. You sit beside it. Run your hand along its scales. The snake continues drinking, completely at ease with your presence. Trust.`,
+            `${snake.custom_name} hasn't had water in a while. You notice the dryness in its scales. Quickly, you bring fresh water. The snake drinks DEEPLY. Relief visible in every movement. After, it coils in the water dish—just resting there. Cool and comfortable. You smile. Taking care of your familiar feels right.`
           ];
-          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 10);
-          updates.health = Math.min(100, (mySnake.health || 100) + 3);
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 10);
+          updates.health = Math.min(100, (snake.health || 100) + 3);
           message = waterOutcomes[Math.floor(Math.random() * waterOutcomes.length)];
           break;
 
         case 'clean_enclosure':
           const cleanOutcomes = [
-            `Cleaning time. You remove ${mySnake.custom_name} gently, place it on your shoulder. It watches curiously as you work. Scrubbing. Wiping. Replacing bedding. Everything fresh and new. When you return your familiar to its space, it immediately explores. Sliding over every surface. Inspecting your work. Then coils in its favorite spot. Content. You did well.`,
-            `The enclosure needs cleaning. ${mySnake.custom_name} is NOT happy about being moved. Hisses at you. Stubborn serpent. But you persist. Clean every corner. Disinfect. Replace substrate. Add new enrichment items. When finished, you return the snake. It explores suspiciously... then settles. Admits (silently) that this is better. You win.`,
-            `You begin the cleaning ritual. ${mySnake.custom_name} helps—sort of. Follows you around. Gets in the way. Investigates every tool. You laugh. "I'm trying to clean FOR you," you say. The snake doesn't care. Just wants to be involved. Eventually you finish. Sparkling clean. The serpent coils up immediately. Happy. You suspect it appreciates the effort more than it shows.`
+            `Cleaning time. You remove ${snake.custom_name} gently, place it on your shoulder. It watches curiously as you work. Scrubbing. Wiping. Replacing bedding. Everything fresh and new. When you return your familiar to its space, it immediately explores. Sliding over every surface. Inspecting your work. Then coils in its favorite spot. Content. You did well.`,
+            `The enclosure needs cleaning. ${snake.custom_name} is NOT happy about being moved. Hisses at you. Stubborn serpent. But you persist. Clean every corner. Disinfect. Replace substrate. Add new enrichment items. When finished, you return the snake. It explores suspiciously... then settles. Admits (silently) that this is better. You win.`,
+            `You begin the cleaning ritual. ${snake.custom_name} helps—sort of. Follows you around. Gets in the way. Investigates every tool. You laugh. "I'm trying to clean FOR you," you say. The snake doesn't care. Just wants to be involved. Eventually you finish. Sparkling clean. The serpent coils up immediately. Happy. You suspect it appreciates the effort more than it shows.`
           ];
-          updates.health = Math.min(100, (mySnake.health || 100) + 8);
-          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 12);
+          updates.health = Math.min(100, (snake.health || 100) + 8);
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 12);
           message = cleanOutcomes[Math.floor(Math.random() * cleanOutcomes.length)];
           break;
 
         case 'health_check':
           const healthOutcomes = [
-            `Health inspection. You examine ${mySnake.custom_name} carefully. Eyes—clear and bright. Scales—smooth, no damage. Mouth—check for infections. Teeth sharp. Perfectly healthy. You run your hands along the entire length of its body. Checking for injuries. Bumps. Anything unusual. All good. ${mySnake.custom_name} tolerates the examination patiently. Trusts you completely. When done, you give it a treat. "Perfect health," you announce. The snake seems pleased.`,
-            `Vet check time. ${mySnake.custom_name} is NOT cooperating. Squirming. Hiding its head. "Come on," you coax. Finally manage to examine it properly. Temperature normal. Breathing good. No signs of illness. Just being dramatic. You discover a small scratch though—probably from training. You clean it carefully. Apply healing salve. ${mySnake.custom_name} hisses but holds still. Knows you're helping. After, it nuzzles against you. Apology accepted.`,
-            `You notice ${mySnake.custom_name} moving slower today. Concerned, you do a thorough health assessment. Check its weight—good. Skin elasticity—fine. Then you find it: preparing to shed. That explains everything. You increase humidity. Add a rough surface for shedding. Make sure water is fresh. Your familiar will need extra care during this time. You stay close. Monitoring. Supportive. This is what it means to care for your serpent.`
+            `Health inspection. You examine ${snake.custom_name} carefully. Eyes—clear and bright. Scales—smooth, no damage. Mouth—check for infections. Teeth sharp. Perfectly healthy. You run your hands along the entire length of its body. Checking for injuries. Bumps. Anything unusual. All good. ${snake.custom_name} tolerates the examination patiently. Trusts you completely. When done, you give it a treat. "Perfect health," you announce. The snake seems pleased.`,
+            `Vet check time. ${snake.custom_name} is NOT cooperating. Squirming. Hiding its head. "Come on," you coax. Finally manage to examine it properly. Temperature normal. Breathing good. No signs of illness. Just being dramatic. You discover a small scratch though—probably from training. You clean it carefully. Apply healing salve. ${snake.custom_name} hisses but holds still. Knows you're helping. After, it nuzzles against you. Apology accepted.`,
+            `You notice ${snake.custom_name} moving slower today. Concerned, you do a thorough health assessment. Check its weight—good. Skin elasticity—fine. Then you find it: preparing to shed. That explains everything. You increase humidity. Add a rough surface for shedding. Make sure water is fresh. Your familiar will need extra care during this time. You stay close. Monitoring. Supportive. This is what it means to care for your serpent.`
           ];
-          updates.health = Math.min(100, (mySnake.health || 100) + 15);
-          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 5);
+          updates.health = Math.min(100, (snake.health || 100) + 15);
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 5);
           message = healthOutcomes[Math.floor(Math.random() * healthOutcomes.length)];
           break;
 
         case 'enrichment':
           const enrichmentOutcomes = [
-            `Enrichment day! You set up an obstacle course for ${mySnake.custom_name}. Tubes to explore. Branches to climb. Hidden treats. The snake investigates everything. Curious. Excited. You watch as it navigates each challenge. Problem-solving. Learning. This is good for its mind AND body. When done, ${mySnake.custom_name} returns to you. Tired but happy. Mental stimulation achieved. You can see the intelligence in those eyes. Your familiar is THRIVING.`,
-            `Time to shake things up. ${mySnake.custom_name} has been bored. You rearrange its entire enclosure. New layout. New hiding spots. Add textures it hasn't felt before. Release the snake back in. It IMMEDIATELY starts exploring. Every corner. Every surface. Tongue flicking constantly. Taking it all in. Hours pass. Your familiar is completely engaged. This is what it needed. Variety. Challenge. You make a mental note to do this more often.`,
-            `You bring ${mySnake.custom_name} to a new room. Let it explore freely under supervision. The snake is FASCINATED. New smells. New sounds. Different temperature. It investigates cautiously at first, then with growing confidence. Climbs furniture. Hides in corners. Tests boundaries. You guide it gently. Keep it safe. This exposure to new environments builds confidence. Makes your familiar more adaptable. Stronger. After an hour, you return it to its enclosure. ${mySnake.custom_name} seems... bigger somehow. More worldly. Enrichment success.`
+            `Enrichment day! You set up an obstacle course for ${snake.custom_name}. Tubes to explore. Branches to climb. Hidden treats. The snake investigates everything. Curious. Excited. You watch as it navigates each challenge. Problem-solving. Learning. This is good for its mind AND body. When done, ${snake.custom_name} returns to you. Tired but happy. Mental stimulation achieved. You can see the intelligence in those eyes. Your familiar is THRIVING.`,
+            `Time to shake things up. ${snake.custom_name} has been bored. You rearrange its entire enclosure. New layout. New hiding spots. Add textures it hasn't felt before. Release the snake back in. It IMMEDIATELY starts exploring. Every corner. Every surface. Tongue flicking constantly. Taking it all in. Hours pass. Your familiar is completely engaged. This is what it needed. Variety. Challenge. You make a mental note to do this more often.`,
+            `You bring ${snake.custom_name} to a new room. Let it explore freely under supervision. The snake is FASCINATED. New smells. New sounds. Different temperature. It investigates cautiously at first, then with growing confidence. Climbs furniture. Hides in corners. Tests boundaries. You guide it gently. Keep it safe. This exposure to new environments builds confidence. Makes your familiar more adaptable. Stronger. After an hour, you return it to its enclosure. ${snake.custom_name} seems... bigger somehow. More worldly. Enrichment success.`
           ];
-          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 20);
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 20);
           updates.mood = 'playful';
-          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + 5);
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + 5);
           message = enrichmentOutcomes[Math.floor(Math.random() * enrichmentOutcomes.length)];
           break;
       }
 
-      await base44.entities.SnakeFamiliar.update(mySnake.id, updates);
+      await base44.entities.SnakeFamiliar.update(snake.id, updates);
       setOutcome(message);
 
       await base44.entities.NightLog.create({
@@ -545,7 +586,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     }, 2000);
   };
 
-  const handleInteraction = async (action) => {
+  const handleInteraction = async (action, targetSnake) => {
+    const snake = targetSnake || snakes[selectedSnakeIndex];
+    if (!snake) return;
+    
     setInteracting(true);
     setCurrentAction(action);
 
@@ -557,163 +601,163 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
       switch (action) {
         case 'feed':
-          result = `You fed ${mySnake.custom_name} vampire blood. Its eyes glow crimson. Power courses through its scales.`;
+          result = `You fed ${snake.custom_name} vampire blood. Its eyes glow crimson. Power courses through its scales.`;
           bondChange = Math.floor(Math.random() * 8) + 5;
           powerChange = Math.floor(Math.random() * 12) + 8;
-          updates.hunger = Math.max(0, (mySnake.hunger || 50) - 40);
-          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + bondChange);
-          updates.power_level = Math.min(100, (mySnake.power_level || 0) + powerChange);
+          updates.hunger = Math.max(0, (snake.hunger || 50) - 40);
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          updates.power_level = Math.min(100, (snake.power_level || 0) + powerChange);
           
           // Size growth
-          if (mySnake.power_level >= 80 && mySnake.size !== 'massive') {
+          if (snake.power_level >= 80 && snake.size !== 'massive') {
             updates.size = 'massive';
-            result += ` ${mySnake.custom_name} grows MASSIVE. Coils thicker than your body.`;
-          } else if (mySnake.power_level >= 60 && mySnake.size === 'medium') {
+            result += ` ${snake.custom_name} grows MASSIVE. Coils thicker than your body.`;
+          } else if (snake.power_level >= 60 && snake.size === 'medium') {
             updates.size = 'large';
-            result += ` ${mySnake.custom_name} grows larger. More powerful.`;
-          } else if (mySnake.power_level >= 30 && mySnake.size === 'small') {
+            result += ` ${snake.custom_name} grows larger. More powerful.`;
+          } else if (snake.power_level >= 30 && snake.size === 'small') {
             updates.size = 'medium';
-            result += ` ${mySnake.custom_name} is growing. No longer small.`;
+            result += ` ${snake.custom_name} is growing. No longer small.`;
           }
           break;
 
         case 'train':
-          result = `Training session. ${mySnake.custom_name} learns to strike faster, hide better. A perfect predator.`;
+          result = `Training session. ${snake.custom_name} learns to strike faster, hide better. A perfect predator.`;
           bondChange = Math.floor(Math.random() * 5) + 3;
           powerChange = Math.floor(Math.random() * 10) + 6;
-          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + bondChange);
-          updates.power_level = Math.min(100, (mySnake.power_level || 0) + powerChange);
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          updates.power_level = Math.min(100, (snake.power_level || 0) + powerChange);
           break;
 
         case 'spy':
           const spyResults = [
-            `${mySnake.custom_name} returns. Saw a hunter planning an ambush. You avoid the trap.`,
+            `${snake.custom_name} returns. Saw a hunter planning an ambush. You avoid the trap.`,
             `The serpent brings information. A rival vampire's weakness. Useful.`,
             `Your snake spied on the witch. She knows you're watching. She smiled.`,
-            `${mySnake.custom_name} tracked a human. Found their home. Their routine. Their vulnerability.`,
+            `${snake.custom_name} tracked a human. Found their home. Their routine. Their vulnerability.`,
             `Your familiar discovered a secret vampire meeting. Political intrigue.`,
-            `${mySnake.custom_name} witnessed a supernatural ritual. Strange magic.`
+            `${snake.custom_name} witnessed a supernatural ritual. Strange magic.`
           ];
           result = spyResults[Math.floor(Math.random() * spyResults.length)];
-          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
           break;
 
         case 'hunt':
-          result = `${mySnake.custom_name} hunted. Brought back a paralyzed victim. Fresh blood for you.`;
-          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
-          updates.hunger = Math.min(100, (mySnake.hunger || 30) + 25);
+          result = `${snake.custom_name} hunted. Brought back a paralyzed victim. Fresh blood for you.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          updates.hunger = Math.min(100, (snake.hunger || 30) + 25);
           await base44.entities.VampireState.update(vampireState.id, {
             hunger_state: 'sated'
           });
           break;
 
         case 'bond':
-          result = `You and ${mySnake.custom_name} share blood. Minds linking. You feel what it feels. See what it sees. Perfect symbiosis.`;
+          result = `You and ${snake.custom_name} share blood. Minds linking. You feel what it feels. See what it sees. Perfect symbiosis.`;
           bondChange = Math.floor(Math.random() * 15) + 10;
-          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + bondChange);
-          updates.loyalty = Math.min(100, (mySnake.loyalty || 50) + 8);
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          updates.loyalty = Math.min(100, (snake.loyalty || 50) + 8);
           break;
 
         case 'cuddle':
-          result = `${mySnake.custom_name} coils around you. Cool scales against your skin. Comforting. You stroke its head gently.`;
+          result = `${snake.custom_name} coils around you. Cool scales against your skin. Comforting. You stroke its head gently.`;
           bondChange = Math.floor(Math.random() * 8) + 6;
-          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + bondChange);
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
           break;
 
         case 'talk':
           const talkResults = [
-            `You speak to ${mySnake.custom_name}. It understands. Hisses softly in response. Communication beyond words.`,
-            `${mySnake.custom_name} curls around your arm. You discuss your plans. It seems to agree.`,
+            `You speak to ${snake.custom_name}. It understands. Hisses softly in response. Communication beyond words.`,
+            `${snake.custom_name} curls around your arm. You discuss your plans. It seems to agree.`,
             `Whispered secrets to your snake. It keeps them all. Loyal. Forever.`,
-            `${mySnake.custom_name} tells you things. Visions. Warnings. Prophecies only serpents know.`
+            `${snake.custom_name} tells you things. Visions. Warnings. Prophecies only serpents know.`
           ];
           result = talkResults[Math.floor(Math.random() * talkResults.length)];
           bondChange = Math.floor(Math.random() * 6) + 4;
-          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + bondChange);
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
           break;
 
         case 'guard':
-          result = `${mySnake.custom_name} guards your lair. Nothing enters unseen. Perfect sentinel.`;
-          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
-          updates.loyalty = Math.min(100, (mySnake.loyalty || 50) + 5);
+          result = `${snake.custom_name} guards your lair. Nothing enters unseen. Perfect sentinel.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          updates.loyalty = Math.min(100, (snake.loyalty || 50) + 5);
           break;
 
         case 'venom':
-          result = `${mySnake.custom_name} produces venom. Potent. Deadly. You collect it in a vial. Useful.`;
-          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          result = `${snake.custom_name} produces venom. Potent. Deadly. You collect it in a vial. Useful.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
           break;
 
         case 'shed':
-          result = `${mySnake.custom_name} sheds its skin. Perfect scales. You collect them—magical material for rituals and crafting.`;
-          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
-          if (mySnake.power_level >= 50) {
+          result = `${snake.custom_name} sheds its skin. Perfect scales. You collect them—magical material for rituals and crafting.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          if (snake.power_level >= 50) {
             result += ` The shed skin GLOWS. Powerful magic infused.`;
           }
           break;
 
         case 'prophecy':
           const prophecies = [
-            `${mySnake.custom_name} hisses warnings. Danger approaches. A hunter is close.`,
+            `${snake.custom_name} hisses warnings. Danger approaches. A hunter is close.`,
             `Your snake sees the future. A rival vampire plots against you. Be ready.`,
-            `${mySnake.custom_name}'s eyes glow. Vision: someone close will betray you soon.`,
+            `${snake.custom_name}'s eyes glow. Vision: someone close will betray you soon.`,
             `Serpent prophecy: Blood will be spilled tonight. Not yours. Not if you're careful.`,
-            `${mySnake.custom_name} senses opportunity. A powerful artifact nearby. Hidden.`,
+            `${snake.custom_name} senses opportunity. A powerful artifact nearby. Hidden.`,
             `Vision from your familiar: The witch thinks of you. Dreams of you.`
           ];
           result = prophecies[Math.floor(Math.random() * prophecies.length)];
-          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
           break;
 
         case 'steal':
           const stolenItems = [
-            `${mySnake.custom_name} returns with a wallet. Cash inside. Easy money.`,
+            `${snake.custom_name} returns with a wallet. Cash inside. Easy money.`,
             `Your snake stole a phone. Messages reveal secrets. Blackmail material.`,
-            `${mySnake.custom_name} brings you keys. Someone's home is now accessible.`,
+            `${snake.custom_name} brings you keys. Someone's home is now accessible.`,
             `Stolen: jewelry. Expensive. Your snake is a perfect thief.`,
-            `${mySnake.custom_name} took someone's ID. Their identity. Their life. Yours to use.`,
+            `${snake.custom_name} took someone's ID. Their identity. Their life. Yours to use.`,
             `Your familiar stole medical records. Private information. Leverage.`
           ];
           result = stolenItems[Math.floor(Math.random() * stolenItems.length)];
-          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
           break;
 
         case 'mark':
-          result = `${mySnake.custom_name} marks your territory. Venom traces on boundaries. Other supernaturals know: this place is YOURS.`;
-          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
-          updates.loyalty = Math.min(100, (mySnake.loyalty || 50) + 6);
+          result = `${snake.custom_name} marks your territory. Venom traces on boundaries. Other supernaturals know: this place is YOURS.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          updates.loyalty = Math.min(100, (snake.loyalty || 50) + 6);
           break;
 
         case 'merge':
-          result = `${mySnake.custom_name} merges with you. Coils INSIDE your body. You feel its power. Its senses. Two beings, one consciousness.`;
+          result = `${snake.custom_name} merges with you. Coils INSIDE your body. You feel its power. Its senses. Two beings, one consciousness.`;
           bondChange = Math.floor(Math.random() * 20) + 15;
           powerChange = Math.floor(Math.random() * 15) + 10;
-          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + bondChange);
-          updates.power_level = Math.min(100, (mySnake.power_level || 0) + powerChange);
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          updates.power_level = Math.min(100, (snake.power_level || 0) + powerChange);
           await base44.entities.VampireState.update(vampireState.id, {
             vampire_power_level: Math.min(100, (vampireState.vampire_power_level || 0) + 5)
           });
           break;
 
         case 'hibernate':
-          result = `${mySnake.custom_name} enters hibernation. Deep sleep. Healing. Growing. Will awaken stronger.`;
+          result = `${snake.custom_name} enters hibernation. Deep sleep. Healing. Growing. Will awaken stronger.`;
           powerChange = Math.floor(Math.random() * 25) + 20;
-          updates.power_level = Math.min(100, (mySnake.power_level || 0) + powerChange);
-          updates.hunger = Math.max(0, (mySnake.hunger || 30) - 50);
+          updates.power_level = Math.min(100, (snake.power_level || 0) + powerChange);
+          updates.hunger = Math.max(0, (snake.hunger || 30) - 50);
           break;
       }
 
       // Check for evolution
-      const oldStage = getEvolutionStage(mySnake.power_level);
-      const newStage = getEvolutionStage(updates.power_level || mySnake.power_level);
+      const oldStage = getEvolutionStage(snake.power_level);
+      const newStage = getEvolutionStage(updates.power_level || snake.power_level);
 
       if (newStage > oldStage) {
-        const evolutionPath = EVOLUTION_PATHS[mySnake.type];
+        const evolutionPath = EVOLUTION_PATHS[snake.type];
         const currentEvolution = evolutionPath[newStage - 1];
         updates.unlocked_abilities = currentEvolution.abilities;
-        result += `\n\n🐍 EVOLUTION! ${mySnake.custom_name} evolved into ${currentEvolution.name}! New abilities unlocked!`;
+        result += `\n\n🐍 EVOLUTION! ${snake.custom_name} evolved into ${currentEvolution.name}! New abilities unlocked!`;
       }
 
-      await base44.entities.SnakeFamiliar.update(mySnake.id, updates);
+      await base44.entities.SnakeFamiliar.update(snake.id, updates);
 
       await base44.entities.NightLog.create({
       entry: result,
@@ -732,38 +776,41 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     }, 2000);
   };
 
-  const handleUseAbility = async (ability) => {
+  const handleUseAbility = async (ability, targetSnake) => {
+    const snake = targetSnake || snakes[selectedSnakeIndex];
+    if (!snake) return;
+    
     setInteracting(true);
     setCurrentAction('ability_' + ability.id);
 
     setTimeout(async () => {
       const abilityResults = {
-        invisible: `${mySnake.custom_name} vanishes completely. Perfect invisibility. Spying made effortless.`,
-        teleport: `${mySnake.custom_name} melts into shadows. Reappears miles away. Shadow travel mastered.`,
-        duplicate: `${mySnake.custom_name} splits into THREE serpents. Shadow clones. All obey you.`,
-        merge: `${mySnake.custom_name} becomes pure shadow. Formless. Impossible to detect or harm.`,
+        invisible: `${snake.custom_name} vanishes completely. Perfect invisibility. Spying made effortless.`,
+        teleport: `${snake.custom_name} melts into shadows. Reappears miles away. Shadow travel mastered.`,
+        duplicate: `${snake.custom_name} splits into THREE serpents. Shadow clones. All obey you.`,
+        merge: `${snake.custom_name} becomes pure shadow. Formless. Impossible to detect or harm.`,
         
-        paralyze: `${mySnake.custom_name} strikes! Victim frozen instantly. Helpless. Yours.`,
-        hallucinate: `Venom-induced visions. The victim sees horrors. Screams. ${mySnake.custom_name} watches.`,
-        control: `${mySnake.custom_name}'s venom rewrites minds. The victim obeys your every command now.`,
-        acidic: `${mySnake.custom_name} spits acid. Metal melts. Stone dissolves. Nothing stops it.`,
+        paralyze: `${snake.custom_name} strikes! Victim frozen instantly. Helpless. Yours.`,
+        hallucinate: `Venom-induced visions. The victim sees horrors. Screams. ${snake.custom_name} watches.`,
+        control: `${snake.custom_name}'s venom rewrites minds. The victim obeys your every command now.`,
+        acidic: `${snake.custom_name} spits acid. Metal melts. Stone dissolves. Nothing stops it.`,
         
-        track: `${mySnake.custom_name} tastes the air. Found them. Blood scent leads straight to your target.`,
-        drain: `${mySnake.custom_name} drains a victim completely. Every drop. Brings it back to you.`,
-        share: `Blood link activated. ${mySnake.custom_name}'s meal flows directly into your veins. Instant feeding.`,
-        resurrect: `${mySnake.custom_name} breathes blood magic into a corpse. They gasp. Alive again. Miracle.`,
+        track: `${snake.custom_name} tastes the air. Found them. Blood scent leads straight to your target.`,
+        drain: `${snake.custom_name} drains a victim completely. Every drop. Brings it back to you.`,
+        share: `Blood link activated. ${snake.custom_name}'s meal flows directly into your veins. Instant feeding.`,
+        resurrect: `${snake.custom_name} breathes blood magic into a corpse. They gasp. Alive again. Miracle.`,
         
-        fear: `${mySnake.custom_name} projects pure terror. Victims flee screaming. Primal fear unleashed.`,
-        dream: `${mySnake.custom_name} enters their dreams. Nightmares shaped by serpent whispers.`,
-        madness: `${mySnake.custom_name}'s eyes lock onto theirs. Sanity shatters. They're broken now.`,
-        consume: `${mySnake.custom_name} feeds on their nightmares. Growing stronger from their terror.`
+        fear: `${snake.custom_name} projects pure terror. Victims flee screaming. Primal fear unleashed.`,
+        dream: `${snake.custom_name} enters their dreams. Nightmares shaped by serpent whispers.`,
+        madness: `${snake.custom_name}'s eyes lock onto theirs. Sanity shatters. They're broken now.`,
+        consume: `${snake.custom_name} feeds on their nightmares. Growing stronger from their terror.`
       };
 
-      const result = abilityResults[ability.id] || `${mySnake.custom_name} used ${ability.name}!`;
+      const result = abilityResults[ability.id] || `${snake.custom_name} used ${ability.name}!`;
 
-      if (!mySnake.unlocked_abilities?.includes(ability.name)) {
-        await base44.entities.SnakeFamiliar.update(mySnake.id, {
-          unlocked_abilities: [...(mySnake.unlocked_abilities || []), ability.name]
+      if (!snake.unlocked_abilities?.includes(ability.name)) {
+        await base44.entities.SnakeFamiliar.update(snake.id, {
+          unlocked_abilities: [...(snake.unlocked_abilities || []), ability.name]
         });
       }
 
@@ -1383,21 +1430,68 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </button>
             ))}
           </div>
-        ) : !mySnake && snakes.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🐍</div>
-            <p className="text-gray-400 mb-4">No snakes yet</p>
+        ) : null}
+        </>
+        )}
+
+      {/* Play Date Modal Content */}
+      {showPlayDate && snakes[selectedSnakeIndex] && !playDateOutcome && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[60]"
+          onClick={() => setShowPlayDate(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto border-2 border-blue-500/50"
+          >
+            <h2 className="text-2xl font-bold text-white mb-4">🎮 Snake Play Date</h2>
+            <p className="text-gray-400 mb-4">Choose a playmate for {snakes[selectedSnakeIndex].custom_name}</p>
+            
+            <div className="space-y-3">
+              {allSnakes.filter(s => s.id !== snakes[selectedSnakeIndex].id).map(mate => (
+                <button
+                  key={mate.id}
+                  onClick={() => handlePlayDate(mate)}
+                  className="w-full bg-gradient-to-r from-blue-900/60 to-cyan-900/60 hover:from-blue-900/80 hover:to-cyan-900/80 border-2 border-blue-500/50 rounded-xl p-4 text-left transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-white font-bold">{mate.custom_name}</p>
+                      <p className="text-gray-300 text-sm">
+                        {mate.gender === 'male' ? '♂️' : '♀️'} {mate.type} • {mate.pattern}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+              
+              {allSnakes.filter(s => s.id !== snakes[selectedSnakeIndex].id).length === 0 && (
+                <div className="bg-gray-800/40 border border-gray-600/30 rounded-lg p-4">
+                  <p className="text-gray-400 text-center">No other snakes available for play dates</p>
+                </div>
+              )}
+            </div>
+
             <button
-              onClick={() => setActiveTab('adopt')}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+              onClick={() => setShowPlayDate(false)}
+              className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
             >
-              Adopt Your First Snake
+              Close
             </button>
-          </div>
-        ) : (
-          <div>
-            {/* Visual Snake Display */}
-            <div className={`rounded-xl p-6 mb-4 border-2 relative overflow-hidden`} style={{
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Old display code removed to prevent duplicates */}
+      {false && (
+        <div>
+          <div className={`rounded-xl p-6 mb-4 border-2 relative overflow-hidden`} style={{
               borderColor: getSnakeBaseColor(mySnake.type),
               borderWidth: '3px',
               background: mySnake.pattern === 'iridescent'
@@ -1904,7 +1998,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 onClick={(e) => e.stopPropagation()}
                 className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-md w-full border-2 border-green-500/50"
               >
-                <h2 className="text-2xl font-bold text-white mb-4">{mySnake && !adoptingType ? 'Customize Snake' : 'Customize Your Snake'}</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">{!adoptingType ? 'Customize Snake' : 'Customize Your Snake'}</h2>
 
                 <div className="mb-4">
                   <label className="text-gray-400 text-sm mb-2 block">Name</label>
@@ -2000,7 +2094,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                     disabled={!customName || !customName.trim()}
                     className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all"
                   >
-                    {mySnake && !adoptingType ? 'Save Changes' : 'Adopt Snake'}
+                    {!adoptingType ? 'Save Changes' : 'Adopt Snake'}
                   </button>
                 </div>
               </motion.div>
@@ -2010,7 +2104,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
         {/* Evolution Progression Modal */}
         <AnimatePresence>
-          {showProgression && mySnake && (
+          {showProgression && snakes[selectedSnakeIndex] && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -2030,30 +2124,30 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 </button>
 
                 <h2 className="text-2xl font-bold text-white mb-2">⚡ Evolution Path</h2>
-                <p className="text-gray-400 text-sm mb-6">{mySnake.custom_name}'s transformation journey</p>
+                <p className="text-gray-400 text-sm mb-6">{snakes[selectedSnakeIndex].custom_name}'s transformation journey</p>
 
                 {/* Current Stage Overview */}
                 <div className="bg-gradient-to-br from-purple-900/60 to-violet-900/60 border-2 border-purple-500/50 rounded-xl p-4 mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <h3 className="text-white font-bold text-lg">
-                        {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].name}
+                        {EVOLUTION_PATHS[snakes[selectedSnakeIndex].type][getEvolutionStage(snakes[selectedSnakeIndex].power_level) - 1].name}
                       </h3>
-                      <p className="text-purple-300 text-sm">Stage {getEvolutionStage(mySnake.power_level)} of 3</p>
+                      <p className="text-purple-300 text-sm">Stage {getEvolutionStage(snakes[selectedSnakeIndex].power_level)} of 3</p>
                     </div>
                     <div className="text-5xl">
-                      {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
+                      {EVOLUTION_PATHS[snakes[selectedSnakeIndex].type][getEvolutionStage(snakes[selectedSnakeIndex].power_level) - 1].emoji}
                     </div>
                   </div>
                   <div className="bg-black/40 rounded-lg p-3">
                     <div className="flex justify-between text-xs text-gray-400 mb-1">
                       <span>Power Level</span>
-                      <span>{mySnake.power_level}/100</span>
+                      <span>{snakes[selectedSnakeIndex].power_level}/100</span>
                     </div>
                     <div className="bg-gray-700 rounded-full h-3">
                       <div 
                         className="bg-gradient-to-r from-purple-500 to-violet-500 h-3 rounded-full transition-all"
-                        style={{ width: `${mySnake.power_level}%` }}
+                        style={{ width: `${snakes[selectedSnakeIndex].power_level}%` }}
                       />
                     </div>
                   </div>
@@ -2061,10 +2155,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
                 {/* Evolution Stages */}
                 <div className="space-y-4">
-                  {EVOLUTION_PATHS[mySnake.type].map((stage, index) => {
-                    const isCurrentStage = getEvolutionStage(mySnake.power_level) === stage.stage;
-                    const isCompleted = getEvolutionStage(mySnake.power_level) > stage.stage;
-                    const isLocked = getEvolutionStage(mySnake.power_level) < stage.stage;
+                  {EVOLUTION_PATHS[snakes[selectedSnakeIndex].type].map((stage, index) => {
+                    const isCurrentStage = getEvolutionStage(snakes[selectedSnakeIndex].power_level) === stage.stage;
+                    const isCompleted = getEvolutionStage(snakes[selectedSnakeIndex].power_level) > stage.stage;
+                    const isLocked = getEvolutionStage(snakes[selectedSnakeIndex].power_level) < stage.stage;
                     
                     return (
                       <div 
@@ -2134,7 +2228,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
         {/* Breeding Modal */}
         <AnimatePresence>
-          {showBreeding && (
+          {showBreeding && snakes[selectedSnakeIndex] && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -2151,16 +2245,16 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               >
                 <h2 className="text-2xl font-bold text-white mb-4">💕 Snake Breeding</h2>
                 
-                {mySnake.bond_level < 60 || mySnake.loyalty < 60 ? (
+                {snakes[selectedSnakeIndex].bond_level < 60 || snakes[selectedSnakeIndex].loyalty < 60 ? (
                   <div className="bg-red-900/40 border border-red-500/50 rounded-lg p-4 mb-4">
                     <p className="text-red-200">Your snake needs 60+ bond and loyalty to breed safely</p>
                   </div>
-                ) : !mySnake.breeding_ready ? (
+                ) : !snakes[selectedSnakeIndex].breeding_ready ? (
                   <div className="bg-yellow-900/40 border border-yellow-500/50 rounded-lg p-4 mb-4">
                     <p className="text-yellow-200">Your snake is not ready to breed yet</p>
                     <button
                       onClick={async () => {
-                        await base44.entities.SnakeFamiliar.update(mySnake.id, { breeding_ready: true });
+                        await base44.entities.SnakeFamiliar.update(snakes[selectedSnakeIndex].id, { breeding_ready: true });
                         queryClient.invalidateQueries();
                       }}
                       className="mt-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg"
@@ -2170,27 +2264,27 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   </div>
                 ) : (
                   <>
-                    <p className="text-gray-400 mb-4">Select a mate for {mySnake.custom_name}</p>
+                    <p className="text-gray-400 mb-4">Select a mate for {snakes[selectedSnakeIndex].custom_name}</p>
                     
                     <div className="bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-pink-500/30 rounded-lg p-4 mb-4">
                       <p className="text-pink-300 text-sm mb-2">Your Snake:</p>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-white font-bold">{mySnake.custom_name}</p>
+                          <p className="text-white font-bold">{snakes[selectedSnakeIndex].custom_name}</p>
                           <p className="text-gray-300 text-sm">
-                            {mySnake.gender === 'male' ? '♂️' : '♀️'} {mySnake.type} • {mySnake.pattern} • {mySnake.eye_color} eyes
+                            {snakes[selectedSnakeIndex].gender === 'male' ? '♂️' : '♀️'} {snakes[selectedSnakeIndex].type} • {snakes[selectedSnakeIndex].pattern} • {snakes[selectedSnakeIndex].eye_color} eyes
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm text-gray-400">Bond: {mySnake.bond_level}</p>
-                          <p className="text-sm text-gray-400">Power: {mySnake.power_level}</p>
+                          <p className="text-sm text-gray-400">Bond: {snakes[selectedSnakeIndex].bond_level}</p>
+                          <p className="text-sm text-gray-400">Power: {snakes[selectedSnakeIndex].power_level}</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-3">
                       {allSnakes
-                        .filter(s => s.id !== mySnake.id && s.breeding_ready && s.bond_level >= 60 && s.loyalty >= 60)
+                        .filter(s => s.id !== snakes[selectedSnakeIndex].id && s.breeding_ready && s.bond_level >= 60 && s.loyalty >= 60)
                         .map(mate => (
                           <button
                             key={mate.id}
@@ -2212,7 +2306,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                           </button>
                         ))}
                       
-                      {allSnakes.filter(s => s.id !== mySnake.id && s.breeding_ready && s.bond_level >= 60 && s.loyalty >= 60).length === 0 && (
+                      {allSnakes.filter(s => s.id !== snakes[selectedSnakeIndex].id && s.breeding_ready && s.bond_level >= 60 && s.loyalty >= 60).length === 0 && (
                         <div className="bg-gray-800/40 border border-gray-600/30 rounded-lg p-4">
                           <p className="text-gray-400 text-center">No suitable mates available. Snakes need 60+ bond, loyalty, and must be marked as breeding ready.</p>
                         </div>
