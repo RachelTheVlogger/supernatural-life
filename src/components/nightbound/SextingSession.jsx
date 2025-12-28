@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Camera, Video, Image, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
-import MasturbationSlider from './MasturbationSlider';
 
 export default function SextingSession({ servant, vampireState, onClose, onGainRelationship }) {
   const queryClient = useQueryClient();
@@ -12,8 +11,6 @@ export default function SextingSession({ servant, vampireState, onClose, onGainR
   const [isTyping, setIsTyping] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [heatLevel, setHeatLevel] = useState(0);
-  const [showSlider, setShowSlider] = useState(false);
-  const [sliderAction, setSliderAction] = useState(null);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -124,13 +121,7 @@ export default function SextingSession({ servant, vampireState, onClose, onGainR
     return options[Math.floor(Math.random() * options.length)];
   };
 
-  const sendMessage = async (text, action = 'flirt', quickActionObj = null) => {
-    if (quickActionObj?.usesSlider) {
-      setSliderAction(quickActionObj);
-      setShowSlider(true);
-      return;
-    }
-
+  const sendMessage = async (text, action = 'flirt') => {
     const vampMsg = { from: 'vampire', text, heat: 0 };
     setMessages(prev => [...prev, vampMsg]);
     setIsTyping(true);
@@ -141,36 +132,6 @@ export default function SextingSession({ servant, vampireState, onClose, onGainR
       setHeatLevel(prev => Math.min(100, prev + response.heat));
       setIsTyping(false);
     }, 1500 + Math.random() * 1500);
-  };
-
-  const handleSliderFinish = async (edgeType, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
-    setShowSlider(false);
-    
-    const vampMsg = { from: 'vampire', text: sliderAction.text, heat: 0 };
-    setMessages(prev => [...prev, vampMsg]);
-    setIsTyping(true);
-
-    setTimeout(() => {
-      const bodyPartDesc = bodyPart === 'clit' ? 'rubbing my clit' :
-                          bodyPart === 'dick' ? 'stroking my cock' :
-                          bodyPart === 'dildo' ? 'fucking myself with my dildo' :
-                          bodyPart === 'vibrator' ? 'using my vibrator' :
-                          bodyPart === 'fingers' ? 'fingers deep inside' :
-                          'touching myself';
-
-      const responses = edgeType === 'edged' ? [
-        { text: `fuck I edged ${edgeCount} times ${bodyPartDesc}\n\nI'm so desperate\n\nalmost came just thinking about you`, heat: 35 },
-        { text: `been ${bodyPartDesc} for you\n\nedged over and over\n\nI need to cum so bad please`, heat: 38 }
-      ] : [
-        { text: `just came ${bodyPartDesc}\n\nmoaned your name so loud\n\nfuck that was intense`, heat: 32 },
-        { text: `came so hard ${bodyPartDesc}\n\nwish you were here to see it\n\nstill shaking`, heat: 35 }
-      ];
-
-      const response = responses[Math.floor(Math.random() * responses.length)];
-      setMessages(prev => [...prev, response]);
-      setHeatLevel(prev => Math.min(100, prev + response.heat));
-      setIsTyping(false);
-    }, 2000);
   };
 
   const quickActions = heatLevel < 20 ? [
@@ -184,12 +145,12 @@ export default function SextingSession({ servant, vampireState, onClose, onGainR
   ] : heatLevel < 70 ? [
     { id: 'explicit', label: '💦 Explicit', text: 'I want to fuck you so bad right now', action: 'dirty' },
     { id: 'sendpic', label: '📷 Send pic', text: '*sends pic* 😈', action: 'send_pic' },
-    { id: 'command', label: '👑 Touch yourself', text: 'Touch yourself. Tell me how it feels.', action: 'command', usesSlider: true },
+    { id: 'command', label: '👑 Touch yourself', text: 'Touch yourself. Tell me how it feels.', action: 'command' },
     { id: 'video', label: '🎥 Request video', text: 'Record yourself for me.', action: 'video' }
   ] : [
-    { id: 'mutual', label: '💕 Both touch', text: 'I\'m touching myself too. Let\'s do it together.', action: 'command', usesSlider: true },
-    { id: 'edge', label: '⚡ Edge together', text: 'Get close with me. But don\'t cum yet.', action: 'edge', usesSlider: true },
-    { id: 'allow', label: '✅ Cum together', text: 'Cum with me. Right now.', action: 'command', usesSlider: true },
+    { id: 'mutual', label: '💕 Both touch', text: 'I\'m touching myself too. Let\'s do it together.', action: 'command' },
+    { id: 'edge', label: '⚡ Edge together', text: 'Get close with me. But don\'t cum yet.', action: 'edge' },
+    { id: 'allow', label: '✅ Cum together', text: 'Cum with me. Right now.', action: 'command' },
     { id: 'comeover', label: '🏠 Come over', text: 'Get here. Now. I need you.', action: 'command' }
   ];
 
@@ -241,23 +202,7 @@ export default function SextingSession({ servant, vampireState, onClose, onGainR
     );
   }
 
-  if (showSlider) {
-    return (
-      <div className="fixed inset-0 z-50 bg-black flex items-center justify-center p-4">
-        <div className="max-w-lg w-full">
-          <div className="text-center mb-4">
-            <p className="text-purple-400 text-sm">💬 Sexting... they're touching themselves for you</p>
-          </div>
-          <MasturbationSlider
-            gender={servant.gender}
-            context="sexting"
-            vampireName={vampireState.vampire_name}
-            onFinish={handleSliderFinish}
-          />
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <motion.div
@@ -357,7 +302,7 @@ export default function SextingSession({ servant, vampireState, onClose, onGainR
           {quickActions.map(action => (
             <button
               key={action.id}
-              onClick={() => sendMessage(action.text, action.action, action)}
+              onClick={() => sendMessage(action.text, action.action)}
               disabled={isTyping}
               className="bitlife-btn py-2 px-3 rounded-lg text-xs disabled:opacity-50"
             >
