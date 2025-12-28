@@ -5,9 +5,9 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const WHOLESALE_BRANDS = [
-  { id: 'huizi', name: 'HUIZI', pricePerSet: 2.5, minOrder: 10, desc: 'Leading manufacturer, 5000+ designs' },
-  { id: 'colorstreet', name: 'Color Street', pricePerSet: 3.5, minOrder: 5, desc: '100% real nail polish strips' },
-  { id: 'lilyfox', name: 'Lily & Fox', pricePerSet: 3.0, minOrder: 8, desc: '1000+ colors and patterns' },
+  { id: 'moonwraps', name: 'MoonWraps Co', pricePerSet: 2.5, minOrder: 10, desc: 'Leading manufacturer, 5000+ designs' },
+  { id: 'nailstreet', name: 'Nail Street', pricePerSet: 3.5, minOrder: 5, desc: '100% real nail polish strips' },
+  { id: 'starwraps', name: 'Star Wraps', pricePerSet: 3.0, minOrder: 8, desc: '1000+ colors and patterns' },
   { id: 'generic', name: 'Generic Stock', pricePerSet: 1.5, minOrder: 20, desc: 'Budget-friendly designs' }
 ];
 
