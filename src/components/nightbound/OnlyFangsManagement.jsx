@@ -2192,135 +2192,86 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
         {tab === 'games' && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
             <div className="bg-gradient-to-br from-pink-950/40 to-purple-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
-              <h3 className="text-white text-xl font-bold mb-4">🎮 Interactive Games</h3>
-              <p className="text-gray-400 text-sm mb-6">Let fans control your content in real-time</p>
+              <h3 className="text-white text-xl font-bold mb-4">🎮 Interactive Sliders</h3>
+              <p className="text-gray-400 text-sm mb-6">Fully interactive experiences - fans watch you in real-time</p>
               
               <div className="space-y-3">
                 <button
-                  onClick={async () => {
-                    setCreating(true);
-                    setTimeout(async () => {
-                      const earnings = Math.floor(Math.random() * 300) + 200;
-                      const newSubs = Math.floor(Math.random() * 40) + 30;
-                      
-                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                        revenue: servantProfile.revenue + earnings,
-                        subscriber_count: servantProfile.subscriber_count + newSubs,
-                        reputation: Math.min(100, servantProfile.reputation + 8)
-                      });
-                      
-                      await base44.entities.NightLog.create({
-                        entry: `Truth or Dare stream. Fans voted. Things got wild. Earned $${earnings}, +${newSubs} subs.`,
-                        category: 'interaction',
-                        intensity: 'significant'
-                      });
-                      
-                      queryClient.invalidateQueries();
-                      setCreating(false);
-                    }, 4000);
+                  onClick={() => {
+                    setCallContext('striptease');
+                    setShowMasturbation(true);
                   }}
-                  disabled={creating}
+                  disabled={showMasturbation}
                   className="w-full bg-gradient-to-br from-pink-900/40 to-red-900/40 border border-pink-500/30 rounded-xl p-4 text-left hover:bg-pink-900/60 transition-all disabled:opacity-50"
                 >
-                  <h4 className="text-white font-medium mb-1">🎲 Truth or Dare (Fans Vote)</h4>
-                  <p className="text-gray-400 text-sm">Fans submit dares. You do them. Live.</p>
+                  <h4 className="text-white font-medium mb-1">💃 Strip Tease Slider</h4>
+                  <p className="text-gray-400 text-sm">Slow tease. Every piece of clothing tracked. Fully interactive.</p>
                   <p className="text-pink-400 text-xs mt-1">$200-500 earnings</p>
                 </button>
 
                 <button
-                  onClick={async () => {
-                    setCreating(true);
-                    setTimeout(async () => {
-                      const earnings = Math.floor(Math.random() * 250) + 150;
-                      
-                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                        revenue: servantProfile.revenue + earnings,
-                        reputation: Math.min(100, servantProfile.reputation + 5)
-                      });
-                      
-                      await base44.entities.NightLog.create({
-                        entry: `Spin the Wheel stream. Every spin, a new position. Fans controlled everything. Earned $${earnings}.`,
-                        category: 'interaction',
-                        intensity: 'significant'
-                      });
-                      
-                      queryClient.invalidateQueries();
-                      setCreating(false);
-                    }, 3500);
+                  onClick={() => {
+                    setCallContext('dirtytalk');
+                    setShowMasturbation(true);
                   }}
-                  disabled={creating}
+                  disabled={showMasturbation}
                   className="w-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all disabled:opacity-50"
                 >
-                  <h4 className="text-white font-medium mb-1">🎡 Wheel of Pleasure</h4>
-                  <p className="text-gray-400 text-sm">Spin decides what you do next. Interactive chaos.</p>
+                  <h4 className="text-white font-medium mb-1">🗣️ Dirty Talk Slider</h4>
+                  <p className="text-gray-400 text-sm">Say filthy things. Build intensity. Chat controls the pace.</p>
                   <p className="text-purple-400 text-xs mt-1">$150-400 earnings</p>
                 </button>
 
                 <button
-                  onClick={async () => {
-                    setCreating(true);
-                    setTimeout(async () => {
-                      const earnings = Math.floor(Math.random() * 400) + 300;
-                      const newSubs = Math.floor(Math.random() * 50) + 40;
-                      
-                      await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                        revenue: servantProfile.revenue + earnings,
-                        subscriber_count: servantProfile.subscriber_count + newSubs,
-                        reputation: Math.min(100, servantProfile.reputation + 10)
-                      });
-                      
-                      await base44.entities.NightLog.create({
-                        entry: `Tip Goal stream. Every goal = clothing removed or action performed. Chat went CRAZY. $${earnings} earned, +${newSubs} subs.`,
-                        category: 'interaction',
-                        intensity: 'significant'
-                      });
-                      
-                      queryClient.invalidateQueries();
-                      setCreating(false);
-                    }, 5000);
+                  onClick={() => {
+                    setCallContext('teasing');
+                    setShowMasturbation(true);
                   }}
-                  disabled={creating || servantProfile.reputation < 30}
+                  disabled={showMasturbation}
                   className="w-full bg-gradient-to-br from-red-900/40 to-pink-900/40 border border-red-500/30 rounded-xl p-4 text-left hover:bg-red-900/60 transition-all disabled:opacity-50"
                 >
-                  <h4 className="text-white font-medium mb-1">🎯 Tip Goal Challenge</h4>
-                  <p className="text-gray-400 text-sm">Set goals. Fans tip. Things escalate with each goal.</p>
-                  <p className="text-red-400 text-xs mt-1">$300-700 earnings • Need 30+ Rep</p>
+                  <h4 className="text-white font-medium mb-1">😈 Edging Tease Slider</h4>
+                  <p className="text-gray-400 text-sm">Almost there... but not yet. Denial game. Interactive edging.</p>
+                  <p className="text-red-400 text-xs mt-1">$300-700 earnings</p>
                 </button>
 
                 <button
-                  onClick={async () => {
-                    const poll = {
-                      question: 'What should I do next?',
-                      options: ['Touch yourself', 'Strip slowly', 'Use a toy', 'Call your vampire']
-                    };
-                    
-                    if (confirm(`Run live poll: "${poll.question}"?`)) {
-                      setCreating(true);
-                      setTimeout(async () => {
-                        const winner = poll.options[Math.floor(Math.random() * poll.options.length)];
-                        const earnings = Math.floor(Math.random() * 200) + 150;
-                        
-                        await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                          revenue: servantProfile.revenue + earnings
-                        });
-                        
-                        await base44.entities.NightLog.create({
-                          entry: `Live poll stream. Fans voted: "${winner}". You did it. They tipped. Earned $${earnings}.`,
-                          category: 'interaction',
-                          intensity: 'moderate'
-                        });
-                        
-                        queryClient.invalidateQueries();
-                        setCreating(false);
-                      }, 3000);
-                    }
+                  onClick={() => {
+                    setCallContext('toys');
+                    setShowMasturbation(true);
                   }}
-                  disabled={creating}
-                  className="w-full bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-xl p-4 text-left hover:bg-blue-900/60 transition-all disabled:opacity-50"
+                  disabled={showMasturbation}
+                  className="w-full bg-gradient-to-br from-purple-900/40 to-red-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all disabled:opacity-50"
                 >
-                  <h4 className="text-white font-medium mb-1">📊 Live Poll Show</h4>
-                  <p className="text-gray-400 text-sm">Fans vote live. You perform whatever wins.</p>
-                  <p className="text-blue-400 text-xs mt-1">$150-350 earnings</p>
+                  <h4 className="text-white font-medium mb-1">🔥 Toy Play Slider</h4>
+                  <p className="text-gray-400 text-sm">Use toys. Fans control speed and intensity. Full show.</p>
+                  <p className="text-purple-400 text-xs mt-1">$250-600 earnings</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCallContext('orgasm');
+                    setShowMasturbation(true);
+                  }}
+                  disabled={showMasturbation}
+                  className="w-full bg-gradient-to-br from-red-900/40 to-rose-900/40 border border-red-500/30 rounded-xl p-4 text-left hover:bg-red-900/60 transition-all disabled:opacity-50"
+                >
+                  <h4 className="text-white font-medium mb-1">💦 Orgasm Slider</h4>
+                  <p className="text-gray-400 text-sm">Build to climax. Track every moment. Interactive finish.</p>
+                  <p className="text-red-400 text-xs mt-1">$350-800 earnings</p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCallContext('vampire_together');
+                    setShowMasturbation(true);
+                  }}
+                  disabled={showMasturbation}
+                  className="w-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all disabled:opacity-50"
+                >
+                  <h4 className="text-white font-medium mb-1">🦇💕 Couple Intimacy Slider</h4>
+                  <p className="text-gray-400 text-sm">With your vampire. Full interactive session. Live together.</p>
+                  <p className="text-pink-400 text-xs mt-1">$400-900 earnings • Bond increase</p>
                 </button>
               </div>
             </div>
