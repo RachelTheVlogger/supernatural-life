@@ -1222,7 +1222,12 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setShowAdoptModal(false);
+                        onClose();
+                        setTimeout(() => {
+                          const firstSnakeType = snakeTypes[0];
+                          setAdoptingType(firstSnakeType.id);
+                          setShowAdoptModal(true);
+                        }, 100);
                       }}
                       className="px-3 py-1 rounded-lg font-medium bg-green-600 hover:bg-green-700 text-white transition-all text-xs touch-manipulation"
                     >
@@ -1230,26 +1235,33 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                     </button>
                   )}
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setCustomName(mySnake.custom_name);
                       setSelectedGender(mySnake.gender);
                       setSelectedPattern(mySnake.pattern);
                       setSelectedEyeColor(mySnake.eye_color);
                       setShowAdoptModal(true);
                     }}
-                    className="px-3 py-1 rounded-lg font-medium bg-purple-600 hover:bg-purple-700 text-white transition-all text-xs"
+                    className="px-3 py-1 rounded-lg font-medium bg-purple-600 hover:bg-purple-700 text-white transition-all text-xs touch-manipulation"
                   >
                     ✏️ Customize
                   </button>
                   <button
-                    onClick={() => setShowBreeding(true)}
-                    className="px-3 py-1 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all text-xs"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowBreeding(true);
+                    }}
+                    className="px-3 py-1 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all text-xs touch-manipulation"
                   >
                     💕 Breed
                   </button>
                   <button
-                    onClick={() => setShowPlayDate(true)}
-                    className="px-3 py-1 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all text-xs"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowPlayDate(true);
+                    }}
+                    className="px-3 py-1 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all text-xs touch-manipulation"
                   >
                     🎮 Play Date
                   </button>
