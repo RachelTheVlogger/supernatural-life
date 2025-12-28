@@ -22,6 +22,7 @@ import ServantDating from '@/components/nightbound/ServantDating';
 import TattooStudio from '@/components/nightbound/TattooStudio';
 import MangaStore from '@/components/nightbound/MangaStore';
 import AuthorCareer from '@/components/nightbound/AuthorCareer';
+import NailWrapsCareer from '@/components/nightbound/NailWrapsCareer';
 import ServantWitchInteraction from '@/components/nightbound/ServantWitchInteraction';
 import WitchServantInteraction from '@/components/nightbound/WitchServantInteraction';
 import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
@@ -74,9 +75,9 @@ const VAMPIRE_ACTIVITIES = [
 const getBusinessActivities = (servantCareer, vampireState) => {
   const activities = [];
   const isLiteMode = vampireState?.content_filter === 'lite';
-  
+
   // Always show career selector/management
-  const hasAnyCareers = servantCareer?.jewelry_business_active || servantCareer?.tattoo_business_active || servantCareer?.author_career_active || servantCareer?.manga_career_active;
+  const hasAnyCareers = servantCareer?.jewelry_business_active || servantCareer?.tattoo_business_active || servantCareer?.author_career_active || servantCareer?.manga_career_active || servantCareer?.nail_wraps_active;
   activities.push({ 
     id: 'choose_career', 
     label: hasAnyCareers ? '⚙️ Manage Careers' : '🎯 Choose Career', 
@@ -84,22 +85,26 @@ const getBusinessActivities = (servantCareer, vampireState) => {
     duration: 0, 
     isModal: true 
   });
-  
+
   // Show active career buttons
   if (servantCareer?.jewelry_business_active) {
     activities.push({ id: 'jewelry', label: '💎 Jewelry Business', icon: Sparkles, duration: 0, isModal: true });
   }
-  
+
   if (servantCareer?.tattoo_business_active) {
     activities.push({ id: 'tattoo', label: '🎨 Tattoo Studio', icon: Sparkles, duration: 0, isModal: true });
   }
-  
+
   if (servantCareer?.author_career_active) {
     activities.push({ id: 'author', label: '📚 Author Career', icon: BookOpen, duration: 0, isModal: true });
   }
-  
+
   if (servantCareer?.manga_career_active) {
     activities.push({ id: 'manga_active', label: '📖 Manga Artist', icon: BookOpen, duration: 0, isModal: true });
+  }
+
+  if (servantCareer?.nail_wraps_active) {
+    activities.push({ id: 'nailwraps', label: '💅 Nail Wraps', icon: Sparkles, duration: 0, isModal: true });
   }
   
   if (!isLiteMode) {
@@ -136,6 +141,7 @@ export default function ServantHome() {
   const [showDating, setShowDating] = useState(false);
   const [showTattoo, setShowTattoo] = useState(false);
   const [showAuthor, setShowAuthor] = useState(false);
+  const [showNailWraps, setShowNailWraps] = useState(false);
   const [showWitchVisit, setShowWitchVisit] = useState(false);
   const [showWitchTalk, setShowWitchTalk] = useState(false);
   const [showFamily, setShowFamily] = useState(false);
@@ -246,6 +252,8 @@ export default function ServantHome() {
         setShowManga(true);
       } else if (chore.id === 'manga_active') {
         setShowManga(true);
+      } else if (chore.id === 'nailwraps') {
+        setShowNailWraps(true);
       }
       return;
     }

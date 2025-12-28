@@ -32,6 +32,13 @@ const CAREERS = {
     description: 'Draw and publish manga series',
     color: 'from-purple-900/40 to-blue-900/40',
     borderColor: 'border-purple-500/50'
+  },
+  nailwraps: { 
+    name: 'Nail Wraps Artist', 
+    icon: '💅', 
+    description: 'Apply press-on nail designs',
+    color: 'from-pink-900/40 to-fuchsia-900/40',
+    borderColor: 'border-pink-500/50'
   }
 };
 
@@ -44,7 +51,8 @@ export default function CareerSelector({ servant, human, onClose, onSelect }) {
     jewelry: false,
     tattoo: false,
     author: false,
-    manga: false
+    manga: false,
+    nailwraps: false
   });
 
   React.useEffect(() => {
@@ -55,7 +63,8 @@ export default function CareerSelector({ servant, human, onClose, onSelect }) {
           jewelry: existing[0].jewelry_business_active || false,
           tattoo: existing[0].tattoo_business_active || false,
           author: existing[0].author_career_active || false,
-          manga: existing[0].manga_career_active || false
+          manga: existing[0].manga_career_active || false,
+          nailwraps: existing[0].nail_wraps_active || false
         });
       }
     };
@@ -77,7 +86,8 @@ export default function CareerSelector({ servant, human, onClose, onSelect }) {
       jewelry_business_active: careerType === 'jewelry' ? true : currentCareers.jewelry,
       tattoo_business_active: careerType === 'tattoo' ? true : currentCareers.tattoo,
       author_career_active: careerType === 'author' ? true : currentCareers.author,
-      manga_career_active: careerType === 'manga' ? true : currentCareers.manga
+      manga_career_active: careerType === 'manga' ? true : currentCareers.manga,
+      nail_wraps_active: careerType === 'nailwraps' ? true : currentCareers.nailwraps
     };
 
     const existing = await base44.entities.ServantCareer.filter({ servant_id: entityId });

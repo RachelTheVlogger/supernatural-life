@@ -76,6 +76,34 @@ export default function TurnedServantProgression({ servant, onClose }) {
         unlocked_powers: newUnlocked
       });
 
+      // Give snake familiar if first training session (newly turned vampire)
+      if (nights === 0) {
+        const snakeTypes = ['shadow', 'venom', 'blood', 'nightmare'];
+        const randomType = snakeTypes[Math.floor(Math.random() * snakeTypes.length)];
+        const snakeNames = {
+          shadow: ['Eclipse', 'Umbra', 'Nox', 'Shade'],
+          venom: ['Viper', 'Toxin', 'Fang', 'Poison'],
+          blood: ['Crimson', 'Ruby', 'Scarlet', 'Sanguis'],
+          nightmare: ['Phantom', 'Terror', 'Dread', 'Fear']
+        };
+        const randomName = snakeNames[randomType][Math.floor(Math.random() * snakeNames[randomType].length)];
+        
+        await base44.entities.SnakeFamiliar.create({
+          vampire_id: servant.id,
+          custom_name: randomName,
+          type: randomType,
+          bond_level: 20,
+          power_level: 15,
+          loyalty: 70,
+          hunger: 40,
+          missions_completed: 0,
+          size: 'small',
+          unlocked_abilities: []
+        });
+
+        msg += `\n\n🐍 A snake familiar appears! ${randomName} is now yours.`;
+      }
+
       const messages = {
         hunt: [
           'You hunted beside your sire. Their movements fluid. Yours clumsy. But improving.',
