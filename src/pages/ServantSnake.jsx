@@ -38,8 +38,11 @@ const EVOLUTION_PATHS = {
 
 const INTERACTIONS = [
   { id: 'feed', label: 'Feed Blood', icon: Droplets, bondGain: 5, powerGain: 3, outcome: 'feeds' },
+  { id: 'cuddle', label: 'Cuddle Snake', icon: Heart, bondGain: 15, powerGain: 1, outcome: 'cuddles', affection: true },
+  { id: 'play', label: 'Play Together', icon: Heart, bondGain: 12, powerGain: 2, outcome: 'plays', affection: true },
+  { id: 'groom', label: 'Groom Scales', icon: Heart, bondGain: 10, powerGain: 1, outcome: 'grooms', affection: true },
   { id: 'train', label: 'Train Powers', icon: Zap, bondGain: 8, powerGain: 5, outcome: 'trains' },
-  { id: 'bond', label: 'Bond Together', icon: Heart, bondGain: 10, powerGain: 2, outcome: 'bonds' },
+  { id: 'bond', label: 'Deep Bond', icon: Heart, bondGain: 10, powerGain: 2, outcome: 'bonds' },
   { id: 'hunt', label: 'Hunt Together', icon: Moon, bondGain: 12, powerGain: 6, outcome: 'hunts' },
   { id: 'guard', label: 'Guard Duty', icon: Moon, bondGain: 6, powerGain: 4, outcome: 'guards', loyaltyGain: 8 },
   { id: 'scout', label: 'Scouting', icon: Moon, bondGain: 7, powerGain: 4, outcome: 'scouts', missionGain: true },
@@ -53,6 +56,7 @@ export default function ServantSnake() {
   const [interacting, setInteracting] = useState(null);
   const [outcome, setOutcome] = useState('');
   const [showAdopt, setShowAdopt] = useState(false);
+  const [carrying, setCarrying] = useState(false);
 
   const urlParams = new URLSearchParams(location.search);
   const servantId = urlParams.get('id');
@@ -111,6 +115,21 @@ export default function ServantSnake() {
           `Your snake coils around your wrist. You offer your blood. It drinks. The bond deepens. Your serpent glows with power.`,
           `Blood drips from your palm. The snake's fangs sink in gently. Taking what it needs. Sharing your vampire essence.`,
           `You feed your familiar. It hisses softly. Satisfied. The connection between you pulses stronger.`
+        ],
+        cuddles: [
+          `You gather your snake close. It wraps around you. Warm. Content. Purring like thunder. Pure love.`,
+          `Cuddle time. Your familiar coils in your lap. Scales smooth against your skin. Heart to heart. Perfect moment.`,
+          `Your snake nuzzles into your neck. Safe. Loved. The bond between you radiates warmth. Unbreakable affection.`
+        ],
+        plays: [
+          `You toss a shadow ball. Your snake chases it. Playful strikes. Laughter. Joy. Just enjoying each other.`,
+          `Playtime! Your familiar weaves between your fingers. Happy hisses. Gentle bites. Pure fun.`,
+          `You play hide and seek. Your snake finds you every time. Excited coils. Celebration. Bonding through play.`
+        ],
+        grooms: [
+          `You carefully brush your snake's scales. Each one gleaming. Your familiar relaxes completely. Trust absolute.`,
+          `Grooming session. You polish each scale with care. Your snake sighs contentedly. Beautiful. Loved.`,
+          `You tend to your familiar's scales. Gentle touches. Appreciation. Your snake practically melts with happiness.`
         ],
         trains: [
           `You practice powers together. The snake mirrors your movements. Learning. Growing. Your abilities sync.`,
@@ -267,6 +286,20 @@ export default function ServantSnake() {
           >
             <h1 className="text-3xl font-bold text-white mb-2">🐍 {snake.custom_name}</h1>
             <p className="text-gray-400 capitalize">{SNAKE_TYPES.find(s => s.type === snake.type)?.name}</p>
+            
+            <button
+              onClick={() => setCarrying(!carrying)}
+              className={`mt-3 px-6 py-2 rounded-lg font-medium transition-all ${
+                carrying 
+                  ? 'bg-green-600 hover:bg-green-700 text-white' 
+                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+              }`}
+            >
+              {carrying ? '🐍 Carrying with you' : 'Leave snake here'}
+            </button>
+            {carrying && (
+              <p className="text-green-400 text-xs mt-2">Your snake is coiled around your arm, ready to assist</p>
+            )}
           </motion.div>
 
           <div className="bg-gray-900 rounded-xl p-6 mb-6">
