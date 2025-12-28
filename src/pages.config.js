@@ -9,11 +9,11 @@ import NateLilithHome from './pages/NateLilithHome';
 import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
 import ServantSnake from './pages/ServantSnake';
+import StandaloneManga from './pages/StandaloneManga';
 import SuccubusHome from './pages/SuccubusHome';
 import VampireHome from './pages/VampireHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
-import StandaloneManga from './pages/StandaloneManga';
 import __Layout from './Layout.jsx';
 
 
@@ -29,11 +29,11 @@ export const PAGES = {
     "Night": Night,
     "ServantHome": ServantHome,
     "ServantSnake": ServantSnake,
+    "StandaloneManga": StandaloneManga,
     "SuccubusHome": SuccubusHome,
     "VampireHome": VampireHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
-    "StandaloneManga": StandaloneManga,
 }
 
 export const pagesConfig = {

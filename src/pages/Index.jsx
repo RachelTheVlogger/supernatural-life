@@ -6,7 +6,7 @@ export default function Index() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    navigate(createPageUrl('StandaloneManga'), { replace: true });
+    navigate(createPageUrl('Home'), { replace: true });
   }, [navigate]);
   
   return null;
