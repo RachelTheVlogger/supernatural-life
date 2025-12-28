@@ -43,6 +43,7 @@ import HolographicCall from '@/components/nightbound/HolographicCall';
 import FuturePredictor from '@/components/nightbound/FuturePredictor';
 import BloodAddiction from '@/components/nightbound/BloodAddiction';
 import FeedingParty from '@/components/nightbound/FeedingParty';
+import WitchLivingTogether from '@/components/nightbound/WitchLivingTogether';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ export default function Night() {
   const [showPredictor, setShowPredictor] = useState(false);
   const [showAddiction, setShowAddiction] = useState(false);
   const [showFeedingParty, setShowFeedingParty] = useState(false);
+  const [showWitchHome, setShowWitchHome] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
 
   // Fetch vampire state
@@ -562,6 +564,34 @@ export default function Night() {
           <span className="text-2xl">🍷</span>
           <p className="text-white text-xs mt-1">Feeding Party</p>
         </button>
+        {witches.length > 0 && witches[0].relationship >= 70 && !witches[0].living_with_vampire && (
+          <button
+            onClick={async () => {
+              if (confirm(`Ask ${witches[0].name} to move in with you?`)) {
+                await base44.entities.Witch.update(witches[0].id, { living_with_vampire: true, disposition: 'in_love' });
+                await base44.entities.NightLog.create({
+                  entry: `${witches[0].name} moved in. Witch and vampire, living together. A new chapter begins.`,
+                  category: 'interaction',
+                  intensity: 'significant'
+                });
+                queryClient.invalidateQueries();
+              }
+            }}
+            className="bg-pink-950/40 hover:bg-pink-950/60 border border-pink-500/30 rounded-lg p-3 text-center transition-colors"
+          >
+            <span className="text-2xl">💕</span>
+            <p className="text-white text-xs mt-1">Ask Witch to Move In</p>
+          </button>
+        )}
+        {witches.length > 0 && witches[0].living_with_vampire && (
+          <button
+            onClick={() => setShowWitchHome(true)}
+            className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+          >
+            <span className="text-2xl">🏠</span>
+            <p className="text-white text-xs mt-1">With {witches[0].name}</p>
+          </button>
+        )}
         </motion.div>
       
 
@@ -727,6 +757,9 @@ export default function Night() {
         )}
         {showFeedingParty && vampireState && (
           <FeedingParty vampireState={vampireState} onClose={() => setShowFeedingParty(false)} />
+        )}
+        {showWitchHome && witches[0] && (
+          <WitchLivingTogether witch={witches[0]} vampireState={vampireState} onClose={() => setShowWitchHome(false)} />
         )}
 
         </AnimatePresence>
