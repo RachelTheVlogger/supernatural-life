@@ -1822,37 +1822,64 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           </div>
         )}
 
-        {feedingSnake && (
-          <div className="text-center py-12">
-            {!snakeFeedOutcome ? (
+        <AnimatePresence>
+          {feedingSnake && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+              onClick={() => {
+                setFeedingSnake(null);
+                setSnakeFeedOutcome('');
+              }}
+            >
               <motion.div
-                animate={{ 
-                  scale: [1, 1.3, 1],
-                  rotate: [0, 360]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-6xl mb-4"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-8 max-w-lg w-full border-2 border-emerald-500/50"
               >
-                🐍
+                {!snakeFeedOutcome ? (
+                  <div className="text-center">
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.3, 1],
+                        rotate: [0, 360]
+                      }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-8xl mb-4"
+                    >
+                      🐍
+                    </motion.div>
+                    <p className="text-emerald-400 text-lg">Feeding snake...</p>
+                  </div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center"
+                  >
+                    <div className="text-8xl mb-6">🐍✨</div>
+                    <p className="text-emerald-300 text-lg whitespace-pre-line leading-relaxed">
+                      {snakeFeedOutcome}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setFeedingSnake(null);
+                        setSnakeFeedOutcome('');
+                      }}
+                      className="mt-6 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg"
+                    >
+                      Close
+                    </button>
+                  </motion.div>
+                )}
               </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-4"
-              >
-                <div className="text-6xl mb-4">🐍✨</div>
-                <motion.p 
-                  className="text-emerald-300 text-lg whitespace-pre-line px-4 leading-relaxed"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {snakeFeedOutcome}
-                </motion.p>
-              </motion.div>
-            )}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {tab === 'research' && !researching && (
           <div className="space-y-3">
