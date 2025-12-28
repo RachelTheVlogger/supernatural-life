@@ -1398,7 +1398,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute inset-0 bg-black/90 flex items-center justify-center p-4 rounded-2xl"
+              className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[60]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full">
@@ -1453,7 +1453,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/90 flex items-center justify-center p-4 rounded-2xl"
+              className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[60]"
               onClick={() => setShowAdoptModal(false)}
             >
               <motion.div
@@ -1574,7 +1574,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/90 flex items-center justify-center p-4 rounded-2xl overflow-y-auto"
+              className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[60] overflow-y-auto"
               onClick={() => setShowBreeding(false)}
             >
               <motion.div
