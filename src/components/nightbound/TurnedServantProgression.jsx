@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { X, Zap, Lock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 const VAMPIRE_POWERS = [
   { name: 'Enhanced Senses', stage: 1, power: 0 },
@@ -28,6 +30,7 @@ const TRAINING_ACTIONS = [
 
 export default function TurnedServantProgression({ servant, onClose }) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [training, setTraining] = useState(false);
   const [outcome, setOutcome] = useState('');
 
@@ -185,6 +188,21 @@ export default function TurnedServantProgression({ servant, onClose }) {
 
         <h2 className="text-2xl font-bold text-rose-100 mb-2">🩸 Vampire Progression</h2>
         <p className="text-rose-300 text-sm mb-6">{servant.name}'s path to power</p>
+
+        <button
+          onClick={() => {
+            onClose();
+            navigate(createPageUrl(`ServantSnake?id=${servant.id}`));
+          }}
+          className="w-full bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-2 border-green-500/50 rounded-xl p-4 mb-6 transition-colors"
+        >
+          <div className="flex items-center justify-between">
+            <div className="text-left">
+              <h3 className="text-green-100 font-bold">🐍 Snake Familiar</h3>
+              <p className="text-green-300 text-xs">Adopt and bond with your serpent</p>
+            </div>
+          </div>
+        </button>
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 mb-6">
