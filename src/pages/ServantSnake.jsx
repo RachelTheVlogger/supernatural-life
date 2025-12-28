@@ -57,6 +57,8 @@ export default function ServantSnake() {
   const [outcome, setOutcome] = useState('');
   const [showAdopt, setShowAdopt] = useState(false);
   const [carrying, setCarrying] = useState(false);
+  const [showBreeding, setShowBreeding] = useState(false);
+  const [selectedMate, setSelectedMate] = useState(null);
 
   const urlParams = new URLSearchParams(location.search);
   const servantId = urlParams.get('id');
@@ -74,20 +76,43 @@ export default function ServantSnake() {
     enabled: !!servantId
   });
 
+  const { data: allSnakes = [] } = useQuery({
+    queryKey: ['allSnakeFamiliars'],
+    queryFn: () => base44.entities.SnakeFamiliar.list()
+  });
+
   const snake = snakes[0];
 
   const handleAdopt = async (type) => {
+    const patterns = ['solid', 'striped', 'spotted', 'iridescent', 'scales_of_night'];
+    const eyeColors = ['red', 'gold', 'green', 'purple', 'blue', 'silver'];
+    const genders = ['male', 'female'];
+    
     await base44.entities.SnakeFamiliar.create({
       vampire_id: servantId,
       custom_name: `${servant.name}'s Serpent`,
+      gender: genders[Math.floor(Math.random() * genders.length)],
       type: type,
+      pattern: patterns[Math.floor(Math.random() * patterns.length)],
+      eye_color: eyeColors[Math.floor(Math.random() * eyeColors.length)],
       bond_level: 10,
       power_level: 20,
       loyalty: 50,
       hunger: 30,
+      happiness: 50,
+      health: 100,
+      mood: 'content',
+      position: 'coiled',
       missions_completed: 0,
       unlocked_abilities: [],
-      size: 'small'
+      size: 'small',
+      age_days: 0,
+      favorite_spot: 'rock',
+      accessories: [],
+      scars: [],
+      breeding_ready: false,
+      parent_ids: [],
+      personality_traits: []
     });
 
     await base44.entities.NightLog.create({
@@ -98,6 +123,79 @@ export default function ServantSnake() {
 
     queryClient.invalidateQueries();
     setShowAdopt(false);
+  };
+
+  const handleBreed = async (mate) => {
+    if (snake.bond_level < 60 || snake.loyalty < 60 || mate.bond_level < 60 || mate.loyalty < 60) {
+      setOutcome('Both snakes need 60+ bond and loyalty to breed safely.');
+      setTimeout(() => setOutcome(''), 3000);
+      return;
+    }
+
+    if (!snake.breeding_ready || !mate.breeding_ready) {
+      setOutcome('One or both snakes are not ready to breed yet.');
+      setTimeout(() => setOutcome(''), 3000);
+      return;
+    }
+
+    // Mix parent traits
+    const inheritType = Math.random() > 0.5 ? snake.type : mate.type;
+    const inheritPattern = Math.random() > 0.5 ? snake.pattern : mate.pattern;
+    const inheritEyeColor = Math.random() > 0.5 ? snake.eye_color : mate.eye_color;
+    
+    // Combine personality traits
+    const combinedTraits = [...new Set([...(snake.personality_traits || []), ...(mate.personality_traits || [])])];
+    const inheritedTraits = combinedTraits.slice(0, 2);
+    
+    // Average stats with some randomness
+    const avgPower = Math.floor((snake.power_level + mate.power_level) / 2) + Math.floor(Math.random() * 20 - 10);
+    const avgBond = Math.floor((snake.bond_level + mate.bond_level) / 2);
+    
+    const offspringName = `${snake.custom_name.split("'s")[0]}'s Hatchling`;
+
+    await base44.entities.SnakeFamiliar.create({
+      vampire_id: servantId,
+      custom_name: offspringName,
+      gender: Math.random() > 0.5 ? 'male' : 'female',
+      type: inheritType,
+      pattern: inheritPattern,
+      eye_color: inheritEyeColor,
+      bond_level: Math.max(10, avgBond - 30),
+      power_level: Math.max(15, avgPower),
+      loyalty: 30,
+      hunger: 50,
+      happiness: 70,
+      health: 100,
+      mood: 'curious',
+      position: 'coiled',
+      missions_completed: 0,
+      unlocked_abilities: [],
+      size: 'small',
+      age_days: 0,
+      favorite_spot: 'nest',
+      accessories: [],
+      scars: [],
+      breeding_ready: false,
+      parent_ids: [snake.id, mate.id],
+      personality_traits: inheritedTraits
+    });
+
+    // Mark parents as not ready to breed again
+    await base44.entities.SnakeFamiliar.update(snake.id, { breeding_ready: false });
+    await base44.entities.SnakeFamiliar.update(mate.id, { breeding_ready: false });
+
+    await base44.entities.NightLog.create({
+      entry: `${snake.custom_name} and ${mate.custom_name} had offspring! A new hatchling joins the nest. Mixed heritage: ${inheritType} type, ${inheritPattern} pattern, ${inheritEyeColor} eyes.`,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+    setShowBreeding(false);
+    setSelectedMate(null);
+    setOutcome(`🐍 Breeding successful! ${offspringName} hatched with ${inheritPattern} ${inheritEyeColor}-eyed ${inheritType} heritage!`);
+    
+    setTimeout(() => setOutcome(''), 5000);
   };
 
   const getEvolutionStage = (power) => {
@@ -290,22 +388,53 @@ export default function ServantSnake() {
             <h1 className="text-3xl font-bold text-white mb-2">{snake.custom_name}</h1>
             <p className="text-gray-400 capitalize">{SNAKE_TYPES.find(s => s.type === snake.type)?.name}</p>
             
-            <button
-              onClick={() => setCarrying(!carrying)}
-              className={`mt-3 px-6 py-2 rounded-lg font-medium transition-all ${
-                carrying 
-                  ? 'bg-green-600 hover:bg-green-700 text-white' 
-                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-              }`}
-            >
-              {carrying ? '🐍 Carrying with you' : 'Leave snake here'}
-            </button>
+            <div className="flex gap-3 mt-3">
+              <button
+                onClick={() => setCarrying(!carrying)}
+                className={`flex-1 px-6 py-2 rounded-lg font-medium transition-all ${
+                  carrying 
+                    ? 'bg-green-600 hover:bg-green-700 text-white' 
+                    : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                }`}
+              >
+                {carrying ? '🐍 Carrying with you' : 'Leave snake here'}
+              </button>
+              <button
+                onClick={() => setShowBreeding(true)}
+                className="px-6 py-2 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all"
+              >
+                💕 Breeding
+              </button>
+            </div>
             {carrying && (
               <p className="text-green-400 text-xs mt-2">Your snake is coiled around your arm, ready to assist</p>
             )}
           </motion.div>
 
           <div className={`bg-gradient-to-br ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].color} rounded-xl p-6 mb-6 border-2 border-green-500/50`}>
+            {/* Visual Traits */}
+            <div className="bg-black/30 rounded-lg p-3 mb-4 border border-green-500/20">
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div>
+                  <p className="text-gray-400 text-xs">Gender</p>
+                  <p className="text-white font-bold">{snake.gender === 'male' ? '♂️' : '♀️'} {snake.gender}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 text-xs">Pattern</p>
+                  <p className="text-white font-bold capitalize">{snake.pattern}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 text-xs">Eyes</p>
+                  <p className="text-white font-bold capitalize">{snake.eye_color}</p>
+                </div>
+              </div>
+              {snake.parent_ids && snake.parent_ids.length > 0 && (
+                <p className="text-purple-300 text-xs mt-2 text-center">
+                  🧬 Offspring of breeding pair
+                </p>
+              )}
+            </div>
+            
             <div className="mb-4">
               <p className="text-gray-400 text-xs mb-1">Evolution Stage {getEvolutionStage(snake.power_level)}/3</p>
               <p className="text-white text-lg font-bold">
@@ -346,6 +475,26 @@ export default function ServantSnake() {
               <div>
                 <p className="text-gray-400 text-xs">Missions</p>
                 <p className="text-white text-xl font-bold">{snake.missions_completed}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-xs">Happiness</p>
+                <p className="text-white text-xl font-bold">{snake.happiness || 50}%</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-xs">Health</p>
+                <p className="text-white text-xl font-bold">{snake.health || 100}%</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-3">
+              <div className="bg-gray-800 rounded-lg p-2">
+                <p className="text-gray-400 text-xs">Mood</p>
+                <p className="text-white capitalize text-sm">{snake.mood || 'content'}</p>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-2">
+                <p className="text-gray-400 text-xs">Breeding Ready</p>
+                <p className={`font-bold text-sm ${snake.breeding_ready ? 'text-green-400' : 'text-gray-400'}`}>
+                  {snake.breeding_ready ? '✓ Yes' : '✗ No'}
+                </p>
               </div>
             </div>
             <div className="bg-gray-800 rounded-lg p-3 mb-3">
@@ -407,6 +556,119 @@ export default function ServantSnake() {
           )}
         </div>
       )}
+
+      {/* Breeding Modal */}
+      <AnimatePresence>
+        {showBreeding && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowBreeding(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto border-2 border-pink-500/50"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">💕 Snake Breeding</h2>
+              
+              {snake.bond_level < 60 || snake.loyalty < 60 ? (
+                <div className="bg-red-900/40 border border-red-500/50 rounded-lg p-4 mb-4">
+                  <p className="text-red-200">Your snake needs 60+ bond and loyalty to breed safely</p>
+                </div>
+              ) : !snake.breeding_ready ? (
+                <div className="bg-yellow-900/40 border border-yellow-500/50 rounded-lg p-4 mb-4">
+                  <p className="text-yellow-200">Your snake is not ready to breed yet</p>
+                  <button
+                    onClick={async () => {
+                      await base44.entities.SnakeFamiliar.update(snake.id, { breeding_ready: true });
+                      queryClient.invalidateQueries();
+                    }}
+                    className="mt-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg"
+                  >
+                    Mark as Ready
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-gray-400 mb-4">Select a mate for {snake.custom_name}</p>
+                  
+                  {/* Your Snake Info */}
+                  <div className="bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-pink-500/30 rounded-lg p-4 mb-4">
+                    <p className="text-pink-300 text-sm mb-2">Your Snake:</p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white font-bold">{snake.custom_name}</p>
+                        <p className="text-gray-300 text-sm">
+                          {snake.gender === 'male' ? '♂️' : '♀️'} {snake.type} • {snake.pattern} • {snake.eye_color} eyes
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-400">Bond: {snake.bond_level}</p>
+                        <p className="text-sm text-gray-400">Power: {snake.power_level}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Available Mates */}
+                  <div className="space-y-3">
+                    {allSnakes
+                      .filter(s => s.id !== snake.id && s.breeding_ready && s.bond_level >= 60 && s.loyalty >= 60)
+                      .map(mate => (
+                        <button
+                          key={mate.id}
+                          onClick={() => handleBreed(mate)}
+                          className="w-full bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border-2 border-purple-500/50 rounded-xl p-4 text-left transition-all"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-white font-bold">{mate.custom_name}</p>
+                              <p className="text-gray-300 text-sm">
+                                {mate.gender === 'male' ? '♂️' : '♀️'} {mate.type} • {mate.pattern} • {mate.eye_color} eyes
+                              </p>
+                              {mate.personality_traits && mate.personality_traits.length > 0 && (
+                                <p className="text-purple-300 text-xs mt-1">
+                                  Traits: {mate.personality_traits.join(', ')}
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-gray-400">Bond: {mate.bond_level}</p>
+                              <p className="text-sm text-gray-400">Power: {mate.power_level}</p>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    
+                    {allSnakes.filter(s => s.id !== snake.id && s.breeding_ready && s.bond_level >= 60 && s.loyalty >= 60).length === 0 && (
+                      <div className="bg-gray-800/40 border border-gray-600/30 rounded-lg p-4">
+                        <p className="text-gray-400 text-center">No suitable mates available. Snakes need 60+ bond, loyalty, and must be marked as breeding ready.</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="bg-blue-900/40 border border-blue-500/30 rounded-lg p-4 mt-4">
+                    <p className="text-blue-200 text-sm">
+                      <strong>Breeding Info:</strong> Offspring will inherit traits from both parents including type, pattern, eye color, and personality. Stats will be averaged with some variation.
+                    </p>
+                  </div>
+                </>
+              )}
+
+              <button
+                onClick={() => setShowBreeding(false)}
+                className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
