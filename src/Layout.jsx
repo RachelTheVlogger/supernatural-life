@@ -112,7 +112,7 @@ export default function Layout({ children, currentPageName }) {
 
       {showNav && (
         <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-purple-900/30 z-50">
-          <div className="flex items-center px-2 py-3 gap-2 overflow-x-auto">
+          <div className="flex items-center justify-around px-2 py-2 gap-1">
             {navItems.filter(item => item.show !== false).map(item => {
               const Icon = item.icon;
               const isActive = currentPageName === item.name;
@@ -128,12 +128,12 @@ export default function Layout({ children, currentPageName }) {
                     }
                   }}
                   disabled={item.disabled}
-                  className={`flex flex-col items-center gap-1 flex-shrink-0 px-2 min-w-[60px] relative ${
+                  className={`flex flex-col items-center gap-0.5 flex-shrink-0 px-1 py-1 relative ${
                     isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-purple-300'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
-                  <span className="text-xs font-medium whitespace-nowrap">{item.name}</span>
+                  <span className="text-[10px] font-medium whitespace-nowrap">{item.name}</span>
                   {item.hasSelector && servants.length > 1 && (
                     <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 text-white text-[10px] rounded-full flex items-center justify-center">
                       {servants.length}
