@@ -1635,10 +1635,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   </button>
                   <button
                     onClick={handleAdopt}
-                    disabled={!customName || !customName.trim()}
+                    disabled={!customName || !customName.trim() || isAdopting}
                     className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all"
                   >
-                    {!adoptingType ? 'Save Changes' : 'Adopt Snake'}
+                    {isAdopting ? 'Adopting...' : !adoptingType ? 'Save Changes' : 'Adopt Snake'}
                   </button>
                 </div>
               </motion.div>
