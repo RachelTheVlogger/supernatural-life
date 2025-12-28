@@ -49,7 +49,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const [activeTab, setActiveTab] = useState('snakes');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  const { data: snakes = [] } = useQuery({
+  const { data: snakes = [], isLoading: snakesLoading } = useQuery({
     queryKey: ['snakeFamiliars'],
     queryFn: async () => {
       try {
@@ -57,11 +57,14 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       } catch (e) {
         return [];
       }
-    },
-    onSuccess: () => {
-      setTimeout(() => setIsInitialLoading(false), 1500);
     }
   });
+
+  React.useEffect(() => {
+    if (!snakesLoading) {
+      setTimeout(() => setIsInitialLoading(false), 1500);
+    }
+  }, [snakesLoading]);
 
   const { data: allSnakes = [] } = useQuery({
     queryKey: ['allSnakeFamiliars'],
