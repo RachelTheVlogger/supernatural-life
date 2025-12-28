@@ -342,59 +342,6 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
       const result = abilityResults[ability.id] || `${mySnake.custom_name} used ${ability.name}!`;
 
-      // Add to unlocked if not already
-      if (!mySnake.unlocked_abilities?.includes(ability.name)) {
-        await base44.entities.SnakeFamiliar.update(mySnake.id, {
-          unlocked_abilities: [...(mySnake.unlocked_abilities || []), ability.name]
-        });
-      }
-
-      await base44.entities.NightLog.create({
-        entry: result,
-        category: 'power',
-        intensity: 'significant'
-      });
-
-      setOutcome(result);
-      queryClient.invalidateQueries();
-
-      setTimeout(() => {
-        setInteracting(false);
-        setCurrentAction(null);
-        setOutcome('');
-      }, 3500);
-    }, 2000);
-  };
-
-  const handleUseAbility = async (ability) => {
-    setInteracting(true);
-    setCurrentAction('ability_' + ability.id);
-
-    setTimeout(async () => {
-      const abilityResults = {
-        invisible: `${mySnake.custom_name} vanishes completely. Perfect invisibility. Spying made effortless.`,
-        teleport: `${mySnake.custom_name} melts into shadows. Reappears miles away. Shadow travel mastered.`,
-        duplicate: `${mySnake.custom_name} splits into THREE serpents. Shadow clones. All obey you.`,
-        merge: `${mySnake.custom_name} becomes pure shadow. Formless. Impossible to detect or harm.`,
-        
-        paralyze: `${mySnake.custom_name} strikes! Victim frozen instantly. Helpless. Yours.`,
-        hallucinate: `Venom-induced visions. The victim sees horrors. Screams. ${mySnake.custom_name} watches.`,
-        control: `${mySnake.custom_name}'s venom rewrites minds. The victim obeys your every command now.`,
-        acidic: `${mySnake.custom_name} spits acid. Metal melts. Stone dissolves. Nothing stops it.`,
-        
-        track: `${mySnake.custom_name} tastes the air. Found them. Blood scent leads straight to your target.`,
-        drain: `${mySnake.custom_name} drains a victim completely. Every drop. Brings it back to you.`,
-        share: `Blood link activated. ${mySnake.custom_name}'s meal flows directly into your veins. Instant feeding.`,
-        resurrect: `${mySnake.custom_name} breathes blood magic into a corpse. They gasp. Alive again. Miracle.`,
-        
-        fear: `${mySnake.custom_name} projects pure terror. Victims flee screaming. Primal fear unleashed.`,
-        dream: `${mySnake.custom_name} enters their dreams. Nightmares shaped by serpent whispers.`,
-        madness: `${mySnake.custom_name}'s eyes lock onto theirs. Sanity shatters. They're broken now.`,
-        consume: `${mySnake.custom_name} feeds on their nightmares. Growing stronger from their terror.`
-      };
-
-      const result = abilityResults[ability.id] || `${mySnake.custom_name} used ${ability.name}!`;
-
       if (!mySnake.unlocked_abilities?.includes(ability.name)) {
         await base44.entities.SnakeFamiliar.update(mySnake.id, {
           unlocked_abilities: [...(mySnake.unlocked_abilities || []), ability.name]
