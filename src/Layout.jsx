@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, MessageCircle, BookOpen, Sparkles, Heart, Skull, Zap, UserCircle, Users } from 'lucide-react';
+import { Home, Moon, User, Sparkles, Zap } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -41,32 +41,6 @@ export default function Layout({ children, currentPageName }) {
     retry: 1
   });
 
-  const { data: succubi = [] } = useQuery({
-    queryKey: ['succubi'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Succubus.list();
-      } catch (e) {
-        console.error('Failed to fetch succubi:', e);
-        return [];
-      }
-    },
-    retry: 1
-  });
-
-  const { data: incubi = [] } = useQuery({
-    queryKey: ['incubi'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Incubus.list();
-      } catch (e) {
-        console.error('Failed to fetch incubi:', e);
-        return [];
-      }
-    },
-    retry: 1
-  });
-
   const { data: playerWerewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
     queryFn: async () => {
@@ -79,35 +53,9 @@ export default function Layout({ children, currentPageName }) {
     },
     retry: 1
   });
-
-  const { data: humans = [] } = useQuery({
-    queryKey: ['humans'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Human.list();
-      } catch (e) {
-        console.error('Failed to fetch humans:', e);
-        return [];
-      }
-    },
-    retry: 1
-  });
-
-  const { data: doppelgangers = [] } = useQuery({
-    queryKey: ['doppelgangers'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Doppelganger.list();
-      } catch (e) {
-        console.error('Failed to fetch doppelgangers:', e);
-        return [];
-      }
-    },
-    retry: 1
-  });
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'Messages', 'WitchHome', 'SuccubusHome', 'IncubusHome', 'WerewolfHome', 'HybridHome', 'SerialKillerHome', 'ObsessedLoverHome', 'HumanHome', 'DoppelgangerHome'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome'].includes(currentPageName);
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
@@ -119,12 +67,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vampire', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
-    { name: 'Human', icon: UserCircle, path: 'HumanHome' },
-    { name: 'Doppelganger', icon: Users, path: `DoppelgangerHome?id=${doppelgangers[0]?.id}` },
-    { name: 'Succubus', icon: Heart, path: 'SuccubusHome', show: succubi.length > 0 },
-    { name: 'Incubus', icon: Skull, path: 'IncubusHome', show: incubi.length > 0 },
-    { name: 'Wolf', icon: Zap, path: 'WerewolfHome', show: playerWerewolves.length > 0 },
-    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 }
+    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
+    { name: 'Wolf', icon: Zap, path: 'WerewolfHome', show: playerWerewolves.length > 0 }
   ];
   
   return (
