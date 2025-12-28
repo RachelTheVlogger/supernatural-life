@@ -1212,8 +1212,18 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
               <div className="relative z-10">
                 <div className="text-center mb-3">
-                  <div className="text-7xl mb-2">
-                    {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
+                  <div className="relative inline-block">
+                    <div className="text-7xl mb-2">
+                      {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
+                    </div>
+                    {/* Eye color indicator */}
+                    <div 
+                      className="absolute top-4 right-2 w-4 h-4 rounded-full border-2 border-white"
+                      style={{ 
+                        backgroundColor: mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color,
+                        boxShadow: `0 0 8px ${mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color}`
+                      }}
+                    />
                   </div>
                 </div>
                 <div className="mb-2">
@@ -1308,13 +1318,36 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   >
                     🗑️ Release
                   </button>
+                  {getEvolutionStage(mySnake.power_level) < 3 && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-xs text-gray-400">Next evolution:</span>
+                      <span className="text-2xl">{EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level)].emoji}</span>
+                      <span className="text-xs text-purple-400">at {getEvolutionStage(mySnake.power_level) === 1 ? '40' : '70'} power</span>
+                    </div>
+                  )}
                   </div>
-              </div>
-            </div>
+                  </div>
+                  </div>
 
-            {/* Snake Stats */}
-            <div className="bg-black/40 rounded-xl p-4 mb-6 border border-green-500/30">
-              <div className="grid grid-cols-2 gap-3 mb-3">
+                  {/* Unlocked Powers */}
+                  {mySnake.unlocked_abilities && mySnake.unlocked_abilities.length > 0 && (
+                  <div className="bg-gradient-to-br from-purple-900/40 to-violet-900/40 border-2 border-purple-500/50 rounded-xl p-4 mb-4">
+                  <h3 className="text-purple-200 font-bold mb-2 flex items-center gap-2">
+                  ⚡ Unlocked Powers
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                  {mySnake.unlocked_abilities.map((ability, i) => (
+                    <span key={i} className="bg-purple-950/60 text-purple-300 text-xs px-3 py-1 rounded-full border border-purple-500/30">
+                      {ability}
+                    </span>
+                  ))}
+                  </div>
+                  </div>
+                  )}
+
+                  {/* Snake Stats */}
+                  <div className="bg-black/40 rounded-xl p-4 mb-6 border border-green-500/30">
+                  <div className="grid grid-cols-2 gap-3 mb-3">
                 <div>
                   <p className="text-gray-400 text-xs">Bond Level</p>
                   <div className="flex items-center gap-2">
