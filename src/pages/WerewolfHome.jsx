@@ -132,6 +132,10 @@ export default function WerewolfHome() {
           break;
       }
       
+      // Ensure pack_members is always an array when updating
+      if (!updates.pack_members) {
+        updates.pack_members = Array.isArray(werewolf.pack_members) ? werewolf.pack_members : [];
+      }
       await base44.entities.PlayerWerewolf.update(werewolf.id, updates);
       await base44.entities.NightLog.create({
         entry: `${werewolf.name}: ${result}`,

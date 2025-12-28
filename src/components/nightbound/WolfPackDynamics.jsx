@@ -42,7 +42,8 @@ export default function WolfPackDynamics({ werewolf, onClose }) {
       }
 
       await base44.entities.PlayerWerewolf.update(werewolf.id, {
-        pack_status: 'alpha'
+        pack_status: 'alpha',
+        pack_members: Array.isArray(werewolf.pack_members) ? werewolf.pack_members : []
       });
 
       await base44.entities.NightLog.create({
