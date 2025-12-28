@@ -1,5 +1,7 @@
 import Codex from './pages/Codex';
+import DoppelgangerHome from './pages/DoppelgangerHome';
 import Home from './pages/Home';
+import HumanHome from './pages/HumanHome';
 import HybridHome from './pages/HybridHome';
 import IncubusHome from './pages/IncubusHome';
 import Index from './pages/Index';
@@ -12,14 +14,14 @@ import VampireHome from './pages/VampireHome';
 import WerewolfHome from './pages/WerewolfHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
-import HumanHome from './pages/HumanHome';
-import DoppelgangerHome from './pages/DoppelgangerHome';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Codex": Codex,
+    "DoppelgangerHome": DoppelgangerHome,
     "Home": Home,
+    "HumanHome": HumanHome,
     "HybridHome": HybridHome,
     "IncubusHome": IncubusHome,
     "Index": Index,
@@ -32,12 +34,10 @@ export const PAGES = {
     "WerewolfHome": WerewolfHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
-    "HumanHome": HumanHome,
-    "DoppelgangerHome": DoppelgangerHome,
 }
 
 export const pagesConfig = {
-    mainPage: "VampireHome",
+    mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
 };

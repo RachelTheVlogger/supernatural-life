@@ -167,7 +167,7 @@ export default function Layout({ children, currentPageName }) {
       {children}
 
       {showNav && (
-        <div className="fixed bottom-16 left-0 right-0 bg-gray-900 border-t border-purple-900/30 z-50 mx-2 rounded-t-xl">
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-purple-900/30 z-50">
           <div className="flex items-center px-2 py-3 gap-2 overflow-x-auto">
             {navItems.filter(item => item.show !== false).map(item => {
               const Icon = item.icon;
