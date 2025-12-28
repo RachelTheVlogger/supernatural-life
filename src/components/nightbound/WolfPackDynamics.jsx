@@ -10,10 +10,10 @@ export default function WolfPackDynamics({ werewolf, onClose }) {
   const [outcome, setOutcome] = useState('');
 
   const { data: packMembers = [] } = useQuery({
-    queryKey: ['packMembers'],
+    queryKey: ['packMembers', werewolf.id],
     queryFn: async () => {
       try {
-        return await base44.entities.PackMember.list();
+        return await base44.entities.PackMember.filter({ pack_id: werewolf.id });
       } catch (e) {
         return [];
       }
@@ -41,9 +41,11 @@ export default function WolfPackDynamics({ werewolf, onClose }) {
         });
       }
 
+      const updatedPackMembers = await base44.entities.PackMember.filter({ pack_id: werewolf.id });
+      
       await base44.entities.PlayerWerewolf.update(werewolf.id, {
         pack_status: 'alpha',
-        pack_members: Array.isArray(werewolf.pack_members) ? werewolf.pack_members : []
+        pack_members: []
       });
 
       await base44.entities.NightLog.create({
