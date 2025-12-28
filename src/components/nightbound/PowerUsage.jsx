@@ -558,18 +558,14 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
   
   // Filter available powers based on morality and conditions
   const availablePowers = Object.entries(POWER_LIBRARY).filter(([name, power]) => {
-    // ALWAYS show unlocked powers regardless of morality
-    if (!unlockedPowers.includes(name)) return false;
-    
     // Check if servant is turned for vampire-to-vampire powers
     if (power.requiresTurned && !servant.is_turned) return false;
     
-    // Don't filter by morality - let player use any unlocked power
-    // const req = power.moralityRequirement;
-    // if (req) {
-    //   if (req.min && humanity < req.min) return false;
-    //   if (req.max && humanity > req.max) return false;
-    // }
+    // Show power if it's explicitly unlocked OR if it's in POWER_LIBRARY
+    // This ensures all defined powers are accessible once unlocked in any tree
+    const isUnlocked = unlockedPowers.includes(name) || unlockedPowers.some(p => name.toLowerCase().includes(p.toLowerCase()));
+    
+    if (!isUnlocked) return false;
     
     return true;
   });
