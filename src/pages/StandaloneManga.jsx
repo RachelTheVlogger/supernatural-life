@@ -35,10 +35,10 @@ export default function StandaloneManga() {
   const [showCustomCreator, setShowCustomCreator] = useState(false);
   const [chapterPrompt, setChapterPrompt] = useState('');
   const [customTitle, setCustomTitle] = useState('');
-  const [customPanels, setCustomPanels] = useState([{ description: '', dialogue: '', image: null }]);
   const [showCharacters, setShowCharacters] = useState(false);
   const [newCharacter, setNewCharacter] = useState({ name: '', description: '', images: [] });
   const [uploadingStyle, setUploadingStyle] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -252,22 +252,58 @@ Format as JSON with: title, plot, panels: [{description, dialogue}]`;
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <p className="text-white">Loading...</p>
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-black to-blue-950 flex items-center justify-center">
+        <motion.div
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <BookOpen className="w-16 h-16 text-purple-400 mb-4" />
+          <p className="text-white">Loading your manga studio...</p>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-950 via-black to-blue-950 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-950 via-black to-blue-950 p-4 md:p-6">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <BookOpen className="w-10 h-10 text-purple-400" />
-          <div>
-            <h1 className="text-3xl font-bold text-white">Manga Creator</h1>
-            <p className="text-gray-400">Create your manga series</p>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-6"
+        >
+          <div className="flex items-center gap-3">
+            <BookOpen className="w-10 h-10 text-purple-400" />
+            <div>
+              <h1 className="text-3xl font-bold text-white">Manga Creator</h1>
+              <p className="text-gray-400 text-sm">AI-powered manga generation</p>
+            </div>
           </div>
-        </div>
+          {series && (
+            <button
+              onClick={() => {
+                if (confirm('Delete all data and start fresh?')) {
+                  base44.auth.updateMe({
+                    manga_series_name: null,
+                    manga_genre: null,
+                    manga_chapters: [],
+                    manga_fans: 0,
+                    manga_income: 0,
+                    manga_art_style: 'classic',
+                    manga_characters: [],
+                    manga_cover_art: null,
+                    manga_style_ref: null,
+                    manga_story_summary: null
+                  });
+                  queryClient.invalidateQueries();
+                }
+              }}
+              className="text-sm text-red-400 hover:text-red-300"
+            >
+              Reset
+            </button>
+          )}
+        </motion.div>
 
         {series ? (
           <div>
@@ -301,26 +337,26 @@ Format as JSON with: title, plot, panels: [{description, dialogue}]`;
                 <button
                   onClick={generateChapter}
                   disabled={working}
-                  className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium"
+                  className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all"
                 >
-                  ✨ New Chapter
+                  ✨ Auto Chapter
                 </button>
                 <button
                   onClick={() => setShowCustomCreator(true)}
                   disabled={working}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all"
                 >
                   ✍️ Custom Chapter
                 </button>
                 <button
                   onClick={() => setShowCharacters(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium"
+                  className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all"
                 >
-                  👥 Characters
+                  👥 Characters ({characters.length})
                 </button>
                 <button
                   onClick={() => setShowStyleSelect(true)}
-                  className="bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-medium"
+                  className="bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-medium transition-all"
                 >
                   🎨 Art Style
                 </button>
@@ -632,17 +668,24 @@ Format as JSON with: title, plot, panels: [{description, dialogue}]`;
                       </div>
                     </div>
                     <button
-                      onClick={async () => {
-                        if (confirm(`Delete ${char.name}?`)) {
+                      onClick={() => setDeleteConfirm(char.id)}
+                      className="w-full bg-red-900/40 hover:bg-red-900/60 text-red-300 py-2 rounded text-sm"
+                    >
+                      {deleteConfirm === char.id ? 'Click again to confirm' : 'Delete'}
+                    </button>
+                    {deleteConfirm === char.id && (
+                      <button
+                        onClick={async () => {
                           const updated = characters.filter(c => c.id !== char.id);
                           await base44.auth.updateMe({ manga_characters: updated });
                           queryClient.invalidateQueries();
-                        }
-                      }}
-                      className="w-full bg-red-900/40 hover:bg-red-900/60 text-red-300 py-2 rounded text-sm"
-                    >
-                      Delete
-                    </button>
+                          setDeleteConfirm(null);
+                        }}
+                        className="w-full mt-2 bg-red-600 hover:bg-red-700 text-white py-2 rounded text-sm font-bold"
+                      >
+                        Confirm Delete
+                      </button>
+                    )}
                   </div>
                 ))
               )}
