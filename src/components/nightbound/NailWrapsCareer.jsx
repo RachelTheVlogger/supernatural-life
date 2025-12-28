@@ -1,23 +1,34 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Sparkles } from 'lucide-react';
+import { X, Sparkles, ShoppingCart, Palette, TrendingUp, Package } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-const DESIGNS = [
-  { id: 'gothic', name: 'Gothic Dark', price: 25, time: 2, desc: 'Black coffins, crosses, bats' },
-  { id: 'blood', name: 'Blood Drip', price: 30, time: 2, desc: 'Realistic blood effects' },
-  { id: 'celestial', name: 'Moon & Stars', price: 28, time: 2, desc: 'Mystical celestial designs' },
-  { id: 'floral', name: 'Dark Florals', price: 22, time: 2, desc: 'Black roses and vines' },
-  { id: 'marble', name: 'Marble Glam', price: 35, time: 3, desc: 'Marble with gold accents' },
-  { id: 'chrome', name: 'Chrome Mirror', price: 40, time: 3, desc: 'Reflective chrome finish' },
-  { id: 'custom', name: 'Custom Design', price: 50, time: 4, desc: 'Personalized art' }
+const WHOLESALE_BRANDS = [
+  { id: 'huizi', name: 'HUIZI', pricePerSet: 2.5, minOrder: 10, desc: 'Leading manufacturer, 5000+ designs' },
+  { id: 'colorstreet', name: 'Color Street', pricePerSet: 3.5, minOrder: 5, desc: '100% real nail polish strips' },
+  { id: 'lilyfox', name: 'Lily & Fox', pricePerSet: 3.0, minOrder: 8, desc: '1000+ colors and patterns' },
+  { id: 'generic', name: 'Generic Stock', pricePerSet: 1.5, minOrder: 20, desc: 'Budget-friendly designs' }
+];
+
+const DESIGN_CATEGORIES = [
+  { id: 'gothic', name: 'Gothic/Dark', trending: true },
+  { id: 'floral', name: 'Floral', trending: false },
+  { id: 'abstract', name: 'Abstract Art', trending: true },
+  { id: 'seasonal', name: 'Seasonal', trending: false },
+  { id: 'glitter', name: 'Glitter/Sparkle', trending: true },
+  { id: 'marble', name: 'Marble', trending: false },
+  { id: 'animal', name: 'Animal Print', trending: false },
+  { id: 'custom', name: 'Custom Design', trending: true }
 ];
 
 export default function NailWrapsCareer({ servant, onClose }) {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState('shop'); // shop, design, sell, orders
   const [working, setWorking] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [orderingFrom, setOrderingFrom] = useState(null);
+  const [orderQuantity, setOrderQuantity] = useState(10);
 
   const { data: career = [] } = useQuery({
     queryKey: ['career', servant.id],
@@ -28,37 +39,30 @@ export default function NailWrapsCareer({ servant, onClose }) {
   const reputation = servantCareer?.nail_wrap_reputation || 0;
   const customers = servantCareer?.nail_wrap_customers || 0;
   const revenue = servantCareer?.nail_wrap_revenue || 0;
+  const inventory = servantCareer?.nail_wrap_inventory || {};
+  const customDesigns = servantCareer?.nail_wrap_custom_designs || [];
+  const socialFollowers = servantCareer?.nail_wrap_followers || 0;
 
-  const handleMakeWraps = async (design) => {
+  const totalInventory = Object.values(inventory).reduce((sum, qty) => sum + qty, 0);
+
+  const handleOrderStock = async (brand) => {
+    if (orderQuantity < brand.minOrder) {
+      setOutcome(`Minimum order is ${brand.minOrder} sets!`);
+      setTimeout(() => setOutcome(''), 2000);
+      return;
+    }
+
+    const totalCost = brand.pricePerSet * orderQuantity;
+    
     setWorking(true);
-
     setTimeout(async () => {
-      const quality = Math.random() > 0.3 ? 'great' : 'okay';
-      const repGain = quality === 'great' ? Math.floor(Math.random() * 5) + 3 : Math.floor(Math.random() * 3) + 1;
-      const tips = quality === 'great' ? Math.floor(Math.random() * 20) + 10 : Math.floor(Math.random() * 10);
+      const newInventory = { ...inventory };
+      const brandKey = `${brand.id}_stock`;
+      newInventory[brandKey] = (newInventory[brandKey] || 0) + orderQuantity;
 
-      const outcomes = {
-        great: [
-          `Perfect application! Customer LOVES them. Posted on Instagram. You're getting tagged.`,
-          `Flawless. Customer tipped extra. Said they're coming back and bringing friends.`,
-          `Your best work yet. The design looks professional. Customer is thrilled.`,
-          `Absolutely stunning. Customer can't stop staring at their nails. Word spreading.`,
-          `10/10 execution. Customer wants to book their next appointment already.`
-        ],
-        okay: [
-          `Good work. Customer satisfied. A few minor bubbles but they didn't mind.`,
-          `Decent application. Customer happy enough. Room for improvement.`,
-          `Not your best but not bad. Customer accepted them.`,
-          `One nail slightly crooked but overall fine. Customer still paid.`
-        ]
-      };
-
-      const result = outcomes[quality][Math.floor(Math.random() * outcomes[quality].length)];
-      
       const updates = {
-        nail_wrap_reputation: Math.min(100, reputation + repGain),
-        nail_wrap_customers: customers + 1,
-        nail_wrap_revenue: revenue + design.price + tips
+        nail_wrap_inventory: newInventory,
+        nail_wrap_revenue: (revenue || 0) - totalCost
       };
 
       if (servantCareer) {
@@ -72,46 +76,189 @@ export default function NailWrapsCareer({ servant, onClose }) {
       }
 
       await base44.entities.NightLog.create({
-        entry: `${servant.name} completed ${design.name} nail wraps. ${result}`,
+        entry: `${servant.name} ordered ${orderQuantity} sets from ${brand.name}. Invested $${totalCost.toFixed(2)}.`,
         category: 'interaction',
         intensity: 'subtle'
       });
 
-      setOutcome(`${result}\n\nEarned: $${design.price + tips} (+${repGain} reputation)`);
+      setOutcome(`Ordered ${orderQuantity} sets from ${brand.name}!\n\nCost: $${totalCost.toFixed(2)}\nDelivery: 2-3 days`);
+      queryClient.invalidateQueries();
+      setOrderingFrom(null);
+
+      setTimeout(() => {
+        setWorking(false);
+        setOutcome('');
+      }, 3000);
+    }, 1500);
+  };
+
+  const handleCreateDesign = async (category) => {
+    setWorking(true);
+
+    setTimeout(async () => {
+      const designNames = {
+        gothic: ['Blood Moon', 'Coffin Nails', 'Vampire Bite', 'Cemetery Roses'],
+        floral: ['Cherry Blossom', 'Wild Roses', 'Lavender Dreams', 'Sunflower Fields'],
+        abstract: ['Chaos Theory', 'Cosmic Waves', 'Neon Burst', 'Paint Splatter'],
+        seasonal: ['Autumn Leaves', 'Winter Frost', 'Spring Bloom', 'Summer Vibes'],
+        glitter: ['Diamond Dust', 'Rose Gold Shimmer', 'Holographic Dreams', 'Galaxy Sparkle'],
+        marble: ['Black Marble', 'Rose Quartz', 'Jade Stone', 'Gold Veins'],
+        animal: ['Leopard Print', 'Snake Skin', 'Tiger Stripes', 'Zebra Pattern'],
+        custom: ['Personalized', 'Photo Print', 'Name Custom', 'Event Special']
+      };
+
+      const randomName = designNames[category.id][Math.floor(Math.random() * designNames[category.id].length)];
+      const designCost = category.id === 'custom' ? 50 : 25;
+      const qualityScore = Math.floor(Math.random() * 30) + 70; // 70-100
+
+      const newDesign = {
+        id: Date.now().toString(),
+        name: randomName,
+        category: category.id,
+        quality: qualityScore,
+        created: new Date().toISOString(),
+        sales: 0,
+        pricePoint: category.trending ? 15 : 12
+      };
+
+      const newDesigns = [...customDesigns, newDesign];
+
+      const updates = {
+        nail_wrap_custom_designs: newDesigns,
+        nail_wrap_revenue: (revenue || 0) - designCost,
+        nail_wrap_reputation: Math.min(100, reputation + Math.floor(qualityScore / 10))
+      };
+
+      if (servantCareer) {
+        await base44.entities.ServantCareer.update(servantCareer.id, updates);
+      } else {
+        await base44.entities.ServantCareer.create({
+          servant_id: servant.id,
+          nail_wraps_active: true,
+          ...updates
+        });
+      }
+
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} designed "${randomName}" nail wraps. Quality: ${qualityScore}/100`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+
+      setOutcome(`Created "${randomName}"!\n\nQuality: ${qualityScore}/100\n${category.trending ? '🔥 Trending category!' : ''}\nDesign cost: $${designCost}`);
       queryClient.invalidateQueries();
 
       setTimeout(() => {
         setWorking(false);
         setOutcome('');
       }, 3500);
-    }, design.time * 1000);
+    }, 3000);
   };
 
-  const handlePractice = async () => {
+  const handleMarketOnSocial = async () => {
     setWorking(true);
 
     setTimeout(async () => {
-      const skillGain = Math.floor(Math.random() * 4) + 2;
-      
-      await base44.entities.ServantCareer.update(servantCareer.id, {
-        nail_wrap_reputation: Math.min(100, reputation + skillGain)
-      });
+      const engagement = Math.random() > 0.4 ? 'high' : 'low';
+      const newFollowers = engagement === 'high' ? Math.floor(Math.random() * 50) + 20 : Math.floor(Math.random() * 20) + 5;
+      const repGain = engagement === 'high' ? Math.floor(Math.random() * 8) + 5 : Math.floor(Math.random() * 4) + 1;
 
-      const outcomes = [
-        `Practiced application techniques. Getting smoother. Faster. Cleaner.`,
-        `Experimented with new designs. Creativity flowing. Skills improving.`,
-        `Watched tutorials. Learned new tips. Practice makes perfect.`,
-        `Perfected your filing technique. Edges clean. Professional quality.`
-      ];
+      const outcomes = {
+        high: [
+          `Your reel went viral! ${newFollowers} new followers. Comments flooding in.`,
+          `That design photo hit the algorithm PERFECTLY. ${newFollowers} followers gained!`,
+          `Your story got shared by a nail art page! ${newFollowers} new potential customers.`,
+          `People are tagging friends. "${newFollowers} followers. Your DMs are exploding."`
+        ],
+        low: [
+          `Decent reach. ${newFollowers} new followers. Keep posting consistently.`,
+          `Some engagement. ${newFollowers} followers. Try trending sounds next time.`,
+          `Post did okay. ${newFollowers} followers joined. Algorithm is tough today.`
+        ]
+      };
 
-      setOutcome(outcomes[Math.floor(Math.random() * outcomes.length)] + `\n\n+${skillGain} reputation`);
+      const result = outcomes[engagement][Math.floor(Math.random() * outcomes[engagement].length)];
+
+      const updates = {
+        nail_wrap_followers: (socialFollowers || 0) + newFollowers,
+        nail_wrap_reputation: Math.min(100, reputation + repGain)
+      };
+
+      if (servantCareer) {
+        await base44.entities.ServantCareer.update(servantCareer.id, updates);
+      }
+
+      setOutcome(`${result}\n\n+${newFollowers} followers\n+${repGain} reputation`);
       queryClient.invalidateQueries();
 
       setTimeout(() => {
         setWorking(false);
         setOutcome('');
-      }, 3000);
+      }, 3500);
     }, 2000);
+  };
+
+  const handleProcessOrders = async () => {
+    if (totalInventory === 0 && customDesigns.length === 0) {
+      setOutcome('You need inventory or custom designs to sell!');
+      setTimeout(() => setOutcome(''), 2000);
+      return;
+    }
+
+    setWorking(true);
+
+    setTimeout(async () => {
+      const orderCount = Math.min(Math.floor(socialFollowers / 20) + Math.floor(reputation / 10) + Math.floor(Math.random() * 5) + 1, 10);
+      let totalSales = 0;
+      let itemsSold = 0;
+
+      // Sell from inventory or custom designs
+      const newInventory = { ...inventory };
+      let soldCustom = false;
+
+      for (let i = 0; i < orderCount; i++) {
+        // 60% chance to sell custom if available, 40% stock
+        if (customDesigns.length > 0 && Math.random() > 0.4) {
+          const design = customDesigns[Math.floor(Math.random() * customDesigns.length)];
+          totalSales += design.pricePoint;
+          soldCustom = true;
+        } else {
+          // Sell from stock
+          const inventoryKeys = Object.keys(newInventory).filter(k => newInventory[k] > 0);
+          if (inventoryKeys.length > 0) {
+            const randomKey = inventoryKeys[Math.floor(Math.random() * inventoryKeys.length)];
+            newInventory[randomKey]--;
+            totalSales += Math.floor(Math.random() * 5) + 10; // $10-15
+            itemsSold++;
+          }
+        }
+      }
+
+      const updates = {
+        nail_wrap_inventory: newInventory,
+        nail_wrap_customers: customers + orderCount,
+        nail_wrap_revenue: revenue + totalSales,
+        nail_wrap_reputation: Math.min(100, reputation + Math.floor(orderCount / 2))
+      };
+
+      if (servantCareer) {
+        await base44.entities.ServantCareer.update(servantCareer.id, updates);
+      }
+
+      await base44.entities.NightLog.create({
+        entry: `${servant.name} processed ${orderCount} nail wrap orders. Revenue: $${totalSales.toFixed(2)}`,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+
+      setOutcome(`Processed ${orderCount} orders!\n\nRevenue: $${totalSales.toFixed(2)}\n${soldCustom ? '✨ Custom designs sold!' : ''}\nInventory used: ${itemsSold} sets`);
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setWorking(false);
+        setOutcome('');
+      }, 3500);
+    }, 2500);
   };
 
   return (
@@ -133,23 +280,50 @@ export default function NailWrapsCareer({ servant, onClose }) {
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-2">💅 Nail Wraps Career</h2>
-        <p className="text-pink-300 text-sm mb-6">Apply adhesive nail art stickers to customers' natural nails</p>
+        <h2 className="text-2xl font-bold text-white mb-2">💅 Nail Wraps Business</h2>
+        <p className="text-pink-300 text-sm mb-6">Design, source, and sell nail wraps online</p>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-black/40 rounded-lg p-3 border border-pink-500/30">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+          <div className="bg-black/40 rounded-lg p-2 border border-pink-500/30">
             <p className="text-pink-400 text-xs">Reputation</p>
-            <p className="text-white font-bold">{reputation}/100</p>
+            <p className="text-white font-bold text-sm">{reputation}/100</p>
           </div>
-          <div className="bg-black/40 rounded-lg p-3 border border-pink-500/30">
-            <p className="text-pink-400 text-xs">Customers</p>
-            <p className="text-white font-bold">{customers}</p>
+          <div className="bg-black/40 rounded-lg p-2 border border-pink-500/30">
+            <p className="text-pink-400 text-xs">Followers</p>
+            <p className="text-white font-bold text-sm">{socialFollowers}</p>
           </div>
-          <div className="bg-black/40 rounded-lg p-3 border border-pink-500/30">
+          <div className="bg-black/40 rounded-lg p-2 border border-pink-500/30">
+            <p className="text-pink-400 text-xs">Inventory</p>
+            <p className="text-white font-bold text-sm">{totalInventory} sets</p>
+          </div>
+          <div className="bg-black/40 rounded-lg p-2 border border-pink-500/30">
             <p className="text-pink-400 text-xs">Revenue</p>
-            <p className="text-white font-bold">${revenue}</p>
+            <p className="text-white font-bold text-sm">${revenue?.toFixed(0) || 0}</p>
           </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6 overflow-x-auto">
+          {[
+            { id: 'shop', label: 'Order Stock', icon: ShoppingCart },
+            { id: 'design', label: 'Design', icon: Palette },
+            { id: 'sell', label: 'Marketing', icon: TrendingUp },
+            { id: 'orders', label: 'Process Orders', icon: Package }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-black/30 text-pink-300 hover:bg-black/50'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         {outcome ? (
@@ -162,37 +336,160 @@ export default function NailWrapsCareer({ servant, onClose }) {
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             >
-              <div className="text-6xl">💅</div>
+              <Sparkles className="w-12 h-12 text-pink-400 mx-auto" />
             </motion.div>
-            <p className="text-pink-300 mt-4">Working on nails...</p>
+            <p className="text-pink-300 mt-4">Working...</p>
           </div>
         ) : (
           <div>
-            <button
-              onClick={handlePractice}
-              className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 mb-4 transition-colors"
-            >
-              <h3 className="text-white font-bold">✨ Practice Techniques</h3>
-              <p className="text-gray-400 text-sm">Improve skills (no income)</p>
-            </button>
+            {activeTab === 'shop' && (
+              <div>
+                <h3 className="text-white font-bold mb-3">Wholesale Suppliers</h3>
+                <p className="text-pink-300 text-sm mb-4">Order nail wrap stock from brands</p>
+                <div className="space-y-3">
+                  {WHOLESALE_BRANDS.map(brand => (
+                    <div key={brand.id} className="bg-pink-900/40 border border-pink-500/30 rounded-xl p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="text-white font-medium">{brand.name}</h4>
+                          <p className="text-gray-400 text-sm">{brand.desc}</p>
+                        </div>
+                        <span className="text-green-400 font-bold">${brand.pricePerSet}/set</span>
+                      </div>
+                      <p className="text-pink-400 text-xs mb-3">Min order: {brand.minOrder} sets</p>
+                      {orderingFrom === brand.id ? (
+                        <div className="space-y-2">
+                          <input
+                            type="number"
+                            min={brand.minOrder}
+                            value={orderQuantity}
+                            onChange={(e) => setOrderQuantity(parseInt(e.target.value) || brand.minOrder)}
+                            className="w-full bg-black/40 border border-pink-500/30 rounded-lg px-3 py-2 text-white"
+                            placeholder="Quantity"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleOrderStock(brand)}
+                              className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg transition-colors"
+                            >
+                              Confirm (${(brand.pricePerSet * orderQuantity).toFixed(2)})
+                            </button>
+                            <button
+                              onClick={() => setOrderingFrom(null)}
+                              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setOrderingFrom(brand.id);
+                            setOrderQuantity(brand.minOrder);
+                          }}
+                          className="w-full bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg transition-colors"
+                        >
+                          Order Stock
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-            <h3 className="text-white font-bold mb-3">Available Designs</h3>
-            <div className="space-y-2">
-              {DESIGNS.map(design => (
-                <button
-                  key={design.id}
-                  onClick={() => handleMakeWraps(design)}
-                  className="w-full bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 rounded-xl p-4 text-left transition-colors"
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <h4 className="text-white font-medium">{design.name}</h4>
-                    <span className="text-green-400 font-bold">${design.price}</span>
+            {activeTab === 'design' && (
+              <div>
+                <h3 className="text-white font-bold mb-3">Create Custom Designs</h3>
+                <p className="text-pink-300 text-sm mb-4">Design your own nail wraps to sell ($25-50 design cost)</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {DESIGN_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleCreateDesign(cat)}
+                      className="bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 rounded-xl p-4 text-left transition-colors relative"
+                    >
+                      {cat.trending && (
+                        <span className="absolute top-2 right-2 text-xs bg-orange-500 text-white px-2 py-0.5 rounded">
+                          🔥 Trending
+                        </span>
+                      )}
+                      <h4 className="text-white font-medium mb-1">{cat.name}</h4>
+                      <p className="text-pink-400 text-xs">Create design</p>
+                    </button>
+                  ))}
+                </div>
+                {customDesigns.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="text-white font-bold mb-3">Your Designs ({customDesigns.length})</h4>
+                    <div className="space-y-2">
+                      {customDesigns.slice(-5).reverse().map(design => (
+                        <div key={design.id} className="bg-black/30 border border-pink-500/20 rounded-lg p-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="text-white font-medium">{design.name}</p>
+                              <p className="text-gray-400 text-xs capitalize">{design.category}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-pink-400 font-bold">${design.pricePoint}</p>
+                              <p className="text-gray-500 text-xs">Quality: {design.quality}/100</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-gray-400 text-sm">{design.desc}</p>
-                  <p className="text-pink-400 text-xs mt-1">⏱️ {design.time}s</p>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'sell' && (
+              <div>
+                <h3 className="text-white font-bold mb-3">Social Media Marketing</h3>
+                <p className="text-pink-300 text-sm mb-4">Build your following and attract customers</p>
+                <button
+                  onClick={handleMarketOnSocial}
+                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white py-4 rounded-xl transition-colors mb-4"
+                >
+                  <h4 className="font-bold">📱 Post on Social Media</h4>
+                  <p className="text-sm opacity-90">Instagram, TikTok, Facebook</p>
                 </button>
-              ))}
-            </div>
+                <div className="bg-black/30 border border-pink-500/20 rounded-xl p-4">
+                  <h4 className="text-white font-medium mb-3">Marketing Tips</h4>
+                  <ul className="space-y-2 text-pink-300 text-sm">
+                    <li>• Use trending sounds and hashtags</li>
+                    <li>• Post nail application videos</li>
+                    <li>• Share customer reviews and photos</li>
+                    <li>• Collaborate with nail influencers</li>
+                    <li>• Run giveaways to boost engagement</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'orders' && (
+              <div>
+                <h3 className="text-white font-bold mb-3">Process Online Orders</h3>
+                <p className="text-pink-300 text-sm mb-4">Fulfill customer orders from your shop</p>
+                <button
+                  onClick={handleProcessOrders}
+                  disabled={totalInventory === 0 && customDesigns.length === 0}
+                  className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-4 rounded-xl transition-colors mb-4"
+                >
+                  <h4 className="font-bold">📦 Process Orders</h4>
+                  <p className="text-sm opacity-90">Ship out nail wraps</p>
+                </button>
+                <div className="bg-black/30 border border-pink-500/20 rounded-xl p-4">
+                  <p className="text-pink-300 text-sm">
+                    Orders based on: Social followers, reputation, and inventory availability
+                  </p>
+                  <p className="text-gray-400 text-xs mt-2">
+                    Higher followers + reputation = more orders
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </motion.div>
