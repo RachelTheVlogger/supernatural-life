@@ -220,6 +220,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
       setTimeout(() => {
         setInteracting(false);
+        setCurrentAction(null);
         setOutcome('');
       }, 3500);
     }, 2000);
@@ -272,6 +273,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
       setTimeout(() => {
         setInteracting(false);
+        setCurrentAction(null);
         setOutcome('');
       }, 3500);
     }, 2000);
