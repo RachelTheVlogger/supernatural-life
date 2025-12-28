@@ -36,7 +36,7 @@ const CAREERS = {
   nailwraps: { 
     name: 'Nail Wraps Artist', 
     icon: '💅', 
-    description: 'Apply press-on nail designs',
+    description: 'Apply adhesive nail art stickers',
     color: 'from-pink-900/40 to-fuchsia-900/40',
     borderColor: 'border-pink-500/50'
   }

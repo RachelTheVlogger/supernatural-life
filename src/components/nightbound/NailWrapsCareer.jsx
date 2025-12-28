@@ -134,7 +134,7 @@ export default function NailWrapsCareer({ servant, onClose }) {
         </button>
 
         <h2 className="text-2xl font-bold text-white mb-2">💅 Nail Wraps Career</h2>
-        <p className="text-pink-300 text-sm mb-6">Apply press-on nail wraps for customers</p>
+        <p className="text-pink-300 text-sm mb-6">Apply adhesive nail art stickers to customers' natural nails</p>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">
