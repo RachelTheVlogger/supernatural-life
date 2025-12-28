@@ -303,12 +303,8 @@ export default function QuestSystem({ servant, vampireState, onClose }) {
           <div className="text-center py-8">
             <p className="text-gray-300 mb-6">Begin {servant.name}'s personal journey?</p>
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleStartQuest();
-              }}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-xl font-medium transition-colors"
+              onClick={handleStartQuest}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-xl font-medium transition-colors touch-manipulation"
             >
               Start Quest
             </button>
