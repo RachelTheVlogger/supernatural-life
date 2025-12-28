@@ -36,13 +36,8 @@ export default function Home() {
     queryKey: ['witches'],
     queryFn: () => base44.entities.Witch.list()
   });
-
-  const { data: playerWerewolves = [] } = useQuery({
-    queryKey: ['playerWerewolves'],
-    queryFn: () => base44.entities.PlayerWerewolf.list()
-  });
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || playerWerewolves.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -82,18 +77,6 @@ export default function Home() {
       });
       queryClient.invalidateQueries();
       navigate(createPageUrl('WitchHome'));
-    } else if (selectedType === 'werewolf') {
-      await base44.entities.PlayerWerewolf.create({
-        name: characterName.trim(),
-        gender: characterGender,
-        sexuality: characterSexuality,
-        personality: characterPersonality,
-        pack_status: 'lone',
-        wolf_control: 30,
-        human_life_balance: 50
-      });
-      queryClient.invalidateQueries();
-      navigate(createPageUrl('WerewolfHome'));
     }
     };
   
@@ -101,7 +84,6 @@ export default function Home() {
     // Navigate to the appropriate home based on what characters exist
     if (vampireStates.length > 0) navigate(createPageUrl('Night'));
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
-    else if (playerWerewolves.length > 0) navigate(createPageUrl('WerewolfHome'));
   };
   
   return (
@@ -225,37 +207,6 @@ export default function Home() {
                     </div>
                   ))}
 
-                  {playerWerewolves.map(w => (
-                    <div key={w.id} className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(createPageUrl('WerewolfHome'));
-                        }}
-                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">🐺</span>
-                          <div>
-                            <p className="text-white font-medium">{w.name}</p>
-                            <p className="text-gray-400 text-xs">Werewolf</p>
-                          </div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm(`Delete ${w.name}?`)) {
-                            await base44.entities.PlayerWerewolf.delete(w.id);
-                            queryClient.invalidateQueries();
-                          }
-                        }}
-                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-300" />
-                      </button>
-                    </div>
-                  ))}
-
                 </div>
               </div>
 
@@ -350,20 +301,7 @@ export default function Home() {
                     </div>
                   </button>
 
-                  <button
-                    onClick={() => { setSelectedType('werewolf'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">🐺</span>
-                      <div>
-                        <span className="font-medium text-white block">Werewolf</span>
-                        <p className="text-sm text-gray-400">Moon, pack, primal power</p>
-                      </div>
-                    </div>
-                  </button>
-
-                </div>
+                  </div>
               </>
             )}
 

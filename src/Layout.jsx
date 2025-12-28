@@ -40,19 +40,6 @@ export default function Layout({ children, currentPageName }) {
     },
     retry: 1
   });
-
-  const { data: playerWerewolves = [] } = useQuery({
-    queryKey: ['playerWerewolves'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.PlayerWerewolf.list();
-      } catch (e) {
-        console.error('Failed to fetch werewolves:', e);
-        return [];
-      }
-    },
-    retry: 1
-  });
   
   // Show nav on main game pages only
   const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome'].includes(currentPageName);
@@ -67,8 +54,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vamp', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
-    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
-    { name: 'Wolf', icon: Zap, path: 'WerewolfHome', show: playerWerewolves.length > 0 }
+    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 }
   ];
   
   return (

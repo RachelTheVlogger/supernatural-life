@@ -20,7 +20,6 @@ import FoodSystem from '@/components/nightbound/FoodSystem';
 import WitchEncounter from '@/components/nightbound/WitchEncounter';
 import CovenManagement from '@/components/nightbound/CovenManagement';
 import DayCycleToggle from '@/components/nightbound/DayCycleToggle';
-import WerewolfSystem from '@/components/nightbound/WerewolfSystem';
 import DaylightRingCrafting from '@/components/nightbound/DaylightRingCrafting';
 import VampireClubScene from '@/components/nightbound/VampireClubScene';
 import ArtifactCollection from '@/components/nightbound/ArtifactCollection';
@@ -55,7 +54,6 @@ export default function VampireHome() {
   const [showFoodSystem, setShowFoodSystem] = useState(false);
   const [showWitchEncounter, setShowWitchEncounter] = useState(false);
   const [showCovenManagement, setShowCovenManagement] = useState(false);
-  const [showWerewolves, setShowWerewolves] = useState(false);
   const [showDaylightRings, setShowDaylightRings] = useState(false);
   const [showClubs, setShowClubs] = useState(false);
   const [showArtifacts, setShowArtifacts] = useState(false);
@@ -151,29 +149,7 @@ export default function VampireHome() {
     }
   });
 
-  const { data: hybrids = [] } = useQuery({
-    queryKey: ['hybrids'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Hybrid.list();
-      } catch (e) {
-        console.error('Failed to fetch hybrids:', e);
-        return [];
-      }
-    }
-  });
 
-  const { data: playerWerewolves = [] } = useQuery({
-    queryKey: ['playerWerewolves'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.PlayerWerewolf.list();
-      } catch (e) {
-        console.error('Failed to fetch werewolves:', e);
-        return [];
-      }
-    }
-  });
 
   const { data: succubi = [] } = useQuery({
     queryKey: ['succubi'],
@@ -847,26 +823,7 @@ export default function VampireHome() {
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Vampire serpent spy</p>
             </button>
 
-            {/* Succubus interaction moved to separate button below */}
 
-
-
-            {hybrids.length > 0 ? (
-              <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
-                <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🔄 Hybrid Form</h3>
-                <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Access hybrid powers</p>
-              </button>
-            ) : playerWerewolves.length > 0 ? (
-              <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
-                <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🔄 Become Hybrid</h3>
-                <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Merge with wolf</p>
-              </button>
-            ) : null}
-
-            <button onClick={() => setShowWerewolves(true)} className={`${isDaytime ? 'bg-amber-100/60 border-amber-400/40' : 'bg-orange-900/40 border-orange-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
-              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🐺 Werewolves</h3>
-              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Ancient enemies</p>
-            </button>
 
             <button onClick={() => setShowCovenManagement(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🦇 Coven</h3>
@@ -1183,9 +1140,6 @@ export default function VampireHome() {
         )}
         {showCovenManagement && vampireState && (
           <CovenManagement vampireState={vampireState} servants={servants} onClose={() => setShowCovenManagement(false)} />
-        )}
-        {showWerewolves && vampireState && (
-          <WerewolfSystem vampireState={vampireState} onClose={() => setShowWerewolves(false)} />
         )}
         {showDaylightRings && vampireState && (
           <DaylightRingCrafting vampireState={vampireState} witches={witches} onClose={() => setShowDaylightRings(false)} />

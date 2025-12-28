@@ -25,7 +25,6 @@ import VampireWeaknessModal from '@/components/nightbound/VampireWeaknessModal';
 import MilestonesDisplay from '@/components/nightbound/MilestonesDisplay';
 import CovenManagement from '@/components/nightbound/CovenManagement';
 import ServantInteractions from '@/components/nightbound/ServantInteractions';
-import WerewolfSystem from '@/components/nightbound/WerewolfSystem';
 import DaylightRingCrafting from '@/components/nightbound/DaylightRingCrafting';
 import VampireClubScene from '@/components/nightbound/VampireClubScene';
 import ArtifactCollection from '@/components/nightbound/ArtifactCollection';
@@ -51,7 +50,6 @@ export default function Night() {
   const queryClient = useQueryClient();
   const [activeModal, setActiveModal] = useState(null);
   const [selectedServant, setSelectedServant] = useState(null);
-  const [showWerewolves, setShowWerewolves] = useState(false);
   const [showDaylightRings, setShowDaylightRings] = useState(false);
   const [showClubs, setShowClubs] = useState(false);
   const [showArtifacts, setShowArtifacts] = useState(false);
@@ -108,6 +106,17 @@ export default function Night() {
         return await base44.entities.Witch.list();
       } catch (e) {
         console.error('Failed to fetch witches:', e);
+        return [];
+      }
+    }
+  });
+
+  const { data: hybrids = [] } = useQuery({
+    queryKey: ['hybrids'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Hybrid.list();
+      } catch (e) {
         return [];
       }
     }
@@ -458,13 +467,6 @@ export default function Night() {
           <p className="text-white text-xs mt-1">Coven</p>
         </button>
         <button
-          onClick={() => setShowWerewolves(true)}
-          className="bg-orange-950/40 hover:bg-orange-950/60 border border-orange-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">🐺</span>
-          <p className="text-white text-xs mt-1">Werewolves</p>
-        </button>
-        <button
           onClick={() => setShowDaylightRings(true)}
           className="bg-yellow-950/40 hover:bg-yellow-950/60 border border-yellow-500/30 rounded-lg p-3 text-center transition-colors"
         >
@@ -718,9 +720,6 @@ export default function Night() {
             servants={servants}
             onClose={() => setActiveModal(null)}
           />
-        )}
-        {showWerewolves && (
-          <WerewolfSystem vampireState={vampireState} onClose={() => setShowWerewolves(false)} />
         )}
         {showDaylightRings && (
           <DaylightRingCrafting vampireState={vampireState} witches={witches} onClose={() => setShowDaylightRings(false)} />
