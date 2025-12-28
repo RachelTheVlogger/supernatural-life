@@ -1239,7 +1239,9 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                       ✏️ Rename
                     </button>
                   </div>
-                  <p className="text-gray-400 text-sm capitalize">{mySnake.type} • {mySnake.size}</p>
+                  <p className="text-gray-400 text-sm capitalize">
+                    {mySnake.type} • {mySnake.size} • {mySnake.mood === 'content' ? '😌' : mySnake.mood === 'playful' ? '😄' : mySnake.mood === 'aggressive' ? '😠' : mySnake.mood === 'sleepy' ? '😴' : mySnake.mood === 'affectionate' ? '🥰' : '🤔'} {mySnake.mood}
+                  </p>
                   <p className="text-purple-300 text-sm mt-1">
                     {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].name}
                   </p>
