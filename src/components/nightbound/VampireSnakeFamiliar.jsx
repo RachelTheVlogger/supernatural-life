@@ -686,21 +686,42 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               <h3 className="text-white font-bold mb-3">Your Snakes</h3>
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {snakes.map((s, i) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setSelectedSnakeIndex(i)}
-                    className={`flex-shrink-0 rounded-lg p-3 border-2 transition-all ${
-                      selectedSnakeIndex === i
-                        ? 'bg-purple-600 border-purple-400 scale-105'
-                        : 'bg-gray-800 border-gray-600 hover:border-purple-500'
-                    }`}
-                  >
-                    <div className="text-3xl mb-1">
-                      {EVOLUTION_PATHS[s.type][getEvolutionStage(s.power_level) - 1].emoji}
-                    </div>
-                    <p className="text-white text-xs font-medium">{s.custom_name}</p>
-                    <p className="text-gray-400 text-xs">{s.type}</p>
-                  </button>
+                  <div key={s.id} className="flex-shrink-0 relative">
+                    <button
+                      onClick={() => setSelectedSnakeIndex(i)}
+                      className={`rounded-lg p-3 border-2 transition-all ${
+                        selectedSnakeIndex === i
+                          ? 'bg-purple-600 border-purple-400 scale-105'
+                          : 'bg-gray-800 border-gray-600 hover:border-purple-500'
+                      }`}
+                    >
+                      <div className="text-3xl mb-1">
+                        {EVOLUTION_PATHS[s.type][getEvolutionStage(s.power_level) - 1].emoji}
+                      </div>
+                      <p className="text-white text-xs font-medium">{s.custom_name}</p>
+                      <p className="text-gray-400 text-xs">{s.type}</p>
+                    </button>
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Release ${s.custom_name}? This cannot be undone.`)) {
+                          await base44.entities.SnakeFamiliar.delete(s.id);
+                          await base44.entities.NightLog.create({
+                            entry: `${s.custom_name} was released back into the wild. The bond severed.`,
+                            category: 'interaction',
+                            intensity: 'moderate'
+                          });
+                          queryClient.invalidateQueries();
+                          if (selectedSnakeIndex >= snakes.length - 1) {
+                            setSelectedSnakeIndex(Math.max(0, snakes.length - 2));
+                          }
+                        }
+                      }}
+                      className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center text-xs font-bold shadow-lg transition-colors touch-manipulation"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
