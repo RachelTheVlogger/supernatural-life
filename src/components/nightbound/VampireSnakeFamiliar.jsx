@@ -1083,7 +1083,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                     )}
                   </div>
                   <button
-                    onClick={() => setShowNaming(true)}
+                    onClick={() => {
+                      setCustomName(mySnake.custom_name);
+                      setShowNaming(true);
+                    }}
                     className="text-purple-400 hover:text-purple-300 text-sm"
                   >
                     Rename
