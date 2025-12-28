@@ -45,6 +45,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const [showPlayDate, setShowPlayDate] = useState(false);
   const [playDateOutcome, setPlayDateOutcome] = useState('');
   const [showProgression, setShowProgression] = useState(false);
+  const [showSnakeSocial, setShowSnakeSocial] = useState(false);
 
   const { data: snakes = [] } = useQuery({
     queryKey: ['snakeFamiliars'],
@@ -60,6 +61,14 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const { data: allSnakes = [] } = useQuery({
     queryKey: ['allSnakeFamiliars'],
     queryFn: () => base44.entities.SnakeFamiliar.list()
+  });
+
+  const { data: allVampireSnakes = [] } = useQuery({
+    queryKey: ['allVampireSnakes'],
+    queryFn: async () => {
+      const servantSnakes = await base44.entities.SnakeFamiliar.list();
+      return servantSnakes;
+    }
   });
 
   // Reset index if it's out of bounds
@@ -201,6 +210,72 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   };
 
   const handlePlayDate = async (mate) => {
+    setShowPlayDate(false);
+    setInteracting(true);
+    setCurrentAction('playdate');
+
+    setTimeout(async () => {
+      try {
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `Two vampire snake familiars have a play date. Snake 1: ${mySnake.custom_name} (${mySnake.type}, ${mySnake.gender}, ${mySnake.personality_traits?.join(', ') || 'mysterious'}). Snake 2: ${mate.custom_name} (${mate.type}, ${mate.gender}, ${mate.personality_traits?.join(', ') || 'mysterious'}). Write a vivid, detailed scene of their social interaction. Are they playful? Competitive? Affectionate? Do they fight or bond? 150 words. Make it engaging and snake-like.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              scene: { type: 'string' },
+              bond_change_1: { type: 'number' },
+              bond_change_2: { type: 'number' },
+              relationship: { type: 'string', enum: ['rivals', 'friends', 'lovers', 'neutral', 'enemies'] }
+            }
+          }
+        });
+
+        await base44.entities.SnakeFamiliar.update(mySnake.id, {
+          bond_level: Math.min(100, (mySnake.bond_level || 0) + response.bond_change_1),
+          happiness: Math.min(100, (mySnake.happiness || 50) + 10)
+        });
+
+        await base44.entities.SnakeFamiliar.update(mate.id, {
+          bond_level: Math.min(100, (mate.bond_level || 0) + response.bond_change_2),
+          happiness: Math.min(100, (mate.happiness || 50) + 10)
+        });
+
+        setPlayDateOutcome(`${response.scene}\n\n🐍 Relationship: ${response.relationship}\n${mySnake.custom_name}: ${response.bond_change_1 > 0 ? '+' : ''}${response.bond_change_1} bond\n${mate.custom_name}: ${response.bond_change_2 > 0 ? '+' : ''}${response.bond_change_2} bond`);
+
+        await base44.entities.NightLog.create({
+          entry: `${mySnake.custom_name} and ${mate.custom_name} had a play date. ${response.relationship}.`,
+          category: 'interaction',
+          intensity: 'moderate'
+        });
+
+        queryClient.invalidateQueries();
+      } catch (e) {
+        const fallbackScenes = [
+          `${mySnake.custom_name} and ${mate.custom_name} coil around each other. Testing strength. ${mySnake.custom_name} is faster. ${mate.custom_name} is stronger. They hiss playfully. This is bonding. Snake style.`,
+          `The two serpents meet. Cautious at first. Then ${mate.custom_name} flicks tongue at ${mySnake.custom_name}. A game begins. Chase through shadows. They're having fun. Pure reptilian joy.`,
+          `${mySnake.custom_name} shows off abilities. ${mate.custom_name} watches. Impressed. They exchange knowledge. Snake wisdom passed between them. A friendship forming.`
+        ];
+        setPlayDateOutcome(fallbackScenes[Math.floor(Math.random() * fallbackScenes.length)]);
+        
+        await base44.entities.SnakeFamiliar.update(mySnake.id, {
+          bond_level: Math.min(100, (mySnake.bond_level || 0) + 5),
+          happiness: Math.min(100, (mySnake.happiness || 50) + 10)
+        });
+        await base44.entities.SnakeFamiliar.update(mate.id, {
+          bond_level: Math.min(100, (mate.bond_level || 0) + 5),
+          happiness: Math.min(100, (mate.happiness || 50) + 10)
+        });
+        queryClient.invalidateQueries();
+      }
+
+      setTimeout(() => {
+        setInteracting(false);
+        setCurrentAction(null);
+        setPlayDateOutcome('');
+      }, 5000);
+    }, 2000);
+  };
+
+  const handleBreed = async (mate) => {
     setShowPlayDate(false);
     setInteracting(true);
     setCurrentAction('playdate');
@@ -1136,6 +1211,49 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <p className="text-pink-400 mt-4">Creating new life...</p>
               </motion.div>
             )}
+            {currentAction === 'playdate' && (
+              <motion.div>
+                {!playDateOutcome ? (
+                  <>
+                    <motion.div
+                      animate={{ x: [-20, 20, -20], rotate: [0, 360] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-6xl mb-4"
+                    >
+                      🐍🐍
+                    </motion.div>
+                    <p className="text-blue-400 mt-4">Play date in progress...</p>
+                  </>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <div className="text-6xl mb-4">🐍💕🐍</div>
+                    <p className="text-blue-300 text-base whitespace-pre-line px-4">{playDateOutcome}</p>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+            {currentAction === 'breeding' && (
+              <motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1], rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍💕🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🥚
+                </motion.div>
+                <p className="text-pink-400 mt-4">Creating new life...</p>
+              </motion.div>
+            )}
             {currentAction?.startsWith('ability_') && (
               <motion.div>
                 <motion.div
@@ -1220,7 +1338,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <div className="mb-2">
                   <div className="flex items-center justify-between mb-1">
                     <h3 className="text-white font-bold text-xl flex items-center gap-2">
-                      {mySnake.custom_name}
+                      {mySnake.gender === 'male' ? '♂️' : '♀️'} {mySnake.custom_name}
                       <span 
                         className="inline-block w-3 h-3 rounded-full"
                         style={{ 
@@ -1229,15 +1347,17 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                         }}
                       />
                     </h3>
-                    <button
-                      onClick={() => {
-                        setCustomName(mySnake.custom_name);
-                        setShowNaming(true);
-                      }}
-                      className="text-purple-400 hover:text-purple-300 text-sm px-2 py-1"
-                    >
-                      ✏️ Rename
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setCustomName(mySnake.custom_name);
+                          setShowNaming(true);
+                        }}
+                        className="text-purple-400 hover:text-purple-300 text-sm px-2 py-1"
+                      >
+                        ✏️ Rename
+                      </button>
+                    </div>
                   </div>
                   <p className="text-gray-400 text-sm capitalize">
                     {mySnake.type} • {mySnake.size} • {mySnake.mood === 'content' ? '😌' : mySnake.mood === 'playful' ? '😄' : mySnake.mood === 'aggressive' ? '😠' : mySnake.mood === 'sleepy' ? '😴' : mySnake.mood === 'affectionate' ? '🥰' : '🤔'} {mySnake.mood}
@@ -2004,6 +2124,92 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <button
                   onClick={() => setShowProgression(false)}
                   className="w-full mt-6 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-medium transition-colors"
+                >
+                  Close
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Play Date Modal */}
+        <AnimatePresence>
+          {showPlayDate && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[60] overflow-y-auto"
+              onClick={() => setShowPlayDate(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto border-2 border-blue-500/50"
+              >
+                <h2 className="text-2xl font-bold text-white mb-4">🎮 Snake Play Date</h2>
+                
+                <div className="bg-gradient-to-br from-blue-900/40 to-cyan-900/40 border border-blue-500/30 rounded-lg p-4 mb-4">
+                  <p className="text-blue-300 text-sm mb-2">Your Snake:</p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-white font-bold">{mySnake.custom_name}</p>
+                      <p className="text-gray-300 text-sm">
+                        {mySnake.gender === 'male' ? '♂️' : '♀️'} {mySnake.type} • {mySnake.pattern}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-400">Bond: {mySnake.bond_level}</p>
+                      <p className="text-sm text-gray-400">Happy: {mySnake.happiness || 50}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-gray-400 mb-4">Select a snake for {mySnake.custom_name} to play with:</p>
+                
+                <div className="space-y-3">
+                  {allVampireSnakes
+                    .filter(s => s.id !== mySnake.id)
+                    .map(snake => (
+                      <button
+                        key={snake.id}
+                        onClick={() => handlePlayDate(snake)}
+                        className="w-full bg-gradient-to-r from-blue-900/60 to-cyan-900/60 hover:from-blue-900/80 hover:to-cyan-900/80 border-2 border-blue-500/50 rounded-xl p-4 text-left transition-all"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-white font-bold">{snake.custom_name}</p>
+                            <p className="text-gray-300 text-sm">
+                              {snake.gender === 'male' ? '♂️' : '♀️'} {snake.type} • {snake.pattern}
+                            </p>
+                            {snake.personality_traits && snake.personality_traits.length > 0 && (
+                              <p className="text-blue-300 text-xs mt-1">
+                                {snake.personality_traits.join(', ')}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  
+                  {allVampireSnakes.filter(s => s.id !== mySnake.id).length === 0 && (
+                    <div className="bg-gray-800/40 border border-gray-600/30 rounded-lg p-4">
+                      <p className="text-gray-400 text-center">No other snakes available for play dates.</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-blue-900/40 border border-blue-500/30 rounded-lg p-4 mt-4">
+                  <p className="text-blue-200 text-sm">
+                    <strong>Play Dates:</strong> AI-generated social interactions between snakes. They'll play, compete, or bond. Increases happiness and bond levels.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setShowPlayDate(false)}
+                  className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
                 >
                   Close
                 </button>
