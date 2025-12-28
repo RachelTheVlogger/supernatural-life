@@ -69,6 +69,9 @@ export default function ServantSnake() {
   const [aiSuggestions, setAiSuggestions] = useState(null);
   const [loadingAI, setLoadingAI] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [showSocial, setShowSocial] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [communityTrends, setCommunityTrends] = useState(null);
 
   const urlParams = new URLSearchParams(location.search);
   const servantId = urlParams.get('id');
@@ -273,6 +276,102 @@ Provide recommendations in this exact JSON format:
       console.error('AI suggestions failed:', e);
       setOutcome('AI assistant temporarily unavailable');
       setTimeout(() => setOutcome(''), 2000);
+    }
+
+    setLoadingAI(false);
+  };
+
+  const handleSocialAction = async (action, targetSnake) => {
+    setInteracting(action);
+
+    setTimeout(async () => {
+      let message = '';
+      let rewardBond = 0;
+      let rewardPower = 0;
+
+      switch (action) {
+        case 'visit':
+          message = `${snake.custom_name} visited ${targetSnake.custom_name}. They circled each other curiously. New friendship forming.`;
+          rewardBond = 3;
+          break;
+        case 'playdate':
+          message = `Playdate! ${snake.custom_name} and ${targetSnake.custom_name} played together. Chasing tails. Mock battles. Fun bonding time.`;
+          rewardBond = 8;
+          rewardPower = 4;
+          break;
+        case 'duel':
+          const winner = Math.random() > 0.5 ? snake.custom_name : targetSnake.custom_name;
+          message = `Friendly duel! ${snake.custom_name} vs ${targetSnake.custom_name}. ${winner} won! Both learned valuable combat skills.`;
+          rewardPower = 10;
+          rewardBond = 5;
+          break;
+        case 'like':
+          message = `You left appreciation for ${targetSnake.custom_name}. The owner will be pleased.`;
+          break;
+      }
+
+      if (rewardBond || rewardPower) {
+        await base44.entities.SnakeFamiliar.update(snake.id, {
+          bond_level: Math.min(100, snake.bond_level + rewardBond),
+          power_level: Math.min(100, snake.power_level + rewardPower)
+        });
+      }
+
+      await base44.entities.NightLog.create({
+        entry: message,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+
+      setOutcome(message);
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setInteracting(null);
+        setOutcome('');
+      }, 4000);
+    }, 2000);
+  };
+
+  const getCommunityTrends = async () => {
+    setLoadingAI(true);
+
+    try {
+      const topSnakes = allSnakes.slice(0, 10);
+      const avgPower = allSnakes.reduce((sum, s) => sum + (s.power_level || 0), 0) / allSnakes.length;
+      
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are analyzing snake familiar training trends across the vampire community. Based on this data, provide insights:
+
+Total Snakes: ${allSnakes.length}
+Average Power Level: ${avgPower.toFixed(1)}
+Top Snake Types: ${topSnakes.map(s => s.type).join(', ')}
+Popular Patterns: ${topSnakes.map(s => s.pattern).join(', ')}
+
+Provide analysis in this JSON format:
+{
+  "popular_training": "string - most effective training methods being used",
+  "type_meta": "string - which snake types are performing best and why",
+  "optimal_strategy": "string - recommended strategy for new snake owners",
+  "power_tips": ["string array - 3 specific tips to increase power level"],
+  "community_insights": "string - interesting trends or patterns in the data"
+}`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            popular_training: { type: 'string' },
+            type_meta: { type: 'string' },
+            optimal_strategy: { type: 'string' },
+            power_tips: { type: 'array', items: { type: 'string' } },
+            community_insights: { type: 'string' }
+          }
+        }
+      });
+
+      setCommunityTrends(result);
+      setShowSocial(true);
+    } catch (e) {
+      console.error('Community trends failed:', e);
     }
 
     setLoadingAI(false);
@@ -667,6 +766,18 @@ Provide recommendations in this exact JSON format:
               >
                 🤖 AI Care
               </button>
+              <button
+                onClick={() => setShowSocial(true)}
+                className="px-4 py-2 rounded-lg font-medium bg-indigo-600 hover:bg-indigo-700 text-white transition-all text-sm"
+              >
+                👥 Social
+              </button>
+              <button
+                onClick={() => setShowLeaderboard(true)}
+                className="px-4 py-2 rounded-lg font-medium bg-yellow-600 hover:bg-yellow-700 text-white transition-all text-sm"
+              >
+                🏆 Leaderboard
+              </button>
             </div>
             {carrying && (
               <p className="text-green-400 text-xs mt-2">Your snake is coiled around your arm, ready to assist</p>
@@ -714,14 +825,23 @@ Provide recommendations in this exact JSON format:
             borderColor: getSnakeBaseColor(snake.type),
             borderWidth: '3px'
           }}>
-            {/* Aura Effect */}
-            <div className={`absolute inset-0 opacity-${Math.min(50 + snake.power_level / 2, 90)}`} style={{
-              background: `radial-gradient(circle at center, ${
-                snake.type === 'shadow' ? 'rgba(75, 85, 99, 0.4)' :
-                snake.type === 'venom' ? 'rgba(34, 197, 94, 0.4)' :
-                snake.type === 'blood' ? 'rgba(239, 68, 68, 0.4)' :
-                'rgba(147, 51, 234, 0.4)'
-              }, transparent 70%)`
+            {/* Aura Effect with Pattern Colors */}
+            <div className="absolute inset-0 opacity-60" style={{
+              background: snake.pattern === 'iridescent' 
+                ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 25%, rgba(240, 147, 251, 0.4) 50%, rgba(79, 172, 254, 0.4) 75%, rgba(0, 242, 254, 0.4) 100%)'
+                : snake.pattern === 'scales_of_night'
+                ? `radial-gradient(circle at center, rgba(0, 0, 0, 0.6), ${
+                    snake.type === 'shadow' ? 'rgba(75, 85, 99, 0.4)' :
+                    snake.type === 'venom' ? 'rgba(34, 197, 94, 0.4)' :
+                    snake.type === 'blood' ? 'rgba(239, 68, 68, 0.4)' :
+                    'rgba(147, 51, 234, 0.4)'
+                  } 70%)`
+                : `radial-gradient(circle at center, ${
+                    snake.type === 'shadow' ? 'rgba(75, 85, 99, 0.4)' :
+                    snake.type === 'venom' ? 'rgba(34, 197, 94, 0.4)' :
+                    snake.type === 'blood' ? 'rgba(239, 68, 68, 0.4)' :
+                    'rgba(147, 51, 234, 0.4)'
+                  }, transparent 70%)`
             }} />
 
             {/* Background Scene */}
@@ -1382,6 +1502,203 @@ Provide recommendations in this exact JSON format:
 
               <button
                 onClick={() => setShowCareAssistant(false)}
+                className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Social Features Modal */}
+      <AnimatePresence>
+        {showSocial && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowSocial(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto border-2 border-indigo-500/50"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">👥 Snake Community</h2>
+
+              {/* Community Trends Button */}
+              <button
+                onClick={getCommunityTrends}
+                disabled={loadingAI}
+                className="w-full mb-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium"
+              >
+                {loadingAI ? '🤖 Analyzing...' : '🤖 Get Community Trends & Training Tips'}
+              </button>
+
+              {communityTrends && (
+                <div className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-4 mb-4">
+                  <h3 className="text-purple-200 font-bold mb-3">📊 Community Analysis</h3>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <p className="text-purple-300 font-medium mb-1">Popular Training Methods:</p>
+                      <p className="text-gray-300">{communityTrends.popular_training}</p>
+                    </div>
+                    <div>
+                      <p className="text-purple-300 font-medium mb-1">Type Meta:</p>
+                      <p className="text-gray-300">{communityTrends.type_meta}</p>
+                    </div>
+                    <div>
+                      <p className="text-purple-300 font-medium mb-1">Optimal Strategy:</p>
+                      <p className="text-gray-300">{communityTrends.optimal_strategy}</p>
+                    </div>
+                    <div>
+                      <p className="text-purple-300 font-medium mb-1">Power Tips:</p>
+                      <ul className="space-y-1">
+                        {communityTrends.power_tips.map((tip, i) => (
+                          <li key={i} className="text-gray-300">• {tip}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-purple-300 font-medium mb-1">Community Insights:</p>
+                      <p className="text-gray-300">{communityTrends.community_insights}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Other Snakes */}
+              <h3 className="text-white font-bold mb-3">Other Snakes</h3>
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {allSnakes.filter(s => s.id !== snake.id).map(otherSnake => (
+                  <div key={otherSnake.id} className="bg-gray-800/60 border border-indigo-500/30 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <p className="text-white font-bold">{otherSnake.custom_name}</p>
+                        <p className="text-gray-400 text-sm capitalize">
+                          {otherSnake.gender === 'male' ? '♂️' : '♀️'} {otherSnake.type} • {otherSnake.pattern}
+                        </p>
+                        <p className="text-purple-300 text-xs">Power: {otherSnake.power_level}</p>
+                      </div>
+                      <div className="text-4xl">
+                        {EVOLUTION_PATHS[otherSnake.type][getEvolutionStage(otherSnake.power_level) - 1].emoji}
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleSocialAction('visit', otherSnake)}
+                        disabled={!!interacting}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 rounded-lg text-sm"
+                      >
+                        👋 Visit
+                      </button>
+                      <button
+                        onClick={() => handleSocialAction('playdate', otherSnake)}
+                        disabled={!!interacting}
+                        className="flex-1 bg-pink-600 hover:bg-pink-700 disabled:opacity-50 text-white py-2 rounded-lg text-sm"
+                      >
+                        🎾 Playdate
+                      </button>
+                      <button
+                        onClick={() => handleSocialAction('duel', otherSnake)}
+                        disabled={!!interacting}
+                        className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white py-2 rounded-lg text-sm"
+                      >
+                        ⚔️ Duel
+                      </button>
+                      <button
+                        onClick={() => handleSocialAction('like', otherSnake)}
+                        disabled={!!interacting}
+                        className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-3 py-2 rounded-lg text-sm"
+                      >
+                        ❤️
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowSocial(false);
+                  setCommunityTrends(null);
+                }}
+                className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Leaderboard Modal */}
+      <AnimatePresence>
+        {showLeaderboard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowLeaderboard(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto border-2 border-yellow-500/50"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">🏆 Snake Leaderboard</h2>
+
+              {/* Top Snakes by Power */}
+              <div className="space-y-3">
+                {allSnakes
+                  .sort((a, b) => (b.power_level || 0) - (a.power_level || 0))
+                  .slice(0, 10)
+                  .map((topSnake, index) => (
+                    <div 
+                      key={topSnake.id} 
+                      className={`rounded-lg p-4 border-2 ${
+                        topSnake.id === snake.id ? 'bg-yellow-900/60 border-yellow-500' : 'bg-gray-800/60 border-gray-600'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="text-3xl font-bold" style={{
+                          color: index === 0 ? '#ffd700' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#6b7280'
+                        }}>
+                          #{index + 1}
+                        </div>
+                        <div className="text-4xl">
+                          {EVOLUTION_PATHS[topSnake.type][getEvolutionStage(topSnake.power_level) - 1].emoji}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-white font-bold flex items-center gap-2">
+                            {topSnake.custom_name}
+                            {topSnake.id === snake.id && <span className="text-yellow-400 text-sm">(You!)</span>}
+                          </p>
+                          <p className="text-gray-400 text-sm capitalize">{topSnake.type} • {topSnake.size}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-yellow-400 font-bold text-xl">{topSnake.power_level}</p>
+                          <p className="text-gray-400 text-xs">Power</p>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex gap-4 text-xs text-gray-400">
+                        <span>Bond: {topSnake.bond_level}</span>
+                        <span>Missions: {topSnake.missions_completed}</span>
+                        <span>Stage: {getEvolutionStage(topSnake.power_level)}/3</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <button
+                onClick={() => setShowLeaderboard(false)}
                 className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
               >
                 Close
