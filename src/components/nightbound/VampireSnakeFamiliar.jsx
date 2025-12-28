@@ -1253,6 +1253,23 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   >
                     🎮 Play Date
                   </button>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (confirm(`Release ${mySnake.custom_name}? This cannot be undone.`)) {
+                        await base44.entities.SnakeFamiliar.delete(mySnake.id);
+                        await base44.entities.NightLog.create({
+                          entry: `${mySnake.custom_name} was released back into the wild. The bond severed.`,
+                          category: 'interaction',
+                          intensity: 'moderate'
+                        });
+                        queryClient.invalidateQueries();
+                      }
+                    }}
+                    className="px-3 py-1 rounded-lg font-medium bg-red-600 hover:bg-red-700 text-white transition-all text-xs touch-manipulation"
+                  >
+                    🗑️ Release
+                  </button>
                   </div>
               </div>
             </div>
