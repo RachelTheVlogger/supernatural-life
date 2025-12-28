@@ -150,6 +150,7 @@ export default function ServantHome() {
   const [showAI, setShowAI] = useState(false);
   const [showMemory, setShowMemory] = useState(false);
   const [showEmotion, setShowEmotion] = useState(false);
+  const [showSnakeTab, setShowSnakeTab] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
@@ -531,6 +532,15 @@ export default function ServantHome() {
           </button>
           
           <div className="grid grid-cols-1 gap-2">
+            {entity.is_turned && (
+              <button
+                onClick={() => navigate(createPageUrl(`ServantSnake?id=${currentServantId}`))}
+                className="w-full bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-2 border-green-500/50 rounded-xl py-3 px-4 flex items-center gap-3 shadow-lg transition-all"
+              >
+                <span className="text-2xl">🐍</span>
+                <span className="text-sm font-medium text-white">Snake Familiar</span>
+              </button>
+            )}
             <button
               onClick={() => setShowAI(true)}
               className="w-full bg-gradient-to-r from-purple-900/60 to-blue-900/60 hover:from-purple-900/80 hover:to-blue-900/80 border-2 border-purple-500/50 rounded-xl py-3 px-4 flex items-center gap-3 shadow-lg transition-all"

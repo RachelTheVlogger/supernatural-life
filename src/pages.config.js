@@ -8,11 +8,11 @@ import Messages from './pages/Messages';
 import NateLilithHome from './pages/NateLilithHome';
 import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
+import ServantSnake from './pages/ServantSnake';
 import SuccubusHome from './pages/SuccubusHome';
 import VampireHome from './pages/VampireHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
-import ServantSnake from './pages/ServantSnake';
 import __Layout from './Layout.jsx';
 
 
@@ -27,11 +27,11 @@ export const PAGES = {
     "NateLilithHome": NateLilithHome,
     "Night": Night,
     "ServantHome": ServantHome,
+    "ServantSnake": ServantSnake,
     "SuccubusHome": SuccubusHome,
     "VampireHome": VampireHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
-    "ServantSnake": ServantSnake,
 }
 
 export const pagesConfig = {
