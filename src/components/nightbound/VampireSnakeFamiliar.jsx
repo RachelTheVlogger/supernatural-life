@@ -1090,6 +1090,25 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 )}
               </motion.div>
             )}
+            {currentAction === 'breeding' && (
+              <motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1], rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍💕🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🥚
+                </motion.div>
+                <p className="text-pink-400 mt-4">Creating new life...</p>
+              </motion.div>
+            )}
             {currentAction?.startsWith('ability_') && (
               <motion.div>
                 <motion.div

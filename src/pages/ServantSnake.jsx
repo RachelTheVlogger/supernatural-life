@@ -228,70 +228,143 @@ export default function ServantSnake() {
       return;
     }
 
-    // Mix parent traits
-    const inheritType = Math.random() > 0.5 ? snake.type : mate.type;
-    const inheritPattern = Math.random() > 0.5 ? snake.pattern : mate.pattern;
-    const inheritEyeColor = Math.random() > 0.5 ? snake.eye_color : mate.eye_color;
-    const inheritGender = Math.random() > 0.5 ? 'male' : 'female';
-    
-    // Combine personality traits
-    const combinedTraits = [...new Set([...(snake.personality_traits || []), ...(mate.personality_traits || [])])];
-    const inheritedTraits = combinedTraits.slice(0, 2);
-    
-    // Average stats with some randomness
-    const avgPower = Math.floor((snake.power_level + mate.power_level) / 2) + Math.floor(Math.random() * 20 - 10);
-    const avgBond = Math.floor((snake.bond_level + mate.bond_level) / 2);
-    
-    // Generate cute baby name
-    const babyPrefixes = ['Little', 'Baby', 'Mini', 'Tiny'];
-    const parentName = snake.custom_name.split(' ')[0];
-    const offspringName = `${babyPrefixes[Math.floor(Math.random() * babyPrefixes.length)]} ${parentName}`;
+    setInteracting('breeding');
 
-    await base44.entities.SnakeFamiliar.create({
-      vampire_id: servantId,
-      custom_name: offspringName,
-      gender: inheritGender,
-      type: inheritType,
-      pattern: inheritPattern,
-      eye_color: inheritEyeColor,
-      bond_level: Math.max(10, avgBond - 30),
-      power_level: Math.max(15, avgPower),
-      loyalty: 30,
-      hunger: 50,
-      happiness: 70,
-      health: 100,
-      mood: 'curious',
-      position: 'coiled',
-      missions_completed: 0,
-      unlocked_abilities: EVOLUTION_PATHS[inheritType][0].abilities,
-      size: 'small',
-      age_days: 0,
-      favorite_spot: 'nest',
-      accessories: [],
-      scars: [],
-      breeding_ready: false,
-      parent_ids: [snake.id, mate.id],
-      personality_traits: inheritedTraits
-    });
+    setTimeout(async () => {
+      try {
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `Two vampire snake familiars are breeding. Parent 1: ${snake.custom_name} (${snake.type}, ${snake.gender}, ${snake.pattern} pattern, ${snake.eye_color} eyes, power ${snake.power_level}, traits: ${(snake.personality_traits || []).join(', ') || 'none'}). Parent 2: ${mate.custom_name} (${mate.type}, ${mate.gender}, ${mate.pattern} pattern, ${mate.eye_color} eyes, power ${mate.power_level}, traits: ${(mate.personality_traits || []).join(', ') || 'none'}). Generate offspring genetics and description. Be creative with inheritance - can be hybrid type, unique patterns, etc. Name should be baby-themed or combine parent names.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              gender: { type: 'string', enum: ['male', 'female'] },
+              type: { type: 'string', enum: ['shadow', 'venom', 'blood', 'nightmare'] },
+              pattern: { type: 'string', enum: ['solid', 'striped', 'spotted', 'iridescent', 'scales_of_night'] },
+              eye_color: { type: 'string', enum: ['red', 'gold', 'green', 'purple', 'blue', 'silver'] },
+              personality_traits: { type: 'array', items: { type: 'string' } },
+              birth_description: { type: 'string' },
+              special_mutation: { type: 'string' }
+            }
+          }
+        });
 
-    // Mark parents as not ready to breed again
-    await base44.entities.SnakeFamiliar.update(snake.id, { breeding_ready: false });
-    await base44.entities.SnakeFamiliar.update(mate.id, { breeding_ready: false });
+        const avgPower = Math.floor((snake.power_level + mate.power_level) / 2) + Math.floor(Math.random() * 20 - 10);
+        const avgBond = Math.floor((snake.bond_level + mate.bond_level) / 2);
 
-    const babyEmoji = EVOLUTION_PATHS[inheritType][0].emoji;
-    
-    await base44.entities.NightLog.create({
-      entry: `${babyEmoji} ${snake.custom_name} and ${mate.custom_name} had a baby! ${offspringName} was born - a tiny ${inheritGender} ${inheritType} with ${inheritPattern} pattern and ${inheritEyeColor} eyes. Adorable!`,
-      category: 'interaction',
-      intensity: 'significant'
-    });
+        await base44.entities.SnakeFamiliar.create({
+          vampire_id: servantId,
+          custom_name: response.name,
+          gender: response.gender,
+          type: response.type,
+          pattern: response.pattern,
+          eye_color: response.eye_color,
+          bond_level: Math.max(10, avgBond - 30),
+          power_level: Math.max(15, avgPower),
+          loyalty: 30,
+          hunger: 50,
+          happiness: 70,
+          health: 100,
+          mood: 'curious',
+          position: 'coiled',
+          missions_completed: 0,
+          unlocked_abilities: EVOLUTION_PATHS[response.type][0].abilities,
+          size: 'small',
+          age_days: 0,
+          favorite_spot: 'nest',
+          accessories: [],
+          scars: [],
+          breeding_ready: false,
+          parent_ids: [snake.id, mate.id],
+          personality_traits: response.personality_traits || []
+        });
 
-    queryClient.invalidateQueries();
-    setShowBreeding(false);
-    setSelectedMate(null);
-    setOutcome(`🐍 ${babyEmoji} A baby snake! ${offspringName} hatched - ${inheritGender} ${inheritType} with ${inheritPattern} scales and ${inheritEyeColor} eyes! Looks just like the parents! SO CUTE!`);
-    
-    setTimeout(() => setOutcome(''), 6000);
+        await base44.entities.SnakeFamiliar.update(snake.id, { breeding_ready: false });
+        await base44.entities.SnakeFamiliar.update(mate.id, { breeding_ready: false });
+
+        const babyEmoji = EVOLUTION_PATHS[response.type][0].emoji;
+        
+        await base44.entities.NightLog.create({
+          entry: `${babyEmoji} ${response.name} was born! Parents: ${snake.custom_name} & ${mate.custom_name}. ${response.birth_description}`,
+          category: 'interaction',
+          intensity: 'significant'
+        });
+
+        queryClient.invalidateQueries();
+        setShowBreeding(false);
+        setSelectedMate(null);
+        setOutcome(`🐍 ${babyEmoji} ${response.birth_description}\n\n${response.name} - ${response.gender} ${response.type}\n${response.pattern} scales, ${response.eye_color} eyes\nTraits: ${response.personality_traits?.join(', ') || 'none'}\n${response.special_mutation ? `\n✨ Mutation: ${response.special_mutation}` : ''}`);
+        
+        setTimeout(() => {
+          setInteracting(null);
+          setOutcome('');
+        }, 7000);
+      } catch (e) {
+        // Fallback breeding
+        const inheritType = Math.random() > 0.5 ? snake.type : mate.type;
+        const inheritPattern = Math.random() > 0.5 ? snake.pattern : mate.pattern;
+        const inheritEyeColor = Math.random() > 0.5 ? snake.eye_color : mate.eye_color;
+        const inheritGender = Math.random() > 0.5 ? 'male' : 'female';
+        
+        const combinedTraits = [...new Set([...(snake.personality_traits || []), ...(mate.personality_traits || [])])];
+        const inheritedTraits = combinedTraits.slice(0, 2);
+        
+        const avgPower = Math.floor((snake.power_level + mate.power_level) / 2) + Math.floor(Math.random() * 20 - 10);
+        const avgBond = Math.floor((snake.bond_level + mate.bond_level) / 2);
+        
+        const babyPrefixes = ['Little', 'Baby', 'Mini', 'Tiny'];
+        const parentName = snake.custom_name.split(' ')[0];
+        const offspringName = `${babyPrefixes[Math.floor(Math.random() * babyPrefixes.length)]} ${parentName}`;
+
+        await base44.entities.SnakeFamiliar.create({
+          vampire_id: servantId,
+          custom_name: offspringName,
+          gender: inheritGender,
+          type: inheritType,
+          pattern: inheritPattern,
+          eye_color: inheritEyeColor,
+          bond_level: Math.max(10, avgBond - 30),
+          power_level: Math.max(15, avgPower),
+          loyalty: 30,
+          hunger: 50,
+          happiness: 70,
+          health: 100,
+          mood: 'curious',
+          position: 'coiled',
+          missions_completed: 0,
+          unlocked_abilities: EVOLUTION_PATHS[inheritType][0].abilities,
+          size: 'small',
+          age_days: 0,
+          favorite_spot: 'nest',
+          accessories: [],
+          scars: [],
+          breeding_ready: false,
+          parent_ids: [snake.id, mate.id],
+          personality_traits: inheritedTraits
+        });
+
+        await base44.entities.SnakeFamiliar.update(snake.id, { breeding_ready: false });
+        await base44.entities.SnakeFamiliar.update(mate.id, { breeding_ready: false });
+
+        const babyEmoji = EVOLUTION_PATHS[inheritType][0].emoji;
+        
+        await base44.entities.NightLog.create({
+          entry: `${babyEmoji} ${snake.custom_name} and ${mate.custom_name} had a baby! ${offspringName} was born.`,
+          category: 'interaction',
+          intensity: 'significant'
+        });
+
+        queryClient.invalidateQueries();
+        setShowBreeding(false);
+        setSelectedMate(null);
+        setOutcome(`🐍 ${babyEmoji} A baby snake! ${offspringName} hatched - ${inheritGender} ${inheritType} with ${inheritPattern} scales and ${inheritEyeColor} eyes!`);
+        
+        setTimeout(() => {
+          setInteracting(null);
+          setOutcome('');
+        }, 6000);
+      }
+    }, 2000);
   };
 
   const getEvolutionStage = (power) => {
