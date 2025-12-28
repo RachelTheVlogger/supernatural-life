@@ -209,6 +209,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const [showSnakeSocial, setShowSnakeSocial] = useState(false);
   const [activeTab, setActiveTab] = useState('snakes');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isAdopting, setIsAdopting] = useState(false);
 
   const { data: snakes = [], isLoading: snakesLoading } = useQuery({
     queryKey: ['snakeFamiliars'],
