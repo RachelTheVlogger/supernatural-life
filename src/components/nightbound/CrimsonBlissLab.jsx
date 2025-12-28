@@ -36,6 +36,8 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const [hybridMode, setHybridMode] = useState(false);
   const [selectedStrains, setSelectedStrains] = useState([]);
   const [servantBloodMode, setServantBloodMode] = useState(false);
+  const [feedingSnake, setFeedingSnake] = useState(null);
+  const [snakeFeedOutcome, setSnakeFeedOutcome] = useState('');
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['bloodDrugs'],
@@ -55,6 +57,11 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const { data: bloodPlants = [] } = useQuery({
     queryKey: ['bloodPlants'],
     queryFn: () => base44.entities.BloodPlant.list()
+  });
+
+  const { data: snakes = [] } = useQuery({
+    queryKey: ['snakeFamiliars'],
+    queryFn: () => base44.entities.SnakeFamiliar.list()
   });
 
   if (!vampireState) {
@@ -718,6 +725,79 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
     }, 2000);
   };
 
+  const handleFeedSnake = async (snake, drug) => {
+    if (drug.quantity === 0) return;
+    
+    setFeedingSnake({ snake, drug });
+
+    setTimeout(async () => {
+      // Map drugs/plants to snake abilities
+      const powerMappings = {
+        'Crimson Bliss': { ability: 'Blood Rage', icon: '🔥', desc: 'Temporary strength boost from blood fury' },
+        'Midnight Rush': { ability: 'Time Dilation', icon: '⏰', desc: 'Slow perceived time during combat' },
+        'Eternal Dream': { ability: 'Reality Warp', icon: '🌀', desc: 'Create illusions and bend reality' },
+        'Bloodfire': { ability: 'Inferno Scales', icon: '🔥', desc: 'Scales burn anyone who touches them' },
+        'Void Kiss': { ability: 'Void Step', icon: '⚫', desc: 'Teleport through the void instantly' },
+        'crimson_bloom': { ability: 'Bloom Shield', icon: '🌸', desc: 'Protective barrier of blood petals' },
+        'shadow_vine': { ability: 'Shadow Bind', icon: '🌿', desc: 'Entangle enemies with shadow vines' },
+        'midnight_lotus': { ability: 'Lunar Empowerment', icon: '🌙', desc: 'Power increases at night' },
+        'bloodroot': { ability: 'Root Strike', icon: '🌱', desc: 'Summon blood roots from ground' },
+        'vampweed': { ability: 'Toxic Cloud', icon: '☁️', desc: 'Exhale poisonous vapor' }
+      };
+
+      const mapping = powerMappings[drug.strain_name] || powerMappings[drug.plant_type];
+      const defaultPower = { ability: 'Enhanced Senses', icon: '👁️', desc: 'Heightened perception' };
+      const newPower = mapping || defaultPower;
+
+      // Check if snake already has this ability
+      const hasAbility = (snake.unlocked_abilities || []).includes(newPower.ability);
+
+      await base44.entities.BloodDrug.update(drug.id, {
+        quantity: drug.quantity - 1
+      });
+
+      let outcome = '';
+      let bondGain = 0;
+      let powerGain = 0;
+
+      if (!hasAbility) {
+        await base44.entities.SnakeFamiliar.update(snake.id, {
+          unlocked_abilities: [...(snake.unlocked_abilities || []), newPower.ability],
+          power_level: Math.min(100, (snake.power_level || 0) + 15),
+          bond_level: Math.min(100, (snake.bond_level || 0) + 10)
+        });
+
+        outcome = `${snake.custom_name} consumed ${drug.strain_name}. The serpent's body convulses. Eyes glow brighter. Scales shimmer with new power.\n\n${newPower.icon} NEW ABILITY UNLOCKED: ${newPower.ability}\n${newPower.desc}\n\nYour familiar has evolved.`;
+        bondGain = 10;
+        powerGain = 15;
+      } else {
+        await base44.entities.SnakeFamiliar.update(snake.id, {
+          power_level: Math.min(100, (snake.power_level || 0) + 5),
+          bond_level: Math.min(100, (snake.bond_level || 0) + 5)
+        });
+
+        outcome = `${snake.custom_name} consumed ${drug.strain_name}. Already has ${newPower.ability}, but the drug strengthens it. Power surges through serpent scales. Existing abilities enhanced.`;
+        bondGain = 5;
+        powerGain = 5;
+      }
+
+      setSnakeFeedOutcome(outcome);
+
+      await base44.entities.NightLog.create({
+        entry: `Fed ${drug.strain_name} to ${snake.custom_name}. ${hasAbility ? 'Enhanced' : 'Unlocked'} ${newPower.ability}.`,
+        category: 'power',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setFeedingSnake(null);
+        setSnakeFeedOutcome('');
+      }, 5000);
+    }, 2000);
+  };
+
   const handleTest = async (drug) => {
     setTesting(true);
     setSelectedStrain(drug);
@@ -892,6 +972,12 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
             className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'plants' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             🌿 Plants
+          </button>
+          <button 
+            onClick={() => setTab('snakes')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'snakes' ? 'bg-emerald-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            🐍 Snake Powers
           </button>
         </div>
 
@@ -1411,6 +1497,85 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
               💬
             </motion.div>
             <p className="text-gray-300 text-lg whitespace-pre-line">{chatOutcome}</p>
+          </div>
+        )}
+
+        {tab === 'snakes' && !feedingSnake && (
+          <div className="space-y-3">
+            <h3 className="text-white font-bold mb-3">🐍 Snake Power Enhancement</h3>
+            <p className="text-gray-400 text-sm mb-4">Feed blood drugs or plant extracts to your snakes to unlock new abilities</p>
+            
+            {snakes.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No snake familiars. Adopt one first.</p>
+            ) : inventory.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No drugs available. Produce some first.</p>
+            ) : (
+              snakes.map(snake => (
+                <div key={snake.id} className="bg-gray-800 rounded-xl p-4 border-2 border-emerald-500/30">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h4 className="text-white font-bold">{snake.custom_name}</h4>
+                      <p className="text-gray-400 text-sm capitalize">{snake.type} • Power: {snake.power_level}/100</p>
+                      <p className="text-emerald-400 text-xs mt-1">Abilities: {(snake.unlocked_abilities || []).length}</p>
+                    </div>
+                  </div>
+
+                  {(snake.unlocked_abilities || []).length > 0 && (
+                    <div className="mb-3 flex gap-1 flex-wrap">
+                      {(snake.unlocked_abilities || []).map(ability => (
+                        <span key={ability} className="text-xs bg-emerald-600 text-white px-2 py-1 rounded">
+                          {ability}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <p className="text-gray-400 text-xs mb-2">Select drug to feed:</p>
+                    {inventory.filter(d => d.quantity > 0).map(drug => (
+                      <button
+                        key={drug.id}
+                        onClick={() => handleFeedSnake(snake, drug)}
+                        className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg p-3 text-left transition-colors"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="text-white font-medium text-sm">{drug.strain_name}</p>
+                            <p className="text-gray-400 text-xs">Potency: {drug.potency} • Stock: {drug.quantity}</p>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {feedingSnake && (
+          <div className="text-center py-12">
+            {!snakeFeedOutcome ? (
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.3, 1],
+                  rotate: [0, 360]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-6xl mb-4"
+              >
+                🐍
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-4"
+              >
+                <div className="text-6xl mb-4">🐍✨</div>
+                <p className="text-emerald-300 text-lg whitespace-pre-line px-4">{snakeFeedOutcome}</p>
+              </motion.div>
+            )}
           </div>
         )}
 
