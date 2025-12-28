@@ -140,6 +140,91 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     }
   };
 
+  const handleCareAction = async (action) => {
+    setInteracting(true);
+    setCurrentAction(action);
+
+    setTimeout(async () => {
+      let updates = {};
+      let message = '';
+
+      switch (action) {
+        case 'feed_meal':
+          const feedOutcomes = [
+            `You prepare fresh meat for ${mySnake.custom_name}. The snake approaches cautiously. Sniffs. Then strikes! Teeth sink into flesh. Eating slowly. Savoring each bite. You watch fondly as your familiar feeds. When finished, ${mySnake.custom_name} coils contentedly, belly full. A satisfied hiss. The bond between you grows.`,
+            `Feeding time. ${mySnake.custom_name} hasn't eaten in days. You can see the hunger in those glowing eyes. You offer the meal. The serpent lunges—FAST. Powerful jaws clamp down. Swallowing methodically. You stroke its scales as it eats. "Good," you whisper. The snake's tail wraps around your wrist. Grateful.`,
+            `${mySnake.custom_name} is RAVENOUS. You present the food. Your familiar's eyes lock onto it. Predator mode activated. The strike is lightning-quick. A blur of scales and fangs. Minutes pass as the snake consumes its prey. Finally sated, ${mySnake.custom_name} slides over to you. Presses its head against your palm. Thank you.`
+          ];
+          updates.hunger = Math.max(0, (mySnake.hunger || 30) - 50);
+          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 5);
+          message = feedOutcomes[Math.floor(Math.random() * feedOutcomes.length)];
+          break;
+
+        case 'give_water':
+          const waterOutcomes = [
+            `You fill ${mySnake.custom_name}'s water bowl with fresh, cool water. The snake glides over immediately. Dips its snout in. Drinks for a long time—must have been thirsty. You watch the rhythmic movements of its throat. When done, the serpent looks up at you. Eyes brighter. More alert. Refreshed. It flicks its tongue gratefully.`,
+            `Time for fresh water. ${mySnake.custom_name} watches as you clean the old bowl, refill it. The water glistens. Your familiar approaches and begins drinking. Slow. Deliberate. You sit beside it. Run your hand along its scales. The snake continues drinking, completely at ease with your presence. Trust.`,
+            `${mySnake.custom_name} hasn't had water in a while. You notice the dryness in its scales. Quickly, you bring fresh water. The snake drinks DEEPLY. Relief visible in every movement. After, it coils in the water dish—just resting there. Cool and comfortable. You smile. Taking care of your familiar feels right.`
+          ];
+          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 10);
+          updates.health = Math.min(100, (mySnake.health || 100) + 3);
+          message = waterOutcomes[Math.floor(Math.random() * waterOutcomes.length)];
+          break;
+
+        case 'clean_enclosure':
+          const cleanOutcomes = [
+            `Cleaning time. You remove ${mySnake.custom_name} gently, place it on your shoulder. It watches curiously as you work. Scrubbing. Wiping. Replacing bedding. Everything fresh and new. When you return your familiar to its space, it immediately explores. Sliding over every surface. Inspecting your work. Then coils in its favorite spot. Content. You did well.`,
+            `The enclosure needs cleaning. ${mySnake.custom_name} is NOT happy about being moved. Hisses at you. Stubborn serpent. But you persist. Clean every corner. Disinfect. Replace substrate. Add new enrichment items. When finished, you return the snake. It explores suspiciously... then settles. Admits (silently) that this is better. You win.`,
+            `You begin the cleaning ritual. ${mySnake.custom_name} helps—sort of. Follows you around. Gets in the way. Investigates every tool. You laugh. "I'm trying to clean FOR you," you say. The snake doesn't care. Just wants to be involved. Eventually you finish. Sparkling clean. The serpent coils up immediately. Happy. You suspect it appreciates the effort more than it shows.`
+          ];
+          updates.health = Math.min(100, (mySnake.health || 100) + 8);
+          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 12);
+          message = cleanOutcomes[Math.floor(Math.random() * cleanOutcomes.length)];
+          break;
+
+        case 'health_check':
+          const healthOutcomes = [
+            `Health inspection. You examine ${mySnake.custom_name} carefully. Eyes—clear and bright. Scales—smooth, no damage. Mouth—check for infections. Teeth sharp. Perfectly healthy. You run your hands along the entire length of its body. Checking for injuries. Bumps. Anything unusual. All good. ${mySnake.custom_name} tolerates the examination patiently. Trusts you completely. When done, you give it a treat. "Perfect health," you announce. The snake seems pleased.`,
+            `Vet check time. ${mySnake.custom_name} is NOT cooperating. Squirming. Hiding its head. "Come on," you coax. Finally manage to examine it properly. Temperature normal. Breathing good. No signs of illness. Just being dramatic. You discover a small scratch though—probably from training. You clean it carefully. Apply healing salve. ${mySnake.custom_name} hisses but holds still. Knows you're helping. After, it nuzzles against you. Apology accepted.`,
+            `You notice ${mySnake.custom_name} moving slower today. Concerned, you do a thorough health assessment. Check its weight—good. Skin elasticity—fine. Then you find it: preparing to shed. That explains everything. You increase humidity. Add a rough surface for shedding. Make sure water is fresh. Your familiar will need extra care during this time. You stay close. Monitoring. Supportive. This is what it means to care for your serpent.`
+          ];
+          updates.health = Math.min(100, (mySnake.health || 100) + 15);
+          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 5);
+          message = healthOutcomes[Math.floor(Math.random() * healthOutcomes.length)];
+          break;
+
+        case 'enrichment':
+          const enrichmentOutcomes = [
+            `Enrichment day! You set up an obstacle course for ${mySnake.custom_name}. Tubes to explore. Branches to climb. Hidden treats. The snake investigates everything. Curious. Excited. You watch as it navigates each challenge. Problem-solving. Learning. This is good for its mind AND body. When done, ${mySnake.custom_name} returns to you. Tired but happy. Mental stimulation achieved. You can see the intelligence in those eyes. Your familiar is THRIVING.`,
+            `Time to shake things up. ${mySnake.custom_name} has been bored. You rearrange its entire enclosure. New layout. New hiding spots. Add textures it hasn't felt before. Release the snake back in. It IMMEDIATELY starts exploring. Every corner. Every surface. Tongue flicking constantly. Taking it all in. Hours pass. Your familiar is completely engaged. This is what it needed. Variety. Challenge. You make a mental note to do this more often.`,
+            `You bring ${mySnake.custom_name} to a new room. Let it explore freely under supervision. The snake is FASCINATED. New smells. New sounds. Different temperature. It investigates cautiously at first, then with growing confidence. Climbs furniture. Hides in corners. Tests boundaries. You guide it gently. Keep it safe. This exposure to new environments builds confidence. Makes your familiar more adaptable. Stronger. After an hour, you return it to its enclosure. ${mySnake.custom_name} seems... bigger somehow. More worldly. Enrichment success.`
+          ];
+          updates.happiness = Math.min(100, (mySnake.happiness || 50) + 20);
+          updates.mood = 'playful';
+          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + 5);
+          message = enrichmentOutcomes[Math.floor(Math.random() * enrichmentOutcomes.length)];
+          break;
+      }
+
+      await base44.entities.SnakeFamiliar.update(mySnake.id, updates);
+      setOutcome(message);
+
+      await base44.entities.NightLog.create({
+        entry: message,
+        category: 'interaction',
+        intensity: 'subtle'
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setInteracting(false);
+        setCurrentAction(null);
+        setOutcome('');
+      }, 4500);
+    }, 2000);
+  };
+
   const handleInteraction = async (action) => {
     setInteracting(true);
     setCurrentAction(action);
@@ -404,6 +489,89 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
           </div>
         ) : interacting ? (
           <div className="text-center py-12">
+            {currentAction === 'feed_meal' && (
+              <motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ y: [-20, 0], opacity: [0, 1, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🍖
+                </motion.div>
+                <p className="text-orange-400 mt-4">Feeding meal...</p>
+              </motion.div>
+            )}
+            {currentAction === 'give_water' && (
+              <motion.div>
+                <div className="text-6xl mb-4">🐍</div>
+                <motion.div
+                  animate={{ y: [0, 20], opacity: [1, 0.5] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  💧
+                </motion.div>
+                <p className="text-blue-400 mt-4">Giving water...</p>
+              </motion.div>
+            )}
+            {currentAction === 'clean_enclosure' && (
+              <motion.div>
+                <motion.div
+                  animate={{ x: [-20, 20, -20] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🧹
+                </motion.div>
+                <p className="text-green-400 mt-4">Cleaning...</p>
+              </motion.div>
+            )}
+            {currentAction === 'health_check' && (
+              <motion.div>
+                <div className="text-6xl mb-4">🐍</div>
+                <motion.div
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🩺
+                </motion.div>
+                <p className="text-purple-400 mt-4">Health check...</p>
+              </motion.div>
+            )}
+            {currentAction === 'enrichment' && (
+              <motion.div>
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🎾
+                </motion.div>
+                <p className="text-pink-400 mt-4">Enrichment...</p>
+              </motion.div>
+            )}
             {currentAction === 'feed' && (
               <motion.div
                 animate={{ scale: [1, 1.3, 1] }}
@@ -792,6 +960,58 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 </div>
               </div>
               <p className="text-gray-400 text-xs">Missions: {mySnake.missions_completed || 0} • Abilities: {mySnake.unlocked_abilities?.length || 0}</p>
+            </div>
+
+            {/* Care Actions */}
+            <div className="bg-gradient-to-br from-blue-900/40 to-cyan-900/40 border-2 border-blue-500/50 rounded-xl p-4 mb-6">
+              <h3 className="text-blue-200 font-bold mb-3">🩺 Daily Care</h3>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => handleCareAction('feed_meal')}
+                  disabled={interacting || (mySnake.hunger || 30) < 20}
+                  className={`border border-orange-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all ${
+                    currentAction === 'feed_meal' ? 'bg-orange-600 scale-95' : 'bg-orange-900/60 hover:bg-orange-900/80'
+                  } disabled:opacity-50`}
+                >
+                  🍖 Feed Meal
+                </button>
+                <button
+                  onClick={() => handleCareAction('give_water')}
+                  disabled={interacting}
+                  className={`border border-blue-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all ${
+                    currentAction === 'give_water' ? 'bg-blue-600 scale-95' : 'bg-blue-900/60 hover:bg-blue-900/80'
+                  } disabled:opacity-50`}
+                >
+                  💧 Fresh Water
+                </button>
+                <button
+                  onClick={() => handleCareAction('clean_enclosure')}
+                  disabled={interacting}
+                  className={`border border-green-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all ${
+                    currentAction === 'clean_enclosure' ? 'bg-green-600 scale-95' : 'bg-green-900/60 hover:bg-green-900/80'
+                  } disabled:opacity-50`}
+                >
+                  🧹 Clean
+                </button>
+                <button
+                  onClick={() => handleCareAction('health_check')}
+                  disabled={interacting}
+                  className={`border border-purple-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all ${
+                    currentAction === 'health_check' ? 'bg-purple-600 scale-95' : 'bg-purple-900/60 hover:bg-purple-900/80'
+                  } disabled:opacity-50`}
+                >
+                  🩺 Health Check
+                </button>
+                <button
+                  onClick={() => handleCareAction('enrichment')}
+                  disabled={interacting}
+                  className={`border border-pink-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all col-span-2 ${
+                    currentAction === 'enrichment' ? 'bg-pink-600 scale-95' : 'bg-pink-900/60 hover:bg-pink-900/80'
+                  } disabled:opacity-50`}
+                >
+                  🎾 Enrichment Activity
+                </button>
+              </div>
             </div>
 
             {/* Basic Interactions */}
