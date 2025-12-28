@@ -1212,41 +1212,8 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
               <div className="relative z-10">
                 <div className="text-center mb-3">
-                  <div className="relative inline-block">
-                    <svg width="120" height="120" viewBox="0 0 120 120" className="mx-auto mb-2">
-                      {/* Snake body */}
-                      <path 
-                        d="M 60 20 Q 80 30, 85 50 Q 90 70, 75 85 Q 60 95, 45 85 Q 30 70, 35 50 Q 40 30, 60 20" 
-                        fill={getSnakeBaseColor(mySnake.type)}
-                        stroke="rgba(0,0,0,0.3)"
-                        strokeWidth="2"
-                      />
-                      {/* Snake head */}
-                      <ellipse cx="60" cy="35" rx="20" ry="15" fill={getSnakeBaseColor(mySnake.type)} stroke="rgba(0,0,0,0.3)" strokeWidth="2" />
-                      {/* Eyes */}
-                      <circle 
-                        cx="53" 
-                        cy="32" 
-                        r="4" 
-                        fill={mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color}
-                        style={{ filter: `drop-shadow(0 0 4px ${mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color})` }}
-                      />
-                      <circle 
-                        cx="67" 
-                        cy="32" 
-                        r="4" 
-                        fill={mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color}
-                        style={{ filter: `drop-shadow(0 0 4px ${mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color})` }}
-                      />
-                      {/* Pupils */}
-                      <circle cx="53" cy="32" r="2" fill="black" />
-                      <circle cx="67" cy="32" r="2" fill="black" />
-                      {/* Tongue */}
-                      <path d="M 60 42 L 60 48 M 58 48 L 60 48 L 62 48" stroke="#ef4444" strokeWidth="1" fill="none" />
-                    </svg>
-                    <p className="text-xs text-gray-400">
-                      {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].name}
-                    </p>
+                  <div className="text-7xl mb-2">
+                    {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
                   </div>
                 </div>
                 <div className="mb-2">
