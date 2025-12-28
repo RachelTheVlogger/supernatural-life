@@ -4,6 +4,110 @@ import { X, Zap, Heart, Eye, Skull, Wind, Droplets, Moon, Flame, Sparkles } from
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+// Snake Card Component
+function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbility, onBreed, onPlayDate, onCustomize, onDelete, onShowProgression, interacting, currentAction, getEvolutionStage, getAbilities, EVOLUTION_PATHS }) {
+  const getSnakeBaseColor = (type) => {
+    const colors = {
+      shadow: '#4b5563',
+      venom: '#10b981',
+      blood: '#ef4444',
+      nightmare: '#a855f7'
+    };
+    return colors[type] || '#6b7280';
+  };
+
+  const abilities = getAbilities();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 border-2 relative"
+      style={{
+        borderColor: getSnakeBaseColor(snake.type),
+        borderWidth: '3px',
+      }}
+    >
+      {/* Visual Snake Display */}
+      <div className={`rounded-xl p-6 mb-4 border-2 relative overflow-hidden`} style={{
+        borderColor: getSnakeBaseColor(snake.type),
+        borderWidth: '3px',
+        background: snake.pattern === 'iridescent'
+          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)'
+          : snake.pattern === 'striped'
+          ? `repeating-linear-gradient(90deg, ${getSnakeBaseColor(snake.type)} 0px, ${getSnakeBaseColor(snake.type)} 40px, rgba(255,255,255,0.15) 40px, rgba(255,255,255,0.15) 80px)`
+          : snake.pattern === 'spotted'
+          ? `radial-gradient(circle, rgba(255,255,255,0.2) 8px, transparent 8px), linear-gradient(135deg, ${getSnakeBaseColor(snake.type)}, ${getSnakeBaseColor(snake.type)})`
+          : snake.pattern === 'scales_of_night'
+          ? `conic-gradient(from 0deg at 50% 50%, ${getSnakeBaseColor(snake.type)} 0deg 30deg, rgba(0,0,0,0.4) 30deg 60deg, ${getSnakeBaseColor(snake.type)} 60deg 90deg, rgba(0,0,0,0.4) 90deg 120deg, ${getSnakeBaseColor(snake.type)} 120deg 150deg, rgba(0,0,0,0.4) 150deg 180deg, ${getSnakeBaseColor(snake.type)} 180deg 210deg, rgba(0,0,0,0.4) 210deg 240deg, ${getSnakeBaseColor(snake.type)} 240deg 270deg, rgba(0,0,0,0.4) 270deg 300deg, ${getSnakeBaseColor(snake.type)} 300deg 330deg, rgba(0,0,0,0.4) 330deg 360deg)`
+          : `linear-gradient(135deg, ${getSnakeBaseColor(snake.type)}, ${getSnakeBaseColor(snake.type)})`,
+        backgroundSize: snake.pattern === 'spotted' ? '50px 50px, 100% 100%' : 'auto'
+      }}>
+        <div className="relative z-10">
+          <div className="text-center mb-3">
+            <div className="text-7xl mb-2">🐍</div>
+          </div>
+          <div className="mb-2">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-white font-bold text-xl flex items-center gap-2">
+                {snake.custom_name}
+                <span 
+                  className="inline-block w-3 h-3 rounded-full"
+                  style={{ 
+                    backgroundColor: snake.eye_color === 'gold' ? '#fbbf24' : snake.eye_color === 'silver' ? '#d1d5db' : snake.eye_color,
+                    boxShadow: `0 0 6px ${snake.eye_color === 'gold' ? '#fbbf24' : snake.eye_color === 'silver' ? '#d1d5db' : snake.eye_color}`
+                  }}
+                />
+              </h3>
+              <div className="flex gap-2">
+                <button onClick={onCustomize} className="text-purple-400 hover:text-purple-300 text-sm px-2 py-1">✏️</button>
+                <button onClick={onDelete} className="text-red-400 hover:text-red-300 text-sm px-2 py-1">🗑️</button>
+              </div>
+            </div>
+            <p className="text-gray-400 text-sm capitalize flex items-center gap-2">
+              <span className={`${snake.gender === 'male' ? 'text-blue-400' : 'text-pink-400'} font-bold text-lg`}>
+                {snake.gender === 'male' ? '♂️' : '♀️'}
+              </span>
+              {snake.type} • {snake.size} • {snake.mood === 'content' ? '😌' : snake.mood === 'playful' ? '😄' : snake.mood === 'aggressive' ? '😠' : snake.mood === 'sleepy' ? '😴' : snake.mood === 'affectionate' ? '🥰' : '🤔'} {snake.mood}
+            </p>
+            <p className="text-purple-300 text-sm mt-1">
+              {EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].name}
+            </p>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex gap-2 mt-3 flex-wrap">
+            <button onClick={onBreed} className="px-3 py-1 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all text-xs">💕 Breed</button>
+            <button onClick={onPlayDate} className="px-3 py-1 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all text-xs">🎮 Play Date</button>
+            <button onClick={onShowProgression} className="px-3 py-1 rounded-lg font-medium bg-purple-600 hover:bg-purple-700 text-white transition-all text-xs">⚡ Evolution</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Snake Stats */}
+      <div className="bg-black/40 rounded-xl p-4 mb-4 border border-green-500/30">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <p className="text-gray-400 text-xs">Bond: {snake.bond_level}</p>
+            <div className="bg-gray-700 rounded-full h-2"><div style={{ width: `${snake.bond_level}%` }} className="h-2 bg-green-500 rounded-full" /></div>
+          </div>
+          <div>
+            <p className="text-gray-400 text-xs">Power: {snake.power_level}</p>
+            <div className="bg-gray-700 rounded-full h-2"><div style={{ width: `${snake.power_level}%` }} className="h-2 bg-red-500 rounded-full" /></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Basic Actions - Compact */}
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        <button onClick={() => onInteraction('feed')} disabled={interacting} className="bg-red-900/40 border border-red-500/30 rounded-lg p-2 text-xs text-white">🩸 Feed</button>
+        <button onClick={() => onInteraction('train')} disabled={interacting} className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-2 text-xs text-white">⚡ Train</button>
+        <button onClick={() => onInteraction('bond')} disabled={interacting} className="bg-green-900/40 border border-green-500/30 rounded-lg p-2 text-xs text-white">💚 Bond</button>
+      </div>
+    </motion.div>
+  );
+}
+
 const EVOLUTION_PATHS = {
   shadow: [
     { stage: 1, name: 'Shadow Hatchling', abilities: ['Blend with Shadows'], emoji: '🐍', color: 'from-gray-700 to-gray-900' },
@@ -754,50 +858,55 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
           </div>
         ) : (
           <>
-        {/* Snake Selector if multiple */}
-        {snakes.length > 1 && activeTab === 'snakes' && (
-          <div className="mb-4">
-            <div className="bg-gray-900/60 rounded-xl p-4 border border-purple-500/30">
-              <h3 className="text-white font-bold mb-3">Your Snakes</h3>
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {snakes.map((s, i) => (
-                  <div key={s.id} className="flex-shrink-0 relative">
-                    <button
-                      onClick={() => setSelectedSnakeIndex(i)}
-                      className={`rounded-lg p-3 border-2 transition-all ${
-                        selectedSnakeIndex === i
-                          ? 'bg-purple-600 border-purple-400 scale-105'
-                          : 'bg-gray-800 border-gray-600 hover:border-purple-500'
-                      }`}
-                    >
-                      <div className="text-3xl mb-1">
-                        {EVOLUTION_PATHS[s.type][getEvolutionStage(s.power_level) - 1].emoji}
-                      </div>
-                      <p className="text-white text-xs font-medium">{s.custom_name}</p>
-                      <p className="text-gray-400 text-xs">{s.type}</p>
-                    </button>
-                    <button
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        if (confirm(`Release ${s.custom_name}? This cannot be undone.`)) {
-                          await base44.entities.SnakeFamiliar.delete(s.id);
-                          await base44.entities.NightLog.create({
-                            entry: `${s.custom_name} was released back into the wild. The bond severed.`,
-                            category: 'interaction',
-                            intensity: 'moderate'
-                          });
-                          queryClient.invalidateQueries();
-                          setSelectedSnakeIndex(0);
-                        }
-                      }}
-                      className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center text-xs font-bold shadow-lg transition-colors touch-manipulation"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* All Snakes Display */}
+        {activeTab === 'snakes' && snakes.length > 0 && (
+          <div className="space-y-6 max-h-[65vh] overflow-y-auto pr-2">
+            {snakes.map((snake, index) => (
+              <SnakeCard 
+                key={snake.id}
+                snake={snake}
+                vampireState={vampireState}
+                onInteraction={handleInteraction}
+                onCareAction={handleCareAction}
+                onUseAbility={handleUseAbility}
+                onBreed={() => {
+                  setSelectedSnakeIndex(index);
+                  setShowBreeding(true);
+                }}
+                onPlayDate={() => {
+                  setSelectedSnakeIndex(index);
+                  setShowPlayDate(true);
+                }}
+                onCustomize={() => {
+                  setSelectedSnakeIndex(index);
+                  setCustomName(snake.custom_name);
+                  setSelectedGender(snake.gender);
+                  setSelectedPattern(snake.pattern);
+                  setSelectedEyeColor(snake.eye_color);
+                  setShowAdoptModal(true);
+                }}
+                onDelete={async () => {
+                  if (confirm(`Release ${snake.custom_name}? This cannot be undone.`)) {
+                    await base44.entities.SnakeFamiliar.delete(snake.id);
+                    await base44.entities.NightLog.create({
+                      entry: `${snake.custom_name} was released back into the wild. The bond severed.`,
+                      category: 'interaction',
+                      intensity: 'moderate'
+                    });
+                    queryClient.invalidateQueries();
+                  }
+                }}
+                onShowProgression={() => {
+                  setSelectedSnakeIndex(index);
+                  setShowProgression(true);
+                }}
+                interacting={interacting}
+                currentAction={currentAction}
+                getEvolutionStage={getEvolutionStage}
+                getAbilities={getAbilities}
+                EVOLUTION_PATHS={EVOLUTION_PATHS}
+              />
+            ))}
           </div>
         )}
 
