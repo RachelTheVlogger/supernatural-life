@@ -5,7 +5,6 @@ import { base44 } from '@/api/base44Client';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import LocationVisit from './LocationVisit';
 import RelationshipEvent from './RelationshipEvent';
-import QuestSystem from './QuestSystem';
 import DirectInteraction from './DirectInteraction';
 import FriendsSystem from './FriendsSystem';
 import NPCInteraction from './NPCInteraction';
@@ -63,7 +62,6 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [visitingLocation, setVisitingLocation] = useState(null);
   const [locationOutcome, setLocationOutcome] = useState('');
   const [relationshipMilestone, setRelationshipMilestone] = useState(null);
-  const [showQuestModal, setShowQuestModal] = useState(false);
   const [feeding, setFeeding] = useState(false);
   const [showInteractions, setShowInteractions] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
@@ -72,18 +70,9 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [showTraining, setShowTraining] = useState(false);
   const queryClient = useQueryClient();
   
-  // Fetch quests for this servant
-  const { data: quests = [] } = useQuery({
-    queryKey: ['quests', servant.id],
-    queryFn: () => base44.entities.Quest.filter({ servant_id: servant.id }),
-    enabled: !!servant?.id
-  });
-
   if (!servant || !vampireState) {
     return null;
   }
-  
-  const activeQuest = quests.find(q => !q.completed);
   
   const checkRelationshipMilestone = (oldRel, newRel) => {
     const milestones = [20, 40, 60, 80, 100];
@@ -95,16 +84,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
     return null;
   };
   
-  const updateQuestProgress = async (type) => {
-    if (activeQuest && !activeQuest.completed) {
-      const progress = activeQuest.progress || {};
-      const newCount = (progress[type] || 0) + 1;
-      await base44.entities.Quest.update(activeQuest.id, {
-        progress: { ...progress, [type]: newCount }
-      });
-      queryClient.invalidateQueries(['quests']);
-    }
-  };
+
   
   const handleTeach = async () => {
     setTeaching(true);
@@ -121,8 +101,6 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
         obsession_stage: Math.min(servant.obsession_stage + (newProgress % 3 === 0 ? 1 : 0), 5),
         relationship: newRel
       });
-      
-      await updateQuestProgress('teach');
       
       const milestone = checkRelationshipMilestone(oldRel, newRel);
       if (milestone) {
@@ -219,8 +197,6 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
       const oldRel = servant.relationship || 0;
       const newRel = Math.min(oldRel + relationshipGain, 100);
       
-      await updateQuestProgress('feed');
-      
       let feedingText = `You fed. They trembled but did not pull away, breath catching in their throat.`;
       if (newRel >= 80) {
         feedingText = `You fed. They offered themselves willingly, pressing closer, a soft sound escaping their lips.`;
@@ -274,8 +250,6 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
     setLocationOutcome(outcome);
     setVisitingLocation(location);
     setShowLocations(false);
-    
-    await updateQuestProgress('goout');
     
     // Log and update in background
     setTimeout(async () => {
@@ -332,17 +306,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           />
         )}
         
-        {showQuestModal && (
-          <QuestSystem
-            servant={servant}
-            vampireState={vampireState}
-            onClose={() => {
-              setShowQuestModal(false);
-              queryClient.invalidateQueries(['servants']);
-            }}
-          />
-        )}
-        
+
         {showInteractions && (
           <DirectInteraction
             servant={servant}
@@ -420,27 +384,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           {servant.variant} · Stage {servant.obsession_stage}
         </p>
         
-        {/* Quest indicator */}
-        {activeQuest && !activeQuest.completed && (
-          <div className="mt-4 bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-purple-500/50 rounded-xl p-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-400" />
-                <div>
-                  <p className="text-white text-xs font-medium">Active Quest</p>
-                  <p className="text-gray-400 text-xs">Stage {activeQuest.stage}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowQuestModal(true)}
-                className="text-purple-400 hover:text-purple-300 text-xs font-medium transition-colors"
-              >
-                View →
-              </button>
-            </div>
-          </div>
-        )}
-        
+
         {/* Relationship display */}
         <div className="mt-3 mb-6">
           <div className="flex justify-between items-center mb-2">
@@ -573,19 +517,6 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
               <Users className="w-5 h-5 text-blue-400" />
               <span className="text-white font-medium">{servant.name}'s Friends</span>
             </button>
-            
-            {!activeQuest && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowQuestModal(true);
-                }}
-                className="w-full bg-gradient-to-r from-purple-900/30 to-pink-900/30 border-2 border-purple-500/50 rounded-xl py-3 flex items-center justify-center gap-2 transition-all hover:from-purple-900/50 hover:to-pink-900/50"
-              >
-                <Sparkles className="w-5 h-5 text-purple-400" />
-                <span className="text-white font-medium">Begin Their Quest</span>
-              </button>
-            )}
             
             {servant.is_turned && (
               <div className="bg-red-900/30 border border-red-800/50 rounded-xl p-4 mb-2">
