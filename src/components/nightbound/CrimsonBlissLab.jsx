@@ -1573,7 +1573,13 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                 className="space-y-4"
               >
                 <div className="text-6xl mb-4">🐍✨</div>
-                <p className="text-emerald-300 text-lg whitespace-pre-line px-4">{snakeFeedOutcome}</p>
+                <motion.p 
+                  className="text-emerald-300 text-lg whitespace-pre-line px-4 leading-relaxed"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  {snakeFeedOutcome}
+                </motion.p>
               </motion.div>
             )}
           </div>
