@@ -708,7 +708,14 @@ export default function ServantHome() {
               else if (careerType === 'tattoo') setShowTattoo(true);
               else if (careerType === 'author') setShowAuthor(true);
               else if (careerType === 'manga') setShowManga(true);
+              else if (careerType === 'nailwraps') setShowNailWraps(true);
             }}
+          />
+        )}
+        {showNailWraps && (
+          <NailWrapsCareer
+            servant={servant}
+            onClose={() => setShowNailWraps(false)}
           />
         )}
         {showTattoo && (
