@@ -1189,7 +1189,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </button>
             ))}
           </div>
-        ) : mySnake ? (
+        ) : (
           <div>
             {/* Visual Snake Display */}
             <div className={`rounded-xl p-6 mb-4 border-2 relative overflow-hidden`} style={{
