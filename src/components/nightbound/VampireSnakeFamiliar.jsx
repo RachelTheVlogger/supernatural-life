@@ -1437,7 +1437,6 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         {/* Naming Modal */}
         <AnimatePresence>
           {showNaming && mySnake && (
-          {showNaming && mySnake && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
