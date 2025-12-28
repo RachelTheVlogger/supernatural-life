@@ -61,6 +61,13 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     queryFn: () => base44.entities.SnakeFamiliar.list()
   });
 
+  // Reset index if it's out of bounds
+  React.useEffect(() => {
+    if (selectedSnakeIndex >= snakes.length && snakes.length > 0) {
+      setSelectedSnakeIndex(0);
+    }
+  }, [snakes.length, selectedSnakeIndex]);
+
   const mySnake = snakes[selectedSnakeIndex] || snakes[0];
 
   const getEvolutionStage = (power) => {
@@ -712,9 +719,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                             intensity: 'moderate'
                           });
                           queryClient.invalidateQueries();
-                          if (selectedSnakeIndex >= snakes.length - 1) {
-                            setSelectedSnakeIndex(Math.max(0, snakes.length - 2));
-                          }
+                          setSelectedSnakeIndex(0);
                         }
                       }}
                       className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center text-xs font-bold shadow-lg transition-colors touch-manipulation"
