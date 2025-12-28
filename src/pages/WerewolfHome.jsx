@@ -35,7 +35,23 @@ export default function WerewolfHome() {
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
-    queryFn: () => base44.entities.PlayerWerewolf.list()
+    queryFn: async () => {
+      try {
+        const wolves = await base44.entities.PlayerWerewolf.list();
+        // Fix any werewolves with invalid pack_members
+        for (const wolf of wolves) {
+          if (!Array.isArray(wolf.pack_members)) {
+            await base44.entities.PlayerWerewolf.update(wolf.id, {
+              pack_members: []
+            });
+          }
+        }
+        return base44.entities.PlayerWerewolf.list();
+      } catch (e) {
+        console.error('Error fetching werewolves:', e);
+        return [];
+      }
+    }
   });
 
   const { data: vampireStates = [] } = useQuery({
@@ -47,14 +63,7 @@ export default function WerewolfHome() {
   const vampire = vampireStates[0];
   const isDaytime = vampire?.time_of_day === 'day';
 
-  // Fix pack_members if it's a number instead of array
-  React.useEffect(() => {
-    if (werewolf && typeof werewolf.pack_members === 'number') {
-      base44.entities.PlayerWerewolf.update(werewolf.id, {
-        pack_members: []
-      }).then(() => queryClient.invalidateQueries(['playerWerewolves']));
-    }
-  }, [werewolf?.id]);
+
 
   React.useEffect(() => {
     if (!werewolf) {
