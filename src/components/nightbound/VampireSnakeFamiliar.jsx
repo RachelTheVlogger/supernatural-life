@@ -1137,17 +1137,18 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </motion.div>
             )}
           </div>
-        ) : !mySnake ? (
+        ) : !mySnake || !showAdoptModal ? (
           <div className="space-y-3">
             <p className="text-gray-300 mb-4">Choose your serpent familiar:</p>
             {snakeTypes.map(snake => (
               <button
                 key={snake.id}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setAdoptingType(snake.id);
                   setShowAdoptModal(true);
                 }}
-                className={`w-full bg-gradient-to-r ${snake.color} border border-green-500/30 rounded-xl p-4 text-left hover:opacity-90 transition-opacity`}
+                className={`w-full bg-gradient-to-r ${snake.color} border border-green-500/30 rounded-xl p-4 text-left hover:opacity-90 transition-opacity touch-manipulation`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -1162,7 +1163,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </button>
             ))}
           </div>
-        ) : (
+        ) : mySnake && showAdoptModal ? null : (
           <div>
             {/* Visual Snake Display */}
             <div className={`rounded-xl p-6 mb-4 border-2 relative overflow-hidden`} style={{
@@ -1219,11 +1220,11 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <div className="flex gap-2 mt-3 flex-wrap">
                   {snakes.length < 5 && (
                     <button
-                      onClick={() => {
-                        setAdoptingType(null);
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setShowAdoptModal(false);
                       }}
-                      className="px-3 py-1 rounded-lg font-medium bg-green-600 hover:bg-green-700 text-white transition-all text-xs"
+                      className="px-3 py-1 rounded-lg font-medium bg-green-600 hover:bg-green-700 text-white transition-all text-xs touch-manipulation"
                     >
                       + Adopt Another
                     </button>
