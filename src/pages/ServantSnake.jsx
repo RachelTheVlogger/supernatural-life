@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Heart, Zap, Droplets, Moon, Shield, Eye, Sword } from 'lucide-react';
+import { ArrowLeft, Heart, Zap, Droplets, Moon, Shield, Eye, Sword, Sparkles } from 'lucide-react';
 
 const SNAKE_TYPES = [
   { type: 'shadow', name: 'Shadow Serpent', color: 'from-gray-900 to-black', ability: 'Stealth and illusions' },
@@ -36,44 +36,50 @@ const EVOLUTION_PATHS = {
   ]
 };
 
-const INTERACTIONS = [
-  { id: 'feed', label: 'Feed Blood', icon: Droplets, bondGain: 5, powerGain: 3, outcome: 'feeds' },
-  { id: 'cuddle', label: 'Cuddle Snake', icon: Heart, bondGain: 15, powerGain: 1, outcome: 'cuddles', affection: true },
-  { id: 'play', label: 'Play Together', icon: Heart, bondGain: 12, powerGain: 2, outcome: 'plays', affection: true },
-  { id: 'groom', label: 'Groom Scales', icon: Heart, bondGain: 10, powerGain: 1, outcome: 'grooms', affection: true },
-  { id: 'train', label: 'Train Powers', icon: Zap, bondGain: 8, powerGain: 5, outcome: 'trains' },
-  { id: 'bond', label: 'Deep Bond', icon: Heart, bondGain: 10, powerGain: 2, outcome: 'bonds' },
-  { id: 'hunt', label: 'Hunt Together', icon: Moon, bondGain: 12, powerGain: 6, outcome: 'hunts' },
-  { id: 'guard', label: 'Guard Duty', icon: Moon, bondGain: 6, powerGain: 4, outcome: 'guards', loyaltyGain: 8 },
-  { id: 'scout', label: 'Scouting', icon: Moon, bondGain: 7, powerGain: 4, outcome: 'scouts', missionGain: true },
-  { id: 'attack', label: 'Bite Attack Training', icon: Zap, bondGain: 5, powerGain: 7, outcome: 'attacks', combatGain: true },
-  
-  // Care & Bonding
-  { id: 'massage', label: 'Massage Scales', icon: Heart, bondGain: 14, powerGain: 2, outcome: 'massages', affection: true },
-  { id: 'secrets', label: 'Tell Secrets', icon: Heart, bondGain: 18, powerGain: 1, outcome: 'tells_secrets', affection: true },
-  { id: 'sleep', label: 'Sleep Together', icon: Moon, bondGain: 20, powerGain: 3, outcome: 'sleeps', affection: true },
-  { id: 'treats', label: 'Special Treats', icon: Droplets, bondGain: 10, powerGain: 4, outcome: 'gives_treats' },
-  { id: 'tricks', label: 'Teach Tricks', icon: Zap, bondGain: 8, powerGain: 5, outcome: 'teaches_tricks' },
-  
-  // Activities
-  { id: 'walk', label: 'Go on Walk', icon: Moon, bondGain: 13, powerGain: 3, outcome: 'walks', missionGain: true },
-  { id: 'photo', label: 'Photo Session', icon: Eye, bondGain: 11, powerGain: 1, outcome: 'photos', affection: true },
-  { id: 'hideseek', label: 'Hide & Seek', icon: Eye, bondGain: 14, powerGain: 4, outcome: 'plays_hideseek', affection: true },
-  { id: 'fetch', label: 'Fetch Training', icon: Zap, bondGain: 9, powerGain: 5, outcome: 'fetches' },
-  
-  // Advanced
-  { id: 'telepathy', label: 'Telepathic Link', icon: Zap, bondGain: 25, powerGain: 8, outcome: 'telepathy', reqBond: 60 },
-  { id: 'dreams', label: 'Share Dreams', icon: Moon, bondGain: 22, powerGain: 6, outcome: 'dreams', reqBond: 50, affection: true },
-  { id: 'ritual', label: 'Blood Ritual', icon: Droplets, bondGain: 30, powerGain: 15, outcome: 'ritual', reqBond: 70 },
-  { id: 'meditate', label: 'Meditate Together', icon: Heart, bondGain: 16, powerGain: 7, outcome: 'meditates', reqBond: 40 },
-  { id: 'dance', label: 'Synchronized Dance', icon: Heart, bondGain: 19, powerGain: 5, outcome: 'dances', affection: true, reqBond: 55 },
-  
-  // Social
-  { id: 'accessories', label: 'Fashion Shopping', icon: Heart, bondGain: 12, powerGain: 1, outcome: 'shops', affection: true },
-  { id: 'competition', label: 'Enter Competition', icon: Zap, bondGain: 15, powerGain: 10, outcome: 'competes', reqBond: 50 },
-  { id: 'spa', label: 'Snake Spa Day', icon: Heart, bondGain: 17, powerGain: 2, outcome: 'spa', affection: true },
-  { id: 'obstacle', label: 'Obstacle Course', icon: Zap, bondGain: 11, powerGain: 8, outcome: 'obstacle' }
+const BASIC_INTERACTIONS = [
+  { id: 'feed', label: 'Feed Blood', icon: Droplets },
+  { id: 'train', label: 'Train Powers', icon: Zap },
+  { id: 'spy', label: 'Spy Mission', icon: Eye },
+  { id: 'hunt', label: 'Hunt Together', icon: Moon },
+  { id: 'bond', label: 'Deep Bond', icon: Heart },
+  { id: 'cuddle', label: 'Cuddle', icon: Heart },
+  { id: 'talk', label: 'Talk to Snake', icon: Heart },
+  { id: 'guard', label: 'Guard Duty', icon: Shield },
+  { id: 'venom', label: 'Harvest Venom', icon: Droplets },
+  { id: 'shed', label: 'Collect Shed Skin', icon: Sparkles },
+  { id: 'prophecy', label: 'Seek Prophecy', icon: Eye },
+  { id: 'steal', label: 'Steal Items', icon: Sword },
+  { id: 'mark', label: 'Mark Territory', icon: Zap },
+  { id: 'merge', label: 'Merge Consciousness', icon: Heart, reqBond: 70 },
+  { id: 'hibernate', label: 'Hibernate', icon: Moon }
 ];
+
+const SNAKE_ABILITIES = {
+  shadow: [
+    { id: 'invisible', name: 'Turn Invisible', icon: '👁️‍🗨️', reqBond: 20, desc: 'Snake becomes completely invisible' },
+    { id: 'teleport', name: 'Shadow Jump', icon: '🌑', reqBond: 40, desc: 'Teleport through shadows' },
+    { id: 'duplicate', name: 'Shadow Clone', icon: '👥', reqBond: 60, desc: 'Create shadow duplicates' },
+    { id: 'merge', name: 'Become Shadow', icon: '🌫️', reqBond: 80, desc: 'Transform into living shadow' }
+  ],
+  venom: [
+    { id: 'paralyze', name: 'Paralyzing Bite', icon: '💉', reqBond: 20, desc: 'Immobilize victims instantly' },
+    { id: 'hallucinate', name: 'Venom Dreams', icon: '🌀', reqBond: 40, desc: 'Cause vivid hallucinations' },
+    { id: 'control', name: 'Venom Control', icon: '🧠', reqBond: 60, desc: 'Control poisoned victims' },
+    { id: 'acidic', name: 'Acidic Venom', icon: '💧', reqBond: 80, desc: 'Venom melts through anything' }
+  ],
+  blood: [
+    { id: 'track', name: 'Blood Tracker', icon: '🩸', reqBond: 20, desc: 'Track anyone by blood scent' },
+    { id: 'drain', name: 'Blood Drain', icon: '💀', reqBond: 40, desc: 'Drain victims completely' },
+    { id: 'share', name: 'Blood Link', icon: '🔗', reqBond: 60, desc: 'Share blood with you instantly' },
+    { id: 'resurrect', name: 'Blood Revival', icon: '❤️', reqBond: 80, desc: 'Revive the recently dead' }
+  ],
+  nightmare: [
+    { id: 'fear', name: 'Project Fear', icon: '😱', reqBond: 20, desc: 'Make victims terrified' },
+    { id: 'dream', name: 'Enter Dreams', icon: '💭', reqBond: 40, desc: 'Invade sleeping minds' },
+    { id: 'madness', name: 'Induce Madness', icon: '🌀', reqBond: 60, desc: 'Drive victims insane' },
+    { id: 'consume', name: 'Consume Nightmares', icon: '🌑', reqBond: 80, desc: 'Feed on terror itself' }
+  ]
+};
 
 export default function ServantSnake() {
   const navigate = useNavigate();
@@ -591,209 +597,232 @@ Provide analysis in this JSON format:
     return 1;
   };
 
-  const handleInteraction = async (action) => {
-    setInteracting(action.id);
+  const handleBasicInteraction = async (actionId) => {
+    setInteracting(actionId);
 
     setTimeout(async () => {
-      const outcomes = {
-        feeds: [
-          `Your snake coils around your wrist. You offer your blood. It drinks. The bond deepens. Your serpent glows with power.`,
-          `Blood drips from your palm. The snake's fangs sink in gently. Taking what it needs. Sharing your vampire essence.`,
-          `You feed your familiar. It hisses softly. Satisfied. The connection between you pulses stronger.`
-        ],
-        cuddles: [
-          `You gather your snake close. It wraps around you. Warm. Content. Purring like thunder. Pure love.`,
-          `Cuddle time. Your familiar coils in your lap. Scales smooth against your skin. Heart to heart. Perfect moment.`,
-          `Your snake nuzzles into your neck. Safe. Loved. The bond between you radiates warmth. Unbreakable affection.`
-        ],
-        plays: [
-          `You toss a shadow ball. Your snake chases it. Playful strikes. Laughter. Joy. Just enjoying each other.`,
-          `Playtime! Your familiar weaves between your fingers. Happy hisses. Gentle bites. Pure fun.`,
-          `You play hide and seek. Your snake finds you every time. Excited coils. Celebration. Bonding through play.`
-        ],
-        grooms: [
-          `You carefully brush your snake's scales. Each one gleaming. Your familiar relaxes completely. Trust absolute.`,
-          `Grooming session. You polish each scale with care. Your snake sighs contentedly. Beautiful. Loved.`,
-          `You tend to your familiar's scales. Gentle touches. Appreciation. Your snake practically melts with happiness.`
-        ],
-        trains: [
-          `You practice powers together. The snake mirrors your movements. Learning. Growing. Your abilities sync.`,
-          `Training session. Your serpent strikes at shadows. Faster each time. You feel its progress as your own.`,
-          `You channel energy through your familiar. It radiates power. Together you're stronger than apart.`
-        ],
-        bonds: [
-          `You sit with your snake. It wraps around you. Protective. Loving. You understand each other without words.`,
-          `Meditation together. Your minds link. You see through its eyes. Feel its thoughts. True companionship.`,
-          `Your familiar nuzzles against you. Scales smooth and cool. Trust absolute. The bond unbreakable.`
-        ],
-        hunts: [
-          `You hunt together in the night. Your snake strikes prey while you feed. Perfect teamwork. Primal connection.`,
-          `The hunt. Your familiar tracks. You follow. Together you're an unstoppable predator team.`,
-          `Hunting as one. The snake flushes out prey. You take them down. Share the blood. Partners in darkness.`
-        ],
-        guards: [
-          `Your snake coils at the entrance. Watching. Waiting. Nothing gets past your vigilant guardian.`,
-          `Guard duty complete. Your familiar spotted three threats. Hissed warnings. Kept you safe.`,
-          `The serpent patrols silently. Eyes glowing in darkness. Your loyal protector never sleeps.`
-        ],
-        scouts: [
-          `Your snake slithers ahead. Scouting the territory. Returns with knowledge of what lies ahead.`,
-          `Reconnaissance successful. Your familiar mapped the area. Enemies located. Path clear.`,
-          `The serpent scouts silently. No one sees it coming. Intelligence gathered. Mission complete.`
-        ],
-        attacks: [
-          `Your snake strikes! Faster than before. Deadlier. Combat training paying off.`,
-          `Attack drill. Your familiar demonstrates its bite. Precision. Power. Lethal efficiency.`,
-          `Combat practice. The snake's venom flows stronger. Its fangs sharper. A weapon perfected.`
-        ],
-        massages: [
-          `You massage each scale carefully. Oil between your fingers. ${snake.custom_name} melts under your touch. Completely relaxed. Trusting. This is intimacy.`,
-          `Gentle circular motions along the spine. Your snake sighs—actually SIGHS. Tension releasing. Pure bliss. You feel the love radiating.`,
-          `Scale polishing session. Each one gleaming like jewels. ${snake.custom_name} watches you work. Grateful. Beautiful. Cherished.`
-        ],
-        tells_secrets: [
-          `You whisper your deepest secrets. ${snake.custom_name} listens. Really listens. No judgment. Just understanding. Your snake knows you completely now.`,
-          `Late night confessions. You tell your familiar everything. Fears. Dreams. Desires. The snake coils tighter. Protective. Your secrets are safe.`,
-          `You share your darkest thoughts. ${snake.custom_name} hisses softly. Acceptance. Love. Whatever you are, your snake stays.`
-        ],
-        sleeps: [
-          `You fall asleep with ${snake.custom_name} wrapped around you. Protective. Warm. The snake's breathing syncs with yours. Peace.`,
-          `Bedtime. Your familiar curls up on the pillow. You drift off together. Shared dreams. Deeper connection. Morning comes too soon.`,
-          `${snake.custom_name} sleeps on your chest. Heart to heart. You feel its dreams. Hunting. Flying. Being with you. Perfect.`
-        ],
-        gives_treats: [
-          `Special treat today! Blood-infused meat. ${snake.custom_name} devours it eagerly. Eyes bright with joy. This is the BEST.`,
-          `You prepared a delicacy. Rare vampire delicacy. Your snake savors every bite. Appreciative hisses. Spoiled familiar.`,
-          `Gourmet feeding time. ${snake.custom_name} tries something new. Loves it! Tail wagging—yes, snakes can do that.`
-        ],
-        teaches_tricks: [
-          `Teaching "come" command. ${snake.custom_name} learns fast. So smart! Your familiar slithers over on command. Proud moment.`,
-          `Trick training! Your snake learns to coil in specific patterns. Impressive! You could put on a show.`,
-          `${snake.custom_name} masters "stay" and "strike" commands. Disciplined. Deadly. The perfect combination.`
-        ],
-        walks: [
-          `Night walk through the forest. ${snake.custom_name} explores freely. You follow. Bonding in nature. The snake finds hidden paths. Adventure.`,
-          `Taking your familiar outside. Fresh air. New smells. ${snake.custom_name} is THRILLED. Slithering through grass. Free. Happy.`,
-          `Moonlit stroll. Your snake on your shoulders. People stare. You don't care. You and ${snake.custom_name} against the world.`
-        ],
-        photos: [
-          `Photo session! ${snake.custom_name} poses perfectly. Regal. Beautiful. You capture the serpent's majesty. These photos are STUNNING.`,
-          `Taking pictures of your familiar. Every angle gorgeous. ${snake.custom_name} knows it. Posing naturally. Model snake.`,
-          `Photoshoot complete! Got the perfect shot of ${snake.custom_name} mid-strike. Fierce. Powerful. Frame-worthy.`
-        ],
-        plays_hideseek: [
-          `Hide and seek! You hide. ${snake.custom_name} finds you in SECONDS. Those hunter instincts. Impossible to beat. The snake is too good.`,
-          `Your turn to seek. ${snake.custom_name} hides perfectly. Camouflage skills amazing. Took you forever to find. Clever serpent.`,
-          `Playing hide and seek in the house. ${snake.custom_name} loves this game! Playful hisses when found. Pure joy.`
-        ],
-        fetches: [
-          `Fetch training! You throw a toy. ${snake.custom_name} retrieves it! AMAZING! Your snake can fetch! Training success!`,
-          `Teaching fetch. ${snake.custom_name} brings back the item. Drops it at your feet. Good snake! Treats earned.`,
-          `Fetch practice. Your familiar is getting better! Fast retrieval. Accurate delivery. This snake is incredibly smart.`
-        ],
-        telepathy: [
-          `Telepathic link established. Your minds merge. You see through ${snake.custom_name}'s eyes. Feel its thoughts. TWO BEINGS, ONE CONSCIOUSNESS. Transcendent.`,
-          `Mental connection deepens. You communicate without words. Thoughts flowing freely. ${snake.custom_name} shares visions. Memories. Everything.`,
-          `Telepathy achieved! You send commands mentally. ${snake.custom_name} responds instantly. Perfect synchronization. Ultimate bond.`
-        ],
-        dreams: [
-          `You enter ${snake.custom_name}'s dreams. Hunting. Flying. Magic. The snake dreams of being with you. Always with you. Beautiful.`,
-          `Shared dreamscape. You and your familiar explore impossible worlds together. Dream-bonding. Deeper than reality.`,
-          `${snake.custom_name} visits YOUR dreams tonight. Protective presence. Guardian even in sleep. You wake feeling loved.`
-        ],
-        ritual: [
-          `BLOOD RITUAL. Ancient magic. You and ${snake.custom_name} share blood in sacred ceremony. Power EXPLODES. Bonded forever. Unbreakable. ETERNAL.`,
-          `Ritual complete. Your blood, snake blood, mixed. Magic seals the bond. You are ONE. ${snake.custom_name} glows with power. Transformed.`,
-          `Blood magic ritual. Dark. Powerful. Beautiful. ${snake.custom_name} becomes part of you. You become part of it. No separation. Only unity.`
-        ],
-        meditates: [
-          `Meditation session. You and ${snake.custom_name} breathe as one. Energy flowing between you. Peace. Power. Perfect harmony.`,
-          `Sitting in silence together. Your familiar coiled beside you. Minds quiet. Souls connected. This is zen.`,
-          `Meditation with ${snake.custom_name}. Time stops. Just breathing. Existing. Together. The bond strengthens in stillness.`
-        ],
-        dances: [
-          `Synchronized movement! You dance, ${snake.custom_name} flows with you. Perfect rhythm. Like water. Like shadows. Mesmerizing.`,
-          `Dancing together! The snake matches your every move. Graceful. Beautiful. Art in motion.`,
-          `Movement meditation. You and ${snake.custom_name} create patterns. Spirals. Infinity. Dancing as one being.`
-        ],
-        shops: [
-          `Shopping trip! You buy ${snake.custom_name} a tiny crown. The snake LOVES it. Fashion icon. Looks royal.`,
-          `Accessory shopping. New collar? Yes. Tiny jewelry? Absolutely. ${snake.custom_name} is getting SPOILED.`,
-          `Fashion time! You pick out accessories for your familiar. ${snake.custom_name} tries everything on. Fabulous serpent.`
-        ],
-        competes: [
-          `COMPETITION TIME! ${snake.custom_name} enters the ring. Judges watch. Your snake performs FLAWLESSLY. Standing ovation! WINNER!`,
-          `Competition day. ${snake.custom_name} competes against other familiars. Power demonstration. Speed test. YOUR SNAKE DOMINATES.`,
-          `Show competition. ${snake.custom_name} shows off abilities. Crowd amazed. Judges impressed. Trophy earned!`
-        ],
-        spa: [
-          `SPA DAY! ${snake.custom_name} gets the full treatment. Scale polish. Oils. Massage. Your snake is GLOWING. Pampered familiar.`,
-          `Treating ${snake.custom_name} to spa services. Professional scale care. Aromatherapy. Your snake has never been happier.`,
-          `Snake spa complete! ${snake.custom_name} is RADIANT. Scales gleaming. Mood perfect. Best day ever.`
-        ],
-        obstacle: [
-          `Obstacle course challenge! ${snake.custom_name} navigates perfectly. Tubes. Jumps. Climbing. Your snake is ATHLETIC!`,
-          `Setting up new obstacles. ${snake.custom_name} LOVES this! Problem-solving. Physical challenge. Mental stimulation. Perfect enrichment.`,
-          `Obstacle training complete! ${snake.custom_name} beat the record time. So fast! So agile! Impressive!`
-        ]
-      };
+      let result = '';
+      let bondChange = 0;
+      let powerChange = 0;
+      const updates = {};
 
-      const result = outcomes[action.outcome][Math.floor(Math.random() * outcomes[action.outcome].length)];
-      let message = result;
+      switch (actionId) {
+        case 'feed':
+          result = `You fed ${snake.custom_name} vampire blood. Its eyes glow crimson. Power courses through its scales.`;
+          bondChange = Math.floor(Math.random() * 8) + 5;
+          powerChange = Math.floor(Math.random() * 12) + 8;
+          updates.hunger = Math.max(0, (snake.hunger || 50) - 40);
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          updates.power_level = Math.min(100, (snake.power_level || 0) + powerChange);
+          
+          // Size growth
+          if (updates.power_level >= 80 && snake.size !== 'massive') {
+            updates.size = 'massive';
+            result += ` ${snake.custom_name} grows MASSIVE. Coils thicker than your body.`;
+          } else if (updates.power_level >= 60 && snake.size === 'medium') {
+            updates.size = 'large';
+            result += ` ${snake.custom_name} grows larger. More powerful.`;
+          } else if (updates.power_level >= 30 && snake.size === 'small') {
+            updates.size = 'medium';
+            result += ` ${snake.custom_name} is growing. No longer small.`;
+          }
+          break;
 
-      const newBond = Math.min(100, snake.bond_level + action.bondGain);
-      const newPower = Math.min(100, snake.power_level + action.powerGain);
-      const newLoyalty = Math.min(100, snake.loyalty + (action.loyaltyGain || 5));
-      
-      const oldStage = getEvolutionStage(snake.power_level);
-      const newStage = getEvolutionStage(newPower);
-      
-      const evolutionPath = EVOLUTION_PATHS[snake.type];
-      const currentEvolution = evolutionPath[newStage - 1];
-      const unlockedAbilities = currentEvolution.abilities;
+        case 'train':
+          result = `Training session. ${snake.custom_name} learns to strike faster, hide better. A perfect predator.`;
+          bondChange = Math.floor(Math.random() * 5) + 3;
+          powerChange = Math.floor(Math.random() * 10) + 6;
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          updates.power_level = Math.min(100, (snake.power_level || 0) + powerChange);
+          break;
+
+        case 'spy':
+          const spyResults = [
+            `${snake.custom_name} returns. Saw a hunter planning an ambush. You avoid the trap.`,
+            `The serpent brings information. A rival vampire's weakness. Useful.`,
+            `Your snake spied on the witch. She knows you're watching. She smiled.`,
+            `${snake.custom_name} tracked a human. Found their home. Their routine. Their vulnerability.`,
+            `Your familiar discovered a secret vampire meeting. Political intrigue.`,
+            `${snake.custom_name} witnessed a supernatural ritual. Strange magic.`
+          ];
+          result = spyResults[Math.floor(Math.random() * spyResults.length)];
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          break;
+
+        case 'hunt':
+          result = `${snake.custom_name} hunted. Brought back a paralyzed victim. Fresh blood for you.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          updates.hunger = Math.min(100, (snake.hunger || 30) + 25);
+          break;
+
+        case 'bond':
+          result = `You and ${snake.custom_name} share blood. Minds linking. You feel what it feels. See what it sees. Perfect symbiosis.`;
+          bondChange = Math.floor(Math.random() * 15) + 10;
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          updates.loyalty = Math.min(100, (snake.loyalty || 50) + 8);
+          break;
+
+        case 'cuddle':
+          result = `${snake.custom_name} coils around you. Cool scales against your skin. Comforting. You stroke its head gently.`;
+          bondChange = Math.floor(Math.random() * 8) + 6;
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          break;
+
+        case 'talk':
+          const talkResults = [
+            `You speak to ${snake.custom_name}. It understands. Hisses softly in response. Communication beyond words.`,
+            `${snake.custom_name} curls around your arm. You discuss your plans. It seems to agree.`,
+            `Whispered secrets to your snake. It keeps them all. Loyal. Forever.`,
+            `${snake.custom_name} tells you things. Visions. Warnings. Prophecies only serpents know.`
+          ];
+          result = talkResults[Math.floor(Math.random() * talkResults.length)];
+          bondChange = Math.floor(Math.random() * 6) + 4;
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          break;
+
+        case 'guard':
+          result = `${snake.custom_name} guards your lair. Nothing enters unseen. Perfect sentinel.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          updates.loyalty = Math.min(100, (snake.loyalty || 50) + 5);
+          break;
+
+        case 'venom':
+          result = `${snake.custom_name} produces venom. Potent. Deadly. You collect it in a vial. Useful.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          break;
+
+        case 'shed':
+          result = `${snake.custom_name} sheds its skin. Perfect scales. You collect them—magical material for rituals and crafting.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          if ((snake.power_level || 0) >= 50) {
+            result += ` The shed skin GLOWS. Powerful magic infused.`;
+          }
+          break;
+
+        case 'prophecy':
+          const prophecies = [
+            `${snake.custom_name} hisses warnings. Danger approaches. A hunter is close.`,
+            `Your snake sees the future. A rival vampire plots against you. Be ready.`,
+            `${snake.custom_name}'s eyes glow. Vision: someone close will betray you soon.`,
+            `Serpent prophecy: Blood will be spilled tonight. Not yours. Not if you're careful.`,
+            `${snake.custom_name} senses opportunity. A powerful artifact nearby. Hidden.`,
+            `Vision from your familiar: The witch thinks of you. Dreams of you.`
+          ];
+          result = prophecies[Math.floor(Math.random() * prophecies.length)];
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          break;
+
+        case 'steal':
+          const stolenItems = [
+            `${snake.custom_name} returns with a wallet. Cash inside. Easy money.`,
+            `Your snake stole a phone. Messages reveal secrets. Blackmail material.`,
+            `${snake.custom_name} brings you keys. Someone's home is now accessible.`,
+            `Stolen: jewelry. Expensive. Your snake is a perfect thief.`,
+            `${snake.custom_name} took someone's ID. Their identity. Their life. Yours to use.`,
+            `Your familiar stole medical records. Private information. Leverage.`
+          ];
+          result = stolenItems[Math.floor(Math.random() * stolenItems.length)];
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          break;
+
+        case 'mark':
+          result = `${snake.custom_name} marks your territory. Venom traces on boundaries. Other supernaturals know: this place is YOURS.`;
+          updates.missions_completed = (snake.missions_completed || 0) + 1;
+          updates.loyalty = Math.min(100, (snake.loyalty || 50) + 6);
+          break;
+
+        case 'merge':
+          result = `${snake.custom_name} merges with you. Coils INSIDE your body. You feel its power. Its senses. Two beings, one consciousness.`;
+          bondChange = Math.floor(Math.random() * 20) + 15;
+          powerChange = Math.floor(Math.random() * 15) + 10;
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + bondChange);
+          updates.power_level = Math.min(100, (snake.power_level || 0) + powerChange);
+          break;
+
+        case 'hibernate':
+          result = `${snake.custom_name} enters hibernation. Deep sleep. Healing. Growing. Will awaken stronger.`;
+          powerChange = Math.floor(Math.random() * 25) + 20;
+          updates.power_level = Math.min(100, (snake.power_level || 0) + powerChange);
+          updates.hunger = Math.max(0, (snake.hunger || 30) - 50);
+          break;
+      }
 
       // Check for evolution
+      const oldStage = getEvolutionStage(snake.power_level);
+      const newStage = getEvolutionStage(updates.power_level || snake.power_level);
+      
       if (newStage > oldStage) {
-        message += `\n\n🐍 EVOLUTION! Your snake evolved into ${currentEvolution.name}! New abilities unlocked!`;
+        const evolutionPath = EVOLUTION_PATHS[snake.type];
+        const currentEvolution = evolutionPath[newStage - 1];
+        updates.unlocked_abilities = currentEvolution.abilities;
+        result += `\n\n🐍 EVOLUTION! Your snake evolved into ${currentEvolution.name}! New abilities unlocked!`;
       }
 
-      // Check for size growth
-      let newSize = snake.size;
-      if (newPower >= 80 && snake.size !== 'massive') {
-        newSize = 'massive';
-        message += `\n\n🐍 Your snake grew MASSIVE! Its presence intimidating.`;
-      } else if (newPower >= 50 && snake.size === 'small') {
-        newSize = 'large';
-        message += `\n\n🐍 Your snake grew LARGE! More powerful than ever.`;
-      } else if (newPower >= 30 && snake.size === 'small') {
-        newSize = 'medium';
-        message += `\n\n🐍 Your snake grew to MEDIUM size!`;
-      }
-
-      setOutcome(message);
-
-      await base44.entities.SnakeFamiliar.update(snake.id, {
-        bond_level: newBond,
-        power_level: newPower,
-        loyalty: newLoyalty,
-        hunger: action.id === 'feed' ? 0 : Math.max(0, snake.hunger - 10),
-        missions_completed: action.missionGain ? snake.missions_completed + 1 : snake.missions_completed,
-        size: newSize,
-        unlocked_abilities: unlockedAbilities
-      });
+      await base44.entities.SnakeFamiliar.update(snake.id, updates);
 
       await base44.entities.NightLog.create({
-        entry: `${servant.name} ${action.outcome} with their snake familiar. ${newStage > oldStage ? 'EVOLVED!' : ''}`,
+        entry: result,
         category: 'interaction',
-        intensity: newStage > oldStage ? 'significant' : 'moderate'
+        intensity: 'moderate'
       });
 
+      setOutcome(result);
       queryClient.invalidateQueries();
 
       setTimeout(() => {
         setInteracting(null);
         setOutcome('');
-      }, 5000);
+      }, 3500);
+    }, 2000);
+  };
+
+  const handleUseAbility = async (ability) => {
+    setInteracting('ability_' + ability.id);
+
+    setTimeout(async () => {
+      const outcomes = {
+        invisible: `${snake.custom_name} vanishes completely. Perfect invisibility. Spying made effortless.`,
+        teleport: `${snake.custom_name} melts into shadows. Reappears miles away. Shadow travel mastered.`,
+        duplicate: `${snake.custom_name} splits into THREE serpents. Shadow clones. All obey you.`,
+        merge: `${snake.custom_name} becomes pure shadow. Formless. Impossible to detect or harm.`,
+        
+        paralyze: `${snake.custom_name} strikes! Victim frozen instantly. Helpless. Yours.`,
+        hallucinate: `Venom-induced visions. The victim sees horrors. Screams. ${snake.custom_name} watches.`,
+        control: `${snake.custom_name}'s venom rewrites minds. The victim obeys your every command now.`,
+        acidic: `${snake.custom_name} spits acid. Metal melts. Stone dissolves. Nothing stops it.`,
+        
+        track: `${snake.custom_name} tastes the air. Found them. Blood scent leads straight to your target.`,
+        drain: `${snake.custom_name} drains a victim completely. Every drop. Brings it back to you.`,
+        share: `Blood link activated. ${snake.custom_name}'s meal flows directly into your veins. Instant feeding.`,
+        resurrect: `${snake.custom_name} breathes blood magic into a corpse. They gasp. Alive again. Miracle.`,
+        
+        fear: `${snake.custom_name} projects pure terror. Victims flee screaming. Primal fear unleashed.`,
+        dream: `${snake.custom_name} enters their dreams. Nightmares shaped by serpent whispers.`,
+        madness: `${snake.custom_name}'s eyes lock onto theirs. Sanity shatters. They're broken now.`,
+        consume: `${snake.custom_name} feeds on their nightmares. Growing stronger from their terror.`
+      };
+
+      const result = outcomes[ability.id] || `${snake.custom_name} used ${ability.name}!`;
+
+      if (!(snake.unlocked_abilities || []).includes(ability.name)) {
+        await base44.entities.SnakeFamiliar.update(snake.id, {
+          unlocked_abilities: [...(snake.unlocked_abilities || []), ability.name]
+        });
+      }
+
+      await base44.entities.NightLog.create({
+        entry: result,
+        category: 'power',
+        intensity: 'significant'
+      });
+
+      setOutcome(result);
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setInteracting(null);
+        setOutcome('');
+      }, 3500);
     }, 2000);
   };
 
@@ -1310,38 +1339,72 @@ Provide analysis in this JSON format:
           </div>
 
           {!outcome ? (
-            <div className="space-y-3">
-              <h3 className="text-white font-bold mb-3">⚡ Training & Bonding</h3>
-              {INTERACTIONS.map((action, i) => {
-                const ActionIcon = action.id === 'guard' ? Shield : action.id === 'scout' ? Eye : action.id === 'attack' ? Sword : action.icon;
-                return (
-                  <motion.button
-                    key={action.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    onClick={() => handleInteraction(action)}
-                    disabled={!!interacting || (action.reqBond && snake.bond_level < action.reqBond)}
-                    className={`w-full border-2 rounded-xl py-4 px-6 transition-all ${
-                      action.reqBond && snake.bond_level < action.reqBond
-                        ? 'bg-gray-800/60 border-gray-600/50 opacity-50 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-green-500/50'
-                    } ${!!interacting ? 'opacity-50' : ''}`}
-                  >
-                    <div className="flex items-center gap-3 w-full">
-                      <ActionIcon className="w-5 h-5 text-white" />
-                      <div className="flex-1 text-left">
-                        <span className="text-base font-medium text-white block">
-                          {interacting === action.id ? 'Interacting...' : action.label}
-                        </span>
+            <div className="space-y-6">
+              {/* Basic Interactions */}
+              <div>
+                <h3 className="text-white font-bold mb-3">Basic Interactions</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {BASIC_INTERACTIONS.map((action) => {
+                    const ActionIcon = action.icon;
+                    const disabled = !!interacting || (action.reqBond && snake.bond_level < action.reqBond);
+                    
+                    return (
+                      <button
+                        key={action.id}
+                        onClick={() => handleBasicInteraction(action.id)}
+                        disabled={disabled}
+                        className={`border rounded-lg p-3 text-center transition-colors ${
+                          disabled
+                            ? 'bg-gray-800/40 border-gray-600/30 opacity-50'
+                            : 'bg-green-900/40 hover:bg-green-900/60 border-green-500/30'
+                        }`}
+                      >
+                        <ActionIcon className="w-5 h-5 text-white mx-auto mb-1" />
+                        <p className="text-white text-xs font-medium">{action.label}</p>
                         {action.reqBond && snake.bond_level < action.reqBond && (
-                          <span className="text-xs text-gray-400">Requires {action.reqBond} bond</span>
+                          <p className="text-xs text-gray-400 mt-1">({action.reqBond})</p>
                         )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Special Abilities */}
+              <div>
+                <h3 className="text-white font-bold mb-3">Special Abilities</h3>
+                {SNAKE_ABILITIES[snake.type].map(ability => {
+                  const unlocked = snake.bond_level >= ability.reqBond;
+                  const alreadyUnlocked = (snake.unlocked_abilities || []).includes(ability.name);
+
+                  return (
+                    <button
+                      key={ability.id}
+                      onClick={() => unlocked && handleUseAbility(ability)}
+                      disabled={!unlocked}
+                      className={`w-full rounded-lg p-3 text-left transition-colors mb-2 ${
+                        unlocked 
+                          ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border border-green-500/30' 
+                          : 'bg-gray-800/40 border border-gray-600/30 opacity-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{ability.icon}</span>
+                          <div>
+                            <h4 className="text-white font-medium">{ability.name}</h4>
+                            <p className="text-gray-400 text-xs">{ability.desc}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          {alreadyUnlocked && <span className="text-green-400 text-xs">✓ Unlocked</span>}
+                          {!unlocked && <span className="text-gray-500 text-xs">Bond {ability.reqBond}</span>}
+                        </div>
                       </div>
-                    </div>
-                  </motion.button>
-                );
-              })}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           ) : (
             <motion.div
