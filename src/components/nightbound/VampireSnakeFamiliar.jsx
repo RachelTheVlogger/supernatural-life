@@ -100,9 +100,39 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
 
       {/* Basic Actions - Compact */}
       <div className="grid grid-cols-3 gap-2 mb-4">
-        <button onClick={(e) => { e.stopPropagation(); onInteraction('feed', snake); }} disabled={interacting} className="bg-red-900/40 border border-red-500/30 rounded-lg p-2 text-xs text-white touch-manipulation">🩸 Feed</button>
-        <button onClick={(e) => { e.stopPropagation(); onInteraction('train', snake); }} disabled={interacting} className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-2 text-xs text-white touch-manipulation">⚡ Train</button>
-        <button onClick={(e) => { e.stopPropagation(); onInteraction('bond', snake); }} disabled={interacting} className="bg-green-900/40 border border-green-500/30 rounded-lg p-2 text-xs text-white touch-manipulation">💚 Bond</button>
+        <button 
+          onClick={(e) => { 
+            e.preventDefault();
+            e.stopPropagation(); 
+            if (!interacting) onInteraction('feed', snake); 
+          }} 
+          disabled={interacting} 
+          className="bg-red-900/40 border border-red-500/30 rounded-lg p-3 text-xs text-white touch-manipulation active:bg-red-900/60 disabled:opacity-50"
+        >
+          🩸 Feed
+        </button>
+        <button 
+          onClick={(e) => { 
+            e.preventDefault();
+            e.stopPropagation(); 
+            if (!interacting) onInteraction('train', snake); 
+          }} 
+          disabled={interacting} 
+          className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-3 text-xs text-white touch-manipulation active:bg-purple-900/60 disabled:opacity-50"
+        >
+          ⚡ Train
+        </button>
+        <button 
+          onClick={(e) => { 
+            e.preventDefault();
+            e.stopPropagation(); 
+            if (!interacting) onInteraction('bond', snake); 
+          }} 
+          disabled={interacting} 
+          className="bg-green-900/40 border border-green-500/30 rounded-lg p-3 text-xs text-white touch-manipulation active:bg-green-900/60 disabled:opacity-50"
+        >
+          💚 Bond
+        </button>
       </div>
 
       {/* Special Abilities - Compact */}
