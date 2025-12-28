@@ -2005,6 +2005,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           last_interaction: new Date().toISOString(),
           jealousy_level: Math.min((servant.jealousy_level || 0) + jealousyGain, 100)
         });
+        
+        console.log(`Bond updated: ${servant.name} relationship ${servant.relationship || 0} -> ${newRel} (+${relationshipGain})`);
       } catch (e) {
         console.error('Failed to update servant:', e);
       }

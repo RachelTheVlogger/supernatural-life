@@ -193,14 +193,18 @@ export default function QuestSystem({ servant, vampireState, onClose }) {
   };
   
   const handleStartQuest = async () => {
-    await base44.entities.Quest.create({
-      servant_id: servant.id,
-      quest_key: questData.key,
-      stage: 1,
-      progress: {},
-      choices_made: []
-    });
-    queryClient.invalidateQueries(['quests']);
+    try {
+      await base44.entities.Quest.create({
+        servant_id: servant.id,
+        quest_key: questData.key,
+        stage: 1,
+        progress: {},
+        choices_made: []
+      });
+      queryClient.invalidateQueries(['quests']);
+    } catch (e) {
+      console.error('Failed to start quest:', e);
+    }
   };
   
   const handleMakeChoice = async (choice, stageIndex) => {

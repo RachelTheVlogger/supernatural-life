@@ -556,14 +556,13 @@ export default function PowerUsage({ servant, vampireState, onClose, onPowerUsed
   
   const timeOfNight = getTimeOfNight();
   
-  // Filter available powers based on morality and conditions
+  // Filter available powers - show ALL unlocked powers
   const availablePowers = Object.entries(POWER_LIBRARY).filter(([name, power]) => {
     // Check if servant is turned for vampire-to-vampire powers
     if (power.requiresTurned && !servant.is_turned) return false;
     
-    // Show power if it's explicitly unlocked OR if it's in POWER_LIBRARY
-    // This ensures all defined powers are accessible once unlocked in any tree
-    const isUnlocked = unlockedPowers.includes(name) || unlockedPowers.some(p => name.toLowerCase().includes(p.toLowerCase()));
+    // Show if power is in unlocked list (exact match or partial match)
+    const isUnlocked = unlockedPowers.includes(name);
     
     if (!isUnlocked) return false;
     
