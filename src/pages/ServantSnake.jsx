@@ -854,28 +854,24 @@ Provide analysis in this JSON format:
           </div>
 
           {/* Visual Snake Display */}
-          <div className={`bg-gradient-to-br ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].color} rounded-xl p-6 mb-6 border-2 relative overflow-hidden`} style={{
+          <div className={`rounded-xl p-6 mb-6 border-2 relative overflow-hidden`} style={{
             borderColor: getSnakeBaseColor(snake.type),
-            borderWidth: '3px'
+            borderWidth: '3px',
+            background: snake.pattern === 'iridescent'
+              ? 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)'
+              : snake.pattern === 'striped'
+              ? `repeating-linear-gradient(90deg, ${getSnakeBaseColor(snake.type)} 0px, ${getSnakeBaseColor(snake.type)} 40px, rgba(255,255,255,0.15) 40px, rgba(255,255,255,0.15) 80px)`
+              : snake.pattern === 'spotted'
+              ? `radial-gradient(circle, rgba(255,255,255,0.2) 8px, transparent 8px), linear-gradient(135deg, ${getSnakeBaseColor(snake.type)}, ${getSnakeBaseColor(snake.type)})`
+              : snake.pattern === 'scales_of_night'
+              ? `conic-gradient(from 0deg at 50% 50%, ${getSnakeBaseColor(snake.type)} 0deg 30deg, rgba(0,0,0,0.4) 30deg 60deg, ${getSnakeBaseColor(snake.type)} 60deg 90deg, rgba(0,0,0,0.4) 90deg 120deg, ${getSnakeBaseColor(snake.type)} 120deg 150deg, rgba(0,0,0,0.4) 150deg 180deg, ${getSnakeBaseColor(snake.type)} 180deg 210deg, rgba(0,0,0,0.4) 210deg 240deg, ${getSnakeBaseColor(snake.type)} 240deg 270deg, rgba(0,0,0,0.4) 270deg 300deg, ${getSnakeBaseColor(snake.type)} 300deg 330deg, rgba(0,0,0,0.4) 330deg 360deg)`
+              : `linear-gradient(135deg, ${getSnakeBaseColor(snake.type)}, ${getSnakeBaseColor(snake.type)})`,
+            backgroundSize: snake.pattern === 'spotted' ? '50px 50px, 100% 100%' : 'auto'
           }}>
-            {/* Aura Effect with Pattern Colors */}
-            <div className="absolute inset-0 opacity-60" style={{
-              background: snake.pattern === 'iridescent' 
-                ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 25%, rgba(240, 147, 251, 0.4) 50%, rgba(79, 172, 254, 0.4) 75%, rgba(0, 242, 254, 0.4) 100%)'
-                : snake.pattern === 'scales_of_night'
-                ? `radial-gradient(circle at center, rgba(0, 0, 0, 0.6), ${
-                    snake.type === 'shadow' ? 'rgba(75, 85, 99, 0.4)' :
-                    snake.type === 'venom' ? 'rgba(34, 197, 94, 0.4)' :
-                    snake.type === 'blood' ? 'rgba(239, 68, 68, 0.4)' :
-                    'rgba(147, 51, 234, 0.4)'
-                  } 70%)`
-                : `radial-gradient(circle at center, ${
-                    snake.type === 'shadow' ? 'rgba(75, 85, 99, 0.4)' :
-                    snake.type === 'venom' ? 'rgba(34, 197, 94, 0.4)' :
-                    snake.type === 'blood' ? 'rgba(239, 68, 68, 0.4)' :
-                    'rgba(147, 51, 234, 0.4)'
-                  }, transparent 70%)`
-            }} />
+            {/* Animated overlay for iridescent */}
+            {snake.pattern === 'iridescent' && (
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 animate-pulse" />
+            )}
 
             {/* Background Scene */}
             <div className="absolute top-2 right-2 text-4xl opacity-30">
@@ -899,28 +895,8 @@ Provide analysis in this JSON format:
                     }}
                   />
                   
-                  {/* Size-based display with pattern overlay */}
+                  {/* Size-based display */}
                   <div className="relative">
-                    {/* Pattern overlay */}
-                    {snake.pattern === 'striped' && (
-                      <div className="absolute inset-0 pointer-events-none" style={{
-                        background: 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)'
-                      }} />
-                    )}
-                    {snake.pattern === 'spotted' && (
-                      <div className="absolute inset-0 pointer-events-none" style={{
-                        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 2px, transparent 2px)',
-                        backgroundSize: '20px 20px'
-                      }} />
-                    )}
-                    {snake.pattern === 'iridescent' && (
-                      <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 animate-pulse" />
-                    )}
-                    {snake.pattern === 'scales_of_night' && (
-                      <div className="absolute inset-0 pointer-events-none opacity-40" style={{
-                        background: 'repeating-conic-gradient(from 0deg, transparent 0deg 30deg, rgba(0,0,0,0.3) 30deg 60deg)'
-                      }} />
-                    )}
                     
                     {snake.size === 'small' && (
                       <div className="text-6xl relative z-10">
