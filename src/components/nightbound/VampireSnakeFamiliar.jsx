@@ -927,7 +927,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               <h3 className="text-white font-bold mb-3">Special Abilities</h3>
               {getAbilities().map(ability => {
                 const unlocked = mySnake.bond_level >= ability.reqBond;
-                const hasUsed = mySnake.unlocked_abilities?.includes(ability.name);
+                const alreadyUnlocked = (mySnake.unlocked_abilities || []).includes(ability.name);
 
                 return (
                   <button
@@ -949,7 +949,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                         </div>
                       </div>
                       <div className="text-right">
-                        {hasUsed && <span className="text-green-400 text-xs">✓ Used</span>}
+                        {alreadyUnlocked && <span className="text-green-400 text-xs">✓ Unlocked</span>}
                         {!unlocked && <span className="text-gray-500 text-xs">Bond {ability.reqBond}</span>}
                       </div>
                     </div>
