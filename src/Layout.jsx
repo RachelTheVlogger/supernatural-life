@@ -59,9 +59,9 @@ export default function Layout({ children, currentPageName }) {
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
-  const currentServantId = urlParams.get('servant') || urlParams.get('id') || (servants.length > 0 ? servants[0].id : null);
-  const currentServant = servants.find(s => s.id === currentServantId) || servants[0];
-  const firstServantId = currentServant?.id;
+  const urlServantId = urlParams.get('servant') || urlParams.get('id');
+  const currentServant = urlServantId ? servants.find(s => s.id === urlServantId) : servants[0];
+  const firstServantId = currentServant?.id || (servants.length > 0 ? servants[0].id : null);
   
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },

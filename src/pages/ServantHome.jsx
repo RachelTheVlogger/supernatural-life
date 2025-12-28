@@ -169,19 +169,25 @@ export default function ServantHome() {
     staleTime: 5000
   });
   
-  const { data: servant, isLoading: servantLoading } = useQuery({
+  const { data: servant, isLoading: servantLoading, error: servantError } = useQuery({
     queryKey: ['servant', servantId],
     queryFn: async () => {
       try {
         const servants = await base44.entities.Servant.list();
-        return servants.find(s => s.id === servantId);
+        const found = servants.find(s => s.id === servantId);
+        if (!found && servantId && servantId !== 'null' && servantId !== 'undefined') {
+          // Servant doesn't exist - redirect will happen in useEffect
+          return null;
+        }
+        return found;
       } catch (e) {
         console.error('Failed to fetch servant:', e);
         return null;
       }
     },
     enabled: !!servantId && servantId !== 'null' && servantId !== 'undefined',
-    retry: 2
+    retry: 1,
+    refetchOnMount: true
   });
 
   const { data: allServants = [] } = useQuery({

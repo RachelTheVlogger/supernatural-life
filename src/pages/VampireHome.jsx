@@ -1002,7 +1002,7 @@ export default function VampireHome() {
                   <span className="text-gray-400 text-sm">Average Bond</span>
                   <span className="text-white text-sm font-medium">{avgRelationship}/100</span>
                 </div>
-                {servants.slice(0, 2).map(servant => (
+                {servants.filter(s => s && s.id).slice(0, 2).map(servant => (
                   <div key={servant.id}>
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-gray-400 text-sm">{servant.name}</span>
