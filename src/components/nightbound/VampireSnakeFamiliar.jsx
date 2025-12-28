@@ -129,7 +129,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   };
 
   const handleAdopt = async () => {
-    if (!customName.trim()) {
+    if (!customName || !customName.trim()) {
       setOutcome('Please enter a name for your snake');
       setTimeout(() => setOutcome(''), 2000);
       return;
@@ -1405,10 +1405,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <h3 className="text-white text-xl font-bold mb-4">Name Your Snake</h3>
                 <input
                   type="text"
-                  value={customName}
+                  value={customName || ''}
                   onChange={(e) => setCustomName(e.target.value)}
                   onKeyPress={(e) => {
-                    if (e.key === 'Enter' && customName.trim()) {
+                    if (e.key === 'Enter' && customName && customName.trim()) {
                       base44.entities.SnakeFamiliar.update(mySnake.id, { custom_name: customName.trim() });
                       queryClient.invalidateQueries();
                       setShowNaming(false);
@@ -1428,14 +1428,14 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   </button>
                   <button
                     onClick={() => {
-                      if (customName.trim()) {
+                      if (customName && customName.trim()) {
                         base44.entities.SnakeFamiliar.update(mySnake.id, { custom_name: customName.trim() });
                         queryClient.invalidateQueries();
                         setShowNaming(false);
                         setCustomName('');
                       }
                     }}
-                    disabled={!customName.trim()}
+                    disabled={!customName || !customName.trim()}
                     className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white py-2 rounded-lg"
                   >
                     Confirm
@@ -1469,7 +1469,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   <label className="text-gray-400 text-sm mb-2 block">Name</label>
                   <input
                     type="text"
-                    value={customName}
+                    value={customName || ''}
                     onChange={(e) => setCustomName(e.target.value)}
                     placeholder="Enter snake name..."
                     className="w-full bg-gray-800 border border-green-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500"
@@ -1556,7 +1556,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   </button>
                   <button
                     onClick={handleAdopt}
-                    disabled={!customName.trim()}
+                    disabled={!customName || !customName.trim()}
                     className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all"
                   >
                     {mySnake && !adoptingType ? 'Save Changes' : 'Adopt Snake'}
