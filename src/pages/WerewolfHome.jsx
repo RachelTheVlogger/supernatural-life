@@ -9,6 +9,7 @@ import PackDynamics from '@/components/nightbound/PackDynamics';
 import FullMoonEvent from '@/components/nightbound/FullMoonEvent';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 import WolfPackDynamics from '@/components/nightbound/WolfPackDynamics';
+import WolfShiftControl from '@/components/nightbound/WolfShiftControl';
 
 const ACTIONS = [
   { id: 'hunt', label: 'Hunt in the Wild', icon: '🐺', duration: 3000 },
@@ -30,6 +31,7 @@ export default function WerewolfHome() {
   const [showFullMoon, setShowFullMoon] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
   const [showPackDynamics, setShowPackDynamics] = useState(false);
+  const [showShiftControl, setShowShiftControl] = useState(false);
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
@@ -276,6 +278,7 @@ export default function WerewolfHome() {
         {showPack && <PackDynamics werewolf={werewolf} onClose={() => setShowPack(false)} />}
         {showFullMoon && <FullMoonEvent werewolf={werewolf} onClose={() => setShowFullMoon(false)} />}
         {showPackDynamics && <WolfPackDynamics werewolf={werewolf} onClose={() => setShowPackDynamics(false)} />}
+        {showShiftControl && <WolfShiftControl werewolf={werewolf} onClose={() => setShowShiftControl(false)} />}
 
         {showIdentity && (
           <motion.div
