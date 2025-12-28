@@ -178,8 +178,16 @@ export default function ServantHome() {
     
     if (!servantId || servantId === 'null' || servantId === 'undefined') {
       navigate(createPageUrl('Night'), { replace: true });
+      return;
     }
-  }, [vampireStates.length, vampireLoading, navigate, servantId]);
+
+    // If servant loaded but not found, redirect to first available servant or Night
+    if (!servantLoading && servantId && !servant && allServants.length > 0) {
+      navigate(createPageUrl(`ServantHome?id=${allServants[0].id}`), { replace: true });
+    } else if (!servantLoading && servantId && !servant && allServants.length === 0) {
+      navigate(createPageUrl('Night'), { replace: true });
+    }
+  }, [vampireStates.length, vampireLoading, navigate, servantId, servantLoading, servant, allServants]);
   
   const { data: servant, isLoading: servantLoading } = useQuery({
     queryKey: ['servant', servantId],
