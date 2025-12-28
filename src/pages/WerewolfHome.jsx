@@ -10,6 +10,7 @@ import FullMoonEvent from '@/components/nightbound/FullMoonEvent';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 import WolfPackDynamics from '@/components/nightbound/WolfPackDynamics';
 import WolfShiftControl from '@/components/nightbound/WolfShiftControl';
+import WerewolfAppearance from '@/components/nightbound/WerewolfAppearance';
 
 const ACTIONS = [
   { id: 'hunt', label: 'Hunt in the Wild', icon: '🐺', duration: 3000 },
@@ -32,6 +33,7 @@ export default function WerewolfHome() {
   const [showIdentity, setShowIdentity] = useState(false);
   const [showPackDynamics, setShowPackDynamics] = useState(false);
   const [showShiftControl, setShowShiftControl] = useState(false);
+  const [showAppearance, setShowAppearance] = useState(false);
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
@@ -194,6 +196,12 @@ export default function WerewolfHome() {
               ✏️
             </button>
           </div>
+          <button
+            onClick={() => setShowAppearance(true)}
+            className={`${isDaytime ? 'text-orange-700 hover:text-orange-900' : 'text-orange-400 hover:text-orange-300'} text-sm mt-1 mb-2`}
+          >
+            ✨ Customize Appearance
+          </button>
           <p className={`${isDaytime ? 'text-orange-800' : 'text-orange-100'} text-sm capitalize`}>{werewolf.pack_status} • {werewolf.current_form || 'human'} form</p>
           <button
             onClick={() => setShowIdentity(true)}
@@ -305,8 +313,7 @@ export default function WerewolfHome() {
         {showFullMoon && <FullMoonEvent werewolf={werewolf} onClose={() => setShowFullMoon(false)} />}
         {showPackDynamics && <WolfPackDynamics werewolf={werewolf} onClose={() => setShowPackDynamics(false)} />}
         {showShiftControl && <WolfShiftControl werewolf={werewolf} onClose={() => setShowShiftControl(false)} />}
-        {showPackDynamics && <WolfPackDynamics werewolf={werewolf} onClose={() => setShowPackDynamics(false)} />}
-        {showShiftControl && <WolfShiftControl werewolf={werewolf} onClose={() => setShowShiftControl(false)} />}
+        {showAppearance && <WerewolfAppearance werewolf={werewolf} onClose={() => setShowAppearance(false)} />}
 
         {showIdentity && (
           <motion.div
