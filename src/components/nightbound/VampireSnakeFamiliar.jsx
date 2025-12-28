@@ -4,6 +4,29 @@ import { X, Zap, Heart, Eye, Skull, Wind, Droplets, Moon, Flame, Sparkles } from
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+const EVOLUTION_PATHS = {
+  shadow: [
+    { stage: 1, name: 'Shadow Hatchling', abilities: ['Blend with Shadows'], emoji: '🐍', color: 'from-gray-700 to-gray-900' },
+    { stage: 2, name: 'Umbral Serpent', abilities: ['Blend with Shadows', 'Shadow Step'], emoji: '🐍✨', color: 'from-gray-800 to-black' },
+    { stage: 3, name: 'Void Wyrm', abilities: ['Blend with Shadows', 'Shadow Step', 'Darkness Manipulation', 'Phase Through Walls'], emoji: '🐍🌑', color: 'from-black to-purple-950' }
+  ],
+  venom: [
+    { stage: 1, name: 'Venom Hatchling', abilities: ['Toxic Bite'], emoji: '🐍', color: 'from-green-700 to-green-900' },
+    { stage: 2, name: 'Poison Serpent', abilities: ['Toxic Bite', 'Paralysis Venom'], emoji: '🐍💚', color: 'from-green-800 to-emerald-950' },
+    { stage: 3, name: 'Death Adder', abilities: ['Toxic Bite', 'Paralysis Venom', 'Acidic Spit', 'Plague Breath'], emoji: '🐍☠️', color: 'from-emerald-950 to-green-950' }
+  ],
+  blood: [
+    { stage: 1, name: 'Blood Hatchling', abilities: ['Blood Scent'], emoji: '🐍', color: 'from-red-700 to-red-900' },
+    { stage: 2, name: 'Crimson Serpent', abilities: ['Blood Scent', 'Healing Blood'], emoji: '🐍❤️', color: 'from-red-800 to-rose-950' },
+    { stage: 3, name: 'Sanguis Drake', abilities: ['Blood Scent', 'Healing Blood', 'Blood Control', 'Life Drain'], emoji: '🐍🩸', color: 'from-rose-950 to-red-950' }
+  ],
+  nightmare: [
+    { stage: 1, name: 'Nightmare Hatchling', abilities: ['Induce Fear'], emoji: '🐍', color: 'from-purple-700 to-purple-900' },
+    { stage: 2, name: 'Terror Serpent', abilities: ['Induce Fear', 'Nightmare Vision'], emoji: '🐍💜', color: 'from-purple-800 to-indigo-950' },
+    { stage: 3, name: 'Dread Basilisk', abilities: ['Induce Fear', 'Nightmare Vision', 'Mind Break', 'Petrifying Gaze'], emoji: '🐍👁️', color: 'from-indigo-950 to-purple-950' }
+  ]
+};
+
 export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const queryClient = useQueryClient();
   const [outcome, setOutcome] = useState('');
@@ -24,6 +47,12 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   });
 
   const mySnake = snakes.find(s => s.vampire_id === vampireState.id);
+
+  const getEvolutionStage = (power) => {
+    if (power >= 70) return 3;
+    if (power >= 40) return 2;
+    return 1;
+  };
 
   const snakeTypes = [
     { id: 'shadow', name: 'Shadow Serpent', power: 'Invisibility & Spying', icon: '🐍', color: 'from-gray-900 to-black' },
