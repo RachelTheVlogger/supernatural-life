@@ -69,13 +69,14 @@ export default function WerewolfAppearance({ werewolf, onClose }) {
     try {
       const appKey = isWolf ? 'wolf_appearance' : 'human_appearance';
       const currentApp = isWolf ? wolfApp : humanApp;
+      const packMembers = Array.isArray(werewolf.pack_members) ? werewolf.pack_members : [];
       
       await base44.entities.PlayerWerewolf.update(werewolf.id, {
+        pack_members: packMembers,
         [appKey]: {
           ...currentApp,
           [field]: value
-        },
-        pack_members: Array.isArray(werewolf.pack_members) ? werewolf.pack_members : []
+        }
       });
       
       queryClient.invalidateQueries(['playerWerewolves']);
@@ -89,6 +90,7 @@ export default function WerewolfAppearance({ werewolf, onClose }) {
     const appKey = isWolf ? 'wolf_appearance' : 'human_appearance';
     const currentApp = isWolf ? wolfApp : humanApp;
     const currentArray = currentApp[field] || [];
+    const packMembers = Array.isArray(werewolf.pack_members) ? werewolf.pack_members : [];
     
     const newArray = currentArray.includes(item)
       ? currentArray.filter(i => i !== item)
@@ -97,11 +99,11 @@ export default function WerewolfAppearance({ werewolf, onClose }) {
     setSaving(true);
     try {
       await base44.entities.PlayerWerewolf.update(werewolf.id, {
+        pack_members: packMembers,
         [appKey]: {
           ...currentApp,
           [field]: newArray
-        },
-        pack_members: Array.isArray(werewolf.pack_members) ? werewolf.pack_members : []
+        }
       });
       
       queryClient.invalidateQueries(['playerWerewolves']);
