@@ -47,6 +47,15 @@ export default function WerewolfHome() {
   const vampire = vampireStates[0];
   const isDaytime = vampire?.time_of_day === 'day';
 
+  // Fix pack_members if it's a number instead of array
+  React.useEffect(() => {
+    if (werewolf && typeof werewolf.pack_members === 'number') {
+      base44.entities.PlayerWerewolf.update(werewolf.id, {
+        pack_members: []
+      }).then(() => queryClient.invalidateQueries(['playerWerewolves']));
+    }
+  }, [werewolf?.id]);
+
   React.useEffect(() => {
     if (!werewolf) {
       navigate(createPageUrl('Home'), { replace: true });
@@ -88,7 +97,8 @@ export default function WerewolfHome() {
             loyalty: 60,
             strength: Math.floor(Math.random() * 50) + 30
           };
-          updates.pack_members = [...(werewolf.pack_members || []), newMember];
+          const currentMembers = Array.isArray(werewolf.pack_members) ? werewolf.pack_members : [];
+          updates.pack_members = [...currentMembers, newMember];
           if (updates.pack_members.length >= 5 && werewolf.pack_status === 'lone') {
             updates.pack_status = 'alpha';
             result = `${newMember.name} joins your pack. You are now an Alpha!`;
