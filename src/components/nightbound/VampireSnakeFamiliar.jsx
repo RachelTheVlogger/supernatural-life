@@ -324,9 +324,12 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       return;
     }
 
+    if (isAdopting) return;
+
     const editingSnake = snakes[selectedSnakeIndex];
     
     if (editingSnake && !adoptingType) {
+      setIsAdopting(true);
       await base44.entities.SnakeFamiliar.update(editingSnake.id, {
         custom_name: customName.trim(),
         gender: selectedGender,
@@ -338,9 +341,11 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       setShowAdoptModal(false);
       setCustomName('');
       setAdoptingType(null);
+      setIsAdopting(false);
       return;
     }
 
+    setIsAdopting(true);
     await base44.entities.SnakeFamiliar.create({
       vampire_id: vampireState.id,
       custom_name: customName.trim(),
