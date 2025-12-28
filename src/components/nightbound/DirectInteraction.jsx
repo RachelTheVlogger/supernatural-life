@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Eye, Hand, Sparkles, Zap, Coffee, Music, Book, Utensils, Wine, Flame, Moon, Droplets, Wind, Smile, Lock, Star, Skull, Crown, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tantml:react-query';
 import PowerUsage from './PowerUsage';
 import TitleSelection from './TitleSelection';
-import MasturbationSlider from './MasturbationSlider';
 
 const getVariantModifier = (variant, category) => {
   const modifiers = {
@@ -1799,8 +1798,6 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [showIdentity, setShowIdentity] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [liteMode, setLiteMode] = useState(vampireState?.content_filter === 'lite');
-  const [showSlider, setShowSlider] = useState(false);
-  const [sliderType, setSliderType] = useState(null);
   
   // Always call hooks in the same order - never conditionally
   const { data: interactionProgress = [] } = useQuery({
@@ -1849,14 +1846,6 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     });
   };
   
-  const sliderInteractions = [
-    'intimate', 'dominate', 'worship', 'breeding', 'edging', 'bdsm', 'orgasmControl', 
-    'oralService', 'rideDom', 'multiple', 'Marathon', 'vampireSex', 'vampireBiteDuringsex',
-    'vampireRoughFuck', 'vampireSpeedFuck', 'vampireWallFuck', 'vampireMarathon',
-    'roughBehind', 'behindSeduction', 'publicUse', 'casualUse', 'service', 'vampireDoubleFeeding',
-    'tease', 'makeout', 'exhibition', 'vampireBloodPlay', 'vampireRace', 'vampireSpar'
-  ];
-
   const handleInteraction = async (type) => {
     if (type === 'usePower') {
       setShowPowers(true);
@@ -1875,13 +1864,6 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
     if (type === 'setIdentity') {
       setShowIdentity(true);
-      return;
-    }
-
-    // Check if interaction should use slider
-    if (sliderInteractions.includes(type) && !liteMode) {
-      setSliderType(type);
-      setShowSlider(true);
       return;
     }
     
@@ -2497,137 +2479,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             </motion.div>
           </motion.div>
         )}
-        {showSlider && sliderType && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-black/95"
-            onClick={() => {
-              setShowSlider(false);
-              setSliderType(null);
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              className="max-w-lg w-full"
-            >
-              <MasturbationSlider
-                gender={servant.gender}
-                context={sliderType === 'videocall' ? 'videocall' : sliderType === 'sexting' ? 'sexting' : 'vampire'}
-                onFinish={async (edgeType, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
-                  setShowSlider(false);
-                  setSliderType(null);
-                  
-                  // Process the interaction with bonus for edging
-                  const interaction = allInteractions[sliderType];
-                  const rel = servant.relationship || 0;
-                  const tier = getRelationshipTier(rel);
-                  
-                  let outcomes;
-                  if (interaction.getDynamicOutcomes) {
-                    const dynamicOutcomes = ['worship', 'oralService', 'rideDom', 'dominate', 'breeding'].includes(sliderType) 
-                      ? interaction.getDynamicOutcomes(vampireState.gender) 
-                      : interaction.getDynamicOutcomes(servant.name);
-                    outcomes = dynamicOutcomes?.[tier] || dynamicOutcomes?.mid || dynamicOutcomes?.low;
-                  } else if (interaction.outcomes) {
-                    outcomes = interaction.outcomes[tier] || interaction.outcomes.mid || interaction.outcomes.low;
-                  }
 
-                  let baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-                  
-                  // Add body part specifics - sex positions include both orgasms
-                  const bodyPartText = bodyPart === 'ride' ? (servant.gender === 'woman' ? 
-                    '\n\nThey rode you hard, bouncing, taking you deep. Moaning loudly. You both came together, crying out.' :
-                    '\n\nThey rode them desperately. Grinding. Fucking. You both came, shaking.') :
-                                      bodyPart === 'thrust' ? (servant.gender === 'woman' ?
-                    '\n\nThey pounded into them hard. Deep thrusts. Both moaning. You both came together, trembling.' :
-                    '\n\nYou thrust into them relentlessly. Hard. Deep. Both of you came, gasping.') :
-                                      bodyPart === 'oral' ? '\n\nTheir mouth worked perfectly. You both were lost in pleasure. They made you cum hard.' :
-                                      bodyPart === 'receive' ? '\n\nYour tongue worked them. They came in your mouth, moaning. You both satisfied.' :
-                                      bodyPart === 'receive_oral' ? '\n\nThey sucked you perfectly. You came hard. They swallowed, both satisfied.' :
-                                      bodyPart === 'penetrate' ? '\n\nYou penetrated them deep. Both moaning. Came together, bodies shaking.' :
-                                      bodyPart === 'mutual' ? '\n\nPleasuring each other simultaneously. Both came at once. Perfect.' :
-                                      bodyPart === 'clit' ? '\n\nYou watched them rub their clit in circles. Faster. Harder. So wet. They came for you.' :
-                                      bodyPart === 'dick' ? '\n\nYou watched them stroke their hard cock. Grip tight. Up and down. They came hard.' :
-                                      bodyPart === 'breasts' ? '\n\nThey pinched and played with their nipples. Moaning. Getting so hard.' :
-                                      bodyPart === 'fingers' ? '\n\nFingers deep inside themselves. Two, then three. Fucking themselves. Came hard for you.' :
-                                      bodyPart === 'balls' ? '\n\nPlaying with their balls while stroking. Squeezing. So full. Came everywhere.' :
-                                      bodyPart === 'dildo' ? '\n\nFucking themselves with a dildo. Deep. Hard. Came so hard.' :
-                                      bodyPart === 'vibrator' ? '\n\nVibrator buzzing. So intense. They came shaking.' :
-                                      bodyPart === 'fleshlight' ? '\n\nFucking their fleshlight hard. Tight. Came filling it.' :
-                                      bodyPart === 'oral_toy' ? '\n\nOral toy sucking. Felt so real. Came hard.' :
-                                      bodyPart === 'toy' ? '\n\nUsing a toy. Felt amazing. Came intensely.' :
-                                      touchingMultiple ? (servant.gender === 'woman' ? '\n\nRubbing their clit while playing with their tits. Both spots at once. They came hard, shaking.' :
-                                                         servant.gender === 'man' ? '\n\nStroking their dick while squeezing their balls. Everything at once. Came explosively.' :
-                                                         '\n\nTouching everywhere. Multiple spots. Too much sensation. Came hard.') : '';
-                  
-                  // Add edging flavor
-                  const intensityText = edgeCount > 3 ? '\n\nYou made them edge over and over. Shaking. Desperate. Begging. Finally allowed.' : 
-                                       edgeCount > 1 ? '\n\nEdged multiple times. Building. Building. Finally released.' : 
-                                       edgeType === 'edged' ? '\n\nEdged them. Made them wait. Denied. Then finally allowed.' : '';
-                  
-                  if (bodyPartText || intensityText) {
-                    baseOutcome += bodyPartText + intensityText;
-                  }
-                  
-                  const finalOutcome = addTitleToOutcome(baseOutcome);
-                  setOutcome(finalOutcome);
-                  setProcessing(true);
-
-                  setTimeout(async () => {
-                    const [min, max] = interaction.gains;
-                    const baseGain = Math.floor(Math.random() * (max - min + 1)) + min;
-                    const edgeBonus = edgeType === 'edged' ? Math.floor(baseGain * 0.5) : 0;
-                    const desperationBonus = Math.floor(desperationLevel / 20);
-                    const edgeCountBonus = edgeCount * 2;
-                    const modifier = getVariantModifier(servant.variant, interaction.category);
-                    const relationshipGain = Math.round((baseGain + edgeBonus + desperationBonus + edgeCountBonus) * modifier);
-                    const newRel = Math.min((servant.relationship || 0) + relationshipGain, 100);
-
-                    const emotionalStates = {
-                      devoted: ['shy', 'longing', 'devoted', 'worshipful', 'transcendent'],
-                      defiant: ['conflicted', 'resistant', 'surrendering', 'accepting', 'bound'],
-                      dreamer: ['distant', 'drifting', 'fading', 'ethereal', 'dissolved']
-                    };
-                    const stateIndex = Math.min(Math.floor(newRel / 20), 4);
-                    const newEmotionalState = emotionalStates[servant.variant][stateIndex];
-                    
-                    let jealousyGain = 0;
-                    if (['physical', 'bdsm'].includes(interaction.category) && !['open', 'no-strings'].includes(servant.boundaries)) {
-                      jealousyGain = Math.floor(Math.random() * 5) + 2;
-                    }
-                    
-                    await base44.entities.Servant.update(servant.id, {
-                      relationship: newRel,
-                      obsession_stage: Math.min(Math.floor(newRel / 20) + 1, 5),
-                      emotional_state: newEmotionalState,
-                      last_interaction: new Date().toISOString(),
-                      jealousy_level: Math.min((servant.jealousy_level || 0) + jealousyGain, 100)
-                    });
-
-                    await base44.entities.NightLog.create({
-                      entry: `With ${servant.name}: ${finalOutcome}`,
-                      category: 'interaction',
-                      intensity: 'significant'
-                    });
-
-                    queryClient.invalidateQueries();
-
-                    setTimeout(() => {
-                      setProcessing(false);
-                      setOutcome('');
-                      setInteractionType('');
-                    }, 5000);
-                  }, 2000);
-                }}
-              />
-            </motion.div>
-          </motion.div>
-        )}
       </AnimatePresence>
     <motion.div
       initial={{ opacity: 0 }}
