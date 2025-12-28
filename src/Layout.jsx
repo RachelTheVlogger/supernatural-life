@@ -48,6 +48,7 @@ export default function Layout({ children, currentPageName }) {
   const urlParams = new URLSearchParams(location.search);
   const urlServantId = urlParams.get('servant') || urlParams.get('id');
   const currentServant = urlServantId ? servants.find(s => s.id === urlServantId) : servants[0];
+  const currentServantId = currentServant?.id;
   const firstServantId = currentServant?.id || (servants.length > 0 ? servants[0].id : null);
   
   const navItems = [
