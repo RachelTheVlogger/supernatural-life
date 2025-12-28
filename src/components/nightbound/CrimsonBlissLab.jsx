@@ -595,6 +595,61 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
     }
   };
 
+  const handleDeepConversation = async (customer) => {
+    setSelectedCustomer(customer);
+    
+    setTimeout(async () => {
+      try {
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `Create a deep, emotional conversation between a vampire drug dealer and their customer "${customer.name}" (${customer.customer_type}). Addiction level: ${customer.addiction_level}%. Life status: ${customer.life_status || 'stable'}. Make it raw, honest, and impactful. Include: what they say, their emotional state, and outcome. 150 words max.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              dialogue: { type: 'string' },
+              emotional_impact: { type: 'string' },
+              relationship_shift: { type: 'string', enum: ['business', 'friend', 'lover', 'dependent', 'enemy'] },
+              life_change: { type: 'string', enum: ['stable', 'declining', 'rock_bottom', 'recovering'] }
+            }
+          }
+        });
+
+        await base44.entities.DrugCustomer.update(customer.id, {
+          relationship_type: response.relationship_shift,
+          life_status: response.life_change,
+          friendship: Math.min(100, (customer.friendship || 0) + 20),
+          backstory: response.dialogue
+        });
+
+        setChatOutcome(`${response.dialogue}\n\n${response.emotional_impact}\n\nRelationship: ${response.relationship_shift}\nLife: ${response.life_change}`);
+
+        await base44.entities.NightLog.create({
+          entry: `Deep conversation with ${customer.name}. ${response.emotional_impact}`,
+          category: 'interaction',
+          intensity: 'significant'
+        });
+
+        queryClient.invalidateQueries();
+      } catch (e) {
+        // Fallback
+        const fallback = [
+          `${customer.name}: "I'm losing myself. Every hit takes more of me away." They're crying. Real pain. You realize the weight of what you do.`,
+          `${customer.name} confesses everything. Their family. Their job. All gone because of you. They don't blame you. That makes it worse.`,
+          `Deep talk. ${customer.name} says you saved them. The drugs let them escape. You're their only friend. You don't know how to feel.`
+        ];
+        setChatOutcome(fallback[Math.floor(Math.random() * fallback.length)]);
+        await base44.entities.DrugCustomer.update(customer.id, {
+          friendship: Math.min(100, (customer.friendship || 0) + 20)
+        });
+        queryClient.invalidateQueries();
+      }
+
+      setTimeout(() => {
+        setSelectedCustomer(null);
+        setChatOutcome('');
+      }, 7000);
+    }, 2000);
+  };
+
   const handleChatWithCustomer = async (customer) => {
     setSelectedCustomer(customer);
 
@@ -812,6 +867,12 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
             className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'events' ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             Events
+          </button>
+          <button 
+            onClick={() => setTab('progression')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'progression' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            Progression
           </button>
         </div>
 
@@ -1091,8 +1152,18 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                         <h4 className="text-white font-bold">{customer.name}</h4>
                         {customer.is_vip && <span className="text-xs bg-yellow-600 text-white px-2 py-0.5 rounded">VIP</span>}
                       </div>
-                      <p className="text-gray-400 text-sm capitalize">{customer.customer_type}</p>
+                      <p className="text-gray-400 text-sm capitalize">{customer.customer_type} • {customer.relationship_type || 'business'}</p>
+                      {customer.life_status && customer.life_status !== 'stable' && (
+                        <p className={`text-xs mt-1 ${
+                          customer.life_status === 'recovering' ? 'text-green-400' :
+                          customer.life_status === 'declining' ? 'text-yellow-400' :
+                          'text-red-400'
+                        }`}>
+                          Life: {customer.life_status}
+                        </p>
+                      )}
                       {customer.custom_order && <p className="text-purple-400 text-xs mt-1">💎 Custom order: {customer.custom_order}</p>}
+                      {customer.days_clean > 0 && <p className="text-green-400 text-xs mt-1">🌱 {customer.days_clean} days clean</p>}
                     </div>
                     <span className="text-green-400 font-bold">${customer.total_spent}</span>
                   </div>
@@ -1116,7 +1187,13 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                       onClick={() => handleChatWithCustomer(customer)}
                       className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors text-sm"
                     >
-                      Talk
+                      Small Talk
+                    </button>
+                    <button
+                      onClick={() => handleDeepConversation(customer)}
+                      className="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors text-sm"
+                    >
+                      Deep Talk
                     </button>
                     {customer.is_vip && (
                       <button
@@ -1189,6 +1266,74 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                     <span className="bg-blue-700 px-2 py-1 rounded">Premium</span>
                     <span className="bg-yellow-700 px-2 py-1 rounded">Legendary</span>
                   </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === 'progression' && (
+          <div className="space-y-3">
+            <h3 className="text-white font-bold mb-3">Lab Progression</h3>
+            
+            {operation && (
+              <>
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-bold mb-2">Lab Tier: {operation.lab_tier || 1}/5</h4>
+                  <p className="text-gray-400 text-sm mb-3">Research: {operation.research_points || 0}/100</p>
+                  <div className="w-full bg-gray-700 rounded-full h-3 mb-3">
+                    <div 
+                      style={{ width: `${operation.research_points || 0}%` }}
+                      className="h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+                    />
+                  </div>
+                  {(operation.research_points || 0) >= 100 && (
+                    <button
+                      onClick={async () => {
+                        await base44.entities.DrugOperation.update(operation.id, {
+                          lab_tier: Math.min(5, (operation.lab_tier || 1) + 1),
+                          research_points: 0
+                        });
+                        await base44.entities.NightLog.create({
+                          entry: `Lab upgraded to tier ${(operation.lab_tier || 1) + 1}! New techniques unlocked.`,
+                          category: 'interaction',
+                          intensity: 'significant'
+                        });
+                        queryClient.invalidateQueries();
+                      }}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg"
+                    >
+                      Upgrade Lab
+                    </button>
+                  )}
+                </div>
+
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-bold mb-2">Moral Compass</h4>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-red-400">Ruthless</span>
+                    <span className="text-blue-400">Ethical</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-3 mb-2">
+                    <div 
+                      style={{ width: `${operation.moral_compass || 50}%` }}
+                      className="h-3 bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 rounded-full"
+                    />
+                  </div>
+                  <div className="flex gap-3 text-xs text-gray-400">
+                    <span>Deaths: {operation.casualties || 0}</span>
+                    <span>Lives Ruined: {operation.lives_ruined || 0}</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <h4 className="text-white font-bold mb-2">Underworld Network</h4>
+                  <p className="text-gray-400 text-sm mb-2">Connections: {(operation.underworld_connections || []).length}</p>
+                  {(operation.underworld_connections || []).map((contact, i) => (
+                    <div key={i} className="bg-gray-700 rounded p-2 mb-1 text-sm text-gray-300">
+                      {contact}
+                    </div>
+                  ))}
                 </div>
               </>
             )}
