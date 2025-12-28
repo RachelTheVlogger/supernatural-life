@@ -1163,7 +1163,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </motion.div>
             )}
           </div>
-        ) : snakes.length === 0 ? (
+        ) : !mySnake && snakes.length === 0 ? (
           <div className="space-y-3">
             <p className="text-gray-300 mb-4">Choose your serpent familiar:</p>
             {snakeTypes.map(snake => (
@@ -1212,8 +1212,26 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
               <div className="relative z-10">
                 <div className="text-center mb-3">
-                  <div className="text-7xl mb-2">
-                    {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
+                  <div className="relative inline-block">
+                    <div className="text-7xl mb-2">
+                      {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
+                    </div>
+                    <div className="absolute top-2 right-0 flex gap-1">
+                      <div 
+                        className="w-3 h-3 rounded-full border-2 border-white shadow-lg"
+                        style={{ 
+                          backgroundColor: mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color,
+                          boxShadow: `0 0 8px ${mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color}`
+                        }}
+                      />
+                      <div 
+                        className="w-3 h-3 rounded-full border-2 border-white shadow-lg"
+                        style={{ 
+                          backgroundColor: mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color,
+                          boxShadow: `0 0 8px ${mySnake.eye_color === 'gold' ? '#fbbf24' : mySnake.eye_color === 'silver' ? '#d1d5db' : mySnake.eye_color}`
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="mb-2">
