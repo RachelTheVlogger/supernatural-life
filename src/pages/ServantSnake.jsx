@@ -65,6 +65,10 @@ export default function ServantSnake() {
   const [selectedGender, setSelectedGender] = useState('male');
   const [selectedPattern, setSelectedPattern] = useState('solid');
   const [selectedEyeColor, setSelectedEyeColor] = useState('red');
+  const [showCareAssistant, setShowCareAssistant] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState(null);
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   const urlParams = new URLSearchParams(location.search);
   const servantId = urlParams.get('id');
@@ -88,6 +92,191 @@ export default function ServantSnake() {
   });
 
   const snake = snakes[0];
+
+  // Check for urgent care needs
+  React.useEffect(() => {
+    if (!snake) return;
+    
+    const urgentNeeds = [];
+    if ((snake.hunger || 30) > 80) urgentNeeds.push('🍖 Snake is very hungry!');
+    if ((snake.health || 100) < 30) urgentNeeds.push('🩹 Snake health is critical!');
+    if ((snake.happiness || 50) < 20) urgentNeeds.push('😢 Snake is very unhappy!');
+    
+    setNotifications(urgentNeeds);
+  }, [snake]);
+
+  const getPatternColor = (pattern, baseColor) => {
+    const patternColors = {
+      solid: baseColor,
+      striped: `linear-gradient(90deg, ${baseColor} 50%, rgba(255,255,255,0.2) 50%)`,
+      spotted: `radial-gradient(circle, rgba(255,255,255,0.3) 20%, ${baseColor} 20%)`,
+      iridescent: 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)',
+      scales_of_night: `linear-gradient(135deg, ${baseColor} 0%, rgba(0,0,0,0.8) 50%, ${baseColor} 100%)`
+    };
+    return patternColors[pattern] || baseColor;
+  };
+
+  const getSnakeBaseColor = (type) => {
+    const colors = {
+      shadow: '#4b5563',
+      venom: '#10b981',
+      blood: '#ef4444',
+      nightmare: '#a855f7'
+    };
+    return colors[type] || '#6b7280';
+  };
+
+  const handleCareAction = async (action) => {
+    setInteracting(action);
+
+    setTimeout(async () => {
+      let updates = {};
+      let message = '';
+
+      switch (action) {
+        case 'feed_meal':
+          updates.hunger = Math.max(0, (snake.hunger || 30) - 50);
+          message = `You fed ${snake.custom_name} a proper meal. Satisfied hisses. Hunger sated.`;
+          break;
+        case 'give_water':
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 10);
+          message = `Fresh water provided. ${snake.custom_name} drinks deeply. Refreshed.`;
+          break;
+        case 'clean_enclosure':
+          updates.health = Math.min(100, (snake.health || 100) + 5);
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 8);
+          message = `You cleaned ${snake.custom_name}'s enclosure. Sparkling clean. Snake content.`;
+          break;
+        case 'health_check':
+          updates.health = Math.min(100, (snake.health || 100) + 15);
+          message = `Health inspection complete. Scales checked. Teeth examined. ${snake.custom_name} is healthy.`;
+          break;
+        case 'enrichment':
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 20);
+          updates.mood = 'playful';
+          message = `Enrichment time! New toys. Obstacles. ${snake.custom_name} explores excitedly.`;
+          break;
+      }
+
+      await base44.entities.SnakeFamiliar.update(snake.id, updates);
+      setOutcome(message);
+
+      await base44.entities.NightLog.create({
+        entry: message,
+        category: 'interaction',
+        intensity: 'subtle'
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setInteracting(null);
+        setOutcome('');
+      }, 3000);
+    }, 1500);
+  };
+
+  const getAISuggestions = async () => {
+    setLoadingAI(true);
+    setShowCareAssistant(true);
+
+    try {
+      const snakeInfo = `Snake: ${snake.custom_name}
+Type: ${snake.type}
+Gender: ${snake.gender}
+Mood: ${snake.mood}
+Hunger: ${snake.hunger || 30}%
+Happiness: ${snake.happiness || 50}%
+Health: ${snake.health || 100}%
+Bond Level: ${snake.bond_level}%
+Power Level: ${snake.power_level}%
+Size: ${snake.size}
+Age: ${snake.age_days || 0} days
+Personality Traits: ${(snake.personality_traits || []).join(', ') || 'None yet'}`;
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are an expert snake care AI assistant for magical vampire snake familiars. Based on this snake's current status, provide detailed personalized care recommendations:
+
+${snakeInfo}
+
+Provide recommendations in this exact JSON format:
+{
+  "feeding": {
+    "timing": "string - when to feed",
+    "type": "string - what to feed",
+    "notes": "string - additional feeding tips"
+  },
+  "cleaning": {
+    "schedule": "string - cleaning schedule",
+    "priority": "string - low/medium/high/urgent",
+    "tips": "string - cleaning tips"
+  },
+  "enrichment": {
+    "activities": ["string array - 3 specific activities for this snake"],
+    "frequency": "string - how often"
+  },
+  "health": {
+    "concerns": "string - any health concerns",
+    "recommendations": "string - health recommendations"
+  },
+  "mood": {
+    "analysis": "string - mood analysis",
+    "tips": "string - how to improve mood"
+  }
+}`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            feeding: {
+              type: 'object',
+              properties: {
+                timing: { type: 'string' },
+                type: { type: 'string' },
+                notes: { type: 'string' }
+              }
+            },
+            cleaning: {
+              type: 'object',
+              properties: {
+                schedule: { type: 'string' },
+                priority: { type: 'string' },
+                tips: { type: 'string' }
+              }
+            },
+            enrichment: {
+              type: 'object',
+              properties: {
+                activities: { type: 'array', items: { type: 'string' } },
+                frequency: { type: 'string' }
+              }
+            },
+            health: {
+              type: 'object',
+              properties: {
+                concerns: { type: 'string' },
+                recommendations: { type: 'string' }
+              }
+            },
+            mood: {
+              type: 'object',
+              properties: {
+                analysis: { type: 'string' },
+                tips: { type: 'string' }
+              }
+            }
+          }
+        }
+      });
+
+      setAiSuggestions(result);
+    } catch (e) {
+      console.error('AI suggestions failed:', e);
+      setOutcome('AI assistant temporarily unavailable');
+      setTimeout(() => setOutcome(''), 2000);
+    }
+
+    setLoadingAI(false);
+  };
 
   const handleAdopt = async () => {
     if (!customName.trim()) {
@@ -423,8 +612,27 @@ export default function ServantSnake() {
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">{snake.custom_name}</h1>
             <p className="text-gray-400 capitalize">{SNAKE_TYPES.find(s => s.type === snake.type)?.name}</p>
+            <p className="text-sm capitalize" style={{
+              background: getPatternColor(snake.pattern, getSnakeBaseColor(snake.type)),
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontWeight: 'bold'
+            }}>
+              {snake.eye_color} {snake.pattern.replace('_', ' ')} pattern
+            </p>
             
-            <div className="flex gap-3 mt-3">
+            {/* Urgent Care Notifications */}
+            {notifications.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {notifications.map((notif, i) => (
+                  <div key={i} className="bg-red-900/60 border-2 border-red-500 rounded-lg p-2 text-red-100 text-sm font-medium animate-pulse">
+                    {notif}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="flex gap-2 mt-3 flex-wrap">
               <button
                 onClick={() => setCarrying(!carrying)}
                 className={`flex-1 px-6 py-2 rounded-lg font-medium transition-all ${
@@ -449,9 +657,15 @@ export default function ServantSnake() {
               </button>
               <button
                 onClick={() => setShowBreeding(true)}
-                className="px-6 py-2 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all"
+                className="px-4 py-2 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all text-sm"
               >
-                💕 Breeding
+                💕 Breed
+              </button>
+              <button
+                onClick={getAISuggestions}
+                className="px-4 py-2 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all text-sm"
+              >
+                🤖 AI Care
               </button>
             </div>
             {carrying && (
@@ -459,8 +673,47 @@ export default function ServantSnake() {
             )}
           </motion.div>
 
+          {/* Care Stats */}
+          <div className="bg-black/40 rounded-xl p-4 mb-6 border border-gray-700">
+            <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+              🩺 Care Status
+            </h3>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <p className="text-gray-400 text-xs mb-1">Hunger</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 bg-gray-700 rounded-full h-2">
+                    <div style={{ width: `${snake.hunger || 30}%` }} className={`h-2 rounded-full ${(snake.hunger || 30) > 70 ? 'bg-red-500' : (snake.hunger || 30) > 40 ? 'bg-yellow-500' : 'bg-green-500'}`} />
+                  </div>
+                  <span className="text-white text-xs">{snake.hunger || 30}%</span>
+                </div>
+              </div>
+              <div>
+                <p className="text-gray-400 text-xs mb-1">Happiness</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 bg-gray-700 rounded-full h-2">
+                    <div style={{ width: `${snake.happiness || 50}%` }} className={`h-2 rounded-full ${(snake.happiness || 50) < 30 ? 'bg-red-500' : (snake.happiness || 50) < 60 ? 'bg-yellow-500' : 'bg-green-500'}`} />
+                  </div>
+                  <span className="text-white text-xs">{snake.happiness || 50}%</span>
+                </div>
+              </div>
+              <div>
+                <p className="text-gray-400 text-xs mb-1">Health</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 bg-gray-700 rounded-full h-2">
+                    <div style={{ width: `${snake.health || 100}%` }} className={`h-2 rounded-full ${(snake.health || 100) < 40 ? 'bg-red-500' : (snake.health || 100) < 70 ? 'bg-yellow-500' : 'bg-green-500'}`} />
+                  </div>
+                  <span className="text-white text-xs">{snake.health || 100}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Visual Snake Display */}
-          <div className={`bg-gradient-to-br ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].color} rounded-xl p-6 mb-6 border-2 border-green-500/50 relative overflow-hidden`}>
+          <div className={`bg-gradient-to-br ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].color} rounded-xl p-6 mb-6 border-2 relative overflow-hidden`} style={{
+            borderColor: getSnakeBaseColor(snake.type),
+            borderWidth: '3px'
+          }}>
             {/* Aura Effect */}
             <div className={`absolute inset-0 opacity-${Math.min(50 + snake.power_level / 2, 90)}`} style={{
               background: `radial-gradient(circle at center, ${
@@ -716,8 +969,51 @@ export default function ServantSnake() {
             </div>
           </div>
 
+          {/* Care Actions */}
+          <div className="bg-gradient-to-br from-blue-900/40 to-cyan-900/40 border-2 border-blue-500/50 rounded-xl p-4 mb-6">
+            <h3 className="text-blue-200 font-bold mb-3">🩺 Daily Care</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => handleCareAction('feed_meal')}
+                disabled={!!interacting || (snake.hunger || 30) < 20}
+                className="bg-orange-900/60 hover:bg-orange-900/80 disabled:opacity-50 border border-orange-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all"
+              >
+                🍖 Feed Meal
+              </button>
+              <button
+                onClick={() => handleCareAction('give_water')}
+                disabled={!!interacting}
+                className="bg-blue-900/60 hover:bg-blue-900/80 disabled:opacity-50 border border-blue-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all"
+              >
+                💧 Fresh Water
+              </button>
+              <button
+                onClick={() => handleCareAction('clean_enclosure')}
+                disabled={!!interacting}
+                className="bg-green-900/60 hover:bg-green-900/80 disabled:opacity-50 border border-green-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all"
+              >
+                🧹 Clean
+              </button>
+              <button
+                onClick={() => handleCareAction('health_check')}
+                disabled={!!interacting}
+                className="bg-purple-900/60 hover:bg-purple-900/80 disabled:opacity-50 border border-purple-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all"
+              >
+                🩺 Health Check
+              </button>
+              <button
+                onClick={() => handleCareAction('enrichment')}
+                disabled={!!interacting}
+                className="bg-pink-900/60 hover:bg-pink-900/80 disabled:opacity-50 border border-pink-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all col-span-2"
+              >
+                🎾 Enrichment Activity
+              </button>
+            </div>
+          </div>
+
           {!outcome ? (
             <div className="space-y-3">
+              <h3 className="text-white font-bold mb-3">⚡ Training & Bonding</h3>
               {INTERACTIONS.map((action, i) => {
                 const ActionIcon = action.id === 'guard' ? Shield : action.id === 'scout' ? Eye : action.id === 'attack' ? Sword : action.icon;
                 return (
@@ -978,6 +1274,114 @@ export default function ServantSnake() {
 
               <button
                 onClick={() => setShowBreeding(false)}
+                className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* AI Care Assistant Modal */}
+      <AnimatePresence>
+        {showCareAssistant && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowCareAssistant(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto border-2 border-blue-500/50"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                🤖 AI Care Assistant
+              </h2>
+
+              {loadingAI ? (
+                <div className="text-center py-12">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="text-6xl mb-4"
+                  >
+                    🤖
+                  </motion.div>
+                  <p className="text-blue-400">Analyzing {snake.custom_name}'s needs...</p>
+                </div>
+              ) : aiSuggestions ? (
+                <div className="space-y-4">
+                  {/* Feeding */}
+                  <div className="bg-orange-900/40 border border-orange-500/30 rounded-lg p-4">
+                    <h3 className="text-orange-200 font-bold mb-2 flex items-center gap-2">
+                      🍖 Feeding Recommendations
+                    </h3>
+                    <p className="text-gray-300 text-sm mb-2"><strong>Timing:</strong> {aiSuggestions.feeding.timing}</p>
+                    <p className="text-gray-300 text-sm mb-2"><strong>Type:</strong> {aiSuggestions.feeding.type}</p>
+                    <p className="text-gray-400 text-xs">{aiSuggestions.feeding.notes}</p>
+                  </div>
+
+                  {/* Cleaning */}
+                  <div className="bg-green-900/40 border border-green-500/30 rounded-lg p-4">
+                    <h3 className="text-green-200 font-bold mb-2 flex items-center gap-2">
+                      🧹 Cleaning Schedule
+                    </h3>
+                    <p className="text-gray-300 text-sm mb-2"><strong>Schedule:</strong> {aiSuggestions.cleaning.schedule}</p>
+                    <p className="text-gray-300 text-sm mb-2">
+                      <strong>Priority:</strong> 
+                      <span className={`ml-2 px-2 py-0.5 rounded text-xs font-bold ${
+                        aiSuggestions.cleaning.priority === 'urgent' ? 'bg-red-600' :
+                        aiSuggestions.cleaning.priority === 'high' ? 'bg-orange-600' :
+                        aiSuggestions.cleaning.priority === 'medium' ? 'bg-yellow-600' :
+                        'bg-blue-600'
+                      }`}>
+                        {aiSuggestions.cleaning.priority}
+                      </span>
+                    </p>
+                    <p className="text-gray-400 text-xs">{aiSuggestions.cleaning.tips}</p>
+                  </div>
+
+                  {/* Enrichment */}
+                  <div className="bg-purple-900/40 border border-purple-500/30 rounded-lg p-4">
+                    <h3 className="text-purple-200 font-bold mb-2 flex items-center gap-2">
+                      🎾 Enrichment Activities
+                    </h3>
+                    <p className="text-gray-300 text-sm mb-2"><strong>Frequency:</strong> {aiSuggestions.enrichment.frequency}</p>
+                    <ul className="space-y-1">
+                      {aiSuggestions.enrichment.activities.map((activity, i) => (
+                        <li key={i} className="text-gray-300 text-sm">• {activity}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Health */}
+                  <div className="bg-red-900/40 border border-red-500/30 rounded-lg p-4">
+                    <h3 className="text-red-200 font-bold mb-2 flex items-center gap-2">
+                      🩺 Health Analysis
+                    </h3>
+                    <p className="text-gray-300 text-sm mb-2"><strong>Concerns:</strong> {aiSuggestions.health.concerns}</p>
+                    <p className="text-gray-400 text-xs">{aiSuggestions.health.recommendations}</p>
+                  </div>
+
+                  {/* Mood */}
+                  <div className="bg-pink-900/40 border border-pink-500/30 rounded-lg p-4">
+                    <h3 className="text-pink-200 font-bold mb-2 flex items-center gap-2">
+                      😊 Mood & Wellbeing
+                    </h3>
+                    <p className="text-gray-300 text-sm mb-2"><strong>Analysis:</strong> {aiSuggestions.mood.analysis}</p>
+                    <p className="text-gray-400 text-xs">{aiSuggestions.mood.tips}</p>
+                  </div>
+                </div>
+              ) : null}
+
+              <button
+                onClick={() => setShowCareAssistant(false)}
                 className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
               >
                 Close
