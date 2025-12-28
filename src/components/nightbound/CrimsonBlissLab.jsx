@@ -12,6 +12,14 @@ const BASE_STRAINS = [
   { name: 'Void Kiss', potency: 10, effects: 'total ego death. Become the darkness itself. Transcendence.', price: 1000, addictiveness: 95 }
 ];
 
+const BLOOD_PLANTS = [
+  { type: 'crimson_bloom', name: 'Crimson Bloom', description: 'Classic blood flower. Grows fast. Reliable potency.', growTime: 3, baseYield: 5 },
+  { type: 'shadow_vine', name: 'Shadow Vine', description: 'Creeps in darkness. High THC equivalent. Psychedelic effects.', growTime: 4, baseYield: 7 },
+  { type: 'midnight_lotus', name: 'Midnight Lotus', description: 'Rare. Beautiful. Extremely potent. Hard to grow.', growTime: 6, baseYield: 3 },
+  { type: 'bloodroot', name: 'Bloodroot', description: 'Deep roots. Feeds on blood. Creates powerful strains.', growTime: 5, baseYield: 6 },
+  { type: 'vampweed', name: 'Vampweed', description: 'Hybrid plant. Easy to grow. Medium potency. Great for beginners.', growTime: 2, baseYield: 8 }
+];
+
 export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('produce');
@@ -42,6 +50,11 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const { data: operations = [] } = useQuery({
     queryKey: ['drugOperation'],
     queryFn: () => base44.entities.DrugOperation.list()
+  });
+
+  const { data: bloodPlants = [] } = useQuery({
+    queryKey: ['bloodPlants'],
+    queryFn: () => base44.entities.BloodPlant.list()
   });
 
   if (!vampireState) {
@@ -874,6 +887,12 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           >
             Progression
           </button>
+          <button 
+            onClick={() => setTab('plants')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'plants' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            🌿 Plants
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -1392,6 +1411,151 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
               💬
             </motion.div>
             <p className="text-gray-300 text-lg whitespace-pre-line">{chatOutcome}</p>
+          </div>
+        )}
+
+        {tab === 'plants' && (
+          <div className="space-y-3">
+            <h3 className="text-white font-bold mb-3">Blood Plant Garden 🌿</h3>
+            
+            {bloodPlants.length === 0 ? (
+              <div className="space-y-3">
+                <p className="text-gray-400 text-sm mb-4">Grow blood plants to create organic strains</p>
+                {BLOOD_PLANTS.map(plant => (
+                  <button
+                    key={plant.type}
+                    onClick={async () => {
+                      await base44.entities.BloodPlant.create({
+                        plant_type: plant.type,
+                        growth_stage: 1,
+                        health: 100,
+                        potency: 50,
+                        planted_date: new Date().toISOString(),
+                        last_watered: new Date().toISOString()
+                      });
+                      await base44.entities.NightLog.create({
+                        entry: `Planted ${plant.name}. Let it grow.`,
+                        category: 'interaction',
+                        intensity: 'moderate'
+                      });
+                      queryClient.invalidateQueries();
+                    }}
+                    className="w-full bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 rounded-xl p-4 text-left"
+                  >
+                    <h4 className="text-white font-bold mb-1">{plant.name}</h4>
+                    <p className="text-gray-400 text-sm mb-2">{plant.description}</p>
+                    <div className="flex gap-3 text-xs text-gray-500">
+                      <span>Grow time: {plant.growTime} days</span>
+                      <span>Yield: {plant.baseYield} doses</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              bloodPlants.map(plant => {
+                const plantInfo = BLOOD_PLANTS.find(p => p.type === plant.plant_type);
+                return (
+                  <div key={plant.id} className="bg-gray-800 rounded-xl p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <h4 className="text-white font-bold mb-1">{plantInfo?.name} 🌱</h4>
+                        <p className="text-gray-400 text-sm mb-2">Stage {plant.growth_stage}/5</p>
+                        <div className="flex gap-3 text-xs mb-3">
+                          <span className={`${plant.health > 70 ? 'text-green-400' : plant.health > 40 ? 'text-yellow-400' : 'text-red-400'}`}>
+                            Health: {plant.health}%
+                          </span>
+                          <span className="text-purple-400">Potency: {plant.potency}%</span>
+                          {plant.mutation_level > 0 && <span className="text-pink-400">Mutated: {plant.mutation_level}%</span>}
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
+                          <div 
+                            style={{ width: `${(plant.growth_stage / 5) * 100}%` }}
+                            className="h-2 bg-gradient-to-r from-green-500 to-purple-500 rounded-full"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={async () => {
+                          await base44.entities.BloodPlant.update(plant.id, {
+                            health: Math.min(100, plant.health + 20),
+                            last_watered: new Date().toISOString()
+                          });
+                          queryClient.invalidateQueries();
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm"
+                      >
+                        Water
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await base44.entities.BloodPlant.update(plant.id, {
+                            health: Math.min(100, plant.health + 30),
+                            potency: Math.min(100, plant.potency + 15),
+                            needs_blood: false
+                          });
+                          queryClient.invalidateQueries();
+                        }}
+                        className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm"
+                      >
+                        Feed Blood
+                      </button>
+                      {plant.growth_stage < 5 && (
+                        <button
+                          onClick={async () => {
+                            await base44.entities.BloodPlant.update(plant.id, {
+                              growth_stage: plant.growth_stage + 1,
+                              harvest_ready: plant.growth_stage + 1 === 5
+                            });
+                            queryClient.invalidateQueries();
+                          }}
+                          className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm"
+                        >
+                          Advance Growth
+                        </button>
+                      )}
+                      {plant.harvest_ready && (
+                        <button
+                          onClick={async () => {
+                            const yield_ = Math.floor(Math.random() * 3) + plantInfo.baseYield;
+                            const strainName = `${plantInfo.name} Extract`;
+                            
+                            await base44.entities.BloodDrug.create({
+                              strain_name: strainName,
+                              potency: Math.floor(plant.potency / 10),
+                              quantity: yield_,
+                              price_per_dose: 150 + (plant.potency * 2),
+                              effects: `organic ${plantInfo.name.toLowerCase()} strain. Natural. Pure. ${plant.mutation_level > 0 ? 'Mutated properties.' : ''}`,
+                              addictiveness: 40 + plant.potency / 2
+                            });
+
+                            await base44.entities.BloodPlant.delete(plant.id);
+
+                            await base44.entities.NightLog.create({
+                              entry: `Harvested ${plantInfo.name}. Got ${yield_} doses of ${strainName}.`,
+                              category: 'interaction',
+                              intensity: 'moderate'
+                            });
+
+                            if (operation) {
+                              await base44.entities.DrugOperation.update(operation.id, {
+                                research_points: Math.min(100, (operation.research_points || 0) + 10)
+                              });
+                            }
+
+                            queryClient.invalidateQueries();
+                          }}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm col-span-2"
+                        >
+                          🌿 Harvest
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         )}
       </motion.div>

@@ -7,7 +7,7 @@ import { Sparkles, Home, MessageCircle, BookOpen, Coffee, Droplets, Shirt, Moon,
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import BusinessManagement from '@/components/nightbound/BusinessManagement';
-import NPCInteraction from '@/components/nightbound/NPCInteraction';
+
 import ServantAutomationSettings from '@/components/nightbound/ServantAutomationSettings';
 import ServantProactiveActions from '@/components/nightbound/ServantProactiveActions';
 import OnlyFangsManagement from '@/components/nightbound/OnlyFangsManagement';
@@ -34,7 +34,6 @@ import EmotionMonitor from '@/components/nightbound/EmotionMonitor';
 
 const CHORES = [
   { id: 'dating', label: 'Dating App', icon: Heart, duration: 0, isModal: true },
-  { id: 'npc', label: 'Chat with Friends', icon: User, duration: 0, isModal: true },
   { id: 'clean', label: 'Clean the rooms', icon: Sparkles, duration: 2000, outcomes: ['You tidied the bedroom. Everything feels peaceful.', 'You dusted the shelves. The space feels lighter.', 'You organized their belongings with care.'] },
   { id: 'prepare', label: 'Prepare their space', icon: Home, duration: 2000, outcomes: ['You arranged fresh linens. The bed smells like night air.', 'You lit candles around the room. Shadows dance.', 'You set out their things exactly how they like them.'] },
   { id: 'study', label: 'Study their books', icon: BookOpen, duration: 2500, outcomes: ['You read about the old ways. Some things make sense now.', 'Their books are strange. Beautiful. Terrifying.', 'You found a page marked for you. Your name written in the margin.'] },
@@ -128,7 +127,7 @@ export default function ServantHome() {
   const [doingChore, setDoingChore] = useState(null);
   const [choreOutcome, setChoreOutcome] = useState('');
   const [showBusinessModal, setShowBusinessModal] = useState(false);
-  const [showNPCModal, setShowNPCModal] = useState(false);
+
   const [showAutomationSettings, setShowAutomationSettings] = useState(false);
   const [showOnlyFangs, setShowOnlyFangs] = useState(false);
   const [showServantInteractions, setShowServantInteractions] = useState(false);
@@ -244,8 +243,6 @@ export default function ServantHome() {
     if (chore.isModal) {
       if (chore.id === 'dating') {
         setShowDating(true);
-      } else if (chore.id === 'npc') {
-        setShowNPCModal(true);
       } else if (chore.id === 'choose_career') {
         setShowCareerSelector(true);
       } else if (chore.id === 'jewelry') {
@@ -398,12 +395,6 @@ export default function ServantHome() {
           >
             <Settings className="w-4 h-4" />
             Automation
-          </button>
-          <button
-            onClick={() => setShowNPCModal(true)}
-            className="text-gray-400 hover:text-white text-sm transition-colors"
-          >
-            Town People
           </button>
           <button
             onClick={() => setShowWitchVisit(true)}
@@ -664,12 +655,7 @@ export default function ServantHome() {
             onClose={() => setShowBusinessModal(false)}
           />
         )}
-        {showNPCModal && (
-          <NPCInteraction
-            onClose={() => setShowNPCModal(false)}
-            viewMode="servant"
-          />
-        )}
+
         {showAutomationSettings && servant && (
           <ServantAutomationSettings
             servant={servant}
