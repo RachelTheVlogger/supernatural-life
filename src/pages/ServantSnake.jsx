@@ -478,15 +478,7 @@ export default function ServantSnake() {
                     </div>
                   )}
 
-                  {/* Eye Glow based on mood */}
-                  <div className="absolute -top-2 -right-2 text-2xl">
-                    {snake.mood === 'content' && '😊💫'}
-                    {snake.mood === 'playful' && '😄✨'}
-                    {snake.mood === 'aggressive' && '😠💢'}
-                    {snake.mood === 'sleepy' && '😴💤'}
-                    {snake.mood === 'affectionate' && '🥰💕'}
-                    {snake.mood === 'curious' && '🤔💭'}
-                  </div>
+
 
                   {/* Accessories */}
                   {snake.accessories && snake.accessories.length > 0 && (
@@ -514,6 +506,18 @@ export default function ServantSnake() {
                   {snake.position === 'wrapped' && '🟡 Wrapped Around Arm'}
                   {snake.position === 'hiding' && '🟣 Hiding'}
                   {snake.position === 'sleeping' && '⚫ Sleeping'}
+                </div>
+
+                {/* Mood Indicator - separate from face */}
+                <div className="mt-3 flex items-center justify-center gap-2 text-lg">
+                  <span className="text-gray-400 text-xs">Mood:</span>
+                  {snake.mood === 'content' && <span>😊💫</span>}
+                  {snake.mood === 'playful' && <span>😄✨</span>}
+                  {snake.mood === 'aggressive' && <span>😠💢</span>}
+                  {snake.mood === 'sleepy' && <span>😴💤</span>}
+                  {snake.mood === 'affectionate' && <span>🥰💕</span>}
+                  {snake.mood === 'curious' && <span>🤔💭</span>}
+                  <span className="text-gray-300 text-xs capitalize">({snake.mood})</span>
                 </div>
               </div>
 
