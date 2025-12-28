@@ -1322,20 +1322,22 @@ Provide analysis in this JSON format:
                     transition={{ delay: i * 0.05 }}
                     onClick={() => handleInteraction(action)}
                     disabled={!!interacting || (action.reqBond && snake.bond_level < action.reqBond)}
-                    className={`w-full border-2 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all ${
+                    className={`w-full border-2 rounded-xl py-4 px-6 transition-all ${
                       action.reqBond && snake.bond_level < action.reqBond
                         ? 'bg-gray-800/60 border-gray-600/50 opacity-50 cursor-not-allowed'
                         : 'bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-green-500/50'
-                    } ${!!interacting ? 'opacity-50' : ''}`
+                    } ${!!interacting ? 'opacity-50' : ''}`}
                   >
-                    <ActionIcon className="w-5 h-5 text-white" />
-                    <div className="flex-1">
-                      <span className="text-base font-medium text-white block">
-                        {interacting === action.id ? 'Interacting...' : action.label}
-                      </span>
-                      {action.reqBond && snake.bond_level < action.reqBond && (
-                        <span className="text-xs text-gray-400">Requires {action.reqBond} bond</span>
-                      )}
+                    <div className="flex items-center gap-3 w-full">
+                      <ActionIcon className="w-5 h-5 text-white" />
+                      <div className="flex-1 text-left">
+                        <span className="text-base font-medium text-white block">
+                          {interacting === action.id ? 'Interacting...' : action.label}
+                        </span>
+                        {action.reqBond && snake.bond_level < action.reqBond && (
+                          <span className="text-xs text-gray-400">Requires {action.reqBond} bond</span>
+                        )}
+                      </div>
                     </div>
                   </motion.button>
                 );
