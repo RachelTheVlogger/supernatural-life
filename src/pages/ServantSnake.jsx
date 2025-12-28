@@ -138,26 +138,59 @@ export default function ServantSnake() {
 
       switch (action) {
         case 'feed_meal':
+          const feedOutcomes = [
+            `You prepare fresh meat for ${snake.custom_name}. The snake approaches cautiously. Sniffs. Then strikes! Teeth sink into flesh. Eating slowly. Savoring each bite. You watch fondly as your familiar feeds. When finished, ${snake.custom_name} coils contentedly, belly full. A satisfied hiss. The bond between you grows.`,
+            `Feeding time. ${snake.custom_name} hasn't eaten in days. You can see the hunger in those glowing eyes. You offer the meal. The serpent lunges—FAST. Powerful jaws clamp down. Swallowing methodically. You stroke its scales as it eats. "Good," you whisper. The snake's tail wraps around your wrist. Grateful.`,
+            `${snake.custom_name} is RAVENOUS. You present the food. Your familiar's eyes lock onto it. Predator mode activated. The strike is lightning-quick. A blur of scales and fangs. Minutes pass as the snake consumes its prey. Finally sated, ${snake.custom_name} slides over to you. Presses its head against your palm. Thank you.`
+          ];
           updates.hunger = Math.max(0, (snake.hunger || 30) - 50);
-          message = `You fed ${snake.custom_name} a proper meal. Satisfied hisses. Hunger sated.`;
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 5);
+          message = feedOutcomes[Math.floor(Math.random() * feedOutcomes.length)];
           break;
+
         case 'give_water':
+          const waterOutcomes = [
+            `You fill ${snake.custom_name}'s water bowl with fresh, cool water. The snake glides over immediately. Dips its snout in. Drinks for a long time—must have been thirsty. You watch the rhythmic movements of its throat. When done, the serpent looks up at you. Eyes brighter. More alert. Refreshed. It flicks its tongue gratefully.`,
+            `Time for fresh water. ${snake.custom_name} watches as you clean the old bowl, refill it. The water glistens. Your familiar approaches and begins drinking. Slow. Deliberate. You sit beside it. Run your hand along its scales. The snake continues drinking, completely at ease with your presence. Trust.`,
+            `${snake.custom_name} hasn't had water in a while. You notice the dryness in its scales. Quickly, you bring fresh water. The snake drinks DEEPLY. Relief visible in every movement. After, it coils in the water dish—just resting there. Cool and comfortable. You smile. Taking care of your familiar feels right.`
+          ];
           updates.happiness = Math.min(100, (snake.happiness || 50) + 10);
-          message = `Fresh water provided. ${snake.custom_name} drinks deeply. Refreshed.`;
+          updates.health = Math.min(100, (snake.health || 100) + 3);
+          message = waterOutcomes[Math.floor(Math.random() * waterOutcomes.length)];
           break;
+
         case 'clean_enclosure':
-          updates.health = Math.min(100, (snake.health || 100) + 5);
-          updates.happiness = Math.min(100, (snake.happiness || 50) + 8);
-          message = `You cleaned ${snake.custom_name}'s enclosure. Sparkling clean. Snake content.`;
+          const cleanOutcomes = [
+            `Cleaning time. You remove ${snake.custom_name} gently, place it on your shoulder. It watches curiously as you work. Scrubbing. Wiping. Replacing bedding. Everything fresh and new. When you return your familiar to its space, it immediately explores. Sliding over every surface. Inspecting your work. Then coils in its favorite spot. Content. You did well.`,
+            `The enclosure needs cleaning. ${snake.custom_name} is NOT happy about being moved. Hisses at you. Stubborn serpent. But you persist. Clean every corner. Disinfect. Replace substrate. Add new enrichment items. When finished, you return the snake. It explores suspiciously... then settles. Admits (silently) that this is better. You win.`,
+            `You begin the cleaning ritual. ${snake.custom_name} helps—sort of. Follows you around. Gets in the way. Investigates every tool. You laugh. "I'm trying to clean FOR you," you say. The snake doesn't care. Just wants to be involved. Eventually you finish. Sparkling clean. The serpent coils up immediately. Happy. You suspect it appreciates the effort more than it shows.`
+          ];
+          updates.health = Math.min(100, (snake.health || 100) + 8);
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 12);
+          message = cleanOutcomes[Math.floor(Math.random() * cleanOutcomes.length)];
           break;
+
         case 'health_check':
+          const healthOutcomes = [
+            `Health inspection. You examine ${snake.custom_name} carefully. Eyes—clear and bright. Scales—smooth, no damage. Mouth—check for infections. Teeth sharp. Perfectly healthy. You run your hands along the entire length of its body. Checking for injuries. Bumps. Anything unusual. All good. ${snake.custom_name} tolerates the examination patiently. Trusts you completely. When done, you give it a treat. "Perfect health," you announce. The snake seems pleased.`,
+            `Vet check time. ${snake.custom_name} is NOT cooperating. Squirming. Hiding its head. "Come on," you coax. Finally manage to examine it properly. Temperature normal. Breathing good. No signs of illness. Just being dramatic. You discover a small scratch though—probably from training. You clean it carefully. Apply healing salve. ${snake.custom_name} hisses but holds still. Knows you're helping. After, it nuzzles against you. Apology accepted.`,
+            `You notice ${snake.custom_name} moving slower today. Concerned, you do a thorough health assessment. Check its weight—good. Skin elasticity—fine. Then you find it: preparing to shed. That explains everything. You increase humidity. Add a rough surface for shedding. Make sure water is fresh. Your familiar will need extra care during this time. You stay close. Monitoring. Supportive. This is what it means to care for your serpent.`
+          ];
           updates.health = Math.min(100, (snake.health || 100) + 15);
-          message = `Health inspection complete. Scales checked. Teeth examined. ${snake.custom_name} is healthy.`;
+          updates.happiness = Math.min(100, (snake.happiness || 50) + 5);
+          message = healthOutcomes[Math.floor(Math.random() * healthOutcomes.length)];
           break;
+
         case 'enrichment':
+          const enrichmentOutcomes = [
+            `Enrichment day! You set up an obstacle course for ${snake.custom_name}. Tubes to explore. Branches to climb. Hidden treats. The snake investigates everything. Curious. Excited. You watch as it navigates each challenge. Problem-solving. Learning. This is good for its mind AND body. When done, ${snake.custom_name} returns to you. Tired but happy. Mental stimulation achieved. You can see the intelligence in those eyes. Your familiar is THRIVING.`,
+            `Time to shake things up. ${snake.custom_name} has been bored. You rearrange its entire enclosure. New layout. New hiding spots. Add textures it hasn't felt before. Release the snake back in. It IMMEDIATELY starts exploring. Every corner. Every surface. Tongue flicking constantly. Taking it all in. Hours pass. Your familiar is completely engaged. This is what it needed. Variety. Challenge. You make a mental note to do this more often.`,
+            `You bring ${snake.custom_name} to a new room. Let it explore freely under supervision. The snake is FASCINATED. New smells. New sounds. Different temperature. It investigates cautiously at first, then with growing confidence. Climbs furniture. Hides in corners. Tests boundaries. You guide it gently. Keep it safe. This exposure to new environments builds confidence. Makes your familiar more adaptable. Stronger. After an hour, you return it to its enclosure. ${snake.custom_name} seems... bigger somehow. More worldly. Enrichment success.`
+          ];
           updates.happiness = Math.min(100, (snake.happiness || 50) + 20);
           updates.mood = 'playful';
-          message = `Enrichment time! New toys. Obstacles. ${snake.custom_name} explores excitedly.`;
+          updates.bond_level = Math.min(100, (snake.bond_level || 0) + 5);
+          message = enrichmentOutcomes[Math.floor(Math.random() * enrichmentOutcomes.length)];
           break;
       }
 
@@ -175,8 +208,8 @@ export default function ServantSnake() {
       setTimeout(() => {
         setInteracting(null);
         setOutcome('');
-      }, 3000);
-    }, 1500);
+      }, 4500);
+    }, 2000);
   };
 
   const getAISuggestions = async () => {
