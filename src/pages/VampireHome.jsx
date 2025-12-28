@@ -115,12 +115,16 @@ export default function VampireHome() {
     queryKey: ['allFriends'],
     queryFn: async () => {
       try {
-        return await base44.entities.PotentialServant.list();
+        const friends = await base44.entities.PotentialServant.list();
+        // Filter out friends whose servant no longer exists
+        const validServantIds = servants.map(s => s.id);
+        return friends.filter(f => validServantIds.includes(f.met_through_servant_id));
       } catch (e) {
         console.error('Failed to fetch friends:', e);
         return [];
       }
-    }
+    },
+    enabled: servants.length > 0
   });
 
   const { data: powerProgress = [] } = useQuery({
@@ -1122,14 +1126,23 @@ export default function VampireHome() {
             onClose={() => setShowOnlyFangs(false)}
           />
         )}
-        {selectedFriend && vampireState && servants.length > 0 && (
-          <FriendInteraction
-            friend={selectedFriend}
-            servant={servants.find(s => s.id === selectedFriend.met_through_servant_id) || servants[0]}
-            vampireState={vampireState}
-            onClose={() => setSelectedFriend(null)}
-          />
-        )}
+        {selectedFriend && vampireState && servants.length > 0 && (() => {
+          const matchingServant = servants.find(s => s.id === selectedFriend.met_through_servant_id);
+          if (!matchingServant) {
+            // Clean up invalid friend reference
+            base44.entities.PotentialServant.delete(selectedFriend.id).catch(() => {});
+            setSelectedFriend(null);
+            return null;
+          }
+          return (
+            <FriendInteraction
+              friend={selectedFriend}
+              servant={matchingServant}
+              vampireState={vampireState}
+              onClose={() => setSelectedFriend(null)}
+            />
+          );
+        })()}
         {dateServant && vampireState && (
           <DateOutingModal
             servant={dateServant}
