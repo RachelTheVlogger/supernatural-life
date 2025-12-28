@@ -149,9 +149,10 @@ export default function WerewolfHome() {
             onClick={async () => {
               await base44.entities.PlayerWerewolf.create({
                 name: 'Fenrir',
-                pack_rank: 'lone_wolf',
+                pack_status: 'lone',
                 transformation_control: 40,
-                current_form: 'human'
+                current_form: 'human',
+                pack_members: []
               });
               queryClient.invalidateQueries();
             }}
