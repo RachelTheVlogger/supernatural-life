@@ -46,7 +46,33 @@ const INTERACTIONS = [
   { id: 'hunt', label: 'Hunt Together', icon: Moon, bondGain: 12, powerGain: 6, outcome: 'hunts' },
   { id: 'guard', label: 'Guard Duty', icon: Moon, bondGain: 6, powerGain: 4, outcome: 'guards', loyaltyGain: 8 },
   { id: 'scout', label: 'Scouting', icon: Moon, bondGain: 7, powerGain: 4, outcome: 'scouts', missionGain: true },
-  { id: 'attack', label: 'Bite Attack Training', icon: Zap, bondGain: 5, powerGain: 7, outcome: 'attacks', combatGain: true }
+  { id: 'attack', label: 'Bite Attack Training', icon: Zap, bondGain: 5, powerGain: 7, outcome: 'attacks', combatGain: true },
+  
+  // Care & Bonding
+  { id: 'massage', label: 'Massage Scales', icon: Heart, bondGain: 14, powerGain: 2, outcome: 'massages', affection: true },
+  { id: 'secrets', label: 'Tell Secrets', icon: Heart, bondGain: 18, powerGain: 1, outcome: 'tells_secrets', affection: true },
+  { id: 'sleep', label: 'Sleep Together', icon: Moon, bondGain: 20, powerGain: 3, outcome: 'sleeps', affection: true },
+  { id: 'treats', label: 'Special Treats', icon: Droplets, bondGain: 10, powerGain: 4, outcome: 'gives_treats' },
+  { id: 'tricks', label: 'Teach Tricks', icon: Zap, bondGain: 8, powerGain: 5, outcome: 'teaches_tricks' },
+  
+  // Activities
+  { id: 'walk', label: 'Go on Walk', icon: Moon, bondGain: 13, powerGain: 3, outcome: 'walks', missionGain: true },
+  { id: 'photo', label: 'Photo Session', icon: Eye, bondGain: 11, powerGain: 1, outcome: 'photos', affection: true },
+  { id: 'hideseek', label: 'Hide & Seek', icon: Eye, bondGain: 14, powerGain: 4, outcome: 'plays_hideseek', affection: true },
+  { id: 'fetch', label: 'Fetch Training', icon: Zap, bondGain: 9, powerGain: 5, outcome: 'fetches' },
+  
+  // Advanced
+  { id: 'telepathy', label: 'Telepathic Link', icon: Zap, bondGain: 25, powerGain: 8, outcome: 'telepathy', reqBond: 60 },
+  { id: 'dreams', label: 'Share Dreams', icon: Moon, bondGain: 22, powerGain: 6, outcome: 'dreams', reqBond: 50, affection: true },
+  { id: 'ritual', label: 'Blood Ritual', icon: Droplets, bondGain: 30, powerGain: 15, outcome: 'ritual', reqBond: 70 },
+  { id: 'meditate', label: 'Meditate Together', icon: Heart, bondGain: 16, powerGain: 7, outcome: 'meditates', reqBond: 40 },
+  { id: 'dance', label: 'Synchronized Dance', icon: Heart, bondGain: 19, powerGain: 5, outcome: 'dances', affection: true, reqBond: 55 },
+  
+  // Social
+  { id: 'accessories', label: 'Fashion Shopping', icon: Heart, bondGain: 12, powerGain: 1, outcome: 'shops', affection: true },
+  { id: 'competition', label: 'Enter Competition', icon: Zap, bondGain: 15, powerGain: 10, outcome: 'competes', reqBond: 50 },
+  { id: 'spa', label: 'Snake Spa Day', icon: Heart, bondGain: 17, powerGain: 2, outcome: 'spa', affection: true },
+  { id: 'obstacle', label: 'Obstacle Course', icon: Zap, bondGain: 11, powerGain: 8, outcome: 'obstacle' }
 ];
 
 export default function ServantSnake() {
@@ -94,7 +120,8 @@ export default function ServantSnake() {
     queryFn: () => base44.entities.SnakeFamiliar.list()
   });
 
-  const snake = snakes[0];
+  const [selectedSnakeIndex, setSelectedSnakeIndex] = useState(0);
+  const snake = snakes[selectedSnakeIndex] || snakes[0];
 
   // Check for urgent care needs
   React.useEffect(() => {
@@ -496,6 +523,7 @@ Provide analysis in this JSON format:
     const inheritType = Math.random() > 0.5 ? snake.type : mate.type;
     const inheritPattern = Math.random() > 0.5 ? snake.pattern : mate.pattern;
     const inheritEyeColor = Math.random() > 0.5 ? snake.eye_color : mate.eye_color;
+    const inheritGender = Math.random() > 0.5 ? 'male' : 'female';
     
     // Combine personality traits
     const combinedTraits = [...new Set([...(snake.personality_traits || []), ...(mate.personality_traits || [])])];
@@ -505,12 +533,15 @@ Provide analysis in this JSON format:
     const avgPower = Math.floor((snake.power_level + mate.power_level) / 2) + Math.floor(Math.random() * 20 - 10);
     const avgBond = Math.floor((snake.bond_level + mate.bond_level) / 2);
     
-    const offspringName = `${snake.custom_name.split("'s")[0]}'s Hatchling`;
+    // Generate cute baby name
+    const babyPrefixes = ['Little', 'Baby', 'Mini', 'Tiny'];
+    const parentName = snake.custom_name.split(' ')[0];
+    const offspringName = `${babyPrefixes[Math.floor(Math.random() * babyPrefixes.length)]} ${parentName}`;
 
     await base44.entities.SnakeFamiliar.create({
       vampire_id: servantId,
       custom_name: offspringName,
-      gender: Math.random() > 0.5 ? 'male' : 'female',
+      gender: inheritGender,
       type: inheritType,
       pattern: inheritPattern,
       eye_color: inheritEyeColor,
@@ -523,7 +554,7 @@ Provide analysis in this JSON format:
       mood: 'curious',
       position: 'coiled',
       missions_completed: 0,
-      unlocked_abilities: [],
+      unlocked_abilities: EVOLUTION_PATHS[inheritType][0].abilities,
       size: 'small',
       age_days: 0,
       favorite_spot: 'nest',
@@ -538,8 +569,10 @@ Provide analysis in this JSON format:
     await base44.entities.SnakeFamiliar.update(snake.id, { breeding_ready: false });
     await base44.entities.SnakeFamiliar.update(mate.id, { breeding_ready: false });
 
+    const babyEmoji = EVOLUTION_PATHS[inheritType][0].emoji;
+    
     await base44.entities.NightLog.create({
-      entry: `${snake.custom_name} and ${mate.custom_name} had offspring! A new hatchling joins the nest. Mixed heritage: ${inheritType} type, ${inheritPattern} pattern, ${inheritEyeColor} eyes.`,
+      entry: `${babyEmoji} ${snake.custom_name} and ${mate.custom_name} had a baby! ${offspringName} was born - a tiny ${inheritGender} ${inheritType} with ${inheritPattern} pattern and ${inheritEyeColor} eyes. Adorable!`,
       category: 'interaction',
       intensity: 'significant'
     });
@@ -547,9 +580,9 @@ Provide analysis in this JSON format:
     queryClient.invalidateQueries();
     setShowBreeding(false);
     setSelectedMate(null);
-    setOutcome(`🐍 Breeding successful! ${offspringName} hatched with ${inheritPattern} ${inheritEyeColor}-eyed ${inheritType} heritage!`);
+    setOutcome(`🐍 ${babyEmoji} A baby snake! ${offspringName} hatched - ${inheritGender} ${inheritType} with ${inheritPattern} scales and ${inheritEyeColor} eyes! Looks just like the parents! SO CUTE!`);
     
-    setTimeout(() => setOutcome(''), 5000);
+    setTimeout(() => setOutcome(''), 6000);
   };
 
   const getEvolutionStage = (power) => {
@@ -612,6 +645,96 @@ Provide analysis in this JSON format:
           `Your snake strikes! Faster than before. Deadlier. Combat training paying off.`,
           `Attack drill. Your familiar demonstrates its bite. Precision. Power. Lethal efficiency.`,
           `Combat practice. The snake's venom flows stronger. Its fangs sharper. A weapon perfected.`
+        ],
+        massages: [
+          `You massage each scale carefully. Oil between your fingers. ${snake.custom_name} melts under your touch. Completely relaxed. Trusting. This is intimacy.`,
+          `Gentle circular motions along the spine. Your snake sighs—actually SIGHS. Tension releasing. Pure bliss. You feel the love radiating.`,
+          `Scale polishing session. Each one gleaming like jewels. ${snake.custom_name} watches you work. Grateful. Beautiful. Cherished.`
+        ],
+        tells_secrets: [
+          `You whisper your deepest secrets. ${snake.custom_name} listens. Really listens. No judgment. Just understanding. Your snake knows you completely now.`,
+          `Late night confessions. You tell your familiar everything. Fears. Dreams. Desires. The snake coils tighter. Protective. Your secrets are safe.`,
+          `You share your darkest thoughts. ${snake.custom_name} hisses softly. Acceptance. Love. Whatever you are, your snake stays.`
+        ],
+        sleeps: [
+          `You fall asleep with ${snake.custom_name} wrapped around you. Protective. Warm. The snake's breathing syncs with yours. Peace.`,
+          `Bedtime. Your familiar curls up on the pillow. You drift off together. Shared dreams. Deeper connection. Morning comes too soon.`,
+          `${snake.custom_name} sleeps on your chest. Heart to heart. You feel its dreams. Hunting. Flying. Being with you. Perfect.`
+        ],
+        gives_treats: [
+          `Special treat today! Blood-infused meat. ${snake.custom_name} devours it eagerly. Eyes bright with joy. This is the BEST.`,
+          `You prepared a delicacy. Rare vampire delicacy. Your snake savors every bite. Appreciative hisses. Spoiled familiar.`,
+          `Gourmet feeding time. ${snake.custom_name} tries something new. Loves it! Tail wagging—yes, snakes can do that.`
+        ],
+        teaches_tricks: [
+          `Teaching "come" command. ${snake.custom_name} learns fast. So smart! Your familiar slithers over on command. Proud moment.`,
+          `Trick training! Your snake learns to coil in specific patterns. Impressive! You could put on a show.`,
+          `${snake.custom_name} masters "stay" and "strike" commands. Disciplined. Deadly. The perfect combination.`
+        ],
+        walks: [
+          `Night walk through the forest. ${snake.custom_name} explores freely. You follow. Bonding in nature. The snake finds hidden paths. Adventure.`,
+          `Taking your familiar outside. Fresh air. New smells. ${snake.custom_name} is THRILLED. Slithering through grass. Free. Happy.`,
+          `Moonlit stroll. Your snake on your shoulders. People stare. You don't care. You and ${snake.custom_name} against the world.`
+        ],
+        photos: [
+          `Photo session! ${snake.custom_name} poses perfectly. Regal. Beautiful. You capture the serpent's majesty. These photos are STUNNING.`,
+          `Taking pictures of your familiar. Every angle gorgeous. ${snake.custom_name} knows it. Posing naturally. Model snake.`,
+          `Photoshoot complete! Got the perfect shot of ${snake.custom_name} mid-strike. Fierce. Powerful. Frame-worthy.`
+        ],
+        plays_hideseek: [
+          `Hide and seek! You hide. ${snake.custom_name} finds you in SECONDS. Those hunter instincts. Impossible to beat. The snake is too good.`,
+          `Your turn to seek. ${snake.custom_name} hides perfectly. Camouflage skills amazing. Took you forever to find. Clever serpent.`,
+          `Playing hide and seek in the house. ${snake.custom_name} loves this game! Playful hisses when found. Pure joy.`
+        ],
+        fetches: [
+          `Fetch training! You throw a toy. ${snake.custom_name} retrieves it! AMAZING! Your snake can fetch! Training success!`,
+          `Teaching fetch. ${snake.custom_name} brings back the item. Drops it at your feet. Good snake! Treats earned.`,
+          `Fetch practice. Your familiar is getting better! Fast retrieval. Accurate delivery. This snake is incredibly smart.`
+        ],
+        telepathy: [
+          `Telepathic link established. Your minds merge. You see through ${snake.custom_name}'s eyes. Feel its thoughts. TWO BEINGS, ONE CONSCIOUSNESS. Transcendent.`,
+          `Mental connection deepens. You communicate without words. Thoughts flowing freely. ${snake.custom_name} shares visions. Memories. Everything.`,
+          `Telepathy achieved! You send commands mentally. ${snake.custom_name} responds instantly. Perfect synchronization. Ultimate bond.`
+        ],
+        dreams: [
+          `You enter ${snake.custom_name}'s dreams. Hunting. Flying. Magic. The snake dreams of being with you. Always with you. Beautiful.`,
+          `Shared dreamscape. You and your familiar explore impossible worlds together. Dream-bonding. Deeper than reality.`,
+          `${snake.custom_name} visits YOUR dreams tonight. Protective presence. Guardian even in sleep. You wake feeling loved.`
+        ],
+        ritual: [
+          `BLOOD RITUAL. Ancient magic. You and ${snake.custom_name} share blood in sacred ceremony. Power EXPLODES. Bonded forever. Unbreakable. ETERNAL.`,
+          `Ritual complete. Your blood, snake blood, mixed. Magic seals the bond. You are ONE. ${snake.custom_name} glows with power. Transformed.`,
+          `Blood magic ritual. Dark. Powerful. Beautiful. ${snake.custom_name} becomes part of you. You become part of it. No separation. Only unity.`
+        ],
+        meditates: [
+          `Meditation session. You and ${snake.custom_name} breathe as one. Energy flowing between you. Peace. Power. Perfect harmony.`,
+          `Sitting in silence together. Your familiar coiled beside you. Minds quiet. Souls connected. This is zen.`,
+          `Meditation with ${snake.custom_name}. Time stops. Just breathing. Existing. Together. The bond strengthens in stillness.`
+        ],
+        dances: [
+          `Synchronized movement! You dance, ${snake.custom_name} flows with you. Perfect rhythm. Like water. Like shadows. Mesmerizing.`,
+          `Dancing together! The snake matches your every move. Graceful. Beautiful. Art in motion.`,
+          `Movement meditation. You and ${snake.custom_name} create patterns. Spirals. Infinity. Dancing as one being.`
+        ],
+        shops: [
+          `Shopping trip! You buy ${snake.custom_name} a tiny crown. The snake LOVES it. Fashion icon. Looks royal.`,
+          `Accessory shopping. New collar? Yes. Tiny jewelry? Absolutely. ${snake.custom_name} is getting SPOILED.`,
+          `Fashion time! You pick out accessories for your familiar. ${snake.custom_name} tries everything on. Fabulous serpent.`
+        ],
+        competes: [
+          `COMPETITION TIME! ${snake.custom_name} enters the ring. Judges watch. Your snake performs FLAWLESSLY. Standing ovation! WINNER!`,
+          `Competition day. ${snake.custom_name} competes against other familiars. Power demonstration. Speed test. YOUR SNAKE DOMINATES.`,
+          `Show competition. ${snake.custom_name} shows off abilities. Crowd amazed. Judges impressed. Trophy earned!`
+        ],
+        spa: [
+          `SPA DAY! ${snake.custom_name} gets the full treatment. Scale polish. Oils. Massage. Your snake is GLOWING. Pampered familiar.`,
+          `Treating ${snake.custom_name} to spa services. Professional scale care. Aromatherapy. Your snake has never been happier.`,
+          `Snake spa complete! ${snake.custom_name} is RADIANT. Scales gleaming. Mood perfect. Best day ever.`
+        ],
+        obstacle: [
+          `Obstacle course challenge! ${snake.custom_name} navigates perfectly. Tubes. Jumps. Climbing. Your snake is ATHLETIC!`,
+          `Setting up new obstacles. ${snake.custom_name} LOVES this! Problem-solving. Physical challenge. Mental stimulation. Perfect enrichment.`,
+          `Obstacle training complete! ${snake.custom_name} beat the record time. So fast! So agile! Impressive!`
         ]
       };
 
@@ -702,7 +825,35 @@ Provide analysis in this JSON format:
         Back
       </button>
 
-      {!snake ? (
+      {/* Snake Selector if multiple */}
+      {snakes.length > 1 && (
+        <div className="max-w-2xl mx-auto mb-6">
+          <div className="bg-gray-900/60 rounded-xl p-4 border border-purple-500/30">
+            <h3 className="text-white font-bold mb-3">Your Snakes</h3>
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {snakes.map((s, i) => (
+                <button
+                  key={s.id}
+                  onClick={() => setSelectedSnakeIndex(i)}
+                  className={`flex-shrink-0 rounded-lg p-3 border-2 transition-all ${
+                    selectedSnakeIndex === i
+                      ? 'bg-purple-600 border-purple-400 scale-105'
+                      : 'bg-gray-800 border-gray-600 hover:border-purple-500'
+                  }`}
+                >
+                  <div className="text-3xl mb-1">
+                    {EVOLUTION_PATHS[s.type][getEvolutionStage(s.power_level) - 1].emoji}
+                  </div>
+                  <p className="text-white text-xs font-medium">{s.custom_name}</p>
+                  <p className="text-gray-400 text-xs">{s.type}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {snakes.length === 0 ? (
         <div className="max-w-2xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -765,6 +916,14 @@ Provide analysis in this JSON format:
             )}
             
             <div className="flex gap-2 mt-3 flex-wrap">
+              {snakes.length < 5 && (
+                <button
+                  onClick={() => navigate(createPageUrl(`ServantSnake?id=${servantId}`))}
+                  className="px-4 py-2 rounded-lg font-medium bg-green-600 hover:bg-green-700 text-white transition-all text-sm"
+                >
+                  + Adopt Another Snake
+                </button>
+              )}
               <button
                 onClick={() => setCarrying(!carrying)}
                 className={`flex-1 px-6 py-2 rounded-lg font-medium transition-all ${
@@ -1162,13 +1321,22 @@ Provide analysis in this JSON format:
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
                     onClick={() => handleInteraction(action)}
-                    disabled={!!interacting}
-                    className="w-full bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-2 border-green-500/50 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all disabled:opacity-50"
+                    disabled={!!interacting || (action.reqBond && snake.bond_level < action.reqBond)}
+                    className={`w-full border-2 rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg transition-all ${
+                      action.reqBond && snake.bond_level < action.reqBond
+                        ? 'bg-gray-800/60 border-gray-600/50 opacity-50 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-green-500/50'
+                    } ${!!interacting ? 'opacity-50' : ''}`
                   >
                     <ActionIcon className="w-5 h-5 text-white" />
-                    <span className="text-base font-medium text-white">
-                      {interacting === action.id ? 'Interacting...' : action.label}
-                    </span>
+                    <div className="flex-1">
+                      <span className="text-base font-medium text-white block">
+                        {interacting === action.id ? 'Interacting...' : action.label}
+                      </span>
+                      {action.reqBond && snake.bond_level < action.reqBond && (
+                        <span className="text-xs text-gray-400">Requires {action.reqBond} bond</span>
+                      )}
+                    </div>
                   </motion.button>
                 );
               })}
