@@ -38,6 +38,11 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
   const [servantBloodMode, setServantBloodMode] = useState(false);
   const [feedingSnake, setFeedingSnake] = useState(null);
   const [snakeFeedOutcome, setSnakeFeedOutcome] = useState('');
+  const [plantBreeding, setPlantBreeding] = useState(false);
+  const [selectedPlants, setSelectedPlants] = useState([]);
+  const [breedingOutcome, setBreedingOutcome] = useState('');
+  const [showResearch, setShowResearch] = useState(false);
+  const [researching, setResearching] = useState(false);
 
   const { data: inventory = [] } = useQuery({
     queryKey: ['bloodDrugs'],
@@ -725,6 +730,258 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
     }, 2000);
   };
 
+  const handlePlantCrossBreed = async () => {
+    if (selectedPlants.length !== 2) return;
+    
+    setPlantBreeding(true);
+
+    setTimeout(async () => {
+      try {
+        const plant1 = bloodPlants.find(p => p.id === selectedPlants[0]);
+        const plant2 = bloodPlants.find(p => p.id === selectedPlants[1]);
+
+        const plant1Info = BLOOD_PLANTS.find(p => p.type === plant1.plant_type);
+        const plant2Info = BLOOD_PLANTS.find(p => p.type === plant2.plant_type);
+
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `Two blood plants are being cross-bred: ${plant1Info.name} (${plant1Info.description}) and ${plant2Info.name} (${plant2Info.description}). Generate a unique hybrid plant. Create: hybrid_name (creative 2-3 word name), description (unique properties), special_trait (mutation/enhancement), potency_boost (10-40).`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              hybrid_name: { type: 'string' },
+              description: { type: 'string' },
+              special_trait: { type: 'string' },
+              potency_boost: { type: 'number' }
+            }
+          }
+        });
+
+        const avgPotency = Math.floor((plant1.potency + plant2.potency) / 2) + response.potency_boost;
+        const avgGrowTime = Math.floor((plant1Info.growTime + plant2Info.growTime) / 2);
+
+        await base44.entities.BloodPlant.delete(plant1.id);
+        await base44.entities.BloodPlant.delete(plant2.id);
+
+        await base44.entities.BloodPlant.create({
+          plant_type: `hybrid_${Date.now()}`,
+          growth_stage: 1,
+          health: 100,
+          potency: Math.min(100, avgPotency),
+          planted_date: new Date().toISOString(),
+          last_watered: new Date().toISOString(),
+          mutation_level: 30,
+          hybrid_name: response.hybrid_name,
+          hybrid_description: response.description,
+          special_trait: response.special_trait
+        });
+
+        await base44.entities.NightLog.create({
+          entry: `Cross-bred ${plant1Info.name} with ${plant2Info.name}. Created: ${response.hybrid_name}. ${response.special_trait}`,
+          category: 'interaction',
+          intensity: 'significant'
+        });
+
+        if (operation) {
+          await base44.entities.DrugOperation.update(operation.id, {
+            research_points: Math.min(100, (operation.research_points || 0) + 20)
+          });
+        }
+
+        setBreedingOutcome(`🌿 Hybrid Created: ${response.hybrid_name}\n\n${response.description}\n\n✨ Special Trait: ${response.special_trait}\n\nPotency: ${Math.min(100, avgPotency)}%`);
+
+        queryClient.invalidateQueries();
+
+        setTimeout(() => {
+          setPlantBreeding(false);
+          setSelectedPlants([]);
+          setBreedingOutcome('');
+        }, 6000);
+      } catch (e) {
+        // Fallback
+        const plant1 = bloodPlants.find(p => p.id === selectedPlants[0]);
+        const plant2 = bloodPlants.find(p => p.id === selectedPlants[1]);
+        const plant1Info = BLOOD_PLANTS.find(p => p.type === plant1.plant_type);
+        const plant2Info = BLOOD_PLANTS.find(p => p.type === plant2.plant_type);
+
+        const hybridNames = ['Shadow Bloom', 'Crimson Vine', 'Midnight Root', 'Blood Lotus'];
+        const hybridName = hybridNames[Math.floor(Math.random() * hybridNames.length)];
+        const avgPotency = Math.floor((plant1.potency + plant2.potency) / 2) + 20;
+
+        await base44.entities.BloodPlant.delete(plant1.id);
+        await base44.entities.BloodPlant.delete(plant2.id);
+
+        await base44.entities.BloodPlant.create({
+          plant_type: `hybrid_${Date.now()}`,
+          growth_stage: 1,
+          health: 100,
+          potency: Math.min(100, avgPotency),
+          planted_date: new Date().toISOString(),
+          last_watered: new Date().toISOString(),
+          mutation_level: 30,
+          hybrid_name: hybridName,
+          hybrid_description: `Hybrid of ${plant1Info.name} and ${plant2Info.name}. Enhanced properties.`
+        });
+
+        setBreedingOutcome(`🌿 Hybrid Created: ${hybridName}\n\nCombines traits from both parent plants.\n\nPotency: ${Math.min(100, avgPotency)}%`);
+
+        queryClient.invalidateQueries();
+
+        setTimeout(() => {
+          setPlantBreeding(false);
+          setSelectedPlants([]);
+          setBreedingOutcome('');
+        }, 6000);
+      }
+    }, 3000);
+  };
+
+  const handleReduceHeat = async (method) => {
+    if (!operation) return;
+
+    const methods = {
+      bribe: { cost: 500, reduction: 20, rep: -5, text: 'Bribed local police. Heat reduced. Corruption spreads.' },
+      relocate: { cost: 1000, reduction: 40, rep: -10, text: 'Relocated lab. New location. Fresh start. Lost some territory.' },
+      cleanup: { cost: 200, reduction: 10, rep: 5, text: 'Cleaned up evidence. More careful now. Slightly safer.' },
+      frame: { cost: 0, reduction: 30, rep: -20, text: 'Framed a rival. Police went after them. You\'re safe for now. Ruthless.' }
+    };
+
+    const action = methods[method];
+    
+    await base44.entities.DrugOperation.update(operation.id, {
+      heat_level: Math.max(0, (operation.heat_level || 0) - action.reduction),
+      reputation: Math.max(0, Math.min(100, (operation.reputation || 0) + action.rep)),
+      territory_control: method === 'relocate' ? Math.max(30, (operation.territory_control || 50) - 10) : operation.territory_control,
+      moral_compass: method === 'frame' ? Math.max(0, (operation.moral_compass || 50) - 15) : operation.moral_compass
+    });
+
+    await base44.entities.NightLog.create({
+      entry: action.text,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+  };
+
+  const handleResearchUpgrade = async (upgrade) => {
+    if (!operation) return;
+
+    const upgrades = {
+      extraction: {
+        name: 'Advanced Extraction',
+        cost: 30,
+        desc: 'Extract more doses from blood plants',
+        benefit: 'Harvesting yields +3 doses'
+      },
+      stealth: {
+        name: 'Stealth Operations',
+        cost: 40,
+        desc: 'Reduce heat generation from sales',
+        benefit: 'Heat gain reduced by 50%'
+      },
+      quality: {
+        name: 'Quality Enhancement',
+        cost: 50,
+        desc: 'Increase potency of all strains',
+        benefit: 'All drugs +1 potency'
+      },
+      automation: {
+        name: 'Full Automation',
+        cost: 60,
+        desc: 'Servant distributor produces drugs',
+        benefit: 'Passive drug production'
+      },
+      network: {
+        name: 'Network Expansion',
+        cost: 45,
+        desc: 'Attract high-value customers',
+        benefit: 'VIP customers more likely'
+      }
+    };
+
+    const tech = upgrades[upgrade];
+    
+    if ((operation.research_points || 0) < tech.cost) return;
+
+    setResearching(true);
+
+    setTimeout(async () => {
+      await base44.entities.DrugOperation.update(operation.id, {
+        research_points: (operation.research_points || 0) - tech.cost,
+        underworld_connections: [...(operation.underworld_connections || []), tech.name]
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `Researched: ${tech.name}. ${tech.benefit}`,
+        category: 'power',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+      setResearching(false);
+    }, 2000);
+  };
+
+  const handlePoliceRaid = async () => {
+    if (!operation || (operation.heat_level || 0) < 80) return;
+
+    const outcomes = [
+      { 
+        text: 'POLICE RAID! They burst in. You barely escaped. Lost inventory. Heat cooled down.',
+        inventoryLoss: 0.5,
+        heatReduction: 60,
+        repLoss: 30,
+        casualties: 0
+      },
+      {
+        text: 'POLICE RAID! Shootout. You killed two cops. Escaped but this is BAD. Manhunt incoming.',
+        inventoryLoss: 0.3,
+        heatReduction: 20,
+        repLoss: 50,
+        casualties: 2
+      },
+      {
+        text: 'POLICE RAID! They arrested a customer. Turned informant. You need to move. NOW.',
+        inventoryLoss: 0,
+        heatReduction: 40,
+        repLoss: 20,
+        casualties: 0
+      },
+      {
+        text: 'POLICE RAID! Your servant took the fall. Arrested. Protecting you. Loyal to the end.',
+        inventoryLoss: 0.2,
+        heatReduction: 70,
+        repLoss: 10,
+        casualties: 0
+      }
+    ];
+
+    const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+
+    // Delete inventory based on loss percentage
+    const drugsToLose = Math.floor(inventory.length * outcome.inventoryLoss);
+    for (let i = 0; i < drugsToLose; i++) {
+      if (inventory[i]) {
+        await base44.entities.BloodDrug.delete(inventory[i].id);
+      }
+    }
+
+    await base44.entities.DrugOperation.update(operation.id, {
+      heat_level: Math.max(0, (operation.heat_level || 0) - outcome.heatReduction),
+      reputation: Math.max(0, (operation.reputation || 0) - outcome.repLoss),
+      casualties: (operation.casualties || 0) + outcome.casualties,
+      lives_ruined: (operation.lives_ruined || 0) + 1
+    });
+
+    await base44.entities.NightLog.create({
+      entry: outcome.text,
+      category: 'interaction',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+  };
+
   const handleFeedSnake = async (snake, drug) => {
     if (drug.quantity === 0) return;
     
@@ -978,6 +1235,18 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
             className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'snakes' ? 'bg-emerald-600 text-white' : 'bg-gray-800 text-gray-400'}`}
           >
             🐍 Snake Powers
+          </button>
+          <button 
+            onClick={() => setTab('research')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'research' ? 'bg-cyan-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            🔬 Research
+          </button>
+          <button 
+            onClick={() => setTab('heat')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'heat' ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            🚨 Heat Management
           </button>
         </div>
 
@@ -1585,9 +1854,251 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           </div>
         )}
 
-        {tab === 'plants' && (
+        {tab === 'research' && !researching && (
           <div className="space-y-3">
-            <h3 className="text-white font-bold mb-3">Blood Plant Garden 🌿</h3>
+            <h3 className="text-white font-bold mb-3">🔬 Research & Development</h3>
+            
+            {operation && (
+              <>
+                <div className="bg-gray-800 rounded-xl p-4 mb-4">
+                  <p className="text-gray-400 text-sm mb-2">Research Points: {operation.research_points || 0}</p>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      style={{ width: `${operation.research_points || 0}%` }}
+                      className="h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+                    />
+                  </div>
+                  <p className="text-gray-500 text-xs mt-2">Earn research points by experimenting, harvesting plants, and creating hybrids</p>
+                </div>
+
+                <div className="space-y-2">
+                  <button
+                    onClick={() => handleResearchUpgrade('extraction')}
+                    disabled={(operation.research_points || 0) < 30}
+                    className="w-full bg-cyan-900/40 hover:bg-cyan-900/60 disabled:bg-gray-800 border border-cyan-500/30 rounded-xl p-4 text-left disabled:opacity-50"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">Advanced Extraction</h4>
+                        <p className="text-gray-400 text-sm">Extract more doses from blood plants</p>
+                        <p className="text-cyan-400 text-xs mt-1">Benefit: Harvesting yields +3 doses</p>
+                      </div>
+                      <span className="text-cyan-400 font-bold">30 RP</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleResearchUpgrade('stealth')}
+                    disabled={(operation.research_points || 0) < 40}
+                    className="w-full bg-cyan-900/40 hover:bg-cyan-900/60 disabled:bg-gray-800 border border-cyan-500/30 rounded-xl p-4 text-left disabled:opacity-50"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">Stealth Operations</h4>
+                        <p className="text-gray-400 text-sm">Reduce heat generation from sales</p>
+                        <p className="text-cyan-400 text-xs mt-1">Benefit: Heat gain reduced by 50%</p>
+                      </div>
+                      <span className="text-cyan-400 font-bold">40 RP</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleResearchUpgrade('quality')}
+                    disabled={(operation.research_points || 0) < 50}
+                    className="w-full bg-cyan-900/40 hover:bg-cyan-900/60 disabled:bg-gray-800 border border-cyan-500/30 rounded-xl p-4 text-left disabled:opacity-50"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">Quality Enhancement</h4>
+                        <p className="text-gray-400 text-sm">Increase potency of all strains</p>
+                        <p className="text-cyan-400 text-xs mt-1">Benefit: All drugs +1 potency</p>
+                      </div>
+                      <span className="text-cyan-400 font-bold">50 RP</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleResearchUpgrade('automation')}
+                    disabled={(operation.research_points || 0) < 60}
+                    className="w-full bg-cyan-900/40 hover:bg-cyan-900/60 disabled:bg-gray-800 border border-cyan-500/30 rounded-xl p-4 text-left disabled:opacity-50"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">Full Automation</h4>
+                        <p className="text-gray-400 text-sm">Servant distributor produces drugs automatically</p>
+                        <p className="text-cyan-400 text-xs mt-1">Benefit: Passive drug production</p>
+                      </div>
+                      <span className="text-cyan-400 font-bold">60 RP</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleResearchUpgrade('network')}
+                    disabled={(operation.research_points || 0) < 45}
+                    className="w-full bg-cyan-900/40 hover:bg-cyan-900/60 disabled:bg-gray-800 border border-cyan-500/30 rounded-xl p-4 text-left disabled:opacity-50"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">Network Expansion</h4>
+                        <p className="text-gray-400 text-sm">Attract high-value customers</p>
+                        <p className="text-cyan-400 text-xs mt-1">Benefit: VIP customers more likely</p>
+                      </div>
+                      <span className="text-cyan-400 font-bold">45 RP</span>
+                    </div>
+                  </button>
+                </div>
+
+                {(operation.underworld_connections || []).length > 0 && (
+                  <div className="bg-gray-800 rounded-xl p-4 mt-4">
+                    <h4 className="text-white font-bold mb-2">Researched Technologies</h4>
+                    <div className="space-y-1">
+                      {(operation.underworld_connections || []).map((tech, i) => (
+                        <div key={i} className="text-cyan-400 text-sm">✓ {tech}</div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {researching && (
+          <div className="text-center py-12">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+              className="text-6xl mb-4"
+            >
+              🔬
+            </motion.div>
+            <p className="text-cyan-300">Researching new technology...</p>
+          </div>
+        )}
+
+        {tab === 'heat' && (
+          <div className="space-y-3">
+            <h3 className="text-white font-bold mb-3">🚨 Heat Management</h3>
+            
+            {operation && (
+              <>
+                <div className="bg-gray-800 rounded-xl p-4 mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-gray-400 text-sm">Police Heat</span>
+                    <span className={`font-bold ${
+                      (operation.heat_level || 0) > 80 ? 'text-red-400' :
+                      (operation.heat_level || 0) > 50 ? 'text-orange-400' :
+                      'text-green-400'
+                    }`}>
+                      {operation.heat_level || 0}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-3">
+                    <div 
+                      style={{ width: `${operation.heat_level || 0}%` }}
+                      className="h-3 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 rounded-full"
+                    />
+                  </div>
+                  {(operation.heat_level || 0) > 80 && (
+                    <p className="text-red-400 text-sm mt-2 font-bold">⚠️ CRITICAL: Police raid imminent!</p>
+                  )}
+                  {(operation.heat_level || 0) > 50 && (operation.heat_level || 0) <= 80 && (
+                    <p className="text-orange-400 text-sm mt-2">⚠️ WARNING: High police attention</p>
+                  )}
+                </div>
+
+                {(operation.heat_level || 0) > 80 && (
+                  <button
+                    onClick={handlePoliceRaid}
+                    className="w-full bg-red-900/60 border-2 border-red-500 rounded-xl p-4 text-left mb-3"
+                  >
+                    <h4 className="text-white font-bold mb-1">⚠️ POLICE RAID IN PROGRESS</h4>
+                    <p className="text-red-300 text-sm">Click to resolve the situation</p>
+                  </button>
+                )}
+
+                <div className="space-y-2">
+                  <button
+                    onClick={() => handleReduceHeat('cleanup')}
+                    className="w-full bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-xl p-4 text-left"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">🧹 Clean Up Evidence</h4>
+                        <p className="text-gray-400 text-sm">Remove traces. Be more careful.</p>
+                        <p className="text-blue-400 text-xs mt-1">-10% Heat | +5 Reputation | Cost: $200</p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleReduceHeat('bribe')}
+                    className="w-full bg-yellow-900/40 hover:bg-yellow-900/60 border border-yellow-500/30 rounded-xl p-4 text-left"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">💰 Bribe Police</h4>
+                        <p className="text-gray-400 text-sm">Pay off local cops. Corruption spreads.</p>
+                        <p className="text-yellow-400 text-xs mt-1">-20% Heat | -5 Reputation | Cost: $500</p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleReduceHeat('relocate')}
+                    className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">🚚 Relocate Lab</h4>
+                        <p className="text-gray-400 text-sm">Move to new location. Fresh start.</p>
+                        <p className="text-purple-400 text-xs mt-1">-40% Heat | -10 Territory | -10 Rep | Cost: $1000</p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleReduceHeat('frame')}
+                    className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-white font-bold mb-1">🎯 Frame Rival Dealer</h4>
+                        <p className="text-gray-400 text-sm">Send police after competition. Ruthless.</p>
+                        <p className="text-red-400 text-xs mt-1">-30% Heat | -20 Reputation | -15 Morality | Free</p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="bg-gray-800 rounded-xl p-4 mt-4">
+                  <h4 className="text-white font-bold mb-2">Investigation Details</h4>
+                  <div className="space-y-1 text-sm">
+                    <p className="text-gray-400">Heat increases from:</p>
+                    <p className="text-red-300">• Selling drugs</p>
+                    <p className="text-red-300">• Customer overdoses</p>
+                    <p className="text-red-300">• Violent incidents</p>
+                    <p className="text-red-300">• High-profile operations</p>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === 'plants' && !plantBreeding && !breedingOutcome && (
+          <div className="space-y-3">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-white font-bold">Blood Plant Garden 🌿</h3>
+              {bloodPlants.length >= 2 && (
+                <button 
+                  onClick={() => setPlantBreeding(true)}
+                  className="text-pink-400 text-xs px-3 py-1 bg-pink-900/40 rounded-lg"
+                >
+                  Cross-Breed
+                </button>
+              )}
+            </div>
             
             {bloodPlants.length === 0 ? (
               <div className="space-y-3">
@@ -1625,11 +2136,18 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
             ) : (
               bloodPlants.map(plant => {
                 const plantInfo = BLOOD_PLANTS.find(p => p.type === plant.plant_type);
+                const displayName = plant.hybrid_name || plantInfo?.name || 'Unknown Plant';
                 return (
                   <div key={plant.id} className="bg-gray-800 rounded-xl p-4">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex-1">
-                        <h4 className="text-white font-bold mb-1">{plantInfo?.name} 🌱</h4>
+                        <h4 className="text-white font-bold mb-1">{displayName} 🌱</h4>
+                        {plant.hybrid_description && (
+                          <p className="text-pink-400 text-xs mb-1">{plant.hybrid_description}</p>
+                        )}
+                        {plant.special_trait && (
+                          <p className="text-purple-400 text-xs mb-1">✨ {plant.special_trait}</p>
+                        )}
                         <p className="text-gray-400 text-sm mb-2">Stage {plant.growth_stage}/5</p>
                         <div className="flex gap-3 text-xs mb-3">
                           <span className={`${plant.health > 70 ? 'text-green-400' : plant.health > 40 ? 'text-yellow-400' : 'text-red-400'}`}>
@@ -1687,45 +2205,122 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                         </button>
                       )}
                       {plant.harvest_ready && (
-                        <button
-                          onClick={async () => {
-                            const yield_ = Math.floor(Math.random() * 3) + plantInfo.baseYield;
-                            const strainName = `${plantInfo.name} Extract`;
-                            
-                            await base44.entities.BloodDrug.create({
-                              strain_name: strainName,
-                              potency: Math.floor(plant.potency / 10),
-                              quantity: yield_,
-                              price_per_dose: 150 + (plant.potency * 2),
-                              effects: `organic ${plantInfo.name.toLowerCase()} strain. Natural. Pure. ${plant.mutation_level > 0 ? 'Mutated properties.' : ''}`,
-                              addictiveness: 40 + plant.potency / 2
-                            });
+                       <button
+                         onClick={async () => {
+                           const baseYield = plantInfo?.baseYield || 5;
+                           const yield_ = Math.floor(Math.random() * 3) + baseYield;
+                           const strainName = plant.hybrid_name ? `${plant.hybrid_name} Extract` : `${plantInfo.name} Extract`;
 
-                            await base44.entities.BloodPlant.delete(plant.id);
+                           await base44.entities.BloodDrug.create({
+                             strain_name: strainName,
+                             potency: Math.floor(plant.potency / 10),
+                             quantity: yield_,
+                             price_per_dose: 150 + (plant.potency * 2),
+                             effects: plant.hybrid_description || `organic ${plantInfo.name.toLowerCase()} strain. Natural. Pure. ${plant.mutation_level > 0 ? 'Mutated properties.' : ''}`,
+                             addictiveness: 40 + plant.potency / 2
+                           });
 
-                            await base44.entities.NightLog.create({
-                              entry: `Harvested ${plantInfo.name}. Got ${yield_} doses of ${strainName}.`,
-                              category: 'interaction',
-                              intensity: 'moderate'
-                            });
+                           await base44.entities.BloodPlant.delete(plant.id);
 
-                            if (operation) {
-                              await base44.entities.DrugOperation.update(operation.id, {
-                                research_points: Math.min(100, (operation.research_points || 0) + 10)
-                              });
-                            }
+                           await base44.entities.NightLog.create({
+                             entry: `Harvested ${displayName}. Got ${yield_} doses of ${strainName}.`,
+                             category: 'interaction',
+                             intensity: 'moderate'
+                           });
 
-                            queryClient.invalidateQueries();
-                          }}
-                          className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm col-span-2"
-                        >
-                          🌿 Harvest
-                        </button>
+                           if (operation) {
+                             await base44.entities.DrugOperation.update(operation.id, {
+                               research_points: Math.min(100, (operation.research_points || 0) + (plant.hybrid_name ? 15 : 10))
+                             });
+                           }
+
+                           queryClient.invalidateQueries();
+                         }}
+                         className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm col-span-2"
+                       >
+                         🌿 Harvest
+                       </button>
                       )}
                     </div>
                   </div>
                 );
               })
+            )}
+          </div>
+        )}
+
+        {plantBreeding && !breedingOutcome && (
+          <div className="space-y-3">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-white font-bold">Cross-Breed Plants</h3>
+              <button 
+                onClick={() => { setPlantBreeding(false); setSelectedPlants([]); }}
+                className="text-gray-400 text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">Select 2 plants to cross-breed and create a hybrid with unique properties</p>
+            
+            {bloodPlants.map(plant => {
+              const plantInfo = BLOOD_PLANTS.find(p => p.type === plant.plant_type);
+              const displayName = plant.hybrid_name || plantInfo?.name || 'Unknown Plant';
+              return (
+                <div 
+                  key={plant.id} 
+                  className={`bg-gray-800 rounded-xl p-4 border-2 ${
+                    selectedPlants.includes(plant.id) ? 'border-pink-500' : 'border-transparent'
+                  }`}
+                >
+                  <button
+                    onClick={() => {
+                      if (selectedPlants.includes(plant.id)) {
+                        setSelectedPlants(selectedPlants.filter(id => id !== plant.id));
+                      } else if (selectedPlants.length < 2) {
+                        setSelectedPlants([...selectedPlants, plant.id]);
+                      }
+                    }}
+                    className="w-full text-left"
+                  >
+                    <h4 className="text-white font-bold mb-1">{displayName}</h4>
+                    <p className="text-gray-400 text-xs">Potency: {plant.potency}% | Stage: {plant.growth_stage}/5</p>
+                  </button>
+                </div>
+              );
+            })}
+
+            <button
+              onClick={handlePlantCrossBreed}
+              disabled={selectedPlants.length !== 2}
+              className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-3 rounded-lg transition-colors disabled:opacity-50"
+            >
+              Cross-Breed ({selectedPlants.length}/2 selected)
+            </button>
+          </div>
+        )}
+
+        {(plantBreeding || breedingOutcome) && (
+          <div className="text-center py-12">
+            {!breedingOutcome ? (
+              <motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.3, 1], rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🌿
+                </motion.div>
+                <p className="text-pink-400 mt-4">Cross-breeding plants...</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-4"
+              >
+                <div className="text-6xl mb-4">🌿✨</div>
+                <p className="text-pink-300 text-lg whitespace-pre-line px-4">{breedingOutcome}</p>
+              </motion.div>
             )}
           </div>
         )}
