@@ -2864,7 +2864,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                     e.stopPropagation();
                     handleInteraction(key);
                   }}
-                  className="bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 text-sm"
+                  className="bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 text-sm touch-manipulation"
                 >
                   <Icon className="w-4 h-4" />
                   <span>{interaction.label}</span>

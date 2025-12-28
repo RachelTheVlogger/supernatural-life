@@ -288,8 +288,11 @@ export default function WitchEncounter({ vampireState, onClose }) {
                   </div>
 
                   <button
-                    onClick={() => setSelectedWitch(witch)}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg mt-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedWitch(witch);
+                    }}
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg mt-2 touch-manipulation"
                   >
                     Interact
                   </button>
@@ -298,8 +301,11 @@ export default function WitchEncounter({ vampireState, onClose }) {
             </div>
 
             <button
-              onClick={handleEncounter}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-4 rounded-xl"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEncounter();
+              }}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-4 rounded-xl touch-manipulation"
             >
               {witches.length === 0 ? 'Encounter a Witch' : 'Find Another Witch'}
             </button>
@@ -322,53 +328,77 @@ export default function WitchEncounter({ vampireState, onClose }) {
 
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={() => handleInteraction('approach')}
-                className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInteraction('approach');
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm touch-manipulation"
               >
                 Approach
               </button>
               <button
-                onClick={() => handleInteraction('negotiate')}
-                className="bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInteraction('negotiate');
+                }}
+                className="bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl text-sm touch-manipulation"
               >
                 Negotiate
               </button>
               <button
-                onClick={() => handleInteraction('flirt')}
-                className="bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-xl text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInteraction('flirt');
+                }}
+                className="bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-xl text-sm touch-manipulation"
               >
                 Flirt
               </button>
               <button
-                onClick={() => handleInteraction('drink_tea')}
-                className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInteraction('drink_tea');
+                }}
+                className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-sm touch-manipulation"
               >
                 Have Tea
               </button>
               <button
-                onClick={() => handleInteraction('gift')}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white py-3 rounded-xl text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInteraction('gift');
+                }}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white py-3 rounded-xl text-sm touch-manipulation"
               >
                 Give Gift
               </button>
               <button
-                onClick={() => handleInteraction('visit_shop')}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInteraction('visit_shop');
+                }}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm touch-manipulation"
               >
                 Visit Shop
               </button>
               {selectedWitch.relationship >= 20 && (
                 <button
-                  onClick={() => handleInteraction('confide')}
-                  className="bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl text-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleInteraction('confide');
+                  }}
+                  className="bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl text-sm touch-manipulation"
                 >
                   Confide
                 </button>
               )}
               {selectedWitch.relationship >= 30 && (
                 <button
-                  onClick={() => handleInteraction('ally')}
-                  className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleInteraction('ally');
+                  }}
+                  className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-sm touch-manipulation"
                 >
                   Alliance
                 </button>
@@ -376,14 +406,20 @@ export default function WitchEncounter({ vampireState, onClose }) {
               {selectedWitch.relationship >= 40 && (
                 <>
                   <button
-                    onClick={() => handleInteraction('learn')}
-                    className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleInteraction('learn');
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm touch-manipulation"
                   >
                     Learn Magic
                   </button>
                   <button
-                    onClick={() => handleInteraction('spar')}
-                    className="bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl text-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleInteraction('spar');
+                    }}
+                    className="bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl text-sm touch-manipulation"
                   >
                     Spar
                   </button>
@@ -391,23 +427,32 @@ export default function WitchEncounter({ vampireState, onClose }) {
               )}
               {selectedWitch.relationship >= 50 && (
                 <button
-                  onClick={() => handleInteraction('help_ritual')}
-                  className="bg-purple-700 hover:bg-purple-800 text-white py-3 rounded-xl text-sm col-span-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleInteraction('help_ritual');
+                  }}
+                  className="bg-purple-700 hover:bg-purple-800 text-white py-3 rounded-xl text-sm col-span-2 touch-manipulation"
                 >
                   Help with Ritual
                 </button>
               )}
               <button
-                onClick={() => handleInteraction('threaten')}
-                className="bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl col-span-2 text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInteraction('threaten');
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl col-span-2 text-sm touch-manipulation"
               >
                 Threaten (Dangerous)
               </button>
             </div>
 
             <button
-              onClick={() => setSelectedWitch(null)}
-              className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedWitch(null);
+              }}
+              className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg touch-manipulation"
             >
               Back
             </button>

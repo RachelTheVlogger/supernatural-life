@@ -1273,8 +1273,11 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                     </div>
                   </div>
                   <button
-                    onClick={() => handleProduce(strain)}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleProduce(strain);
+                    }}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors touch-manipulation"
                   >
                     Produce
                   </button>
@@ -1379,9 +1382,12 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                     </div>
                   </div>
                   <button
-                    onClick={() => handleSell(drug)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSell(drug);
+                    }}
                     disabled={drug.quantity === 0}
-                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50"
+                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 touch-manipulation"
                   >
                     Sell to Customers
                   </button>
@@ -1411,9 +1417,12 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                   </div>
                   <div className="space-y-2">
                     <button
-                      onClick={() => handlePersonalUse(drug)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePersonalUse(drug);
+                      }}
                       disabled={drug.quantity === 0}
-                      className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50"
+                      className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 touch-manipulation"
                     >
                       Use Solo
                     </button>
@@ -1421,9 +1430,12 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                       {servants.filter(s => s.id).map(servant => (
                         <button
                           key={servant.id}
-                          onClick={() => handleUseWith(drug, servant)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUseWith(drug, servant);
+                          }}
                           disabled={drug.quantity < 2}
-                          className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
+                          className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 text-sm touch-manipulation"
                         >
                           Use with {servant.name} 💕 (2 doses)
                         </button>
@@ -1558,29 +1570,41 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <button
-                      onClick={() => handleChatWithCustomer(customer)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors text-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleChatWithCustomer(customer);
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors text-sm touch-manipulation"
                     >
                       Small Talk
                     </button>
                     <button
-                      onClick={() => handleDeepConversation(customer)}
-                      className="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors text-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeepConversation(customer);
+                      }}
+                      className="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors text-sm touch-manipulation"
                     >
                       Deep Talk
                     </button>
                     {customer.is_vip && (
                       <button
-                        onClick={() => handleCustomerReferral(customer)}
-                        className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition-colors text-sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCustomerReferral(customer);
+                        }}
+                        className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition-colors text-sm touch-manipulation"
                       >
                         Get Referral
                       </button>
                     )}
                     {customer.custom_order && (
                       <button
-                        onClick={() => handleCustomOrder(customer)}
-                        className="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors text-sm col-span-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCustomOrder(customer);
+                        }}
+                        className="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors text-sm col-span-2 touch-manipulation"
                       >
                         Fulfill Custom Order
                       </button>
@@ -1757,16 +1781,45 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         )}
 
         {selectedCustomer && chatOutcome && (
-          <div className="text-center py-12">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => {
+              setSelectedCustomer(null);
+              setChatOutcome('');
+            }}
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-6xl mb-4"
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
             >
-              💬
+              <div className="text-center mb-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-6xl mb-4"
+                >
+                  💬
+                </motion.div>
+              </div>
+              <p className="text-gray-300 text-base whitespace-pre-line leading-relaxed">{chatOutcome}</p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedCustomer(null);
+                  setChatOutcome('');
+                }}
+                className="w-full mt-6 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg"
+              >
+                Close
+              </button>
             </motion.div>
-            <p className="text-gray-300 text-lg whitespace-pre-line">{chatOutcome}</p>
-          </div>
+          </motion.div>
         )}
 
         {tab === 'snakes' && !feedingSnake && (
