@@ -172,7 +172,7 @@ export default function WerewolfHome() {
               ✏️
             </button>
           </div>
-          <p className={`${isDaytime ? 'text-orange-800' : 'text-orange-100'} text-sm capitalize`}>{werewolf.pack_rank} • {werewolf.current_form} form</p>
+          <p className={`${isDaytime ? 'text-orange-800' : 'text-orange-100'} text-sm capitalize`}>{werewolf.pack_status} • {werewolf.current_form || 'human'} form</p>
           <button
             onClick={() => setShowIdentity(true)}
             className={`${isDaytime ? 'text-orange-700 hover:text-orange-900' : 'text-orange-400 hover:text-orange-300'} text-sm mt-2`}
