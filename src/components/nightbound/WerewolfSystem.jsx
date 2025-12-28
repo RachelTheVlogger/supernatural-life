@@ -190,20 +190,23 @@ export default function WerewolfSystem({ vampireState, onClose }) {
           </div>
         )}
 
-        <AnimatePresence>
-          {outcome && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80"
-            >
-              <div className="bg-gray-900 rounded-xl p-6 max-w-md text-center border-2 border-orange-500/50">
+        {(interacting || outcome) && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80">
+            <div className="bg-gray-900 rounded-xl p-6 max-w-md text-center border-2 border-orange-500/50">
+              {outcome ? (
                 <p className="text-white text-lg">{outcome}</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              ) : (
+                <motion.p
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-orange-400"
+                >
+                  {interacting === 'encounter' ? 'Searching...' : 'Processing...'}
+                </motion.p>
+              )}
+            </div>
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );
