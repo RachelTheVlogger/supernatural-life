@@ -279,6 +279,8 @@ export default function WerewolfHome() {
         {showFullMoon && <FullMoonEvent werewolf={werewolf} onClose={() => setShowFullMoon(false)} />}
         {showPackDynamics && <WolfPackDynamics werewolf={werewolf} onClose={() => setShowPackDynamics(false)} />}
         {showShiftControl && <WolfShiftControl werewolf={werewolf} onClose={() => setShowShiftControl(false)} />}
+        {showPackDynamics && <WolfPackDynamics werewolf={werewolf} onClose={() => setShowPackDynamics(false)} />}
+        {showShiftControl && <WolfShiftControl werewolf={werewolf} onClose={() => setShowShiftControl(false)} />}
 
         {showIdentity && (
           <motion.div
