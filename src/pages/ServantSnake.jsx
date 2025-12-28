@@ -1128,36 +1128,46 @@ Provide analysis in this JSON format:
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => handleCareAction('feed_meal')}
-                disabled={!!interacting || (snake.hunger || 30) < 20}
-                className="bg-orange-900/60 hover:bg-orange-900/80 disabled:opacity-50 border border-orange-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all"
+                disabled={interacting === 'feed_meal' || (snake.hunger || 30) < 20}
+                className={`border border-orange-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all ${
+                  interacting === 'feed_meal' ? 'bg-orange-600 scale-95' : 'bg-orange-900/60 hover:bg-orange-900/80'
+                } disabled:opacity-50`}
               >
                 🍖 Feed Meal
               </button>
               <button
                 onClick={() => handleCareAction('give_water')}
-                disabled={!!interacting}
-                className="bg-blue-900/60 hover:bg-blue-900/80 disabled:opacity-50 border border-blue-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all"
+                disabled={interacting === 'give_water'}
+                className={`border border-blue-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all ${
+                  interacting === 'give_water' ? 'bg-blue-600 scale-95' : 'bg-blue-900/60 hover:bg-blue-900/80'
+                } disabled:opacity-50`}
               >
                 💧 Fresh Water
               </button>
               <button
                 onClick={() => handleCareAction('clean_enclosure')}
-                disabled={!!interacting}
-                className="bg-green-900/60 hover:bg-green-900/80 disabled:opacity-50 border border-green-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all"
+                disabled={interacting === 'clean_enclosure'}
+                className={`border border-green-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all ${
+                  interacting === 'clean_enclosure' ? 'bg-green-600 scale-95' : 'bg-green-900/60 hover:bg-green-900/80'
+                } disabled:opacity-50`}
               >
                 🧹 Clean
               </button>
               <button
                 onClick={() => handleCareAction('health_check')}
-                disabled={!!interacting}
-                className="bg-purple-900/60 hover:bg-purple-900/80 disabled:opacity-50 border border-purple-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all"
+                disabled={interacting === 'health_check'}
+                className={`border border-purple-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all ${
+                  interacting === 'health_check' ? 'bg-purple-600 scale-95' : 'bg-purple-900/60 hover:bg-purple-900/80'
+                } disabled:opacity-50`}
               >
                 🩺 Health Check
               </button>
               <button
                 onClick={() => handleCareAction('enrichment')}
-                disabled={!!interacting}
-                className="bg-pink-900/60 hover:bg-pink-900/80 disabled:opacity-50 border border-pink-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all col-span-2"
+                disabled={interacting === 'enrichment'}
+                className={`border border-pink-500/30 rounded-lg p-3 text-white text-sm font-medium transition-all col-span-2 ${
+                  interacting === 'enrichment' ? 'bg-pink-600 scale-95' : 'bg-pink-900/60 hover:bg-pink-900/80'
+                } disabled:opacity-50`}
               >
                 🎾 Enrichment Activity
               </button>

@@ -113,9 +113,12 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         power_level: 20,
         loyalty: 50,
         hunger: 30,
+        happiness: 50,
+        health: 100,
+        mood: 'content',
         missions_completed: 0,
         size: 'small',
-        unlocked_abilities: []
+        unlocked_abilities: EVOLUTION_PATHS[type][0].abilities
       });
 
       await base44.entities.NightLog.create({
