@@ -14,6 +14,7 @@ import CurseSystem from '@/components/nightbound/CurseSystem';
 import TeachServants from '@/components/nightbound/TeachServants';
 import WitchCoven from '@/components/nightbound/WitchCoven';
 import WitchFamiliar from '@/components/nightbound/WitchFamiliar';
+import WitchFamiliarDeep from '@/components/nightbound/WitchFamiliarDeep';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 
 const SPELLS = {
@@ -740,10 +741,10 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
               className="bg-gradient-to-r from-amber-900/40 to-yellow-900/40 hover:from-amber-900/60 hover:to-yellow-900/60 border-2 border-amber-500/50 rounded-xl p-6 transition-all"
             >
               <div className="flex items-center gap-3">
-                <span className="text-4xl">🐾</span>
+                <span className="text-4xl">🐈‍⬛</span>
                 <div className="text-left">
                   <h3 className="text-white font-bold">Familiar</h3>
-                  <p className="text-gray-400 text-sm">Magical companion</p>
+                  <p className="text-gray-400 text-sm">Bond deeply with companion</p>
                 </div>
               </div>
             </button>
@@ -947,7 +948,7 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
         {showCurses && <CurseSystem witch={witch} onClose={() => setShowCurses(false)} />}
         {showTeaching && <TeachServants witch={witch} onClose={() => setShowTeaching(false)} />}
         {showCoven && <WitchCoven witch={witch} onClose={() => setShowCoven(false)} />}
-        {showFamiliar && <WitchFamiliar witch={witch} onClose={() => setShowFamiliar(false)} />}
+        {showFamiliar && <WitchFamiliarDeep witch={witch} onClose={() => setShowFamiliar(false)} />}
         
         {showIdentity && (
           <motion.div

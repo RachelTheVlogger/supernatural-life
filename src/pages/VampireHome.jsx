@@ -34,6 +34,7 @@ import StalkingSystem from '@/components/nightbound/StalkingSystem';
 import JournalSystem from '@/components/nightbound/JournalSystem';
 import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
+import VampireSnakeFamiliar from '@/components/nightbound/VampireSnakeFamiliar';
 
 export default function VampireHome() {
   const navigate = useNavigate();
@@ -68,6 +69,7 @@ export default function VampireHome() {
   const [showStalking, setShowStalking] = useState(false);
   const [showJournal, setShowJournal] = useState(false);
   const [showDoppelgangers, setShowDoppelgangers] = useState(false);
+  const [showSnakeFamiliar, setShowSnakeFamiliar] = useState(false);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -860,12 +862,14 @@ export default function VampireHome() {
               <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Meet powerful witches</p>
             </button>
 
+            <button onClick={() => setShowSnakeFamiliar(true)} className={`${isDaytime ? 'bg-emerald-100/60 border-emerald-400/40' : 'bg-green-900/40 border-green-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>🐍 Snake Familiar</h3>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Vampire serpent spy</p>
+            </button>
+
             {/* Succubus interaction moved to separate button below */}
 
-            <button onClick={() => navigate(createPageUrl('IncubusHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
-              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>😈 Talk to Incubus</h3>
-              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Terror & nightmares</p>
-            </button>
+
 
             {hybrids.length > 0 ? (
               <button onClick={() => navigate(createPageUrl('HybridHome'))} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
@@ -1244,6 +1248,12 @@ export default function VampireHome() {
           <DoppelgangerSystem
             vampireState={vampireState}
             onClose={() => setShowDoppelgangers(false)}
+          />
+        )}
+        {showSnakeFamiliar && vampireState && (
+          <VampireSnakeFamiliar
+            vampireState={vampireState}
+            onClose={() => setShowSnakeFamiliar(false)}
           />
         )}
         {showVampireIdentity && (
