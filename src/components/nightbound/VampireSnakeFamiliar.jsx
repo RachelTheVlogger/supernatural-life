@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Zap, Heart, Eye, Skull, Wind, Droplets, Moon, Flame } from 'lucide-react';
+import { X, Zap, Heart, Eye, Skull, Wind, Droplets, Moon, Flame, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -204,6 +204,64 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         case 'venom':
           result = `${mySnake.custom_name} produces venom. Potent. Deadly. You collect it in a vial. Useful.`;
           updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          break;
+
+        case 'shed':
+          result = `${mySnake.custom_name} sheds its skin. Perfect scales. You collect them—magical material for rituals and crafting.`;
+          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          if (mySnake.power_level >= 50) {
+            result += ` The shed skin GLOWS. Powerful magic infused.`;
+          }
+          break;
+
+        case 'prophecy':
+          const prophecies = [
+            `${mySnake.custom_name} hisses warnings. Danger approaches. A hunter is close.`,
+            `Your snake sees the future. A rival vampire plots against you. Be ready.`,
+            `${mySnake.custom_name}'s eyes glow. Vision: someone close will betray you soon.`,
+            `Serpent prophecy: Blood will be spilled tonight. Not yours. Not if you're careful.`,
+            `${mySnake.custom_name} senses opportunity. A powerful artifact nearby. Hidden.`,
+            `Vision from your familiar: The witch thinks of you. Dreams of you.`
+          ];
+          result = prophecies[Math.floor(Math.random() * prophecies.length)];
+          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          break;
+
+        case 'steal':
+          const stolenItems = [
+            `${mySnake.custom_name} returns with a wallet. Cash inside. Easy money.`,
+            `Your snake stole a phone. Messages reveal secrets. Blackmail material.`,
+            `${mySnake.custom_name} brings you keys. Someone's home is now accessible.`,
+            `Stolen: jewelry. Expensive. Your snake is a perfect thief.`,
+            `${mySnake.custom_name} took someone's ID. Their identity. Their life. Yours to use.`,
+            `Your familiar stole medical records. Private information. Leverage.`
+          ];
+          result = stolenItems[Math.floor(Math.random() * stolenItems.length)];
+          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          break;
+
+        case 'mark':
+          result = `${mySnake.custom_name} marks your territory. Venom traces on boundaries. Other supernaturals know: this place is YOURS.`;
+          updates.missions_completed = (mySnake.missions_completed || 0) + 1;
+          updates.loyalty = Math.min(100, (mySnake.loyalty || 50) + 6);
+          break;
+
+        case 'merge':
+          result = `${mySnake.custom_name} merges with you. Coils INSIDE your body. You feel its power. Its senses. Two beings, one consciousness.`;
+          bondChange = Math.floor(Math.random() * 20) + 15;
+          powerChange = Math.floor(Math.random() * 15) + 10;
+          updates.bond_level = Math.min(100, (mySnake.bond_level || 0) + bondChange);
+          updates.power_level = Math.min(100, (mySnake.power_level || 0) + powerChange);
+          await base44.entities.VampireState.update(vampireState.id, {
+            vampire_power_level: Math.min(100, (vampireState.vampire_power_level || 0) + 5)
+          });
+          break;
+
+        case 'hibernate':
+          result = `${mySnake.custom_name} enters hibernation. Deep sleep. Healing. Growing. Will awaken stronger.`;
+          powerChange = Math.floor(Math.random() * 25) + 20;
+          updates.power_level = Math.min(100, (mySnake.power_level || 0) + powerChange);
+          updates.hunger = Math.max(0, (mySnake.hunger || 30) - 50);
           break;
       }
 
@@ -477,6 +535,108 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <p className="text-green-400 mt-4">Extracting venom...</p>
               </motion.div>
             )}
+            {currentAction === 'shed' && (
+              <motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [0.5, 1.2], opacity: [0, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  ✨
+                </motion.div>
+                <p className="text-purple-400 mt-4">Shedding skin...</p>
+              </motion.div>
+            )}
+            {currentAction === 'prophecy' && (
+              <motion.div>
+                <div className="text-6xl mb-4">🐍</div>
+                <motion.div
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🔮
+                </motion.div>
+                <p className="text-blue-400 mt-4">Receiving vision...</p>
+              </motion.div>
+            )}
+            {currentAction === 'steal' && (
+              <motion.div>
+                <motion.div
+                  animate={{ x: [-30, 30, -30], opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  💰
+                </motion.div>
+                <p className="text-red-400 mt-4">Stealing...</p>
+              </motion.div>
+            )}
+            {currentAction === 'mark' && (
+              <motion.div>
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [0.8, 1.3, 0.8] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🔥
+                </motion.div>
+                <p className="text-orange-400 mt-4">Marking territory...</p>
+              </motion.div>
+            )}
+            {currentAction === 'merge' && (
+              <motion.div>
+                <motion.div
+                  animate={{ scale: [1, 0.5], opacity: [1, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.5, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl"
+                >
+                  🧛
+                </motion.div>
+                <p className="text-pink-400 mt-4">Merging consciousness...</p>
+              </motion.div>
+            )}
+            {currentAction === 'hibernate' && (
+              <motion.div>
+                <motion.div
+                  animate={{ opacity: [1, 0.3, 1], scale: [1, 0.9, 1] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <div className="text-4xl">💤</div>
+                <p className="text-gray-400 mt-4">Hibernating...</p>
+              </motion.div>
+            )}
             {currentAction?.startsWith('ability_') && (
               <motion.div>
                 <motion.div
@@ -665,6 +825,59 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 >
                   <Droplets className="w-5 h-5 text-green-400 mx-auto mb-1" />
                   <p className="text-white text-xs font-medium">Harvest Venom</p>
+                </button>
+
+                <button
+                  onClick={() => handleInteraction('shed')}
+                  className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+                >
+                  <Sparkles className="w-5 h-5 text-purple-400 mx-auto mb-1" />
+                  <p className="text-white text-xs font-medium">Shed Skin</p>
+                </button>
+
+                <button
+                  onClick={() => handleInteraction('prophecy')}
+                  className="bg-blue-900/40 hover:bg-blue-900/60 border border-blue-500/30 rounded-lg p-3 text-center transition-colors"
+                >
+                  <Eye className="w-5 h-5 text-blue-400 mx-auto mb-1" />
+                  <p className="text-white text-xs font-medium">See Prophecy</p>
+                </button>
+
+                <button
+                  onClick={() => handleInteraction('steal')}
+                  className="bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+                >
+                  <Skull className="w-5 h-5 text-red-400 mx-auto mb-1" />
+                  <p className="text-white text-xs font-medium">Steal</p>
+                </button>
+
+                <button
+                  onClick={() => handleInteraction('mark')}
+                  className="bg-orange-900/40 hover:bg-orange-900/60 border border-orange-500/30 rounded-lg p-3 text-center transition-colors"
+                >
+                  <Flame className="w-5 h-5 text-orange-400 mx-auto mb-1" />
+                  <p className="text-white text-xs font-medium">Mark Territory</p>
+                </button>
+
+                <button
+                  onClick={() => handleInteraction('merge')}
+                  disabled={mySnake.bond_level < 70}
+                  className={`rounded-lg p-3 text-center transition-colors ${
+                    mySnake.bond_level >= 70
+                      ? 'bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30'
+                      : 'bg-gray-800/40 border border-gray-600/30 opacity-50'
+                  }`}
+                >
+                  <Heart className="w-5 h-5 text-pink-400 mx-auto mb-1" />
+                  <p className="text-white text-xs font-medium">Merge {mySnake.bond_level < 70 && '(70)'}</p>
+                </button>
+
+                <button
+                  onClick={() => handleInteraction('hibernate')}
+                  className="bg-gray-900/40 hover:bg-gray-900/60 border border-gray-500/30 rounded-lg p-3 text-center transition-colors"
+                >
+                  <Moon className="w-5 h-5 text-gray-400 mx-auto mb-1" />
+                  <p className="text-white text-xs font-medium">Hibernate</p>
                 </button>
               </div>
             </div>
