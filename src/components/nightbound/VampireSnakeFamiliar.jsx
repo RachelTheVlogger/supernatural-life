@@ -387,6 +387,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     setSelectedEyeColor('red');
     setAdoptingType(null);
     setActiveTab('snakes');
+    setIsAdopting(false);
   };
 
   const handlePlayDate = async (mate) => {
