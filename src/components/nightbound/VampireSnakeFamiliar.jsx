@@ -44,6 +44,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const [selectedSnakeIndex, setSelectedSnakeIndex] = useState(0);
   const [showPlayDate, setShowPlayDate] = useState(false);
   const [playDateOutcome, setPlayDateOutcome] = useState('');
+  const [showProgression, setShowProgression] = useState(false);
 
   const { data: snakes = [] } = useQuery({
     queryKey: ['snakeFamiliars'],
@@ -1330,6 +1331,22 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   </div>
                   </div>
 
+                  {/* Evolution Progression Button */}
+                  <button
+                    onClick={() => setShowProgression(true)}
+                    className="w-full bg-gradient-to-r from-purple-900/60 to-violet-900/60 hover:from-purple-900/80 hover:to-violet-900/80 border-2 border-purple-500/50 rounded-xl p-4 transition-colors mb-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="text-left">
+                        <h3 className="text-purple-100 font-bold">⚡ Evolution Progress</h3>
+                        <p className="text-purple-300 text-xs">
+                          Stage {getEvolutionStage(mySnake.power_level)}/3 • {mySnake.unlocked_abilities?.length || 0} abilities
+                        </p>
+                      </div>
+                      <Zap className="w-6 h-6 text-purple-400" />
+                    </div>
+                  </button>
+
                   {/* Unlocked Powers */}
                   {mySnake.unlocked_abilities && mySnake.unlocked_abilities.length > 0 && (
                   <div className="bg-gradient-to-br from-purple-900/40 to-violet-900/40 border-2 border-purple-500/50 rounded-xl p-4 mb-4">
@@ -1863,6 +1880,130 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <button
                   onClick={() => setShowPlayDate(false)}
                   className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg"
+                >
+                  Close
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Evolution Progression Modal */}
+        <AnimatePresence>
+          {showProgression && mySnake && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[60] overflow-y-auto"
+              onClick={() => setShowProgression(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto border-2 border-purple-500/50"
+              >
+                <button onClick={() => setShowProgression(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+
+                <h2 className="text-2xl font-bold text-white mb-2">⚡ Evolution Path</h2>
+                <p className="text-gray-400 text-sm mb-6">{mySnake.custom_name}'s transformation journey</p>
+
+                {/* Current Stage Overview */}
+                <div className="bg-gradient-to-br from-purple-900/60 to-violet-900/60 border-2 border-purple-500/50 rounded-xl p-4 mb-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h3 className="text-white font-bold text-lg">
+                        {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].name}
+                      </h3>
+                      <p className="text-purple-300 text-sm">Stage {getEvolutionStage(mySnake.power_level)} of 3</p>
+                    </div>
+                    <div className="text-5xl">
+                      {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
+                    </div>
+                  </div>
+                  <div className="bg-black/40 rounded-lg p-3">
+                    <div className="flex justify-between text-xs text-gray-400 mb-1">
+                      <span>Power Level</span>
+                      <span>{mySnake.power_level}/100</span>
+                    </div>
+                    <div className="bg-gray-700 rounded-full h-3">
+                      <div 
+                        className="bg-gradient-to-r from-purple-500 to-violet-500 h-3 rounded-full transition-all"
+                        style={{ width: `${mySnake.power_level}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Evolution Stages */}
+                <div className="space-y-4">
+                  {EVOLUTION_PATHS[mySnake.type].map((stage, index) => {
+                    const isCurrentStage = getEvolutionStage(mySnake.power_level) === stage.stage;
+                    const isCompleted = getEvolutionStage(mySnake.power_level) > stage.stage;
+                    const isLocked = getEvolutionStage(mySnake.power_level) < stage.stage;
+                    
+                    return (
+                      <div 
+                        key={stage.stage}
+                        className={`rounded-xl p-4 border-2 transition-all ${
+                          isCurrentStage 
+                            ? 'bg-gradient-to-br from-purple-900/60 to-violet-900/60 border-purple-400 shadow-lg shadow-purple-500/20' 
+                            : isCompleted
+                            ? 'bg-gradient-to-br from-green-900/40 to-emerald-900/40 border-green-500/50'
+                            : 'bg-gray-900/40 border-gray-600/30 opacity-60'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="text-white font-bold">{stage.name}</h4>
+                              {isCompleted && <span className="text-green-400 text-xs">✓ Completed</span>}
+                              {isCurrentStage && <span className="text-purple-400 text-xs">• Current</span>}
+                            </div>
+                            <p className="text-gray-400 text-xs">
+                              {stage.stage === 1 ? 'Power: 0-39' : stage.stage === 2 ? 'Power: 40-69' : 'Power: 70+'}
+                            </p>
+                          </div>
+                          <div className="text-4xl">{stage.emoji}</div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <p className="text-gray-300 text-sm font-medium">Abilities:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {stage.abilities.map((ability, i) => (
+                              <span 
+                                key={i} 
+                                className={`text-xs px-3 py-1 rounded-full ${
+                                  isCompleted || isCurrentStage
+                                    ? 'bg-purple-950/60 text-purple-300 border border-purple-500/30'
+                                    : 'bg-gray-800/60 text-gray-500 border border-gray-600/30'
+                                }`}
+                              >
+                                {ability}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {isLocked && (
+                          <div className="mt-3 bg-black/40 rounded-lg p-2 text-center">
+                            <p className="text-gray-500 text-xs">
+                              Reach power level {stage.stage === 2 ? '40' : '70'} to unlock
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => setShowProgression(false)}
+                  className="w-full mt-6 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-medium transition-colors"
                 >
                   Close
                 </button>
