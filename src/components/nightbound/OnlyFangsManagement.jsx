@@ -5,7 +5,6 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import OnlyFangsMerch from './OnlyFangsMerch';
 import StalkerManagement from './StalkerManagement';
-import MasturbationSlider from './MasturbationSlider';
 
 const getGenderExamples = (vampireGender) => {
   const isFemale = vampireGender === 'woman';
@@ -93,11 +92,6 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
   const [showCollabs, setShowCollabs] = useState(false);
   const [audioRecording, setAudioRecording] = useState(false);
   const [activeStory, setActiveStory] = useState(null);
-  const [videoCallFan, setVideoCallFan] = useState(null);
-  const [sextingSession, setSextingSession] = useState(null);
-  const [sextingMessages, setSextingMessages] = useState([]);
-  const [showMasturbation, setShowMasturbation] = useState(false);
-  const [callContext, setCallContext] = useState(null);
 
   const { data: profile = [] } = useQuery({
     queryKey: ['onlyfangs-profile', servant.id],
@@ -1973,38 +1967,6 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
                 <button
                   onClick={async (e) => {
                     e.stopPropagation();
-                    const fan = topFans[Math.floor(Math.random() * Math.min(3, topFans.length))];
-                    const fanName = fan?.name || 'VampireFan420';
-                    setVideoCallFan(fanName);
-                    setCallContext('videocall');
-                    setShowMasturbation(true);
-                  }}
-                  disabled={!!videoCallFan || servantProfile.reputation < 50 || showMasturbation}
-                  className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium mb-1">📹 1-on-1 Video Call</h4>
-                  <p className="text-gray-400 text-sm">Masturbate for a fan ($150-500)</p>
-                  {servantProfile.reputation < 50 && <p className="text-red-400 text-xs mt-1">Need 50+ Rep</p>}
-                </button>
-
-                <button
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    const fan = topFans[Math.floor(Math.random() * topFans.length)]?.name || 'DarkLover69';
-                    setSextingSession(fan);
-                    setCallContext('sexting');
-                    setShowMasturbation(true);
-                  }}
-                  disabled={!!sextingSession || showMasturbation}
-                  className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-4 text-left disabled:opacity-50"
-                >
-                  <h4 className="text-white font-medium mb-1">💬 Sexting Session</h4>
-                  <p className="text-gray-400 text-sm">Dirty texting + masturbation ($100-300)</p>
-                </button>
-
-                <button
-                  onClick={async (e) => {
-                    e.stopPropagation();
                     const earnings = Math.floor(Math.random() * 50) + 30;
                     await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
                       revenue: servantProfile.revenue + earnings
@@ -2103,162 +2065,36 @@ export default function OnlyFangsManagement({ servant, vampireState, onClose }) 
           </div>
         )}
 
-        {/* INTERACTIVE TAB */}
-        {tab === 'interactive' && !showMasturbation && (
+        {/* INTERACTIVE TAB - simplified */}
+        {tab === 'interactive' && (
           <div className="space-y-4 max-h-[55vh] overflow-y-auto">
-            <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6">
-              <h3 className="text-white text-2xl font-bold mb-2">🎮 Interactive Sliders</h3>
-              <p className="text-gray-300 text-sm mb-6">Fully interactive experiences - fans watch you in real-time</p>
-              
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    setCallContext('audience');
-                    setShowMasturbation(true);
-                  }}
-                  className="w-full bg-gradient-to-br from-pink-900/40 to-red-900/40 border border-pink-500/30 rounded-xl p-4 text-left hover:bg-pink-900/60 transition-all"
-                >
-                  <h4 className="text-white font-medium mb-1">💦 Live Masturbation</h4>
-                  <p className="text-gray-400 text-sm">Pleasure yourself for your audience. Full interactive slider.</p>
-                  <p className="text-pink-400 text-xs mt-1">$200-500 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('striptease');
-                    setShowMasturbation(true);
-                  }}
-                  className="w-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all"
-                >
-                  <h4 className="text-white font-medium mb-1">💃 Strip Tease Slider</h4>
-                  <p className="text-gray-400 text-sm">Slow tease. Every piece of clothing tracked.</p>
-                  <p className="text-purple-400 text-xs mt-1">$200-500 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('dirtytalk');
-                    setShowMasturbation(true);
-                  }}
-                  className="w-full bg-gradient-to-br from-red-900/40 to-pink-900/40 border border-red-500/30 rounded-xl p-4 text-left hover:bg-red-900/60 transition-all"
-                >
-                  <h4 className="text-white font-medium mb-1">🗣️ Dirty Talk Slider</h4>
-                  <p className="text-gray-400 text-sm">Say filthy things. Build intensity.</p>
-                  <p className="text-red-400 text-xs mt-1">$150-400 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('teasing');
-                    setShowMasturbation(true);
-                  }}
-                  className="w-full bg-gradient-to-br from-purple-900/40 to-red-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all"
-                >
-                  <h4 className="text-white font-medium mb-1">😈 Edging Tease Slider</h4>
-                  <p className="text-gray-400 text-sm">Almost there... but not yet. Interactive edging.</p>
-                  <p className="text-purple-400 text-xs mt-1">$300-700 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('toys');
-                    setShowMasturbation(true);
-                  }}
-                  className="w-full bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-pink-500/30 rounded-xl p-4 text-left hover:bg-pink-900/60 transition-all"
-                >
-                  <h4 className="text-white font-medium mb-1">🔥 Toy Play Slider</h4>
-                  <p className="text-gray-400 text-sm">Use toys. Fans control speed and intensity.</p>
-                  <p className="text-pink-400 text-xs mt-1">$250-600 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('orgasm');
-                    setShowMasturbation(true);
-                  }}
-                  className="w-full bg-gradient-to-br from-red-900/40 to-rose-900/40 border border-red-500/30 rounded-xl p-4 text-left hover:bg-red-900/60 transition-all"
-                >
-                  <h4 className="text-white font-medium mb-1">💦 Orgasm Slider</h4>
-                  <p className="text-gray-400 text-sm">Build to climax. Track every moment.</p>
-                  <p className="text-red-400 text-xs mt-1">$350-800 earnings</p>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCallContext('vampire_together');
-                    setShowMasturbation(true);
-                  }}
-                  className="w-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-4 text-left hover:bg-purple-900/60 transition-all"
-                >
-                  <h4 className="text-white font-medium mb-1">🦇💕 Couple Intimacy Slider</h4>
-                  <p className="text-gray-400 text-sm">With your vampire. Full interactive session.</p>
-                  <p className="text-pink-400 text-xs mt-1">$400-900 earnings • Bond increase</p>
-                </button>
-              </div>
+            <div className="bg-gradient-to-br from-pink-950/40 to-red-950/40 border-2 border-pink-500/30 rounded-2xl p-6 text-center">
+              <h3 className="text-white text-2xl font-bold mb-2">🎮 Interactive Content</h3>
+              <p className="text-gray-400 mb-6">This section has been simplified</p>
+              <button
+                onClick={async () => {
+                  const earnings = Math.floor(Math.random() * 400) + 200;
+                  const newSubs = Math.floor(Math.random() * 30) + 20;
+                  
+                  await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
+                    revenue: servantProfile.revenue + earnings,
+                    subscriber_count: servantProfile.subscriber_count + newSubs,
+                    reputation: Math.min(100, servantProfile.reputation + 8)
+                  });
+                  
+                  await base44.entities.NightLog.create({
+                    entry: `Posted interactive content. Earned $${earnings}, +${newSubs} subs.`,
+                    category: 'interaction',
+                    intensity: 'significant'
+                  });
+                  
+                  queryClient.invalidateQueries();
+                }}
+                className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold"
+              >
+                Create Interactive Content
+              </button>
             </div>
-          </div>
-        )}
-
-        {tab === 'interactive' && showMasturbation && (
-          <div className="max-h-[60vh] overflow-y-auto">
-            <MasturbationSlider
-              gender={servant.gender}
-              context={callContext || 'audience'}
-              onFinish={async (type, edgeCount, desperationLevel, bodyPart, touchingMultiple) => {
-                const isVideoCall = callContext === 'videocall';
-                const isSexting = callContext === 'sexting';
-                
-                const baseEarnings = isVideoCall ? Math.floor(Math.random() * 250) + 150 : 
-                                    isSexting ? Math.floor(Math.random() * 200) + 100 :
-                                    type === 'edged' ? Math.floor(Math.random() * 400) + 300 : 
-                                    Math.floor(Math.random() * 300) + 200;
-                const edgeBonus = edgeCount * 50;
-                const desperationBonus = Math.floor(desperationLevel / 2);
-                const earnings = baseEarnings + edgeBonus + desperationBonus;
-                const newSubs = (isVideoCall || isSexting) ? 0 : (type === 'edged' ? Math.floor(Math.random() * 40) + 30 : Math.floor(Math.random() * 25) + 15) + Math.floor(edgeCount * 5);
-                
-                await base44.entities.OnlyFangsProfile.update(servantProfile.id, {
-                  revenue: servantProfile.revenue + earnings,
-                  subscriber_count: servantProfile.subscriber_count + newSubs,
-                  reputation: Math.min(100, servantProfile.reputation + (isVideoCall || isSexting ? 5 : 8))
-                });
-                
-                const relBonus = Math.floor(Math.random() * 10) + 8;
-                await base44.entities.Servant.update(servant.id, {
-                  relationship: Math.min(100, (servant.relationship || 0) + relBonus)
-                });
-                
-                const bodyPartDesc = bodyPart === 'clit' ? ' Close-up. They watched every circle.' :
-                                    bodyPart === 'dick' ? ' Full view. They watched every stroke.' :
-                                    bodyPart === 'breasts' ? ' Nipples. Pinching and teasing.' :
-                                    bodyPart === 'chest' ? ' Chest. Touching and teasing.' :
-                                    bodyPart === 'fingers' ? ' Deep inside. Camera angle perfect.' :
-                                    bodyPart === 'balls' ? ' Showing them. Playing and squeezing.' :
-                                    touchingMultiple ? ' Both spots at once. Full show.' : '';
-                
-                const edgeDesc = edgeCount > 3 ? ` Edged ${edgeCount}x. ${isVideoCall || isSexting ? 'Begging for permission.' : 'Chat begging.'} Finally allowed. Explosive.` :
-                                edgeCount > 1 ? ` Edged ${edgeCount}x. Building intensity.` :
-                                type === 'edged' ? ' Edged. Made it last.' : '';
-
-                const contextDesc = isVideoCall ? 
-                  `Video call. Masturbated for them.${bodyPartDesc}${edgeDesc} They watched you cum. Earned $${earnings}.` :
-                  isSexting ?
-                  `Sexting session. Masturbated while texting.${bodyPartDesc}${edgeDesc} They came too. Earned $${earnings}.` :
-                  `Live masturbation show.${bodyPartDesc}${edgeDesc} Chat went wild. Earned $${earnings}, +${newSubs} subs.`;
-
-                await base44.entities.NightLog.create({
-                  entry: contextDesc,
-                  category: 'interaction',
-                  intensity: 'significant'
-                });
-                
-                queryClient.invalidateQueries();
-                setShowMasturbation(false);
-                setCallContext(null);
-                setSextingSession(null);
-                setVideoCallFan(null);
-              }}
-            />
           </div>
         )}
 
