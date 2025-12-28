@@ -37,27 +37,12 @@ export default function Home() {
     queryFn: () => base44.entities.Witch.list()
   });
 
-  const { data: succubi = [] } = useQuery({
-    queryKey: ['succubi'],
-    queryFn: () => base44.entities.Succubus.list()
-  });
-
-  const { data: incubi = [] } = useQuery({
-    queryKey: ['incubi'],
-    queryFn: () => base44.entities.Incubus.list()
-  });
-
   const { data: playerWerewolves = [] } = useQuery({
     queryKey: ['playerWerewolves'],
     queryFn: () => base44.entities.PlayerWerewolf.list()
   });
-
-  const { data: humans = [] } = useQuery({
-    queryKey: ['humans'],
-    queryFn: () => base44.entities.Human.list()
-  });
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || succubi.length > 0 || incubi.length > 0 || playerWerewolves.length > 0 || humans.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || playerWerewolves.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -97,29 +82,6 @@ export default function Home() {
       });
       queryClient.invalidateQueries();
       navigate(createPageUrl('WitchHome'));
-    } else if (selectedType === 'succubus') {
-      await base44.entities.Succubus.create({
-        name: characterName.trim(),
-        gender: 'woman',
-        sexuality: characterSexuality,
-        personality: characterPersonality,
-        energy_level: 50,
-        charm_power: 30,
-        unlocked_abilities: ['Allure', 'Energy Drain']
-      });
-      queryClient.invalidateQueries();
-      navigate(createPageUrl('SuccubusHome'));
-    } else if (selectedType === 'incubus') {
-      await base44.entities.Incubus.create({
-        name: characterName.trim(),
-        gender: 'man',
-        sexuality: characterSexuality,
-        personality: characterPersonality,
-        terror_level: 40,
-        nightmare_power: 25
-      });
-      queryClient.invalidateQueries();
-      navigate(createPageUrl('IncubusHome'));
     } else if (selectedType === 'werewolf') {
       await base44.entities.PlayerWerewolf.create({
         name: characterName.trim(),
@@ -132,29 +94,14 @@ export default function Home() {
       });
       queryClient.invalidateQueries();
       navigate(createPageUrl('WerewolfHome'));
-    } else if (selectedType === 'human') {
-      await base44.entities.Human.create({
-        name: characterName.trim(),
-        gender: characterGender,
-        sexuality: characterSexuality,
-        personality: characterPersonality,
-        job: 'Student',
-        awareness_level: 0,
-        danger_level: 0
-      });
-      queryClient.invalidateQueries();
-      navigate(createPageUrl('HumanHome'));
     }
-  };
+    };
   
   const handleContinue = () => {
     // Navigate to the appropriate home based on what characters exist
     if (vampireStates.length > 0) navigate(createPageUrl('Night'));
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
-    else if (succubi.length > 0) navigate(createPageUrl('SuccubusHome'));
-    else if (incubi.length > 0) navigate(createPageUrl('IncubusHome'));
     else if (playerWerewolves.length > 0) navigate(createPageUrl('WerewolfHome'));
-    else if (humans.length > 0) navigate(createPageUrl('HumanHome'));
   };
   
   return (
@@ -277,66 +224,7 @@ export default function Home() {
                       </button>
                     </div>
                   ))}
-                  {succubi.map(s => (
-                    <div key={s.id} className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(createPageUrl('SuccubusHome'));
-                        }}
-                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">💋</span>
-                          <div>
-                            <p className="text-white font-medium">{s.name}</p>
-                            <p className="text-gray-400 text-xs">Succubus</p>
-                          </div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm(`Delete ${s.name}?`)) {
-                            await base44.entities.Succubus.delete(s.id);
-                            queryClient.invalidateQueries();
-                          }
-                        }}
-                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-300" />
-                      </button>
-                    </div>
-                  ))}
-                  {incubi.map(i => (
-                    <div key={i.id} className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(createPageUrl('IncubusHome'));
-                        }}
-                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">😈</span>
-                          <div>
-                            <p className="text-white font-medium">{i.name}</p>
-                            <p className="text-gray-400 text-xs">Incubus</p>
-                          </div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm(`Delete ${i.name}?`)) {
-                            await base44.entities.Incubus.delete(i.id);
-                            queryClient.invalidateQueries();
-                          }
-                        }}
-                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-300" />
-                      </button>
-                    </div>
-                  ))}
+
                   {playerWerewolves.map(w => (
                     <div key={w.id} className="flex gap-2">
                       <button
@@ -367,36 +255,7 @@ export default function Home() {
                       </button>
                     </div>
                   ))}
-                  {humans.map(h => (
-                    <div key={h.id} className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(createPageUrl('HumanHome'));
-                        }}
-                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">👤</span>
-                          <div>
-                            <p className="text-white font-medium">{h.name}</p>
-                            <p className="text-gray-400 text-xs">Human</p>
-                          </div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm(`Delete ${h.name}?`)) {
-                            await base44.entities.Human.delete(h.id);
-                            queryClient.invalidateQueries();
-                          }
-                        }}
-                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-300" />
-                      </button>
-                    </div>
-                  ))}
+
                 </div>
               </div>
 
@@ -490,30 +349,7 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
-                  <button
-                    onClick={() => { setSelectedType('succubus'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">💋</span>
-                      <div>
-                        <span className="font-medium text-white block">Succubus</span>
-                        <p className="text-sm text-gray-400">Seduction, energy, desire</p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedType('incubus'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">😈</span>
-                      <div>
-                        <span className="font-medium text-white block">Incubus</span>
-                        <p className="text-sm text-gray-400">Nightmares, terror, darkness</p>
-                      </div>
-                    </div>
-                  </button>
+
                   <button
                     onClick={() => { setSelectedType('werewolf'); setIntroStep(1); }}
                     className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
@@ -526,18 +362,7 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
-                  <button
-                    onClick={() => { setSelectedType('human'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">👤</span>
-                      <div>
-                        <span className="font-medium text-white block">Human</span>
-                        <p className="text-sm text-gray-400">Mortal life, supernatural discovery</p>
-                      </div>
-                    </div>
-                  </button>
+
                 </div>
               </>
             )}
@@ -577,7 +402,7 @@ export default function Home() {
                 <h2 className="text-2xl font-bold text-white mb-4">Your identity</h2>
                 <p className="text-purple-300 text-sm mb-4">How do you see yourself?</p>
                 <div className="space-y-3 mb-6">
-                  {!['succubus', 'incubus'].includes(selectedType) && (
+                  {(
                     <>
                       <button
                         onClick={() => setCharacterGender('man')}
@@ -612,14 +437,8 @@ export default function Home() {
                         <span className="font-medium">Custom</span>
                         <p className="text-sm opacity-80">They/Them</p>
                       </button>
-                    </>
-                  )}
-                  {selectedType === 'succubus' && (
-                    <p className="text-gray-400 text-sm">Succubi are female-presenting beings of desire.</p>
-                  )}
-                  {selectedType === 'incubus' && (
-                    <p className="text-gray-400 text-sm">Incubi are male-presenting beings of nightmares.</p>
-                  )}
+                      </>
+                      )}
                 </div>
                 <button
                   onClick={() => setIntroStep(3)}
