@@ -8,6 +8,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const queryClient = useQueryClient();
   const [outcome, setOutcome] = useState('');
   const [interacting, setInteracting] = useState(false);
+  const [currentAction, setCurrentAction] = useState(null);
   const [showNaming, setShowNaming] = useState(false);
   const [snakeName, setSnakeName] = useState('');
 
@@ -109,6 +110,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
   const handleInteraction = async (action) => {
     setInteracting(true);
+    setCurrentAction(action);
 
     setTimeout(async () => {
       let result = '';
@@ -225,6 +227,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
 
   const handleUseAbility = async (ability) => {
     setInteracting(true);
+    setCurrentAction('ability_' + ability.id);
 
     setTimeout(async () => {
       const abilityResults = {
@@ -310,12 +313,195 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
           </div>
         ) : interacting ? (
           <div className="text-center py-12">
-            <motion.div
-              animate={{ rotate: 360, scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            >
-              <div className="text-6xl">🐍</div>
-            </motion.div>
+            {currentAction === 'feed' && (
+              <motion.div
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                <div className="text-6xl mb-4">🐍</div>
+                <motion.div
+                  animate={{ y: [-20, 0], opacity: [0, 1, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🩸
+                </motion.div>
+                <p className="text-red-400 mt-4">Feeding...</p>
+              </motion.div>
+            )}
+            {currentAction === 'train' && (
+              <motion.div>
+                <motion.div
+                  animate={{ x: [-30, 30, -30], rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <div className="flex justify-center gap-4">
+                  <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 0.5, repeat: Infinity }}>⚡</motion.div>
+                  <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.3 }}>💪</motion.div>
+                </div>
+                <p className="text-purple-400 mt-4">Training...</p>
+              </motion.div>
+            )}
+            {currentAction === 'spy' && (
+              <motion.div>
+                <motion.div
+                  animate={{ opacity: [1, 0.3, 1], scale: [1, 0.8, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  👁️
+                </motion.div>
+                <p className="text-blue-400 mt-4">Spying...</p>
+              </motion.div>
+            )}
+            {currentAction === 'hunt' && (
+              <motion.div>
+                <motion.div
+                  animate={{ x: [-50, 50], y: [0, -20, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 0.8, 1], opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🎯
+                </motion.div>
+                <p className="text-red-400 mt-4">Hunting prey...</p>
+              </motion.div>
+            )}
+            {currentAction === 'bond' && (
+              <motion.div>
+                <div className="flex justify-center items-center gap-4 mb-4">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                    className="text-6xl"
+                  >
+                    🐍
+                  </motion.div>
+                  <motion.div
+                    animate={{ scale: [1, 1.5, 1], rotate: [0, 360] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-4xl"
+                  >
+                    💚
+                  </motion.div>
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1, repeat: Infinity, delay: 0.5 }}
+                    className="text-6xl"
+                  >
+                    🧛
+                  </motion.div>
+                </div>
+                <p className="text-green-400">Bonding deeply...</p>
+              </motion.div>
+            )}
+            {currentAction === 'cuddle' && (
+              <motion.div>
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  💕
+                </motion.div>
+                <p className="text-pink-400 mt-4">Cuddling...</p>
+              </motion.div>
+            )}
+            {currentAction === 'talk' && (
+              <motion.div>
+                <div className="text-6xl mb-4">🐍</div>
+                <motion.div
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-2xl"
+                >
+                  💭 💬 💭
+                </motion.div>
+                <p className="text-cyan-400 mt-4">Communicating...</p>
+              </motion.div>
+            )}
+            {currentAction === 'guard' && (
+              <motion.div>
+                <motion.div
+                  animate={{ x: [-20, 20, -20] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  🛡️
+                </motion.div>
+                <p className="text-indigo-400 mt-4">Guarding...</p>
+              </motion.div>
+            )}
+            {currentAction === 'venom' && (
+              <motion.div>
+                <div className="text-6xl mb-4">🐍</div>
+                <motion.div
+                  animate={{ y: [0, 20], opacity: [1, 0.5] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-4xl"
+                >
+                  💧
+                </motion.div>
+                <p className="text-green-400 mt-4">Extracting venom...</p>
+              </motion.div>
+            )}
+            {currentAction?.startsWith('ability_') && (
+              <motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.5, 1], rotate: [0, 360] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  🐍
+                </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-5xl"
+                >
+                  ⚡✨⚡
+                </motion.div>
+                <p className="text-purple-400 mt-4">Using special ability...</p>
+              </motion.div>
+            )}
+            {!currentAction && (
+              <motion.div
+                animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              >
+                <div className="text-6xl">🐍</div>
+              </motion.div>
+            )}
           </div>
         ) : !mySnake ? (
           <div className="space-y-3">
