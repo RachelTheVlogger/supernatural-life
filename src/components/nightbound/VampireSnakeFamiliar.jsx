@@ -690,14 +690,26 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         ) : (
           <div>
             {/* Snake Header */}
-            <div className="bg-black/40 rounded-xl p-4 mb-4 border border-green-500/30">
+            <div className={`bg-gradient-to-br ${EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].color} rounded-xl p-4 mb-4 border-2 border-green-500/50`}>
+              <div className="text-center mb-3">
+                <div className="text-7xl mb-2">
+                  {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].emoji}
+                </div>
+              </div>
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <span className="text-5xl">🐍</span>
-                  <div>
-                    <h3 className="text-white font-bold text-xl">{mySnake.custom_name}</h3>
-                    <p className="text-gray-400 text-sm capitalize">{mySnake.type} • {mySnake.size}</p>
-                  </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-bold text-xl">{mySnake.custom_name}</h3>
+                  <p className="text-gray-400 text-sm capitalize">{mySnake.type} • {mySnake.size}</p>
+                  <p className="text-purple-300 text-sm mt-1">
+                    {EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level) - 1].name}
+                  </p>
+                  {getEvolutionStage(mySnake.power_level) < 3 && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-xs text-gray-400">Next evolution:</span>
+                      <span className="text-2xl">{EVOLUTION_PATHS[mySnake.type][getEvolutionStage(mySnake.power_level)].emoji}</span>
+                      <span className="text-xs text-purple-400">at {getEvolutionStage(mySnake.power_level) === 1 ? '40' : '70'} power</span>
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={() => setShowNaming(true)}
