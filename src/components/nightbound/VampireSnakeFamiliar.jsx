@@ -46,6 +46,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const [playDateOutcome, setPlayDateOutcome] = useState('');
   const [showProgression, setShowProgression] = useState(false);
   const [showSnakeSocial, setShowSnakeSocial] = useState(false);
+  const [activeTab, setActiveTab] = useState('snakes');
 
   const { data: snakes = [] } = useQuery({
     queryKey: ['snakeFamiliars'],
@@ -692,9 +693,33 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         </button>
 
         <h2 className="text-2xl font-bold text-white mb-2">🐍 Snake Familiar</h2>
-        <p className="text-gray-400 text-sm mb-6">
+        <p className="text-gray-400 text-sm mb-4">
           A serpent bound to you. Your spy. Your weapon. Your companion.
         </p>
+
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setActiveTab('snakes')}
+            className={`flex-1 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'snakes'
+                ? 'bg-green-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            My Snakes {snakes.length > 0 && `(${snakes.length})`}
+          </button>
+          <button
+            onClick={() => setActiveTab('adopt')}
+            className={`flex-1 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'adopt'
+                ? 'bg-green-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            + Adopt New
+          </button>
+        </div>
 
         {/* Snake Selector if multiple */}
         {snakes.length > 1 && (
@@ -1173,9 +1198,14 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </motion.div>
             )}
           </div>
-        ) : !mySnake && snakes.length === 0 ? (
+        ) : activeTab === 'adopt' ? (
           <div className="space-y-3">
             <p className="text-gray-300 mb-4">Choose your serpent familiar:</p>
+            {snakes.length >= 5 && (
+              <div className="bg-yellow-900/40 border border-yellow-500/50 rounded-lg p-3 mb-4">
+                <p className="text-yellow-200 text-sm">Maximum 5 snakes reached</p>
+              </div>
+            )}
             {snakeTypes.map(snake => (
               <button
                 key={snake.id}
@@ -1184,7 +1214,8 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   setAdoptingType(snake.id);
                   setShowAdoptModal(true);
                 }}
-                className={`w-full bg-gradient-to-r ${snake.color} border border-green-500/30 rounded-xl p-4 text-left hover:opacity-90 transition-opacity touch-manipulation`}
+                disabled={snakes.length >= 5}
+                className={`w-full bg-gradient-to-r ${snake.color} border border-green-500/30 rounded-xl p-4 text-left hover:opacity-90 transition-opacity touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -1198,6 +1229,17 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 </div>
               </button>
             ))}
+          </div>
+        ) : !mySnake && snakes.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🐍</div>
+            <p className="text-gray-400 mb-4">No snakes yet</p>
+            <button
+              onClick={() => setActiveTab('adopt')}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            >
+              Adopt Your First Snake
+            </button>
           </div>
         ) : (
           <div>
@@ -1271,8 +1313,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setAdoptingType(snakeTypes[0].id);
-                        setShowAdoptModal(true);
+                        setActiveTab('adopt');
                       }}
                       className="px-3 py-1 rounded-lg font-medium bg-green-600 hover:bg-green-700 text-white transition-all text-xs touch-manipulation"
                     >
