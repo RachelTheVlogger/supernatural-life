@@ -772,8 +772,7 @@ export default function Night() {
         {showSnake && vampireState && (
           <VampireSnakeFamiliar vampireState={vampireState} onClose={() => setShowSnake(false)} />
         )}
-
-        </AnimatePresence>
-        </div>
-            );
-            }
+      </AnimatePresence>
+    </div>
+  );
+}
