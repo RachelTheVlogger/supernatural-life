@@ -181,7 +181,7 @@ export default function ServantHome() {
     }
   }, [vampireStates.length, vampireLoading, navigate, servantId]);
   
-  const { data: servant } = useQuery({
+  const { data: servant, isLoading: servantLoading } = useQuery({
     queryKey: ['servant', servantId],
     queryFn: async () => {
       try {
@@ -311,7 +311,7 @@ export default function ServantHome() {
     }, chore.duration);
   };
   
-  if (!entity) {
+  if (servantLoading || !entity) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-400">Loading...</p>
@@ -644,7 +644,7 @@ export default function ServantHome() {
 
       {/* Modals */}
       <AnimatePresence>
-        {showBusinessModal && (
+        {showBusinessModal && servant && (
           <BusinessManagement
             servant={servant}
             onClose={() => setShowBusinessModal(false)}
@@ -656,7 +656,7 @@ export default function ServantHome() {
             viewMode="servant"
           />
         )}
-        {showAutomationSettings && (
+        {showAutomationSettings && servant && (
           <ServantAutomationSettings
             servant={servant}
             onClose={() => setShowAutomationSettings(false)}
