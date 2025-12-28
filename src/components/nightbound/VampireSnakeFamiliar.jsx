@@ -47,6 +47,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const [showProgression, setShowProgression] = useState(false);
   const [showSnakeSocial, setShowSnakeSocial] = useState(false);
   const [activeTab, setActiveTab] = useState('snakes');
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const { data: snakes = [] } = useQuery({
     queryKey: ['snakeFamiliars'],
@@ -56,6 +57,9 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       } catch (e) {
         return [];
       }
+    },
+    onSuccess: () => {
+      setTimeout(() => setIsInitialLoading(false), 1500);
     }
   });
 
@@ -721,8 +725,34 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
           </button>
         </div>
 
+        {/* Initial Loading Animation */}
+        {isInitialLoading ? (
+          <div className="text-center py-16">
+            <motion.div
+              animate={{ 
+                rotate: [0, 360],
+                scale: [1, 1.3, 1]
+              }}
+              transition={{ 
+                rotate: { duration: 2, repeat: Infinity, ease: 'linear' },
+                scale: { duration: 1.5, repeat: Infinity }
+              }}
+              className="text-8xl mb-4"
+            >
+              🐍
+            </motion.div>
+            <motion.p
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-green-400"
+            >
+              Summoning your familiar...
+            </motion.p>
+          </div>
+        ) : (
+          <>
         {/* Snake Selector if multiple */}
-        {snakes.length > 1 && (
+        {snakes.length > 1 && activeTab === 'snakes' && (
           <div className="mb-4">
             <div className="bg-gray-900/60 rounded-xl p-4 border border-purple-500/30">
               <h3 className="text-white font-bold mb-3">Your Snakes</h3>
@@ -1198,6 +1228,17 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </motion.div>
             )}
           </div>
+        ) : activeTab === 'snakes' && !mySnake && snakes.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🐍</div>
+            <p className="text-gray-400 mb-4">No snakes yet</p>
+            <button
+              onClick={() => setActiveTab('adopt')}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            >
+              Adopt Your First Snake
+            </button>
+          </div>
         ) : activeTab === 'adopt' ? (
           <div className="space-y-3">
             <p className="text-gray-300 mb-4">Choose your serpent familiar:</p>
@@ -1271,7 +1312,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <div className="mb-2">
                   <div className="flex items-center justify-between mb-1">
                     <h3 className="text-white font-bold text-xl flex items-center gap-2">
-                      {mySnake.gender === 'male' ? '♂️' : '♀️'} {mySnake.custom_name}
+                      {mySnake.custom_name}
                       <span 
                         className="inline-block w-3 h-3 rounded-full"
                         style={{ 
@@ -1292,7 +1333,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                       </button>
                     </div>
                   </div>
-                  <p className="text-gray-400 text-sm capitalize">
+                  <p className="text-gray-400 text-sm capitalize flex items-center gap-2">
+                    <span className={`${mySnake.gender === 'male' ? 'text-blue-400' : 'text-pink-400'} font-bold text-lg`}>
+                      {mySnake.gender === 'male' ? '♂️' : '♀️'}
+                    </span>
                     {mySnake.type} • {mySnake.size} • {mySnake.mood === 'content' ? '😌' : mySnake.mood === 'playful' ? '😄' : mySnake.mood === 'aggressive' ? '😠' : mySnake.mood === 'sleepy' ? '😴' : mySnake.mood === 'affectionate' ? '🥰' : '🤔'} {mySnake.mood}
                   </p>
                   <p className="text-purple-300 text-sm mt-1">
@@ -1673,6 +1717,8 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               })}
             </div>
           </div>
+        )}
+        </>
         )}
 
         {/* Naming Modal */}
