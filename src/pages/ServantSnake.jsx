@@ -81,6 +81,21 @@ const SNAKE_ABILITIES = {
   ]
 };
 
+// Enhanced abilities from drugs/plants (available when unlocked)
+const ENHANCED_ABILITIES = [
+  { id: 'blood_rage', name: 'Blood Rage', icon: '🔥', desc: 'Temporary strength boost from blood fury' },
+  { id: 'time_dilation', name: 'Time Dilation', icon: '⏰', desc: 'Slow perceived time' },
+  { id: 'reality_warp', name: 'Reality Warp', icon: '🌀', desc: 'Bend reality' },
+  { id: 'inferno_scales', name: 'Inferno Scales', icon: '🔥', desc: 'Burning scales' },
+  { id: 'void_step', name: 'Void Step', icon: '⚫', desc: 'Void teleportation' },
+  { id: 'bloom_shield', name: 'Bloom Shield', icon: '🌸', desc: 'Blood petal barrier' },
+  { id: 'shadow_bind', name: 'Shadow Bind', icon: '🌿', desc: 'Shadow vine trap' },
+  { id: 'lunar_empowerment', name: 'Lunar Empowerment', icon: '🌙', desc: 'Night power surge' },
+  { id: 'root_strike', name: 'Root Strike', icon: '🌱', desc: 'Blood root attack' },
+  { id: 'toxic_cloud', name: 'Toxic Cloud', icon: '☁️', desc: 'Poison vapor' },
+  { id: 'enhanced_senses', name: 'Enhanced Senses', icon: '👁️', desc: 'Heightened perception' }
+];
+
 export default function ServantSnake() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -575,16 +590,22 @@ export default function ServantSnake() {
         fear: `${snake.custom_name} projects pure terror. Victims flee screaming. Primal fear unleashed.`,
         dream: `${snake.custom_name} enters their dreams. Nightmares shaped by serpent whispers.`,
         madness: `${snake.custom_name}'s eyes lock onto theirs. Sanity shatters. They're broken now.`,
-        consume: `${snake.custom_name} feeds on their nightmares. Growing stronger from their terror.`
+        consume: `${snake.custom_name} feeds on their nightmares. Growing stronger from their terror.`,
+        
+        blood_rage: `${snake.custom_name}'s body surges with blood fury! Super strength!`,
+        time_dilation: `${snake.custom_name} slows time. Combat in slow motion.`,
+        reality_warp: `${snake.custom_name} bends reality. Illusions everywhere.`,
+        inferno_scales: `${snake.custom_name}'s scales ignite! Touch = burn.`,
+        void_step: `${snake.custom_name} tears through the void. Instant teleport.`,
+        bloom_shield: `${snake.custom_name} summons blood petal barrier.`,
+        shadow_bind: `${snake.custom_name} extends shadow vines. Enemies trapped.`,
+        lunar_empowerment: `${snake.custom_name} channels moonlight. Power surge!`,
+        root_strike: `${snake.custom_name} summons blood roots. Impaling strike.`,
+        toxic_cloud: `${snake.custom_name} exhales poison vapor. Cloud spreads.`,
+        enhanced_senses: `${snake.custom_name}'s senses sharpen impossibly. Sees all.`
       };
 
       const result = outcomes[ability.id] || `${snake.custom_name} used ${ability.name}!`;
-
-      if (!(snake.unlocked_abilities || []).includes(ability.name)) {
-        await base44.entities.SnakeFamiliar.update(snake.id, {
-          unlocked_abilities: [...(snake.unlocked_abilities || []), ability.name]
-        });
-      }
 
       await base44.entities.NightLog.create({
         entry: result,
@@ -810,21 +831,45 @@ export default function ServantSnake() {
 
               {/* Special Abilities */}
               <div>
-                <h3 className="text-white font-bold mb-3">Special Abilities</h3>
-                {SNAKE_ABILITIES[snake.type].map(ability => {
-                  const unlocked = snake.bond_level >= ability.reqBond;
-                  const alreadyUnlocked = (snake.unlocked_abilities || []).includes(ability.name);
+                <h3 className="text-white font-bold mb-3">Special Abilities (Infinite Use)</h3>
+                <div className="space-y-2">
+                  {SNAKE_ABILITIES[snake.type].map(ability => {
+                    const unlocked = snake.bond_level >= ability.reqBond;
 
-                  return (
+                    return (
+                      <button
+                        key={ability.id}
+                        onClick={() => unlocked && !interacting && handleUseAbility(ability)}
+                        disabled={!unlocked || !!interacting}
+                        className={`w-full rounded-lg p-3 text-left transition-all active:scale-95 ${
+                          unlocked 
+                            ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border border-green-500/30' 
+                            : 'bg-gray-800/40 border border-gray-600/30 opacity-50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{ability.icon}</span>
+                            <div>
+                              <h4 className="text-white font-medium">{ability.name}</h4>
+                              <p className="text-gray-400 text-xs">{ability.desc}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            {!unlocked && <span className="text-gray-500 text-xs">Bond {ability.reqBond}</span>}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+
+                  {/* Enhanced Abilities (if any unlocked) */}
+                  {ENHANCED_ABILITIES.filter(ea => (snake.unlocked_abilities || []).includes(ea.name)).map(ability => (
                     <button
                       key={ability.id}
-                      onClick={() => unlocked && handleUseAbility(ability)}
-                      disabled={!unlocked}
-                      className={`w-full rounded-lg p-3 text-left transition-colors mb-2 ${
-                        unlocked 
-                          ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border border-green-500/30' 
-                          : 'bg-gray-800/40 border border-gray-600/30 opacity-50'
-                      }`}
+                      onClick={() => !interacting && handleUseAbility(ability)}
+                      disabled={!!interacting}
+                      className="w-full rounded-lg p-3 text-left transition-all active:scale-95 bg-gradient-to-r from-purple-900/40 to-pink-900/40 hover:from-purple-900/60 hover:to-pink-900/60 border border-purple-500/30"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -834,14 +879,11 @@ export default function ServantSnake() {
                             <p className="text-gray-400 text-xs">{ability.desc}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          {alreadyUnlocked && <span className="text-green-400 text-xs">✓ Unlocked</span>}
-                          {!unlocked && <span className="text-gray-500 text-xs">Bond {ability.reqBond}</span>}
-                        </div>
+                        <span className="text-purple-300 text-xs">ENHANCED</span>
                       </div>
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
             </div>
           ) : (
