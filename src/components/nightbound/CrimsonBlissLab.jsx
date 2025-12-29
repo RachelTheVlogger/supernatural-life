@@ -108,8 +108,14 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
 
   const generateNewStrain = async () => {
     try {
+      // Get existing strain names to avoid duplicates
+      const existingNames = [
+        ...BASE_STRAINS.map(s => s.name),
+        ...inventory.map(i => i.strain_name)
+      ];
+
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Generate a unique blood drug strain for a vampire drug lab. Make it creative, trippy, and explicit. Include: name (creative 2-word name), potency (1-10), effects (vivid psychedelic description), price (50-1000), addictiveness (30-95). Make it wilder than typical drugs. Format as JSON.`,
+        prompt: `Generate a unique blood drug strain for a vampire drug lab. Make it creative, trippy, and explicit. The name must be 2-3 words and completely different from these existing strains: ${existingNames.join(', ')}. Include: name (creative 2-3 word name, must be unique), potency (1-10), effects (vivid psychedelic description, 10-15 words, make it wild and supernatural), price (50-1000), addictiveness (30-95). Make it darker and more intense than typical drugs. Format as JSON.`,
         response_json_schema: {
           type: 'object',
           properties: {
