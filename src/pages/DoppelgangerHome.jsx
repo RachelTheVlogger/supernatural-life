@@ -41,7 +41,7 @@ export default function DoppelgangerHome() {
 
   if (!doppelganger) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 to-black">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 to-black pb-24">
         <div className="text-center">
           <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
           <p className="text-gray-400">No doppelgängers found yet.</p>
