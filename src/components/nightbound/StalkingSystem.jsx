@@ -806,13 +806,13 @@ Make it intense, layered with power dynamics and supernatural seduction. This is
               )}
             </div>
 
-            <div className="flex gap-2">
+            <div className="space-y-2">
               {outcome.wants_more && (
                 <button
                   onClick={handleCompelVisit}
-                  className="flex-1 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg py-3 text-red-300 text-sm"
+                  className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg py-3 text-red-300 text-sm"
                 >
-                  Continue Session
+                  Compel Another Visit
                 </button>
               )}
               <button
@@ -820,7 +820,7 @@ Make it intense, layered with power dynamics and supernatural seduction. This is
                   setOutcome('');
                   setSelectedTarget(null);
                 }}
-                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg text-sm"
+                className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg text-sm"
               >
                 {outcome.wants_more ? 'Send Them Home' : 'Finish'}
               </button>
