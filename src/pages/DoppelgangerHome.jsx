@@ -35,7 +35,7 @@ export default function DoppelgangerHome() {
 
   React.useEffect(() => {
     if (doppelgangers.length === 0) {
-      navigate(createPageUrl('Night'), { replace: true });
+      navigate(createPageUrl('VampireHome'), { replace: true });
     }
   }, [doppelgangers.length, navigate]);
 
