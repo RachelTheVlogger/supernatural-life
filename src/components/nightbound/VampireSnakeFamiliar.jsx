@@ -45,7 +45,15 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
       }}>
         <div className="relative z-10">
           <div className="text-center mb-3">
-            <div className="text-7xl mb-2">🐍</div>
+            <div 
+              className="text-7xl mb-2"
+              style={{
+                filter: `drop-shadow(0 0 ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].shadowGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].toxicGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].bloodGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].nightmareGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].voidGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].acidGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].dragonGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].basiliskGlow ? '12px' : '0px'} ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emojiColor})`,
+                color: EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emojiColor
+              }}
+            >
+              🐍
+            </div>
           </div>
           <div className="mb-2">
             <div className="flex items-center justify-between mb-1">
@@ -167,24 +175,24 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
 
 const EVOLUTION_PATHS = {
   shadow: [
-    { stage: 1, name: 'Shadow Hatchling', abilities: ['Blend with Shadows'], emoji: '🐍', color: 'from-gray-700 to-gray-900' },
-    { stage: 2, name: 'Umbral Serpent', abilities: ['Blend with Shadows', 'Shadow Step'], emoji: '🐍✨', color: 'from-gray-800 to-black' },
-    { stage: 3, name: 'Void Wyrm', abilities: ['Blend with Shadows', 'Shadow Step', 'Darkness Manipulation', 'Phase Through Walls'], emoji: '🐍🌑', color: 'from-black to-purple-950' }
+    { stage: 1, name: 'Shadow Hatchling', abilities: ['Blend with Shadows'], emoji: '🐍', emojiColor: '#9CA3AF', color: 'from-gray-700 to-gray-900' },
+    { stage: 2, name: 'Umbral Serpent', abilities: ['Blend with Shadows', 'Shadow Step'], emoji: '🐍', emojiColor: '#4B5563', shadowGlow: true, color: 'from-gray-800 to-black' },
+    { stage: 3, name: 'Void Wyrm', abilities: ['Blend with Shadows', 'Shadow Step', 'Darkness Manipulation', 'Phase Through Walls'], emoji: '🐍', emojiColor: '#000000', voidGlow: true, color: 'from-black to-purple-950' }
   ],
   venom: [
-    { stage: 1, name: 'Venom Hatchling', abilities: ['Toxic Bite'], emoji: '🐍', color: 'from-green-700 to-green-900' },
-    { stage: 2, name: 'Poison Serpent', abilities: ['Toxic Bite', 'Paralysis Venom'], emoji: '🐍💚', color: 'from-green-800 to-emerald-950' },
-    { stage: 3, name: 'Death Adder', abilities: ['Toxic Bite', 'Paralysis Venom', 'Acidic Spit', 'Plague Breath'], emoji: '🐍☠️', color: 'from-emerald-950 to-green-950' }
+    { stage: 1, name: 'Venom Hatchling', abilities: ['Toxic Bite'], emoji: '🐍', emojiColor: '#10B981', color: 'from-green-700 to-green-900' },
+    { stage: 2, name: 'Poison Serpent', abilities: ['Toxic Bite', 'Paralysis Venom'], emoji: '🐍', emojiColor: '#059669', toxicGlow: true, color: 'from-green-800 to-emerald-950' },
+    { stage: 3, name: 'Death Adder', abilities: ['Toxic Bite', 'Paralysis Venom', 'Acidic Spit', 'Plague Breath'], emoji: '🐍', emojiColor: '#047857', acidGlow: true, color: 'from-emerald-950 to-green-950' }
   ],
   blood: [
-    { stage: 1, name: 'Blood Hatchling', abilities: ['Blood Scent'], emoji: '🐍', color: 'from-red-700 to-red-900' },
-    { stage: 2, name: 'Crimson Serpent', abilities: ['Blood Scent', 'Healing Blood'], emoji: '🐍❤️', color: 'from-red-800 to-rose-950' },
-    { stage: 3, name: 'Sanguis Drake', abilities: ['Blood Scent', 'Healing Blood', 'Blood Control', 'Life Drain'], emoji: '🐍🩸', color: 'from-rose-950 to-red-950' }
+    { stage: 1, name: 'Blood Hatchling', abilities: ['Blood Scent'], emoji: '🐍', emojiColor: '#EF4444', color: 'from-red-700 to-red-900' },
+    { stage: 2, name: 'Crimson Serpent', abilities: ['Blood Scent', 'Healing Blood'], emoji: '🐍', emojiColor: '#DC2626', bloodGlow: true, color: 'from-red-800 to-rose-950' },
+    { stage: 3, name: 'Sanguis Drake', abilities: ['Blood Scent', 'Healing Blood', 'Blood Control', 'Life Drain'], emoji: '🐍', emojiColor: '#991B1B', dragonGlow: true, color: 'from-rose-950 to-red-950' }
   ],
   nightmare: [
-    { stage: 1, name: 'Nightmare Hatchling', abilities: ['Induce Fear'], emoji: '🐍', color: 'from-purple-700 to-purple-900' },
-    { stage: 2, name: 'Terror Serpent', abilities: ['Induce Fear', 'Nightmare Vision'], emoji: '🐍💜', color: 'from-purple-800 to-indigo-950' },
-    { stage: 3, name: 'Dread Basilisk', abilities: ['Induce Fear', 'Nightmare Vision', 'Mind Break', 'Petrifying Gaze'], emoji: '🐍👁️', color: 'from-indigo-950 to-purple-950' }
+    { stage: 1, name: 'Nightmare Hatchling', abilities: ['Induce Fear'], emoji: '🐍', emojiColor: '#A855F7', color: 'from-purple-700 to-purple-900' },
+    { stage: 2, name: 'Terror Serpent', abilities: ['Induce Fear', 'Nightmare Vision'], emoji: '🐍', emojiColor: '#9333EA', nightmareGlow: true, color: 'from-purple-800 to-indigo-950' },
+    { stage: 3, name: 'Dread Basilisk', abilities: ['Induce Fear', 'Nightmare Vision', 'Mind Break', 'Petrifying Gaze'], emoji: '🐍', emojiColor: '#7C3AED', basiliskGlow: true, color: 'from-indigo-950 to-purple-950' }
   ]
 };
 
