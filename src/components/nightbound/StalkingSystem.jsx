@@ -167,10 +167,11 @@ export default function StalkingSystem({ vampireState, onClose }) {
         enjoyment: newEnjoyment,
         obsession: newObsession,
         fear_vs_thrill: newThrill,
-        times_watched: selectedTarget.times_watched + 1,
+        times_watched: (selectedTarget.times_watched || 0) + 1,
         last_stalk_location: randomLocation.label,
         knows_its_you: newAwareness > 70 ? true : selectedTarget.knows_its_you,
-        wants_to_meet: newObsession > 60 ? true : selectedTarget.wants_to_meet
+        wants_to_meet: newObsession > 60 ? true : selectedTarget.wants_to_meet,
+        has_been_compelled: selectedTarget.has_been_compelled || false
       });
 
       await base44.entities.NightLog.create({
@@ -363,7 +364,8 @@ Make it intense, layered with power dynamics and supernatural seduction. This is
 
       await base44.entities.StalkTarget.update(outcome.target.id, {
         obsession: newObsession,
-        enjoyment: newEnjoyment
+        enjoyment: newEnjoyment,
+        has_been_compelled: true
       });
 
       await base44.entities.NightLog.create({
@@ -578,9 +580,15 @@ Make it intense, layered with power dynamics and supernatural seduction. This is
               >
                 <div className="flex items-center justify-center gap-2">
                   <Eye className="w-5 h-5" />
-                  <span className="text-white font-medium">Compel Them to Come Over</span>
+                  <span className="text-white font-medium">
+                    {selectedTarget.has_been_compelled ? 'Invite Them Back Over' : 'Compel Them to Come Over'}
+                  </span>
                 </div>
-                <p className="text-red-300 text-xs mt-1">Their obsession makes them vulnerable</p>
+                <p className="text-red-300 text-xs mt-1">
+                  {selectedTarget.has_been_compelled 
+                    ? 'They remember last time... they want to come back' 
+                    : 'Their obsession makes them vulnerable'}
+                </p>
               </button>
             )}
 
