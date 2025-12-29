@@ -497,6 +497,7 @@ export default function DoppelgangerHome() {
             transition={{ delay: 0.2 }}
             className="space-y-3 max-h-[60vh] overflow-y-auto pr-2"
           >
+            {/* VAMPIRE INTERACTIONS */}
             {!doppelganger.is_vampire && (
               <>
                 <button
@@ -517,8 +518,18 @@ export default function DoppelgangerHome() {
                 </button>
               </>
             )}
+            {doppelganger.is_vampire && (
+              <button
+                onClick={() => handleAction('cure')}
+                disabled={acting}
+                className="w-full bg-gradient-to-r from-blue-900/60 to-cyan-950/60 hover:from-blue-900/80 hover:to-cyan-950/80 border-2 border-blue-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+              >
+                <Zap className="w-5 h-5 inline mr-2" />
+                Force The Cure On Them
+              </button>
+            )}
 
-            {/* Psychological Manipulation */}
+            {/* ELENA/KATHERINE PSYCHOLOGICAL WARFARE */}
             <button
               onClick={() => handleAction('impersonate')}
               disabled={acting}
@@ -532,8 +543,8 @@ export default function DoppelgangerHome() {
               disabled={acting}
               className="w-full bg-gradient-to-r from-purple-900/60 to-pink-950/60 hover:from-purple-900/80 hover:to-pink-950/80 border-2 border-purple-500/50 rounded-xl py-4 text-white disabled:opacity-50"
             >
-              <Eye className="w-5 h-5 inline mr-2" />
-              Steal Their Life
+              <Skull className="w-5 h-5 inline mr-2" />
+              Steal Their Entire Life
             </button>
             <button
               onClick={() => handleAction('possess')}
@@ -542,6 +553,30 @@ export default function DoppelgangerHome() {
             >
               <Brain className="w-5 h-5 inline mr-2" />
               Possess Their Body
+            </button>
+            <button
+              onClick={() => handleAction('steal_love')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-pink-900/60 to-red-950/60 hover:from-pink-900/80 hover:to-red-950/80 border-2 border-pink-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Heart className="w-5 h-5 inline mr-2" />
+              Steal Their Lover
+            </button>
+            <button
+              onClick={() => handleAction('frame')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-yellow-900/60 to-orange-950/60 hover:from-yellow-900/80 hover:to-orange-950/80 border-2 border-yellow-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Skull className="w-5 h-5 inline mr-2" />
+              Frame Them For Crimes
+            </button>
+            <button
+              onClick={() => handleAction('ruin')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-red-900/60 to-black/80 hover:from-red-900/80 hover:to-black border-2 border-red-700/50 rounded-xl py-4 text-red-300 disabled:opacity-50"
+            >
+              <Skull className="w-5 h-5 inline mr-2" />
+              Completely Ruin Them
             </button>
             <button
               onClick={() => handleAction('gaslighting')}
@@ -560,35 +595,11 @@ export default function DoppelgangerHome() {
               Compete With Them
             </button>
             <button
-              onClick={() => handleAction('steal_love')}
-              disabled={acting}
-              className="w-full bg-gradient-to-r from-pink-900/60 to-red-950/60 hover:from-pink-900/80 hover:to-red-950/80 border-2 border-pink-500/50 rounded-xl py-4 text-white disabled:opacity-50"
-            >
-              <Heart className="w-5 h-5 inline mr-2" />
-              Steal Their Lover
-            </button>
-            <button
-              onClick={() => handleAction('frame')}
-              disabled={acting}
-              className="w-full bg-gradient-to-r from-yellow-900/60 to-orange-950/60 hover:from-yellow-900/80 hover:to-orange-950/80 border-2 border-yellow-500/50 rounded-xl py-4 text-white disabled:opacity-50"
-            >
-              <Skull className="w-5 h-5 inline mr-2" />
-              Frame Them
-            </button>
-            <button
-              onClick={() => handleAction('ruin')}
-              disabled={acting}
-              className="w-full bg-gradient-to-r from-red-900/60 to-black/80 hover:from-red-900/80 hover:to-black rounded-xl py-4 text-red-300 disabled:opacity-50"
-            >
-              <Skull className="w-5 h-5 inline mr-2" />
-              Ruin Their Life
-            </button>
-            <button
               onClick={() => handleAction('jealousy')}
               disabled={acting}
               className="w-full bg-gradient-to-r from-green-900/60 to-emerald-950/60 hover:from-green-900/80 hover:to-emerald-950/80 border-2 border-green-500/50 rounded-xl py-4 text-white disabled:opacity-50"
             >
-              <Eye className="w-5 h-5 inline mr-2" />
+              <Zap className="w-5 h-5 inline mr-2" />
               Make Them Jealous
             </button>
             <button
@@ -599,16 +610,8 @@ export default function DoppelgangerHome() {
               <Heart className="w-5 h-5 inline mr-2" />
               Make Them Obsessed
             </button>
-            <button
-              onClick={() => handleAction('cure')}
-              disabled={acting}
-              className="w-full bg-gradient-to-r from-blue-900/60 to-cyan-950/60 hover:from-blue-900/80 hover:to-cyan-950/80 border-2 border-blue-500/50 rounded-xl py-4 text-white disabled:opacity-50"
-            >
-              <Zap className="w-5 h-5 inline mr-2" />
-              Force The Cure
-            </button>
 
-            {/* Original interactions */}
+            {/* POSITIVE INTERACTIONS */}
             <button
               onClick={() => handleAction('bond')}
               disabled={acting}
@@ -623,7 +626,7 @@ export default function DoppelgangerHome() {
               className="w-full bg-gradient-to-r from-green-900/60 to-green-950/60 hover:from-green-900/80 hover:to-green-950/80 border-2 border-green-500/50 rounded-xl py-4 text-white disabled:opacity-50"
             >
               <Shield className="w-5 h-5 inline mr-2" />
-              Save Them From Danger
+              Save From Danger
             </button>
             <button
               onClick={() => handleAction('sacrifice')}
@@ -632,14 +635,6 @@ export default function DoppelgangerHome() {
             >
               <Crown className="w-5 h-5 inline mr-2" />
               Sacrifice For Them
-            </button>
-            <button
-              onClick={() => handleAction('gift')}
-              disabled={acting}
-              className="w-full bg-gradient-to-r from-pink-900/60 to-pink-950/60 hover:from-pink-900/80 hover:to-pink-950/80 border-2 border-pink-500/50 rounded-xl py-4 text-white disabled:opacity-50"
-            >
-              <Heart className="w-5 h-5 inline mr-2" />
-              Give Them A Gift
             </button>
             <button
               onClick={() => handleAction('protect')}
@@ -658,6 +653,14 @@ export default function DoppelgangerHome() {
               Seduce Them
             </button>
             <button
+              onClick={() => handleAction('gift')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-pink-900/60 to-pink-950/60 hover:from-pink-900/80 hover:to-pink-950/80 border-2 border-pink-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Heart className="w-5 h-5 inline mr-2" />
+              Give Gift
+            </button>
+            <button
               onClick={() => handleAction('test')}
               disabled={acting}
               className="w-full bg-gradient-to-r from-orange-900/60 to-orange-950/60 hover:from-orange-900/80 hover:to-orange-950/80 border-2 border-orange-500/50 rounded-xl py-4 text-white disabled:opacity-50"
@@ -665,6 +668,8 @@ export default function DoppelgangerHome() {
               <Zap className="w-5 h-5 inline mr-2" />
               Test Their Limits
             </button>
+
+            {/* DARK INTERACTIONS */}
             <button
               onClick={() => handleAction('stalk')}
               disabled={acting}
@@ -674,12 +679,12 @@ export default function DoppelgangerHome() {
               Stalk Them
             </button>
             <button
-              onClick={() => handleAction('abandon')}
+              onClick={() => handleAction('manipulate')}
               disabled={acting}
-              className="w-full bg-gradient-to-r from-gray-900/60 to-gray-950/60 hover:from-gray-900/80 hover:to-gray-950/80 border-2 border-gray-600/40 rounded-xl py-4 text-gray-400 disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-purple-950/60 to-purple-950/80 hover:from-purple-950/80 hover:to-purple-950/100 border-2 border-purple-600/40 rounded-xl py-4 text-purple-400 disabled:opacity-50"
             >
-              <Ghost className="w-5 h-5 inline mr-2" />
-              Abandon Them
+              <Eye className="w-5 h-5 inline mr-2" />
+              Compel & Manipulate
             </button>
             <button
               onClick={() => handleAction('torment')}
@@ -690,12 +695,12 @@ export default function DoppelgangerHome() {
               Torment Them
             </button>
             <button
-              onClick={() => handleAction('manipulate')}
+              onClick={() => handleAction('abandon')}
               disabled={acting}
-              className="w-full bg-gradient-to-r from-purple-950/60 to-purple-950/80 hover:from-purple-950/80 hover:to-purple-950/100 border-2 border-purple-600/40 rounded-xl py-4 text-purple-400 disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-gray-900/60 to-gray-950/60 hover:from-gray-900/80 hover:to-gray-950/80 border-2 border-gray-600/40 rounded-xl py-4 text-gray-400 disabled:opacity-50"
             >
-              <Eye className="w-5 h-5 inline mr-2" />
-              Manipulate Them
+              <Ghost className="w-5 h-5 inline mr-2" />
+              Abandon Them
             </button>
             {!doppelganger.is_aware && (
               <button
