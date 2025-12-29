@@ -1357,16 +1357,20 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
               <button onClick={() => setServantBloodMode(false)} className="text-gray-400 text-sm">Cancel</button>
             </div>
             <p className="text-gray-400 text-sm mb-4">Create strains using your servants' blood. Intimate. Personal. Powerful.</p>
-            {servants.filter(s => s.id).map(servant => (
-              <button
-                key={servant.id}
-                onClick={() => handleServantBloodProduction(servant)}
-                className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left transition-colors"
-              >
-                <h4 className="text-white font-bold mb-1">{servant.name}</h4>
-                <p className="text-gray-400 text-sm">Use their blood to create a unique strain</p>
-              </button>
-            ))}
+            {servants && servants.length > 0 ? (
+              servants.filter(s => s.id && s.name).map(servant => (
+                <button
+                  key={servant.id}
+                  onClick={() => handleServantBloodProduction(servant)}
+                  className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h4 className="text-white font-bold mb-1">{servant.name}</h4>
+                  <p className="text-gray-400 text-sm">Use their blood to create a unique strain</p>
+                </button>
+              ))
+            ) : (
+              <p className="text-gray-400 text-center py-8">No servants available</p>
+            )}
           </div>
         )}
 
@@ -1660,20 +1664,24 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                   <h4 className="text-white font-bold mb-2">Automation</h4>
                   <p className="text-gray-400 text-sm mb-3">Assign a servant to handle distribution</p>
                   <div className="space-y-2">
-                    {servants.map(servant => (
-                      <button
-                        key={servant.id}
-                        onClick={() => handleSetupDistributor(servant)}
-                        disabled={operation.servant_distributor_id === servant.id}
-                        className={`w-full py-2 rounded-lg transition-colors text-sm ${
-                          operation.servant_distributor_id === servant.id
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                        }`}
-                      >
-                        {operation.servant_distributor_id === servant.id ? '✓ ' : ''}{servant.name}
-                      </button>
-                    ))}
+                    {servants && servants.length > 0 ? (
+                      servants.filter(s => s.id && s.name).map(servant => (
+                        <button
+                          key={servant.id}
+                          onClick={() => handleSetupDistributor(servant)}
+                          disabled={operation.servant_distributor_id === servant.id}
+                          className={`w-full py-2 rounded-lg transition-colors text-sm ${
+                            operation.servant_distributor_id === servant.id
+                              ? 'bg-purple-600 text-white'
+                              : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                          }`}
+                        >
+                          {operation.servant_distributor_id === servant.id ? '✓ ' : ''}{servant.name}
+                        </button>
+                      ))
+                    ) : (
+                      <p className="text-gray-400 text-sm text-center py-2">No servants available</p>
+                    )}
                   </div>
                 </div>
 
@@ -1806,8 +1814,18 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
               </button>
             ))}
 
-            {customers.length === 0 && (
-              <p className="text-gray-400 text-center py-8">No active events. Keep selling to generate events.</p>
+            {/* Show message if no events */}
+            {operation && (operation.rival_threat || 0) <= 30 && 
+             customers.filter(c => (c.overdose_risk || 0) > 60 || (c.violence_level || 0) > 60).length === 0 && (
+              <div className="bg-gray-800 rounded-xl p-6 text-center">
+                <p className="text-gray-400 mb-2">No active critical events</p>
+                <p className="text-gray-500 text-sm">Events trigger when:</p>
+                <ul className="text-gray-500 text-xs mt-2 space-y-1">
+                  <li>• Rival Threat exceeds 30%</li>
+                  <li>• Customer Overdose Risk exceeds 60%</li>
+                  <li>• Customer Violence Level exceeds 60%</li>
+                </ul>
+              </div>
             )}
           </div>
         )}
@@ -1983,21 +2001,28 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                   <p className="text-gray-500 text-xs mt-2">Earn research points by experimenting, harvesting plants, and creating hybrids</p>
                 </div>
 
-                <button
-                  onClick={async () => {
-                    setResearching(true);
-                    await generateNewStrain();
-                    setResearching(false);
-                  }}
-                  disabled={researching}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white py-4 rounded-xl font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-3"
-                >
-                  <Sparkles className="w-5 h-5" />
-                  Generate AI Strain
-                </button>
-                <p className="text-gray-500 text-xs text-center -mt-2 mb-4">
-                  Use AI to discover completely new blood drug strains
-                </p>
+                {/* AI STRAIN GENERATOR - PROMINENT */}
+                <div className="bg-gradient-to-r from-purple-900/60 to-pink-900/60 border-2 border-purple-500/50 rounded-xl p-4 mb-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Sparkles className="w-8 h-8 text-purple-300" />
+                    <div>
+                      <h4 className="text-white font-bold text-lg">AI Strain Generator</h4>
+                      <p className="text-purple-300 text-xs">Discover completely unique blood drugs using AI</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      setResearching(true);
+                      await generateNewStrain();
+                      setResearching(false);
+                    }}
+                    disabled={researching}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white py-4 rounded-xl font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-3 text-lg"
+                  >
+                    <Sparkles className="w-6 h-6" />
+                    Generate New Strain
+                  </button>
+                </div>
 
                 <div className="space-y-2">
                   <button
