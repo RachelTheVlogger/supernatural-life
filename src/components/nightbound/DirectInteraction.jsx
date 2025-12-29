@@ -823,7 +823,7 @@ const INTERACTIONS = {
     category: 'bdsm',
     gains: [20, 30],
     getDynamicOutcomes: (servantName) => {
-      const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion', 'cedar'];
+      const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion'];
       const isMale = maleNames.some(name => servantName?.toLowerCase().includes(name));
       const term = isMale ? 'slut' : 'slut';
       const toy = isMale ? 'toy' : 'toy';
@@ -862,7 +862,7 @@ const INTERACTIONS = {
     category: 'bdsm',
     gains: [15, 25],
     getDynamicOutcomes: (servantName) => {
-      const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion', 'cedar'];
+      const maleNames = ['alex', 'ash', 'blake', 'gray', 'kai', 'phoenix', 'river', 'rowan', 'sage', 'storm', 'atlas', 'orion'];
       const isMale = maleNames.some(name => servantName?.toLowerCase().includes(name));
       const term = isMale ? 'boy' : 'girl';
       const Term = isMale ? 'Boy' : 'Girl';
@@ -2112,7 +2112,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
               'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
               'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
               'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren',
-              'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar', 'Dante',
+              'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Dante',
               'Celeste', 'Zephyr', 'Vesper', 'Sable', 'Crimson', 'Nyx', 'Aspen'
             ];
             const variants = ['devoted', 'defiant', 'dreamer'];

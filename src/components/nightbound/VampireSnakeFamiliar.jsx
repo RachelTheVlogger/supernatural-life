@@ -149,12 +149,12 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
         </button>
       </div>
 
-      {/* Special Abilities - Compact */}
+      {/* Special Abilities - Show ALL abilities */}
       {abilities.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-white font-bold text-sm">Special Abilities</h4>
-          <div className="grid grid-cols-2 gap-2">
-            {abilities.slice(0, 4).map(ability => {
+          <h4 className="text-white font-bold text-sm">Special Abilities ({abilities.length})</h4>
+          <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+            {abilities.map(ability => {
               const unlocked = snake.bond_level >= ability.reqBond;
               return (
                 <button
@@ -880,7 +880,19 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         fear: `${snake.custom_name} projects pure terror. Victims flee screaming. Primal fear unleashed.`,
         dream: `${snake.custom_name} enters their dreams. Nightmares shaped by serpent whispers.`,
         madness: `${snake.custom_name}'s eyes lock onto theirs. Sanity shatters. They're broken now.`,
-        consume: `${snake.custom_name} feeds on their nightmares. Growing stronger from their terror.`
+        consume: `${snake.custom_name} feeds on their nightmares. Growing stronger from their terror.`,
+        
+        blood_rage: `${snake.custom_name}'s body surges with blood fury! Temporary super strength activated!`,
+        time_dilation: `${snake.custom_name} slows time around itself. Combat becomes slow motion. Perfect strikes.`,
+        reality_warp: `${snake.custom_name} bends reality. Illusions shimmer. Enemies see what isn't there.`,
+        inferno_scales: `${snake.custom_name}'s scales ignite! Anyone touching burns. Living weapon.`,
+        void_step: `${snake.custom_name} tears through the void. Instant teleportation. Anywhere.`,
+        bloom_shield: `${snake.custom_name} summons blood petals. Protective barrier forms. Nothing penetrates.`,
+        shadow_bind: `${snake.custom_name} extends shadow vines. Enemies entangled. Trapped. Helpless.`,
+        lunar_empowerment: `${snake.custom_name} channels moonlight. Power surges at night. Unstoppable.`,
+        root_strike: `${snake.custom_name} summons blood roots from the ground. Impaling. Deadly.`,
+        toxic_cloud: `${snake.custom_name} exhales poisonous vapor. Cloud spreads. Enemies choke.`,
+        enhanced_senses: `${snake.custom_name}'s senses sharpen impossibly. Sees everything. Hears everything.`
       };
 
       const result = abilityResults[ability.id] || `${snake.custom_name} used ${ability.name}!`;

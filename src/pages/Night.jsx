@@ -144,7 +144,7 @@ export default function Night() {
       'Ash', 'River', 'Sage', 'Rowan', 'Quinn', 'Jade', 'Raven', 'Storm',
       'Blake', 'Eden', 'Gray', 'Haven', 'Indigo', 'Jules', 'Kai',
       'Morgan', 'Nova', 'Onyx', 'Phoenix', 'Rain', 'Shadow', 'Sky', 'Wren',
-      'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Cedar', 'Dante',
+      'Ember', 'Luna', 'Atlas', 'Iris', 'Orion', 'Lyra', 'Dante',
       'Celeste', 'Zephyr', 'Vesper', 'Sable', 'Crimson', 'Nyx', 'Aspen'
     ];
     
