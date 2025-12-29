@@ -102,8 +102,16 @@ export default function ResearchTree({ operation, onClose }) {
   const [unlocking, setUnlocking] = useState(null);
   const [category, setCategory] = useState('strains');
 
-  const unlockedResearch = operation?.underworld_connections || [];
-  const researchPoints = operation?.research_points || 0;
+  if (!operation) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-400">Loading research data...</p>
+      </div>
+    );
+  }
+
+  const unlockedResearch = operation.underworld_connections || [];
+  const researchPoints = operation.research_points || 0;
 
   const isUnlocked = (itemId) => unlockedResearch.some(r => r.includes(itemId));
   

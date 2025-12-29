@@ -9,6 +9,14 @@ export default function AddictionManagement({ customers, operation, onClose }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
+  if (!operation) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-400">Loading addiction data...</p>
+      </div>
+    );
+  }
+
   const handleWithdrawalSupport = async (customer) => {
     setProcessing(true);
 

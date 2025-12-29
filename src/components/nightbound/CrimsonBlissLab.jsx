@@ -2435,16 +2435,22 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           </div>
         )}
 
-        {tab === 'research_tree' && (
+        {tab === 'research_tree' && operation && (
           <ResearchTree operation={operation} onClose={onClose} />
         )}
 
-        {tab === 'addiction_mgmt' && (
+        {tab === 'addiction_mgmt' && operation && (
           <AddictionManagement customers={customers} operation={operation} onClose={onClose} />
         )}
 
-        {tab === 'rivals' && (
+        {tab === 'rivals' && operation && (
           <RivalDealers operation={operation} vampireState={vampireState} onClose={onClose} />
+        )}
+
+        {!operation && (tab === 'research_tree' || tab === 'addiction_mgmt' || tab === 'rivals') && (
+          <div className="text-center py-12">
+            <p className="text-gray-400">Initializing lab operations...</p>
+          </div>
         )}
       </motion.div>
     </motion.div>
