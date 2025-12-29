@@ -138,6 +138,7 @@ export default function SnakeMissions({ snake, onClose }) {
     setProcessing(true);
 
     setTimeout(async () => {
+      // Success based on power level and loyalty
       const successChance = ((snake.power_level || 0) / 100) * 0.5 + ((snake.loyalty || 50) / 100) * 0.3 + 0.2;
       const success = Math.random() < successChance;
 
