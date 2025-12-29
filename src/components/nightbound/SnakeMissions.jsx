@@ -2,11 +2,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Target, Eye, Skull, Shield, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@antml:parameter>
-<parameter name="content">import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Target, Eye, Skull, Shield, Zap } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
 const MISSIONS = [
@@ -143,7 +138,6 @@ export default function SnakeMissions({ snake, onClose }) {
     setProcessing(true);
 
     setTimeout(async () => {
-      // Success based on power level and loyalty
       const successChance = ((snake.power_level || 0) / 100) * 0.5 + ((snake.loyalty || 50) / 100) * 0.3 + 0.2;
       const success = Math.random() < successChance;
 
