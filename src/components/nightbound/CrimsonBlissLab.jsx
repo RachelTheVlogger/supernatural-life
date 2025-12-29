@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Beaker, DollarSign, Users, Zap, TrendingUp, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import ResearchTree from './ResearchTree';
+import AddictionManagement from './AddictionManagement';
+import RivalDealers from './RivalDealers';
 
 const BASE_STRAINS = [
   { name: 'Crimson Bliss', potency: 1, effects: 'mild euphoria. Colors slightly brighter. Warm feeling.', price: 50, addictiveness: 30 },
@@ -1248,6 +1251,24 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
           >
             🚨 Heat Management
           </button>
+          <button 
+            onClick={() => setTab('research_tree')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'research_tree' ? 'bg-cyan-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            🔬 Research Tree
+          </button>
+          <button 
+            onClick={() => setTab('addiction_mgmt')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'addiction_mgmt' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            💊 Addiction
+          </button>
+          <button 
+            onClick={() => setTab('rivals')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'rivals' ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            ⚔️ Rivals
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -2412,6 +2433,18 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
               </motion.div>
             )}
           </div>
+        )}
+
+        {tab === 'research_tree' && (
+          <ResearchTree operation={operation} onClose={onClose} />
+        )}
+
+        {tab === 'addiction_mgmt' && (
+          <AddictionManagement customers={customers} operation={operation} onClose={onClose} />
+        )}
+
+        {tab === 'rivals' && (
+          <RivalDealers operation={operation} vampireState={vampireState} onClose={onClose} />
         )}
       </motion.div>
     </motion.div>
