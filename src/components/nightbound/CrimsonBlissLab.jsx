@@ -1009,7 +1009,17 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         'shadow_vine': { ability: 'Shadow Bind', icon: '🌿', desc: 'Entangle enemies with shadow vines' },
         'midnight_lotus': { ability: 'Lunar Empowerment', icon: '🌙', desc: 'Power increases at night' },
         'bloodroot': { ability: 'Root Strike', icon: '🌱', desc: 'Summon blood roots from ground' },
-        'vampweed': { ability: 'Toxic Cloud', icon: '☁️', desc: 'Exhale poisonous vapor' }
+        'vampweed': { ability: 'Toxic Cloud', icon: '☁️', desc: 'Exhale poisonous vapor' },
+        'Blood Rage': { ability: 'Blood Rage', icon: '🔥', desc: 'Temporary strength boost from blood fury' },
+        'Time Dilation': { ability: 'Time Dilation', icon: '⏰', desc: 'Slow perceived time during combat' },
+        'Reality Warp': { ability: 'Reality Warp', icon: '🌀', desc: 'Create illusions and bend reality' },
+        'Inferno Scales': { ability: 'Inferno Scales', icon: '🔥', desc: 'Scales burn anyone who touches them' },
+        'Bloom Shield': { ability: 'Bloom Shield', icon: '🌸', desc: 'Protective barrier of blood petals' },
+        'Shadow Bind': { ability: 'Shadow Bind', icon: '🌿', desc: 'Entangle enemies with shadow vines' },
+        'Lunar Empowerment': { ability: 'Lunar Empowerment', icon: '🌙', desc: 'Power increases at night' },
+        'Root Strike': { ability: 'Root Strike', icon: '🌱', desc: 'Summon blood roots from ground' },
+        'Toxic Cloud': { ability: 'Toxic Cloud', icon: '☁️', desc: 'Exhale poisonous vapor' },
+        'Enhanced Senses': { ability: 'Enhanced Senses', icon: '👁️', desc: 'Heightened perception' }
       };
 
       const mapping = powerMappings[drug.strain_name] || powerMappings[drug.plant_type];
@@ -1322,24 +1332,33 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
               <button onClick={() => { setHybridMode(false); setSelectedStrains([]); }} className="text-gray-400 text-sm">Cancel</button>
             </div>
             <p className="text-gray-400 text-sm mb-4">Select 2 strains to combine (requires 2 doses each)</p>
-            {inventory.map(drug => (
-              <div key={drug.id} className={`bg-gray-800 rounded-xl p-4 border-2 ${selectedStrains.includes(drug.id) ? 'border-purple-500' : 'border-transparent'}`}>
-                <button
-                  onClick={() => {
-                    if (selectedStrains.includes(drug.id)) {
-                      setSelectedStrains(selectedStrains.filter(id => id !== drug.id));
-                    } else if (selectedStrains.length < 2) {
-                      setSelectedStrains([...selectedStrains, drug.id]);
-                    }
-                  }}
-                  disabled={drug.quantity < 2}
-                  className="w-full text-left"
-                >
-                  <h4 className="text-white font-bold mb-1">{drug.strain_name}</h4>
-                  <p className="text-gray-400 text-xs">Stock: {drug.quantity} | Potency: {drug.potency}</p>
-                </button>
-              </div>
+            {inventory.filter(d => d.quantity >= 2).map(drug => (
+              <button
+                key={drug.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (selectedStrains.includes(drug.id)) {
+                    setSelectedStrains(selectedStrains.filter(id => id !== drug.id));
+                  } else if (selectedStrains.length < 2) {
+                    setSelectedStrains([...selectedStrains, drug.id]);
+                  }
+                }}
+                className={`w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 border-2 transition-all text-left touch-manipulation ${
+                  selectedStrains.includes(drug.id) ? 'border-purple-500 bg-purple-900/40' : 'border-gray-700'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="text-white font-bold">{drug.strain_name}</h4>
+                  {selectedStrains.includes(drug.id) && <span className="text-purple-400">✓</span>}
+                </div>
+                <p className="text-gray-400 text-xs">Stock: {drug.quantity} | Potency: {drug.potency}/10</p>
+              </button>
             ))}
+            {inventory.filter(d => d.quantity >= 2).length === 0 && (
+              <div className="bg-gray-800 rounded-xl p-6 text-center">
+                <p className="text-gray-400">No strains with enough quantity (need 2+ doses each)</p>
+              </div>
+            )}
             <button
               onClick={handleCreateHybrid}
               disabled={selectedStrains.length !== 2}

@@ -313,7 +313,27 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       ]
     };
 
-    return baseAbilities[snake.type] || [];
+    // Enhanced abilities from drugs/plants (always available if unlocked)
+    const enhancedAbilities = [
+      { id: 'blood_rage', name: 'Blood Rage', icon: '🔥', reqBond: 0, desc: 'Temporary strength boost from blood fury' },
+      { id: 'time_dilation', name: 'Time Dilation', icon: '⏰', reqBond: 0, desc: 'Slow perceived time during combat' },
+      { id: 'reality_warp', name: 'Reality Warp', icon: '🌀', reqBond: 0, desc: 'Create illusions and bend reality' },
+      { id: 'inferno_scales', name: 'Inferno Scales', icon: '🔥', reqBond: 0, desc: 'Scales burn anyone who touches them' },
+      { id: 'void_step', name: 'Void Step', icon: '⚫', reqBond: 0, desc: 'Teleport through the void instantly' },
+      { id: 'bloom_shield', name: 'Bloom Shield', icon: '🌸', reqBond: 0, desc: 'Protective barrier of blood petals' },
+      { id: 'shadow_bind', name: 'Shadow Bind', icon: '🌿', reqBond: 0, desc: 'Entangle enemies with shadow vines' },
+      { id: 'lunar_empowerment', name: 'Lunar Empowerment', icon: '🌙', reqBond: 0, desc: 'Power increases at night' },
+      { id: 'root_strike', name: 'Root Strike', icon: '🌱', reqBond: 0, desc: 'Summon blood roots from ground' },
+      { id: 'toxic_cloud', name: 'Toxic Cloud', icon: '☁️', reqBond: 0, desc: 'Exhale poisonous vapor' },
+      { id: 'enhanced_senses', name: 'Enhanced Senses', icon: '👁️', reqBond: 0, desc: 'Heightened perception' }
+    ];
+
+    const baseList = baseAbilities[snake.type] || [];
+    const unlockedEnhanced = enhancedAbilities.filter(ea => 
+      (snake.unlocked_abilities || []).includes(ea.name)
+    );
+
+    return [...baseList, ...unlockedEnhanced];
   };
 
   const getPatternColor = (pattern, baseColor) => {
