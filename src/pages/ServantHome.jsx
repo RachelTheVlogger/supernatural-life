@@ -27,6 +27,7 @@ import ServantWitchInteraction from '@/components/nightbound/ServantWitchInterac
 import WitchServantInteraction from '@/components/nightbound/WitchServantInteraction';
 import ServantFamilySystem from '@/components/nightbound/ServantFamilySystem';
 import TurnedServantProgression from '@/components/nightbound/TurnedServantProgression';
+import ServantPowerUsage from '@/components/nightbound/ServantPowerUsage';
 import JournalSystem from '@/components/nightbound/JournalSystem';
 import AICompanion from '@/components/nightbound/AICompanion';
 import MemoryRecorder from '@/components/nightbound/MemoryRecorder';
@@ -145,6 +146,7 @@ export default function ServantHome() {
   const [showWitchTalk, setShowWitchTalk] = useState(false);
   const [showFamily, setShowFamily] = useState(false);
   const [showProgression, setShowProgression] = useState(false);
+  const [selectedPower, setSelectedPower] = useState(null);
   const [showJournal, setShowJournal] = useState(false);
   const [showMangaStore, setShowMangaStore] = useState(false);
   const [showAI, setShowAI] = useState(false);
