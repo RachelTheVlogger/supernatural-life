@@ -181,20 +181,29 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
           <h4 className="text-white font-bold text-sm">Special Abilities ({abilities.length})</h4>
           <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
             {abilities.map(ability => {
-              const unlocked = snake.bond_level >= ability.reqBond;
+              const unlocked = snake.bond_level >= ability.reqBond && (!ability.vampireOnly || vampireState);
               return (
                 <button
                   key={ability.id}
-                  onClick={(e) => { e.stopPropagation(); unlocked && onUseAbility(ability, snake); }}
-                  disabled={!unlocked}
-                  className={`rounded-lg p-2 text-xs transition-colors touch-manipulation ${
+                  onClick={(e) => { 
+                    e.preventDefault();
+                    e.stopPropagation(); 
+                    if (unlocked && !interacting) {
+                      onUseAbility(ability, snake);
+                    }
+                  }}
+                  disabled={!unlocked || interacting}
+                  className={`rounded-lg p-2 text-xs transition-colors touch-manipulation active:scale-95 ${
                     unlocked 
-                      ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border border-green-500/30 text-white' 
+                      ? ability.vampireOnly
+                        ? 'bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border-2 border-purple-400/50 text-white shadow-lg shadow-purple-500/20'
+                        : 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border border-green-500/30 text-white'
                       : 'bg-gray-800/40 border border-gray-600/30 opacity-50 text-gray-500'
                   }`}
                 >
                   <span className="block text-lg mb-1">{ability.icon}</span>
                   {ability.name}
+                  {ability.vampireOnly && <span className="block text-[10px] text-purple-300 mt-1">EXCLUSIVE</span>}
                 </button>
               );
             })}
@@ -328,25 +337,29 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         { id: 'invisible', name: 'Turn Invisible', icon: '👁️‍🗨️', reqBond: 20, desc: 'Snake becomes completely invisible' },
         { id: 'teleport', name: 'Shadow Jump', icon: '🌑', reqBond: 40, desc: 'Teleport through shadows' },
         { id: 'duplicate', name: 'Shadow Clone', icon: '👥', reqBond: 60, desc: 'Create shadow duplicates' },
-        { id: 'merge', name: 'Become Shadow', icon: '🌫️', reqBond: 80, desc: 'Transform into living shadow' }
+        { id: 'merge', name: 'Become Shadow', icon: '🌫️', reqBond: 80, desc: 'Transform into living shadow' },
+        { id: 'soul_bond', name: 'Soul Bond', icon: '💜', reqBond: 90, desc: 'VAMPIRE EXCLUSIVE: Share your immortality', vampireOnly: true }
       ],
       venom: [
         { id: 'paralyze', name: 'Paralyzing Bite', icon: '💉', reqBond: 20, desc: 'Immobilize victims instantly' },
         { id: 'hallucinate', name: 'Venom Dreams', icon: '🌀', reqBond: 40, desc: 'Cause vivid hallucinations' },
         { id: 'control', name: 'Venom Control', icon: '🧠', reqBond: 60, desc: 'Control poisoned victims' },
-        { id: 'acidic', name: 'Acidic Venom', icon: '💧', reqBond: 80, desc: 'Venom melts through anything' }
+        { id: 'acidic', name: 'Acidic Venom', icon: '💧', reqBond: 80, desc: 'Venom melts through anything' },
+        { id: 'eternal_venom', name: 'Eternal Venom', icon: '⚗️', reqBond: 90, desc: 'VAMPIRE EXCLUSIVE: Venom with immortal properties', vampireOnly: true }
       ],
       blood: [
         { id: 'track', name: 'Blood Tracker', icon: '🩸', reqBond: 20, desc: 'Track anyone by blood scent' },
         { id: 'drain', name: 'Blood Drain', icon: '💀', reqBond: 40, desc: 'Drain victims completely' },
         { id: 'share', name: 'Blood Link', icon: '🔗', reqBond: 60, desc: 'Share blood with you instantly' },
-        { id: 'resurrect', name: 'Blood Revival', icon: '❤️', reqBond: 80, desc: 'Revive the recently dead' }
+        { id: 'resurrect', name: 'Blood Revival', icon: '❤️', reqBond: 80, desc: 'Revive the recently dead' },
+        { id: 'immortal_blood', name: 'Immortal Blood', icon: '🩸', reqBond: 90, desc: 'VAMPIRE EXCLUSIVE: Grant temporary immortality', vampireOnly: true }
       ],
       nightmare: [
         { id: 'fear', name: 'Project Fear', icon: '😱', reqBond: 20, desc: 'Make victims terrified' },
         { id: 'dream', name: 'Enter Dreams', icon: '💭', reqBond: 40, desc: 'Invade sleeping minds' },
         { id: 'madness', name: 'Induce Madness', icon: '🌀', reqBond: 60, desc: 'Drive victims insane' },
-        { id: 'consume', name: 'Consume Nightmares', icon: '🌑', reqBond: 80, desc: 'Feed on terror itself' }
+        { id: 'consume', name: 'Consume Nightmares', icon: '🌑', reqBond: 80, desc: 'Feed on terror itself' },
+        { id: 'eternal_nightmare', name: 'Eternal Nightmare', icon: '🌙', reqBond: 90, desc: 'VAMPIRE EXCLUSIVE: Trap souls in endless nightmares', vampireOnly: true }
       ]
     };
 
@@ -933,21 +946,20 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         lunar_empowerment: `${snake.custom_name} channels moonlight. Power surges at night. Unstoppable.`,
         root_strike: `${snake.custom_name} summons blood roots from the ground. Impaling. Deadly.`,
         toxic_cloud: `${snake.custom_name} exhales poisonous vapor. Cloud spreads. Enemies choke.`,
-        enhanced_senses: `${snake.custom_name}'s senses sharpen impossibly. Sees everything. Hears everything.`
+        enhanced_senses: `${snake.custom_name}'s senses sharpen impossibly. Sees everything. Hears everything.`,
+        
+        soul_bond: `${snake.custom_name} bonds with your immortal soul. Your essences merge. The snake becomes TRULY eternal. Bound to you forever. A vampire's familiar in the deepest sense.`,
+        eternal_venom: `${snake.custom_name} produces venom infused with vampire blood. Once bitten, victims become addicted to the snake. Obsessed. They'll do anything for another bite.`,
+        immortal_blood: `${snake.custom_name}'s blood carries your immortality. One drop grants temporary invincibility. Healing. Power beyond mortal limits. Your gift to the worthy.`,
+        eternal_nightmare: `${snake.custom_name} traps victims in nightmares that never end. Even when awake, they see horrors. Madness guaranteed. No escape. Ever.`
       };
 
       const result = abilityResults[ability.id] || `${snake.custom_name} used ${ability.name}!`;
 
-      if (!snake.unlocked_abilities?.includes(ability.name)) {
-        await base44.entities.SnakeFamiliar.update(snake.id, {
-          unlocked_abilities: [...(snake.unlocked_abilities || []), ability.name]
-        });
-      }
-
       await base44.entities.NightLog.create({
         entry: result,
         category: 'power',
-        intensity: 'significant'
+        intensity: ability.vampireOnly ? 'major' : 'significant'
       });
 
       setOutcome(result);
