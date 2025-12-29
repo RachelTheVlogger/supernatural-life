@@ -153,9 +153,17 @@ export default function ServantHome() {
   const [showMemory, setShowMemory] = useState(false);
   const [showEmotion, setShowEmotion] = useState(false);
   const [showSnakeTab, setShowSnakeTab] = useState(false);
+
+  // Auto-open power usage if power param exists
+  useEffect(() => {
+    if (powerParam && servant && !selectedPower) {
+      setSelectedPower(decodeURIComponent(powerParam));
+    }
+  }, [powerParam, servant, selectedPower]);
   
   const urlParams = new URLSearchParams(window.location.search);
   const servantId = urlParams.get('id');
+  const powerParam = urlParams.get('power');
   
   const { data: career = [] } = useQuery({
     queryKey: ['career', servantId],
@@ -782,6 +790,13 @@ export default function ServantHome() {
           <TurnedServantProgression
             servant={servant}
             onClose={() => setShowProgression(false)}
+          />
+        )}
+        {selectedPower && servant && (
+          <ServantPowerUsage
+            servant={servant}
+            power={selectedPower}
+            onClose={() => setSelectedPower(null)}
           />
         )}
         {showManga && (

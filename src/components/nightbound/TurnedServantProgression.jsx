@@ -261,26 +261,31 @@ export default function TurnedServantProgression({ servant, onClose }) {
               </div>
             </div>
 
-            {/* Unlocked Powers */}
+            {/* Unlocked Powers - Now clickable! */}
             {availablePowers.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-rose-200 font-bold mb-3 flex items-center gap-2">
                   <Zap className="w-4 h-4" />
-                  Unlocked Powers
+                  Unlocked Powers (Infinite Use)
                 </h3>
+                <p className="text-rose-300 text-xs mb-3">Click any power to use it - no limits, no cooldowns!</p>
                 <div className="grid grid-cols-2 gap-2">
                   {availablePowers.map(p => (
-                    <div
+                    <button
                       key={p.name}
-                      className={`rounded-lg p-3 border ${
+                      onClick={() => {
+                        onClose();
+                        navigate(createPageUrl(`ServantHome?id=${servant.id}&power=${encodeURIComponent(p.name)}`));
+                      }}
+                      className={`rounded-lg p-3 border transition-all active:scale-95 ${
                         unlockedPowers.includes(p.name)
-                          ? 'bg-rose-500/20 border-rose-400'
+                          ? 'bg-rose-500/20 hover:bg-rose-500/30 border-rose-400 cursor-pointer'
                           : 'bg-black/20 border-rose-500/20'
                       }`}
                     >
-                      <p className="text-rose-100 text-sm font-medium">{p.name}</p>
-                      <p className="text-rose-300 text-xs">Stage {p.stage}</p>
-                    </div>
+                      <p className="text-rose-100 text-sm font-medium">⚡ {p.name}</p>
+                      <p className="text-rose-300 text-xs">Tap to use</p>
+                    </button>
                   ))}
                 </div>
               </div>
