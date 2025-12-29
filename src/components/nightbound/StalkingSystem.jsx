@@ -289,6 +289,104 @@ export default function StalkingSystem({ vampireState, onClose }) {
     }, 2000);
   };
 
+  const handleCompelVisit = async () => {
+    if (!selectedTarget) return;
+    setStalking(true);
+
+    setTimeout(async () => {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `A vampire has been stalking ${selectedTarget.name} (${selectedTarget.gender}) who is now ${selectedTarget.obsession}% obsessed with them. The vampire uses compulsion to make them come to the vampire's house. Write a deeply psychological, intense scene (200 words) covering:
+1. The compulsion moment - the vampire's eyes, voice, command
+2. ${selectedTarget.name}'s mental state - how obsession made them vulnerable, how they WANT to obey
+3. The journey to the house - their thoughts, anticipation, arousal
+4. Arrival - nervous excitement, crossing the threshold
+5. What happens next - options for feeding, seduction, conversation
+
+Make it sensual, psychological, with consent blurred by supernatural influence and existing obsession. ${selectedTarget.name} wants this but wouldn't admit it without compulsion.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            compulsion_scene: { type: 'string' },
+            their_thoughts: { type: 'string' },
+            available_actions: { 
+              type: 'array',
+              items: { 
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  label: { type: 'string' },
+                  description: { type: 'string' }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      setOutcome({
+        type: 'compelled_visit',
+        scene: response.compulsion_scene,
+        thoughts: response.their_thoughts,
+        actions: response.available_actions,
+        target: selectedTarget
+      });
+      setStalking(false);
+    }, 3000);
+  };
+
+  const handleVisitAction = async (action) => {
+    setStalking(true);
+
+    setTimeout(async () => {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Continue the scene. ${outcome.target.name} is at the vampire's house, compelled and obsessed (${outcome.target.obsession}% obsession). The vampire chooses: "${action.label}". Write a vivid, intimate 250-word scene showing:
+1. The action in detail - sensory, psychological, emotional
+2. ${outcome.target.name}'s reaction - pleasure, fear, submission, desire
+3. How their obsession deepens
+4. The aftermath - their state of mind
+
+Make it intense, layered with power dynamics and supernatural seduction. This is consensual-ish through compulsion and obsession.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            scene: { type: 'string' },
+            obsession_change: { type: 'number' },
+            enjoyment_change: { type: 'number' },
+            aftermath: { type: 'string' },
+            wants_more: { type: 'boolean' }
+          }
+        }
+      });
+
+      const newObsession = Math.min(100, outcome.target.obsession + response.obsession_change);
+      const newEnjoyment = Math.min(100, outcome.target.enjoyment + response.enjoyment_change);
+
+      await base44.entities.StalkTarget.update(outcome.target.id, {
+        obsession: newObsession,
+        enjoyment: newEnjoyment
+      });
+
+      await base44.entities.NightLog.create({
+        entry: `${outcome.target.name} came to your house. Compelled. Obsessed. ${action.label}. ${response.aftermath}`,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+
+      setOutcome({
+        type: 'action_result',
+        scene: response.scene,
+        aftermath: response.aftermath,
+        wants_more: response.wants_more,
+        target: outcome.target,
+        obsession_change: response.obsession_change,
+        enjoyment_change: response.enjoyment_change
+      });
+
+      queryClient.invalidateQueries();
+      setStalking(false);
+    }, 4000);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -473,6 +571,19 @@ export default function StalkingSystem({ vampireState, onClose }) {
               ))}
             </div>
 
+            {selectedTarget.obsession > 50 && (
+              <button
+                onClick={handleCompelVisit}
+                className="w-full bg-gradient-to-r from-red-900/60 to-pink-900/60 hover:from-red-900/80 hover:to-pink-900/80 border-2 border-red-500/50 rounded-xl p-4 transition-all mb-3"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <Eye className="w-5 h-5" />
+                  <span className="text-white font-medium">Compel Them to Come Over</span>
+                </div>
+                <p className="text-red-300 text-xs mt-1">Their obsession makes them vulnerable</p>
+              </button>
+            )}
+
             {selectedTarget.wants_to_meet && selectedTarget.obsession > 70 && (
               <>
                 <button
@@ -625,9 +736,95 @@ export default function StalkingSystem({ vampireState, onClose }) {
           </div>
         )}
 
-        {outcome && !consequence && (
+        {outcome && typeof outcome === 'string' && !consequence && (
           <div className="py-8">
             <p className="text-gray-300 text-center leading-relaxed whitespace-pre-line">{outcome}</p>
+          </div>
+        )}
+
+        {outcome && typeof outcome === 'object' && outcome.type === 'compelled_visit' && (
+          <div className="space-y-4">
+            <button 
+              onClick={() => {
+                setOutcome('');
+                setSelectedTarget(null);
+              }}
+              className="text-purple-400 hover:text-purple-300 text-sm mb-2"
+            >
+              ← Back
+            </button>
+
+            <div className="bg-gradient-to-br from-red-950/60 to-pink-950/60 border-2 border-red-500/50 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-3">🧿 Compulsion</h3>
+              <p className="text-gray-200 text-sm leading-relaxed mb-4">{outcome.scene}</p>
+              
+              <div className="bg-black/40 rounded-lg p-4 border border-pink-500/30">
+                <p className="text-pink-300 text-xs mb-2">Their Thoughts:</p>
+                <p className="text-gray-300 text-sm italic">"{outcome.thoughts}"</p>
+              </div>
+            </div>
+
+            <h4 className="text-white font-medium">What will you do?</h4>
+            <div className="space-y-2">
+              {outcome.actions.map(action => (
+                <button
+                  key={action.id}
+                  onClick={() => handleVisitAction(action)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-all"
+                >
+                  <p className="text-white font-medium mb-1">{action.label}</p>
+                  <p className="text-gray-400 text-xs">{action.description}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {outcome && typeof outcome === 'object' && outcome.type === 'action_result' && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-purple-950/60 to-red-950/60 border-2 border-purple-500/50 rounded-xl p-6">
+              <p className="text-gray-200 text-sm leading-relaxed mb-4">{outcome.scene}</p>
+              
+              <div className="bg-black/40 rounded-lg p-4 border border-red-500/30 mb-4">
+                <p className="text-red-300 text-xs mb-2">Aftermath:</p>
+                <p className="text-gray-300 text-sm italic">{outcome.aftermath}</p>
+              </div>
+
+              <div className="flex gap-2 text-xs mb-3">
+                <span className="bg-red-900/40 text-red-300 px-3 py-1 rounded-full">
+                  Obsession: {outcome.obsession_change > 0 ? '+' : ''}{outcome.obsession_change}
+                </span>
+                <span className="bg-pink-900/40 text-pink-300 px-3 py-1 rounded-full">
+                  Enjoyment: {outcome.enjoyment_change > 0 ? '+' : ''}{outcome.enjoyment_change}
+                </span>
+              </div>
+
+              {outcome.wants_more && (
+                <div className="bg-pink-950/40 rounded-lg p-3 border border-pink-500/30">
+                  <p className="text-pink-200 text-sm">💕 {outcome.target.name} is still under compulsion. They want more...</p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              {outcome.wants_more && (
+                <button
+                  onClick={handleCompelVisit}
+                  className="flex-1 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg py-3 text-red-300 text-sm"
+                >
+                  Continue Session
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  setOutcome('');
+                  setSelectedTarget(null);
+                }}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg text-sm"
+              >
+                {outcome.wants_more ? 'Send Them Home' : 'Finish'}
+              </button>
+            </div>
           </div>
         )}
       </motion.div>
