@@ -242,7 +242,7 @@ export default function DoppelgangerHome() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="space-y-3 max-h-[50vh] overflow-y-auto pr-2"
+            className="space-y-3 max-h-[60vh] overflow-y-auto pr-2"
           >
             {!doppelganger.is_vampire && (
               <>
