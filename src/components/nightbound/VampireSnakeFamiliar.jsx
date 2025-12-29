@@ -1114,14 +1114,38 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
           </div>
         )}
 
-        {outcome ? (
+        {interacting && currentAction?.startsWith('ability_') && !outcome ? (
+          <div className="text-center py-12">
+            <motion.div
+              animate={{ scale: [1, 1.5, 1], rotate: [0, 360] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-6xl mb-4"
+            >
+              🐍
+            </motion.div>
+            <motion.div
+              animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1, repeat: Infinity }}
+              className="text-5xl"
+            >
+              {abilityEffect?.icon || '⚡'}
+            </motion.div>
+            <motion.p
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-purple-400 mt-4"
+            >
+              {abilityEffect?.name || 'Using ability'}...
+            </motion.p>
+          </div>
+        ) : outcome ? (
           <div className="py-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-black/40 rounded-xl p-6 border border-green-500/30"
             >
-              <p className="text-green-100 text-base leading-relaxed">{outcome}</p>
+              <p className="text-green-100 text-base leading-relaxed whitespace-pre-line">{outcome}</p>
             </motion.div>
           </div>
         ) : interacting ? (
@@ -1573,155 +1597,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <p className="text-pink-400 mt-4">Creating new life...</p>
               </motion.div>
             )}
-            {currentAction?.startsWith('ability_') && abilityEffect && (
-              <motion.div className="relative">
-                {/* Ability-specific visual effects */}
-                {abilityEffect.id === 'invisible' && (
-                  <motion.div
-                    animate={{ opacity: [1, 0.3, 1, 0.3, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="text-6xl mb-4"
-                  >
-                    🐍
-                  </motion.div>
-                )}
-                {abilityEffect.id === 'teleport' && (
-                  <>
-                    <motion.div
-                      animate={{ x: [-50, 50], opacity: [1, 0, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className="text-6xl mb-4"
-                    >
-                      🐍
-                    </motion.div>
-                    <motion.div
-                      animate={{ scale: [1, 2, 1], opacity: [0, 1, 0] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                      className="text-4xl absolute"
-                    >
-                      🌑
-                    </motion.div>
-                  </>
-                )}
-                {abilityEffect.id === 'paralyze' && (
-                  <>
-                    <motion.div className="text-6xl mb-4">🐍</motion.div>
-                    <motion.div
-                      animate={{ y: [-20, 0], opacity: [0, 1] }}
-                      transition={{ duration: 0.5, repeat: Infinity }}
-                      className="text-5xl"
-                    >
-                      💉
-                    </motion.div>
-                  </>
-                )}
-                {abilityEffect.id === 'track' && (
-                  <>
-                    <motion.div
-                      animate={{ rotate: [0, 360] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="text-6xl mb-4"
-                    >
-                      🐍
-                    </motion.div>
-                    <motion.div
-                      animate={{ scale: [1, 1.5, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                      className="text-4xl"
-                    >
-                      🩸
-                    </motion.div>
-                  </>
-                )}
-                {abilityEffect.id === 'fear' && (
-                  <>
-                    <motion.div className="text-6xl mb-4">🐍</motion.div>
-                    <motion.div
-                      animate={{ scale: [1, 2, 1], opacity: [1, 0.3, 1] }}
-                      transition={{ duration: 0.8, repeat: Infinity }}
-                      className="text-5xl"
-                    >
-                      😱
-                    </motion.div>
-                  </>
-                )}
-                {abilityEffect.id === 'blood_rage' && (
-                  <>
-                    <motion.div
-                      animate={{ scale: [1, 1.3, 1] }}
-                      transition={{ duration: 0.5, repeat: Infinity }}
-                      className="text-6xl mb-4 text-red-500"
-                    >
-                      🐍
-                    </motion.div>
-                    <motion.div
-                      animate={{ scale: [1, 2, 1], rotate: [0, 360] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                      className="text-5xl"
-                    >
-                      🔥
-                    </motion.div>
-                  </>
-                )}
-                {!['invisible', 'teleport', 'paralyze', 'track', 'fear', 'blood_rage'].includes(abilityEffect.id) && (
-                  <>
-                    <motion.div
-                      animate={{ scale: [1, 1.5, 1], rotate: [0, 360] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className="text-6xl mb-4"
-                    >
-                      🐍
-                    </motion.div>
-                    <motion.div
-                      animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                      className="text-5xl"
-                    >
-                      {abilityEffect.icon}
-                    </motion.div>
-                  </>
-                )}
-                <motion.p
-                  animate={{ opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-purple-400 mt-4"
-                >
-                  {abilityEffect.name}...
-                </motion.p>
 
-                {/* Particle effects */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {[...Array(10)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute w-2 h-2 rounded-full"
-                      style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                        background: getEvolvedColor(snakes[selectedSnakeIndex]?.type || 'shadow', getEvolutionStage(snakes[selectedSnakeIndex]?.power_level || 0))
-                      }}
-                      animate={{
-                        scale: [0, 1.5, 0],
-                        opacity: [0, 1, 0]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        delay: i * 0.2
-                      }}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            )}
-            {!currentAction && (
-              <motion.div
-                animate={{ rotate: 360, scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              >
-                <div className="text-6xl">🐍</div>
-              </motion.div>
-            )}
           </div>
         ) : activeTab === 'snakes' && snakes.length === 0 ? (
           <div className="text-center py-12">

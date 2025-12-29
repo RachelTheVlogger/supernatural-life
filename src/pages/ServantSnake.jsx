@@ -746,17 +746,6 @@ export default function ServantSnake() {
           {/* Snake Stats */}
           <div className="bg-black/40 rounded-xl p-4 mb-6 border border-green-500/30">
             <div className="grid grid-cols-2 gap-3 mb-3">
-            borderColor: getSnakeBaseColor(snake.type),
-            borderWidth: '3px',
-            background: snake.pattern === 'iridescent'
-              ? 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)'
-              : snake.pattern === 'striped'
-              ? `repeating-linear-gradient(90deg, ${getSnakeBaseColor(snake.type)} 0px, ${getSnakeBaseColor(snake.type)} 40px, rgba(255,255,255,0.15) 40px, rgba(255,255,255,0.15) 80px)`
-              : snake.pattern === 'spotted'
-              ? `radial-gradient(circle, rgba(255,255,255,0.2) 8px, transparent 8px), linear-gradient(135deg, ${getSnakeBaseColor(snake.type)}, ${getSnakeBaseColor(snake.type)})`
-              : snake.pattern === 'scales_of_night'
-              ? `conic-gradient(from 0deg at 50% 50%, ${getSnakeBaseColor(snake.type)} 0deg 30deg, rgba(0,0,0,0.4) 30deg 60deg, ${getSnakeBaseColor(snake.type)} 60deg 90deg, rgba(0,0,0,0.4) 90deg 120deg, ${getSnakeBaseColor(snake.type)} 120deg 150deg, rgba(0,0,0,0.4) 150deg 180deg, ${getSnakeBaseColor(snake.type)} 180deg 210deg, rgba(0,0,0,0.4) 210deg 240deg, ${getSnakeBaseColor(snake.type)} 240deg 270deg, rgba(0,0,0,0.4) 270deg 300deg, ${getSnakeBaseColor(snake.type)} 300deg 330deg, rgba(0,0,0,0.4) 330deg 360deg)`
-              : `linear-gradient(135deg, ${getSnakeBaseColor(snake.type)}, ${getSnakeBaseColor(snake.type)})`,
               <div>
                 <p className="text-gray-400 text-xs">Bond Level</p>
                 <div className="flex items-center gap-2">
