@@ -58,12 +58,156 @@ export default function DoppelgangerHome() {
 
   const handleAction = async (action) => {
     setActing(true);
-    
+
     setTimeout(async () => {
       let message = '';
       let humanityChange = 0;
-      
-      if (action === 'blood') {
+
+      if (action === 'impersonate') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 25, -100)
+        });
+
+        const impersonations = [
+          `You pretended to be ${doppelganger.name}. Lived their life for a week. Met their friends. Their family. Slept with their partner. Ruined everything. When you revealed yourself, the betrayal in their eyes was delicious.`,
+          `You impersonated ${doppelganger.name} perfectly. Same face. Same voice. Destroyed their reputation. Made enemies in their name. They came back to a life in ruins. "That wasn't me!" Nobody believes them.`,
+          `You became ${doppelganger.name}. Stole their identity completely. Got them fired. Broke up with their lover for them. They watched from the shadows, helpless. You smiled at them. "Thanks for the life."`,
+          `Perfect impersonation. You texted their loved ones horrible things as them. Posted embarrassing content. Sabotaged relationships. When ${doppelganger.name} returned, everyone hated them. You just watched. Enjoyed it.`
+        ];
+        message = impersonations[Math.floor(Math.random() * impersonations.length)];
+        humanityChange = -10;
+      } else if (action === 'steal_life') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 35, -100)
+        });
+
+        const thefts = [
+          `You took everything. Their apartment - yours now. Their job - you charmed the boss. Their friends - convinced them ${doppelganger.name} was crazy. Their lover - seduced them in their bed. ${doppelganger.name} has NOTHING left. You took it all. They watch their stolen life from the outside.`,
+          `Systematic destruction. You stole their identity piece by piece. Bank account drained. Lease canceled. Relationships poisoned. ${doppelganger.name} became a ghost in their own life. You? You're living their dream. Better than they ever did.`,
+          `You didn't just impersonate. You REPLACED them. Everyone thinks YOU are the real one now. ${doppelganger.name} tries to explain. "I'm me!" But you have their fingerprints. Their memories. Their face. Who's the copy now?`,
+          `You stole their entire existence. Got them arrested for crimes you committed. Turned their family against them. Married their fiancé. ${doppelganger.name} is homeless. Alone. Destroyed. You send them photos of your perfect life. Their life. Stolen.`
+        ];
+        message = thefts[Math.floor(Math.random() * thefts.length)];
+        humanityChange = -15;
+      } else if (action === 'possess') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 40, -100),
+          is_aware: true
+        });
+
+        const possessions = [
+          `You forced your consciousness into ${doppelganger.name}'s body. They screamed inside their own mind. Trapped. Prisoner in their own flesh. You lived as them for MONTHS. Did terrible things in their body. When you finally left, they remembered everything. Couldn't wash the feeling of violation away.`,
+          `Body possession. You pushed ${doppelganger.name}'s soul aside. Took control. Used their body however you wanted. They felt everything but controlled nothing. When you released them, they collapsed sobbing. "You were INSIDE me. I felt you. I couldn't stop you."`,
+          `You possessed ${doppelganger.name} and made them hurt people they love. Used their hands to destroy. Their voice to lie. Their body to betray. When you left, the guilt remained. They'll never forgive you. Or themselves.`,
+          `Consciousness swap. You trapped ${doppelganger.name} in your body while you lived in theirs. They experienced being a vampire. The hunger. The urges. The killing. It broke them. When you switched back, they weren't the same. "I understand you now. I hate you more."`
+        ];
+        message = possessions[Math.floor(Math.random() * possessions.length)];
+        humanityChange = -20;
+      } else if (action === 'gaslighting') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 15, -100)
+        });
+
+        const gaslights = [
+          `You made ${doppelganger.name} doubt everything. "That never happened." "You're remembering wrong." "You're going crazy." Systematic. Deliberate. You rewrote their reality. Now they don't trust their own memories. Perfect.`,
+          `You convinced ${doppelganger.name} that they're the doppelganger and YOU'RE the original. They believe it now. Identity crisis complete. They don't know who they are anymore. You smile. "I've always been me. You're just the copy, remember?"`,
+          `Gaslighting as an art form. You made ${doppelganger.name} question their sanity. Moved their belongings. Denied conversations. Created false evidence. They think they're losing their mind. They came to YOU for help. Ironic. You comfort them. While destroying them.`,
+          `You made them believe everyone secretly hates them. Forged messages. Faked conversations. ${doppelganger.name} is paranoid now. Isolated. Only trusts you. Exactly as planned. "I'm the only one who cares about you." They believe it. You broke them psychologically.`
+        ];
+        message = gaslights[Math.floor(Math.random() * gaslights.length)];
+        humanityChange = -8;
+      } else if (action === 'rivalry') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: (doppelganger.relationship_vampire || 0) - 20
+        });
+
+        const rivalries = [
+          `You challenged ${doppelganger.name}. Who's better? Who's smarter? Who's more loved? You won. Every time. Proved you're superior in every way. They hate you. Good. Hate keeps them close. Obsessed with beating you. They never will.`,
+          `Competition. You stole their achievements. Did everything they did, but BETTER. They got promoted? You got promoted HIGHER. They found love? You seduced someone MORE desirable. Constantly one-upping them. They're furious. Desperate to win. It's delicious.`,
+          `You turned your existence into their personal hell. Everything's a competition. Every victory yours. Every failure theirs. ${doppelganger.name} is consumed with beating you. Can't. You're always better. The frustration eats them alive. Perfect.`,
+          `Rivalry became obsession. You're better than ${doppelganger.name} at everything. They train. You train harder. They succeed. You succeed MORE. The gap widens. They'll never catch up. But they'll never stop trying. You own them through competition.`
+        ];
+        message = rivalries[Math.floor(Math.random() * rivalries.length)];
+        humanityChange = -5;
+      } else if (action === 'steal_love') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 30, -100)
+        });
+
+        const thefts = [
+          `${doppelganger.name} had someone they loved. HAD. You seduced them. Stole them. Fucked them in ${doppelganger.name}'s bed. Made them forget the original. Now they're yours. ${doppelganger.name} watched it happen. Helpless. You kissed their lover in front of them. "They prefer the upgrade."`,
+          `You targeted ${doppelganger.name}'s lover specifically. Seduction. Manipulation. Better sex. Better everything. They left ${doppelganger.name} for you. "You're what I thought they were." The original watches their love story with YOU. Replaced. Forgotten. Perfect revenge.`,
+          `Same face. Better personality. You took ${doppelganger.name}'s partner easily. They couldn't resist. Thought they were cheating with their own lover. Realized too late. Now addicted to you. ${doppelganger.name} lost them forever. "Sorry. I'm just... better than you."`,
+          `You didn't just steal their lover. You made ${doppelganger.name} WATCH. Compelled them to witness every intimate moment. Every kiss. Every fuck. Every "I love you" meant for them, said to you instead. Psychological torture perfected.`
+        ];
+        message = thefts[Math.floor(Math.random() * thefts.length)];
+        humanityChange = -12;
+      } else if (action === 'frame') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 25, -100)
+        });
+
+        const frames = [
+          `You committed crimes wearing ${doppelganger.name}'s face. Murder. Theft. Assault. All caught on camera. All blamed on them. They're arrested. Imprisoned. Screaming "It wasn't me!" DNA says otherwise. You visit them in jail. Smile through the glass. "Enjoying your life?"`,
+          `You framed ${doppelganger.name} for YOUR kills. Every body. Every witness. Saw their face. Their DNA at scenes. Police are hunting THEM. They're running. Terrified. You? Safe. Free. Watching the hunt. Amused. "Should have been more careful, twin."`,
+          `Perfect frame job. You made ${doppelganger.name} look like a monster. Planted evidence everywhere. Testimonies from "victims." They're wanted. Hunted. Ruined. Lost everything. You took their life and gave them your crimes. "Thanks for taking the fall."`,
+          `You framed them for supernatural crimes. Hunters think ${doppelganger.name} is the dangerous one. They're being hunted by everyone. Vampires AND humans. Nowhere safe. You offered protection. "All you have to do is serve me." They had no choice. Trapped.`
+        ];
+        message = frames[Math.floor(Math.random() * frames.length)];
+        humanityChange = -14;
+      } else if (action === 'ruin') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 45, -100)
+        });
+
+        const ruins = [
+          `Total destruction. You destroyed EVERYTHING ${doppelganger.name} built. Career sabotaged. Relationships poisoned. Reputation demolished. Family turned against them. Savings stolen. Home burned. They have NOTHING. You did this methodically. Carefully. Completely. They're broken. Empty. Perfect.`,
+          `You didn't just ruin their life. You made them ruin it themselves. Compelled them to quit their job. Insult their family. Cheat on their partner. Destroy their own life while conscious but unable to stop. They remember doing it all. Can't explain why. Everyone thinks they went insane. Mission accomplished.`,
+          `Systematic annihilation. You spent months destroying every good thing in ${doppelganger.name}'s life. One by one. Watched them spiral. Lose hope. Contemplate ending it. Then you appeared. "I can make it stop. Just obey me." They agreed. You own them through devastation.`,
+          `You ruined them so thoroughly they became dependent on you. Lost everything. Everyone. You're all they have left. Stockholm syndrome on purpose. "I'll help you rebuild. Be mine." They nodded. Broken. Yours. Exactly as planned.`
+        ];
+        message = ruins[Math.floor(Math.random() * ruins.length)];
+        humanityChange = -18;
+      } else if (action === 'jealousy') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.min((doppelganger.relationship_vampire || 0) + 15, 100)
+        });
+
+        const jealousies = [
+          `You flaunted your vampire life. Powers. Immortality. Beauty. Everything ${doppelganger.name} doesn't have. Made them watch you seduce people effortlessly. "Being me must be so... boring." They're consumed with envy. Want what you have. Want to BE you.`,
+          `You made ${doppelganger.name} jealous of their own face. "I wear it better, don't I?" Showed them how much more powerful you are. How much more desired. Same appearance. Completely different lives. They hate it. Hate you. Hate themselves for not being you.`,
+          `You lived ${doppelganger.name}'s dream life in front of them. Everything they wanted. You have it. Because you're a vampire. They're just human. Limited. Mortal. Weak. The jealousy eats them alive. "Want to be like me? Beg for it." They're considering it.`,
+          `You made them jealous by being HAPPY. Same face. Different fate. You're thriving. They're surviving. The unfairness burns them. "Why do YOU get everything?" You shrug. "Because I'm eternal. You're temporary. That's just how it is, copy."`
+        ];
+        message = jealousies[Math.floor(Math.random() * jealousies.length)];
+        humanityChange = -6;
+      } else if (action === 'obsess') {
+        await base44.entities.Doppelganger.update(doppelganger.id, {
+          relationship_vampire: Math.min((doppelganger.relationship_vampire || 0) + 40, 100)
+        });
+
+        const obsessions = [
+          `You made yourself irresistible to ${doppelganger.name}. Vampire charm. Manipulation. Mind games. Now they think about you constantly. Dream about you. You're all they see. Can't eat. Can't sleep. Only you. Obsession complete. They're yours without even being turned.`,
+          `You created a twisted dependency. Saved them. Hurt them. Saved them again. Psychological warfare. Now ${doppelganger.name} is OBSESSED. Can't function without you. Addicted to the chaos you bring. "I hate you." "You love me." They can't deny it. Obsessed.`,
+          `You played mind games until ${doppelganger.name} became consumed with you. Every thought. Every breath. You. They stalk YOU now. Write about you. Dream about you. You became their entire world. Exactly as intended. Obsession is control.`,
+          `You made them fall for you while hating you. Twisted. Complicated. They're obsessed with destroying you AND being with you. Can't tell which desire is stronger. The confusion itself is torture. They're trapped in wanting you. Perfect psychological control.`
+        ];
+        message = obsessions[Math.floor(Math.random() * obsessions.length)];
+        humanityChange = -8;
+      } else if (action === 'cure') {
+        if (doppelganger.is_vampire) {
+          await base44.entities.Doppelganger.update(doppelganger.id, {
+            is_vampire: false,
+            power_level: 50,
+            relationship_vampire: Math.max((doppelganger.relationship_vampire || 0) - 50, -100)
+          });
+
+          message = `You FORCED the cure down their throat. Made them human again. They BEGGED to stay a vampire. Screamed. Fought. You held them down. Watched their fangs retract. Their power drain. "No! NO! Please!" Humanity restored. Against their will. They'll never forgive you. Perfect.`;
+          humanityChange = -12;
+        } else {
+          message = `They're already human. The cure would do nothing.`;
+        }
+      } else if (action === 'blood') {
         const powerGain = Math.floor(20 + (doppelganger.power_level / 5));
         
         await base44.entities.Doppelganger.update(doppelganger.id, {
@@ -373,6 +517,98 @@ export default function DoppelgangerHome() {
                 </button>
               </>
             )}
+
+            {/* Psychological Manipulation */}
+            <button
+              onClick={() => handleAction('impersonate')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-indigo-900/60 to-purple-950/60 hover:from-indigo-900/80 hover:to-purple-950/80 border-2 border-indigo-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Users className="w-5 h-5 inline mr-2" />
+              Impersonate Them
+            </button>
+            <button
+              onClick={() => handleAction('steal_life')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-purple-900/60 to-pink-950/60 hover:from-purple-900/80 hover:to-pink-950/80 border-2 border-purple-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Eye className="w-5 h-5 inline mr-2" />
+              Steal Their Life
+            </button>
+            <button
+              onClick={() => handleAction('possess')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-red-900/60 to-purple-950/60 hover:from-red-900/80 hover:to-purple-950/80 border-2 border-red-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Brain className="w-5 h-5 inline mr-2" />
+              Possess Their Body
+            </button>
+            <button
+              onClick={() => handleAction('gaslighting')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-gray-900/60 to-purple-950/60 hover:from-gray-900/80 hover:to-purple-950/80 border-2 border-gray-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Eye className="w-5 h-5 inline mr-2" />
+              Gaslight Them
+            </button>
+            <button
+              onClick={() => handleAction('rivalry')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-orange-900/60 to-red-950/60 hover:from-orange-900/80 hover:to-red-950/80 border-2 border-orange-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Flame className="w-5 h-5 inline mr-2" />
+              Compete With Them
+            </button>
+            <button
+              onClick={() => handleAction('steal_love')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-pink-900/60 to-red-950/60 hover:from-pink-900/80 hover:to-red-950/80 border-2 border-pink-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Heart className="w-5 h-5 inline mr-2" />
+              Steal Their Lover
+            </button>
+            <button
+              onClick={() => handleAction('frame')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-yellow-900/60 to-orange-950/60 hover:from-yellow-900/80 hover:to-orange-950/80 border-2 border-yellow-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Skull className="w-5 h-5 inline mr-2" />
+              Frame Them
+            </button>
+            <button
+              onClick={() => handleAction('ruin')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-red-900/60 to-black/80 hover:from-red-900/80 hover:to-black rounded-xl py-4 text-red-300 disabled:opacity-50"
+            >
+              <Skull className="w-5 h-5 inline mr-2" />
+              Ruin Their Life
+            </button>
+            <button
+              onClick={() => handleAction('jealousy')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-green-900/60 to-emerald-950/60 hover:from-green-900/80 hover:to-emerald-950/80 border-2 border-green-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Eye className="w-5 h-5 inline mr-2" />
+              Make Them Jealous
+            </button>
+            <button
+              onClick={() => handleAction('obsess')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-pink-900/60 to-purple-950/60 hover:from-pink-900/80 hover:to-purple-950/80 border-2 border-pink-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Heart className="w-5 h-5 inline mr-2" />
+              Make Them Obsessed
+            </button>
+            <button
+              onClick={() => handleAction('cure')}
+              disabled={acting}
+              className="w-full bg-gradient-to-r from-blue-900/60 to-cyan-950/60 hover:from-blue-900/80 hover:to-cyan-950/80 border-2 border-blue-500/50 rounded-xl py-4 text-white disabled:opacity-50"
+            >
+              <Zap className="w-5 h-5 inline mr-2" />
+              Force The Cure
+            </button>
+
+            {/* Original interactions */}
             <button
               onClick={() => handleAction('bond')}
               disabled={acting}
