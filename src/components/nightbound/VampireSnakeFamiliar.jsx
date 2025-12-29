@@ -205,6 +205,16 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
   );
 }
 
+const getEvolvedColor = (type, stage) => {
+  const evolutionColors = {
+    shadow: ['#6B7280', '#374151', '#000000'],
+    venom: ['#10B981', '#059669', '#047857'],
+    blood: ['#EF4444', '#DC2626', '#991B1B'],
+    nightmare: ['#A855F7', '#9333EA', '#7C3AED']
+  };
+  return evolutionColors[type]?.[stage - 1] || '#6B7280';
+};
+
 const EVOLUTION_PATHS = {
   shadow: [
     { stage: 1, name: 'Shadow Hatchling', abilities: ['Blend with Shadows'], emoji: '🐍', emojiColor: '#9CA3AF', color: 'from-gray-700 to-gray-900' },
@@ -233,6 +243,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const [outcome, setOutcome] = useState('');
   const [interacting, setInteracting] = useState(false);
   const [currentAction, setCurrentAction] = useState(null);
+  const [abilityEffect, setAbilityEffect] = useState(null);
   const [showNaming, setShowNaming] = useState(false);
   const [snakeName, setSnakeName] = useState('');
   const [showAdoptModal, setShowAdoptModal] = useState(false);
@@ -300,16 +311,6 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     if (power >= 70) return 3;
     if (power >= 40) return 2;
     return 1;
-  };
-
-  const getEvolvedColor = (type, stage) => {
-    const evolutionColors = {
-      shadow: ['#6B7280', '#374151', '#000000'],
-      venom: ['#10B981', '#059669', '#047857'],
-      blood: ['#EF4444', '#DC2626', '#991B1B'],
-      nightmare: ['#A855F7', '#9333EA', '#7C3AED']
-    };
-    return evolutionColors[type]?.[stage - 1] || '#6B7280';
   };
 
   const snakeTypes = [
@@ -891,8 +892,6 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
       }, 3500);
     }, 2000);
   };
-
-  const [abilityEffect, setAbilityEffect] = useState(null);
 
   const handleUseAbility = async (ability, targetSnake) => {
     const snake = targetSnake || snakes[selectedSnakeIndex];
