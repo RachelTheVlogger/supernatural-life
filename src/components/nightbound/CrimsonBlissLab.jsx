@@ -172,8 +172,9 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
         quantity: Math.max(0, drug.quantity - 2)
       });
 
+      // Dynamically generate experiences using current servant name
       const experiences = [
-        `You both take ${drug.strain_name}. Colors explode. Time stops. You pull them close. Every touch is electric. You kiss. Their lips taste like eternity. Clothes disappear. Bodies merge. Reality fractures as you fuck. You've never felt anything like this.`,
+        `You both take ${drug.strain_name}. Colors explode. Time stops. You pull ${servant.name} close. Every touch is electric. You kiss. Their lips taste like eternity. Clothes disappear. Bodies merge. Reality fractures as you fuck. You've never felt anything like this.`,
         `${drug.strain_name} hits. ${servant.name} gasps. Their pupils dilate. "I feel everything," they whisper. You touch their face. They shudder. You undress each other slowly, every sensation amplified. When you enter them, you both see the same fractals. Connected. One being.`,
         `The drug takes hold. You're both flying. ${servant.name} straddles you, moving in slow motion. Every thrust creates waves of color. You're not just fucking - you're traveling through dimensions together. They scream your name. You taste sound. Hear their pleasure as music.`,
         `${drug.strain_name} makes everything vibrate. ${servant.name}'s skin glows. You kiss them everywhere. They beg for more. You give them everything. The room breathes with you. Your heartbeats sync. When you finish, you're both crying from how beautiful it was.`,
@@ -1454,19 +1455,23 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                       Use Solo
                     </button>
                     <div className="space-y-1">
-                      {servants.filter(s => s.id).map(servant => (
-                        <button
-                          key={servant.id}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleUseWith(drug, servant);
-                          }}
-                          disabled={drug.quantity < 2}
-                          className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 text-sm touch-manipulation"
-                        >
-                          Use with {servant.name} 💕 (2 doses)
-                        </button>
-                      ))}
+                      {servants && servants.length > 0 ? (
+                        servants.filter(s => s.id && s.name).map(servant => (
+                          <button
+                            key={servant.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUseWith(drug, servant);
+                            }}
+                            disabled={drug.quantity < 2}
+                            className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-2 rounded-lg transition-colors disabled:opacity-50 text-sm touch-manipulation"
+                          >
+                            Use with {servant.name} 💕 (2 doses)
+                          </button>
+                        ))
+                      ) : (
+                        <p className="text-gray-500 text-xs text-center py-2">No servants available</p>
+                      )}
                     </div>
                   </div>
                 </div>
