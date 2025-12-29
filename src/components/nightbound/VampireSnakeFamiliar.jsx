@@ -1962,11 +1962,43 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 >
                   Close
                 </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </motion.div>
-  );
-}
+                </motion.div>
+                </motion.div>
+                )}
+                </AnimatePresence>
+
+                {/* Deep System Modals */}
+                {showPersonality && personalitySnake && (
+                <SnakePersonality 
+                snake={personalitySnake}
+                onClose={() => {
+                setShowPersonality(false);
+                setPersonalitySnake(null);
+                }}
+                />
+                )}
+
+                {showRelationships && relationshipSnake && (
+                <SnakeRelationships
+                snake={relationshipSnake}
+                allSnakes={allSnakes}
+                onClose={() => {
+                setShowRelationships(false);
+                setRelationshipSnake(null);
+                }}
+                />
+                )}
+
+                {showMissions && missionSnake && (
+                <SnakeMissions
+                snake={missionSnake}
+                onClose={() => {
+                setShowMissions(false);
+                setMissionSnake(null);
+                }}
+                />
+                )}
+                </motion.div>
+                </motion.div>
+                );
+                }
