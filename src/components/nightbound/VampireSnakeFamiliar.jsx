@@ -8,7 +8,7 @@ import SnakeRelationships from './SnakeRelationships';
 import SnakeMissions from './SnakeMissions';
 
 // Snake Card Component
-function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbility, onBreed, onPlayDate, onCustomize, onDelete, onShowProgression, interacting, currentAction, getEvolutionStage, getAbilities, getEvolvedColor, EVOLUTION_PATHS, onPersonality, onRelationships, onMissions }) {
+function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbility, onBreed, onPlayDate, onCustomize, onDelete, onShowProgression, interacting, currentAction, getEvolutionStage, getAbilities, getEvolvedColor, EVOLUTION_PATHS, onPersonality, onRelationships, onMissions, isVampireOwned }) {
   const getSnakeBaseColor = (type) => {
     const colors = {
       shadow: '#4b5563',
@@ -1108,6 +1108,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 getAbilities={getAbilities}
                 getEvolvedColor={getEvolvedColor}
                 EVOLUTION_PATHS={EVOLUTION_PATHS}
+                isVampireOwned={true}
               />
             ))}
           </div>

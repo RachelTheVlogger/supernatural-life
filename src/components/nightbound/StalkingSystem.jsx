@@ -70,10 +70,12 @@ export default function StalkingSystem({ vampireState, onClose }) {
         name,
         gender: genders[Math.floor(Math.random() * genders.length)],
         vampire_id: vampireState.id,
-        awareness: Math.floor(Math.random() * 30) + 20,
-        enjoyment: Math.floor(Math.random() * 40) + 40,
-        fear_vs_thrill: Math.floor(Math.random() * 30) + 60,
-        obsession: Math.floor(Math.random() * 25) + 15
+        awareness: Math.floor(Math.random() * 30) + 40,
+        enjoyment: Math.floor(Math.random() * 30) + 60,
+        fear_vs_thrill: Math.floor(Math.random() * 30) + 70,
+        obsession: Math.floor(Math.random() * 30) + 55,
+        has_been_compelled: false,
+        times_watched: 0
       });
 
       const meetingStories = [
