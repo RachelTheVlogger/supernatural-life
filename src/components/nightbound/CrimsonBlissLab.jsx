@@ -1972,6 +1972,22 @@ export default function CrimsonBlissLab({ vampireState, servants, onClose }) {
                   <p className="text-gray-500 text-xs mt-2">Earn research points by experimenting, harvesting plants, and creating hybrids</p>
                 </div>
 
+                <button
+                  onClick={async () => {
+                    setResearching(true);
+                    await generateNewStrain();
+                    setResearching(false);
+                  }}
+                  disabled={researching}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 text-white py-4 rounded-xl font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Generate AI Strain
+                </button>
+                <p className="text-gray-500 text-xs text-center -mt-2 mb-4">
+                  Use AI to discover completely new blood drug strains
+                </p>
+
                 <div className="space-y-2">
                   <button
                     onClick={() => handleResearchUpgrade('extraction')}
