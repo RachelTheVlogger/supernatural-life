@@ -48,15 +48,41 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
       }}>
         <div className="relative z-10">
           <div className="text-center mb-3">
-            <div 
+            <motion.div 
               className="text-7xl mb-2"
+              animate={{
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
               style={{
-                filter: `drop-shadow(0 0 ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].shadowGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].toxicGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].bloodGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].nightmareGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].voidGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].acidGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].dragonGlow || EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].basiliskGlow ? '12px' : '0px'} ${EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emojiColor})`,
-                color: EVOLUTION_PATHS[snake.type][getEvolutionStage(snake.power_level) - 1].emojiColor
+                filter: `drop-shadow(0 0 ${getEvolutionStage(snake.power_level) >= 2 ? '15px' : '0px'} ${getEvolvedColor(snake.type, getEvolutionStage(snake.power_level))})`,
+                color: getEvolvedColor(snake.type, getEvolutionStage(snake.power_level))
               }}
             >
               🐍
-            </div>
+            </motion.div>
+            {getEvolutionStage(snake.power_level) === 3 && (
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                animate={{
+                  opacity: [0.3, 0.7, 0.3],
+                  scale: [0.95, 1.05, 0.95]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity
+                }}
+                style={{
+                  background: `radial-gradient(circle, ${getEvolvedColor(snake.type, 3)}40 0%, transparent 70%)`,
+                  borderRadius: '50%'
+                }}
+              />
+            )}
           </div>
           <div className="mb-2">
             <div className="flex items-center justify-between mb-1">
@@ -274,6 +300,16 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     if (power >= 70) return 3;
     if (power >= 40) return 2;
     return 1;
+  };
+
+  const getEvolvedColor = (type, stage) => {
+    const evolutionColors = {
+      shadow: ['#6B7280', '#374151', '#000000'],
+      venom: ['#10B981', '#059669', '#047857'],
+      blood: ['#EF4444', '#DC2626', '#991B1B'],
+      nightmare: ['#A855F7', '#9333EA', '#7C3AED']
+    };
+    return evolutionColors[type]?.[stage - 1] || '#6B7280';
   };
 
   const snakeTypes = [
@@ -831,7 +867,10 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         const evolutionPath = EVOLUTION_PATHS[snake.type];
         const currentEvolution = evolutionPath[newStage - 1];
         updates.unlocked_abilities = currentEvolution.abilities;
-        result += `\n\n🐍 EVOLUTION! ${snake.custom_name} evolved into ${currentEvolution.name}! New abilities unlocked!`;
+
+        // Visual transformation
+        const newColor = getEvolvedColor(snake.type, newStage);
+        result += `\n\n🐍 ✨ EVOLUTION! ✨ 🐍\n${snake.custom_name} evolved into ${currentEvolution.name}!\nTheir scales shimmer and transform to ${newColor}!\nNew abilities unlocked: ${currentEvolution.abilities.join(', ')}!`;
       }
 
       await base44.entities.SnakeFamiliar.update(snake.id, updates);
@@ -853,12 +892,15 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
     }, 2000);
   };
 
+  const [abilityEffect, setAbilityEffect] = useState(null);
+
   const handleUseAbility = async (ability, targetSnake) => {
     const snake = targetSnake || snakes[selectedSnakeIndex];
     if (!snake) return;
-    
+
     setInteracting(true);
     setCurrentAction('ability_' + ability.id);
+    setAbilityEffect(ability);
 
     setTimeout(async () => {
       const abilityResults = {
@@ -1154,11 +1196,15 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </motion.div>
             )}
             {currentAction === 'feed' && (
-              <motion.div
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-              >
-                <div className="text-6xl mb-4">🐍</div>
+              <motion.div className="relative">
+                <motion.div
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                  style={{ color: getEvolvedColor(snakes[selectedSnakeIndex]?.type || 'shadow', getEvolutionStage(snakes[selectedSnakeIndex]?.power_level || 0)) }}
+                >
+                  🐍
+                </motion.div>
                 <motion.div
                   animate={{ y: [-20, 0], opacity: [0, 1, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
@@ -1166,15 +1212,36 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 >
                   🩸
                 </motion.div>
-                <p className="text-red-400 mt-4">Feeding...</p>
+                {/* Blood particles */}
+                {[...Array(8)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-2 h-2 rounded-full bg-red-500"
+                    style={{
+                      left: `${50 + Math.cos(i * Math.PI / 4) * 40}%`,
+                      top: `${50 + Math.sin(i * Math.PI / 4) * 40}%`
+                    }}
+                    animate={{
+                      scale: [0, 1.5, 0],
+                      opacity: [0, 1, 0]
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      delay: i * 0.15
+                    }}
+                  />
+                ))}
+                <p className="text-red-400 mt-4">Feeding vampire blood...</p>
               </motion.div>
             )}
             {currentAction === 'train' && (
-              <motion.div>
+              <motion.div className="relative">
                 <motion.div
                   animate={{ x: [-30, 30, -30], rotate: [0, 360] }}
                   transition={{ duration: 2, repeat: Infinity }}
                   className="text-6xl mb-4"
+                  style={{ color: getEvolvedColor(snakes[selectedSnakeIndex]?.type || 'shadow', getEvolutionStage(snakes[selectedSnakeIndex]?.power_level || 0)) }}
                 >
                   🐍
                 </motion.div>
@@ -1182,7 +1249,26 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                   <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 0.5, repeat: Infinity }}>⚡</motion.div>
                   <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.3 }}>💪</motion.div>
                 </div>
-                <p className="text-purple-400 mt-4">Training...</p>
+                {/* Training energy rings */}
+                {[...Array(3)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute inset-0 border-4 rounded-full"
+                    style={{
+                      borderColor: getEvolvedColor(snakes[selectedSnakeIndex]?.type || 'shadow', getEvolutionStage(snakes[selectedSnakeIndex]?.power_level || 0))
+                    }}
+                    animate={{
+                      scale: [1, 2.5],
+                      opacity: [0.8, 0]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      delay: i * 0.7
+                    }}
+                  />
+                ))}
+                <p className="text-purple-400 mt-4">Training power...</p>
               </motion.div>
             )}
             {currentAction === 'spy' && (
@@ -1224,12 +1310,13 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
               </motion.div>
             )}
             {currentAction === 'bond' && (
-              <motion.div>
+              <motion.div className="relative">
                 <div className="flex justify-center items-center gap-4 mb-4">
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 1, repeat: Infinity }}
                     className="text-6xl"
+                    style={{ color: getEvolvedColor(snakes[selectedSnakeIndex]?.type || 'shadow', getEvolutionStage(snakes[selectedSnakeIndex]?.power_level || 0)) }}
                   >
                     🐍
                   </motion.div>
@@ -1248,6 +1335,18 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                     🧛
                   </motion.div>
                 </div>
+                {/* Bond connection visual */}
+                <motion.svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" width="200" height="100">
+                  <motion.path
+                    d="M 50,50 Q 100,0 150,50"
+                    stroke={getEvolvedColor(snakes[selectedSnakeIndex]?.type || 'shadow', getEvolutionStage(snakes[selectedSnakeIndex]?.power_level || 0))}
+                    strokeWidth="3"
+                    fill="none"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: [0, 1, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                </motion.svg>
                 <p className="text-green-400">Bonding deeply...</p>
               </motion.div>
             )}
@@ -1460,23 +1559,145 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 <p className="text-pink-400 mt-4">Creating new life...</p>
               </motion.div>
             )}
-            {currentAction?.startsWith('ability_') && (
-              <motion.div>
-                <motion.div
-                  animate={{ scale: [1, 1.5, 1], rotate: [0, 360] }}
+            {currentAction?.startsWith('ability_') && abilityEffect && (
+              <motion.div className="relative">
+                {/* Ability-specific visual effects */}
+                {abilityEffect.id === 'invisible' && (
+                  <motion.div
+                    animate={{ opacity: [1, 0.3, 1, 0.3, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-6xl mb-4"
+                  >
+                    🐍
+                  </motion.div>
+                )}
+                {abilityEffect.id === 'teleport' && (
+                  <>
+                    <motion.div
+                      animate={{ x: [-50, 50], opacity: [1, 0, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="text-6xl mb-4"
+                    >
+                      🐍
+                    </motion.div>
+                    <motion.div
+                      animate={{ scale: [1, 2, 1], opacity: [0, 1, 0] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      className="text-4xl absolute"
+                    >
+                      🌑
+                    </motion.div>
+                  </>
+                )}
+                {abilityEffect.id === 'paralyze' && (
+                  <>
+                    <motion.div className="text-6xl mb-4">🐍</motion.div>
+                    <motion.div
+                      animate={{ y: [-20, 0], opacity: [0, 1] }}
+                      transition={{ duration: 0.5, repeat: Infinity }}
+                      className="text-5xl"
+                    >
+                      💉
+                    </motion.div>
+                  </>
+                )}
+                {abilityEffect.id === 'track' && (
+                  <>
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-6xl mb-4"
+                    >
+                      🐍
+                    </motion.div>
+                    <motion.div
+                      animate={{ scale: [1, 1.5, 1] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      className="text-4xl"
+                    >
+                      🩸
+                    </motion.div>
+                  </>
+                )}
+                {abilityEffect.id === 'fear' && (
+                  <>
+                    <motion.div className="text-6xl mb-4">🐍</motion.div>
+                    <motion.div
+                      animate={{ scale: [1, 2, 1], opacity: [1, 0.3, 1] }}
+                      transition={{ duration: 0.8, repeat: Infinity }}
+                      className="text-5xl"
+                    >
+                      😱
+                    </motion.div>
+                  </>
+                )}
+                {abilityEffect.id === 'blood_rage' && (
+                  <>
+                    <motion.div
+                      animate={{ scale: [1, 1.3, 1] }}
+                      transition={{ duration: 0.5, repeat: Infinity }}
+                      className="text-6xl mb-4 text-red-500"
+                    >
+                      🐍
+                    </motion.div>
+                    <motion.div
+                      animate={{ scale: [1, 2, 1], rotate: [0, 360] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      className="text-5xl"
+                    >
+                      🔥
+                    </motion.div>
+                  </>
+                )}
+                {!['invisible', 'teleport', 'paralyze', 'track', 'fear', 'blood_rage'].includes(abilityEffect.id) && (
+                  <>
+                    <motion.div
+                      animate={{ scale: [1, 1.5, 1], rotate: [0, 360] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="text-6xl mb-4"
+                    >
+                      🐍
+                    </motion.div>
+                    <motion.div
+                      animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      className="text-5xl"
+                    >
+                      {abilityEffect.icon}
+                    </motion.div>
+                  </>
+                )}
+                <motion.p
+                  animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-6xl mb-4"
+                  className="text-purple-400 mt-4"
                 >
-                  🐍
-                </motion.div>
-                <motion.div
-                  animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                  className="text-5xl"
-                >
-                  ⚡✨⚡
-                </motion.div>
-                <p className="text-purple-400 mt-4">Using special ability...</p>
+                  {abilityEffect.name}...
+                </motion.p>
+
+                {/* Particle effects */}
+                <div className="absolute inset-0 pointer-events-none">
+                  {[...Array(10)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute w-2 h-2 rounded-full"
+                      style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        background: getEvolvedColor(snakes[selectedSnakeIndex]?.type || 'shadow', getEvolutionStage(snakes[selectedSnakeIndex]?.power_level || 0))
+                      }}
+                      animate={{
+                        scale: [0, 1.5, 0],
+                        opacity: [0, 1, 0]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: i * 0.2
+                      }}
+                    />
+                  ))}
+                </div>
               </motion.div>
             )}
             {!currentAction && (
