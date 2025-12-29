@@ -8,7 +8,7 @@ import SnakeRelationships from './SnakeRelationships';
 import SnakeMissions from './SnakeMissions';
 
 // Snake Card Component
-function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbility, onBreed, onPlayDate, onCustomize, onDelete, onShowProgression, interacting, currentAction, getEvolutionStage, getAbilities, EVOLUTION_PATHS }) {
+function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbility, onBreed, onPlayDate, onCustomize, onDelete, onShowProgression, interacting, currentAction, getEvolutionStage, getAbilities, EVOLUTION_PATHS, onPersonality, onRelationships, onMissions }) {
   const getSnakeBaseColor = (type) => {
     const colors = {
       shadow: '#4b5563',
@@ -88,9 +88,9 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
 
           {/* Quick Actions */}
           <div className="flex gap-2 mt-3 flex-wrap">
-            <button onClick={(e) => { e.stopPropagation(); setPersonalitySnake(snake); setShowPersonality(true); }} className="px-3 py-1 rounded-lg font-medium bg-cyan-600 hover:bg-cyan-700 text-white transition-all text-xs touch-manipulation">🎭 Personality</button>
-            <button onClick={(e) => { e.stopPropagation(); setRelationshipSnake(snake); setShowRelationships(true); }} className="px-3 py-1 rounded-lg font-medium bg-indigo-600 hover:bg-indigo-700 text-white transition-all text-xs touch-manipulation">🤝 Relations</button>
-            <button onClick={(e) => { e.stopPropagation(); setMissionSnake(snake); setShowMissions(true); }} className="px-3 py-1 rounded-lg font-medium bg-orange-600 hover:bg-orange-700 text-white transition-all text-xs touch-manipulation">🎯 Missions</button>
+            <button onClick={(e) => { e.stopPropagation(); onPersonality(); }} className="px-3 py-1 rounded-lg font-medium bg-cyan-600 hover:bg-cyan-700 text-white transition-all text-xs touch-manipulation">🎭 Personality</button>
+            <button onClick={(e) => { e.stopPropagation(); onRelationships(); }} className="px-3 py-1 rounded-lg font-medium bg-indigo-600 hover:bg-indigo-700 text-white transition-all text-xs touch-manipulation">🤝 Relations</button>
+            <button onClick={(e) => { e.stopPropagation(); onMissions(); }} className="px-3 py-1 rounded-lg font-medium bg-orange-600 hover:bg-orange-700 text-white transition-all text-xs touch-manipulation">🎯 Missions</button>
             <button onClick={(e) => { e.stopPropagation(); onBreed(); }} className="px-3 py-1 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all text-xs touch-manipulation">💕 Breed</button>
             <button onClick={(e) => { e.stopPropagation(); onPlayDate(); }} className="px-3 py-1 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all text-xs touch-manipulation">🎮 Play Date</button>
             <button onClick={(e) => { e.stopPropagation(); onShowProgression(); }} className="px-3 py-1 rounded-lg font-medium bg-purple-600 hover:bg-purple-700 text-white transition-all text-xs touch-manipulation">⚡ Evolution</button>
@@ -1003,6 +1003,18 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
                 onShowProgression={() => {
                   setSelectedSnakeIndex(index);
                   setShowProgression(true);
+                }}
+                onPersonality={() => {
+                  setPersonalitySnake(snake);
+                  setShowPersonality(true);
+                }}
+                onRelationships={() => {
+                  setRelationshipSnake(snake);
+                  setShowRelationships(true);
+                }}
+                onMissions={() => {
+                  setMissionSnake(snake);
+                  setShowMissions(true);
                 }}
                 interacting={interacting}
                 currentAction={currentAction}
