@@ -957,6 +957,7 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
         setInteracting(false);
         setCurrentAction(null);
         setOutcome('');
+        setAbilityEffect(null);
       }, 3500);
     }, 2000);
   };
