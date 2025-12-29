@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Coffee, Moon, Sparkles, Flame } from 'lucide-react';
+import { X, Heart, Coffee, Moon, Sparkles, Flame, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import WitchDeepInteractions from './WitchDeepInteractions';
 
 export default function WitchLivingTogether({ witch, vampireState, onClose }) {
   const queryClient = useQueryClient();
   const [interacting, setInteracting] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [showDeepInteractions, setShowDeepInteractions] = useState(false);
 
   const getDailyActivities = () => {
     const p = vampireState.gender === 'woman' ? { subject: 'she', object: 'her', possessive: 'her' } 
@@ -161,6 +163,19 @@ export default function WitchLivingTogether({ witch, vampireState, onClose }) {
           </div>
         ) : (
           <div className="space-y-3">
+            <button
+              onClick={() => setShowDeepInteractions(true)}
+              className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 border-2 border-pink-500/50 rounded-xl p-4 text-center transition-all mb-4"
+            >
+              <div className="flex items-center justify-center gap-3">
+                <MessageCircle className="w-6 h-6 text-white" />
+                <div>
+                  <h4 className="text-white font-bold text-lg">Deep Interactions</h4>
+                  <p className="text-pink-200 text-xs">Advanced relationship system</p>
+                </div>
+              </div>
+            </button>
+
             {getDailyActivities().map(activity => (
               <button
                 key={activity.id}
@@ -177,6 +192,14 @@ export default function WitchLivingTogether({ witch, vampireState, onClose }) {
               </button>
             ))}
           </div>
+        )}
+
+        {showDeepInteractions && (
+          <WitchDeepInteractions
+            witch={witch}
+            vampireState={vampireState}
+            onClose={() => setShowDeepInteractions(false)}
+          />
         )}
       </motion.div>
     </motion.div>

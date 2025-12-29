@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, Heart, Eye, Skull, Wind, Droplets, Moon, Flame, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import SnakePersonality from './SnakePersonality';
+import SnakeRelationships from './SnakeRelationships';
+import SnakeMissions from './SnakeMissions';
 
 // Snake Card Component
 function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbility, onBreed, onPlayDate, onCustomize, onDelete, onShowProgression, interacting, currentAction, getEvolutionStage, getAbilities, EVOLUTION_PATHS }) {
@@ -85,6 +88,9 @@ function SnakeCard({ snake, vampireState, onInteraction, onCareAction, onUseAbil
 
           {/* Quick Actions */}
           <div className="flex gap-2 mt-3 flex-wrap">
+            <button onClick={(e) => { e.stopPropagation(); setPersonalitySnake(snake); setShowPersonality(true); }} className="px-3 py-1 rounded-lg font-medium bg-cyan-600 hover:bg-cyan-700 text-white transition-all text-xs touch-manipulation">🎭 Personality</button>
+            <button onClick={(e) => { e.stopPropagation(); setRelationshipSnake(snake); setShowRelationships(true); }} className="px-3 py-1 rounded-lg font-medium bg-indigo-600 hover:bg-indigo-700 text-white transition-all text-xs touch-manipulation">🤝 Relations</button>
+            <button onClick={(e) => { e.stopPropagation(); setMissionSnake(snake); setShowMissions(true); }} className="px-3 py-1 rounded-lg font-medium bg-orange-600 hover:bg-orange-700 text-white transition-all text-xs touch-manipulation">🎯 Missions</button>
             <button onClick={(e) => { e.stopPropagation(); onBreed(); }} className="px-3 py-1 rounded-lg font-medium bg-pink-600 hover:bg-pink-700 text-white transition-all text-xs touch-manipulation">💕 Breed</button>
             <button onClick={(e) => { e.stopPropagation(); onPlayDate(); }} className="px-3 py-1 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all text-xs touch-manipulation">🎮 Play Date</button>
             <button onClick={(e) => { e.stopPropagation(); onShowProgression(); }} className="px-3 py-1 rounded-lg font-medium bg-purple-600 hover:bg-purple-700 text-white transition-all text-xs touch-manipulation">⚡ Evolution</button>
@@ -218,6 +224,12 @@ export default function VampireSnakeFamiliar({ vampireState, onClose }) {
   const [activeTab, setActiveTab] = useState('snakes');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isAdopting, setIsAdopting] = useState(false);
+  const [showPersonality, setShowPersonality] = useState(false);
+  const [showRelationships, setShowRelationships] = useState(false);
+  const [showMissions, setShowMissions] = useState(false);
+  const [personalitySnake, setPersonalitySnake] = useState(null);
+  const [relationshipSnake, setRelationshipSnake] = useState(null);
+  const [missionSnake, setMissionSnake] = useState(null);
 
   const { data: snakes = [], isLoading: snakesLoading } = useQuery({
     queryKey: ['snakeFamiliars'],
