@@ -111,16 +111,7 @@ export default function Night() {
     }
   });
 
-  const { data: hybrids = [] } = useQuery({
-    queryKey: ['hybrids'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Hybrid.list();
-      } catch (e) {
-        return [];
-      }
-    }
-  });
+  // Removed Hybrid entity query - entity doesn't exist
 
   // Fetch recent logs
   const { data: logs = [] } = useQuery({

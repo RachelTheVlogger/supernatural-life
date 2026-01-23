@@ -100,10 +100,9 @@ export default function ServantsList({ onClose, servants, vampireState }) {
                   <Link 
                     to={createPageUrl(`Messages?servant=${servant.id}`)}
                     onClick={(e) => e.stopPropagation()}
+                    className="text-purple-400 hover:text-purple-300 transition-colors"
                   >
-                    <button className="text-purple-400 hover:text-purple-300 transition-colors">
-                      <MessageCircle className="w-5 h-5" />
-                    </button>
+                    <MessageCircle className="w-5 h-5" />
                   </Link>
                 </div>
                 
