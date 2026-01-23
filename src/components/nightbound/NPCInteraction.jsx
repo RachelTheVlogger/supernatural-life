@@ -97,14 +97,16 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
       const relationshipKey = viewMode === 'vampire' ? 'relationship_vampire' : 'relationship_servant';
       const newRel = Math.min((npc[relationshipKey] || 50) + gain, 100);
       
+      const servantName = servant?.name || 'You';
       const outcomes = {
-        chat: [`You talked with ${npc.name}. They seem more comfortable around you.`, `${npc.name} opened up a bit. The conversation was nice.`],
-        compliment: [`${npc.name} blushed at your words.`, `Your compliment made ${npc.name} smile.`],
-        gift: [`${npc.name} was touched by your gift.`, `You gave ${npc.name} something special. They were grateful.`],
-        coffee: [`You shared coffee with ${npc.name}. Simple moments matter.`, `${npc.name} enjoyed the coffee date.`]
+        chat: [`${servantName} talked with ${npc.name}. They seem more comfortable.`, `${npc.name} opened up a bit. The conversation was nice.`],
+        compliment: [`${npc.name} blushed at ${servantName}'s words.`, `The compliment made ${npc.name} smile.`],
+        gift: [`${npc.name} was touched by ${servantName}'s gift.`, `${servantName} gave ${npc.name} something special. They were grateful.`],
+        coffee: [`${servantName} shared coffee with ${npc.name}. Simple moments matter.`, `${npc.name} enjoyed the coffee date.`]
       };
       
-      setOutcome(outcomes[actionKey][Math.floor(Math.random() * outcomes[actionKey].length)]);
+      const selectedOutcome = outcomes[actionKey][Math.floor(Math.random() * outcomes[actionKey].length)];
+      setOutcome(selectedOutcome);
       
       try {
         await base44.entities.NPC.update(npc.id, {
@@ -113,7 +115,7 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
         });
         
         await base44.entities.NightLog.create({
-          entry: `NPC interaction: ${outcomes[actionKey][0]}`,
+          entry: `${servantName} and ${npc.name}: ${selectedOutcome}`,
           category: 'social',
           intensity: 'subtle'
         });
@@ -219,8 +221,13 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
 
         <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
           <Users className="w-6 h-6" />
-          People Around Town
+          {servant ? `${servant.name} Meets People` : 'People Around Town'}
         </h2>
+        {servant && (
+          <p className="text-gray-400 text-sm mb-4">
+            {servant.name} can meet people and make connections for you.
+          </p>
+        )}
 
         {isLoading || npcs.length === 0 ? (
           <p className="text-gray-400 text-center py-8">Loading...</p>
