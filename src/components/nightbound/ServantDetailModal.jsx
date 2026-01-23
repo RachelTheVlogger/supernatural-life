@@ -330,7 +330,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
         
         {showTownPeople && (
           <NPCInteraction
-            onClose={() => setShowTownPeople(false)}
+            onClose={() => {
+              console.log('Closing town people modal');
+              setShowTownPeople(false);
+            }}
             viewMode="servant"
             servant={servant}
           />
@@ -572,9 +575,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             <button
               onClick={(e) => {
                 e.stopPropagation();
+                console.log('Town People button clicked');
                 setShowTownPeople(true);
               }}
-              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
+              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3 touch-manipulation"
             >
               <Users className="w-5 h-5" />
               <span>Introduce to Town People</span>
