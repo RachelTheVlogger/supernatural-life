@@ -147,7 +147,7 @@ export default function Codex() {
   const vampireState = vampireStates[0];
   
   const filteredEntries = entries.filter(e => e.category === selectedCategory);
-  const categoryData = CATEGORIES.find(c => c.id === selectedCategory);
+  const categoryData = CATEGORIES.find(c => c.id === selectedCategory) || CATEGORIES[0];
 
   return (
     <div className="min-h-screen bg-black p-4 md:p-6">
@@ -203,7 +203,7 @@ export default function Codex() {
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
                   selectedCategory === cat.id
-                    ? `bg-${cat.color}-600 text-white`
+                    ? 'bg-purple-600 text-white'
                     : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                 }`}
               >
@@ -215,6 +215,11 @@ export default function Codex() {
         </div>
 
         {/* Entries List */}
+        {filteredEntries.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-400">No entries in this category yet.</p>
+          </div>
+        ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {filteredEntries.map((entry) => (
             <motion.button
@@ -242,6 +247,7 @@ export default function Codex() {
             </motion.button>
           ))}
         </div>
+        )}
       </div>
 
       {/* Entry Detail Modal */}
@@ -263,8 +269,8 @@ export default function Codex() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <span className={`text-xs uppercase font-bold text-${categoryData.color}-400`}>
-                    {categoryData.label}
+                  <span className="text-xs uppercase font-bold text-purple-400">
+                    {categoryData?.label || 'Entry'}
                   </span>
                   <h2 className="text-2xl font-bold text-white mt-1">
                     {selectedEntry.title}
