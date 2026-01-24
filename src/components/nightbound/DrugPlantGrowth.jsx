@@ -3,13 +3,14 @@ import { motion } from 'framer-motion';
 import { Droplet, Leaf, Trash2, Plus, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import PlantEmoji from './PlantEmoji';
 
 const PLANT_TYPES = {
-  cannabis: { name: '🌿 Cannabis', growth_days: 8, max_potency: 85, icon: '🌱' },
-  psilocybin: { name: '🍄 Psilocybin Mushrooms', growth_days: 6, max_potency: 75, icon: '🍄' },
-  opium_poppy: { name: '🌸 Opium Poppy', growth_days: 10, max_potency: 90, icon: '🌸' },
-  coca: { name: '🌿 Coca Plant', growth_days: 9, max_potency: 80, icon: '🌿' },
-  ergot: { name: '⚫ Ergot Fungus', growth_days: 7, max_potency: 70, icon: '⚫' }
+  cannabis: { name: '🌿 Cannabis', growth_days: 8, max_potency: 85, icon: '💚', color: 'green', variants: ['🟢', '💚', '✅'] },
+  psilocybin: { name: '🍄 Psilocybin Mushrooms', growth_days: 6, max_potency: 75, icon: '🍄', color: 'purple', variants: ['🟣', '💜', '🍆'] },
+  opium_poppy: { name: '🌸 Opium Poppy', growth_days: 10, max_potency: 90, icon: '🌸', color: 'red', variants: ['🔴', '❤️', '🌹'] },
+  coca: { name: '🌿 Coca Plant', growth_days: 9, max_potency: 80, icon: '🟡', color: 'yellow', variants: ['🟡', '💛', '⭐'] },
+  ergot: { name: '⚫ Ergot Fungus', growth_days: 7, max_potency: 70, icon: '🟣', color: 'dark', variants: ['⚫', '⬛', '◼️'] }
 };
 
 const APPEARANCE_OPTIONS = {
@@ -177,6 +178,11 @@ export default function DrugPlantGrowth({ hunter, onClose }) {
                       <p className="text-gray-400 text-xs">Health</p>
                       <p className="text-white font-bold">{plant.health}%</p>
                     </div>
+                  </div>
+
+                  {/* Plant Visual */}
+                  <div className="text-center mb-4">
+                    <PlantEmoji plantType={plant.plant_type} stage={plant.growth_stage} potency={plant.potency} />
                   </div>
 
                   <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
