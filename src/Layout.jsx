@@ -58,14 +58,7 @@ export default function Layout({ children, currentPageName }) {
     queryKey: ['waterNymphs'],
     queryFn: async () => {
       try {
-        const allNymphs = await base44.entities.WaterNymph.list();
-        // Keep only the first nymph, delete the rest
-        if (allNymphs.length > 1) {
-          const toDelete = allNymphs.slice(1);
-          await Promise.all(toDelete.map(n => base44.entities.WaterNymph.delete(n.id)));
-          return [allNymphs[0]];
-        }
-        return allNymphs;
+        return await base44.entities.WaterNymph.list();
       } catch (e) {
         console.error('Failed to fetch nymphs:', e);
         return [];
@@ -83,14 +76,20 @@ export default function Layout({ children, currentPageName }) {
   const currentServant = urlServantId ? servants.find(s => s.id === urlServantId) : servants[0];
   const currentServantId = currentServant?.id;
   const firstServantId = currentServant?.id || (servants.length > 0 ? servants[0].id : null);
-  
+
+  const urlNymphId = urlParams.get('nymph');
+  const firstNymphId = urlNymphId ? nymphs.find(n => n.id === urlNymphId)?.id : (nymphs.length > 0 ? nymphs[0].id : null);
+
+  const urlSirenId = urlParams.get('siren');
+  const firstSirenId = urlSirenId ? sirens.find(s => s.id === urlSirenId)?.id : (sirens.length > 0 ? sirens[0].id : null);
+
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vamp', icon: Home, path: 'VampireHome' },
-    { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
+    { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 1, disabled: servants.length === 0 },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
-    { name: 'Siren', icon: Waves, path: 'SirenHome', show: sirens.length > 0 },
-    { name: 'Nymph', icon: Droplets, path: 'WaterNymphHome' }
+    { name: 'Siren', icon: Waves, path: `SirenHome?id=${firstSirenId}`, show: sirens.length > 0, hasSelector: sirens.length > 1, disabled: sirens.length === 0 },
+    { name: 'Nymph', icon: Droplets, path: `WaterNymphHome?id=${firstNymphId}`, hasSelector: nymphs.length > 1, disabled: nymphs.length === 0 }
   ];
   
   return (
@@ -168,7 +167,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
       )}
       
-      {/* Servant Selector Modal */}
+      {/* Multi-selector Modal */}
       {showServantSelector && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -184,7 +183,7 @@ export default function Layout({ children, currentPageName }) {
             onClick={(e) => e.stopPropagation()}
             className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
           >
-            <h3 className="text-white text-xl font-bold mb-4">Select Servant</h3>
+            <h3 className="text-white text-xl font-bold mb-4">Select Character</h3>
             <div className="space-y-2 max-h-[60vh] overflow-y-auto">
               {servants.map(s => (
                 <button
@@ -201,6 +200,32 @@ export default function Layout({ children, currentPageName }) {
                   <p className="text-gray-400 text-sm capitalize">
                     {s.is_turned ? '🦇 Vampire' : `${s.variant} servant`} • Bond: {s.relationship || 0}%
                   </p>
+                </button>
+              ))}
+              {sirens.map(si => (
+                <button
+                  key={si.id}
+                  onClick={() => {
+                    navigate(createPageUrl(`SirenHome?id=${si.id}`));
+                    setShowServantSelector(false);
+                  }}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">{si.name}</h4>
+                  <p className="text-gray-400 text-sm">🌊 Siren • Voice: {si.voice_power}%</p>
+                </button>
+              ))}
+              {nymphs.map(n => (
+                <button
+                  key={n.id}
+                  onClick={() => {
+                    navigate(createPageUrl(`WaterNymphHome?id=${n.id}`));
+                    setShowServantSelector(false);
+                  }}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">{n.name}</h4>
+                  <p className="text-gray-400 text-sm">💧 Nymph • Bond: {n.nature_bond}%</p>
                 </button>
               ))}
             </div>
