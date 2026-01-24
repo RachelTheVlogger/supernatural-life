@@ -8,7 +8,7 @@ import { Zap, Flame, Brain, Heart, Droplet, Dna, Edit2, Plus } from 'lucide-reac
 import MutantProgression from '@/components/nightbound/MutantProgression';
 import MutantPowerTree from '@/components/nightbound/MutantPowerTree';
 import { MutantAnimationWrapper } from '@/components/nightbound/MutantAnimations';
-import MutantAppearanceCustomizer from '@/components/nightbound/MutantAppearanceCustomizer';
+
 import MutantAestheticsShop from '@/components/nightbound/MutantAestheticsShop';
 
 const MUTANT_TYPE_INFO = {
