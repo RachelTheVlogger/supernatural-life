@@ -371,6 +371,30 @@ export default function HereticHome() {
                 <p className="text-white text-xs font-medium">Reputation</p>
               </button>
             </div>
+
+            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-purple-500/30">
+              <button
+                onClick={() => setShowAbilities(true)}
+                className="bg-gradient-to-b from-red-900/60 to-gray-900/60 hover:from-red-900/80 hover:to-gray-900/80 rounded-lg p-2.5 transition-all text-center"
+              >
+                <Zap className="w-5 h-5 text-red-400 mx-auto mb-1" />
+                <p className="text-white text-xs font-medium">Powers</p>
+              </button>
+              <button
+                onClick={() => setShowHybrids(true)}
+                className="bg-gradient-to-b from-pink-900/60 to-gray-900/60 hover:from-pink-900/80 hover:to-gray-900/80 rounded-lg p-2.5 transition-all text-center"
+              >
+                <Wand2 className="w-5 h-5 text-pink-400 mx-auto mb-1" />
+                <p className="text-white text-xs font-medium">Hybrid</p>
+              </button>
+              <button
+                onClick={() => setShowPowerPath(true)}
+                className="bg-gradient-to-b from-blue-900/60 to-gray-900/60 hover:from-blue-900/80 hover:to-gray-900/80 rounded-lg p-2.5 transition-all text-center"
+              >
+                <BookOpen className="w-5 h-5 text-blue-400 mx-auto mb-1" />
+                <p className="text-white text-xs font-medium">Path</p>
+              </button>
+            </div>
           </div>
           </div>
           )}
