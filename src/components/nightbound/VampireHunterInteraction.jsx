@@ -116,13 +116,41 @@ export default function VampireHunterInteraction({ vampire, hunter, onClose }) {
       });
 
       try {
+        const updateData = {};
+        
+        // Handle turning the hunter
+        if (interaction.turn === 'vampire') {
+          updateData.is_turned = true;
+          updateData.vampire_stage = 1;
+          updateData.vampire_power_level = 0;
+        } else if (interaction.turn === 'servant') {
+          updateData.is_turned = false;
+          updateData.obsession_stage = 2;
+          updateData.relationship = 75;
+        } else if (interaction.turn === 'thrall') {
+          // Create thrall record instead
+          await base44.entities.Thrall.create({
+            vampire_id: vampire.id,
+            name: hunter.name,
+            control_level: 100,
+            loyalty: 100,
+            mission_progress: 0
+          });
+        }
+
+        // Update hunter if changes were made
+        if (Object.keys(updateData).length > 0) {
+          await base44.entities.Hunter.update(hunter.id, updateData);
+        }
+
         await base44.entities.NightLog.create({
-          entry: `Confronted ${hunter.name}. You ${interaction.text.toLowerCase()}.\n${hunter.name}: ${hunterText}`,
+          entry: `Confronted ${hunter.name}. You ${interaction.text.toLowerCase()}.\n${hunterText}${interaction.turn ? ` They are now ${interaction.turn === 'vampire' ? 'a vampire' : interaction.turn === 'servant' ? 'your servant' : 'bound to you'}.` : ''}`,
           category: 'encounter',
           intensity: interaction.explicit ? 'high' : 'moderate'
         });
 
         queryClient.invalidateQueries(['vampireState']);
+        queryClient.invalidateQueries(['hunters']);
       } catch (e) {
         console.error('Failed to save interaction:', e);
       }
