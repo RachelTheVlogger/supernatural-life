@@ -275,6 +275,7 @@ export default function HereticHome() {
         </div>
 
         {/* Dual Power Stats */}
+        {!processing && !outcome && (
         <div className="bg-gradient-to-r from-purple-900/60 to-gray-900/60 rounded-2xl p-6 mb-6 border-2 border-purple-500/30">
           <div className="space-y-4">
             <div>
