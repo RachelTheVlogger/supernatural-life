@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Eye, Users, Target, MessageCircle, Skull, Shield, Zap, Heart } from 'lucide-react';
+import { X, Eye, Users, Target, MessageCircle, Skull, Shield, Zap, Heart, Droplets, Gift, Brain, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -16,6 +16,10 @@ const THRALL_ACTIONS = [
   { id: 'reinforce', label: 'Reinforce Control', desc: 'Break their mind further. Restore control.', icon: Zap },
   { id: 'extract', label: 'Extract Information', desc: 'Force them to reveal everything they know.', icon: Eye },
   { id: 'use', label: 'Use Them', desc: 'They exist to serve your desires. No resistance.', icon: Heart },
+  { id: 'feed', label: 'Feed on Them', desc: 'Drain their blood. They won\'t resist.', icon: Droplets },
+  { id: 'gift', label: 'Send as Gift', desc: 'Give them to ally or rival for favors.', icon: Gift },
+  { id: 'memories', label: 'Implant False Memories', desc: 'Rewrite their past. Make them believe lies.', icon: Brain },
+  { id: 'condition', label: 'Condition Response', desc: 'Train them to crave servitude. Increase loyalty.', icon: Sparkles },
   { id: 'bait', label: 'Use as Bait', desc: 'Sacrifice them to lure enemies.', icon: Target },
   { id: 'dispose', label: 'Dispose of Thrall', desc: 'Kill them. They served their purpose.', icon: Skull }
 ];
@@ -143,6 +147,52 @@ export default function ThrallSystem({ vampireState, onClose }) {
           await base44.entities.Thrall.update(selectedThrall.id, {
             control_level: Math.max((selectedThrall.control_level || 100) - 3, 0),
             times_used: (selectedThrall.times_used || 0) + 1
+          });
+        } else if (action.id === 'feed') {
+          const feedOutcomes = [
+            `You drained ${selectedThrall.name}'s blood. They stood perfectly still, offering their neck without hesitation. Hunger sated.`,
+            `${selectedThrall.name} bled for you willingly. No fear. No resistance. Just acceptance. The perfect feeding source.`,
+            `You fed deeply on ${selectedThrall.name}. They never flinched, never pulled away. Complete submission to your hunger.`
+          ];
+          const selectedOutcome = feedOutcomes[Math.floor(Math.random() * feedOutcomes.length)];
+          setOutcome(selectedOutcome);
+          await base44.entities.Thrall.update(selectedThrall.id, {
+            control_level: Math.max((selectedThrall.control_level || 100) - 2, 0)
+          });
+          if (vampireState?.id) {
+            await base44.entities.VampireState.update(vampireState.id, {
+              hunger_state: 'sated',
+              last_feed: new Date().toISOString()
+            });
+          }
+        } else if (action.id === 'gift') {
+          const recipients = ['rival vampire as peace offering', 'ally as a favor', 'council member for influence', 'business partner for leverage'];
+          const recipient = recipients[Math.floor(Math.random() * recipients.length)];
+          await base44.entities.Thrall.delete(selectedThrall.id);
+          setOutcome(`You sent ${selectedThrall.name} to ${recipient}. They'll serve their new master. Political favor gained.`);
+        } else if (action.id === 'memories') {
+          const memoryTypes = [
+            'You implanted memories of unwavering devotion. They now believe they chose this willingly.',
+            'False memories embedded. They remember loving you since childhood. Complete psychological rewrite.',
+            'You rewrote their past. They believe their old life was empty. Only servitude brings meaning now.',
+            'Memories altered. They think they begged you to take them. Their resistance never existed.'
+          ];
+          setOutcome(memoryTypes[Math.floor(Math.random() * memoryTypes.length)]);
+          await base44.entities.Thrall.update(selectedThrall.id, {
+            control_level: 100,
+            loyalty_decay: 0
+          });
+        } else if (action.id === 'condition') {
+          const conditionOutcomes = [
+            `You conditioned ${selectedThrall.name} to feel pleasure from obedience. They crave your commands now. Loyalty increased.`,
+            `Pavlovian conditioning successful. ${selectedThrall.name} now experiences euphoria when serving you. Perfect devotion.`,
+            `You trained ${selectedThrall.name}'s nervous system. Servitude triggers dopamine release. They're addicted to obedience.`,
+            `Conditioning complete. ${selectedThrall.name} feels physical pleasure from submission. They'll never want freedom again.`
+          ];
+          setOutcome(conditionOutcomes[Math.floor(Math.random() * conditionOutcomes.length)]);
+          await base44.entities.Thrall.update(selectedThrall.id, {
+            control_level: Math.min((selectedThrall.control_level || 100) + 10, 100),
+            loyalty_decay: Math.max((selectedThrall.loyalty_decay || 0) - 20, 0)
           });
         } else if (action.id === 'bait') {
           await base44.entities.Thrall.delete(selectedThrall.id);
