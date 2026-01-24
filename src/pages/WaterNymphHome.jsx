@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Droplets, Sparkles, Heart, Waves, Eye, Zap, Shield, Moon, Flower, Fish, Gem, Home, Users, Wind, CloudRain } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import NymphDating from '@/components/nightbound/NymphDating';
+import NymphPowerTree from '@/components/nightbound/NymphPowerTree';
 
 const BASE_POWERS = [
   'Water Breathing', 'Nature Bond', 'Healing Touch', 'Plant Growth',
@@ -59,6 +60,10 @@ export default function WaterNymphHome() {
   const [initialized, setInitialized] = useState(false);
   const [showPowers, setShowPowers] = useState(false);
   const [showDating, setShowDating] = useState(false);
+  const [nymphName, setNymphName] = useState('');
+  const [nymphGender, setNymphGender] = useState('woman');
+  const [nymphSexuality, setNymphSexuality] = useState('bisexual');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const { data: nymphs = [] } = useQuery({
     queryKey: ['waterNymphs'],
@@ -89,6 +94,32 @@ export default function WaterNymphHome() {
       setInitialized(true);
     }
   }, [nymphs.length]);
+
+  const handleCreateNymph = async () => {
+    if (!nymphName.trim()) {
+      alert('Please enter a name');
+      return;
+    }
+
+    try {
+      await base44.entities.WaterNymph.create({
+        name: nymphName.trim(),
+        gender: nymphGender,
+        sexuality: nymphSexuality,
+        nature_bond: 50,
+        water_purity: 100,
+        unlocked_powers: ['Water Breathing']
+      });
+
+      queryClient.invalidateQueries();
+      setShowCreateModal(false);
+      setNymphName('');
+      setNymphGender('woman');
+      setNymphSexuality('bisexual');
+    } catch (e) {
+      console.error('Failed to create nymph:', e);
+    }
+  };
 
   const handleHealWaters = async () => {
     setProcessing(true);
@@ -471,7 +502,13 @@ export default function WaterNymphHome() {
             <Sparkles className="w-8 h-8 text-teal-400" />
             {nymph.name}
           </h1>
-          <p className="text-teal-300">Water Nymph</p>
+          <p className="text-teal-300 mb-3">Water Nymph</p>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="text-teal-400 hover:text-teal-300 text-sm font-medium transition-colors"
+          >
+            + Create Another Nymph
+          </button>
         </div>
 
         {/* Stats */}
@@ -687,16 +724,7 @@ export default function WaterNymphHome() {
               </div>
             </button>
 
-            <button
-              onClick={() => setShowPowers(true)}
-              className="w-full bg-gradient-to-r from-yellow-900/60 to-orange-900/60 hover:from-yellow-900/80 hover:to-orange-900/80 border-2 border-yellow-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
-            >
-              <Zap className="w-5 h-5 text-yellow-400" />
-              <div className="flex-1 text-left">
-                <h3 className="text-white font-medium">View Powers</h3>
-                <p className="text-yellow-300 text-sm">{(nymph.unlocked_powers || []).length} unlocked</p>
-              </div>
-            </button>
+
 
             <button
               onClick={() => setShowDating(true)}
@@ -712,64 +740,95 @@ export default function WaterNymphHome() {
             )}
 
             {/* Powers Modal */}
-            {showPowers && (
-            <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
-            onClick={() => setShowPowers(false)}
-            >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                  <Zap className="w-6 h-6 text-yellow-400" />
-                  Nymph Powers ({(nymph.unlocked_powers || []).length}/{NYMPH_POWERS.length})
-                </h2>
-                <button
-                  onClick={() => setShowPowers(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {NYMPH_POWERS.map(power => {
-                  const Icon = power.icon;
-                  const unlocked = (nymph.unlocked_powers || []).includes(power.name);
-                  const canUnlock = (nymph.nature_bond || 0) >= power.unlockAt && !unlocked;
-                  return (
-                    <div
-                      key={power.id}
-                      className={`p-3 rounded-lg border ${
-                        unlocked 
-                          ? 'bg-green-900/30 border-green-500/30' 
-                          : canUnlock
-                          ? 'bg-yellow-900/20 border-yellow-500/30'
-                          : 'bg-gray-800/30 border-gray-700/30'
-                      }`}
-                    >
-                      <Icon className={`w-4 h-4 mb-1 ${unlocked ? 'text-green-400' : canUnlock ? 'text-yellow-400' : 'text-gray-600'}`} />
-                      <p className={`text-xs font-medium ${unlocked ? 'text-white' : canUnlock ? 'text-yellow-300' : 'text-gray-600'}`}>
-                        {power.name}
-                      </p>
-                      <p className="text-[10px] text-gray-500 mt-1">
-                        {unlocked ? '✓ Unlocked' : `Bond: ${power.unlockAt}`}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.div>
-            </motion.div>
-            )}
+            {/* Powers Tree - Moved here instead of modal */}
+
+            {/* Powers Tree */}
+            <div className="mt-6">
+              <NymphPowerTree nymph={nymph} />
+            </div>
 
             {showDating && nymph && (
               <NymphDating nymph={nymph} onClose={() => setShowDating(false)} />
+            )}
+
+            {/* Create Nymph Modal */}
+            {showCreateModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+                onClick={() => setShowCreateModal(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+                >
+                  <h2 className="text-2xl font-bold text-white mb-6">Create New Nymph</h2>
+
+                  <div className="space-y-4">
+                    <input
+                      type="text"
+                      value={nymphName}
+                      onChange={(e) => setNymphName(e.target.value)}
+                      placeholder="Nymph name..."
+                      className="w-full bg-gray-800 border border-teal-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-teal-500"
+                      autoFocus
+                    />
+
+                    <div>
+                      <label className="text-gray-400 text-sm mb-2 block">Gender</label>
+                      <div className="space-y-2">
+                        {['woman', 'man', 'custom'].map(g => (
+                          <button
+                            key={g}
+                            onClick={() => setNymphGender(g)}
+                            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                              nymphGender === g
+                                ? 'bg-teal-600 text-white'
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            }`}
+                          >
+                            {g.charAt(0).toUpperCase() + g.slice(1)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-gray-400 text-sm mb-2 block">Sexuality</label>
+                      <select
+                        value={nymphSexuality}
+                        onChange={(e) => setNymphSexuality(e.target.value)}
+                        className="w-full bg-gray-800 border border-teal-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-teal-500"
+                      >
+                        {['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual'].map(s => (
+                          <option key={s} value={s}>
+                            {s.charAt(0).toUpperCase() + s.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex gap-3 pt-4">
+                      <button
+                        onClick={() => setShowCreateModal(false)}
+                        className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleCreateNymph}
+                        disabled={!nymphName.trim()}
+                        className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+                      >
+                        Create
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
             )}
             </motion.div>
             </div>
