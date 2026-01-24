@@ -63,7 +63,9 @@ export default function WaterNymphHome() {
     queryFn: () => base44.entities.WaterNymph.list()
   });
 
-  const nymph = nymphs[0];
+  const urlParams = new URLSearchParams(window.location.search);
+  const nymphId = urlParams.get('id');
+  const nymph = nymphId ? nymphs.find(n => n.id === nymphId) : nymphs[0];
   
   const NYMPH_POWERS = React.useMemo(() => 
     generateNymphPowers(nymph?.nature_bond || 50), 
@@ -81,33 +83,10 @@ export default function WaterNymphHome() {
   });
 
   React.useEffect(() => {
-    const initNymph = async () => {
-      // Clean up if more than 1 nymph exists (keep only the most recent)
-      if (nymphs.length > 1) {
-        const toDelete = nymphs.slice(1);
-        await Promise.all(toDelete.map(n => base44.entities.WaterNymph.delete(n.id)));
-        queryClient.invalidateQueries(['waterNymphs']);
-        return;
-      }
-
-      // Only create if no nymphs exist and not already initialized
-      if (nymphs.length === 0 && !initialized) {
-        setInitialized(true);
-        const names = ['Naida', 'Brook', 'Cascade', 'Marina', 'Rivena'];
-        await base44.entities.WaterNymph.create({
-          name: names[Math.floor(Math.random() * names.length)],
-          nature_bond: 50,
-          water_purity: 100,
-          creatures_befriended: 0
-        });
-        queryClient.invalidateQueries(['waterNymphs']);
-      } else if (nymphs.length > 0) {
-        // Mark as initialized if nymphs exist
-        setInitialized(true);
-      }
-    };
-    initNymph();
-  }, [nymphs.length, initialized, queryClient]);
+    if (nymphs.length > 0) {
+      setInitialized(true);
+    }
+  }, [nymphs.length]);
 
   const handleHealWaters = async () => {
     setProcessing(true);
@@ -464,11 +443,19 @@ export default function WaterNymphHome() {
 
   if (!nymph) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-950 to-green-950 p-4">
-        <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-950 to-green-950 p-4">
+          <div className="text-center">
+            <p className="text-gray-400 mb-4">No nymph found</p>
+            <button
+              onClick={() => navigate(createPageUrl('Home'))}
+              className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg"
+            >
+              Create Nymph
+            </button>
+          </div>
+        </div>
+      );
+    }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-950 to-green-950 p-4 pb-24">
