@@ -220,16 +220,15 @@ export default function HunterIntimate({ hunter, vampires }) {
         </div>
 
         {/* Actions Grid */}
-        <div className="space-y-3 max-h-[50vh] overflow-y-auto">
+        <div className="space-y-2 max-h-[50vh] overflow-y-auto">
           {currentActions.map(action => (
             <motion.button
               key={action.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               onClick={() => handleAction(action, validPartners[0] || { name: 'them' })}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl py-4 px-6 font-medium transition-all flex items-center gap-3 group"
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl py-3 px-5 font-medium transition-all text-sm"
             >
-              <span className="text-xl group-hover:scale-125 transition-transform">{action.icon}</span>
               {action.label}
             </motion.button>
           ))}
