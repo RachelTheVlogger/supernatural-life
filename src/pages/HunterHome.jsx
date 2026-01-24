@@ -122,27 +122,18 @@ export default function HunterHome() {
         transition={{ delay: 0.2 }}
         className="max-w-4xl mx-auto"
       >
-        <div className="grid grid-cols-5 gap-2 mb-8">
+        <div className="grid grid-cols-4 gap-2 mb-8">
           {[
             { id: 'home', label: 'Home', icon: Home },
             { id: 'hunting', label: 'Hunt Log', icon: FileText },
             { id: 'activities', label: 'Activities', icon: Utensils },
-            { id: 'intimate', label: 'Hunter', icon: Heart },
-            { id: 'vamp', label: 'Vamp', icon: Zap }
+            { id: 'intimate', label: 'Intimate', icon: Heart }
           ].map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
-                onClick={() => {
-                  if (tab.id === 'vamp') {
-                    setShowVampireTab(true);
-                  } else if (tab.id === 'abilities') {
-                    setShowAbilities(true);
-                  } else {
-                    setActiveTab(tab.id);
-                  }
-                }}
+                onClick={() => setActiveTab(tab.id)}
                 className={`rounded-lg p-3 transition-all flex flex-col items-center gap-2 ${
                   activeTab === tab.id
                     ? 'bg-red-600 text-white'
