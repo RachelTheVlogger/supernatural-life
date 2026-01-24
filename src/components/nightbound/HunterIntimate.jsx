@@ -300,10 +300,34 @@ export default function HunterIntimate({ hunter, vampires }) {
             <h2 className="text-2xl font-bold text-white mb-1">
               {validPartners[0]?.name || 'Intimate Encounter'}
             </h2>
-            <p className="text-gray-400">They're here with you. What will you do?</p>
+            <p className="text-gray-400">{initiator === 'hunter' ? 'What will you do?' : `They make the first move...`}</p>
           </div>
           <button onClick={() => window.history.back()} className="text-gray-400 hover:text-white">
             <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Initiator Tabs */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setInitiator('hunter')}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              initiator === 'hunter'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            You Lead
+          </button>
+          <button
+            onClick={() => setInitiator('vampire')}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              initiator === 'vampire'
+                ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            They Lead
           </button>
         </div>
 
