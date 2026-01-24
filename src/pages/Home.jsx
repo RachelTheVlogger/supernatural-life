@@ -45,8 +45,13 @@ export default function Home() {
     queryKey: ['waterNymphs'],
     queryFn: () => base44.entities.WaterNymph.list()
   });
+
+  const { data: mutants = [] } = useQuery({
+    queryKey: ['mutants'],
+    queryFn: () => base44.entities.Mutant.list()
+  });
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || mutants.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
