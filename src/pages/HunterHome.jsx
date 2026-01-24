@@ -126,8 +126,8 @@ export default function HunterHome() {
             { id: 'home', label: 'Home', icon: Home },
             { id: 'hunting', label: 'Hunt Log', icon: FileText },
             { id: 'activities', label: 'Activities', icon: Utensils },
-            { id: 'intimate', label: 'Intimate', icon: Heart },
-            { id: 'abilities', label: 'Skills', icon: Zap }
+            { id: 'intimate', label: 'Hunter', icon: Heart },
+            { id: 'vamp', label: 'Vamp', icon: Zap }
           ].map(tab => {
             const Icon = tab.icon;
             return (
