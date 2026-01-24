@@ -245,7 +245,20 @@ export default function Layout({ children, currentPageName }) {
                   <p className="text-gray-400 text-sm">💧 Nymph • Bond: {n.nature_bond}%</p>
                 </button>
               ))}
-            </div>
+              {mutants.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => {
+                    navigate(createPageUrl(`MutantHome?id=${m.id}`));
+                    setShowServantSelector(false);
+                  }}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">{m.name}</h4>
+                  <p className="text-gray-400 text-sm">🧬 Mutant • Power: {m.power_level}%</p>
+                </button>
+              ))}
+              </div>
           </motion.div>
         </motion.div>
       )}
