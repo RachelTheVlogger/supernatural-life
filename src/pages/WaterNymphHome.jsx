@@ -79,6 +79,14 @@ export default function WaterNymphHome() {
 
   React.useEffect(() => {
     const initNymph = async () => {
+      // Clean up if more than 1 nymph exists (keep only the most recent)
+      if (nymphs.length > 1) {
+        const toDelete = nymphs.slice(1);
+        await Promise.all(toDelete.map(n => base44.entities.WaterNymph.delete(n.id)));
+        queryClient.invalidateQueries(['waterNymphs']);
+        return;
+      }
+
       // Only create if no nymphs exist and not already initialized
       if (nymphs.length === 0 && !initialized) {
         setInitialized(true);
