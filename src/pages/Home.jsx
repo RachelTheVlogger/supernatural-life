@@ -47,9 +47,14 @@ export default function Home() {
     queryFn: () => base44.entities.WaterNymph.list()
   });
 
+  const { data: hunters = [] } = useQuery({
+    queryKey: ['hunters'],
+    queryFn: () => base44.entities.Hunter.list()
+  });
+
 
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || hunters.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -112,6 +117,19 @@ export default function Home() {
        });
        queryClient.invalidateQueries();
        navigate(createPageUrl('WaterNymphHome'));
+     } else if (selectedType === 'hunter') {
+       await base44.entities.Hunter.create({
+         name: characterName.trim(),
+         gender: characterGender,
+         sexuality: characterSexuality,
+         personality: characterPersonality,
+         skill_level: 30,
+         specialty: 'combat',
+         suspicion: 0,
+         status: 'active'
+       });
+       queryClient.invalidateQueries();
+       navigate(createPageUrl('HunterHome'));
      }
       };
   
@@ -120,6 +138,7 @@ export default function Home() {
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
     else if (sirens.length > 0) navigate(createPageUrl('SirenHome'));
     else if (waterNymphs.length > 0) navigate(createPageUrl('WaterNymphHome'));
+    else if (hunters.length > 0) navigate(createPageUrl('HunterHome'));
   };
 
   const getAllDuplicates = () => {
@@ -290,6 +309,24 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
+                  {hunters.map(h => (
+                    <button
+                      key={h.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('HunterHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🎯</span>
+                        <div>
+                          <p className="text-white font-medium">{h.name}</p>
+                          <p className="text-gray-400 text-xs">Hunter</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
 
                   </div>
                   </div>
@@ -418,7 +455,18 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
-
+                  <button
+                    onClick={() => { setSelectedType('hunter'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🎯</span>
+                      <div>
+                        <span className="font-medium text-white block">Hunter</span>
+                        <p className="text-sm text-gray-400">Combat, tracking, weapons</p>
+                      </div>
+                    </div>
+                  </button>
 
                   </div>
               </>
@@ -597,7 +645,7 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && (
+            {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && selectedType !== 'hunter' && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your personality</h2>
                 <p className="text-purple-300 text-sm mb-4">Who are you at your core?</p>
@@ -624,7 +672,28 @@ export default function Home() {
                 </>
                 )}
 
-                {selectedType === 'nymph' && introStep === 3 && (
+                {introStep === 4 && selectedType === 'hunter' && (
+              <>
+                <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
+                <p className="text-orange-300 text-sm mb-6">Your hunt for the supernatural begins.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIntroStep(3)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={startNewGame}
+                    className="flex-1 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 rounded-lg py-3 text-white font-medium transition-all"
+                  >
+                    Begin
+                  </button>
+                </div>
+              </>
+            )}
+
+            {selectedType === 'nymph' && introStep === 3 && (
                     <>
                     <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
                     <p className="text-teal-300 text-sm mb-6">Your journey as a water nymph awaits.</p>
