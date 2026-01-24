@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Droplets, Sparkles, Heart, Waves, Eye, Zap } from 'lucide-react';
+import { Droplets, Sparkles, Heart, Waves, Eye, Zap, Shield, Moon, Flower, Fish } from 'lucide-react';
 
 export default function WaterNymphHome() {
   const queryClient = useQueryClient();
@@ -90,7 +90,82 @@ export default function WaterNymphHome() {
       setOutcome('You danced by the water. Moonlight reflected. Magic flowed through you.');
 
       await base44.entities.WaterNymph.update(nymph.id, {
-        nature_bond: (nymph.nature_bond || 50) + 4
+        nature_bond: (nymph.nature_bond || 50) + 4,
+        moonlight_dances: (nymph.moonlight_dances || 0) + 1
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+      }, 3000);
+    }, 2000);
+  };
+
+  const handleProtectTerritory = async () => {
+    setProcessing(true);
+
+    setTimeout(async () => {
+      const outcomes = [
+        'You marked your territory. Sacred waters. Protected grounds. Nature knows you.',
+        'Territory claimed. The forest recognizes your presence. Animals feel safe here.',
+        'You established your domain. These waters are yours now. Protected. Guarded.'
+      ];
+
+      setOutcome(outcomes[Math.floor(Math.random() * outcomes.length)]);
+
+      await base44.entities.WaterNymph.update(nymph.id, {
+        territory_protected: true,
+        nature_bond: (nymph.nature_bond || 50) + 5
+      });
+
+      await base44.entities.NightLog.create({
+        entry: 'Territory established. Sacred grounds protected.',
+        category: 'power',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+      }, 3000);
+    }, 2000);
+  };
+
+  const handleGrowPlants = async () => {
+    setProcessing(true);
+
+    setTimeout(async () => {
+      const plants = ['lilies', 'lotus flowers', 'water reeds', 'moss', 'ferns'];
+      const plant = plants[Math.floor(Math.random() * plants.length)];
+      
+      setOutcome(`You touched the earth. ${plant} bloomed instantly. Life responds to you.`);
+
+      await base44.entities.WaterNymph.update(nymph.id, {
+        nature_bond: (nymph.nature_bond || 50) + 3
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+      }, 3000);
+    }, 2000);
+  };
+
+  const handleSummonRain = async () => {
+    setProcessing(true);
+
+    setTimeout(async () => {
+      setOutcome('You called to the sky. Clouds gathered. Rain fell gently. Nature answered.');
+
+      await base44.entities.WaterNymph.update(nymph.id, {
+        water_purity: Math.min((nymph.water_purity || 100) + 3, 100),
+        nature_bond: (nymph.nature_bond || 50) + 3
       });
 
       queryClient.invalidateQueries();
@@ -147,8 +222,16 @@ export default function WaterNymphHome() {
                 <p className="text-white text-2xl font-bold">{nymph.water_purity || 0}%</p>
               </div>
               <div className="text-center">
-                <p className="text-gray-400 text-sm">Creatures Befriended</p>
+                <p className="text-gray-400 text-sm">Creatures</p>
                 <p className="text-white text-2xl font-bold">{nymph.creatures_befriended || 0}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-gray-400 text-sm">Moon Dances</p>
+                <p className="text-white text-2xl font-bold">{nymph.moonlight_dances || 0}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-gray-400 text-sm">Territory</p>
+                <p className="text-white text-xl font-bold">{nymph.territory_protected ? '✓' : '✗'}</p>
               </div>
             </div>
           </div>
@@ -203,9 +286,44 @@ export default function WaterNymphHome() {
                 <p className="text-teal-300 text-sm">Dance by the water. Feel the magic.</p>
               </div>
             </button>
-          </div>
-        )}
-      </motion.div>
-    </div>
-  );
-}
+
+            {!nymph.territory_protected && (
+              <button
+                onClick={handleProtectTerritory}
+                className="w-full bg-gradient-to-r from-emerald-900/60 to-green-900/60 hover:from-emerald-900/80 hover:to-green-900/80 border-2 border-emerald-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+              >
+                <Shield className="w-5 h-5 text-emerald-400" />
+                <div className="flex-1 text-left">
+                  <h3 className="text-white font-medium">Protect Territory</h3>
+                  <p className="text-emerald-300 text-sm">Claim your sacred grounds.</p>
+                </div>
+              </button>
+            )}
+
+            <button
+              onClick={handleGrowPlants}
+              className="w-full bg-gradient-to-r from-green-900/60 to-lime-900/60 hover:from-green-900/80 hover:to-lime-900/80 border-2 border-green-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Flower className="w-5 h-5 text-green-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Grow Plants</h3>
+                <p className="text-green-300 text-sm">Make nature bloom.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={handleSummonRain}
+              className="w-full bg-gradient-to-r from-blue-900/60 to-indigo-900/60 hover:from-blue-900/80 hover:to-indigo-900/80 border-2 border-blue-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Droplets className="w-5 h-5 text-blue-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Summon Rain</h3>
+                <p className="text-blue-300 text-sm">Call the waters from above.</p>
+              </div>
+            </button>
+            </div>
+            )}
+            </motion.div>
+            </div>
+            );
+            }
