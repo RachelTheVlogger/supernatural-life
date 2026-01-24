@@ -60,7 +60,7 @@ export default function HunterHome() {
   }
 
   const hunter = hunters[0];
-  const hunterTargets = vampires.filter(v => (v.exposure_level || 0) > 30);
+  const hunterTargets = vampires.length > 0 ? vampires : [];
 
   return (
     <div className="min-h-screen relative p-4 md:p-6 pb-24 overflow-x-hidden" style={{
