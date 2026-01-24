@@ -8,7 +8,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import HunterHuntLog from '@/components/nightbound/HunterHuntLog';
 import HunterHomeActivities from '@/components/nightbound/HunterHomeActivities';
 import HunterIntimate from '@/components/nightbound/HunterIntimate';
-import DrugPlantGrowth from '@/components/nightbound/DrugPlantGrowth';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -17,7 +16,6 @@ export default function HunterHome() {
   const [showHuntLog, setShowHuntLog] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
   const [showIntimate, setShowIntimate] = useState(false);
-  const [showPlants, setShowPlants] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -173,19 +171,12 @@ export default function HunterHome() {
                   <p className="text-gray-400 text-sm">Recover health, regain energy, study late into night</p>
                 </button>
                 <button
-                  onClick={() => setShowActivities(true)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                >
-                  <h4 className="text-white font-medium">📚 Research Lore</h4>
-                  <p className="text-gray-400 text-sm">Improve understanding of supernatural creatures</p>
-                </button>
-                <button
-                  onClick={() => setShowPlants(true)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                >
-                  <h4 className="text-white font-medium">🌱 Grow Plants</h4>
-                  <p className="text-gray-400 text-sm">Cultivate drugs. Realistic or hidden appearance.</p>
-                </button>
+                   onClick={() => setShowActivities(true)}
+                   className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
+                 >
+                   <h4 className="text-white font-medium">📚 Research Lore</h4>
+                   <p className="text-gray-400 text-sm">Improve understanding of supernatural creatures</p>
+                 </button>
               </div>
               </div>
 
@@ -249,9 +240,7 @@ export default function HunterHome() {
             </motion.div>
           )}
 
-          {showPlants && (
-            <DrugPlantGrowth hunter={hunter} onClose={() => setShowPlants(false)} />
-          )}
+
         </AnimatePresence>
       </motion.div>
     </div>
