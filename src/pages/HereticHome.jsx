@@ -4,7 +4,10 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Wand2, Droplet, Zap, Heart, Edit2, Plus, BookOpen, Moon } from 'lucide-react';
+import { Wand2, Droplet, Zap, Heart, Edit2, Plus, BookOpen, Moon, Users, Award, Target } from 'lucide-react';
+import HereticAllies from '@/components/nightbound/HereticAllies';
+import HereticRivalries from '@/components/nightbound/HereticRivalries';
+import HereticReputation from '@/components/nightbound/HereticReputation';
 
 export default function HereticHome() {
   const queryClient = useQueryClient();
@@ -17,6 +20,9 @@ export default function HereticHome() {
   const [hereticName, setHereticName] = useState('');
   const [hereticGender, setHereticGender] = useState('custom');
   const [hereticSexuality, setHereticSexuality] = useState('bisexual');
+  const [showAllies, setShowAllies] = useState(false);
+  const [showRivalries, setShowRivalries] = useState(false);
+  const [showReputation, setShowReputation] = useState(false);
 
   const { data: heretics = [] } = useQuery({
     queryKey: ['heretics'],
@@ -335,6 +341,30 @@ export default function HereticHome() {
                 <p className="text-white text-lg font-bold">{heretic.magic_reserves || 50}/100</p>
               </div>
             </div>
+
+            <div className="grid grid-cols-3 gap-3 pt-4">
+              <button
+                onClick={() => setShowAllies(true)}
+                className="bg-gradient-to-b from-purple-900/60 to-gray-900/60 hover:from-purple-900/80 hover:to-gray-900/80 rounded-lg p-3 transition-all text-center"
+              >
+                <Heart className="w-5 h-5 text-purple-400 mx-auto mb-1" />
+                <p className="text-white text-xs font-medium">Allies</p>
+              </button>
+              <button
+                onClick={() => setShowRivalries(true)}
+                className="bg-gradient-to-b from-red-900/60 to-gray-900/60 hover:from-red-900/80 hover:to-gray-900/80 rounded-lg p-3 transition-all text-center"
+              >
+                <Target className="w-5 h-5 text-red-400 mx-auto mb-1" />
+                <p className="text-white text-xs font-medium">Rivalries</p>
+              </button>
+              <button
+                onClick={() => setShowReputation(true)}
+                className="bg-gradient-to-b from-yellow-900/60 to-gray-900/60 hover:from-yellow-900/80 hover:to-gray-900/80 rounded-lg p-3 transition-all text-center"
+              >
+                <Award className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
+                <p className="text-white text-xs font-medium">Reputation</p>
+              </button>
+            </div>
           </div>
           </div>
           )}
@@ -428,6 +458,17 @@ export default function HereticHome() {
               </button>
             </div>
           </div>
+        )}
+
+        {/* Modals */}
+        {showAllies && heretic && (
+          <HereticAllies heretic={heretic} onClose={() => setShowAllies(false)} />
+        )}
+        {showRivalries && heretic && (
+          <HereticRivalries heretic={heretic} onClose={() => setShowRivalries(false)} />
+        )}
+        {showReputation && heretic && (
+          <HereticReputation heretic={heretic} onClose={() => setShowReputation(false)} />
         )}
 
         {/* Stats Summary */}
