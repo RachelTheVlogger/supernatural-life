@@ -57,7 +57,7 @@ export default function Home() {
     queryFn: () => base44.entities.Heretic.list()
   });
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || mutants.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || mutants.length > 0 || heretics.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
