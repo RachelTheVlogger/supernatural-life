@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Eye, Users, Target, MessageCircle, Skull, Shield } from 'lucide-react';
+import { X, Eye, Users, Target, MessageCircle, Skull, Shield, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -10,6 +10,13 @@ const MISSIONS = [
   { id: 'guard', label: 'Guard Location', icon: Shield, duration: 1, risk: 'low' },
   { id: 'messenger', label: 'Deliver Message', icon: MessageCircle, duration: 1, risk: 'low' },
   { id: 'assassinate', label: 'Eliminate Target', icon: Skull, duration: 2, risk: 'high' }
+];
+
+const THRALL_ACTIONS = [
+  { id: 'reinforce', label: 'Reinforce Control', desc: 'Break their mind further. Restore control.', icon: Zap },
+  { id: 'extract', label: 'Extract Information', desc: 'Force them to reveal everything they know.', icon: Eye },
+  { id: 'bait', label: 'Use as Bait', desc: 'Sacrifice them to lure enemies.', icon: Target },
+  { id: 'dispose', label: 'Dispose of Thrall', desc: 'Kill them. They served their purpose.', icon: Skull }
 ];
 
 export default function ThrallSystem({ vampireState, onClose }) {
@@ -100,6 +107,47 @@ export default function ThrallSystem({ vampireState, onClose }) {
         queryClient.invalidateQueries();
       } catch (e) {
         console.error('Mission assignment failed:', e);
+      }
+
+      setTimeout(() => {
+        setAssigning(false);
+        setOutcome('');
+        setSelectedThrall(null);
+      }, 3000);
+    }, 2000);
+  };
+
+  const handleThrallAction = async (action) => {
+    setAssigning(true);
+
+    setTimeout(async () => {
+      try {
+        if (action.id === 'reinforce') {
+          await base44.entities.Thrall.update(selectedThrall.id, {
+            control_level: 100,
+            breaking_point: 0
+          });
+          setOutcome(`You shattered ${selectedThrall.name}'s mind again. Control fully restored. They're empty.`);
+        } else if (action.id === 'extract') {
+          const info = ['They know about the hunter network', 'They revealed council secrets', 'They exposed rival vampire locations', 'They gave you blackmail material'][Math.floor(Math.random() * 4)];
+          setOutcome(`${selectedThrall.name} told you everything. ${info}. Information extracted.`);
+        } else if (action.id === 'bait') {
+          await base44.entities.Thrall.delete(selectedThrall.id);
+          setOutcome(`You used ${selectedThrall.name} as bait. They died. But you got what you needed.`);
+        } else if (action.id === 'dispose') {
+          await base44.entities.Thrall.delete(selectedThrall.id);
+          setOutcome(`${selectedThrall.name} is dead. Disposed of. Too broken to be useful anymore.`);
+        }
+
+        await base44.entities.NightLog.create({
+          entry: outcome || `Thrall action: ${action.label}`,
+          category: 'power',
+          intensity: action.id === 'bait' || action.id === 'dispose' ? 'significant' : 'moderate'
+        });
+
+        queryClient.invalidateQueries();
+      } catch (e) {
+        console.error('Thrall action failed:', e);
       }
 
       setTimeout(() => {
@@ -218,15 +266,43 @@ export default function ThrallSystem({ vampireState, onClose }) {
               ← Back
             </button>
 
-            <h3 className="text-white font-medium mb-3">Assign Mission to {selectedThrall.name}</h3>
+            <h3 className="text-white font-medium mb-3">Control {selectedThrall.name}</h3>
 
+            <div className="bg-gray-800 rounded-xl p-3 mb-4">
+              <p className="text-gray-400 text-xs mb-1">Status</p>
+              <p className="text-white text-sm">
+                Control: {selectedThrall.control_level || 0}% • Breaking Point: {selectedThrall.breaking_point || 0}%
+              </p>
+            </div>
+
+            <h4 className="text-white text-sm font-medium mb-2">Actions</h4>
+            {THRALL_ACTIONS.map(action => {
+              const Icon = action.icon;
+              return (
+                <button
+                  key={action.id}
+                  onClick={() => handleThrallAction(action)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-3 text-left transition-colors mb-2"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-4 h-4 text-cyan-400" />
+                    <div className="flex-1">
+                      <h4 className="text-white text-sm font-medium">{action.label}</h4>
+                      <p className="text-gray-400 text-xs">{action.desc}</p>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+
+            <h4 className="text-white text-sm font-medium mt-4 mb-2">Missions</h4>
             {MISSIONS.map(mission => {
               const Icon = mission.icon;
               return (
                 <button
                   key={mission.id}
                   onClick={() => handleAssignMission(mission)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors mb-2"
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="w-5 h-5 text-purple-400" />
