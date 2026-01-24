@@ -48,6 +48,14 @@ const INTIMATE_ACTIONS = {
     { id: 'hold_close', label: 'Hold them close', category: 'romantic' },
     { id: 'whisper_love', label: 'Whisper sweet things', category: 'romantic' }
   ],
+  sweet: [
+    { id: 'gentle_kiss', label: 'Kiss them softly', category: 'sweet' },
+    { id: 'hold_close', label: 'Hold them close', category: 'sweet' },
+    { id: 'whisper_love', label: 'Whisper sweet things', category: 'sweet' },
+    { id: 'forehead_kiss', label: 'Kiss their forehead', category: 'sweet' },
+    { id: 'slow_dance', label: 'Dance together slowly', category: 'sweet' },
+    { id: 'fingers_intertwine', label: 'Intertwine your fingers', category: 'sweet' }
+  ],
   physical: [
     { id: 'kiss_hard', label: 'Pin them and kiss them hard', category: 'physical' },
     { id: 'trail', label: 'Trail fingers down their body', category: 'physical' },
