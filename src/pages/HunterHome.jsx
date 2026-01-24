@@ -298,6 +298,38 @@ export default function HunterHome() {
             />
           )}
 
+          {activeTab === 'vamp' && (
+            <motion.div
+              key="vamp"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-4"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-white text-lg font-bold">Vampire's Perspective</h3>
+                <button
+                  onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
+                  disabled={vampires.length === 0}
+                  className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  Switch to Vampire
+                </button>
+              </div>
+              {vampires.length > 0 ? (
+                <VampireInitiatedInteractions 
+                  vampire={vampires[0]}
+                  hunter={hunter}
+                  onClose={() => setActiveTab('home')}
+                />
+              ) : (
+                <div className="bg-gray-800 rounded-lg p-4 text-center">
+                  <p className="text-gray-400">No vampires found</p>
+                </div>
+              )}
+            </motion.div>
+          )}
+
           {showInteraction && selectedVampire && activeTab === 'intimate' && (
             <VampireInitiatedInteractions 
               vampire={selectedVampire}
