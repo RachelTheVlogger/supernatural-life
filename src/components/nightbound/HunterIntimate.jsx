@@ -85,7 +85,8 @@ export default function HunterIntimate({ hunter, vampires }) {
     id: v.id,
     name: v.vampire_name,
     type: 'vampire',
-    icon: '🦇'
+    icon: '🦇',
+    gender: v.gender
   }));
 
   const categories = ['all', 'romantic', 'physical', 'bdsm', 'social', 'activity'];
