@@ -165,6 +165,18 @@ export default function VampireHome() {
     }
   });
 
+  const { data: hunters = [] } = useQuery({
+    queryKey: ['hunters'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Hunter.list();
+      } catch (e) {
+        console.error('Failed to fetch hunters:', e);
+        return [];
+      }
+    }
+  });
+
   const vampireState = React.useMemo(() => 
     vampireStates.length > 0 ? vampireStates[0] : null, 
     [vampireStates]
