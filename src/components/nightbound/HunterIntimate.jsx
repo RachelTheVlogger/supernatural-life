@@ -140,7 +140,7 @@ export default function HunterIntimate({ hunter, vampires }) {
           setOutcome('');
           setSelectedAction(null);
           setSelectedPartner(null);
-        }, 3000);
+        }, 6000);
       } catch (e) {
         console.error('Activity failed:', e);
         setProcessing(false);
