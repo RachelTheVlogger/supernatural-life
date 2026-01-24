@@ -123,6 +123,7 @@ export default function Home() {
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
     else if (sirens.length > 0) navigate(createPageUrl('SirenHome'));
     else if (waterNymphs.length > 0) navigate(createPageUrl('WaterNymphHome'));
+    else if (mutants.length > 0) navigate(createPageUrl('MutantHome'));
   };
   
   return (
