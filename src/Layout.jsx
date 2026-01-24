@@ -122,7 +122,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
     { name: 'Siren', icon: Waves, path: `SirenHome?id=${firstSirenId}`, show: sirens.length > 0, hasSelector: sirens.length > 1, disabled: sirens.length === 0 },
     { name: 'Nymph', icon: Droplets, path: `WaterNymphHome?id=${firstNymphId}`, hasSelector: nymphs.length > 1, disabled: nymphs.length === 0 },
-    { name: 'Mutant', icon: Dna, path: `MutantHome?id=${firstMutantId}`, show: mutants.length > 0, hasSelector: mutants.length > 1, disabled: mutants.length === 0 }
+    { name: 'Mutant', icon: Dna, path: `MutantHome?id=${firstMutantId}`, show: mutants.length > 0, hasSelector: mutants.length > 1, disabled: mutants.length === 0 },
+    { name: 'Heretic', icon: Zap, path: `HereticHome?id=${firstHereticId}`, show: heretics.length > 0, hasSelector: heretics.length > 1, disabled: heretics.length === 0 }
   ];
   
   return (
