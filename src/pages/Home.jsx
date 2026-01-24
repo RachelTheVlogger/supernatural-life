@@ -51,6 +51,11 @@ export default function Home() {
     queryKey: ['mutants'],
     queryFn: () => base44.entities.Mutant.list()
   });
+
+  const { data: heretics = [] } = useQuery({
+    queryKey: ['heretics'],
+    queryFn: () => base44.entities.Heretic.list()
+  });
   
   const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || mutants.length > 0;
   
