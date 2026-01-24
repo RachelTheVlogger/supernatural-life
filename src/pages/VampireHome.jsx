@@ -34,6 +34,7 @@ import JournalSystem from '@/components/nightbound/JournalSystem';
 import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 import VampireSnakeFamiliar from '@/components/nightbound/VampireSnakeFamiliar';
+import VampireHunterInteraction from '@/components/nightbound/VampireHunterInteraction';
 
 export default function VampireHome() {
   const navigate = useNavigate();
