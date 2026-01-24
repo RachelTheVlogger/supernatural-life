@@ -63,7 +63,9 @@ export default function SirenHome() {
     queryFn: () => base44.entities.Siren.list()
   });
 
-  const siren = sirens[0];
+  const urlParams = new URLSearchParams(window.location.search);
+  const sirenId = urlParams.get('id');
+  const siren = sirenId ? sirens.find(s => s.id === sirenId) : sirens[0];
   
   const SIREN_POWERS = React.useMemo(() => 
     generateSirenPowers(siren?.voice_power || 50), 
@@ -80,23 +82,10 @@ export default function SirenHome() {
   });
 
   React.useEffect(() => {
-    const initSiren = async () => {
-      if (sirens.length === 0 && !initialized) {
-        setInitialized(true);
-        const names = ['Marina', 'Coral', 'Nerissa', 'Oceana', 'Lorelei'];
-        const personalities = ['seductive', 'mysterious', 'playful', 'dangerous', 'haunting'];
-        await base44.entities.Siren.create({
-          name: names[Math.floor(Math.random() * names.length)],
-          personality: [personalities[Math.floor(Math.random() * personalities.length)]],
-          voice_power: 50,
-          water_affinity: 50,
-          charm_level: 60
-        });
-        queryClient.invalidateQueries(['sirens']);
-      }
-    };
-    initSiren();
-  }, [sirens.length, initialized, queryClient]);
+    if (sirens.length > 0) {
+      setInitialized(true);
+    }
+  }, [sirens.length]);
 
   const handleSing = async () => {
     setProcessing(true);
@@ -261,7 +250,15 @@ export default function SirenHome() {
   if (!siren) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-950 to-cyan-950 p-4">
-        <p className="text-gray-400">No siren found...</p>
+        <div className="text-center">
+          <p className="text-gray-400 mb-4">No siren found</p>
+          <button
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-lg"
+          >
+            Create Siren
+          </button>
+        </div>
       </div>
     );
   }
