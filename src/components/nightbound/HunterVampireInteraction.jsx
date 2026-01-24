@@ -271,23 +271,32 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
 
         {/* Message Categories */}
         <div className="grid grid-cols-5 gap-2 mb-6">
-          {Object.keys(DIALOGUE_OPTIONS).map(category => (
-            <button
-              key={category}
-              onClick={() => {
-                setSelectedCategory(category);
-                setVampireResponse(null);
-              }}
-              disabled={loading}
-              className={`rounded-lg p-2 text-xs font-medium transition-all capitalize ${
-                selectedCategory === category
-                  ? 'bg-gradient-to-r from-red-600 to-purple-600 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              } disabled:opacity-50`}
-            >
-              {category}
-            </button>
-          ))}
+          {Object.keys(DIALOGUE_OPTIONS).map(category => {
+            const categoryColors = {
+              flirty: 'from-pink-600 to-red-600',
+              hostile: 'from-orange-600 to-red-600',
+              curious: 'from-blue-600 to-purple-600',
+              provocative: 'from-red-600 to-pink-600',
+              protective: 'from-green-600 to-blue-600'
+            };
+            return (
+              <button
+                key={category}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setVampireResponse(null);
+                }}
+                disabled={loading}
+                className={`rounded-lg p-2 text-xs font-medium transition-all capitalize ${
+                  selectedCategory === category
+                    ? `bg-gradient-to-r ${categoryColors[category]} text-white`
+                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                } disabled:opacity-50`}
+              >
+                {category}
+              </button>
+            );
+          })}
         </div>
 
         {/* Message Options */}
