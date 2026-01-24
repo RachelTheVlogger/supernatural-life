@@ -21,7 +21,11 @@ const DATE_ACTIVITIES = [
   'Discuss supernatural politics',
   'Test each other\'s powers',
   'Watch sunrise (dangerous)',
-  'Infiltrate human event together'
+  'Infiltrate human event together',
+  'Passionate night together',
+  'Secret hideout encounter',
+  'Dangerous flirtation',
+  'Heated argument turned intimate'
 ];
 
 export default function SupernaturalDating({ vampireState, onClose }) {
@@ -143,12 +147,22 @@ export default function SupernaturalDating({ vampireState, onClose }) {
     setDating(true);
 
     setTimeout(async () => {
-      const outcomes = [
-        `Intimacy with ${selectedDate.date_name}. Supernatural. Overwhelming. Powers intertwined. Dangerous bliss.`,
-        `You crossed the line with ${selectedDate.date_name}. Physical and mystical. Can't go back now.`,
-        `${selectedDate.date_name} in your arms. Two powerful beings. Vulnerable. Exposed. Perfect.`
+      const hunterOutcomes = [
+        `Sex with ${selectedDate.date_name}. Enemy becoming lover. Weapons discarded. Bodies entwined. Hunter's hands exploring vampire skin. Forbidden. Perfect. Deadly.`,
+        `${selectedDate.date_name} pinned you against the wall. Hunter. Vampire. Predator. Prey. Lines blurred. Clothes torn. Pure animal passion.`,
+        `You fucked ${selectedDate.date_name} like the world was ending. Every touch dangerous. Every kiss deadly. Hunter riding vampire. Impossible. Addictive.`,
+        `${selectedDate.date_name} took you roughly. Hunter claiming vampire. You let them. Needed them. Supernatural heat between enemies turned lovers.`
       ];
 
+      const generalOutcomes = [
+        `Intimacy with ${selectedDate.date_name}. Supernatural. Overwhelming. Powers intertwined. Dangerous bliss. Bodies pressed together. Gasping. Claiming.`,
+        `You crossed the line with ${selectedDate.date_name}. Physical and mystical. Can't go back now. Every touch electric. Every moan sacred.`,
+        `${selectedDate.date_name} in your arms. Two powerful beings. Vulnerable. Exposed. Perfect. Skin against skin. Power against power.`,
+        `Sex with ${selectedDate.date_name}. Raw. Supernatural. Perfect. Your bodies moving together. Powers amplifying pleasure. Transcendent.`
+      ];
+
+      const isHunter = selectedDate.date_type === 'hunter';
+      const outcomes = isHunter ? hunterOutcomes : generalOutcomes;
       const result = outcomes[Math.floor(Math.random() * outcomes.length)];
       setOutcome(result);
 
@@ -326,13 +340,16 @@ export default function SupernaturalDating({ vampireState, onClose }) {
               </button>
             ))}
 
-            {(selectedDate.relationship_level || 0) > 60 && (
+            {(selectedDate.relationship_level || 0) > 40 && (
               <button
                 onClick={handleIntimacy}
                 className="w-full bg-pink-900/60 hover:bg-pink-900/80 border-2 border-pink-500/50 rounded-xl p-4 transition-colors mt-4"
               >
                 <Heart className="w-5 h-5 text-pink-400 mx-auto mb-2" />
                 <p className="text-white font-medium text-center">Be Intimate</p>
+                <p className="text-pink-300 text-xs text-center mt-1">
+                  {selectedDate.date_type === 'hunter' ? 'Enemy. Lover. Both.' : 'Cross the line together.'}
+                </p>
               </button>
             )}
           </div>
