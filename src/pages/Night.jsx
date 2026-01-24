@@ -76,7 +76,7 @@ export default function Night() {
   const [showSnake, setShowSnake] = useState(false);
   const [showDreams, setShowDreams] = useState(false);
   const [showThralls, setShowThralls] = useState(false);
-  const [showMemory, setShowMemory] = useState(false);
+  const [showMemoryEdit, setShowMemoryEdit] = useState(false);
   const [showVintage, setShowVintage] = useState(false);
   const [showSupernaturalDating, setShowSupernaturalDating] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
@@ -591,7 +591,7 @@ export default function Night() {
           <p className="text-white text-xs mt-1">Thralls</p>
         </button>
         <button
-          onClick={() => setShowMemory(true)}
+          onClick={() => setShowMemoryEdit(true)}
           className="bg-cyan-950/40 hover:bg-cyan-950/60 border border-cyan-500/30 rounded-lg p-3 text-center transition-colors"
         >
           <span className="text-2xl">🧠</span>
@@ -814,8 +814,8 @@ export default function Night() {
         {showThralls && vampireState && (
           <ThrallSystem vampireState={vampireState} onClose={() => setShowThralls(false)} />
         )}
-        {showMemory && vampireState && (
-          <MemoryAlteration vampireState={vampireState} onClose={() => setShowMemory(false)} />
+        {showMemoryEdit && vampireState && (
+          <MemoryAlteration vampireState={vampireState} onClose={() => setShowMemoryEdit(false)} />
         )}
         {showVintage && vampireState && (
           <BloodVintageSystem vampireState={vampireState} onClose={() => setShowVintage(false)} />
