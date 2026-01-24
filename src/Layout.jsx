@@ -67,31 +67,7 @@ export default function Layout({ children, currentPageName }) {
     retry: 1
   });
 
-  const { data: mutants = [] } = useQuery({
-    queryKey: ['mutants'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Mutant.list();
-      } catch (e) {
-        console.error('Failed to fetch mutants:', e);
-        return [];
-      }
-    },
-    retry: 1
-  });
 
-  const { data: heretics = [] } = useQuery({
-    queryKey: ['heretics'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Heretic.list();
-      } catch (e) {
-        console.error('Failed to fetch heretics:', e);
-        return [];
-      }
-    },
-    retry: 1
-  });
   
   // Show nav on main game pages only
   const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome', 'SirenHome', 'WaterNymphHome', 'MutantHome', 'HereticHome'].includes(currentPageName);
@@ -109,11 +85,7 @@ export default function Layout({ children, currentPageName }) {
   const urlSirenId = urlParams.get('siren');
   const firstSirenId = urlSirenId ? sirens.find(s => s.id === urlSirenId)?.id : (sirens.length > 0 ? sirens[0].id : null);
 
-  const urlMutantId = urlParams.get('mutant');
-  const firstMutantId = urlMutantId ? mutants.find(m => m.id === urlMutantId)?.id : (mutants.length > 0 ? mutants[0].id : null);
 
-  const urlHereticId = urlParams.get('heretic');
-  const firstHereticId = urlHereticId ? heretics.find(h => h.id === urlHereticId)?.id : (heretics.length > 0 ? heretics[0].id : null);
 
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
@@ -121,9 +93,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 1, disabled: servants.length === 0 },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
     { name: 'Siren', icon: Waves, path: `SirenHome?id=${firstSirenId}`, show: sirens.length > 0, hasSelector: sirens.length > 1, disabled: sirens.length === 0 },
-    { name: 'Nymph', icon: Droplets, path: `WaterNymphHome?id=${firstNymphId}`, hasSelector: nymphs.length > 1, disabled: nymphs.length === 0 },
-    { name: 'Mutant', icon: Dna, path: `MutantHome?id=${firstMutantId}`, show: mutants.length > 0, hasSelector: mutants.length > 1, disabled: mutants.length === 0 },
-    { name: 'Heretic', icon: Zap, path: `HereticHome?id=${firstHereticId}`, show: heretics.length > 0, hasSelector: heretics.length > 1, disabled: heretics.length === 0 }
+    { name: 'Nymph', icon: Droplets, path: `WaterNymphHome?id=${firstNymphId}`, hasSelector: nymphs.length > 1, disabled: nymphs.length === 0 }
   ];
   
   return (
@@ -262,32 +232,7 @@ export default function Layout({ children, currentPageName }) {
                   <p className="text-gray-400 text-sm">💧 Nymph • Bond: {n.nature_bond}%</p>
                 </button>
               ))}
-              {mutants.map(m => (
-                <button
-                  key={m.id}
-                  onClick={() => {
-                    navigate(createPageUrl(`MutantHome?id=${m.id}`));
-                    setShowServantSelector(false);
-                  }}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
-                >
-                  <h4 className="text-white font-medium">{m.name}</h4>
-                  <p className="text-gray-400 text-sm">🧬 Mutant • Power: {m.power_level}%</p>
-                </button>
-              ))}
-              {heretics.map(h => (
-                <button
-                  key={h.id}
-                  onClick={() => {
-                    navigate(createPageUrl(`HereticHome?id=${h.id}`));
-                    setShowServantSelector(false);
-                  }}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
-                >
-                  <h4 className="text-white font-medium">{h.name}</h4>
-                  <p className="text-gray-400 text-sm">⚡ Heretic • Balance: {h.balance}%</p>
-                </button>
-              ))}
+
               </div>
           </motion.div>
         </motion.div>
