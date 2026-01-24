@@ -6,35 +6,35 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const DIALOGUE_OPTIONS = {
   flirty: [
-    { text: 'You intrigue me...', reaction: 'blush', explicit: false },
-    { text: 'I\'ve been thinking about you.', reaction: 'smirk', explicit: false },
-    { text: 'Want to come closer?', reaction: 'tense', explicit: true },
-    { text: 'I can\'t stop thinking about last time...', reaction: 'intense', explicit: true },
-    { text: 'You\'re dangerous. I like that.', reaction: 'grin', explicit: false }
+    { text: 'You intrigue me...', category: 'flirty', explicit: false },
+    { text: 'I\'ve been thinking about you.', category: 'flirty', explicit: false },
+    { text: 'Want to come closer?', category: 'flirty', explicit: true },
+    { text: 'I can\'t stop thinking about last time...', category: 'flirty', explicit: true },
+    { text: 'You\'re dangerous. I like that.', category: 'flirty', explicit: false }
   ],
   hostile: [
-    { text: 'You\'re a monster.', reaction: 'anger', explicit: false },
-    { text: 'I should kill you where you stand.', reaction: 'defiant', explicit: false },
-    { text: 'Stay away from innocent people.', reaction: 'stern', explicit: false },
-    { text: 'Your kind has taken enough.', reaction: 'grief', explicit: false }
+    { text: 'You\'re a monster.', category: 'hostile', explicit: false },
+    { text: 'I should kill you where you stand.', category: 'hostile', explicit: false },
+    { text: 'Stay away from innocent people.', category: 'hostile', explicit: false },
+    { text: 'Your kind has taken enough.', category: 'hostile', explicit: false }
   ],
   curious: [
-    { text: 'What\'s it like being immortal?', reaction: 'thoughtful', explicit: false },
-    { text: 'Tell me your story.', reaction: 'nostalgic', explicit: false },
-    { text: 'Are you truly evil, or just surviving?', reaction: 'conflicted', explicit: false },
-    { text: 'Do you ever regret what you are?', reaction: 'melancholy', explicit: false }
+    { text: 'What\'s it like being immortal?', category: 'curious', explicit: false },
+    { text: 'Tell me your story.', category: 'curious', explicit: false },
+    { text: 'Are you truly evil, or just surviving?', category: 'curious', explicit: false },
+    { text: 'Do you ever regret what you are?', category: 'curious', explicit: false }
   ],
   provocative: [
-    { text: 'I want you. Here. Now.', reaction: 'breathless', explicit: true },
-    { text: 'Show me what you\'re made of...', reaction: 'predatory', explicit: true },
-    { text: 'Take me like you did before.', reaction: 'hungry', explicit: true },
-    { text: 'I crave the way you make me feel.', reaction: 'desperate', explicit: true }
+    { text: 'I want you. Here. Now.', category: 'provocative', explicit: true },
+    { text: 'Show me what you\'re made of...', category: 'provocative', explicit: true },
+    { text: 'Take me like you did before.', category: 'provocative', explicit: true },
+    { text: 'I crave the way you make me feel.', category: 'provocative', explicit: true }
   ],
   protective: [
-    { text: 'I won\'t let you hurt others.', reaction: 'respectful', explicit: false },
-    { text: 'Change. Stop feeding on humans.', reaction: 'sad', explicit: false },
-    { text: 'There\'s still good in you.', reaction: 'surprised', explicit: false },
-    { text: 'I\'ll help you find another way.', reaction: 'grateful', explicit: false }
+    { text: 'I won\'t let you hurt others.', category: 'protective', explicit: false },
+    { text: 'Change. Stop feeding on humans.', category: 'protective', explicit: false },
+    { text: 'There\'s still good in you.', category: 'protective', explicit: false },
+    { text: 'I\'ll help you find another way.', category: 'protective', explicit: false }
   ]
 };
 
