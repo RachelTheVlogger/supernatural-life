@@ -95,30 +95,34 @@ export default function HunterIntimate({ hunter, vampires }) {
     setProcessing(true);
     setSelectedAction(action);
 
-    const outcomes = {
+    const getOutcomes = (vampireGender) => ({
       kiss_hard: `You slammed them against the wall, your mouth claiming theirs. Hard. Desperate. Fucking them with your tongue like it was your only purpose. They matched your intensity, hands gripping your shirt like they'd die without you.`,
-      trail: `Your fingers traced slowly down their chest, across their stomach, lower. Every touch made them shudder. You stopped just short of where they wanted you. Control. That was the game.`,
-      push_bed: `You pushed them back onto the bed. They landed hard, eyes wild, waiting. "Your turn to watch," you whispered, moving between their legs.`,
+      trail: `Your fingers traced slowly down their chest, across their stomach, lower. Every touch made them shudder. You stopped just short of their pussy or cock. Control. That's the power play.`,
+      push_bed: `You pushed them back onto the bed. They landed hard, eyes wild, waiting. "Let me see that gorgeous body," you whispered, moving between their legs.`,
       straddle: `You straddled their body, keeping them pinned with your weight. They tried to touch you and you grabbed their wrist. "Not yet." The anticipation was destroying them.`,
       grip_throat: `You wrapped your hand around their throat, fingers pressing just enough. Not to hurt. To possess. To remind them exactly who was in control. They tilted their head back, exposing themselves completely to you.`,
-      neck_tongue: `You ran your tongue along the curve of their neck, slow and deliberate. They gasped, their whole body trembling. You bit down gently, then harder. They were yours.`,
-      knees: `You pulled them down to their knees in front of you. "Look at me." Eyes up, and they obeyed. The power shift was fucking intoxicating.`,
-      from_behind: `You took them from behind, hands gripping their hips hard enough to leave marks. Raw. Primal. No rhythm but what you wanted. They were fucking perfect like this.`,
-      watch: `You made them watch as you undressed yourself slowly. Every piece of clothing hit the floor deliberately. Anticipation was a physical thing between you now.`,
-      bind_control: `You bound their wrists with leather. They tested the restraints, pulling against them, and smiled up at you. "I'm all yours," they breathed. You had them completely.`,
-      taste: `You tasted every inch of their skin. Lips and tongue everywhere. Their back arched off the bed. You went lower, slower, making them wait. Making them desperate.`,
-      beg: `You brought them to the edge over and over. Stop. Back up. Edge again. They were begging you now. "Please, please, I need—" "I know what you need," you whispered. "But you wait until I say."`,
-      wall: `You pressed them hard against the wall, your body crushing theirs. No gentleness. No mercy. Just the raw fucking need between you both. They came like they'd been waiting for this their whole life.`,
-      claim_mouth: `You claimed their mouth completely. Deep. Possessive. Your tongue fucking theirs like you were claiming ownership. This was about dominance. They belonged to you.`,
-      mark: `You marked their skin with your lips and teeth. Neck. Chest. Anywhere that would show. Let everyone see who they belonged to. They spread their legs wider just so you'd keep going.`,
-      whisper_threats: `You whispered dark, dangerous things into their ear while your hand moved between their legs. "I could ruin you." "Please do." Threats wrapped in desire. They were coming apart and you hadn't even started.`,
-      breathe: `You breathed them in like a drug you were addicted to. Their skin, their scent, the way they sounded when you touched them. One taste would never be enough. You'd need them again and again.`,
-      surrender: `You let them take control. Gave yourself over completely—something you never did. And they knew it. Used it. Fucked you like they'd been waiting for this moment. The vulnerability was intoxicating.`,
-      corner: `You cornered them, moving in slowly. They had their back to the wall, nowhere to run. You dropped to your knees. "I want to taste you," you said. They came the moment your mouth touched them.`,
-      dominance: `You showed them exactly what you were capable of. Flipped them over. Held them down. Made them take what you gave them and beg for more. Pure dominance. Pure power. They fucking loved it.`,
-      risk: `You pulled them into a dark corner, knowing people could walk by any second. The danger made everything hotter. You kept one hand over their mouth so they wouldn't scream your name.`,
-      hunt_together: `You hunted together that night. The kill sent adrenaline and bloodlust through your veins. When you finally had them alone, all that predatory energy exploded. You fucked them like the hunt itself.`
-    };
+      neck_tongue: `You ran your tongue along the curve of their neck, slow and deliberate. They gasped, their whole body trembling. You bit down hard enough to mark them. That's how you claimed what was yours.`,
+      knees: `You pulled them down to their knees in front of you. "Look at me." Eyes up, and they obeyed instantly. "You want my cock?" you asked. They nodded desperately.`,
+      from_behind: `You took them from behind, hands gripping their hips hard enough to leave bruises. Raw. Primal. No rhythm but what you wanted. "You take it so good," you growled.`,
+      watch: `You made them watch as you stroked yourself slowly. "You see what you do to me?" Every inch of them focused on you. They were soaked and you hadn't even touched them yet.`,
+      bind_control: `You bound their wrists with leather. They tested the restraints, pulling against them, and smiled up at you. "I'm all yours," they breathed. You grabbed their chin. "That's right, you're mine."`,
+      taste: `You tasted every inch of them. Tongue on their skin, working your way down. Their back arched off the bed. When you got between their legs, they came just from you looking at them. "Patience," you whispered against their skin.`,
+      beg: `You brought them to the edge over and over. Stop. Back up. Edge again. "Please, please, I need you inside me," they begged. "I know what you need," you said, refusing to give it to them. "Beg harder."`,
+      wall: `You pressed them hard against the wall, your body crushing theirs. No gentleness. No mercy. Just raw fucking need. You filled them completely and they came immediately, unable to handle the intensity of you.`,
+      claim_mouth: `You claimed their mouth completely. Deep. Possessive. Your tongue fucking theirs like you were claiming ownership. When you pulled away, they were gasping. "Mine," you whispered. They nodded, eyes glazed over.`,
+      mark: `You marked their skin with your lips and teeth. Neck. Chest. Thighs. Anywhere that would show. "Let everyone know who you belong to," you whispered. They spread their legs wider, desperate for more.`,
+      whisper_threats: `You whispered dirty things into their ear while your hand moved between their legs. "You're such a slut for me, aren't you?" "Yes, only for you." Your fingers moved faster. "Come for me." And they did.`,
+      breathe: `You breathed them in like a drug you were addicted to. Their skin, their scent, the way they sounded when you touched them. One taste would never be enough. You'd need this cock or pussy again and again.`,
+      surrender: `You let them take control. Gave yourself over completely, something you never did. And they knew it. Used it. Fucked you raw like they'd been waiting for this moment. You came harder than you ever had.`,
+      corner: `You cornered them, moving in slowly. They had their back to the wall, nowhere to run. You dropped to your knees. "I want to taste you," you said. They came the moment your tongue touched their clit or the tip of their cock.`,
+      dominance: `You showed them exactly what you were capable of. Flipped them over. Held them down. Made them take what you gave them. "Say my name," you commanded. "Again." They were yours completely.`,
+      risk: `You pulled them into a dark corner, knowing people could walk by any second. The danger made everything hotter. You fucked them fast and hard while keeping one hand over their mouth so they wouldn't scream.`,
+      hunt_together: `You hunted together that night. The kill sent adrenaline and bloodlust through your veins. When you finally had them alone, all that predatory energy exploded. You fucked them like the hunt itself was inside you.`,
+      aftercare: `After the intensity faded, you held them close. "Are you okay? Do you need water?" You brushed their hair back gently, pressed soft kisses to their forehead. "You were perfect," you whispered. They melted into you, completely safe.`,
+      safeword: `"Red means stop, yellow means slow down, green means more," you said, making sure they understood. "Always," they promised. You had rules. You had trust. And that made everything hotter.`
+    });
+
+    const outcomes = getOutcomes();
 
     setTimeout(async () => {
       try {
