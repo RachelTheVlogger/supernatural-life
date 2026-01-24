@@ -394,6 +394,18 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
+                  <button
+                    onClick={() => { setSelectedType('mutant'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🧬</span>
+                      <div>
+                        <span className="font-medium text-white block">Mutant</span>
+                        <p className="text-sm text-gray-400">Evolution, power, mutation</p>
+                      </div>
+                    </div>
+                  </button>
 
                   </div>
               </>
