@@ -717,7 +717,7 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && selectedType !== 'mutant' && (
+            {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && selectedType !== 'mutant' && selectedType !== 'heretic' && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your personality</h2>
                 <p className="text-purple-300 text-sm mb-4">Who are you at your core?</p>
