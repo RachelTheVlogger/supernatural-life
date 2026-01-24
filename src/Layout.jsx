@@ -66,6 +66,19 @@ export default function Layout({ children, currentPageName }) {
     },
     retry: 1
   });
+
+  const { data: mutants = [] } = useQuery({
+    queryKey: ['mutants'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Mutant.list();
+      } catch (e) {
+        console.error('Failed to fetch mutants:', e);
+        return [];
+      }
+    },
+    retry: 1
+  });
   
   // Show nav on main game pages only
   const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome', 'SirenHome', 'WaterNymphHome'].includes(currentPageName);
