@@ -1228,6 +1228,13 @@ export default function VampireHome() {
             onClose={() => setShowSnakeFamiliar(false)}
           />
         )}
+        {selectedHunter && vampireState && (
+          <VampireHunterInteraction
+            vampire={vampireState}
+            hunter={selectedHunter}
+            onClose={() => setSelectedHunter(null)}
+          />
+        )}
         {showVampireIdentity && (
           <motion.div
             initial={{ opacity: 0 }}
