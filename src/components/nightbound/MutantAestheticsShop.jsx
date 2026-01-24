@@ -200,9 +200,7 @@ export default function MutantAestheticsShop({ mutant, onSelectAesthetic, onBuyA
         })}
       </div>
 
-      <div className="mt-6 p-4 bg-gray-800/30 rounded-lg text-xs text-gray-500">
-        <p>💡 Earn cosmetic currency by completing missions and leveling up your mutations.</p>
-      </div>
+
     </div>
   );
 }
