@@ -127,7 +127,6 @@ export default function MutantAestheticsShop({ mutant, onSelectAesthetic, onBuyA
           const IconComponent = aesthetic.icon;
           const isUnlocked = unlockedAesthetics.includes(aesthetic.id);
           const isSelected = selectedAesthetic === aesthetic.id;
-          const canAfford = currency >= aesthetic.cost;
 
           return (
             <motion.div
