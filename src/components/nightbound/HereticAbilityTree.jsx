@@ -4,21 +4,60 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Zap, Lock, Star, BookOpen } from 'lucide-react';
 
-const VAMPIRE_ABILITIES = [
+const VAMPIRE_ABILITIES_BASE = [
   { id: 'compulsion', name: 'Compulsion', desc: 'Control minds', cost: 20, unlock: 'vampire_power:30', category: 'offensive' },
   { id: 'enhanced_senses', name: 'Enhanced Senses', desc: 'See in darkness', cost: 10, unlock: 'vampire_power:20', category: 'utility' },
   { id: 'blood_rage', name: 'Blood Rage', desc: 'Extreme power surge', cost: 30, unlock: 'vampire_power:50', category: 'offensive' },
   { id: 'shadow_step', name: 'Shadow Step', desc: 'Move unseen', cost: 15, unlock: 'vampire_power:35', category: 'utility' },
-  { id: 'regeneration', name: 'Regeneration', desc: 'Heal wounds quickly', cost: 25, unlock: 'vampire_power:45', category: 'defensive' }
+  { id: 'regeneration', name: 'Regeneration', desc: 'Heal wounds quickly', cost: 25, unlock: 'vampire_power:45', category: 'defensive' },
+  { id: 'blood_theft', name: 'Blood Theft', desc: 'Drain life force', cost: 35, unlock: 'vampire_power:60', category: 'offensive' },
+  { id: 'night_vision', name: 'Night Vision', desc: 'Perfect darkness sight', cost: 12, unlock: 'vampire_power:25', category: 'utility' },
+  { id: 'primal_form', name: 'Primal Form', desc: 'Transform into beast', cost: 40, unlock: 'vampire_power:70', category: 'offensive' },
+  { id: 'blood_bond', name: 'Blood Bond', desc: 'Link with others', cost: 28, unlock: 'vampire_power:55', category: 'utility' },
+  { id: 'undead_strength', name: 'Undead Strength', desc: 'Superhuman power', cost: 22, unlock: 'vampire_power:40', category: 'passive' }
 ];
 
-const WITCH_ABILITIES = [
+const WITCH_ABILITIES_BASE = [
   { id: 'hex', name: 'Hex', desc: 'Curse your enemies', cost: 20, unlock: 'witch_power:30', category: 'offensive' },
   { id: 'lunar_shield', name: 'Lunar Shield', desc: 'Protective barrier', cost: 15, unlock: 'witch_power:25', category: 'defensive' },
   { id: 'potion_craft', name: 'Potion Craft', desc: 'Create powerful brews', cost: 25, unlock: 'witch_power:40', category: 'utility' },
   { id: 'spell_weave', name: 'Spell Weave', desc: 'Chain multiple spells', cost: 30, unlock: 'witch_power:50', category: 'offensive' },
-  { id: 'familiar_bond', name: 'Familiar Bond', desc: 'Summon spirit companion', cost: 20, unlock: 'witch_power:35', category: 'utility' }
+  { id: 'familiar_bond', name: 'Familiar Bond', desc: 'Summon spirit companion', cost: 20, unlock: 'witch_power:35', category: 'utility' },
+  { id: 'moonlight_healing', name: 'Moonlight Healing', desc: 'Heal under moon', cost: 18, unlock: 'witch_power:45', category: 'defensive' },
+  { id: 'curse_amplify', name: 'Curse Amplify', desc: 'Strengthen hexes', cost: 32, unlock: 'witch_power:60', category: 'offensive' },
+  { id: 'ritual_mastery', name: 'Ritual Mastery', desc: 'Perfect rituals', cost: 35, unlock: 'witch_power:65', category: 'passive' },
+  { id: 'nature_speak', name: 'Nature Speak', desc: 'Talk to creatures', cost: 16, unlock: 'witch_power:28', category: 'utility' },
+  { id: 'dream_walk', name: 'Dream Walk', desc: 'Enter dreams', cost: 28, unlock: 'witch_power:55', category: 'utility' }
 ];
+
+const VAMPIRE_PREFIXES = ['Enhanced', 'Greater', 'Supreme', 'Primal', 'Ancient', 'Demonic', 'Eternal'];
+const VAMPIRE_SUFFIXES = ['Mastery', 'Dominion', 'Ascension', 'Perfection', 'Apotheosis'];
+const WITCH_PREFIXES = ['Arcane', 'Mystical', 'Divine', 'Eldritch', 'Primordial', 'Ethereal', 'Celestial'];
+const WITCH_SUFFIXES = ['Incantation', 'Sorcery', 'Witchcraft', 'Enchantment', 'Manifestation'];
+
+const generateDynamicPowers = (baseAbilities, prefixes, suffixes, currentPower) => {
+  const powers = [...baseAbilities];
+  let level = 10;
+
+  while (level <= currentPower + 50) {
+    const base = baseAbilities[Math.floor(Math.random() * baseAbilities.length)];
+    const prefix = prefixes[Math.floor(level / 15) % prefixes.length];
+    const suffix = suffixes[Math.floor(level / 20) % suffixes.length];
+    
+    powers.push({
+      id: `dynamic_${level}`,
+      name: `${prefix} ${base.name} ${suffix}`,
+      desc: `Enhanced version: ${base.desc}`,
+      cost: Math.min(20 + Math.floor(level / 10), 50),
+      unlock: `power:${level}`,
+      category: base.category
+    });
+    
+    level += 5;
+  }
+
+  return powers;
+};
 
 export default function HereticAbilityTree({ heretic, onClose }) {
   const queryClient = useQueryClient();
@@ -72,7 +111,10 @@ export default function HereticAbilityTree({ heretic, onClose }) {
     }
   };
 
-  const abilityList = activeTab === 'vampire' ? VAMPIRE_ABILITIES : WITCH_ABILITIES;
+  const vampirePowers = generateDynamicPowers(VAMPIRE_ABILITIES_BASE, VAMPIRE_PREFIXES, VAMPIRE_SUFFIXES, heretic.vampire_power || 40);
+  const witchPowers = generateDynamicPowers(WITCH_ABILITIES_BASE, WITCH_PREFIXES, WITCH_SUFFIXES, heretic.witch_power || 40);
+  
+  const abilityList = activeTab === 'vampire' ? vampirePowers : witchPowers;
   const unlockedList = abilities.filter(a => a.type === activeTab);
 
   return (
