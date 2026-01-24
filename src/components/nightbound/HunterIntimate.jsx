@@ -92,18 +92,28 @@ export default function HunterIntimate({ hunter, vampires }) {
     setSelectedAction(action);
 
     const outcomes = {
-      touch: `You reached out and touched ${partner.name}. Electric. Raw. Undeniable.`,
-      kiss: `Your lips met theirs. The world stopped. Everything else faded away.`,
-      dance: `You moved together in the darkness. Two hunters, momentarily forgetting the hunt.`,
-      seduce: `You traced a finger down their spine. They shivered. Control shifted.`,
-      whisper: `You whispered dangerous things into their ear. They leaned in, captivated.`,
-      pin: `You pushed them against the wall. Eyes locked. Nowhere to run.`,
-      undress: `You peeled away their clothes slowly. Every inch revealed. Vulnerable.`,
-      claim: `You marked them with your lips and hands. They belonged to you now.`,
-      bind: `You secured their wrists. They tested the restraints, a smile playing at their lips.`,
-      command: `You gave them orders. They obeyed. The power was intoxicating.`,
-      hunt: `You hunted together that night. Two predators working as one. Deadly.`,
-      explore: `You explored the night together. Discovered new heights of desire.`
+      kiss_hard: `You pinned them against the wall, your mouth claiming theirs. Hard. Desperate. They matched your intensity perfectly.`,
+      trail: `Your fingers traced slowly down their chest, across their stomach. Every touch made them shudder. Control in your hands.`,
+      push_bed: `You pushed them back onto the bed. They landed hard, eyes wide, waiting for what comes next.`,
+      straddle: `You moved over them, straddling their body. Power and vulnerability rolled into one perfect moment.`,
+      grip_throat: `You wrapped your hand around their throat gently. Not to hurt. To possess. To claim. They surrendered completely.`,
+      neck_tongue: `You ran your tongue along the curve of their neck. They gasped. The hunger in you intensified.`,
+      knees: `You pulled them down to their knees. Eyes up, looking at you. The power dynamic shifted entirely in your favor.`,
+      from_behind: `You took them from behind, hands gripping their hips. Raw. Primal. Everything the hunt demanded.`,
+      watch: `You made them watch as you undressed yourself slowly. Anticipation built between you like electricity.`,
+      bind_control: `You bound their wrists with leather. They tested the restraints and smiled. Complete trust. Complete surrender.`,
+      taste: `You tasted every inch of their skin. Lips trailing everywhere. They trembled beneath you, lost completely.`,
+      beg: `You brought them to the edge over and over until they begged. Your name became a prayer.`,
+      wall: `You pressed them against the wall, your body against theirs. Rough. Intense. No gentleness left.`,
+      claim_mouth: `You claimed their mouth completely, deep and possessive. This was about ownership now. They were yours.`,
+      mark: `You marked their skin with your lips and teeth. Visible reminders that they belonged to you.`,
+      whisper_threats: `You whispered dark, dangerous things into their ear. Threats wrapped in desire. They shivered and pulled you closer.`,
+      breathe: `You breathed them in like a drug you were addicted to. One taste would never be enough.`,
+      surrender: `You let them take control. Gave yourself over completely. The vulnerability was intoxicating.`,
+      corner: `You cornered them, moving in slowly. Nowhere to run. Nowhere to hide. Just you and the moment.`,
+      dominance: `You showed them exactly what you were capable of. Pure dominance. Pure power. They loved every second.`,
+      risk: `You pulled them into a dark corner, knowing people could catch you at any moment. The danger made it hotter.`,
+      hunt_together: `You hunted together that night. The kill made you both wild. When you finally had them alone, all that predatory energy exploded.`
     };
 
     setTimeout(async () => {
