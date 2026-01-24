@@ -1,13 +1,11 @@
 import AdminCleanup from './pages/AdminCleanup';
 import Codex from './pages/Codex';
 import DoppelgangerHome from './pages/DoppelgangerHome';
-import HereticHome from './pages/HereticHome';
 import Home from './pages/Home';
 import HumanHome from './pages/HumanHome';
 import IncubusHome from './pages/IncubusHome';
 import Index from './pages/Index';
 import Messages from './pages/Messages';
-import MutantHome from './pages/MutantHome';
 import NateLilithHome from './pages/NateLilithHome';
 import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
@@ -26,13 +24,11 @@ export const PAGES = {
     "AdminCleanup": AdminCleanup,
     "Codex": Codex,
     "DoppelgangerHome": DoppelgangerHome,
-    "HereticHome": HereticHome,
     "Home": Home,
     "HumanHome": HumanHome,
     "IncubusHome": IncubusHome,
     "Index": Index,
     "Messages": Messages,
-    "MutantHome": MutantHome,
     "NateLilithHome": NateLilithHome,
     "Night": Night,
     "ServantHome": ServantHome,
