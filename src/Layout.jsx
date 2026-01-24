@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, Sparkles, Zap, Waves } from 'lucide-react';
+import { Home, Moon, User, Sparkles, Zap, Waves, Droplets } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -53,9 +53,22 @@ export default function Layout({ children, currentPageName }) {
     },
     retry: 1
   });
+
+  const { data: nymphs = [] } = useQuery({
+    queryKey: ['waterNymphs'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.WaterNymph.list();
+      } catch (e) {
+        console.error('Failed to fetch nymphs:', e);
+        return [];
+      }
+    },
+    retry: 1
+  });
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome', 'SirenHome'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome', 'SirenHome', 'WaterNymphHome'].includes(currentPageName);
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
@@ -69,7 +82,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Vamp', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
-    { name: 'Siren', icon: Waves, path: 'SirenHome' }
+    { name: 'Siren', icon: Waves, path: 'SirenHome', show: sirens.length > 0 },
+    { name: 'Nymph', icon: Droplets, path: 'WaterNymphHome', show: nymphs.length > 0 }
   ];
   
   return (
