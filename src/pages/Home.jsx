@@ -41,7 +41,7 @@ export default function Home() {
     queryFn: () => base44.entities.Siren.list()
   });
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -81,6 +81,18 @@ export default function Home() {
       });
       queryClient.invalidateQueries();
       navigate(createPageUrl('WitchHome'));
+    } else if (selectedType === 'siren') {
+      await base44.entities.Siren.create({
+        name: characterName.trim(),
+        gender: characterGender,
+        sexuality: characterSexuality,
+        personality: characterPersonality,
+        voice_power: 50,
+        water_affinity: 50,
+        charm_level: 60
+      });
+      queryClient.invalidateQueries();
+      navigate(createPageUrl('SirenHome'));
     }
     };
   
@@ -88,6 +100,7 @@ export default function Home() {
     // Navigate to the appropriate home based on what characters exist
     if (vampireStates.length > 0) navigate(createPageUrl('Night'));
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
+    else if (sirens.length > 0) navigate(createPageUrl('SirenHome'));
   };
   
   return (
@@ -210,6 +223,36 @@ export default function Home() {
                       </button>
                     </div>
                   ))}
+                  {sirens.map(s => (
+                    <div key={s.id} className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(createPageUrl('SirenHome'));
+                        }}
+                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">🌊</span>
+                          <div>
+                            <p className="text-white font-medium">{s.name}</p>
+                            <p className="text-gray-400 text-xs">Siren</p>
+                          </div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (confirm(`Delete ${s.name}?`)) {
+                            await base44.entities.Siren.delete(s.id);
+                            queryClient.invalidateQueries();
+                          }
+                        }}
+                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
+                    </div>
+                  ))}
 
                 </div>
               </div>
@@ -301,6 +344,18 @@ export default function Home() {
                       <div>
                         <span className="font-medium text-white block">Witch</span>
                         <p className="text-sm text-gray-400">Magic, herbs, lunar rituals</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('siren'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🌊</span>
+                      <div>
+                        <span className="font-medium text-white block">Siren</span>
+                        <p className="text-sm text-gray-400">Voice, seduction, ocean's call</p>
                       </div>
                     </div>
                   </button>
