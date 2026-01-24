@@ -35,6 +35,11 @@ export default function Home() {
     queryKey: ['witches'],
     queryFn: () => base44.entities.Witch.list()
   });
+
+  const { data: sirens = [] } = useQuery({
+    queryKey: ['sirens'],
+    queryFn: () => base44.entities.Siren.list()
+  });
   
   const existingGame = vampireStates.length > 0 || witches.length > 0;
   
