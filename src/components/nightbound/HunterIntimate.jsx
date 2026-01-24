@@ -97,7 +97,6 @@ export default function HunterIntimate({ hunter, vampires }) {
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
-  const [initiator, setInitiator] = useState('hunter'); // 'hunter' or 'vampire'
 
   const validPartners = vampires.map(v => ({
     id: v.id,
