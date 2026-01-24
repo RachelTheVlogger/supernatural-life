@@ -79,6 +79,11 @@ const RESPONSES = {
     'The offer hangs between you. They\'re tempted, even if they won\'t admit it.',
     'Their hand lowers slightly. They\'re actually thinking about this.',
   ],
+  convert: [
+    'They close their eyes as your fangs sink in. When they open them again, everything is different.',
+    'The transformation begins. They gasp as the gift flows through them, changing everything.',
+    'They\'re yours now. No escape. No redemption. Only eternity.',
+  ],
 };
 
 export default function VampireHunterInteraction({ vampire, hunter, onClose }) {
