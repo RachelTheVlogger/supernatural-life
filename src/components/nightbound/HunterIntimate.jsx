@@ -98,7 +98,7 @@ export default function HunterIntimate({ hunter, vampires }) {
     gender: v.gender
   }));
 
-  const categories = ['all', 'romantic', 'physical', 'bdsm', 'social', 'activity'];
+  const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity'];
   const currentActions = INTIMATE_ACTIONS[selectedCategory] || INTIMATE_ACTIONS.all;
 
   const handleAction = async (action, partner) => {
