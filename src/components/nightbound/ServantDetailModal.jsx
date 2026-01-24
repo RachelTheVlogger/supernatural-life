@@ -334,11 +334,13 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
         )}
         
         {showTownPeople && (
-          <NPCInteraction
-            onClose={() => setShowTownPeople(false)}
-            viewMode="servant"
-            servant={servant}
-          />
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
+            <NPCInteraction
+              onClose={() => setShowTownPeople(false)}
+              viewMode="servant"
+              servant={servant}
+            />
+          </div>
         )}
         
         {showDate && (
