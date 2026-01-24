@@ -113,15 +113,6 @@ export default function MutantAestheticsShop({ mutant, onSelectAesthetic, onBuyA
         Mutation Aesthetics
       </h3>
 
-      {/* Currency */}
-      <div className="bg-gray-800/50 rounded-lg p-4 mb-6 flex items-center justify-between">
-        <div>
-          <p className="text-gray-400 text-sm">Cosmetic Currency</p>
-          <p className="text-white text-2xl font-bold">{currency}</p>
-        </div>
-        <Sparkles className="w-8 h-8 text-cyan-400 opacity-50" />
-      </div>
-
       {/* Current Aesthetic */}
       <div className="bg-gradient-to-r from-cyan-950 to-purple-950 rounded-lg p-4 mb-6">
         <p className="text-gray-400 text-xs uppercase mb-2">Current Aesthetic</p>
