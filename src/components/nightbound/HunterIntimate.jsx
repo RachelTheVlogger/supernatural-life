@@ -141,7 +141,13 @@ export default function HunterIntimate({ hunter, vampires }) {
       risk: `You pulled them into a dark corner, knowing people could walk by any second. The danger made everything hotter. You fucked them fast and hard while keeping one hand over their mouth so they wouldn't scream.`,
       hunt_together: `You hunted together that night. The kill sent adrenaline and bloodlust through your veins. When you finally had them alone, all that predatory energy exploded. You fucked them like the hunt itself was inside you.`,
       aftercare: `After the intensity faded, you held them close. "Are you okay? Do you need water?" You brushed their hair back gently, pressed soft kisses to their forehead. "You were perfect," you whispered. They melted into you, completely safe.`,
-      safeword: `"Red means stop, yellow means slow down, green means more," you said, making sure they understood. "Always," they promised. You had rules. You had trust. And that made everything hotter.`
+      safeword: `"Red means stop, yellow means slow down, green means more," you said, making sure they understood. "Always," they promised. You had rules. You had trust. And that made everything hotter.`,
+      gentle_kiss: `You leaned in slowly, giving them time to meet you halfway. Your kiss was soft, tender, full of affection. They sighed into you, their hand finding yours. No urgency. Just connection.`,
+      hold_close: `You wrapped your arms around them and just held them. No words. No demands. Just the warmth of being close to someone you cared about. They rested their head on your chest, listening to your heartbeat.`,
+      whisper_love: `You brushed a strand of hair from their face and whispered things only they could hear. Sweet things. True things. They looked up at you with vulnerable eyes and smiled. This was just as intimate as anything else.`,
+      forehead_kiss: `You tilted their chin up gently and pressed a soft kiss to their forehead. You could feel them relax against you. It was such a simple gesture, but it meant everything.`,
+      slow_dance: `You swayed together slowly in the quiet, no music but the sound of your breathing. Their head rested on your shoulder, your hand on their back. Time stopped in this moment.`,
+      fingers_intertwine: `You reached for their hand and let your fingers intertwine with theirs. You could feel their pulse match yours as you held them. Simple. Perfect. Everything you needed.`
     });
 
     const outcomes = getOutcomes();
