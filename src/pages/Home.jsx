@@ -140,6 +140,45 @@ export default function Home() {
     else if (waterNymphs.length > 0) navigate(createPageUrl('WaterNymphHome'));
     else if (mutants.length > 0) navigate(createPageUrl('MutantHome'));
   };
+
+  // Find all duplicates by name
+  const getAllDuplicates = () => {
+    const allCharacters = [
+      ...vampireStates.map(v => ({ id: v.id, name: v.vampire_name, type: 'Vampire', entity: v })),
+      ...witches.map(w => ({ id: w.id, name: w.name, type: 'Witch', entity: w })),
+      ...sirens.map(s => ({ id: s.id, name: s.name, type: 'Siren', entity: s })),
+      ...waterNymphs.map(n => ({ id: n.id, name: n.name, type: 'Nymph', entity: n })),
+      ...mutants.map(m => ({ id: m.id, name: m.name, type: 'Mutant', entity: m }))
+    ];
+
+    const duplicates = {};
+    allCharacters.forEach(char => {
+      const key = `${char.name.toLowerCase()}-${char.type}`;
+      if (!duplicates[key]) duplicates[key] = [];
+      duplicates[key].push(char);
+    });
+
+    return Object.values(duplicates).filter(group => group.length > 1);
+  };
+
+  const handleDeleteCharacter = async (character) => {
+    const entityMap = {
+      'Vampire': base44.entities.VampireState,
+      'Witch': base44.entities.Witch,
+      'Siren': base44.entities.Siren,
+      'Nymph': base44.entities.WaterNymph,
+      'Mutant': base44.entities.Mutant
+    };
+    
+    try {
+      await entityMap[character.type].delete(character.id);
+      queryClient.invalidateQueries();
+    } catch (e) {
+      console.error('Failed to delete character:', e);
+    }
+  };
+
+  const duplicateGroups = getAllDuplicates();
   
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center"
