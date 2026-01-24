@@ -362,7 +362,6 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
-          onClick={onClose}
         >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -574,8 +573,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
             
             <button
-              type="button"
-              onClick={handleTownPeopleClick}
+              onClick={() => setShowTownPeople(true)}
               className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
             >
               <Users className="w-5 h-5" />
