@@ -493,6 +493,18 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
+                  <button
+                    onClick={() => { setSelectedType('heretic'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">⚡</span>
+                      <div>
+                        <span className="font-medium text-white block">Heretic</span>
+                        <p className="text-sm text-gray-400">Vampire & Witch hybrid</p>
+                      </div>
+                    </div>
+                  </button>
 
                   </div>
               </>
