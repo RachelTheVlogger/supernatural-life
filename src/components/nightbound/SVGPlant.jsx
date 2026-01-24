@@ -3,34 +3,39 @@ import React from 'react';
 const SVGPlant = ({ plantType, stage, potency, size = 120 }) => {
   const colorVariants = {
     cannabis: {
-      light: '#4ade80',
-      medium: '#22c55e',
-      dark: '#16a34a',
-      glow: '#86efac'
+      light: '#65ff00',
+      medium: '#39ff00',
+      dark: '#2db300',
+      glow: '#b3ff66',
+      stem: '#1a5c00'
     },
     psilocybin: {
-      light: '#c084fc',
-      medium: '#a855f7',
-      dark: '#7e22ce',
-      glow: '#e9d5ff'
+      light: '#dd5ef7',
+      medium: '#c400ff',
+      dark: '#7a00cc',
+      glow: '#ff99ff',
+      stem: '#330066'
     },
     opium_poppy: {
-      light: '#f97316',
-      medium: '#ea580c',
-      dark: '#c2410c',
-      glow: '#fed7aa'
+      light: '#ff6b35',
+      medium: '#ff3300',
+      dark: '#cc2200',
+      glow: '#ffb399',
+      stem: '#662211'
     },
     coca: {
-      light: '#fbbf24',
-      medium: '#f59e0b',
-      dark: '#d97706',
-      glow: '#fef3c7'
+      light: '#ffeb3b',
+      medium: '#ffd700',
+      dark: '#cc9900',
+      glow: '#ffff99',
+      stem: '#664400'
     },
     ergot: {
-      light: '#9333ea',
-      medium: '#7e22ce',
-      dark: '#581c87',
-      glow: '#e9d5ff'
+      light: '#d946ef',
+      medium: '#a855f7',
+      dark: '#6b21a8',
+      glow: '#f8b4f8',
+      stem: '#3d0a5c'
     }
   };
 
@@ -66,9 +71,10 @@ const SVGPlant = ({ plantType, stage, potency, size = 120 }) => {
         y1="200"
         x2="100"
         y2={120 - stage * 15}
-        stroke={colors.dark}
-        strokeWidth="4"
+        stroke={colors.stem}
+        strokeWidth="5"
         opacity={opacity}
+        strokeLinecap="round"
       />
 
       {/* Leaves */}
@@ -83,12 +89,12 @@ const SVGPlant = ({ plantType, stage, potency, size = 120 }) => {
           <g key={i}>
             {/* Leaf shadow */}
             <ellipse
-              cx={x + 2}
-              cy={y + 2}
-              rx={20 * opacity}
-              ry={35 * opacity}
-              fill={colors.dark}
-              opacity="0.2"
+              cx={x + 3}
+              cy={y + 3}
+              rx={22 * opacity}
+              ry={37 * opacity}
+              fill="#000000"
+              opacity="0.3"
               transform={`rotate(${angle} ${x} ${y})`}
             />
 
@@ -96,24 +102,24 @@ const SVGPlant = ({ plantType, stage, potency, size = 120 }) => {
             <ellipse
               cx={x}
               cy={y}
-              rx={20 * opacity}
-              ry={35 * opacity}
+              rx={22 * opacity}
+              ry={37 * opacity}
               fill="url(#leafGrad)"
               opacity={opacity}
               transform={`rotate(${angle} ${x} ${y})`}
-              stroke={colors.dark}
-              strokeWidth="1"
+              stroke={colors.medium}
+              strokeWidth="1.5"
             />
 
             {/* Leaf vein */}
             <line
               x1={x}
-              y1={y - 30 * opacity}
+              y1={y - 32 * opacity}
               x2={x}
-              y2={y + 30 * opacity}
+              y2={y + 32 * opacity}
               stroke={colors.light}
-              strokeWidth="1"
-              opacity={opacity * 0.6}
+              strokeWidth="1.5"
+              opacity={opacity * 0.8}
               transform={`rotate(${angle} ${x} ${y})`}
             />
           </g>
@@ -124,10 +130,17 @@ const SVGPlant = ({ plantType, stage, potency, size = 120 }) => {
       <circle
         cx="100"
         cy={100 - stage * 5}
-        r={8 * opacity}
+        r={10 * opacity}
         fill={colors.medium}
         opacity={opacity}
-        filter="drop-shadow(0 0 4px rgba(0,0,0,0.3))"
+        filter="drop-shadow(0 0 8px currentColor)"
+      />
+      <circle
+        cx="100"
+        cy={100 - stage * 5}
+        r={7 * opacity}
+        fill={colors.light}
+        opacity={opacity * 0.6}
       />
 
       {/* Sparkles at high potency */}
