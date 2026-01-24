@@ -29,7 +29,13 @@ const INTIMATE_ACTIONS = {
     { id: 'risk', label: 'Risk getting caught together', category: 'activity' },
     { id: 'hunt_together', label: 'Hunt together that night', category: 'activity' },
     { id: 'aftercare', label: 'Aftercare and comfort', category: 'romantic' },
-    { id: 'safeword', label: 'Establish safe words', category: 'bdsm' }
+    { id: 'safeword', label: 'Establish safe words', category: 'bdsm' },
+    { id: 'gentle_kiss', label: 'Kiss them softly', category: 'sweet' },
+    { id: 'hold_close', label: 'Hold them close', category: 'sweet' },
+    { id: 'whisper_love', label: 'Whisper sweet things', category: 'sweet' },
+    { id: 'forehead_kiss', label: 'Kiss their forehead', category: 'sweet' },
+    { id: 'slow_dance', label: 'Dance together slowly', category: 'sweet' },
+    { id: 'fingers_intertwine', label: 'Intertwine your fingers', category: 'sweet' }
   ],
   romantic: [
     { id: 'whisper_threats', label: 'Whisper degrading things in their ear', category: 'romantic' },
@@ -37,7 +43,10 @@ const INTIMATE_ACTIONS = {
     { id: 'claim_mouth', label: 'Claim their mouth completely', category: 'romantic' },
     { id: 'neck_tongue', label: 'Run your tongue along their neck', category: 'romantic' },
     { id: 'surrender', label: 'Let them take control', category: 'romantic' },
-    { id: 'aftercare', label: 'Aftercare and comfort', category: 'romantic' }
+    { id: 'aftercare', label: 'Aftercare and comfort', category: 'romantic' },
+    { id: 'gentle_kiss', label: 'Kiss them softly', category: 'romantic' },
+    { id: 'hold_close', label: 'Hold them close', category: 'romantic' },
+    { id: 'whisper_love', label: 'Whisper sweet things', category: 'romantic' }
   ],
   physical: [
     { id: 'kiss_hard', label: 'Pin them and kiss them hard', category: 'physical' },
