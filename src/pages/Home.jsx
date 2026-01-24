@@ -40,8 +40,13 @@ export default function Home() {
     queryKey: ['sirens'],
     queryFn: () => base44.entities.Siren.list()
   });
+
+  const { data: waterNymphs = [] } = useQuery({
+    queryKey: ['waterNymphs'],
+    queryFn: () => base44.entities.WaterNymph.list()
+  });
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -93,6 +98,15 @@ export default function Home() {
       });
       queryClient.invalidateQueries();
       navigate(createPageUrl('SirenHome'));
+    } else if (selectedType === 'nymph') {
+      await base44.entities.WaterNymph.create({
+        name: characterName.trim(),
+        gender: characterGender,
+        nature_bond: 50,
+        water_purity: 100
+      });
+      queryClient.invalidateQueries();
+      navigate(createPageUrl('WaterNymphHome'));
     }
     };
   
@@ -101,6 +115,7 @@ export default function Home() {
     if (vampireStates.length > 0) navigate(createPageUrl('Night'));
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
     else if (sirens.length > 0) navigate(createPageUrl('SirenHome'));
+    else if (waterNymphs.length > 0) navigate(createPageUrl('WaterNymphHome'));
   };
   
   return (
@@ -253,6 +268,36 @@ export default function Home() {
                       </button>
                     </div>
                   ))}
+                  {waterNymphs.map(n => (
+                    <div key={n.id} className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(createPageUrl('WaterNymphHome'));
+                        }}
+                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">✨</span>
+                          <div>
+                            <p className="text-white font-medium">{n.name}</p>
+                            <p className="text-gray-400 text-xs">Water Nymph</p>
+                          </div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (confirm(`Delete ${n.name}?`)) {
+                            await base44.entities.WaterNymph.delete(n.id);
+                            queryClient.invalidateQueries();
+                          }
+                        }}
+                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
+                    </div>
+                  ))}
 
                 </div>
               </div>
@@ -356,6 +401,18 @@ export default function Home() {
                       <div>
                         <span className="font-medium text-white block">Siren</span>
                         <p className="text-sm text-gray-400">Voice, seduction, ocean's call</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('nymph'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">✨</span>
+                      <div>
+                        <span className="font-medium text-white block">Water Nymph</span>
+                        <p className="text-sm text-gray-400">Nature, healing, purity</p>
                       </div>
                     </div>
                   </button>
