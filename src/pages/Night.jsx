@@ -37,7 +37,7 @@ import StalkingSystem from '@/components/nightbound/StalkingSystem';
 import PossessionSystem from '@/components/nightbound/PossessionSystem';
 import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
 import AICompanion from '@/components/nightbound/AICompanion';
-import CattleManagement from '@/components/nightbound/CattleManagement';
+
 import MemoryRecorder from '@/components/nightbound/MemoryRecorder';
 import EmotionMonitor from '@/components/nightbound/EmotionMonitor';
 import HolographicCall from '@/components/nightbound/HolographicCall';
@@ -82,7 +82,6 @@ export default function Night() {
   const [showVintage, setShowVintage] = useState(false);
   const [showSupernaturalDating, setShowSupernaturalDating] = useState(false);
   const [showHunterWalk, setShowHunterWalk] = useState(false);
-  const [showCattle, setShowCattle] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
 
   // Fetch vampire state
@@ -834,9 +833,7 @@ export default function Night() {
         {showSupernaturalDating && vampireState && (
           <SupernaturalDating vampireState={vampireState} onClose={() => setShowSupernaturalDating(false)} />
         )}
-        {showCattle && vampireState && (
-          <CattleManagement vampireState={vampireState} onClose={() => setShowCattle(false)} />
-        )}
+
         </AnimatePresence>
     </div>
   );
