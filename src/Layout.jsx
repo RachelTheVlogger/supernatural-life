@@ -275,6 +275,19 @@ export default function Layout({ children, currentPageName }) {
                   <p className="text-gray-400 text-sm">🧬 Mutant • Power: {m.power_level}%</p>
                 </button>
               ))}
+              {heretics.map(h => (
+                <button
+                  key={h.id}
+                  onClick={() => {
+                    navigate(createPageUrl(`HereticHome?id=${h.id}`));
+                    setShowServantSelector(false);
+                  }}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">{h.name}</h4>
+                  <p className="text-gray-400 text-sm">⚡ Heretic • Balance: {h.balance}%</p>
+                </button>
+              ))}
               </div>
           </motion.div>
         </motion.div>
