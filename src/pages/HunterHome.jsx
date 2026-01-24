@@ -9,6 +9,7 @@ import HunterHuntLog from '@/components/nightbound/HunterHuntLog';
 import HunterHomeActivities from '@/components/nightbound/HunterHomeActivities';
 import HunterIntimate from '@/components/nightbound/HunterIntimate';
 import HunterAbilityShop from '@/components/nightbound/HunterAbilityShop';
+import HunterVampireInteraction from '@/components/nightbound/HunterVampireInteraction';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function HunterHome() {
   const [showActivities, setShowActivities] = useState(false);
   const [showIntimate, setShowIntimate] = useState(false);
   const [showAbilities, setShowAbilities] = useState(false);
+  const [showInteraction, setShowInteraction] = useState(false);
+  const [selectedVampire, setSelectedVampire] = useState(null);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -190,13 +193,28 @@ export default function HunterHome() {
                     Current Mission
                   </h3>
                   {hunterTargets.length > 0 ? (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <p className="text-gray-400 text-sm">
                         {hunterTargets.length} known vampire threat{hunterTargets.length !== 1 ? 's' : ''} active in area
                       </p>
-                      <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
+                      <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3 mb-3">
                         <p className="text-red-300 text-sm font-medium">Status: HUNTING</p>
                         <p className="text-gray-400 text-xs mt-1">Stay alert. They're out there.</p>
+                      </div>
+                      <div className="space-y-2 max-h-48 overflow-y-auto">
+                        {hunterTargets.map(target => (
+                          <button
+                            key={target.id}
+                            onClick={() => {
+                              setSelectedVampire(target);
+                              setShowInteraction(true);
+                            }}
+                            className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
+                          >
+                            <p className="text-white font-medium">{target.vampire_name}</p>
+                            <p className="text-gray-400 text-xs">Click to interact</p>
+                          </button>
+                        ))}
                       </div>
                     </div>
                   ) : (
@@ -244,7 +262,16 @@ export default function HunterHome() {
           )}
 
           {showAbilities && (
-           <HunterAbilityShop hunter={hunter} onClose={() => setShowAbilities(false)} />
+            <HunterAbilityShop hunter={hunter} onClose={() => setShowAbilities(false)} />
+          )}
+
+          {showInteraction && selectedVampire && (
+            <HunterVampireInteraction 
+              hunter={hunter} 
+              vampire={selectedVampire} 
+              onClose={() => setShowInteraction(false)} 
+              visitType="meeting"
+            />
           )}
           </AnimatePresence>
       </motion.div>
