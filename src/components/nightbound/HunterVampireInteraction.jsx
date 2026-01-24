@@ -249,20 +249,17 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-lg p-4 mb-6"
+            className="bg-red-950/30 border border-red-500/30 rounded-lg p-4 mb-6"
           >
-            <div className="flex items-start gap-3">
-              <span className="text-4xl">{vampireResponse.emoji}</span>
-              <div className="flex-1">
-                <p className="text-white mb-2">
-                  <span className="font-semibold text-red-300">{vampire.vampire_name}:</span> {vampireResponse.vampireText}
-                </p>
-                {vampireResponse.explicit && (
-                  <span className="inline-block bg-red-600/50 text-red-200 text-xs px-2 py-1 rounded">
-                    Explicit Content
-                  </span>
-                )}
-              </div>
+            <div className="flex-1">
+              <p className="text-red-300 mb-2">
+                <span className="font-semibold">{vampire.vampire_name}:</span> {vampireResponse.vampireText}
+              </p>
+              {vampireResponse.explicit && (
+                <span className="inline-block bg-red-600/50 text-red-200 text-xs px-2 py-1 rounded">
+                  Explicit Content
+                </span>
+              )}
             </div>
           </motion.div>
         )}
