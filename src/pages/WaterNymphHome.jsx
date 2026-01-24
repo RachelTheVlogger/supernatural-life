@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Droplets, Sparkles, Heart, Waves, Eye, Zap, Shield, Moon, Flower, Fish, Gem, Home, Users, Wind, CloudRain } from 'lucide-react';
+import { Droplets, Sparkles, Heart, Waves, Eye, Zap, Shield, Moon, Flower, Fish, Gem, Home, Users, Wind, CloudRain, Edit2 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import NymphDating from '@/components/nightbound/NymphDating';
 import NymphPowerTree from '@/components/nightbound/NymphPowerTree';
@@ -64,6 +64,8 @@ export default function WaterNymphHome() {
   const [nymphGender, setNymphGender] = useState('woman');
   const [nymphSexuality, setNymphSexuality] = useState('bisexual');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [newName, setNewName] = useState(nymph?.name || '');
 
   const { data: nymphs = [] } = useQuery({
     queryKey: ['waterNymphs'],
@@ -94,6 +96,24 @@ export default function WaterNymphHome() {
       setInitialized(true);
     }
   }, [nymphs.length]);
+
+  const handleRenameNymph = async () => {
+    if (!newName.trim()) {
+      alert('Please enter a name');
+      return;
+    }
+
+    try {
+      await base44.entities.WaterNymph.update(nymph.id, {
+        name: newName.trim()
+      });
+
+      queryClient.invalidateQueries();
+      setShowRenameModal(false);
+    } catch (e) {
+      console.error('Failed to rename nymph:', e);
+    }
+  };
 
   const handleCreateNymph = async () => {
     if (!nymphName.trim()) {
@@ -501,6 +521,15 @@ export default function WaterNymphHome() {
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-2">
             <Sparkles className="w-8 h-8 text-teal-400" />
             {nymph.name}
+            <button
+              onClick={() => {
+                setNewName(nymph.name);
+                setShowRenameModal(true);
+              }}
+              className="text-teal-400 hover:text-teal-300 transition-colors"
+            >
+              <Edit2 className="w-5 h-5" />
+            </button>
           </h1>
           <p className="text-teal-300 mb-3">Water Nymph</p>
           <button
@@ -749,6 +778,50 @@ export default function WaterNymphHome() {
 
             {showDating && nymph && (
               <NymphDating nymph={nymph} onClose={() => setShowDating(false)} />
+            )}
+
+            {/* Rename Nymph Modal */}
+            {showRenameModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+                onClick={() => setShowRenameModal(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+                >
+                  <h2 className="text-2xl font-bold text-white mb-6">Rename Nymph</h2>
+
+                  <input
+                    type="text"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="New name..."
+                    className="w-full bg-gray-800 border border-teal-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-6 focus:outline-none focus:border-teal-500"
+                    autoFocus
+                  />
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowRenameModal(false)}
+                      className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleRenameNymph}
+                      disabled={!newName.trim()}
+                      className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+                    >
+                      Rename
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
             )}
 
             {/* Create Nymph Modal */}
