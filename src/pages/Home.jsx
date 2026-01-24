@@ -675,10 +675,31 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 4 && selectedType === 'siren' && (
+            {introStep === 4 && selectedType === 'heretic' && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
-                <p className="text-cyan-300 text-sm mb-6">Your journey as a siren awaits.</p>
+                <p className="text-purple-300 text-sm mb-6">Your hybrid nature awaits. Vampire and witch, forever divided.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIntroStep(3)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={startNewGame}
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg py-3 text-white font-medium transition-all"
+                  >
+                    Begin
+                  </button>
+                </div>
+              </>
+            )}
+
+            {introStep === 4 && selectedType === 'siren' && (
+               <>
+                 <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
+                 <p className="text-cyan-300 text-sm mb-6">Your journey as a siren awaits.</p>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setIntroStep(3)}
