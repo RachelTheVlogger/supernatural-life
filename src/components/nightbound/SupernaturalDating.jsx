@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Zap, Moon, Sparkles, Target, Flame } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import DateScenarios, { VAMPIRE_DATE_SCENARIOS } from './DateScenarios';
 
 const BEING_TYPES = [
   { id: 'vampire', label: 'Vampire', icon: Moon, color: 'red' },
@@ -34,6 +35,7 @@ export default function SupernaturalDating({ vampireState, onClose }) {
   const [creating, setCreating] = useState(false);
   const [dating, setDating] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [currentScenario, setCurrentScenario] = useState(null);
 
   const { data: dates = [] } = useQuery({
     queryKey: ['supernaturalDates', vampireState?.id],
@@ -330,6 +332,14 @@ export default function SupernaturalDating({ vampireState, onClose }) {
             </div>
 
             <h4 className="text-white text-sm font-medium mb-2">Date Activities</h4>
+            <button
+              onClick={() => setCurrentScenario(VAMPIRE_DATE_SCENARIOS[Math.floor(Math.random() * VAMPIRE_DATE_SCENARIOS.length)])}
+              className="w-full bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-4 transition-colors text-white font-medium mb-3"
+            >
+              💕 Interactive Date Scenario
+            </button>
+
+            <p className="text-gray-400 text-xs mb-2">Or select a quick activity:</p>
             {DATE_ACTIVITIES.map((activity, i) => (
               <button
                 key={i}
