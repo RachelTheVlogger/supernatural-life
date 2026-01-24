@@ -18,6 +18,7 @@ export default function SirenHome() {
   const [showAction, setShowAction] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [initialized, setInitialized] = useState(false);
 
   const { data: sirens = [] } = useQuery({
     queryKey: ['sirens'],
@@ -25,6 +26,25 @@ export default function SirenHome() {
   });
 
   const siren = sirens[0];
+
+  React.useEffect(() => {
+    const initSiren = async () => {
+      if (sirens.length === 0 && !initialized) {
+        setInitialized(true);
+        const names = ['Marina', 'Coral', 'Nerissa', 'Oceana', 'Lorelei'];
+        const personalities = ['seductive', 'mysterious', 'playful', 'dangerous', 'haunting'];
+        await base44.entities.Siren.create({
+          name: names[Math.floor(Math.random() * names.length)],
+          personality: [personalities[Math.floor(Math.random() * personalities.length)]],
+          voice_power: 50,
+          water_affinity: 50,
+          charm_level: 60
+        });
+        queryClient.invalidateQueries(['sirens']);
+      }
+    };
+    initSiren();
+  }, [sirens.length, initialized, queryClient]);
 
   const handleSing = async () => {
     setProcessing(true);
