@@ -4,36 +4,43 @@ import { Heart, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
-const INTIMATE_OPTIONS = [
-  {
-    id: 'tension',
-    name: '😈 Sexual Tension',
-    desc: 'Flirt dangerously with someone. Cross boundaries.',
-    icon: '🔥',
-    explicit: true
-  },
-  {
-    id: 'passionate',
-    name: '🌹 Passionate Encounter',
-    desc: 'Intense physical intimacy. Fulfill desires.',
-    icon: '💋',
-    explicit: true
-  },
-  {
-    id: 'roleplay',
-    name: '🎭 Roleplay Scenario',
-    desc: 'Act out fantasies. Both agree to the game.',
-    icon: '👥',
-    explicit: true
-  },
-  {
-    id: 'seduce',
-    name: '💅 Seduce Target',
-    desc: 'Use seduction as a weapon. Manipulate through desire.',
-    icon: '😏',
-    explicit: true
-  }
-];
+const INTIMATE_ACTIONS = {
+  all: [
+    { id: 'touch', label: 'Touch them', icon: '👋', category: 'physical' },
+    { id: 'kiss', label: 'Kiss them', icon: '💋', category: 'romantic' },
+    { id: 'dance', label: 'Dance with them', icon: '💃', category: 'romantic' },
+    { id: 'seduce', label: 'Seduce from behind', icon: '😈', category: 'physical' },
+    { id: 'whisper', label: 'Whisper to them', icon: '🤫', category: 'romantic' },
+    { id: 'pin', label: 'Pin them against wall', icon: '🔥', category: 'physical' },
+    { id: 'undress', label: 'Undress them slowly', icon: '✨', category: 'physical' },
+    { id: 'claim', label: 'Mark them as yours', icon: '💋', category: 'physical' }
+  ],
+  romantic: [
+    { id: 'dance', label: 'Dance with them', icon: '💃', category: 'romantic' },
+    { id: 'whisper', label: 'Whisper sweet threats', icon: '🤫', category: 'romantic' },
+    { id: 'kiss', label: 'Kiss them', icon: '💋', category: 'romantic' }
+  ],
+  physical: [
+    { id: 'touch', label: 'Touch them', icon: '👋', category: 'physical' },
+    { id: 'seduce', label: 'Seduce from behind', icon: '😈', category: 'physical' },
+    { id: 'pin', label: 'Pin them against wall', icon: '🔥', category: 'physical' },
+    { id: 'undress', label: 'Undress them slowly', icon: '✨', category: 'physical' },
+    { id: 'claim', label: 'Mark them as yours', icon: '💋', category: 'physical' }
+  ],
+  bdsm: [
+    { id: 'pin', label: 'Pin them against wall', icon: '🔥', category: 'physical' },
+    { id: 'bind', label: 'Bind their hands', icon: '⛓️', category: 'bdsm' },
+    { id: 'command', label: 'Give them orders', icon: '👑', category: 'bdsm' }
+  ],
+  social: [
+    { id: 'dance', label: 'Dance with them', icon: '💃', category: 'romantic' },
+    { id: 'kiss', label: 'Kiss them publicly', icon: '💋', category: 'social' }
+  ],
+  activity: [
+    { id: 'hunt', label: 'Hunt together', icon: '🔫', category: 'activity' },
+    { id: 'explore', label: 'Explore the night', icon: '🌙', category: 'activity' }
+  ]
+};
 
 export default function HunterIntimate({ hunter, vampires }) {
   const queryClient = useQueryClient();
