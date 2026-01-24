@@ -3,13 +3,17 @@ import { motion } from 'framer-motion';
 import { X, Eye, Users, Target, MessageCircle, Skull, Shield, Zap, Heart, Droplets, Gift, Brain, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import ThrallLoyalty from './ThrallLoyalty';
+import ThrallArmy from './ThrallArmy';
 
 const MISSIONS = [
-  { id: 'spy', label: 'Spy on Someone', icon: Eye, duration: 2, risk: 'medium' },
-  { id: 'infiltrate', label: 'Infiltrate Organization', icon: Users, duration: 3, risk: 'high' },
-  { id: 'guard', label: 'Guard Location', icon: Shield, duration: 1, risk: 'low' },
-  { id: 'messenger', label: 'Deliver Message', icon: MessageCircle, duration: 1, risk: 'low' },
-  { id: 'assassinate', label: 'Eliminate Target', icon: Skull, duration: 2, risk: 'high' }
+  { id: 'spy', label: 'Spy on Someone', icon: Eye, duration: 2, risk: 'medium', roleRequired: 'spy' },
+  { id: 'infiltrate', label: 'Infiltrate Organization', icon: Users, duration: 3, risk: 'high', roleRequired: 'spy' },
+  { id: 'guard', label: 'Guard Location', icon: Shield, duration: 1, risk: 'low', roleRequired: 'guard' },
+  { id: 'messenger', label: 'Deliver Message', icon: MessageCircle, duration: 1, risk: 'low', roleRequired: 'messenger' },
+  { id: 'assassinate', label: 'Eliminate Target', icon: Skull, duration: 2, risk: 'high', roleRequired: 'assassin' },
+  { id: 'seduce', label: 'Seduce Target', icon: Heart, duration: 2, risk: 'medium', roleRequired: 'seducer' },
+  { id: 'sabotage', label: 'Sabotage Operation', icon: Zap, duration: 3, risk: 'high', roleRequired: 'saboteur' }
 ];
 
 const THRALL_ACTIONS = [
@@ -30,6 +34,9 @@ export default function ThrallSystem({ vampireState, onClose }) {
   const [creating, setCreating] = useState(false);
   const [assigning, setAssigning] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [showLoyalty, setShowLoyalty] = useState(false);
+  const [showArmy, setShowArmy] = useState(false);
+  const [showRoles, setShowRoles] = useState(false);
 
   const { data: thralls = [] } = useQuery({
     queryKey: ['thralls', vampireState?.id],
@@ -45,6 +52,29 @@ export default function ThrallSystem({ vampireState, onClose }) {
     queryFn: () => base44.entities.NPC.list()
   });
 
+  const handleAssignRole = async (thrallId, role) => {
+    try {
+      const roleSkills = {
+        spy: { stealth: 3, deception: 3, observation: 3 },
+        assassin: { combat: 3, stealth: 4, precision: 3 },
+        guard: { combat: 4, awareness: 3, loyalty: 4 },
+        seducer: { charm: 4, deception: 3, persuasion: 3 },
+        messenger: { speed: 3, memory: 3, discretion: 3 },
+        saboteur: { technical: 3, stealth: 3, explosives: 3 }
+      };
+
+      await base44.entities.Thrall.update(thrallId, {
+        role: role,
+        skills: roleSkills[role] || {}
+      });
+
+      queryClient.invalidateQueries();
+      setShowRoles(false);
+    } catch (e) {
+      console.error('Failed to assign role:', e);
+    }
+  };
+
   const handleCreateThrall = async (npc) => {
     setCreating(true);
 
@@ -55,6 +85,8 @@ export default function ThrallSystem({ vampireState, onClose }) {
           vampire_id: vampireState.id,
           gender: 'custom',
           control_level: 100,
+          loyalty: 50,
+          rebellion: 0,
           previous_occupation: npc.occupation,
           assigned_mission: 'none',
           useful_connections: [npc.location]
@@ -82,25 +114,40 @@ export default function ThrallSystem({ vampireState, onClose }) {
     setAssigning(true);
 
     setTimeout(async () => {
-      const success = Math.random() > (mission.risk === 'high' ? 0.4 : mission.risk === 'medium' ? 0.2 : 0.1);
+      const loyalty = selectedThrall.loyalty || 50;
+      const successBase = mission.risk === 'high' ? 0.4 : mission.risk === 'medium' ? 0.2 : 0.1;
+      const loyaltyBonus = loyalty / 100;
+      const success = Math.random() > (successBase - loyaltyBonus);
 
       try {
         if (success) {
+          const newXP = (selectedThrall.experience || 0) + 30;
+          const newLevel = Math.floor(newXP / 100) + 1;
+          
           await base44.entities.Thrall.update(selectedThrall.id, {
             assigned_mission: mission.id,
-            mission_progress: 0,
+            mission_progress: 100,
             times_used: (selectedThrall.times_used || 0) + 1,
-            control_level: Math.max((selectedThrall.control_level || 100) - 5, 0)
+            mission_successes: (selectedThrall.mission_successes || 0) + 1,
+            experience: newXP,
+            level: newLevel,
+            control_level: Math.max((selectedThrall.control_level || 100) - 5, 0),
+            loyalty: Math.min((selectedThrall.loyalty || 50) + 5, 100)
           });
 
-          setOutcome(`${selectedThrall.name} accepted the mission. They'll complete it without question.`);
+          setOutcome(`${selectedThrall.name} completed the mission successfully. +5 loyalty, +30 XP.`);
         } else {
+          const betrayalIncrease = Math.random() * 20;
+          
           await base44.entities.Thrall.update(selectedThrall.id, {
             breaking_point: Math.min((selectedThrall.breaking_point || 0) + 30, 100),
-            control_level: Math.max((selectedThrall.control_level || 100) - 15, 0)
+            control_level: Math.max((selectedThrall.control_level || 100) - 15, 0),
+            mission_failures: (selectedThrall.mission_failures || 0) + 1,
+            rebellion: Math.min((selectedThrall.rebellion || 0) + 10, 100),
+            betrayal_risk: Math.min((selectedThrall.betrayal_risk || 0) + betrayalIncrease, 100)
           });
 
-          setOutcome(`Mission failed. ${selectedThrall.name} struggled. Control weakening. They're fighting back.`);
+          setOutcome(`Mission failed. ${selectedThrall.name} struggled. Control weakening. Betrayal risk increasing.`);
         }
 
         await base44.entities.NightLog.create({
@@ -260,6 +307,21 @@ export default function ThrallSystem({ vampireState, onClose }) {
           </div>
         ) : !selectedThrall ? (
           <>
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setShowArmy(true)}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                👥 Manage Army
+              </button>
+              <button
+                onClick={() => setShowRoles(true)}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                🎭 Assign Roles
+              </button>
+            </div>
+
             <h3 className="text-white font-medium mb-3">Your Thralls ({thralls.length})</h3>
             {thralls.length > 0 && (
               <div className="space-y-3 mb-6">
@@ -269,32 +331,29 @@ export default function ThrallSystem({ vampireState, onClose }) {
                     onClick={() => setSelectedThrall(thrall)}
                     className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
                   >
-                    <h4 className="text-white font-medium">{thrall.name}</h4>
-                    <p className="text-gray-400 text-sm">Was: {thrall.previous_occupation}</p>
-                    <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex items-start justify-between mb-1">
                       <div>
-                        <p className="text-gray-500">Control</p>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-700 rounded-full h-1.5">
-                            <div
-                              style={{ width: `${thrall.control_level || 0}%` }}
-                              className="h-1.5 bg-purple-500 rounded-full"
-                            />
-                          </div>
-                          <span className="text-purple-400">{thrall.control_level || 0}</span>
-                        </div>
+                        <h4 className="text-white font-medium">{thrall.name}</h4>
+                        <p className="text-gray-400 text-sm">Was: {thrall.previous_occupation}</p>
+                      </div>
+                      <span className={`text-xs px-2 py-1 rounded font-medium ${
+                        thrall.role === 'none' ? 'bg-gray-700 text-gray-400' : 'bg-purple-600 text-white'
+                      }`}>
+                        {thrall.role === 'none' ? 'Unassigned' : thrall.role}
+                      </span>
+                    </div>
+                    <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <p className="text-gray-500">Level</p>
+                        <p className="text-white font-bold">{thrall.level || 1}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Breaking Point</p>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-700 rounded-full h-1.5">
-                            <div
-                              style={{ width: `${thrall.breaking_point || 0}%` }}
-                              className="h-1.5 bg-red-500 rounded-full"
-                            />
-                          </div>
-                          <span className="text-red-400">{thrall.breaking_point || 0}</span>
-                        </div>
+                        <p className="text-gray-500">Loyalty</p>
+                        <p className={thrall.loyalty > 70 ? 'text-green-400' : 'text-yellow-400'}>{thrall.loyalty || 50}%</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Betrayal Risk</p>
+                        <p className={thrall.betrayal_risk > 60 ? 'text-red-400 font-bold' : 'text-gray-400'}>{Math.round(thrall.betrayal_risk || 0)}%</p>
                       </div>
                     </div>
                   </button>
@@ -338,6 +397,14 @@ export default function ThrallSystem({ vampireState, onClose }) {
               </p>
             </div>
 
+            <button
+              onClick={() => setShowLoyalty(true)}
+              className="w-full bg-red-900/60 hover:bg-red-900/80 rounded-xl p-3 mb-3 text-left transition-colors border border-red-500/30"
+            >
+              <div className="text-white font-medium mb-1">Manage Loyalty</div>
+              <p className="text-red-300 text-xs">Loyalty: {selectedThrall.loyalty || 50}% | Betrayal Risk: {Math.round(selectedThrall.betrayal_risk || 0)}%</p>
+            </button>
+
             <h4 className="text-white text-sm font-medium mb-2">Actions</h4>
             {THRALL_ACTIONS.map(action => {
               const Icon = action.icon;
@@ -380,6 +447,71 @@ export default function ThrallSystem({ vampireState, onClose }) {
               );
             })}
           </div>
+        )}
+
+        {/* Role Assignment Modal */}
+        {showRoles && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setShowRoles(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full border border-purple-500/30"
+            >
+              <h3 className="text-white font-bold mb-4">Assign Roles to Thralls</h3>
+              <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+                {thralls.map(thrall => (
+                  <div key={thrall.id} className="bg-gray-800 rounded-lg p-3">
+                    <p className="text-white font-medium mb-2">{thrall.name}</p>
+                    <div className="grid grid-cols-2 gap-1">
+                      {['spy', 'assassin', 'guard', 'seducer', 'messenger', 'saboteur'].map(role => (
+                        <button
+                          key={role}
+                          onClick={() => handleAssignRole(thrall.id, role)}
+                          className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                            thrall.role === role
+                              ? 'bg-purple-600 text-white'
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                        >
+                          {role}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowRoles(false)}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg mt-4 text-sm"
+              >
+                Done
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Loyalty Management */}
+        {showLoyalty && selectedThrall && (
+          <ThrallLoyalty
+            thrall={selectedThrall}
+            vampireState={vampireState}
+            onClose={() => setShowLoyalty(false)}
+          />
+        )}
+
+        {/* Army Management */}
+        {showArmy && (
+          <ThrallArmy
+            vampireState={vampireState}
+            onClose={() => setShowArmy(false)}
+          />
         )}
       </motion.div>
     </motion.div>
