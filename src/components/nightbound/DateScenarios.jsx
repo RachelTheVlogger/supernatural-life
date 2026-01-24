@@ -419,6 +419,214 @@ export const SIREN_DATE_SCENARIOS = [
   }
 ];
 
+export const HUNTER_DATE_SCENARIOS = [
+  {
+    id: 'hunter_standoff',
+    title: 'Dangerous Standoff',
+    description: 'Face off as predator and hunter',
+    baseScene: 'Weapons drawn. Stakes at maximum. You circle each other, one wrong move away from violence.',
+    branches: [
+      {
+        choice: 'Lower your weapon and trust them',
+        tension: -15,
+        intimacy: 12,
+        relationship: 20,
+        outcomes: [
+          'They lower their weapon too. Vulnerability sparks desire.',
+          'Trust becomes the biggest risk of all.',
+          'Disarmed, you discover something deeper than combat.'
+        ]
+      },
+      {
+        choice: 'Disarm them violently',
+        tension: 18,
+        intimacy: 14,
+        relationship: 2,
+        outcomes: [
+          'You pin them down. Power and danger electrify.',
+          'Their fighting spirit turns them on.',
+          'Struggle becomes foreplay.'
+        ]
+      },
+      {
+        choice: 'Propose a truce',
+        tension: 0,
+        intimacy: 4,
+        relationship: 14,
+        outcomes: [
+          'Enemies turned allies. Respect grows.',
+          'Temporary ceasefire becomes something permanent.',
+          'Common ground builds unexpected connection.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'hunter_chase',
+    title: 'The Hunt Reversed',
+    description: 'They hunt you. You let them.',
+    baseScene: 'You\'ve become the prey. They track you through the night with deadly precision.',
+    branches: [
+      {
+        choice: 'Let them catch you without resistance',
+        tension: -8,
+        intimacy: 16,
+        relationship: 12,
+        outcomes: [
+          'Capture becomes surrender. They\'re shocked by your submission.',
+          'Vulnerability is the ultimate seduction.',
+          'Power dynamics flip in ways they don\'t expect.'
+        ]
+      },
+      {
+        choice: 'Fight back and force them to really work for it',
+        tension: 16,
+        intimacy: 10,
+        relationship: 8,
+        outcomes: [
+          'Chase becomes exhilarating dance.',
+          'Your resistance excites their hunter instinct.',
+          'Victory is only sweet because you made it hard.'
+        ]
+      },
+      {
+        choice: 'Turn the tables mid-chase',
+        tension: 12,
+        intimacy: 8,
+        relationship: 6,
+        outcomes: [
+          'Surprise. They become the hunted.',
+          'They like being outmaneuvered.',
+          'Role reversal intensifies everything.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'hunter_secret',
+    title: 'Reveal the Truth',
+    description: 'Confess what you really are',
+    baseScene: 'You\'ve decided to tell them the truth. Weapons are down. This is the real danger.',
+    branches: [
+      {
+        choice: 'Admit you\'re what they hunt and accept their judgment',
+        tension: -12,
+        intimacy: 18,
+        relationship: 16,
+        outcomes: [
+          'They\'re devastated then transformed by your honesty.',
+          'Acceptance of your nature becomes acceptance of love.',
+          'They choose you knowing exactly what you are.'
+        ]
+      },
+      {
+        choice: 'Show them the monster and dare them to want you anyway',
+        tension: 10,
+        intimacy: 12,
+        relationship: -8,
+        outcomes: [
+          'Fear wars with desire in their eyes.',
+          'They\'re drawn to danger in ways they don\'t understand.',
+          'Attraction becomes darker, more complicated.'
+        ]
+      },
+      {
+        choice: 'Explain your side—why you\'re not the villain',
+        tension: -6,
+        intimacy: 8,
+        relationship: 18,
+        outcomes: [
+          'They finally see your perspective.',
+          'Understanding reframes everything.',
+          'Love becomes alliance against the world.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'hunter_sanctuary',
+    title: 'Hidden Safe House',
+    description: 'A moment of peace in your secret location',
+    baseScene: 'You\'ve brought them to your sanctuary—a place only you know, where hunters never look.',
+    branches: [
+      {
+        choice: 'Show them your true vulnerability',
+        tension: -14,
+        intimacy: 20,
+        relationship: 22,
+        outcomes: [
+          'They see you without armor or fangs.',
+          'Your fear becomes their priority.',
+          'Protection turns into fierce devotion.'
+        ]
+      },
+      {
+        choice: 'Make them your prisoner willingly',
+        tension: 8,
+        intimacy: 16,
+        relationship: 6,
+        outcomes: [
+          'Captivity becomes consensual obsession.',
+          'They like belonging to you.',
+          'Chains feel like safety.'
+        ]
+      },
+      {
+        choice: 'Plan something together against common enemies',
+        tension: 2,
+        intimacy: 6,
+        relationship: 16,
+        outcomes: [
+          'Partnership becomes romantic.',
+          'They see you as an equal strategist.',
+          'Love and war unite perfectly.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'hunter_sacrifice',
+    title: 'The Ultimate Price',
+    description: 'One of you would sacrifice everything',
+    baseScene: 'A hunter\'s organization has them in their sights. You could save them but only by betraying everything.',
+    branches: [
+      {
+        choice: 'Betray your own kind to protect them',
+        tension: -10,
+        intimacy: 24,
+        relationship: 28,
+        outcomes: [
+          'You\'ve burned bridges for them.',
+          'Love becomes your only identity now.',
+          'They owe you everything—forever.'
+        ]
+      },
+      {
+        choice: 'Ask them to choose: you or their cause',
+        tension: 8,
+        intimacy: 4,
+        relationship: -12,
+        outcomes: [
+          'They\'re torn apart by impossible choice.',
+          'Resentment festers no matter what they choose.',
+          'Love isn\'t enough against duty.'
+        ]
+      },
+      {
+        choice: 'Help them escape without sacrificing yourself',
+        tension: 4,
+        intimacy: 10,
+        relationship: 14,
+        outcomes: [
+          'You both survive with boundaries intact.',
+          'Love grows from mutual respect.',
+          'No one owes anyone everything.'
+        ]
+      }
+    ]
+  }
+];
+
 export const NYMPH_DATE_SCENARIOS = [
   {
     id: 'sacred_spring',
