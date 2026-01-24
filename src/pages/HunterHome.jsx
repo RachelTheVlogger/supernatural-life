@@ -8,6 +8,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import HunterHuntLog from '@/components/nightbound/HunterHuntLog';
 import HunterHomeActivities from '@/components/nightbound/HunterHomeActivities';
 import HunterIntimate from '@/components/nightbound/HunterIntimate';
+import DrugPlantGrowth from '@/components/nightbound/DrugPlantGrowth';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function HunterHome() {
   const [showHuntLog, setShowHuntLog] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
   const [showIntimate, setShowIntimate] = useState(false);
+  const [showPlants, setShowPlants] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -149,36 +151,43 @@ export default function HunterHome() {
               className="space-y-4"
             >
               <div className="grid md:grid-cols-2 gap-4">
-                {/* Living Space */}
-                <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
-                  <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                    <Home className="w-5 h-5" />
-                    Safe House
-                  </h3>
-                  <div className="space-y-3">
-                    <button
-                      onClick={() => setShowActivities(true)}
-                      className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                    >
-                      <h4 className="text-white font-medium">🧹 Clean & Maintain</h4>
-                      <p className="text-gray-400 text-sm">Organize weapons, clean gear, prepare for next hunt</p>
-                    </button>
-                    <button
-                      onClick={() => setShowActivities(true)}
-                      className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                    >
-                      <h4 className="text-white font-medium">🍽️ Eat & Rest</h4>
-                      <p className="text-gray-400 text-sm">Recover health, regain energy, study late into night</p>
-                    </button>
-                    <button
-                      onClick={() => setShowActivities(true)}
-                      className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                    >
-                      <h4 className="text-white font-medium">📚 Research Lore</h4>
-                      <p className="text-gray-400 text-sm">Improve understanding of supernatural creatures</p>
-                    </button>
-                  </div>
-                </div>
+              {/* Living Space */}
+              <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+              <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                <Home className="w-5 h-5" />
+                Safe House
+              </h3>
+              <div className="space-y-3">
+                <button
+                  onClick={() => setShowActivities(true)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">🧹 Clean & Maintain</h4>
+                  <p className="text-gray-400 text-sm">Organize weapons, clean gear, prepare for next hunt</p>
+                </button>
+                <button
+                  onClick={() => setShowActivities(true)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">🍽️ Eat & Rest</h4>
+                  <p className="text-gray-400 text-sm">Recover health, regain energy, study late into night</p>
+                </button>
+                <button
+                  onClick={() => setShowActivities(true)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">📚 Research Lore</h4>
+                  <p className="text-gray-400 text-sm">Improve understanding of supernatural creatures</p>
+                </button>
+                <button
+                  onClick={() => setShowPlants(true)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">🌱 Grow Plants</h4>
+                  <p className="text-gray-400 text-sm">Cultivate drugs. Realistic or hidden appearance.</p>
+                </button>
+              </div>
+              </div>
 
                 {/* Current Status */}
                 <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
@@ -238,6 +247,10 @@ export default function HunterHome() {
             >
               <HunterIntimate hunter={hunter} vampires={vampires} />
             </motion.div>
+          )}
+
+          {showPlants && (
+            <DrugPlantGrowth hunter={hunter} onClose={() => setShowPlants(false)} />
           )}
         </AnimatePresence>
       </motion.div>
