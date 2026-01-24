@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { AnimatePresence } from 'framer-motion';
-import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle, Heart, User, Target } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle, Heart, User, Target, Crosshair } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
