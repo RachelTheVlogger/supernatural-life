@@ -133,7 +133,15 @@ export default function HunterHome() {
             return (
               <button
                 key={tab.id}
-                onClick={() => tab.id === 'abilities' ? setShowAbilities(true) : setActiveTab(tab.id)}
+                onClick={() => {
+                  if (tab.id === 'vamp') {
+                    setShowVampireTab(true);
+                  } else if (tab.id === 'abilities') {
+                    setShowAbilities(true);
+                  } else {
+                    setActiveTab(tab.id);
+                  }
+                }}
                 className={`rounded-lg p-3 transition-all flex flex-col items-center gap-2 ${
                   activeTab === tab.id
                     ? 'bg-red-600 text-white'
