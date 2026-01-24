@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Target, Eye, Sword, MessageCircle, Heart, Skull, Footprints } from 'lucide-react';
+import { X, Target, Eye, Sword, MessageCircle, Heart, Skull, Footprints, ShoppingCart, Users } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import HunterEncounter from './HunterEncounter';
+import HunterWeaponShop from './HunterWeaponShop';
+import HunterSupernaturalInteraction from './HunterSupernatualInteraction';
 
 export default function HunterThreatModal({ onClose, vampireState }) {
   const queryClient = useQueryClient();
@@ -11,6 +13,8 @@ export default function HunterThreatModal({ onClose, vampireState }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [showNightWalk, setShowNightWalk] = useState(false);
+  const [showWeaponShop, setShowWeaponShop] = useState(false);
+  const [showSupernaturalInteraction, setShowSupernaturalInteraction] = useState(false);
 
   const { data: hunters = [], isLoading } = useQuery({
     queryKey: ['hunters'],
@@ -156,10 +160,36 @@ export default function HunterThreatModal({ onClose, vampireState }) {
 
   return (
     <>
+      {showWeaponShop && selectedHunter && (
+        <HunterWeaponShop
+          hunter={selectedHunter}
+          onClose={() => setShowWeaponShop(false)}
+          onPurchase={(weapon) => {
+            base44.entities.NightLog.create({
+              entry: `${selectedHunter.name} purchased ${weapon.name}.`,
+              category: 'hunting',
+              intensity: 'minor'
+            });
+          }}
+        />
+      )}
+      {showSupernaturalInteraction && selectedHunter && (
+        <HunterSupernaturalInteraction
+          hunter={selectedHunter}
+          onClose={() => setShowSupernaturalInteraction(false)}
+          onInteraction={(data) => {
+            base44.entities.NightLog.create({
+              entry: `${selectedHunter.name}: ${data.interaction.label} vs ${data.target.type}. Success: ${data.success}`,
+              category: 'hunting',
+              intensity: 'moderate'
+            });
+          }}
+        />
+      )}
       {showNightWalk && (
         <HunterEncounter vampireState={vampireState} onClose={() => setShowNightWalk(false)} />
       )}
-      {!showNightWalk && (
+      {!showNightWalk && !showWeaponShop && !showSupernaturalInteraction && (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -189,16 +219,31 @@ export default function HunterThreatModal({ onClose, vampireState }) {
           Exposure: {vampireState.exposure_level || 0}% {(vampireState.exposure_level || 0) < 20 && '(Low exposure - no hunters yet)'}
         </p>
 
-        <button
-          onClick={() => setShowNightWalk(true)}
-          className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-3 mb-4 transition-colors flex items-center gap-2"
-        >
-          <Footprints className="w-5 h-5 text-purple-400" />
-          <div className="flex-1 text-left">
-            <h4 className="text-white font-medium text-sm">Night Walk</h4>
-            <p className="text-gray-400 text-xs">Walk the streets. Might run into a hunter.</p>
-          </div>
-        </button>
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          <button
+            onClick={() => setShowNightWalk(true)}
+            className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-3 transition-colors flex flex-col items-center gap-1"
+          >
+            <Footprints className="w-5 h-5 text-purple-400" />
+            <span className="text-white text-xs font-medium">Night Walk</span>
+          </button>
+          <button
+            onClick={() => setShowWeaponShop(true)}
+            className="bg-yellow-900/40 hover:bg-yellow-900/60 border border-yellow-500/30 rounded-xl p-3 transition-colors flex flex-col items-center gap-1"
+          >
+            <ShoppingCart className="w-5 h-5 text-yellow-400" />
+            <span className="text-white text-xs font-medium">Armory</span>
+          </button>
+          {hunters.length > 0 && (
+            <button
+              onClick={() => setShowSupernaturalInteraction(true)}
+              className="col-span-2 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-3 transition-colors flex items-center justify-center gap-2"
+            >
+              <Users className="w-5 h-5 text-red-400" />
+              <span className="text-white text-xs font-medium">Hunt Supernatural</span>
+            </button>
+          )}
+        </div>
 
         {hunters.length === 0 ? (
           <div className="text-center py-12">
@@ -318,6 +363,19 @@ export default function HunterThreatModal({ onClose, vampireState }) {
         )}
       </motion.div>
     </motion.div>
+      )}
+      {showWeaponShop && !selectedHunter && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90">
+          <motion.div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full">
+            <p className="text-gray-400 mb-4">Select a hunter first to equip weapons.</p>
+            <button
+              onClick={() => setShowWeaponShop(false)}
+              className="w-full bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
+            >
+              Close
+            </button>
+          </motion.div>
+        </div>
       )}
     </>
   );
