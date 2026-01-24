@@ -78,12 +78,12 @@ export default function Layout({ children, currentPageName }) {
   const firstServantId = currentServant?.id || (servants.length > 0 ? servants[0].id : null);
   
   const navItems = [
-    { name: 'Night', icon: Moon, path: 'Night', show: currentPageName === 'Night' || currentPageName === 'VampireHome' },
-    { name: 'Vamp', icon: Home, path: 'VampireHome', show: currentPageName === 'Night' || currentPageName === 'VampireHome' },
-    { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0, show: currentPageName === 'Night' || currentPageName === 'VampireHome' || currentPageName === 'ServantHome' },
-    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: currentPageName === 'WitchHome' },
-    { name: 'Siren', icon: Waves, path: 'SirenHome', show: currentPageName === 'SirenHome' },
-    { name: 'Nymph', icon: Droplets, path: 'WaterNymphHome', show: currentPageName === 'WaterNymphHome' }
+    { name: 'Night', icon: Moon, path: 'Night' },
+    { name: 'Vamp', icon: Home, path: 'VampireHome' },
+    { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
+    { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
+    { name: 'Siren', icon: Waves, path: 'SirenHome', show: sirens.length > 0 },
+    { name: 'Nymph', icon: Droplets, path: 'WaterNymphHome', show: nymphs.length > 0 }
   ];
   
   return (
