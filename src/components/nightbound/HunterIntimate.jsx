@@ -222,9 +222,9 @@ export default function HunterIntimate({ hunter, vampires }) {
 
     setTimeout(async () => {
       try {
-        const hunterOutcome = selectRandomOutcome(action.id);
+        const hunterOutcome = selectRandomOutcome(action.id, initiator);
         await base44.entities.NightLog.create({
-          entry: `${hunter.name}: ${hunterOutcome}`,
+          entry: `${initiator === 'hunter' ? hunter.name : validPartners[0]?.name}: ${hunterOutcome}`,
           category: 'interaction',
           intensity: 'high'
         });
