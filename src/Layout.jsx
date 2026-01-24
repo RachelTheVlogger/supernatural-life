@@ -79,6 +79,19 @@ export default function Layout({ children, currentPageName }) {
     },
     retry: 1
   });
+
+  const { data: heretics = [] } = useQuery({
+    queryKey: ['heretics'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Heretic.list();
+      } catch (e) {
+        console.error('Failed to fetch heretics:', e);
+        return [];
+      }
+    },
+    retry: 1
+  });
   
   // Show nav on main game pages only
   const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome', 'SirenHome', 'WaterNymphHome', 'MutantHome'].includes(currentPageName);
