@@ -83,7 +83,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 0, disabled: servants.length === 0 },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
     { name: 'Siren', icon: Waves, path: 'SirenHome', show: sirens.length > 0 },
-    { name: 'Nymph', icon: Droplets, path: 'WaterNymphHome', show: nymphs.length > 0 }
+    { name: 'Nymph', icon: Droplets, path: 'WaterNymphHome' }
   ];
   
   return (
