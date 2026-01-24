@@ -173,7 +173,7 @@ export default function VampireHunterInteraction({ vampire, hunter, onClose }) {
 
         {/* Category Tabs */}
         <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
-          {['all', 'seductive', 'menacing', 'tactical', 'mysterious', 'bargain'].map(cat => (
+          {['all', 'seductive', 'menacing', 'tactical', 'mysterious', 'bargain', 'convert'].map(cat => (
             <button
               key={cat}
               onClick={() => {
