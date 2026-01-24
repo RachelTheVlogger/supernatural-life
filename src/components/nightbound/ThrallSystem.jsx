@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Eye, Users, Target, MessageCircle, Skull, Shield, Zap } from 'lucide-react';
+import { X, Eye, Users, Target, MessageCircle, Skull, Shield, Zap, Heart } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -15,6 +15,7 @@ const MISSIONS = [
 const THRALL_ACTIONS = [
   { id: 'reinforce', label: 'Reinforce Control', desc: 'Break their mind further. Restore control.', icon: Zap },
   { id: 'extract', label: 'Extract Information', desc: 'Force them to reveal everything they know.', icon: Eye },
+  { id: 'use', label: 'Use Them', desc: 'They exist to serve your desires. No resistance.', icon: Heart },
   { id: 'bait', label: 'Use as Bait', desc: 'Sacrifice them to lure enemies.', icon: Target },
   { id: 'dispose', label: 'Dispose of Thrall', desc: 'Kill them. They served their purpose.', icon: Skull }
 ];
@@ -131,6 +132,18 @@ export default function ThrallSystem({ vampireState, onClose }) {
         } else if (action.id === 'extract') {
           const info = ['They know about the hunter network', 'They revealed council secrets', 'They exposed rival vampire locations', 'They gave you blackmail material'][Math.floor(Math.random() * 4)];
           setOutcome(`${selectedThrall.name} told you everything. ${info}. Information extracted.`);
+        } else if (action.id === 'use') {
+          const outcomes = [
+            `${selectedThrall.name} served without resistance. Empty eyes. No thoughts. Just obedience. You used them completely.`,
+            `You took what you wanted from ${selectedThrall.name}. They couldn't refuse. Didn't even try. Perfect submission.`,
+            `${selectedThrall.name}'s body obeyed every command. Mind too broken to resist. They exist only to serve your desires.`,
+            `You claimed ${selectedThrall.name} entirely. They performed without hesitation. No will left to deny you anything.`
+          ];
+          setOutcome(outcomes[Math.floor(Math.random() * outcomes.length)]);
+          await base44.entities.Thrall.update(selectedThrall.id, {
+            control_level: Math.max((selectedThrall.control_level || 100) - 3, 0),
+            times_used: (selectedThrall.times_used || 0) + 1
+          });
         } else if (action.id === 'bait') {
           await base44.entities.Thrall.delete(selectedThrall.id);
           setOutcome(`You used ${selectedThrall.name} as bait. They died. But you got what you needed.`);
