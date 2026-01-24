@@ -210,7 +210,7 @@ export default function HunterIntimate({ hunter, vampires }) {
             </h2>
             <p className="text-gray-400">They're here with you. What will you do?</p>
           </div>
-          <button className="text-gray-400 hover:text-white">
+          <button onClick={() => window.history.back()} className="text-gray-400 hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
