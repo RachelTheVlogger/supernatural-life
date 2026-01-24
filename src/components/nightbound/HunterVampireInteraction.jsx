@@ -162,17 +162,18 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
 
     // Simulate message being sent
     setTimeout(async () => {
-      const response = VAMPIRE_RESPONSES[option.reaction];
+      const responseTexts = VAMPIRE_RESPONSES[option.reaction];
+      const vampireText = responseTexts[Math.floor(Math.random() * responseTexts.length)];
+      
       setVampireResponse({
         ...option,
-        vampireText: response.texts[Math.floor(Math.random() * response.texts.length)],
-        emoji: response.emoji
+        vampireText: vampireText
       });
 
       setConversationHistory(prev => [...prev, {
         hunterMessage: option.text,
         vampireReaction: option.reaction,
-        vampireText: response.texts[Math.floor(Math.random() * response.texts.length)]
+        vampireText: vampireText
       }]);
 
       try {
