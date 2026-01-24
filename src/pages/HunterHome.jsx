@@ -21,7 +21,6 @@ export default function HunterHome() {
   const [showIntimate, setShowIntimate] = useState(false);
   const [showAbilities, setShowAbilities] = useState(false);
   const [showInteraction, setShowInteraction] = useState(false);
-  const [showVampireTab, setShowVampireTab] = useState(false);
   const [selectedVampire, setSelectedVampire] = useState(null);
 
   const { data: hunters = [] } = useQuery({
