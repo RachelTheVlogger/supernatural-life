@@ -30,6 +30,7 @@ export default function NymphDating({ nymph, onClose }) {
   const [creating, setCreating] = useState(false);
   const [dating, setDating] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [currentScenario, setCurrentScenario] = useState(null);
 
   const { data: dates = [] } = useQuery({
     queryKey: ['nymphDates', nymph?.id],
@@ -301,6 +302,14 @@ export default function NymphDating({ nymph, onClose }) {
             </div>
 
             <h4 className="text-white text-sm font-medium mb-2">Date Activities</h4>
+            <button
+              onClick={() => setCurrentScenario(NYMPH_DATE_SCENARIOS[Math.floor(Math.random() * NYMPH_DATE_SCENARIOS.length)])}
+              className="w-full bg-gradient-to-r from-emerald-900/60 to-green-900/60 hover:from-emerald-900/80 hover:to-green-900/80 border-2 border-emerald-500/50 rounded-xl py-4 px-4 transition-colors text-white font-medium mb-3"
+            >
+              ✨ Interactive Date Scenario
+            </button>
+
+            <p className="text-gray-400 text-xs mb-2">Or select a quick activity:</p>
             {DATE_ACTIVITIES.map((activity, i) => (
               <button
                 key={i}
