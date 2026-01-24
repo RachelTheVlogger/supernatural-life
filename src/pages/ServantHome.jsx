@@ -41,7 +41,12 @@ const CHORES = [
   { id: 'tea', label: 'Brew tea', icon: Coffee, duration: 1500, outcomes: ['You made tea. Waiting for them to return.', 'The tea grows cold. They\'re still out.', 'You saved some for when they come back.'] },
   { id: 'bathe', label: 'Draw a bath', icon: Droplets, duration: 2000, outcomes: ['You prepared a bath for them. Rose petals floating.', 'Hot water. Steam. You wonder if they\'ll invite you to stay.', 'The bath is ready. You hope they notice.'] },
   { id: 'wardrobe', label: 'Tend their wardrobe', icon: Shirt, duration: 2000, outcomes: ['You brushed their clothes. Your fingers traced the fabric they wear.', 'Everything folded perfectly. You breathed in their scent.', 'You repaired a tear in their sleeve. Small ways to care for them.'] },
-  { id: 'wait', label: 'Wait by the window', icon: Moon, duration: 3000, outcomes: ['You watched the night. Waiting. Always waiting.', 'Every shadow could be them returning.', 'The hours pass differently when they\'re gone.'] }
+  { id: 'wait', label: 'Wait by the window', icon: Moon, duration: 3000, outcomes: ['You watched the night. Waiting. Always waiting.', 'Every shadow could be them returning.', 'The hours pass differently when they\'re gone.'] },
+  { id: 'cook', label: 'Cook their meal', icon: Coffee, duration: 2500, outcomes: ['You prepared their favorite dish. The kitchen fills with warmth and scent.', 'You cooked with care. Every gesture an act of devotion.', 'The meal is ready. You hope they come home hungry for more than food.'] },
+  { id: 'music', label: 'Play music for them', icon: Sparkles, duration: 2000, outcomes: ['You played their favorite song. The notes float through the apartment.', 'Soft music fills the air. You imagined them listening to it.', 'The melody lingers. A gift for when they return.'] },
+  { id: 'flowers', label: 'Arrange fresh flowers', icon: Sparkles, duration: 1500, outcomes: ['You placed flowers where they\'ll see them. Beauty arranged for them.', 'Petals in a vase. Color and fragrance. A silent gesture of care.', 'The flowers bloom. You hope they understand what this means.'] },
+  { id: 'write', label: 'Write them a letter', icon: BookOpen, duration: 2500, outcomes: ['You wrote everything you couldn\'t say aloud. The pen trembled in your hand.', 'Words poured out. Confessions. Devotion. Dangerous things.', 'The letter sits waiting. Will they read it? Will they understand?'] },
+  { id: 'reflect', label: 'Reflect on your bond', icon: Moon, duration: 3000, outcomes: ['You thought about the night they turned you. Everything changed.', 'You replayed memories. Their touch. Their voice. Your addiction to them.', 'The bond pulses through you. Master. Sire. Everything.'] }
 ];
 
 const VAMPIRE_ACTIVITIES = [
