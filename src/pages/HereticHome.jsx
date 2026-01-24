@@ -8,6 +8,9 @@ import { Wand2, Droplet, Zap, Heart, Edit2, Plus, BookOpen, Moon, Users, Award, 
 import HereticAllies from '@/components/nightbound/HereticAllies';
 import HereticRivalries from '@/components/nightbound/HereticRivalries';
 import HereticReputation from '@/components/nightbound/HereticReputation';
+import HereticAbilityTree from '@/components/nightbound/HereticAbilityTree';
+import HereticHybridPowers from '@/components/nightbound/HereticHybridPowers';
+import HereticPowerPath from '@/components/nightbound/HereticPowerPath';
 
 export default function HereticHome() {
   const queryClient = useQueryClient();
@@ -23,6 +26,9 @@ export default function HereticHome() {
   const [showAllies, setShowAllies] = useState(false);
   const [showRivalries, setShowRivalries] = useState(false);
   const [showReputation, setShowReputation] = useState(false);
+  const [showAbilities, setShowAbilities] = useState(false);
+  const [showHybrids, setShowHybrids] = useState(false);
+  const [showPowerPath, setShowPowerPath] = useState(false);
 
   const { data: heretics = [] } = useQuery({
     queryKey: ['heretics'],
@@ -469,6 +475,15 @@ export default function HereticHome() {
         )}
         {showReputation && heretic && (
           <HereticReputation heretic={heretic} onClose={() => setShowReputation(false)} />
+        )}
+        {showAbilities && heretic && (
+          <HereticAbilityTree heretic={heretic} onClose={() => setShowAbilities(false)} />
+        )}
+        {showHybrids && heretic && (
+          <HereticHybridPowers heretic={heretic} onClose={() => setShowHybrids(false)} />
+        )}
+        {showPowerPath && heretic && (
+          <HereticPowerPath heretic={heretic} onClose={() => setShowPowerPath(false)} />
         )}
 
         {/* Stats Summary */}
