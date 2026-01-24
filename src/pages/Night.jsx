@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { AnimatePresence } from 'framer-motion';
-import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle, Heart, User } from 'lucide-react';
+import { Droplets, Users, BookOpen, Eye, Zap, Home, Moon, HelpCircle, Heart, User, Target } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
@@ -22,6 +22,7 @@ import TerritoryMap from '@/components/nightbound/TerritoryMap';
 import HunterThreatModal from '@/components/nightbound/HunterThreatModal';
 import BloodTypeSystem from '@/components/nightbound/BloodTypeSystem';
 import VampireWeaknessModal from '@/components/nightbound/VampireWeaknessModal';
+import HunterEncounter from '@/components/nightbound/HunterEncounter';
 import MilestonesDisplay from '@/components/nightbound/MilestonesDisplay';
 import CovenManagement from '@/components/nightbound/CovenManagement';
 import ServantInteractions from '@/components/nightbound/ServantInteractions';
@@ -79,6 +80,7 @@ export default function Night() {
   const [showMemoryEdit, setShowMemoryEdit] = useState(false);
   const [showVintage, setShowVintage] = useState(false);
   const [showSupernaturalDating, setShowSupernaturalDating] = useState(false);
+  const [showHunterWalk, setShowHunterWalk] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
 
   // Fetch vampire state
@@ -283,6 +285,7 @@ export default function Night() {
     { icon: Users, label: 'Servants', modal: 'servants' },
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
     { icon: Heart, label: 'Mutual Watch', modal: 'stalking' },
+    { icon: Target, label: 'Night Walk', action: () => setShowHunterWalk(true) },
     { icon: Zap, label: 'Powers', modal: 'powers' },
     { icon: User, label: 'Possess Someone', modal: 'possession' },
     { icon: Users, label: 'Town People', modal: 'npcs' },
@@ -352,9 +355,9 @@ export default function Night() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: (servants.length > 1 ? 0.1 : 0.05) + i * 0.05 }}
-            onClick={() => setActiveModal(action.modal)}
+            onClick={() => action.action ? action.action() : setActiveModal(action.modal)}
             className="bitlife-btn w-full rounded-xl py-4 px-6 flex items-center gap-3 shadow-lg"
-          >
+            >
             <action.icon className="w-5 h-5" />
             <span className="text-base font-medium">{action.label}</span>
           </motion.button>
@@ -823,7 +826,10 @@ export default function Night() {
         {showSupernaturalDating && vampireState && (
           <SupernaturalDating vampireState={vampireState} onClose={() => setShowSupernaturalDating(false)} />
         )}
-      </AnimatePresence>
+        {showHunterWalk && vampireState && (
+          <HunterEncounter vampireState={vampireState} onClose={() => setShowHunterWalk(false)} />
+        )}
+        </AnimatePresence>
     </div>
   );
 }
