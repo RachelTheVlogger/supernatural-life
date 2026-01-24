@@ -243,8 +243,10 @@ export default function HunterHome() {
             </motion.div>
           )}
 
-
-        </AnimatePresence>
+          {showAbilities && (
+           <HunterAbilityShop hunter={hunter} onClose={() => setShowAbilities(false)} />
+          )}
+          </AnimatePresence>
       </motion.div>
     </div>
   );
