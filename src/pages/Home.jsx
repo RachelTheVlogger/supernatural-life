@@ -104,18 +104,32 @@ export default function Home() {
       queryClient.invalidateQueries();
       navigate(createPageUrl('SirenHome'));
     } else if (selectedType === 'nymph') {
-      await base44.entities.WaterNymph.create({
-        name: characterName.trim(),
-        gender: characterGender,
-        sexuality: characterSexuality,
-        nature_bond: 50,
-        water_purity: 100,
-        unlocked_powers: ['Water Breathing']
-      });
-      queryClient.invalidateQueries();
-      navigate(createPageUrl('WaterNymphHome'));
-    }
-    };
+       await base44.entities.WaterNymph.create({
+         name: characterName.trim(),
+         gender: characterGender,
+         sexuality: characterSexuality,
+         nature_bond: 50,
+         water_purity: 100,
+         unlocked_powers: ['Water Breathing']
+       });
+       queryClient.invalidateQueries();
+       navigate(createPageUrl('WaterNymphHome'));
+     } else if (selectedType === 'mutant') {
+       await base44.entities.Mutant.create({
+         name: characterName.trim(),
+         gender: characterGender,
+         sexuality: characterSexuality,
+         mutant_type: 'enhanced',
+         power_level: 30,
+         mutation_stability: 50,
+         transformation_stage: 1,
+         unlocked_powers: [],
+         mutations_activated: 0
+       });
+       queryClient.invalidateQueries();
+       navigate(createPageUrl('MutantHome'));
+     }
+     };
   
   const handleContinue = () => {
     // Navigate to the appropriate home based on what characters exist
