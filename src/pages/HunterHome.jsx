@@ -121,13 +121,14 @@ export default function HunterHome() {
         transition={{ delay: 0.2 }}
         className="max-w-4xl mx-auto"
       >
-        <div className="grid grid-cols-4 gap-2 mb-8">
-          {[
-            { id: 'home', label: 'Home', icon: Home },
-            { id: 'hunting', label: 'Hunt Log', icon: FileText },
-            { id: 'activities', label: 'Activities', icon: Utensils },
-            { id: 'intimate', label: 'Intimate', icon: Heart }
-          ].map(tab => {
+        <div className="grid grid-cols-5 gap-2 mb-8">
+            {[
+              { id: 'home', label: 'Home', icon: Home },
+              { id: 'hunting', label: 'Hunt Log', icon: FileText },
+              { id: 'activities', label: 'Activities', icon: Utensils },
+              { id: 'intimate', label: 'Intimate', icon: Heart },
+              { id: 'vamp', label: 'Vamp', icon: Zap }
+            ].map(tab => {
             const Icon = tab.icon;
             return (
               <button
