@@ -598,7 +598,28 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && (
+            {introStep === 4 && selectedType === 'mutant' && (
+              <>
+                <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
+                <p className="text-yellow-300 text-sm mb-6">Your mutation awaits.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIntroStep(3)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={startNewGame}
+                    className="flex-1 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded-lg py-3 text-white font-medium transition-all"
+                  >
+                    Begin
+                  </button>
+                </div>
+              </>
+            )}
+
+            {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && selectedType !== 'mutant' && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your personality</h2>
                 <p className="text-purple-300 text-sm mb-4">Who are you at your core?</p>
