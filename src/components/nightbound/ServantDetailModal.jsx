@@ -573,12 +573,17 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
             
             <button
-              onClick={(e) => {
+              onTouchEnd={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                console.log('Town People button clicked');
                 setShowTownPeople(true);
               }}
-              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3 touch-manipulation"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowTownPeople(true);
+              }}
+              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3 active:scale-95 transition-transform"
             >
               <Users className="w-5 h-5" />
               <span>Introduce to Town People</span>
