@@ -39,174 +39,111 @@ const DIALOGUE_OPTIONS = {
 };
 
 const VAMPIRE_RESPONSES = {
-  blush: {
-    texts: [
-      'A faint blush crosses their pale features.',
-      'They look away, a small smile playing at their lips.',
-      'Their composure wavers for just a moment.'
-    ],
-    emoji: '🥀'
-  },
-  smirk: {
-    texts: [
-      'They smirk, eyes gleaming with amusement.',
-      'A dangerous smile spreads across their face.',
-      'They lean in closer, their expression darkening with intrigue.'
-    ],
-    emoji: '😏'
-  },
-  tense: {
-    texts: [
-      'Their jaw tightens. Eyes flare red for a moment.',
-      'They freeze, clearly fighting internal urges.',
-      'The air between you grows thick with tension.'
-    ],
-    emoji: '⚡'
-  },
-  intense: {
-    texts: [
-      'Their breathing quickens. They move closer, unable to resist.',
-      'Pure hunger flashes across their features.',
-      'They reach for you, eyes completely red.'
-    ],
-    emoji: '🔥'
-  },
-  anger: {
-    texts: [
-      'Their eyes turn completely crimson. Fangs bare.',
-      'A low growl reverberates through the room.',
-      'Power radiates from them, dangerous and suffocating.'
-    ],
-    emoji: '😤'
-  },
-  defiant: {
-    texts: [
-      'They laugh, a dangerous sound echoing.',
-      'Their expression hardens. "Try," they whisper.',
-      'They stand taller, clearly unimpressed by your threat.'
-    ],
-    emoji: '⚔️'
-  },
-  stern: {
-    texts: [
-      'Something flashes in their eyes. Respect, maybe?',
-      'They study you with newfound intensity.',
-      'A moment of silence passes between you.'
-    ],
-    emoji: '👁️'
-  },
-  grief: {
-    texts: [
-      'Their expression goes distant, haunted.',
-      'For a moment, you see the weight of centuries in their eyes.',
-      'They look away, voice quiet. "You don\'t understand the cost."'
-    ],
-    emoji: '💔'
-  },
-  thoughtful: {
-    texts: [
-      'They pause, considering your question seriously.',
-      'A far-away look crosses their face.',
-      'They settle in, as if remembering lives long past.'
-    ],
-    emoji: '🤔'
-  },
-  nostalgic: {
-    texts: [
-      'They lean back, eyes distant with memory.',
-      'A sad smile touches their lips.',
-      'They begin speaking of centuries gone by...'
-    ],
-    emoji: '🌙'
-  },
-  conflicted: {
-    texts: [
-      'They struggle visibly with the question.',
-      'Pain flickers across their features.',
-      'They look at you with something like desperation.'
-    ],
-    emoji: '😔'
-  },
-  melancholy: {
-    texts: [
-      'Sadness washes over them.',
-      'They shake their head slowly.',
-      '"Every day," they whisper.'
-    ],
-    emoji: '🌧️'
-  },
-  breathless: {
-    texts: [
-      'They let out a shaky breath. Eyes glow red.',
-      'They press against you, unable to hold back anymore.',
-      'Words escape them in whispered need...'
-    ],
-    emoji: '💨'
-  },
-  predatory: {
-    texts: [
-      'A slow, predatory smile crosses their face.',
-      'They advance on you with controlled intensity.',
-      'The hunter becomes the hunted...'
-    ],
-    emoji: '🦇'
-  },
-  hungry: {
-    texts: [
-      'They pull you close, their hunger evident.',
-      'Fangs trace along your neck...',
-      'You\'re completely under their spell.'
-    ],
-    emoji: '🩸'
-  },
-  desperate: {
-    texts: [
-      'They grip you tightly, needing you.',
-      'Their whispered pleas are lost against your skin.',
-      'There\'s nothing controlled about them now...'
-    ],
-    emoji: '💫'
-  },
-  respectful: {
-    texts: [
-      'Respect flickers in their crimson eyes.',
-      'They nod slowly, understanding your conviction.',
-      'A moment of mutual recognition passes between you.'
-    ],
-    emoji: '🙏'
-  },
-  sad: {
-    texts: [
-      'They look at you with deep sorrow.',
-      '"It\'s not that simple," they whisper.',
-      'The weight of their nature is written on their face.'
-    ],
-    emoji: '😞'
-  },
-  surprised: {
-    texts: [
-      'Shock registers on their features.',
-      'They study you with new intensity.',
-      'For the first time, they seem vulnerable.'
-    ],
-    emoji: '😮'
-  },
-  grateful: {
-    texts: [
-      'Tears glimmer in their ancient eyes.',
-      'They reach for you, voice breaking slightly.',
-      '"No one has ever... Thank you."'
-    ],
-    emoji: '🌟'
-  },
-  grin: {
-    texts: [
-      'A wicked grin spreads across their face.',
-      'They chuckle darkly, circling you like prey.',
-      'Challenge lights up their eyes.'
-    ],
-    emoji: '😈'
-  }
+  blush: [
+    'They look away for a moment, a faint smile crossing their features.',
+    'They pause, composure wavering slightly as they meet your eyes again.',
+    'Something unguarded flashes across their face before they compose themselves.'
+  ],
+  smirk: [
+    'A knowing smile plays at their lips as they regard you.',
+    'They lean forward slightly, amusement evident in their expression.',
+    'Their eyes dance with interest as they watch you.'
+  ],
+  tense: [
+    'Their jaw clenches. They look away, clearly struggling.',
+    'The air grows heavy between you. Their eyes briefly glow.',
+    'They take a breath, composing themselves with visible effort.'
+  ],
+  intense: [
+    'They move closer, eyes darkening with need.',
+    'Their breathing becomes audible. They reach out slowly.',
+    'Everything about their body language screams hunger.'
+  ],
+  anger: [
+    'Their eyes flash crimson. Fangs bare momentarily.',
+    'A low growl escapes them. Power radiates from their frame.',
+    'They turn away sharply, clearly struggling for control.'
+  ],
+  defiant: [
+    'They laugh, a dangerous sound in the silence.',
+    '"You could try," they say quietly, facing you unflinching.',
+    'They stand taller, utterly unmoved by your words.'
+  ],
+  stern: [
+    'They study you for a long moment, something shifting in their gaze.',
+    'A new respect seems to flicker across their features.',
+    'They nod slowly, acknowledging your conviction.'
+  ],
+  grief: [
+    'Their expression becomes distant, haunted.',
+    'You see centuries of pain reflected in their eyes.',
+    '"You really don\'t understand what it costs to be this," they say quietly.'
+  ],
+  thoughtful: [
+    'They pause, considering your words seriously.',
+    'A far-away look crosses their face as they think.',
+    'They settle into silence, as if remembering.'
+  ],
+  nostalgic: [
+    'They lean back, eyes distant with ancient memories.',
+    'A bittersweet smile touches their lips.',
+    'They speak softly of times long past.'
+  ],
+  conflicted: [
+    'They struggle visibly, wrestling with something internal.',
+    'Pain flickers across their features.',
+    'They look at you, caught between desire and restraint.'
+  ],
+  melancholy: [
+    'Sadness washes over them.',
+    'They look away, voice dropping.',
+    '"Every single day," they whisper.'
+  ],
+  breathless: [
+    'They let out a shaky breath, eyes glowing red.',
+    'They step closer, unable to maintain distance.',
+    'Their voice drops to something barely audible.'
+  ],
+  predatory: [
+    'A slow smile spreads across their face.',
+    'They circle you deliberately, eyes tracking your every movement.',
+    'The dynamic between you shifts.'
+  ],
+  hungry: [
+    'They pull you close without hesitation.',
+    'Their breathing becomes ragged against your skin.',
+    'You feel completely at their mercy.'
+  ],
+  desperate: [
+    'They grip you tightly, trembling slightly.',
+    'Their voice breaks as they speak your name.',
+    'There\'s nothing held back anymore.'
+  ],
+  respectful: [
+    'Something in their expression shifts. Respect.',
+    'They nod, understanding your resolve.',
+    'A moment of mutual recognition passes between you.'
+  ],
+  sad: [
+    'They look at you with deep sorrow.',
+    '"It\'s not that simple," they say, almost helplessly.',
+    'The weight of what they are seems to crush them.'
+  ],
+  surprised: [
+    'Shock registers on their usually composed features.',
+    'They study you as if seeing you for the first time.',
+    'For once, they seem truly vulnerable.'
+  ],
+  grateful: [
+    'Tears glimmer in their immortal eyes.',
+    'They reach for you, voice breaking slightly.',
+    '"No one has ever offered me that before."'
+  ],
+  grin: [
+    'A wicked grin spreads across their face.',
+    'They laugh, the sound both thrilling and dangerous.',
+    'Their eyes glitter with dark amusement.'
+  ]
 };
 
 export default function HunterVampireInteraction({ hunter, vampire, onClose, visitType = 'meeting' }) {
