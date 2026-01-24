@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Target, Eye, Sword, MessageCircle, Heart, Skull } from 'lucide-react';
+import { X, Target, Eye, Sword, MessageCircle, Heart, Skull, Footprints } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import HunterEncounter from './HunterEncounter';
 
 export default function HunterThreatModal({ onClose, vampireState }) {
   const queryClient = useQueryClient();
   const [selectedHunter, setSelectedHunter] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [showNightWalk, setShowNightWalk] = useState(false);
 
   const { data: hunters = [], isLoading } = useQuery({
     queryKey: ['hunters'],
@@ -153,6 +155,11 @@ export default function HunterThreatModal({ onClose, vampireState }) {
   };
 
   return (
+    <>
+      {showNightWalk && (
+        <HunterEncounter vampireState={vampireState} onClose={() => setShowNightWalk(false)} />
+      )}
+      {!showNightWalk && (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -181,6 +188,17 @@ export default function HunterThreatModal({ onClose, vampireState }) {
         <p className="text-gray-400 text-sm mb-4">
           Exposure: {vampireState.exposure_level || 0}% {(vampireState.exposure_level || 0) < 20 && '(Low exposure - no hunters yet)'}
         </p>
+
+        <button
+          onClick={() => setShowNightWalk(true)}
+          className="w-full bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-3 mb-4 transition-colors flex items-center gap-2"
+        >
+          <Footprints className="w-5 h-5 text-purple-400" />
+          <div className="flex-1 text-left">
+            <h4 className="text-white font-medium text-sm">Night Walk</h4>
+            <p className="text-gray-400 text-xs">Walk the streets. Might run into a hunter.</p>
+          </div>
+        </button>
 
         {hunters.length === 0 ? (
           <div className="text-center py-12">
@@ -300,5 +318,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
         )}
       </motion.div>
     </motion.div>
+      )}
+    </>
   );
 }

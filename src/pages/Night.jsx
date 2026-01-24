@@ -285,7 +285,6 @@ export default function Night() {
     { icon: Users, label: 'Servants', modal: 'servants' },
     { icon: Eye, label: 'Hunt', modal: 'hunting' },
     { icon: Heart, label: 'Mutual Watch', modal: 'stalking' },
-    { icon: Target, label: 'Night Walk', action: () => setShowHunterWalk(true) },
     { icon: Zap, label: 'Powers', modal: 'powers' },
     { icon: User, label: 'Possess Someone', modal: 'possession' },
     { icon: Users, label: 'Town People', modal: 'npcs' },
@@ -825,9 +824,6 @@ export default function Night() {
         )}
         {showSupernaturalDating && vampireState && (
           <SupernaturalDating vampireState={vampireState} onClose={() => setShowSupernaturalDating(false)} />
-        )}
-        {showHunterWalk && vampireState && (
-          <HunterEncounter vampireState={vampireState} onClose={() => setShowHunterWalk(false)} />
         )}
         </AnimatePresence>
     </div>
