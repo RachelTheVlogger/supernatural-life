@@ -499,7 +499,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
           </div>
         ) : (
-          <div className="space-y-3 max-h-[50vh] overflow-y-auto">
+          <div className="space-y-3 max-h-[50vh] overflow-y-auto" style={{ touchAction: 'auto' }}>
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -575,12 +575,8 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             
             <button
               type="button"
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                handleTownPeopleClick();
-              }}
-              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3 active:scale-95 transition-transform"
-              style={{ touchAction: 'manipulation' }}
+              onClick={handleTownPeopleClick}
+              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
             >
               <Users className="w-5 h-5" />
               <span>Introduce to Town People</span>
