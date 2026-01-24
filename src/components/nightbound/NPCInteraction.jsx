@@ -26,11 +26,12 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
 
   const [npcsInitialized, setNpcsInitialized] = React.useState(false);
 
-  // Generate NPCs if empty - unique names only
+  // Generate NPCs if needed - prevent duplicates
   React.useEffect(() => {
     const initNPCs = async () => {
-      if (npcs.length === 0 && !npcsInitialized) {
+      if (npcs.length < 4 && !npcsInitialized) {
         setNpcsInitialized(true);
+        
         const namePool = [
           'Alex Rivers', 'Jordan Kane', 'Morgan Stone', 'Casey Harper',
           'Riley Quinn', 'Drew Mitchell', 'Sage Cooper', 'Blake Turner',
@@ -40,19 +41,28 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
         const locations = ['Downtown Cafe', 'City Hospital', 'Art Gallery', 'Night Club', 'University', 'Jazz Bar'];
         const personalities = ['friendly', 'shy', 'curious', 'flirty', 'mysterious', 'bold'];
         
-        const npcsToCreate = Math.min(4, namePool.length);
+        // Get existing names
+        const existingNames = new Set(npcs.map(n => n.name));
         
-        await Promise.all([...Array(npcsToCreate)].map((_, i) =>
-          base44.entities.NPC.create({
-            name: namePool[i],
-            occupation: occupations[i % occupations.length],
-            location: locations[i % locations.length],
-            personality: personalities[i % personalities.length],
-            relationship_vampire: 50,
-            relationship_servant: 50
-          })
-        ));
-        queryClient.invalidateQueries(['npcs']);
+        // Filter out existing names
+        const availableNames = namePool.filter(name => !existingNames.has(name));
+        
+        // Create missing NPCs
+        const toCreate = Math.min(4 - npcs.length, availableNames.length);
+        
+        if (toCreate > 0) {
+          await Promise.all([...Array(toCreate)].map((_, i) =>
+            base44.entities.NPC.create({
+              name: availableNames[i],
+              occupation: occupations[i % occupations.length],
+              location: locations[i % locations.length],
+              personality: personalities[i % personalities.length],
+              relationship_vampire: 50,
+              relationship_servant: 50
+            })
+          ));
+          queryClient.invalidateQueries(['npcs']);
+        }
       }
     };
     
