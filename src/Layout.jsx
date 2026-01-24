@@ -58,7 +58,14 @@ export default function Layout({ children, currentPageName }) {
     queryKey: ['waterNymphs'],
     queryFn: async () => {
       try {
-        return await base44.entities.WaterNymph.list();
+        const allNymphs = await base44.entities.WaterNymph.list();
+        // Keep only the first nymph, delete the rest
+        if (allNymphs.length > 1) {
+          const toDelete = allNymphs.slice(1);
+          await Promise.all(toDelete.map(n => base44.entities.WaterNymph.delete(n.id)));
+          return [allNymphs[0]];
+        }
+        return allNymphs;
       } catch (e) {
         console.error('Failed to fetch nymphs:', e);
         return [];
