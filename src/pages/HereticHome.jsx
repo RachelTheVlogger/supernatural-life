@@ -9,7 +9,6 @@ import HereticAllies from '@/components/nightbound/HereticAllies';
 import HereticRivalries from '@/components/nightbound/HereticRivalries';
 import HereticReputation from '@/components/nightbound/HereticReputation';
 import HereticAbilityTree from '@/components/nightbound/HereticAbilityTree';
-import HereticHybridPowers from '@/components/nightbound/HereticHybridPowers';
 import HereticPowerPath from '@/components/nightbound/HereticPowerPath';
 
 export default function HereticHome() {
@@ -26,8 +25,7 @@ export default function HereticHome() {
   const [showAllies, setShowAllies] = useState(false);
   const [showRivalries, setShowRivalries] = useState(false);
   const [showReputation, setShowReputation] = useState(false);
-  const [showAbilities, setShowAbilities] = useState(false);
-  const [showHybrids, setShowHybrids] = useState(false);
+  const [showPowers, setShowPowers] = useState(false);
   const [showPowerPath, setShowPowerPath] = useState(false);
 
   const { data: heretics = [] } = useQuery({
@@ -372,24 +370,17 @@ export default function HereticHome() {
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-purple-500/30">
+            <div className="grid grid-cols-2 gap-3 pt-4 border-t border-purple-500/30">
               <button
-                onClick={() => setShowAbilities(true)}
-                className="bg-gradient-to-b from-red-900/60 to-gray-900/60 hover:from-red-900/80 hover:to-gray-900/80 rounded-lg p-2.5 transition-all text-center"
+                onClick={() => setShowPowers(true)}
+                className="bg-gradient-to-b from-pink-900/60 to-gray-900/60 hover:from-pink-900/80 hover:to-gray-900/80 rounded-lg p-3 transition-all text-center"
               >
-                <Zap className="w-5 h-5 text-red-400 mx-auto mb-1" />
-                <p className="text-white text-xs font-medium">Powers</p>
-              </button>
-              <button
-                onClick={() => setShowHybrids(true)}
-                className="bg-gradient-to-b from-pink-900/60 to-gray-900/60 hover:from-pink-900/80 hover:to-gray-900/80 rounded-lg p-2.5 transition-all text-center"
-              >
-                <Wand2 className="w-5 h-5 text-pink-400 mx-auto mb-1" />
-                <p className="text-white text-xs font-medium">Hybrid</p>
+                <Zap className="w-5 h-5 text-pink-400 mx-auto mb-1" />
+                <p className="text-white text-xs font-medium">All Powers</p>
               </button>
               <button
                 onClick={() => setShowPowerPath(true)}
-                className="bg-gradient-to-b from-blue-900/60 to-gray-900/60 hover:from-blue-900/80 hover:to-gray-900/80 rounded-lg p-2.5 transition-all text-center"
+                className="bg-gradient-to-b from-blue-900/60 to-gray-900/60 hover:from-blue-900/80 hover:to-gray-900/80 rounded-lg p-3 transition-all text-center"
               >
                 <BookOpen className="w-5 h-5 text-blue-400 mx-auto mb-1" />
                 <p className="text-white text-xs font-medium">Path</p>
@@ -500,11 +491,8 @@ export default function HereticHome() {
         {showReputation && heretic && (
           <HereticReputation heretic={heretic} onClose={() => setShowReputation(false)} />
         )}
-        {showAbilities && heretic && (
-          <HereticAbilityTree heretic={heretic} onClose={() => setShowAbilities(false)} />
-        )}
-        {showHybrids && heretic && (
-          <HereticHybridPowers heretic={heretic} onClose={() => setShowHybrids(false)} />
+        {showPowers && heretic && (
+          <HereticAbilityTree heretic={heretic} onClose={() => setShowPowers(false)} />
         )}
         {showPowerPath && heretic && (
           <HereticPowerPath heretic={heretic} onClose={() => setShowPowerPath(false)} />
