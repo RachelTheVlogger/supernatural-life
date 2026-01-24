@@ -96,6 +96,9 @@ export default function Layout({ children, currentPageName }) {
   const urlSirenId = urlParams.get('siren');
   const firstSirenId = urlSirenId ? sirens.find(s => s.id === urlSirenId)?.id : (sirens.length > 0 ? sirens[0].id : null);
 
+  const urlMutantId = urlParams.get('mutant');
+  const firstMutantId = urlMutantId ? mutants.find(m => m.id === urlMutantId)?.id : (mutants.length > 0 ? mutants[0].id : null);
+
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vamp', icon: Home, path: 'VampireHome' },
