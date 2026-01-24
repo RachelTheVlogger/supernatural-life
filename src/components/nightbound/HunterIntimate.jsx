@@ -6,39 +6,66 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const INTIMATE_ACTIONS = {
   all: [
-    { id: 'touch', label: 'Touch them', icon: '👋', category: 'physical' },
-    { id: 'kiss', label: 'Kiss them', icon: '💋', category: 'romantic' },
-    { id: 'dance', label: 'Dance with them', icon: '💃', category: 'romantic' },
-    { id: 'seduce', label: 'Seduce from behind', icon: '😈', category: 'physical' },
-    { id: 'whisper', label: 'Whisper to them', icon: '🤫', category: 'romantic' },
-    { id: 'pin', label: 'Pin them against wall', icon: '🔥', category: 'physical' },
-    { id: 'undress', label: 'Undress them slowly', icon: '✨', category: 'physical' },
-    { id: 'claim', label: 'Mark them as yours', icon: '💋', category: 'physical' }
+    { id: 'kiss_hard', label: 'Pin them and kiss them hard', category: 'physical' },
+    { id: 'trail', label: 'Trail fingers down their body', category: 'physical' },
+    { id: 'push_bed', label: 'Push them onto the bed', category: 'physical' },
+    { id: 'straddle', label: 'Straddle them', category: 'physical' },
+    { id: 'grip_throat', label: 'Grip their throat', category: 'physical' },
+    { id: 'neck_tongue', label: 'Run your tongue along their neck', category: 'physical' },
+    { id: 'knees', label: 'Push them to their knees', category: 'physical' },
+    { id: 'from_behind', label: 'Take them from behind', category: 'physical' },
+    { id: 'watch', label: 'Make them watch you', category: 'physical' },
+    { id: 'bind_control', label: 'Bind them and take control', category: 'bdsm' },
+    { id: 'taste', label: 'Taste every inch of them', category: 'physical' },
+    { id: 'beg', label: 'Make them beg for you', category: 'physical' },
+    { id: 'wall', label: 'Take them against the wall', category: 'physical' },
+    { id: 'claim_mouth', label: 'Claim their mouth completely', category: 'physical' },
+    { id: 'mark', label: 'Mark every part of them', category: 'physical' },
+    { id: 'whisper_threats', label: 'Whisper dangerous things in their ear', category: 'romantic' },
+    { id: 'breathe', label: 'Breathe them in like a drug', category: 'romantic' },
+    { id: 'surrender', label: 'Let them take control', category: 'romantic' },
+    { id: 'corner', label: 'Corner them and close in', category: 'physical' },
+    { id: 'dominance', label: 'Show them your true dominance', category: 'bdsm' },
+    { id: 'risk', label: 'Risk getting caught together', category: 'activity' },
+    { id: 'hunt_together', label: 'Hunt together that night', category: 'activity' }
   ],
   romantic: [
-    { id: 'dance', label: 'Dance with them', icon: '💃', category: 'romantic' },
-    { id: 'whisper', label: 'Whisper sweet threats', icon: '🤫', category: 'romantic' },
-    { id: 'kiss', label: 'Kiss them', icon: '💋', category: 'romantic' }
+    { id: 'whisper_threats', label: 'Whisper dangerous things in their ear', category: 'romantic' },
+    { id: 'breathe', label: 'Breathe them in like a drug', category: 'romantic' },
+    { id: 'claim_mouth', label: 'Claim their mouth completely', category: 'romantic' },
+    { id: 'neck_tongue', label: 'Run your tongue along their neck', category: 'romantic' },
+    { id: 'surrender', label: 'Let them take control', category: 'romantic' }
   ],
   physical: [
-    { id: 'touch', label: 'Touch them', icon: '👋', category: 'physical' },
-    { id: 'seduce', label: 'Seduce from behind', icon: '😈', category: 'physical' },
-    { id: 'pin', label: 'Pin them against wall', icon: '🔥', category: 'physical' },
-    { id: 'undress', label: 'Undress them slowly', icon: '✨', category: 'physical' },
-    { id: 'claim', label: 'Mark them as yours', icon: '💋', category: 'physical' }
+    { id: 'kiss_hard', label: 'Pin them and kiss them hard', category: 'physical' },
+    { id: 'trail', label: 'Trail fingers down their body', category: 'physical' },
+    { id: 'push_bed', label: 'Push them onto the bed', category: 'physical' },
+    { id: 'straddle', label: 'Straddle them', category: 'physical' },
+    { id: 'grip_throat', label: 'Grip their throat', category: 'physical' },
+    { id: 'neck_tongue', label: 'Run your tongue along their neck', category: 'physical' },
+    { id: 'from_behind', label: 'Take them from behind', category: 'physical' },
+    { id: 'taste', label: 'Taste every inch of them', category: 'physical' },
+    { id: 'wall', label: 'Take them against the wall', category: 'physical' },
+    { id: 'mark', label: 'Mark every part of them', category: 'physical' },
+    { id: 'corner', label: 'Corner them and close in', category: 'physical' }
   ],
   bdsm: [
-    { id: 'pin', label: 'Pin them against wall', icon: '🔥', category: 'physical' },
-    { id: 'bind', label: 'Bind their hands', icon: '⛓️', category: 'bdsm' },
-    { id: 'command', label: 'Give them orders', icon: '👑', category: 'bdsm' }
+    { id: 'knees', label: 'Push them to their knees', category: 'bdsm' },
+    { id: 'bind_control', label: 'Bind them and take control', category: 'bdsm' },
+    { id: 'beg', label: 'Make them beg for you', category: 'bdsm' },
+    { id: 'dominance', label: 'Show them your true dominance', category: 'bdsm' },
+    { id: 'grip_throat', label: 'Grip their throat', category: 'bdsm' },
+    { id: 'watch', label: 'Make them watch you', category: 'bdsm' }
   ],
   social: [
-    { id: 'dance', label: 'Dance with them', icon: '💃', category: 'romantic' },
-    { id: 'kiss', label: 'Kiss them publicly', icon: '💋', category: 'social' }
+    { id: 'claim_mouth', label: 'Claim their mouth publicly', category: 'social' },
+    { id: 'risk', label: 'Risk getting caught together', category: 'social' },
+    { id: 'mark', label: 'Mark them where everyone can see', category: 'social' }
   ],
   activity: [
-    { id: 'hunt', label: 'Hunt together', icon: '🔫', category: 'activity' },
-    { id: 'explore', label: 'Explore the night', icon: '🌙', category: 'activity' }
+    { id: 'risk', label: 'Risk getting caught together', category: 'activity' },
+    { id: 'hunt_together', label: 'Hunt together that night', category: 'activity' },
+    { id: 'corner', label: 'Corner prey together', category: 'activity' }
   ]
 };
 
