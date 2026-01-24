@@ -47,17 +47,9 @@ export default function Home() {
     queryFn: () => base44.entities.WaterNymph.list()
   });
 
-  const { data: mutants = [] } = useQuery({
-    queryKey: ['mutants'],
-    queryFn: () => base44.entities.Mutant.list()
-  });
 
-  const { data: heretics = [] } = useQuery({
-    queryKey: ['heretics'],
-    queryFn: () => base44.entities.Heretic.list()
-  });
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || mutants.length > 0 || heretics.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -120,34 +112,7 @@ export default function Home() {
        });
        queryClient.invalidateQueries();
        navigate(createPageUrl('WaterNymphHome'));
-     } else if (selectedType === 'mutant') {
-       await base44.entities.Mutant.create({
-         name: characterName.trim(),
-         gender: characterGender,
-         sexuality: characterSexuality,
-         mutant_type: 'enhanced',
-         power_level: 30,
-         mutation_stability: 50,
-         transformation_stage: 1,
-         unlocked_powers: [],
-         mutations_activated: 0
-       });
-       queryClient.invalidateQueries();
-       navigate(createPageUrl('MutantHome'));
-     } else if (selectedType === 'heretic') {
-       await base44.entities.Heretic.create({
-         name: characterName.trim(),
-         gender: characterGender,
-         sexuality: characterSexuality,
-         personality: characterPersonality,
-         vampire_power: 40,
-         witch_power: 40,
-         balance: 50,
-         transformation_stage: 1
-       });
-       queryClient.invalidateQueries();
-       navigate(createPageUrl('HereticHome'));
-      }
+     }
       };
   
   const handleContinue = () => {
@@ -494,30 +459,7 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
-                  <button
-                    onClick={() => { setSelectedType('mutant'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">🧬</span>
-                      <div>
-                        <span className="font-medium text-white block">Mutant</span>
-                        <p className="text-sm text-gray-400">Evolution, power, mutation</p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedType('heretic'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">⚡</span>
-                      <div>
-                        <span className="font-medium text-white block">Heretic</span>
-                        <p className="text-sm text-gray-400">Vampire & Witch hybrid</p>
-                      </div>
-                    </div>
-                  </button>
+
 
                   </div>
               </>
@@ -717,27 +659,6 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 4 && selectedType === 'mutant' && (
-              <>
-                <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
-                <p className="text-yellow-300 text-sm mb-6">Your mutation awaits.</p>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setIntroStep(3)}
-                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={startNewGame}
-                    className="flex-1 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded-lg py-3 text-white font-medium transition-all"
-                  >
-                    Begin
-                  </button>
-                </div>
-              </>
-            )}
-
             {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && selectedType !== 'mutant' && selectedType !== 'heretic' && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your personality</h2>
@@ -766,9 +687,9 @@ export default function Home() {
                 )}
 
                 {selectedType === 'nymph' && introStep === 3 && (
-                <>
-                <h2 className="text-2xl font-bold text-white mb-4">Your sexuality</h2>
-                <p className="text-teal-300 text-sm mb-4">Who are you attracted to?</p>
+                    <>
+                    <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
+                    <p className="text-teal-300 text-sm mb-6">Your journey as a water nymph awaits.</p>
                 <div className="space-y-2 mb-6 max-h-[50vh] overflow-y-auto">
                   {[
                     { value: 'straight', label: 'Straight', desc: 'Attracted to opposite gender' },
