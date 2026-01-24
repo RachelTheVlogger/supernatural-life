@@ -8,6 +8,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import HunterHuntLog from '@/components/nightbound/HunterHuntLog';
 import HunterHomeActivities from '@/components/nightbound/HunterHomeActivities';
 import HunterIntimate from '@/components/nightbound/HunterIntimate';
+import HunterAbilityShop from '@/components/nightbound/HunterAbilityShop';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function HunterHome() {
   const [showHuntLog, setShowHuntLog] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
   const [showIntimate, setShowIntimate] = useState(false);
+  const [showAbilities, setShowAbilities] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -114,18 +116,19 @@ export default function HunterHome() {
         transition={{ delay: 0.2 }}
         className="max-w-4xl mx-auto"
       >
-        <div className="grid grid-cols-4 gap-2 mb-8">
+        <div className="grid grid-cols-5 gap-2 mb-8">
           {[
             { id: 'home', label: 'Home', icon: Home },
             { id: 'hunting', label: 'Hunt Log', icon: FileText },
             { id: 'activities', label: 'Activities', icon: Utensils },
-            { id: 'intimate', label: 'Intimate', icon: Heart }
+            { id: 'intimate', label: 'Intimate', icon: Heart },
+            { id: 'abilities', label: 'Skills', icon: Zap }
           ].map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => tab.id === 'abilities' ? setShowAbilities(true) : setActiveTab(tab.id)}
                 className={`rounded-lg p-3 transition-all flex flex-col items-center gap-2 ${
                   activeTab === tab.id
                     ? 'bg-red-600 text-white'
