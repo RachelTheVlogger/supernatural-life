@@ -740,9 +740,60 @@ export default function Home() {
                 </div>
                 </>
                 )}
-          </motion.div>
-        </motion.div>
-      )}
-    </div>
-  );
-}
+                </motion.div>
+                </motion.div>
+                )}
+
+                {/* Cleanup Modal */}
+                {showCleanup && (
+                <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+                onClick={() => setShowCleanup(false)}
+                >
+                <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+                >
+                <h2 className="text-2xl font-bold text-white mb-6">Delete Duplicates</h2>
+                <div className="space-y-4 mb-6">
+                {duplicateGroups.map((group, idx) => (
+                <div key={idx} className="bg-gray-800 rounded-lg p-4">
+                  <p className="text-white font-medium mb-3">
+                    {group[0].name} ({group[0].type})
+                  </p>
+                  <div className="space-y-2">
+                    {group.map(char => (
+                      <button
+                        key={char.id}
+                        onClick={() => {
+                          handleDeleteCharacter(char);
+                          setShowCleanup(false);
+                        }}
+                        className="w-full text-left bg-red-900/60 hover:bg-red-900/80 px-3 py-2 rounded text-sm text-gray-300 transition-all flex items-center justify-between"
+                      >
+                        <span>
+                          {char.entity.created_date && new Date(char.entity.created_date).toLocaleDateString()}
+                        </span>
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                ))}
+                </div>
+                <button
+                onClick={() => setShowCleanup(false)}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
+                >
+                Done
+                </button>
+                </motion.div>
+                </motion.div>
+                )}
+                </div>
+                );
+                }
