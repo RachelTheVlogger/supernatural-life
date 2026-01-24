@@ -2,40 +2,52 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Waves, Music, Droplets, Users, Heart, Zap, Eye } from 'lucide-react';
+import { Waves, Music, Droplets, Users, Heart, Zap, Eye, Sparkles } from 'lucide-react';
 
-const SIREN_POWERS = [
-  { id: 'hypnotic_song', name: 'Hypnotic Song', icon: Music, unlockAt: 0 },
-  { id: 'seductive_voice', name: 'Seductive Voice', icon: Heart, unlockAt: 5 },
-  { id: 'water_breathing', name: 'Water Breathing', icon: Droplets, unlockAt: 10 },
-  { id: 'enhanced_beauty', name: 'Enhanced Beauty', icon: Heart, unlockAt: 15 },
-  { id: 'water_manipulation', name: 'Water Manipulation', icon: Waves, unlockAt: 20 },
-  { id: 'echo_location', name: 'Echo Location', icon: Eye, unlockAt: 25 },
-  { id: 'drowning_kiss', name: 'Drowning Kiss', icon: Droplets, unlockAt: 30 },
-  { id: 'tidal_emotions', name: 'Tidal Emotions', icon: Eye, unlockAt: 35 },
-  { id: 'aquatic_form', name: 'Aquatic Form', icon: Waves, unlockAt: 40 },
-  { id: 'mind_control', name: 'Mind Control', icon: Zap, unlockAt: 45 },
-  { id: 'storm_calling', name: 'Storm Calling', icon: Waves, unlockAt: 50 },
-  { id: 'siren_scream', name: 'Siren Scream', icon: Music, unlockAt: 55 },
-  { id: 'water_teleport', name: 'Water Teleport', icon: Droplets, unlockAt: 60 },
-  { id: 'memory_wash', name: 'Memory Wash', icon: Eye, unlockAt: 65 },
-  { id: 'mass_charm', name: 'Mass Charm', icon: Heart, unlockAt: 70 },
-  { id: 'tsunami_summon', name: 'Tsunami Summon', icon: Waves, unlockAt: 75 },
-  { id: 'illusion_casting', name: 'Illusion Casting', icon: Eye, unlockAt: 80 },
-  { id: 'water_healing', name: 'Water Healing', icon: Droplets, unlockAt: 85 },
-  { id: 'eternal_youth', name: 'Eternal Youth', icon: Heart, unlockAt: 90 },
-  { id: 'ocean_communion', name: 'Ocean Communion', icon: Waves, unlockAt: 95 },
-  { id: 'poseidon_blessing', name: "Poseidon's Blessing", icon: Zap, unlockAt: 100 },
-  { id: 'deep_sea_form', name: 'Deep Sea Form', icon: Waves, unlockAt: 110 },
-  { id: 'whirlpool_creation', name: 'Whirlpool Creation', icon: Waves, unlockAt: 120 },
-  { id: 'soul_singing', name: 'Soul Singing', icon: Music, unlockAt: 130 },
-  { id: 'water_clone', name: 'Water Clone', icon: Droplets, unlockAt: 140 },
-  { id: 'moon_tide_control', name: 'Moon Tide Control', icon: Eye, unlockAt: 150 },
-  { id: 'kraken_summoning', name: 'Kraken Summoning', icon: Zap, unlockAt: 160 },
-  { id: 'oceanic_avatar', name: 'Oceanic Avatar', icon: Waves, unlockAt: 170 },
-  { id: 'mythic_form', name: 'Mythic Form', icon: Zap, unlockAt: 180 },
-  { id: 'voice_of_atlantis', name: 'Voice of Atlantis', icon: Music, unlockAt: 200 }
+const BASE_POWERS = [
+  'Hypnotic Song', 'Seductive Voice', 'Water Breathing', 'Enhanced Beauty',
+  'Water Manipulation', 'Echo Location', 'Drowning Kiss', 'Tidal Emotions',
+  'Aquatic Form', 'Mind Control', 'Storm Calling', 'Siren Scream',
+  'Water Teleport', 'Memory Wash', 'Mass Charm', 'Tsunami Summon',
+  'Illusion Casting', 'Water Healing', 'Eternal Youth', 'Ocean Communion',
+  "Poseidon's Blessing", 'Deep Sea Form', 'Whirlpool Creation', 'Soul Singing',
+  'Water Clone', 'Moon Tide Control', 'Kraken Summoning', 'Oceanic Avatar',
+  'Mythic Form', 'Voice of Atlantis', 'Nymph Summoning'
 ];
+
+const POWER_PREFIXES = ['Enhanced', 'Greater', 'Supreme', 'Divine', 'Ancient', 'Primal', 'Mythic', 'Eternal', 'Cosmic', 'Abyssal'];
+const POWER_SUFFIXES = ['Mastery', 'Dominion', 'Ascension', 'Perfection', 'Transcendence', 'Apotheosis'];
+
+const generateSirenPowers = (maxLevel) => {
+  const powers = [];
+  const icons = [Music, Heart, Droplets, Waves, Eye, Zap];
+  
+  BASE_POWERS.forEach((baseName, i) => {
+    powers.push({ 
+      id: `power_${i}`, 
+      name: baseName, 
+      icon: icons[i % icons.length], 
+      unlockAt: i * 5 
+    });
+  });
+  
+  // Generate infinite powers beyond base
+  let level = BASE_POWERS.length * 5;
+  while (level <= maxLevel + 50) {
+    const prefix = POWER_PREFIXES[Math.floor(level / 50) % POWER_PREFIXES.length];
+    const base = BASE_POWERS[Math.floor(Math.random() * BASE_POWERS.length)];
+    const suffix = level % 100 === 0 ? ` ${POWER_SUFFIXES[Math.floor(level / 100) % POWER_SUFFIXES.length]}` : '';
+    powers.push({
+      id: `power_${level}`,
+      name: `${prefix} ${base}${suffix}`,
+      icon: icons[Math.floor(Math.random() * icons.length)],
+      unlockAt: level
+    });
+    level += 5;
+  }
+  
+  return powers;
+};
 
 export default function SirenHome() {
   const queryClient = useQueryClient();
@@ -50,6 +62,20 @@ export default function SirenHome() {
   });
 
   const siren = sirens[0];
+  
+  const SIREN_POWERS = React.useMemo(() => 
+    generateSirenPowers(siren?.voice_power || 50), 
+    [siren?.voice_power]
+  );
+
+  const { data: nymphs = [] } = useQuery({
+    queryKey: ['water-nymphs', siren?.id],
+    queryFn: async () => {
+      if (!siren?.id) return [];
+      return await base44.entities.WaterNymph.filter({ siren_id: siren.id });
+    },
+    enabled: !!siren?.id
+  });
 
   React.useEffect(() => {
     const initSiren = async () => {
@@ -85,7 +111,7 @@ export default function SirenHome() {
       const result = outcomes[Math.floor(Math.random() * outcomes.length)];
       setOutcome(result);
 
-      const newVoicePower = Math.min((siren.voice_power || 50) + 2, 250);
+      const newVoicePower = (siren.voice_power || 50) + 2;
       const newUnlocked = [...(siren.unlocked_powers || ['Hypnotic Song'])];
       
       SIREN_POWERS.forEach(power => {
@@ -131,8 +157,8 @@ export default function SirenHome() {
       const result = outcomes[Math.floor(Math.random() * outcomes.length)];
       setOutcome(result);
 
-      const newCharm = Math.min((siren.charm_level || 60) + 3, 250);
-      const newVoice = Math.min((siren.voice_power || 50) + 1, 250);
+      const newCharm = (siren.charm_level || 60) + 3;
+      const newVoice = (siren.voice_power || 50) + 1;
       const newUnlocked = [...(siren.unlocked_powers || ['Hypnotic Song'])];
       
       SIREN_POWERS.forEach(power => {
@@ -196,6 +222,40 @@ export default function SirenHome() {
     }, 2000);
   };
 
+  const handleSummonNymph = async () => {
+    setProcessing(true);
+    setShowAction('summon');
+
+    setTimeout(async () => {
+      const nymphNames = ['Naida', 'Thalassa', 'Maris', 'Undine', 'Cascade', 'Pearl', 'Rivena', 'Brooklynn'];
+      const name = nymphNames[Math.floor(Math.random() * nymphNames.length)];
+      
+      await base44.entities.WaterNymph.create({
+        siren_id: siren.id,
+        name: name,
+        loyalty: 100,
+        power_level: Math.floor((siren.voice_power || 50) / 10),
+        tasks_completed: 0
+      });
+
+      setOutcome(`${name} emerged from the water. A water nymph. Loyal. Obedient. Yours to command.`);
+
+      await base44.entities.NightLog.create({
+        entry: `Summoned water nymph ${name}. Your servants grow.`,
+        category: 'power',
+        intensity: 'significant'
+      });
+
+      queryClient.invalidateQueries();
+
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+        setShowAction(null);
+      }, 3000);
+    }, 2000);
+  };
+
   if (!siren) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-950 to-cyan-950 p-4">
@@ -225,7 +285,7 @@ export default function SirenHome() {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-400">Voice Power</span>
-                <span className="text-cyan-400">{siren.voice_power || 0}/250</span>
+                <span className="text-cyan-400">{siren.voice_power || 0}</span>
               </div>
               <div className="w-full bg-gray-800 rounded-full h-2">
                 <div
@@ -238,7 +298,7 @@ export default function SirenHome() {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-400">Charm Level</span>
-                <span className="text-pink-400">{siren.charm_level || 0}/250</span>
+                <span className="text-pink-400">{siren.charm_level || 0}</span>
               </div>
               <div className="w-full bg-gray-800 rounded-full h-2">
                 <div
