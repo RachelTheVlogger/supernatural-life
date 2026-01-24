@@ -65,7 +65,7 @@ export default function WaterNymphHome() {
   const [nymphSexuality, setNymphSexuality] = useState('bisexual');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
-  const [newName, setNewName] = useState(nymph?.name || '');
+  const [newName, setNewName] = useState('');
 
   const { data: nymphs = [] } = useQuery({
     queryKey: ['waterNymphs'],

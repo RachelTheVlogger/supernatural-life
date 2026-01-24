@@ -65,7 +65,7 @@ export default function SirenHome() {
   const [sirenSexuality, setSirenSexuality] = useState('bisexual');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
-  const [newName, setNewName] = useState(siren?.name || '');
+  const [newName, setNewName] = useState('');
 
   const { data: sirens = [] } = useQuery({
     queryKey: ['sirens'],
