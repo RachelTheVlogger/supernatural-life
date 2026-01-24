@@ -162,34 +162,39 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
 
     // Simulate message being sent
     setTimeout(async () => {
-      const responseTexts = VAMPIRE_RESPONSES[option.reaction];
+      const responseTexts = VAMPIRE_RESPONSES[option.category];
       const vampireText = responseTexts[Math.floor(Math.random() * responseTexts.length)];
+      
+      // Determine outcome based on hunter's skill and vampire's exposure
+      const hunterSkill = hunter.skill_level || 30;
+      const vampireExposure = vampire.exposure_level || 0;
+      const roll = Math.random() * 100;
+      
+      let outcomeType;
+      if (option.category === 'hostile') {
+        outcomeType = hunterSkill > 60 ? 'positive' : 'neutral';
+      } else if (option.category === 'flirty' || option.category === 'provocative') {
+        outcomeType = roll < 40 ? 'positive' : 'neutral';
+      } else if (option.category === 'protective') {
+        outcomeType = 'positive';
+      } else {
+        outcomeType = 'neutral';
+      }
       
       setVampireResponse({
         ...option,
-        vampireText: vampireText
+        vampireText: vampireText,
+        outcomeType: outcomeType
       });
 
       setConversationHistory(prev => [...prev, {
         hunterMessage: option.text,
-        vampireReaction: option.reaction,
         vampireText: vampireText
       }]);
 
       try {
-        // Update interaction stats
-        const existingInteractions = hunter.vampire_interactions || {};
-        const vampireKey = vampire.id;
-        
-        existingInteractions[vampireKey] = (existingInteractions[vampireKey] || 0) + 1;
-
-        await base44.entities.Hunter.update(hunter.id, {
-          vampire_interactions: existingInteractions,
-          last_vampire_interaction: new Date().toISOString()
-        });
-
         await base44.entities.NightLog.create({
-          entry: `Encountered ${vampire.vampire_name}. ${option.text}`,
+          entry: `Encountered ${vampire.vampire_name}. ${option.text}\n${vampire.vampire_name}: ${vampireText}`,
           category: 'interaction',
           intensity: option.explicit ? 'high' : 'moderate'
         });
@@ -200,7 +205,7 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
       }
 
       setLoading(false);
-    }, 1200);
+    }, 2000);
   };
 
   return (
