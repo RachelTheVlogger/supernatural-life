@@ -98,6 +98,7 @@ export default function VampireHunterInteraction({ vampire, hunter, onClose }) {
     tactical: 'from-blue-600 to-cyan-600',
     mysterious: 'from-purple-600 to-violet-600',
     bargain: 'from-green-600 to-emerald-600',
+    convert: 'from-red-700 to-purple-700',
   };
 
   const currentInteractions = INTERACTIONS[selectedCategory] || INTERACTIONS.all;
