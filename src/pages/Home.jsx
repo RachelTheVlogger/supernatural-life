@@ -216,42 +216,6 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {allSirens.map(s => (
-                    <button
-                      key={s.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(createPageUrl('SirenHome'));
-                      }}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🌊</span>
-                        <div>
-                          <p className="text-white font-medium">{s.name}</p>
-                          <p className="text-gray-400 text-xs">Siren</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                  {allNymphs.map(n => (
-                    <button
-                      key={n.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(createPageUrl('WaterNymphHome'));
-                      }}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">💧</span>
-                        <div>
-                          <p className="text-white font-medium">{n.name}</p>
-                          <p className="text-gray-400 text-xs">Water Nymph</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
                   {sirens.map(s => (
                     <button
                       key={s.id}
