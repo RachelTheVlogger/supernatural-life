@@ -78,10 +78,11 @@ export default function HunterHome() {
           <p className="text-gray-400 capitalize">{hunter.specialty} • Skill: {hunter.skill_level}%</p>
         </div>
         <button
-          onClick={() => navigate(createPageUrl('Night'))}
-          className="text-gray-400 hover:text-white transition-colors p-2"
+          onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
+          disabled={vampires.length === 0}
+          className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center gap-1"
         >
-          <ArrowLeft className="w-6 h-6" />
+          Switch to Vampire <ArrowLeft className="w-4 h-4 rotate-180" />
         </button>
       </motion.div>
 
