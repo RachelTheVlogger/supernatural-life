@@ -40,109 +40,109 @@ const DIALOGUE_OPTIONS = {
 
 const VAMPIRE_RESPONSES = {
   blush: [
-    'They look away for a moment, a faint smile crossing their features.',
-    'They pause, composure wavering slightly as they meet your eyes again.',
-    'Something unguarded flashes across their face before they compose themselves.'
+    'They look away for a moment, a faint smile crossing their pale features. When they meet your eyes again, something vulnerable flickers there before they mask it.',
+    'They pause mid-breath, composure wavering slightly. Their fingers curl and uncurl at their sides as they compose themselves.',
+    'Something unguarded flashes across their face—raw, honest. They touch their neck, steadying themselves before looking back at you.'
   ],
   smirk: [
-    'A knowing smile plays at their lips as they regard you.',
-    'They lean forward slightly, amusement evident in their expression.',
-    'Their eyes dance with interest as they watch you.'
+    'A knowing smile plays at their lips as they regard you with amusement. "I like the way you think," they murmur.',
+    'They lean forward slightly, amusement evident in their expression. Their eyes gleam as they watch you with renewed interest.',
+    'Their eyes dance with intrigue. They tilt their head, studying you like a puzzle they\'re beginning to understand.'
   ],
   tense: [
-    'Their jaw clenches. They look away, clearly struggling.',
-    'The air grows heavy between you. Their eyes briefly glow.',
-    'They take a breath, composing themselves with visible effort.'
+    'Their jaw clenches visibly. They look away, fists tightening as they clearly fight something internal. "Don\'t," they say quietly.',
+    'The air grows heavy between you. Their eyes briefly glow red before they squeeze them shut, regaining control.',
+    'They take a sharp breath, composing themselves with visible effort. Sweat beads on their temple despite their cool exterior.'
   ],
   intense: [
-    'They move closer, eyes darkening with need.',
-    'Their breathing becomes audible. They reach out slowly.',
-    'Everything about their body language screams hunger.'
+    'They move closer without permission, eyes darkening to pure red. "You\'re making this difficult," they breathe.',
+    'Their breathing becomes audible, almost ragged. They reach out slowly, fingers hovering inches from your skin.',
+    'Everything about their body language screams raw hunger. Their voice drops to something almost animal. "I want you."'
   ],
   anger: [
-    'Their eyes flash crimson. Fangs bare momentarily.',
-    'A low growl escapes them. Power radiates from their frame.',
-    'They turn away sharply, clearly struggling for control.'
+    'Their eyes flash crimson instantly. Fangs bare as a growl reverberates through their chest. "Careful," they warn.',
+    'A low, dangerous sound escapes them. Power radiates from their frame, making the air around you crackle.',
+    'They turn away sharply, their whole body trembling with the effort of restraint. "Leave. Now," they snarl.'
   ],
   defiant: [
-    'They laugh, a dangerous sound in the silence.',
-    '"You could try," they say quietly, facing you unflinching.',
-    'They stand taller, utterly unmoved by your words.'
+    'They laugh—a dangerous, thrilling sound that echoes. "You could try," they say with absolute certainty, facing you unflinching.',
+    'Their expression hardens into something predatory. They step closer instead of backing down. "I dare you."',
+    'They stand taller, completely unmoved by your threat. Confidence radiates from them as they smile wickedly.'
   ],
   stern: [
-    'They study you for a long moment, something shifting in their gaze.',
-    'A new respect seems to flicker across their features.',
-    'They nod slowly, acknowledging your conviction.'
+    'They study you for a long moment, something fundamental shifting in their gaze. They nod slowly, respect evident now.',
+    'A new respect seems to flicker across their usually cold features. They incline their head toward you slightly.',
+    'They reach out and touch your arm gently. "I underestimated you," they admit quietly.'
   ],
   grief: [
-    'Their expression becomes distant, haunted.',
-    'You see centuries of pain reflected in their eyes.',
-    '"You really don\'t understand what it costs to be this," they say quietly.'
+    'Their expression becomes distant, haunted by centuries. You see the weight of ages in their eyes as they look away.',
+    'When they speak, their voice is hollow. "You really don\'t understand what it costs to be this." They sink into a chair.',
+    'Tears—actual tears—glimmer in their ancient eyes. "Every day is a choice to keep going, and every day I wonder why."'
   ],
   thoughtful: [
-    'They pause, considering your words seriously.',
-    'A far-away look crosses their face as they think.',
-    'They settle into silence, as if remembering.'
+    'They pause, genuinely considering your words. A far-away look crosses their face as memories seem to surface.',
+    'They settle into silence, fingers steepled as they think. Minutes pass before they speak again, carefully.',
+    'They walk to the window, staring out into the darkness. "That\'s... a fair question. One I haven\'t allowed myself to ask in centuries."'
   ],
   nostalgic: [
-    'They lean back, eyes distant with ancient memories.',
-    'A bittersweet smile touches their lips.',
-    'They speak softly of times long past.'
+    'They lean back slowly, eyes distant with ancient memories. A bittersweet smile touches their lips. "There was a time..."',
+    'They begin speaking softly of centuries gone by, of lives and loves lost to time. Their voice carries the weight of ages.',
+    'They sit down heavily, as if the weight of memory is suddenly too much to bear standing. "I remember when the world was different."'
   ],
   conflicted: [
-    'They struggle visibly, wrestling with something internal.',
-    'Pain flickers across their features.',
-    'They look at you, caught between desire and restraint.'
+    'They struggle visibly, wrestling with something internal. Pain flickers across their features as they wrestle with themselves.',
+    'They look at you, caught between desire and restraint, wanting and refusing. "This is cruel," they whisper.',
+    'They run their hands through their hair in frustration. "I want to... but I can\'t... I won\'t," they say, tormented.'
   ],
   melancholy: [
-    'Sadness washes over them.',
-    'They look away, voice dropping.',
-    '"Every single day," they whisper.'
+    'Sadness washes over them like a tide. They look away, voice dropping to barely a whisper. "Every single day."',
+    'They sit down slowly, as if the weight of the world just became too much. "Does it ever get easier?" they ask softly.',
+    'A long silence falls. When they finally speak, their voice is hollow. "I stopped counting the centuries ago."'
   ],
   breathless: [
-    'They let out a shaky breath, eyes glowing red.',
-    'They step closer, unable to maintain distance.',
-    'Their voice drops to something barely audible.'
+    'They let out a shaky breath, eyes glowing bright red. They step closer, unable to maintain any distance anymore.',
+    'Their breathing becomes ragged. They reach for you with trembling hands. "I can\'t... I don\'t want to stop," they whisper.',
+    'Everything about them screams need. Their voice drops to something desperate. "Please," they breathe against your skin.'
   ],
   predatory: [
-    'A slow smile spreads across their face.',
-    'They circle you deliberately, eyes tracking your every movement.',
-    'The dynamic between you shifts.'
+    'A slow, predatory smile spreads across their face. They circle you deliberately, eyes tracking your every movement. The hunter becomes the hunted.',
+    'They move with liquid grace, completely in control. Every step is calculated, drawing you deeper under their spell.',
+    'Their eyes glitter with dark amusement as they toy with you. "Run if you want. I love the chase."'
   ],
   hungry: [
-    'They pull you close without hesitation.',
-    'Their breathing becomes ragged against your skin.',
-    'You feel completely at their mercy.'
+    'They pull you close without hesitation, eyes completely red. Their hunger is palpable, overwhelming.',
+    'Their breathing becomes ragged against your skin. Fangs trace along your neck as they inhale deeply.',
+    'You feel completely at their mercy, pinned by their gaze and their strength. They whisper your name like a prayer and a curse.'
   ],
   desperate: [
-    'They grip you tightly, trembling slightly.',
-    'Their voice breaks as they speak your name.',
-    'There\'s nothing held back anymore.'
+    'They grip you tightly, trembling with need. Their voice breaks as they speak your name. "I need... please, I need..."',
+    'There\'s nothing held back anymore. They kiss you urgently, desperately, like you\'re the last thing keeping them sane.',
+    'They hold you like you might disappear. "Don\'t leave," they plead, their composure completely shattered.'
   ],
   respectful: [
-    'Something in their expression shifts. Respect.',
-    'They nod, understanding your resolve.',
-    'A moment of mutual recognition passes between you.'
+    'Something in their expression shifts fundamentally. Genuine respect flickers across their features as they nod slowly.',
+    'They step back, giving you space. When they speak, their voice is different—sincere. "I see you now."',
+    'A moment of mutual recognition passes between you—not as predator and prey, but as equals. Something changes.'
   ],
   sad: [
-    'They look at you with deep sorrow.',
-    '"It\'s not that simple," they say, almost helplessly.',
-    'The weight of what they are seems to crush them.'
+    'They look at you with deep, aching sorrow. "It\'s not that simple," they say, almost helplessly, sitting down heavily.',
+    'The weight of their nature seems to crush them in that moment. "I wish I could be what you want me to be."',
+    'They touch your face gently, sadly. "Some curses can\'t be broken by love or will. Some just... are."'
   ],
   surprised: [
-    'Shock registers on their usually composed features.',
-    'They study you as if seeing you for the first time.',
-    'For once, they seem truly vulnerable.'
+    'Shock registers on their usually composed features. They study you as if seeing you for the first time.',
+    'For once, they seem truly vulnerable—the mask slipped. "I didn\'t expect..." they trail off, uncertain.',
+    'They blink, processing what you\'ve said. "You... you really see me, don\'t you?" they whisper in wonder.'
   ],
   grateful: [
-    'Tears glimmer in their immortal eyes.',
-    'They reach for you, voice breaking slightly.',
-    '"No one has ever offered me that before."'
+    'Tears glimmer in their immortal eyes—real tears. They reach for you, voice breaking. "No one has ever... Thank you."',
+    'They pull you close gently, reverently. "In five hundred years, no one offered me redemption. Until you."',
+    'They hold you like you\'re the most precious thing they\'ve ever touched. "I don\'t deserve this. But God, I need it."'
   ],
   grin: [
-    'A wicked grin spreads across their face.',
-    'They laugh, the sound both thrilling and dangerous.',
-    'Their eyes glitter with dark amusement.'
+    'A wicked grin spreads across their face. They chuckle darkly, the sound thrilling and dangerous. "I like you."',
+    'They circle you like a predator savoring the hunt. Their eyes glitter with dark amusement and hunger.',
+    'They laugh—a sound both thrilling and terrifying. "You\'re either very brave or very stupid. I haven\'t decided which yet."'
   ]
 };
 
