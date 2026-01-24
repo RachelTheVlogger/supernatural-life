@@ -335,9 +335,27 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
+                  {heretics.map(h => (
+                    <button
+                      key={h.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl(`HereticHome?id=${h.id}`));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">⚡</span>
+                        <div>
+                          <p className="text-white font-medium">{h.name}</p>
+                          <p className="text-gray-400 text-xs">Heretic</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
 
                   </div>
-              </div>
+                  </div>
 
               {/* Cleanup & Lite Mode */}
               {duplicateGroups.length > 0 && (
