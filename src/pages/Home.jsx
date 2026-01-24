@@ -258,8 +258,26 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
+                  {mutants.map(m => (
+                    <button
+                      key={m.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('MutantHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🧬</span>
+                        <div>
+                          <p className="text-white font-medium">{m.name}</p>
+                          <p className="text-gray-400 text-xs">Mutant</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
 
-                </div>
+                  </div>
               </div>
 
               {/* Lite Mode Toggle */}
