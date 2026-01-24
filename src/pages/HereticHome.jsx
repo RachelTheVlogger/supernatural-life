@@ -336,10 +336,11 @@ export default function HereticHome() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+          )}
 
-        {/* Actions */}
-        {processing || outcome ? (
+          {/* Actions */}
+          {processing || outcome ? (
           <div className="bg-gray-900/50 rounded-2xl p-12 text-center mb-6">
             {processing ? (
               <motion.p
