@@ -16,6 +16,7 @@ import WitchCoven from '@/components/nightbound/WitchCoven';
 import WitchFamiliar from '@/components/nightbound/WitchFamiliar';
 import WitchFamiliarDeep from '@/components/nightbound/WitchFamiliarDeep';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
+import AlchemySystem from '@/components/nightbound/AlchemySystem';
 
 const SPELLS = {
   elemental: [
@@ -24,6 +25,27 @@ const SPELLS = {
     { name: 'Ventus', icon: '💨', herbs: 'Lavender, sage', power: 25, description: 'Control wind and air', cost: 18, latin: 'Phasmatos Ventus' },
     { name: 'Terra Motus', icon: '🪨', herbs: 'Rosemary, salt', power: 35, description: 'Shake the earth', cost: 30, latin: 'Phasmatos Tribum Terra' },
     { name: 'Pyro Burst', icon: '💥', herbs: 'Dragon\'s blood resin', power: 40, description: 'Explosive fire blast', cost: 35, latin: 'Incendia Maximus' }
+  ],
+  transmutation: [
+    { name: 'Lead to Gold', icon: '✨', herbs: 'Gold dust, transmutation stone', power: 70, description: 'Transform base metal to gold', cost: 65, latin: 'Metallum Aureum' },
+    { name: 'Object Replication', icon: '🔄', herbs: 'Essence of target, moonwater', power: 60, description: 'Duplicate an object', cost: 55, latin: 'Duplicare Signum' },
+    { name: 'Mass Transformation', icon: '🌀', herbs: 'Multiple herbs, blood', power: 85, description: 'Change substance of many things', cost: 80, latin: 'Transformus Pluralis' },
+    { name: 'Living Transmutation', icon: '🧬', herbs: 'Life essence, blood', power: 95, description: 'Transform a living being\'s form', cost: 90, latin: 'Vitae Transformus' },
+    { name: 'Matter Density', icon: '🪨', herbs: 'Granite dust, iron', power: 50, description: 'Make matter harder or softer', cost: 45, latin: 'Densitas Mutatio' }
+  ],
+  healing: [
+    { name: 'Minor Healing', icon: '💚', herbs: 'White willow, yarrow', power: 20, description: 'Heal small wounds', cost: 15, latin: 'Sanitas Minor' },
+    { name: 'Cure Poison', icon: '⚗️', herbs: 'Antitoxin herb, moonwater', power: 35, description: 'Remove any poison or toxin', cost: 30, latin: 'Venenum Curatio' },
+    { name: 'Disease Banishment', icon: '🛡️', herbs: 'Saint John\'s wort, salt', power: 50, description: 'Cure any disease instantly', cost: 45, latin: 'Morbus Absum' },
+    { name: 'Full Regeneration', icon: '⚡', herbs: 'Phoenix ash, blood', power: 75, description: 'Restore body to perfect health', cost: 70, latin: 'Corporis Regenerus' },
+    { name: 'Life Force Restoration', icon: '💖', herbs: 'Life essence, white sage', power: 85, description: 'Restore drained life force', cost: 80, latin: 'Vita Restaurus' }
+  ],
+  summoning: [
+    { name: 'Summon Familiar', icon: '🐈‍⬛', herbs: 'Animal fur, blood', power: 40, description: 'Summon magical animal companion', cost: 35, latin: 'Familias Vocatus' },
+    { name: 'Summon Spirit', icon: '👻', herbs: 'Graveyard dirt, incense', power: 55, description: 'Call forth a spirit to aid you', cost: 50, latin: 'Spiritum Vocatus' },
+    { name: 'Elemental Servant', icon: '🔥', herbs: 'Elemental herbs, blood', power: 65, description: 'Create elemental creature', cost: 60, latin: 'Elementum Servus' },
+    { name: 'Demon Binding', icon: '👹', herbs: 'Black candle, sulfur', power: 80, description: 'Summon and bind demon to serve', cost: 75, latin: 'Daemon Ligare' },
+    { name: 'Dragon Call', icon: '🐉', herbs: 'Dragon scale, blood', power: 95, description: 'Summon ancient dragon ally', cost: 90, latin: 'Draco Vocatus' }
   ],
   psychic: [
     { name: 'Telepathy', icon: '🧠', herbs: 'Mugwort, jasmine', power: 20, description: 'Read surface thoughts', cost: 20, latin: 'Phasmatos Matos' },
@@ -91,6 +113,7 @@ export default function WitchHome() {
   const [showCoven, setShowCoven] = useState(false);
   const [showFamiliar, setShowFamiliar] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
+  const [showAlchemy, setShowAlchemy] = useState(false);
 
   const { data: witches = [], isLoading: witchLoading } = useQuery({
     queryKey: ['witches'],
@@ -685,6 +708,19 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
             </button>
 
             <button
+              onClick={() => setShowAlchemy(true)}
+              className="bg-gradient-to-r from-green-900/40 to-cyan-900/40 hover:from-green-900/60 hover:to-cyan-900/60 border-2 border-green-500/50 rounded-xl p-6 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">🧪</span>
+                <div className="text-left">
+                  <h3 className="text-white font-bold">Alchemy Lab</h3>
+                  <p className="text-gray-400 text-sm">Brew powerful potions</p>
+                </div>
+              </div>
+            </button>
+
+            <button
               onClick={() => setShowHerbGathering(true)}
               className="bg-gradient-to-r from-green-900/40 to-emerald-900/40 hover:from-green-900/60 hover:to-emerald-900/60 border-2 border-green-500/50 rounded-xl p-6 transition-all"
             >
@@ -949,6 +985,7 @@ Make spells creative, powerful, and thematically appropriate for power level ${w
         {showTeaching && <TeachServants witch={witch} onClose={() => setShowTeaching(false)} />}
         {showCoven && <WitchCoven witch={witch} onClose={() => setShowCoven(false)} />}
         {showFamiliar && <WitchFamiliarDeep witch={witch} onClose={() => setShowFamiliar(false)} />}
+        {showAlchemy && <AlchemySystem witch={witch} onClose={() => setShowAlchemy(false)} />}
         
         {showIdentity && (
           <motion.div
