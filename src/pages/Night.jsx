@@ -614,13 +614,7 @@ export default function Night() {
           <span className="text-2xl">💕</span>
           <p className="text-white text-xs mt-1">Supernatural Dating</p>
         </button>
-        <button
-          onClick={() => setShowCattle(true)}
-          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">🐄</span>
-          <p className="text-white text-xs mt-1">Cattle</p>
-        </button>
+
         {witches.length > 0 && witches[0].relationship >= 70 && !witches[0].living_with_vampire && (
           <button
             onClick={async () => {
