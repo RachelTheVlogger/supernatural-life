@@ -70,6 +70,11 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [showTraining, setShowTraining] = useState(false);
   const queryClient = useQueryClient();
   
+  const openTownPeople = () => {
+    console.log('Opening town people modal');
+    setShowTownPeople(true);
+  };
+  
   if (!servant || !vampireState) {
     return null;
   }
@@ -569,11 +574,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
             
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowTownPeople(true);
-              }}
+              onMouseDown={openTownPeople}
+              onTouchStart={openTownPeople}
               className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
+              style={{ WebkitTapHighlightColor: 'rgba(0,0,0,0)' }}
             >
               <Users className="w-5 h-5" />
               <span>Introduce to Town People</span>
