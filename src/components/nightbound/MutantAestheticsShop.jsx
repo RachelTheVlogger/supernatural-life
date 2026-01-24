@@ -162,11 +162,6 @@ export default function MutantAestheticsShop({ mutant, onSelectAesthetic, onBuyA
                           Unlocked
                         </span>
                       )}
-                      {!isUnlocked && aesthetic.cost > 0 && (
-                        <span className="text-xs px-2 py-1 rounded bg-gray-700/50 text-gray-400">
-                          {aesthetic.cost} Currency
-                        </span>
-                      )}
                     </div>
                     <p className={`text-sm mt-1 ${isSelected ? 'text-cyan-300' : 'text-gray-500'}`}>
                       {aesthetic.description}
