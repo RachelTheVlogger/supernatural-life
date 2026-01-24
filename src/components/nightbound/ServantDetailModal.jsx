@@ -66,6 +66,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [showInteractions, setShowInteractions] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
   const [showTownPeople, setShowTownPeople] = useState(false);
+  
+  const handleTownPeopleClick = () => {
+    setShowTownPeople(true);
+  };
   const [showDate, setShowDate] = useState(false);
   const [showTraining, setShowTraining] = useState(false);
   const queryClient = useQueryClient();
@@ -330,10 +334,7 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
         
         {showTownPeople && (
           <NPCInteraction
-            onClose={() => {
-              console.log('Closing town people modal');
-              setShowTownPeople(false);
-            }}
+            onClose={() => setShowTownPeople(false)}
             viewMode="servant"
             servant={servant}
           />
@@ -572,22 +573,18 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
               <span>Take them on a date</span>
             </button>
             
-            <div
-              onTouchStart={(e) => {
-                e.preventDefault();
+            <button
+              type="button"
+              onPointerDown={(e) => {
                 e.stopPropagation();
-                setShowTownPeople(true);
+                handleTownPeopleClick();
               }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowTownPeople(true);
-              }}
-              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3 active:scale-95 transition-transform cursor-pointer"
+              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3 active:scale-95 transition-transform"
+              style={{ touchAction: 'manipulation' }}
             >
               <Users className="w-5 h-5" />
               <span>Introduce to Town People</span>
-            </div>
+            </button>
             
             {!servant.is_turned && servant.obsession_stage >= 4 && (
               <button
