@@ -90,6 +90,46 @@ export default function MutantHome() {
     }
   };
 
+  const handleUpdateAppearance = async (field, value) => {
+    try {
+      await base44.entities.Mutant.update(mutant.id, {
+        [field]: value
+      });
+      queryClient.invalidateQueries();
+    } catch (e) {
+      console.error('Failed to update appearance:', e);
+    }
+  };
+
+  const handleSelectAesthetic = async (aesthetic) => {
+    try {
+      await base44.entities.Mutant.update(mutant.id, {
+        mutation_aesthetic: aesthetic
+      });
+      queryClient.invalidateQueries();
+    } catch (e) {
+      console.error('Failed to select aesthetic:', e);
+    }
+  };
+
+  const handleBuyAesthetic = async (aestheticId, cost) => {
+    try {
+      const newAesthetics = mutant.aesthetics_unlocked || ['natural'];
+      if (!newAesthetics.includes(aestheticId)) {
+        newAesthetics.push(aestheticId);
+      }
+      
+      await base44.entities.Mutant.update(mutant.id, {
+        aesthetics_unlocked: newAesthetics,
+        cosmetic_currency: Math.max((mutant.cosmetic_currency || 0) - cost, 0),
+        mutation_aesthetic: aestheticId
+      });
+      queryClient.invalidateQueries();
+    } catch (e) {
+      console.error('Failed to buy aesthetic:', e);
+    }
+  };
+
   const handleActivateMutation = async () => {
     setProcessing(true);
 
