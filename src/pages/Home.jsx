@@ -17,6 +17,7 @@ export default function Home() {
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
   const [selectedType, setSelectedType] = useState(null);
+  const [showCleanup, setShowCleanup] = useState(false);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
