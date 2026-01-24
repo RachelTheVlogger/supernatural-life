@@ -6,11 +6,35 @@ import { Waves, Music, Droplets, Users, Heart, Zap, Eye } from 'lucide-react';
 
 const SIREN_POWERS = [
   { id: 'hypnotic_song', name: 'Hypnotic Song', icon: Music, unlockAt: 0 },
-  { id: 'seductive_voice', name: 'Seductive Voice', icon: Heart, unlockAt: 20 },
-  { id: 'water_manipulation', name: 'Water Manipulation', icon: Waves, unlockAt: 40 },
-  { id: 'drowning_kiss', name: 'Drowning Kiss', icon: Droplets, unlockAt: 60 },
-  { id: 'tidal_emotions', name: 'Tidal Emotions', icon: Eye, unlockAt: 80 },
-  { id: 'aquatic_form', name: 'Aquatic Form', icon: Waves, unlockAt: 100 }
+  { id: 'seductive_voice', name: 'Seductive Voice', icon: Heart, unlockAt: 5 },
+  { id: 'water_breathing', name: 'Water Breathing', icon: Droplets, unlockAt: 10 },
+  { id: 'enhanced_beauty', name: 'Enhanced Beauty', icon: Heart, unlockAt: 15 },
+  { id: 'water_manipulation', name: 'Water Manipulation', icon: Waves, unlockAt: 20 },
+  { id: 'echo_location', name: 'Echo Location', icon: Eye, unlockAt: 25 },
+  { id: 'drowning_kiss', name: 'Drowning Kiss', icon: Droplets, unlockAt: 30 },
+  { id: 'tidal_emotions', name: 'Tidal Emotions', icon: Eye, unlockAt: 35 },
+  { id: 'aquatic_form', name: 'Aquatic Form', icon: Waves, unlockAt: 40 },
+  { id: 'mind_control', name: 'Mind Control', icon: Zap, unlockAt: 45 },
+  { id: 'storm_calling', name: 'Storm Calling', icon: Waves, unlockAt: 50 },
+  { id: 'siren_scream', name: 'Siren Scream', icon: Music, unlockAt: 55 },
+  { id: 'water_teleport', name: 'Water Teleport', icon: Droplets, unlockAt: 60 },
+  { id: 'memory_wash', name: 'Memory Wash', icon: Eye, unlockAt: 65 },
+  { id: 'mass_charm', name: 'Mass Charm', icon: Heart, unlockAt: 70 },
+  { id: 'tsunami_summon', name: 'Tsunami Summon', icon: Waves, unlockAt: 75 },
+  { id: 'illusion_casting', name: 'Illusion Casting', icon: Eye, unlockAt: 80 },
+  { id: 'water_healing', name: 'Water Healing', icon: Droplets, unlockAt: 85 },
+  { id: 'eternal_youth', name: 'Eternal Youth', icon: Heart, unlockAt: 90 },
+  { id: 'ocean_communion', name: 'Ocean Communion', icon: Waves, unlockAt: 95 },
+  { id: 'poseidon_blessing', name: "Poseidon's Blessing", icon: Zap, unlockAt: 100 },
+  { id: 'deep_sea_form', name: 'Deep Sea Form', icon: Waves, unlockAt: 110 },
+  { id: 'whirlpool_creation', name: 'Whirlpool Creation', icon: Waves, unlockAt: 120 },
+  { id: 'soul_singing', name: 'Soul Singing', icon: Music, unlockAt: 130 },
+  { id: 'water_clone', name: 'Water Clone', icon: Droplets, unlockAt: 140 },
+  { id: 'moon_tide_control', name: 'Moon Tide Control', icon: Eye, unlockAt: 150 },
+  { id: 'kraken_summoning', name: 'Kraken Summoning', icon: Zap, unlockAt: 160 },
+  { id: 'oceanic_avatar', name: 'Oceanic Avatar', icon: Waves, unlockAt: 170 },
+  { id: 'mythic_form', name: 'Mythic Form', icon: Zap, unlockAt: 180 },
+  { id: 'voice_of_atlantis', name: 'Voice of Atlantis', icon: Music, unlockAt: 200 }
 ];
 
 export default function SirenHome() {
@@ -61,9 +85,19 @@ export default function SirenHome() {
       const result = outcomes[Math.floor(Math.random() * outcomes.length)];
       setOutcome(result);
 
+      const newVoicePower = Math.min((siren.voice_power || 50) + 2, 250);
+      const newUnlocked = [...(siren.unlocked_powers || ['Hypnotic Song'])];
+      
+      SIREN_POWERS.forEach(power => {
+        if (newVoicePower >= power.unlockAt && !newUnlocked.includes(power.name)) {
+          newUnlocked.push(power.name);
+        }
+      });
+
       await base44.entities.Siren.update(siren.id, {
         songs_sung: (siren.songs_sung || 0) + 1,
-        voice_power: Math.min((siren.voice_power || 50) + 2, 100)
+        voice_power: newVoicePower,
+        unlocked_powers: newUnlocked
       });
 
       await base44.entities.NightLog.create({
@@ -97,9 +131,21 @@ export default function SirenHome() {
       const result = outcomes[Math.floor(Math.random() * outcomes.length)];
       setOutcome(result);
 
+      const newCharm = Math.min((siren.charm_level || 60) + 3, 250);
+      const newVoice = Math.min((siren.voice_power || 50) + 1, 250);
+      const newUnlocked = [...(siren.unlocked_powers || ['Hypnotic Song'])];
+      
+      SIREN_POWERS.forEach(power => {
+        if (newVoice >= power.unlockAt && !newUnlocked.includes(power.name)) {
+          newUnlocked.push(power.name);
+        }
+      });
+
       await base44.entities.Siren.update(siren.id, {
         victims_lured: (siren.victims_lured || 0) + 1,
-        charm_level: Math.min((siren.charm_level || 60) + 3, 100)
+        charm_level: newCharm,
+        voice_power: newVoice,
+        unlocked_powers: newUnlocked
       });
 
       await base44.entities.NightLog.create({
@@ -179,11 +225,11 @@ export default function SirenHome() {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-400">Voice Power</span>
-                <span className="text-cyan-400">{siren.voice_power}/100</span>
+                <span className="text-cyan-400">{siren.voice_power || 0}/250</span>
               </div>
               <div className="w-full bg-gray-800 rounded-full h-2">
                 <div
-                  style={{ width: `${siren.voice_power}%` }}
+                  style={{ width: `${Math.min(((siren.voice_power || 0) / 250) * 100, 100)}%` }}
                   className="h-2 rounded-full bg-gradient-to-r from-cyan-600 to-blue-500"
                 />
               </div>
@@ -192,11 +238,11 @@ export default function SirenHome() {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-400">Charm Level</span>
-                <span className="text-pink-400">{siren.charm_level}/100</span>
+                <span className="text-pink-400">{siren.charm_level || 0}/250</span>
               </div>
               <div className="w-full bg-gray-800 rounded-full h-2">
                 <div
-                  style={{ width: `${siren.charm_level}%` }}
+                  style={{ width: `${Math.min(((siren.charm_level || 0) / 250) * 100, 100)}%` }}
                   className="h-2 rounded-full bg-gradient-to-r from-pink-600 to-purple-500"
                 />
               </div>
@@ -277,24 +323,30 @@ export default function SirenHome() {
         <div className="bg-gray-900/50 rounded-2xl p-6 mt-6">
           <h3 className="text-white font-bold mb-4 flex items-center gap-2">
             <Zap className="w-5 h-5 text-yellow-400" />
-            Siren Powers
+            Siren Powers ({(siren.unlocked_powers || []).length}/{SIREN_POWERS.length})
           </h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
             {SIREN_POWERS.map(power => {
               const Icon = power.icon;
-              const unlocked = (siren.voice_power || 0) >= power.unlockAt;
+              const unlocked = (siren.unlocked_powers || []).includes(power.name);
+              const canUnlock = (siren.voice_power || 0) >= power.unlockAt && !unlocked;
               return (
                 <div
                   key={power.id}
                   className={`p-3 rounded-lg border ${
                     unlocked 
                       ? 'bg-cyan-900/30 border-cyan-500/30' 
+                      : canUnlock
+                      ? 'bg-yellow-900/20 border-yellow-500/30'
                       : 'bg-gray-800/30 border-gray-700/30'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 mb-1 ${unlocked ? 'text-cyan-400' : 'text-gray-600'}`} />
-                  <p className={`text-xs ${unlocked ? 'text-white' : 'text-gray-600'}`}>
+                  <Icon className={`w-4 h-4 mb-1 ${unlocked ? 'text-cyan-400' : canUnlock ? 'text-yellow-400' : 'text-gray-600'}`} />
+                  <p className={`text-xs font-medium ${unlocked ? 'text-white' : canUnlock ? 'text-yellow-300' : 'text-gray-600'}`}>
                     {power.name}
+                  </p>
+                  <p className="text-[10px] text-gray-500 mt-1">
+                    {unlocked ? '✓ Unlocked' : `Req: ${power.unlockAt}`}
                   </p>
                 </div>
               );
