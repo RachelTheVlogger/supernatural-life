@@ -44,103 +44,85 @@ const INTIMATE_ACTIONS = {
 
 export default function HunterIntimate({ hunter, vampires }) {
   const queryClient = useQueryClient();
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedAction, setSelectedAction] = useState(null);
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const validPartners = [
-    ...vampires.filter(v => Math.random() > 0.6).map(v => ({
-      id: v.id,
-      name: v.vampire_name,
-      type: 'vampire',
-      icon: '🦇'
-    }))
-  ];
+  const validPartners = vampires.map(v => ({
+    id: v.id,
+    name: v.vampire_name,
+    type: 'vampire',
+    icon: '🦇'
+  }));
 
-  const handleIntimate = async (type, partner) => {
+  const categories = ['all', 'romantic', 'physical', 'bdsm', 'social', 'activity'];
+  const currentActions = INTIMATE_ACTIONS[selectedCategory] || INTIMATE_ACTIONS.all;
+
+  const handleAction = async (action, partner) => {
     setProcessing(true);
+    setSelectedAction(action);
 
     const outcomes = {
-      tension: `${partner.name}... the sexual tension between you is undeniable. The hunt can wait for one night.`,
-      passionate: `You and ${partner.name} gave in to desire. Passionate encounter. Both satisfied, both dangerous.`,
-      roleplay: `You and ${partner.name} played the game. The roleplay was intense. Boundaries blurred.`,
-      seduce: `${partner.name} couldn't resist. Seduction successful. They're vulnerable now.`
+      touch: `You reached out and touched ${partner.name}. Electric. Raw. Undeniable.`,
+      kiss: `Your lips met theirs. The world stopped. Everything else faded away.`,
+      dance: `You moved together in the darkness. Two hunters, momentarily forgetting the hunt.`,
+      seduce: `You traced a finger down their spine. They shivered. Control shifted.`,
+      whisper: `You whispered dangerous things into their ear. They leaned in, captivated.`,
+      pin: `You pushed them against the wall. Eyes locked. Nowhere to run.`,
+      undress: `You peeled away their clothes slowly. Every inch revealed. Vulnerable.`,
+      claim: `You marked them with your lips and hands. They belonged to you now.`,
+      bind: `You secured their wrists. They tested the restraints, a smile playing at their lips.`,
+      command: `You gave them orders. They obeyed. The power was intoxicating.`,
+      hunt: `You hunted together that night. Two predators working as one. Deadly.`,
+      explore: `You explored the night together. Discovered new heights of desire.`
     };
 
     setTimeout(async () => {
       try {
         await base44.entities.NightLog.create({
-          entry: `Hunter ${hunter.name}: ${type.toUpperCase()} with ${partner.name}. ${outcomes[type]}`,
+          entry: `${hunter.name}: ${outcomes[action.id] || 'An intimate moment shared.'}`,
           category: 'interaction',
-          intensity: 'explicit'
+          intensity: 'high'
         });
 
-        setOutcome(outcomes[type]);
+        setOutcome(outcomes[action.id] || 'A moment shared.');
         queryClient.invalidateQueries();
 
         setTimeout(() => {
           setProcessing(false);
           setOutcome('');
-          setSelectedType(null);
+          setSelectedAction(null);
           setSelectedPartner(null);
-        }, 4000);
+        }, 3000);
       } catch (e) {
         console.error('Activity failed:', e);
         setProcessing(false);
       }
-    }, 2000);
+    }, 1500);
   };
-
-  if (!selectedType) {
-    return (
-      <div className="space-y-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-black/40 border border-pink-500/30 rounded-2xl p-6"
-        >
-          <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-            <Heart className="w-5 h-5 text-pink-400" />
-            Intimate Encounters
-          </h3>
-
-          <div className="space-y-2">
-            {INTIMATE_OPTIONS.map(option => (
-              <button
-                key={option.id}
-                onClick={() => setSelectedType(option)}
-                className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-left transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{option.icon}</span>
-                  <div className="flex-1">
-                    <h4 className="text-white font-medium">{option.name}</h4>
-                    <p className="text-gray-400 text-sm">{option.desc}</p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
 
   if (processing && outcome) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="bg-black/40 border border-pink-500/30 rounded-2xl p-12"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
       >
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-gray-300 text-center italic"
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="bg-gray-900 rounded-2xl p-8 max-w-md w-full text-center border-2 border-purple-500/50"
         >
-          "{outcome}"
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-purple-200 text-lg leading-relaxed italic"
+          >
+            {outcome}
+          </motion.p>
+        </motion.div>
       </motion.div>
     );
   }
@@ -150,73 +132,72 @@ export default function HunterIntimate({ hunter, vampires }) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="bg-black/40 border border-pink-500/30 rounded-2xl p-12 text-center"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
       >
-        <motion.p
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-gray-400"
-        >
-          ...
-        </motion.p>
+        <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1, repeat: Infinity }}>
+          <span className="text-4xl">💜</span>
+        </motion.div>
       </motion.div>
     );
   }
-
-  const selectedTypeData = INTIMATE_OPTIONS.find(o => o.id === selectedType.id);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-black/40 border border-pink-500/30 rounded-2xl p-6"
+      exit={{ opacity: 0, y: -20 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
     >
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-white text-lg font-bold">{selectedTypeData.name}</h3>
-        <button
-          onClick={() => setSelectedType(null)}
-          className="text-gray-400 hover:text-white"
-        >
-          <X className="w-5 h-5" />
-        </button>
-      </div>
-
-      {validPartners.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-400 mb-4">No available partners at the moment.</p>
-          <button
-            onClick={() => setSelectedType(null)}
-            className="text-pink-400 hover:text-pink-300 text-sm"
-          >
-            ← Back
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl p-6 max-w-lg w-full border-2 border-purple-500/50"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-1">
+              {validPartners[0]?.name || 'Intimate Encounter'}
+            </h2>
+            <p className="text-gray-400">They're here with you. What will you do?</p>
+          </div>
+          <button className="text-gray-400 hover:text-white">
+            <X className="w-5 h-5" />
           </button>
         </div>
-      ) : (
-        <div className="space-y-3">
-          <p className="text-gray-400 text-sm mb-4">Choose a partner...</p>
-          {validPartners.map(partner => (
+
+        {/* Category Tabs */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {categories.map(cat => (
             <button
-              key={partner.id}
-              onClick={() => handleIntimate(selectedTypeData.id, partner)}
-              className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-left transition-colors"
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                selectedCategory === cat
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              }`}
             >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{partner.icon}</span>
-                <div className="flex-1">
-                  <h4 className="text-white font-medium">{partner.name}</h4>
-                  <p className="text-gray-400 text-sm capitalize">{partner.type}</p>
-                </div>
-              </div>
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
             </button>
           ))}
-          <button
-            onClick={() => setSelectedType(null)}
-            className="w-full text-gray-400 hover:text-white text-sm mt-4 py-2"
-          >
-            ← Back
-          </button>
         </div>
-      )}
+
+        {/* Actions Grid */}
+        <div className="space-y-3 max-h-[50vh] overflow-y-auto">
+          {currentActions.map(action => (
+            <motion.button
+              key={action.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => handleAction(action, validPartners[0] || { name: 'them' })}
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl py-4 px-6 font-medium transition-all flex items-center gap-3 group"
+            >
+              <span className="text-xl group-hover:scale-125 transition-transform">{action.icon}</span>
+              {action.label}
+            </motion.button>
+          ))}
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
