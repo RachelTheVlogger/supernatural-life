@@ -6,6 +6,7 @@ import HumanHome from './pages/HumanHome';
 import IncubusHome from './pages/IncubusHome';
 import Index from './pages/Index';
 import Messages from './pages/Messages';
+import MutantHome from './pages/MutantHome';
 import NateLilithHome from './pages/NateLilithHome';
 import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
@@ -17,7 +18,6 @@ import VampireHome from './pages/VampireHome';
 import WaterNymphHome from './pages/WaterNymphHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
-import MutantHome from './pages/MutantHome';
 import __Layout from './Layout.jsx';
 
 
@@ -30,6 +30,7 @@ export const PAGES = {
     "IncubusHome": IncubusHome,
     "Index": Index,
     "Messages": Messages,
+    "MutantHome": MutantHome,
     "NateLilithHome": NateLilithHome,
     "Night": Night,
     "ServantHome": ServantHome,
@@ -41,7 +42,6 @@ export const PAGES = {
     "WaterNymphHome": WaterNymphHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
-    "MutantHome": MutantHome,
 }
 
 export const pagesConfig = {
