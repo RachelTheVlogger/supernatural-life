@@ -221,11 +221,11 @@ export default function NPCInteraction({ onClose, viewMode, servant = null }) {
 
         <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
           <Users className="w-6 h-6" />
-          {servant ? `${servant.name} Meets People` : 'People Around Town'}
+          {servant ? 'Introduce Servant' : 'People Around Town'}
         </h2>
         {servant && (
           <p className="text-gray-400 text-sm mb-4">
-            {servant.name} can meet people and make connections for you.
+            Introduce {servant.name} to people around town.
           </p>
         )}
 
