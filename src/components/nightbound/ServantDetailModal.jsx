@@ -572,8 +572,8 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
               <span>Take them on a date</span>
             </button>
             
-            <button
-              onTouchEnd={(e) => {
+            <div
+              onTouchStart={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setShowTownPeople(true);
@@ -583,11 +583,11 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
                 e.stopPropagation();
                 setShowTownPeople(true);
               }}
-              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3 active:scale-95 transition-transform"
+              className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3 active:scale-95 transition-transform cursor-pointer"
             >
               <Users className="w-5 h-5" />
               <span>Introduce to Town People</span>
-            </button>
+            </div>
             
             {!servant.is_turned && servant.obsession_stage >= 4 && (
               <button
