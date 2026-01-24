@@ -363,8 +363,39 @@ export default function SupernaturalDating({ vampireState, onClose }) {
               </button>
             )}
           </div>
-        )}
-      </motion.div>
-    </motion.div>
-  );
-}
+          )}
+
+          <AnimatePresence>
+          {currentScenario && (
+            <DateScenarios
+              scenario={currentScenario}
+              onChoice={async (choice) => {
+                const newRelationship = Math.max(0, Math.min(100, (selectedDate.relationship_level || 0) + choice.relationship));
+                const newIntimacy = Math.max(0, Math.min(100, (selectedDate.intimacy_level || 0) + choice.intimacy));
+                const newTension = Math.max(0, Math.min(100, (selectedDate.tension_level || 50) + choice.tension));
+
+                await base44.entities.SupernaturalDate.update(selectedDate.id, {
+                  relationship_level: newRelationship,
+                  intimacy_level: newIntimacy,
+                  tension_level: newTension,
+                  dates_completed: (selectedDate.dates_completed || 0) + 1,
+                  last_date: new Date().toISOString()
+                });
+
+                await base44.entities.NightLog.create({
+                  entry: `Date scenario with ${selectedDate.date_name}: ${currentScenario.title}`,
+                  category: 'interaction',
+                  intensity: 'significant'
+                });
+
+                queryClient.invalidateQueries();
+                setCurrentScenario(null);
+              }}
+              onClose={() => setCurrentScenario(null)}
+            />
+          )}
+          </AnimatePresence>
+          </motion.div>
+          </motion.div>
+          );
+          }
