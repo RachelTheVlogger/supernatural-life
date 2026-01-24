@@ -178,17 +178,16 @@ export default function HunterIntimate({ hunter, vampires }) {
       return outcomeList || 'A moment shared.';
     };
 
-    const outcomes = getOutcomes();
-
     setTimeout(async () => {
       try {
+        const hunterOutcome = selectRandomOutcome(action.id);
         await base44.entities.NightLog.create({
-          entry: `${hunter.name}: ${outcomes[action.id] || 'An intimate moment shared.'}`,
+          entry: `${hunter.name}: ${hunterOutcome}`,
           category: 'interaction',
           intensity: 'high'
         });
 
-        setOutcome(outcomes[action.id] || 'A moment shared.');
+        setOutcome(hunterOutcome);
         queryClient.invalidateQueries();
 
         setTimeout(() => {
