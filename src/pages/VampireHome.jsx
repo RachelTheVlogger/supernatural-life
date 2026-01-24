@@ -320,7 +320,7 @@ export default function VampireHome() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             {vampireStates.length > 1 && (
               <button
                 onClick={(e) => {
