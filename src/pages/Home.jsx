@@ -116,22 +116,18 @@ export default function Home() {
       };
   
   const handleContinue = () => {
-    // Navigate to the appropriate home based on what characters exist
     if (vampireStates.length > 0) navigate(createPageUrl('Night'));
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
     else if (sirens.length > 0) navigate(createPageUrl('SirenHome'));
     else if (waterNymphs.length > 0) navigate(createPageUrl('WaterNymphHome'));
-    else if (mutants.length > 0) navigate(createPageUrl('MutantHome'));
   };
 
-  // Find all duplicates by name
   const getAllDuplicates = () => {
     const allCharacters = [
       ...vampireStates.map(v => ({ id: v.id, name: v.vampire_name, type: 'Vampire', entity: v })),
       ...witches.map(w => ({ id: w.id, name: w.name, type: 'Witch', entity: w })),
       ...sirens.map(s => ({ id: s.id, name: s.name, type: 'Siren', entity: s })),
-      ...waterNymphs.map(n => ({ id: n.id, name: n.name, type: 'Nymph', entity: n })),
-      ...mutants.map(m => ({ id: m.id, name: m.name, type: 'Mutant', entity: m }))
+      ...waterNymphs.map(n => ({ id: n.id, name: n.name, type: 'Nymph', entity: n }))
     ];
 
     const duplicates = {};
@@ -149,8 +145,7 @@ export default function Home() {
       'Vampire': base44.entities.VampireState,
       'Witch': base44.entities.Witch,
       'Siren': base44.entities.Siren,
-      'Nymph': base44.entities.WaterNymph,
-      'Mutant': base44.entities.Mutant
+      'Nymph': base44.entities.WaterNymph
     };
     
     try {
@@ -287,46 +282,10 @@ export default function Home() {
                       className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-xl">✨</span>
+                        <span className="text-xl">💧</span>
                         <div>
                           <p className="text-white font-medium">{n.name}</p>
                           <p className="text-gray-400 text-xs">Water Nymph</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                  {mutants.map(m => (
-                    <button
-                      key={m.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(createPageUrl('MutantHome'));
-                      }}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🧬</span>
-                        <div>
-                          <p className="text-white font-medium">{m.name}</p>
-                          <p className="text-gray-400 text-xs">Mutant</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                  {heretics.map(h => (
-                    <button
-                      key={h.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(createPageUrl(`HereticHome?id=${h.id}`));
-                      }}
-                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">⚡</span>
-                        <div>
-                          <p className="text-white font-medium">{h.name}</p>
-                          <p className="text-gray-400 text-xs">Heretic</p>
                         </div>
                       </div>
                     </button>
@@ -617,27 +576,6 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 4 && selectedType === 'heretic' && (
-              <>
-                <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
-                <p className="text-purple-300 text-sm mb-6">Your hybrid nature awaits. Vampire and witch, forever divided.</p>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setIntroStep(3)}
-                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={startNewGame}
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg py-3 text-white font-medium transition-all"
-                  >
-                    Begin
-                  </button>
-                </div>
-              </>
-            )}
-
             {introStep === 4 && selectedType === 'siren' && (
                <>
                  <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
@@ -659,7 +597,7 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && selectedType !== 'mutant' && selectedType !== 'heretic' && (
+            {introStep === 4 && selectedType !== 'nymph' && selectedType !== 'siren' && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your personality</h2>
                 <p className="text-purple-300 text-sm mb-4">Who are you at your core?</p>
