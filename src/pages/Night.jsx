@@ -44,6 +44,11 @@ import BloodAddiction from '@/components/nightbound/BloodAddiction';
 import FeedingParty from '@/components/nightbound/FeedingParty';
 import WitchLivingTogether from '@/components/nightbound/WitchLivingTogether';
 import VampireSnakeFamiliar from '@/components/nightbound/VampireSnakeFamiliar';
+import DreamManipulation from '@/components/nightbound/DreamManipulation';
+import ThrallSystem from '@/components/nightbound/ThrallSystem';
+import MemoryAlteration from '@/components/nightbound/MemoryAlteration';
+import BloodVintageSystem from '@/components/nightbound/BloodVintageSystem';
+import SupernaturalDating from '@/components/nightbound/SupernaturalDating';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -69,6 +74,11 @@ export default function Night() {
   const [showFeedingParty, setShowFeedingParty] = useState(false);
   const [showWitchHome, setShowWitchHome] = useState(false);
   const [showSnake, setShowSnake] = useState(false);
+  const [showDreams, setShowDreams] = useState(false);
+  const [showThralls, setShowThralls] = useState(false);
+  const [showMemory, setShowMemory] = useState(false);
+  const [showVintage, setShowVintage] = useState(false);
+  const [showSupernaturalDating, setShowSupernaturalDating] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
 
   // Fetch vampire state
@@ -566,6 +576,41 @@ export default function Night() {
           <span className="text-2xl">🐍</span>
           <p className="text-white text-xs mt-1">Snake Familiar</p>
         </button>
+        <button
+          onClick={() => setShowDreams(true)}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🌙</span>
+          <p className="text-white text-xs mt-1">Dream Control</p>
+        </button>
+        <button
+          onClick={() => setShowThralls(true)}
+          className="bg-gray-950/40 hover:bg-gray-950/60 border border-gray-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🧠</span>
+          <p className="text-white text-xs mt-1">Thralls</p>
+        </button>
+        <button
+          onClick={() => setShowMemory(true)}
+          className="bg-cyan-950/40 hover:bg-cyan-950/60 border border-cyan-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🧠</span>
+          <p className="text-white text-xs mt-1">Memory Edit</p>
+        </button>
+        <button
+          onClick={() => setShowVintage(true)}
+          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🍷</span>
+          <p className="text-white text-xs mt-1">Blood Cellar</p>
+        </button>
+        <button
+          onClick={() => setShowSupernaturalDating(true)}
+          className="bg-pink-950/40 hover:bg-pink-950/60 border border-pink-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">💕</span>
+          <p className="text-white text-xs mt-1">Supernatural Dating</p>
+        </button>
         {witches.length > 0 && witches[0].relationship >= 70 && !witches[0].living_with_vampire && (
           <button
             onClick={async () => {
@@ -762,6 +807,21 @@ export default function Night() {
         )}
         {showSnake && vampireState && (
           <VampireSnakeFamiliar vampireState={vampireState} onClose={() => setShowSnake(false)} />
+        )}
+        {showDreams && vampireState && (
+          <DreamManipulation vampireState={vampireState} onClose={() => setShowDreams(false)} />
+        )}
+        {showThralls && vampireState && (
+          <ThrallSystem vampireState={vampireState} onClose={() => setShowThralls(false)} />
+        )}
+        {showMemory && vampireState && (
+          <MemoryAlteration vampireState={vampireState} onClose={() => setShowMemory(false)} />
+        )}
+        {showVintage && vampireState && (
+          <BloodVintageSystem vampireState={vampireState} onClose={() => setShowVintage(false)} />
+        )}
+        {showSupernaturalDating && vampireState && (
+          <SupernaturalDating vampireState={vampireState} onClose={() => setShowSupernaturalDating(false)} />
         )}
       </AnimatePresence>
     </div>

@@ -74,6 +74,10 @@ export default function HunterThreatModal({ onClose, vampireState }) {
         frame: {
           success: ['Framed as insane. Discredited completely.', 'Evidence planted. They lost all credibility.', 'Framing successful. No one believes them.'],
           fail: ['Frame job failed. They exposed you more.', 'Backfired. More hunters coming.', 'Failed. Situation worse.']
+        },
+        date: {
+          success: ['Forbidden romance blooming. They\'re conflicted. Hunter falling for vampire. Dangerous love.', 'You started dating them. Attraction undeniable. They question everything now.', 'Romance successful. They can\'t hunt you anymore. Love won.'],
+          fail: ['They rejected you. Professional boundaries. Still hunting.', 'Romance attempt failed. They\'re more determined to kill you.', 'Attraction acknowledged but denied. Painful for both.']
         }
       };
 
@@ -88,6 +92,22 @@ export default function HunterThreatModal({ onClose, vampireState }) {
             await base44.entities.Hunter.update(selectedHunter.id, {
               status: action === 'confront' ? 'dead' : 'recruited',
               suspicion: 0
+            });
+          } else if (action === 'date') {
+            await base44.entities.Hunter.update(selectedHunter.id, {
+              status: 'conflicted',
+              suspicion: Math.max(0, selectedHunter.suspicion - 40)
+            });
+            
+            await base44.entities.SupernaturalDate.create({
+              vampire_id: vampireState.id,
+              date_name: selectedHunter.name,
+              date_type: 'hunter',
+              gender: 'custom',
+              personality: ['conflicted', 'dangerous'],
+              relationship_level: 30,
+              tension_level: 40,
+              dangerous_attraction: true
             });
           } else {
             await base44.entities.Hunter.update(selectedHunter.id, {
@@ -257,6 +277,15 @@ export default function HunterThreatModal({ onClose, vampireState }) {
               <Heart className="w-5 h-5 text-purple-400 mb-2" />
               <h4 className="text-white font-medium">Seduce & Recruit</h4>
               <p className="text-gray-400 text-sm">Turn them. Make them yours instead.</p>
+            </button>
+
+            <button
+              onClick={() => handleAction('date')}
+              className="w-full bg-pink-900/40 hover:bg-pink-900/60 border border-pink-500/30 rounded-xl p-4 text-left transition-colors"
+            >
+              <Heart className="w-5 h-5 text-pink-400 mb-2" />
+              <h4 className="text-white font-medium">Forbidden Romance</h4>
+              <p className="text-gray-400 text-sm">Date them. Dangerous attraction. Hunter falling for vampire.</p>
             </button>
 
             <button

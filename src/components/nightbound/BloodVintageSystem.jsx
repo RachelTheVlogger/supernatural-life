@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Droplet, Clock, Sparkles, Wine } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tanstack:react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const PRESERVATION_METHODS = [
   { id: 'crystal_vial', label: 'Crystal Vial', bonus: 5, cost: 0 },
