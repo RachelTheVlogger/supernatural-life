@@ -90,17 +90,6 @@ export default function MutantHome() {
     }
   };
 
-  const handleUpdateAppearance = async (field, value) => {
-    try {
-      await base44.entities.Mutant.update(mutant.id, {
-        [field]: value
-      });
-      queryClient.invalidateQueries();
-    } catch (e) {
-      console.error('Failed to update appearance:', e);
-    }
-  };
-
   const handleSelectAesthetic = async (aesthetic) => {
     try {
       await base44.entities.Mutant.update(mutant.id, {
