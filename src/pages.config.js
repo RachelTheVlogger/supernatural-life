@@ -3,6 +3,7 @@ import Codex from './pages/Codex';
 import DoppelgangerHome from './pages/DoppelgangerHome';
 import Home from './pages/Home';
 import HumanHome from './pages/HumanHome';
+import HunterHome from './pages/HunterHome';
 import IncubusHome from './pages/IncubusHome';
 import Index from './pages/Index';
 import Messages from './pages/Messages';
@@ -17,7 +18,6 @@ import VampireHome from './pages/VampireHome';
 import WaterNymphHome from './pages/WaterNymphHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
-import HunterHome from './pages/HunterHome';
 import __Layout from './Layout.jsx';
 
 
@@ -27,6 +27,7 @@ export const PAGES = {
     "DoppelgangerHome": DoppelgangerHome,
     "Home": Home,
     "HumanHome": HumanHome,
+    "HunterHome": HunterHome,
     "IncubusHome": IncubusHome,
     "Index": Index,
     "Messages": Messages,
@@ -41,7 +42,6 @@ export const PAGES = {
     "WaterNymphHome": WaterNymphHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
-    "HunterHome": HunterHome,
 }
 
 export const pagesConfig = {

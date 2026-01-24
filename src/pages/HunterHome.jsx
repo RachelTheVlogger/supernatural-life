@@ -10,6 +10,7 @@ import HunterHomeActivities from '@/components/nightbound/HunterHomeActivities';
 import HunterIntimate from '@/components/nightbound/HunterIntimate';
 import HunterAbilityShop from '@/components/nightbound/HunterAbilityShop';
 import HunterVampireInteraction from '@/components/nightbound/HunterVampireInteraction';
+import VampireInitiatedInteractions from '@/components/nightbound/VampireInitiatedInteractions';
 
 export default function HunterHome() {
   const navigate = useNavigate();
