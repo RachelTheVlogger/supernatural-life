@@ -113,6 +113,127 @@ export default function ThrallSystem({ vampireState, onClose }) {
   const handleAssignMission = async (mission) => {
     setAssigning(true);
 
+    const missionAtmosphere = {
+      spy: [
+        'They slip into shadows, becoming one with darkness. Eyes and ears in the night.',
+        'Their footsteps are silent. They blend into crowds. Nothing escapes their notice.',
+        'The city becomes their hunting ground. They watch. They listen. They report back.',
+        'They move through the streets unseen, invisible threads in your spider web.'
+      ],
+      infiltrate: [
+        'They walk through locked doors. Your control is their key. They go where you send them.',
+        'Deepcover begins. They become someone new. A ghost in the machine.',
+        'They disappear into enemy territory. Days pass. You wait for reports.',
+        'They are your agent in the darkness. Embedded. Waiting for your command.'
+      ],
+      guard: [
+        'They take position. Vigilant. Unwavering. Nothing gets past them.',
+        'The location is now under watch. Your thrall stands sentinel, unblinking.',
+        'They settle into place, ready to strike at anything that threatens you.',
+        'A silent guardian. Obedient. Lethal if needed. Perfect protection.'
+      ],
+      messenger: [
+        'They leave immediately, your words burning in their controlled mind.',
+        'The message is theirs to carry. They will not fail you.',
+        'They disappear into the night to deliver your words to waiting ears.',
+        'Off they go, your puppet on invisible strings, delivering your will.'
+      ],
+      assassinate: [
+        'They grip the weapon you gave them. The target is marked. They will not stop.',
+        'A killer awakes. Your thrall becomes an instrument of death.',
+        'They set out into the darkness with one purpose: eliminate the target.',
+        'The hunt begins. Your thrall is the predator. The target, the prey.'
+      ],
+      seduce: [
+        'They prepare themselves. Charm activated. They know exactly what to do.',
+        'They are your weapon of seduction. Irresistible. Unstoppable.',
+        'Off into the night to wrap someone around your finger through them.',
+        'Your thrall becomes desire incarnate. The target will not resist.'
+      ],
+      sabotage: [
+        'Chaos is their tool. They know exactly where to strike.',
+        'They move through the target location, planting seeds of destruction.',
+        'The operation crumbles under their careful sabotage. Perfect execution.',
+        'They dismantle plans with surgical precision. Nothing left but ruins.'
+      ]
+    };
+
+    const missionSuccess = {
+      spy: [
+        '${name} returns with valuable intelligence. Enemy positions. Secret dealings. All revealed to you.',
+        'Intelligence confirmed. ${name} saw everything. Heard everything. Perfect surveillance.',
+        '${name}\'s report comes back. The information is gold. You know their every move.'
+      ],
+      infiltrate: [
+        '${name} has embedded themselves. They are one of them now. Your spy in their ranks.',
+        'Deep cover successful. ${name} sends back reports from inside. You are invisible to them.',
+        '${name} is now one of them. Your influence spreads like poison through their organization.'
+      ],
+      guard: [
+        'Nothing approaches undetected. ${name} reports all clear. Your location is safe.',
+        '${name} stood watch through the night. Nothing threatens you. Your property is secure.',
+        'Perfect vigil maintained. Your location is impregnable. ${name} is an excellent guardian.'
+      ],
+      messenger: [
+        'The message was delivered perfectly. ${name} returns, mission complete.',
+        '${name} carried your words to their destination. The recipient now understands.',
+        'Your will has been communicated. ${name} has served their purpose admirably.'
+      ],
+      assassinate: [
+        'The target is dead. ${name} returns from the darkness, their work complete. Blood on their hands. Your will executed.',
+        '${name} succeeded. The target breathes no more. One less problem in your world.',
+        'Mission accomplished. The target is eliminated. ${name} has proven their worth as a killer.'
+      ],
+      seduce: [
+        'The target is wrapped around ${name}\'s finger. Perfectly compromised. Information flows freely.',
+        '${name} has them entranced. The target reveals secrets willingly. Control achieved.',
+        'Complete seduction. The target is yours now, through ${name}. They will do anything you ask.'
+      ],
+      sabotage: [
+        'The operation is in chaos. ${name}\'s sabotage was flawless. Perfectly orchestrated destruction.',
+        'Everything falls apart. ${name} executed the plan perfectly. Their rivals are now helpless.',
+        'Beautiful destruction. ${name}\'s sabotage cripples the operation. They never saw it coming.'
+      ]
+    };
+
+    const missionFailure = {
+      spy: [
+        '${name} was spotted. The mark was alert. They escaped before getting the information you needed.',
+        'The surveillance failed. ${name} could not get close enough. The target moved before they could observe.',
+        '${name} was careless. The security was tighter than expected. They escaped with nothing.'
+      ],
+      infiltrate: [
+        '${name} was discovered. Barely escaped with their life. The deep cover is blown.',
+        'Security detected the infiltration. ${name} had to flee. The operation is compromised.',
+        '${name}\'s cover was thin. They were exposed too quickly. Retreat was necessary.'
+      ],
+      guard: [
+        'Intruders got past ${name}. Your security was breached. Your thrall failed to stop them.',
+        '${name} was overwhelmed. Too many enemies. Your location was infiltrated on their watch.',
+        'The guard duty failed. ${name} could not stop what came. Your sanctuary was violated.'
+      ],
+      messenger: [
+        '${name} lost the message. A fight broke out. The delivery never happened.',
+        'The recipient was not found. ${name} searched but could not locate them. The message went undelivered.',
+        'Ambushed en route. ${name} barely escaped. The message was lost in the chaos.'
+      ],
+      assassinate: [
+        'The target escaped. ${name}\'s attack failed. Your enemy lives to see another night.',
+        '${name} could not land the killing blow. The target was faster. Stronger. More prepared.',
+        'The assassination attempt failed. ${name} had to retreat. The target remains alive.'
+      ],
+      seduce: [
+        'The target rejected ${name}. They saw through the seduction. The compromise failed.',
+        '${name}\'s charms did not work. The target was unaffected. No secrets were gained.',
+        'The seduction attempt backfired. The target became suspicious. The opportunity is lost.'
+      ],
+      sabotage: [
+        '${name} was caught mid-sabotage. They escaped but the plan is exposed.',
+        'Security stopped the sabotage before it could spread. ${name} retreated with minimal damage done.',
+        'The target anticipated the sabotage. ${name}\'s work was for nothing. The operation continues.'
+      ]
+    };
+
     setTimeout(async () => {
       const loyalty = selectedThrall.loyalty || 50;
       const successBase = mission.risk === 'high' ? 0.4 : mission.risk === 'medium' ? 0.2 : 0.1;
@@ -120,9 +241,15 @@ export default function ThrallSystem({ vampireState, onClose }) {
       const success = Math.random() > (successBase - loyaltyBonus);
 
       try {
+        const atmosphereText = missionAtmosphere[mission.id]?.[Math.floor(Math.random() * 4)] || 'Mission assigned.';
+        const missionName = mission.label.toLowerCase();
+        const atmosphereProcessed = atmosphereText.replace('${name}', selectedThrall.name);
+
         if (success) {
           const newXP = (selectedThrall.experience || 0) + 30;
           const newLevel = Math.floor(newXP / 100) + 1;
+          const successText = missionSuccess[mission.id]?.[Math.floor(Math.random() * 3)] || 'Mission complete.';
+          const successProcessed = successText.replace('${name}', selectedThrall.name);
           
           await base44.entities.Thrall.update(selectedThrall.id, {
             assigned_mission: mission.id,
@@ -135,8 +262,10 @@ export default function ThrallSystem({ vampireState, onClose }) {
             loyalty: Math.min((selectedThrall.loyalty || 50) + 5, 100)
           });
 
-          setOutcome(`${selectedThrall.name} completed the mission successfully. +5 loyalty, +30 XP.`);
+          setOutcome(`${atmosphereProcessed}\n\n✓ ${successProcessed}\n\n+5 loyalty, +30 XP`);
         } else {
+          const failureText = missionFailure[mission.id]?.[Math.floor(Math.random() * 3)] || 'Mission failed.';
+          const failureProcessed = failureText.replace('${name}', selectedThrall.name);
           const betrayalIncrease = Math.random() * 20;
           
           await base44.entities.Thrall.update(selectedThrall.id, {
@@ -147,7 +276,7 @@ export default function ThrallSystem({ vampireState, onClose }) {
             betrayal_risk: Math.min((selectedThrall.betrayal_risk || 0) + betrayalIncrease, 100)
           });
 
-          setOutcome(`Mission failed. ${selectedThrall.name} struggled. Control weakening. Betrayal risk increasing.`);
+          setOutcome(`${atmosphereProcessed}\n\n✗ ${failureProcessed}\n\nControl weakening. Betrayal risk rising.`);
         }
 
         await base44.entities.NightLog.create({
