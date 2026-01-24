@@ -183,30 +183,16 @@ export default function MutantAestheticsShop({ mutant, onSelectAesthetic, onBuyA
                     <p className="text-gray-300 text-sm">{aesthetic.effectDescription}</p>
                   </div>
 
-                  {isUnlocked ? (
-                    <button
-                      onClick={() => handleSelect(aesthetic)}
-                      className={`w-full py-2 rounded-lg font-medium transition-all ${
-                        isSelected
-                          ? 'bg-cyan-600 text-white cursor-default'
-                          : 'bg-cyan-600 hover:bg-cyan-700 text-white'
-                      }`}
-                    >
-                      {isSelected ? '✓ Active' : 'Select'}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleBuy(aesthetic)}
-                      disabled={!canAfford}
-                      className={`w-full py-2 rounded-lg font-medium transition-all ${
-                        canAfford
-                          ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                          : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                      }`}
-                    >
-                      {canAfford ? `Buy for ${aesthetic.cost}` : 'Not Enough Currency'}
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleSelect(aesthetic)}
+                    className={`w-full py-2 rounded-lg font-medium transition-all ${
+                      isSelected
+                        ? 'bg-cyan-600 text-white cursor-default'
+                        : 'bg-cyan-600 hover:bg-cyan-700 text-white'
+                    }`}
+                  >
+                    {isSelected ? '✓ Active' : 'Select'}
+                  </button>
                 </motion.div>
               )}
             </motion.div>
