@@ -117,38 +117,66 @@ export default function HunterIntimate({ hunter, vampires }) {
     const genitalReference = vampireGender === 'woman' ? 'pussy' : 'cock';
     const stimulation = vampireGender === 'woman' ? 'clit' : 'cock';
 
-    const getOutcomes = () => ({
-      kiss_hard: `You slammed them against the wall, your mouth claiming theirs. Hard. Desperate. Fucking them with your tongue like it was your only purpose. They matched your intensity, hands gripping your shirt like they'd die without you.`,
-      trail: `Your fingers traced slowly down their chest, across their stomach, lower. Every touch made them shudder. You stopped just short of their ${genitalReference}. Control. That's the power play.`,
-      push_bed: `You pushed them back onto the bed. They landed hard, eyes wild, waiting. "Let me see that gorgeous body," you whispered, moving between their legs.`,
-      straddle: `You straddled their body, keeping them pinned with your weight. They tried to touch you and you grabbed their wrist. "Not yet." The anticipation was destroying them.`,
-      grip_throat: `You wrapped your hand around their throat, fingers pressing just enough. Not to hurt. To possess. To remind them exactly who was in control. They tilted their head back, exposing themselves completely to you.`,
-      neck_tongue: `You ran your tongue along the curve of their neck, slow and deliberate. They gasped, their whole body trembling. You bit down hard enough to mark them. That's how you claimed what was yours.`,
-      knees: `You pulled them down to their knees in front of you. "Look at me." Eyes up, and they obeyed instantly. "You want my cock?" you asked. They nodded desperately.`,
-      from_behind: `You took them from behind, hands gripping their hips hard enough to leave bruises. Raw. Primal. No rhythm but what you wanted. "You take it so good," you growled.`,
-      watch: `You made them watch as you stroked yourself slowly. "You see what you do to me?" Every inch of them focused on you. They were soaked and you hadn't even touched them yet.`,
-      bind_control: `You bound their wrists with leather. They tested the restraints, pulling against them, and smiled up at you. "I'm all yours," they breathed. You grabbed their chin. "That's right, you're mine."`,
-      taste: `You tasted every inch of them. Tongue on their skin, working your way down. Their back arched off the bed. When you got between their legs, they came just from you looking at them. "Patience," you whispered against their skin.`,
-      beg: `You brought them to the edge over and over. Stop. Back up. Edge again. "Please, please, I need you inside me," they begged. "I know what you need," you said, refusing to give it to them. "Beg harder."`,
-      wall: `You pressed them hard against the wall, your body crushing theirs. No gentleness. No mercy. Just raw fucking need. You filled them completely and they came immediately, unable to handle the intensity of you.`,
-      claim_mouth: `You claimed their mouth completely. Deep. Possessive. Your tongue fucking theirs like you were claiming ownership. When you pulled away, they were gasping. "Mine," you whispered. They nodded, eyes glazed over.`,
-      mark: `You marked their skin with your lips and teeth. Neck. Chest. Thighs. Anywhere that would show. "Let everyone know who you belong to," you whispered. They spread their legs wider, desperate for more.`,
-      whisper_threats: `You whispered dirty things into their ear while your hand moved between their legs. "You're such a slut for me, aren't you?" "Yes, only for you." Your fingers moved faster. "Come for me." And they did.`,
-      breathe: `You breathed them in like a drug you were addicted to. Their skin, their scent, the way they sounded when you touched them. One taste would never be enough. You'd need this ${genitalReference} again and again.`,
-      surrender: `You let them take control. Gave yourself over completely, something you never did. And they knew it. Used it. Fucked you raw like they'd been waiting for this moment. You came harder than you ever had.`,
-      corner: `You cornered them, moving in slowly. They had their back to the wall, nowhere to run. You dropped to your knees. "I want to taste you," you said. They came the moment your tongue touched their ${stimulation}.`,
-      dominance: `You showed them exactly what you were capable of. Flipped them over. Held them down. Made them take what you gave them. "Say my name," you commanded. "Again." They were yours completely.`,
-      risk: `You pulled them into a dark corner, knowing people could walk by any second. The danger made everything hotter. You fucked them fast and hard while keeping one hand over their mouth so they wouldn't scream.`,
-      hunt_together: `You hunted together that night. The kill sent adrenaline and bloodlust through your veins. When you finally had them alone, all that predatory energy exploded. You fucked them like the hunt itself was inside you.`,
-      aftercare: `After the intensity faded, you held them close. "Are you okay? Do you need water?" You brushed their hair back gently, pressed soft kisses to their forehead. "You were perfect," you whispered. They melted into you, completely safe.`,
-      safeword: `"Red means stop, yellow means slow down, green means more," you said, making sure they understood. "Always," they promised. You had rules. You had trust. And that made everything hotter.`,
-      gentle_kiss: `You leaned in slowly, giving them time to meet you halfway. Your kiss was soft, tender, full of affection. They sighed into you, their hand finding yours. No urgency. Just connection.`,
-      hold_close: `You wrapped your arms around them and just held them. No words. No demands. Just the warmth of being close to someone you cared about. They rested their head on your chest, listening to your heartbeat.`,
-      whisper_love: `You brushed a strand of hair from their face and whispered things only they could hear. Sweet things. True things. They looked up at you with vulnerable eyes and smiled. This was just as intimate as anything else.`,
-      forehead_kiss: `You tilted their chin up gently and pressed a soft kiss to their forehead. You could feel them relax against you. It was such a simple gesture, but it meant everything.`,
-      slow_dance: `You swayed together slowly in the quiet, no music but the sound of your breathing. Their head rested on your shoulder, your hand on their back. Time stopped in this moment.`,
-      fingers_intertwine: `You reached for their hand and let your fingers intertwine with theirs. You could feel their pulse match yours as you held them. Simple. Perfect. Everything you needed.`
-    });
+    const getOutcomes = () => {
+      const outcomes = {
+        kiss_hard: [
+          `You slammed them against the wall, your mouth claiming theirs. Hard. Desperate. Fucking them with your tongue like it was your only purpose. They matched your intensity, hands gripping your shirt like they'd die without you.`,
+          `Your lips crashed into theirs with force. No finesse, just raw need. They pulled you closer, teeth grazing your lip as they kissed back with equal ferocity.`,
+          `You pinned them and kissed them like your life depended on it. Deep, consuming, until they couldn't breathe. When you finally pulled back, they were completely wrecked.`
+        ],
+        trail: [
+          `Your fingers traced slowly down their chest, across their stomach, lower. Every touch made them shudder. You stopped just short of their ${genitalReference}. Control. That's the power play.`,
+          `You dragged your fingertips down their body agonizingly slow. They gasped at each touch, arching toward you. "Patience," you murmured against their skin.`,
+          `Your hands explored every inch of them. Down their spine, across their ribs, lower. They trembled beneath your touch, completely at your mercy.`
+        ],
+        gentle_kiss: [
+          `You leaned in slowly, giving them time to meet you halfway. Your kiss was soft, tender, full of affection. They sighed into you, their hand finding yours. No urgency. Just connection.`,
+          `Your lips met theirs gently, a butterfly-soft touch that made their heart race. When you pulled back, they were smiling, eyes closed.`,
+          `You kissed them like they were the most precious thing in the world. Slow. Careful. Full of care. They melted into you completely.`
+        ],
+        hold_close: [
+          `You wrapped your arms around them and just held them. No words. No demands. Just the warmth of being close to someone you cared about. They rested their head on your chest, listening to your heartbeat.`,
+          `You pulled them into your arms and held them tight against your chest. They fit perfectly there. You could feel them relax, all tension melting away.`,
+          `You held them close, not wanting to let go. They nestled against you, safe. Wanted. Loved. This was everything.`
+        ],
+        whisper_love: [
+          `You brushed a strand of hair from their face and whispered things only they could hear. Sweet things. True things. They looked up at you with vulnerable eyes and smiled. This was just as intimate as anything else.`,
+          `"I love the way you look at me," you whispered. "The way you make me feel." They blushed, hiding their face against your neck.`,
+          `You whispered tender things against their hair. Promises. Affirmations. Things you meant with your whole heart. They squeezed you tighter.`
+        ],
+        forehead_kiss: [
+          `You tilted their chin up gently and pressed a soft kiss to their forehead. You could feel them relax against you. It was such a simple gesture, but it meant everything.`,
+          `You kissed their forehead softly, lingering there. They closed their eyes, peaceful. Safe. Completely yours.`,
+          `Your lips brushed against their forehead tenderly. They sighed in contentment, pressing closer to you.`
+        ],
+        slow_dance: [
+          `You swayed together slowly in the quiet, no music but the sound of your breathing. Their head rested on your shoulder, your hand on their back. Time stopped in this moment.`,
+          `You held them close and moved slowly together, no rhythm but your heartbeats. Just existing in this moment with them.`,
+          `You danced with them like no one else was watching. Their arms wrapped around your neck, completely lost in you.`
+        ],
+        fingers_intertwine: [
+          `You reached for their hand and let your fingers intertwine with theirs. You could feel their pulse match yours as you held them. Simple. Perfect. Everything you needed.`,
+          `Your fingers found theirs and wove together naturally. They squeezed gently, a silent promise.`,
+          `You linked your fingers with theirs. Just that. Just connection. And it was enough.`
+        ],
+        push_bed: [
+          `You pushed them back onto the bed. They landed hard, eyes wild, waiting. "Let me see that gorgeous body," you whispered, moving between their legs.`,
+          `You shoved them onto the bed and they bounced, eyes gleaming. "Your turn," they said with a smirk.`,
+          `You pushed them back and they dragged you down on top of them. This was going to be fun.`
+        ]
+      };
+
+      return outcomes;
+    };
+
+    const selectRandomOutcome = (actionId) => {
+      const outcomes = getOutcomes();
+      const outcomeList = outcomes[actionId];
+      if (Array.isArray(outcomeList)) {
+        return outcomeList[Math.floor(Math.random() * outcomeList.length)];
+      }
+      return outcomeList || 'A moment shared.';
+    };
 
     const outcomes = getOutcomes();
 
