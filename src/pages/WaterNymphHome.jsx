@@ -3,6 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Droplets, Sparkles, Heart, Waves, Eye, Zap, Shield, Moon, Flower, Fish, Gem, Home, Users, Wind, CloudRain } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import NymphDating from '@/components/nightbound/NymphDating';
 
 const BASE_POWERS = [
   'Water Breathing', 'Nature Bond', 'Healing Touch', 'Plant Growth',
@@ -54,6 +56,7 @@ export default function WaterNymphHome() {
   const [outcome, setOutcome] = useState('');
   const [initialized, setInitialized] = useState(false);
   const [showPowers, setShowPowers] = useState(false);
+  const [showDating, setShowDating] = useState(false);
 
   const { data: nymphs = [] } = useQuery({
     queryKey: ['waterNymphs'],
@@ -705,6 +708,17 @@ export default function WaterNymphHome() {
                 <p className="text-yellow-300 text-sm">{(nymph.unlocked_powers || []).length} unlocked</p>
               </div>
             </button>
+
+            <button
+              onClick={() => setShowDating(true)}
+              className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Heart className="w-5 h-5 text-pink-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Love & Romance</h3>
+                <p className="text-pink-300 text-sm">Find your kindred spirit.</p>
+              </div>
+            </button>
             </div>
             )}
 
@@ -763,6 +777,10 @@ export default function WaterNymphHome() {
               </div>
             </motion.div>
             </motion.div>
+            )}
+
+            {showDating && nymph && (
+              <NymphDating nymph={nymph} onClose={() => setShowDating(false)} />
             )}
             </motion.div>
             </div>
