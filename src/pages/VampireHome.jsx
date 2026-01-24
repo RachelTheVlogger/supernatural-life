@@ -332,6 +332,15 @@ export default function VampireHome() {
                 Switch Vampire ({vampireStates.length})
               </button>
             )}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(createPageUrl('Night'));
+              }}
+              className="text-purple-400 hover:text-purple-300 transition-colors text-sm touch-manipulation font-medium flex items-center gap-1"
+            >
+              Switch to Hunter →
+            </button>
             {servants.length > 0 && (
               <button
                 onClick={(e) => {
