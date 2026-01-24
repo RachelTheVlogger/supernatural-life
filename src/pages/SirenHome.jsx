@@ -423,6 +423,90 @@ export default function SirenHome() {
         <div className="mt-6">
           <SirenPowerTree siren={siren} />
         </div>
+
+        {showDating && siren && (
+          <SirenDating siren={siren} onClose={() => setShowDating(false)} />
+        )}
+
+        {/* Create Siren Modal */}
+        {showCreateModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setShowCreateModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <h2 className="text-2xl font-bold text-white mb-6">Create New Siren</h2>
+
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  value={sirenName}
+                  onChange={(e) => setSirenName(e.target.value)}
+                  placeholder="Siren name..."
+                  className="w-full bg-gray-800 border border-cyan-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
+                  autoFocus
+                />
+
+                <div>
+                  <label className="text-gray-400 text-sm mb-2 block">Gender</label>
+                  <div className="space-y-2">
+                    {['woman', 'man', 'custom'].map(g => (
+                      <button
+                        key={g}
+                        onClick={() => setSirenGender(g)}
+                        className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                          sirenGender === g
+                            ? 'bg-cyan-600 text-white'
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {g.charAt(0).toUpperCase() + g.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-gray-400 text-sm mb-2 block">Sexuality</label>
+                  <select
+                    value={sirenSexuality}
+                    onChange={(e) => setSirenSexuality(e.target.value)}
+                    className="w-full bg-gray-800 border border-cyan-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    {['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual'].map(s => (
+                      <option key={s} value={s}>
+                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleCreateSiren}
+                    disabled={!sirenName.trim()}
+                    className="flex-1 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
