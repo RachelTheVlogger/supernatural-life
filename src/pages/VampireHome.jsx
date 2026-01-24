@@ -69,6 +69,7 @@ export default function VampireHome() {
   const [showJournal, setShowJournal] = useState(false);
   const [showDoppelgangers, setShowDoppelgangers] = useState(false);
   const [showSnakeFamiliar, setShowSnakeFamiliar] = useState(false);
+  const [selectedHunter, setSelectedHunter] = useState(null);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
