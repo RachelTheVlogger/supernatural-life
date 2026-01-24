@@ -170,8 +170,49 @@ export default function HunterIntimate({ hunter, vampires }) {
       return outcomes;
     };
 
-    const selectRandomOutcome = (actionId) => {
-      const outcomes = getOutcomes();
+    const getVampireOutcomes = () => {
+      const outcomes = {
+        kiss_hard: [
+          `They pulled you close and kissed you like they owned you. Deep. Claiming. You melted into them completely.`,
+          `Their mouth found yours with urgency. Desperate. Hungry. You gave yourself over to them entirely.`,
+          `They kissed you senseless, leaving you breathless and wanting more. Their control was absolute.`
+        ],
+        gentle_kiss: [
+          `They leaned in slowly and kissed you with unexpected tenderness. Soft. Careful. Like you mattered.`,
+          `Their lips brushed yours gently, reverently. A kiss that felt like a promise.`,
+          `They kissed your cheek softly, then your lips, each touch full of care and affection.`
+        ],
+        hold_close: [
+          `They wrapped their arms around you and held you like they never wanted to let go. You felt completely safe.`,
+          `They pulled you against them, and you fit perfectly there. Their heartbeat matching yours.`,
+          `They held you close, their fingers gently stroking your back. Complete and utter comfort.`
+        ],
+        whisper_love: [
+          `"You're everything to me," they whispered against your hair. You felt tears forming.`,
+          `They whispered tender things that made your heart ache. Truths only you would ever hear.`,
+          `"I'm so deeply in love with you," they breathed into your ear. The vulnerability in their voice broke you.`
+        ],
+        forehead_kiss: [
+          `They kissed your forehead softly, tenderly. A gesture that held so much emotion.`,
+          `Their lips brushed your forehead, lingering. You felt completely cherished.`,
+          `They pressed a gentle kiss to your forehead, grounding you in the moment.`
+        ],
+        slow_dance: [
+          `They swayed with you, no music needed. Just their body against yours, moving as one.`,
+          `They held you and moved with you slowly, completely lost in each other.`,
+          `They danced with you like you were the only person in the world that mattered.`
+        ],
+        fingers_intertwine: [
+          `They laced their fingers with yours, squeezing gently. A silent promise of forever.`,
+          `Their fingers found yours and intertwined perfectly. So simple. So everything.`,
+          `They linked your hands together, and it felt like the most intimate thing in the world.`
+        ]
+      };
+      return outcomes;
+    };
+
+    const selectRandomOutcome = (actionId, isPerspective = 'hunter') => {
+      const outcomes = isPerspective === 'vampire' ? getVampireOutcomes() : getOutcomes();
       const outcomeList = outcomes[actionId];
       if (Array.isArray(outcomeList)) {
         return outcomeList[Math.floor(Math.random() * outcomeList.length)];
