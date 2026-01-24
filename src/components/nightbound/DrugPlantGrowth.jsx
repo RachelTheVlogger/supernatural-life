@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Droplet, Leaf, Trash2, Plus, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
-import PlantEmoji from './PlantEmoji';
+import SVGPlant from './SVGPlant';
 
 const PLANT_TYPES = {
   cannabis: { name: '🌿 Cannabis', growth_days: 8, max_potency: 85, icon: '💚', color: 'green', variants: ['🟢', '💚', '✅'] },
@@ -181,8 +181,8 @@ export default function DrugPlantGrowth({ hunter, onClose }) {
                   </div>
 
                   {/* Plant Visual */}
-                  <div className="text-center mb-4">
-                    <PlantEmoji plantType={plant.plant_type} stage={plant.growth_stage} potency={plant.potency} />
+                  <div className="text-center mb-4 flex justify-center">
+                    <SVGPlant plantType={plant.plant_type} stage={plant.growth_stage} potency={plant.potency} size={140} />
                   </div>
 
                   <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
