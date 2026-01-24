@@ -408,7 +408,7 @@ export default function Home() {
                 <h2 className="text-2xl font-bold text-white mb-4">Your identity</h2>
                 <p className="text-purple-300 text-sm mb-4">How do you see yourself?</p>
                 <div className="space-y-3 mb-6">
-                  {(
+                  {selectedType !== 'nymph' ? (
                     <>
                       <button
                         onClick={() => setCharacterGender('man')}
@@ -444,6 +444,31 @@ export default function Home() {
                         <p className="text-sm opacity-80">They/Them</p>
                       </button>
                       </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => setCharacterGender('woman')}
+                            className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                              characterGender === 'woman' 
+                                ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white' 
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            }`}
+                          >
+                            <span className="font-medium">Woman</span>
+                            <p className="text-sm opacity-80">She/Her</p>
+                          </button>
+                          <button
+                            onClick={() => setCharacterGender('man')}
+                            className={`w-full rounded-lg py-4 px-4 text-left transition-all ${
+                              characterGender === 'man' 
+                                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            }`}
+                          >
+                            <span className="font-medium">Man</span>
+                            <p className="text-sm opacity-80">He/Him</p>
+                          </button>
+                        </>
                       )}
                 </div>
                 <button
@@ -500,7 +525,7 @@ export default function Home() {
               </>
             )}
 
-            {introStep === 4 && (
+            {introStep === 4 && selectedType !== 'nymph' && (
               <>
                 <h2 className="text-2xl font-bold text-white mb-4">Your personality</h2>
                 <p className="text-purple-300 text-sm mb-4">Who are you at your core?</p>
@@ -524,8 +549,29 @@ export default function Home() {
                     Begin
                   </button>
                 </div>
-              </>
-            )}
+                </>
+                )}
+
+                {selectedType === 'nymph' && introStep === 3 && (
+                <>
+                <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
+                <p className="text-teal-300 text-sm mb-6">Your journey as a water nymph awaits.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIntroStep(2)}
+                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={startNewGame}
+                    className="flex-1 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
+                  >
+                    Begin
+                  </button>
+                </div>
+                </>
+                )}
           </motion.div>
         </motion.div>
       )}
