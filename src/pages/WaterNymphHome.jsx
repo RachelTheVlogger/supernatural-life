@@ -8,6 +8,7 @@ import { Droplets, Sparkles, Heart, Waves, Eye, Zap, Shield, Moon, Flower, Fish,
 import { AnimatePresence } from 'framer-motion';
 import NymphDating from '@/components/nightbound/NymphDating';
 import NymphPowerTree from '@/components/nightbound/NymphPowerTree';
+import NymphProgression from '@/components/nightbound/NymphProgression';
 
 const BASE_POWERS = [
   'Water Breathing', 'Nature Bond', 'Healing Touch', 'Plant Growth',
@@ -771,9 +772,9 @@ export default function WaterNymphHome() {
             {/* Powers Modal */}
             {/* Powers Tree - Moved here instead of modal */}
 
-            {/* Powers Tree */}
+            {/* Progression System */}
             <div className="mt-6">
-              <NymphPowerTree nymph={nymph} />
+              <NymphProgression nymph={nymph} />
             </div>
 
             {showDating && nymph && (

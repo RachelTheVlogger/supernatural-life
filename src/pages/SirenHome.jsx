@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Waves, Music, Droplets, Users, Heart, Zap, Eye, Sparkles, Edit2 } from 'lucide-react';
 import SirenDating from '@/components/nightbound/SirenDating';
 import SirenPowerTree from '@/components/nightbound/SirenPowerTree';
+import SirenProgression from '@/components/nightbound/SirenProgression';
 
 const BASE_POWERS = [
   'Hypnotic Song', 'Seductive Voice', 'Water Breathing', 'Enhanced Beauty',
@@ -448,9 +449,9 @@ export default function SirenHome() {
           </div>
         )}
 
-        {/* Powers Tree */}
+        {/* Progression System */}
         <div className="mt-6">
-          <SirenPowerTree siren={siren} />
+          <SirenProgression siren={siren} />
         </div>
 
         {showDating && siren && (
