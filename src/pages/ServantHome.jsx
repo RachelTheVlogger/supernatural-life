@@ -159,16 +159,16 @@ export default function ServantHome() {
   const [showEmotion, setShowEmotion] = useState(false);
   const [showSnakeTab, setShowSnakeTab] = useState(false);
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const servantId = urlParams.get('id');
+  const powerParam = urlParams.get('power');
+
   // Auto-open power usage if power param exists
   useEffect(() => {
     if (powerParam && servant && !selectedPower) {
       setSelectedPower(decodeURIComponent(powerParam));
     }
   }, [powerParam, servant, selectedPower]);
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  const servantId = urlParams.get('id');
-  const powerParam = urlParams.get('power');
   
   const { data: career = [] } = useQuery({
     queryKey: ['career', servantId],
