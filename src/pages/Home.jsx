@@ -334,7 +334,17 @@ export default function Home() {
                   </div>
               </div>
 
-              {/* Lite Mode Toggle */}
+              {/* Cleanup & Lite Mode */}
+              {duplicateGroups.length > 0 && (
+                <button
+                  onClick={() => setShowCleanup(true)}
+                  className="w-full bg-red-900/60 hover:bg-red-900/80 border-2 border-red-500/50 rounded-xl py-4 text-white font-medium text-sm transition-all flex items-center justify-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete Duplicates ({duplicateGroups.length} groups)
+                </button>
+              )}
+
               {vampireStates.length > 0 && (
                 <div className="bg-gray-900/60 border border-blue-500/30 rounded-xl p-4">
                   <div className="flex items-center justify-between">
