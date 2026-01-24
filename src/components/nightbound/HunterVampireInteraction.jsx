@@ -229,15 +229,15 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
 
         {/* Conversation Display */}
         {conversationHistory.length > 0 && (
-          <div className="bg-gray-800/50 rounded-lg p-4 mb-6 max-h-48 overflow-y-auto space-y-3">
-            <p className="text-gray-400 text-xs mb-3">Conversation History</p>
+          <div className="bg-gray-900/50 rounded-lg p-4 mb-6 max-h-64 overflow-y-auto space-y-3">
+            <p className="text-gray-400 text-xs mb-4 font-medium">Conversation History</p>
             {conversationHistory.map((msg, idx) => (
               <div key={idx} className="space-y-2">
-                <div className="bg-blue-900/30 rounded p-2 border-l-2 border-blue-500">
-                  <p className="text-blue-300 text-sm">{msg.hunterMessage}</p>
+                <div className="bg-blue-950/40 rounded p-3 border-l-2 border-blue-500">
+                  <p className="text-blue-300 text-sm"><span className="font-semibold">You:</span> {msg.hunterMessage}</p>
                 </div>
-                <div className="bg-red-900/30 rounded p-2 border-l-2 border-red-500">
-                  <p className="text-red-300 text-sm">{msg.vampireText}</p>
+                <div className="bg-red-950/40 rounded p-3 border-l-2 border-red-500">
+                  <p className="text-red-300 text-sm"><span className="font-semibold">{vampire.vampire_name}:</span> {msg.vampireText}</p>
                 </div>
               </div>
             ))}
