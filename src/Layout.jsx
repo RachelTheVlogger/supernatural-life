@@ -112,6 +112,9 @@ export default function Layout({ children, currentPageName }) {
   const urlMutantId = urlParams.get('mutant');
   const firstMutantId = urlMutantId ? mutants.find(m => m.id === urlMutantId)?.id : (mutants.length > 0 ? mutants[0].id : null);
 
+  const urlHereticId = urlParams.get('heretic');
+  const firstHereticId = urlHereticId ? heretics.find(h => h.id === urlHereticId)?.id : (heretics.length > 0 ? heretics[0].id : null);
+
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vamp', icon: Home, path: 'VampireHome' },
