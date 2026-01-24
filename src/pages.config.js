@@ -18,6 +18,7 @@ import VampireHome from './pages/VampireHome';
 import WaterNymphHome from './pages/WaterNymphHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
+import HereticHome from './pages/HereticHome';
 import __Layout from './Layout.jsx';
 
 
@@ -42,6 +43,7 @@ export const PAGES = {
     "WaterNymphHome": WaterNymphHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
+    "HereticHome": HereticHome,
 }
 
 export const pagesConfig = {
