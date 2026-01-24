@@ -100,16 +100,6 @@ export default function MutantAestheticsShop({ mutant, onSelectAesthetic, onBuyA
   const [showDetails, setShowDetails] = React.useState(null);
 
   const unlockedAesthetics = mutant?.aesthetics_unlocked || ['natural'];
-  const currency = mutant?.cosmetic_currency || 0;
-
-  const handleBuy = async (aesthetic) => {
-    if (aesthetic.cost > currency) {
-      alert('Not enough cosmetic currency!');
-      return;
-    }
-
-    await onBuyAesthetic(aesthetic.id, aesthetic.cost);
-  };
 
   const handleSelect = async (aesthetic) => {
     setSelectedAesthetic(aesthetic.id);
