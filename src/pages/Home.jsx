@@ -134,8 +134,21 @@ export default function Home() {
        });
        queryClient.invalidateQueries();
        navigate(createPageUrl('MutantHome'));
-     }
-     };
+     } else if (selectedType === 'heretic') {
+       await base44.entities.Heretic.create({
+         name: characterName.trim(),
+         gender: characterGender,
+         sexuality: characterSexuality,
+         personality: characterPersonality,
+         vampire_power: 40,
+         witch_power: 40,
+         balance: 50,
+         transformation_stage: 1
+       });
+       queryClient.invalidateQueries();
+       navigate(createPageUrl('HereticHome'));
+      }
+      };
   
   const handleContinue = () => {
     // Navigate to the appropriate home based on what characters exist
