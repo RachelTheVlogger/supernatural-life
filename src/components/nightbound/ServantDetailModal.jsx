@@ -66,10 +66,6 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
   const [showInteractions, setShowInteractions] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
   const [showTownPeople, setShowTownPeople] = useState(false);
-  
-  const handleTownPeopleClick = () => {
-    setShowTownPeople(true);
-  };
   const [showDate, setShowDate] = useState(false);
   const [showTraining, setShowTraining] = useState(false);
   const queryClient = useQueryClient();
@@ -573,7 +569,10 @@ export default function ServantDetailModal({ servant, vampireState, onClose }) {
             </button>
             
             <button
-              onClick={() => setShowTownPeople(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowTownPeople(true);
+              }}
               className="bitlife-btn w-full rounded-xl py-4 flex items-center gap-3"
             >
               <Users className="w-5 h-5" />
