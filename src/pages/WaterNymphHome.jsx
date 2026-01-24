@@ -79,6 +79,7 @@ export default function WaterNymphHome() {
 
   React.useEffect(() => {
     const initNymph = async () => {
+      // Only create if no nymphs exist and not already initialized
       if (nymphs.length === 0 && !initialized) {
         setInitialized(true);
         const names = ['Naida', 'Brook', 'Cascade', 'Marina', 'Rivena'];
@@ -89,6 +90,9 @@ export default function WaterNymphHome() {
           creatures_befriended: 0
         });
         queryClient.invalidateQueries(['waterNymphs']);
+      } else if (nymphs.length > 0) {
+        // Mark as initialized if nymphs exist
+        setInitialized(true);
       }
     };
     initNymph();
