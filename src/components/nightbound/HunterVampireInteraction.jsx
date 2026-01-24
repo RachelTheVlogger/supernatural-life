@@ -39,7 +39,7 @@ const DIALOGUE_OPTIONS = {
 };
 
 const VAMPIRE_RESPONSES = {
-  blush: [
+  flirty: [
     'They look away for a moment, a faint smile crossing their pale features. When they meet your eyes again, something vulnerable flickers there before they mask it.',
     'They pause mid-breath, composure wavering slightly. Their fingers curl and uncurl at their sides as they compose themselves.',
     'Something unguarded flashes across their face—raw, honest. They touch their neck, steadying themselves before looking back at you.'
