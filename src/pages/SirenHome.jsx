@@ -3,6 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Waves, Music, Droplets, Users, Heart, Zap, Eye, Sparkles } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import SirenDating from '@/components/nightbound/SirenDating';
 
 const BASE_POWERS = [
   'Hypnotic Song', 'Seductive Voice', 'Water Breathing', 'Enhanced Beauty',
@@ -55,6 +57,7 @@ export default function SirenHome() {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [initialized, setInitialized] = useState(false);
+  const [showDating, setShowDating] = useState(false);
 
   const { data: sirens = [] } = useQuery({
     queryKey: ['sirens'],
