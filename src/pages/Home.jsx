@@ -102,8 +102,10 @@ export default function Home() {
       await base44.entities.WaterNymph.create({
         name: characterName.trim(),
         gender: characterGender,
+        sexuality: characterSexuality,
         nature_bond: 50,
-        water_purity: 100
+        water_purity: 100,
+        unlocked_powers: ['Water Breathing']
       });
       queryClient.invalidateQueries();
       navigate(createPageUrl('WaterNymphHome'));
@@ -361,7 +363,7 @@ export default function Home() {
                     className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-3xl">✨</span>
+                      <span className="text-3xl">💧</span>
                       <div>
                         <span className="font-medium text-white block">Water Nymph</span>
                         <p className="text-sm text-gray-400">Nature, healing, purity</p>
@@ -554,8 +556,32 @@ export default function Home() {
 
                 {selectedType === 'nymph' && introStep === 3 && (
                 <>
-                <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
-                <p className="text-teal-300 text-sm mb-6">Your journey as a water nymph awaits.</p>
+                <h2 className="text-2xl font-bold text-white mb-4">Your sexuality</h2>
+                <p className="text-teal-300 text-sm mb-4">Who are you attracted to?</p>
+                <div className="space-y-2 mb-6 max-h-[50vh] overflow-y-auto">
+                  {[
+                    { value: 'straight', label: 'Straight', desc: 'Attracted to opposite gender' },
+                    { value: 'gay', label: 'Gay', desc: 'Men attracted to men' },
+                    { value: 'lesbian', label: 'Lesbian', desc: 'Women attracted to women' },
+                    { value: 'bisexual', label: 'Bisexual', desc: 'Attracted to two or more genders' },
+                    { value: 'pansexual', label: 'Pansexual', desc: 'Attracted to all genders' },
+                    { value: 'asexual', label: 'Asexual', desc: 'Little to no sexual attraction' },
+                    { value: 'questioning', label: 'Questioning', desc: 'Still figuring it out' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setCharacterSexuality(option.value)}
+                      className={`w-full rounded-lg py-3 px-4 text-left transition-all ${
+                        characterSexuality === option.value 
+                          ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white' 
+                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      }`}
+                    >
+                      <span className="font-medium">{option.label}</span>
+                      <p className="text-sm opacity-80">{option.desc}</p>
+                    </button>
+                  ))}
+                </div>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setIntroStep(2)}
@@ -565,7 +591,7 @@ export default function Home() {
                   </button>
                   <button
                     onClick={startNewGame}
-                    className="flex-1 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 rounded-lg py-3 text-white font-medium transition-all"
+                    className="flex-1 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 rounded-lg py-3 text-white font-medium transition-all"
                   >
                     Begin
                   </button>
