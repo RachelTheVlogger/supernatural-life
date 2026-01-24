@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Waves, Music, Droplets, Users, Heart, Zap, Eye, Sparkles } from 'lucide-react';
+import { Waves, Music, Droplets, Users, Heart, Zap, Eye, Sparkles, Edit2 } from 'lucide-react';
 import SirenDating from '@/components/nightbound/SirenDating';
 import SirenPowerTree from '@/components/nightbound/SirenPowerTree';
 
@@ -64,6 +64,8 @@ export default function SirenHome() {
   const [sirenGender, setSirenGender] = useState('woman');
   const [sirenSexuality, setSirenSexuality] = useState('bisexual');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [newName, setNewName] = useState(siren?.name || '');
 
   const { data: sirens = [] } = useQuery({
     queryKey: ['sirens'],
@@ -248,6 +250,24 @@ export default function SirenHome() {
     }, 2000);
   };
 
+  const handleRenameSiren = async () => {
+    if (!newName.trim()) {
+      alert('Please enter a name');
+      return;
+    }
+
+    try {
+      await base44.entities.Siren.update(siren.id, {
+        name: newName.trim()
+      });
+
+      queryClient.invalidateQueries();
+      setShowRenameModal(false);
+    } catch (e) {
+      console.error('Failed to rename siren:', e);
+    }
+  };
+
   const handleSummonNymph = async () => {
     setProcessing(true);
     setShowAction('summon');
@@ -309,6 +329,15 @@ export default function SirenHome() {
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-2">
             <Waves className="w-8 h-8 text-cyan-400" />
             {siren.name}
+            <button
+              onClick={() => {
+                setNewName(siren.name);
+                setShowRenameModal(true);
+              }}
+              className="text-cyan-400 hover:text-cyan-300 transition-colors"
+            >
+              <Edit2 className="w-5 h-5" />
+            </button>
           </h1>
           <p className="text-cyan-300 mb-3">Siren of the Deep</p>
           <button
@@ -426,6 +455,50 @@ export default function SirenHome() {
 
         {showDating && siren && (
           <SirenDating siren={siren} onClose={() => setShowDating(false)} />
+        )}
+
+        {/* Rename Siren Modal */}
+        {showRenameModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setShowRenameModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <h2 className="text-2xl font-bold text-white mb-6">Rename Siren</h2>
+
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="New name..."
+                className="w-full bg-gray-800 border border-cyan-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 mb-6 focus:outline-none focus:border-cyan-500"
+                autoFocus
+              />
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowRenameModal(false)}
+                  className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRenameSiren}
+                  disabled={!newName.trim()}
+                  className="flex-1 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+                >
+                  Rename
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Create Siren Modal */}
