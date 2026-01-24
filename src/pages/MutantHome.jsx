@@ -366,6 +366,16 @@ export default function MutantHome() {
           </div>
         )}
 
+        {/* Appearance Customization */}
+        <MutantAppearanceCustomizer mutant={mutant} onUpdate={handleUpdateAppearance} />
+
+        {/* Aesthetics Shop */}
+        <MutantAestheticsShop 
+          mutant={mutant} 
+          onSelectAesthetic={handleSelectAesthetic}
+          onBuyAesthetic={handleBuyAesthetic}
+        />
+
         {/* Progression */}
         <MutantProgression mutant={mutant} />
 
