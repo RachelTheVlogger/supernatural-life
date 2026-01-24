@@ -21,20 +21,23 @@ const INTIMATE_ACTIONS = {
     { id: 'wall', label: 'Take them against the wall', category: 'physical' },
     { id: 'claim_mouth', label: 'Claim their mouth completely', category: 'physical' },
     { id: 'mark', label: 'Mark every part of them', category: 'physical' },
-    { id: 'whisper_threats', label: 'Whisper dangerous things in their ear', category: 'romantic' },
+    { id: 'whisper_threats', label: 'Whisper degrading things in their ear', category: 'romantic' },
     { id: 'breathe', label: 'Breathe them in like a drug', category: 'romantic' },
     { id: 'surrender', label: 'Let them take control', category: 'romantic' },
     { id: 'corner', label: 'Corner them and close in', category: 'physical' },
     { id: 'dominance', label: 'Show them your true dominance', category: 'bdsm' },
     { id: 'risk', label: 'Risk getting caught together', category: 'activity' },
-    { id: 'hunt_together', label: 'Hunt together that night', category: 'activity' }
+    { id: 'hunt_together', label: 'Hunt together that night', category: 'activity' },
+    { id: 'aftercare', label: 'Aftercare and comfort', category: 'romantic' },
+    { id: 'safeword', label: 'Establish safe words', category: 'bdsm' }
   ],
   romantic: [
-    { id: 'whisper_threats', label: 'Whisper dangerous things in their ear', category: 'romantic' },
+    { id: 'whisper_threats', label: 'Whisper degrading things in their ear', category: 'romantic' },
     { id: 'breathe', label: 'Breathe them in like a drug', category: 'romantic' },
     { id: 'claim_mouth', label: 'Claim their mouth completely', category: 'romantic' },
     { id: 'neck_tongue', label: 'Run your tongue along their neck', category: 'romantic' },
-    { id: 'surrender', label: 'Let them take control', category: 'romantic' }
+    { id: 'surrender', label: 'Let them take control', category: 'romantic' },
+    { id: 'aftercare', label: 'Aftercare and comfort', category: 'romantic' }
   ],
   physical: [
     { id: 'kiss_hard', label: 'Pin them and kiss them hard', category: 'physical' },
@@ -55,7 +58,8 @@ const INTIMATE_ACTIONS = {
     { id: 'beg', label: 'Make them beg for you', category: 'bdsm' },
     { id: 'dominance', label: 'Show them your true dominance', category: 'bdsm' },
     { id: 'grip_throat', label: 'Grip their throat', category: 'bdsm' },
-    { id: 'watch', label: 'Make them watch you', category: 'bdsm' }
+    { id: 'watch', label: 'Make them watch you', category: 'bdsm' },
+    { id: 'safeword', label: 'Establish safe words', category: 'bdsm' }
   ],
   social: [
     { id: 'claim_mouth', label: 'Claim their mouth publicly', category: 'social' },
