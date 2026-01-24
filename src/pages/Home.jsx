@@ -179,124 +179,76 @@ export default function Home() {
                 <p className="text-gray-400 text-sm mb-3">Your Characters:</p>
                 <div className="space-y-2">
                   {vampireStates.map(v => (
-                    <div key={v.id} className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(createPageUrl('Night'));
-                        }}
-                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">🦇</span>
-                          <div>
-                            <p className="text-white font-medium">{v.vampire_name}</p>
-                            <p className="text-gray-400 text-xs">Vampire</p>
-                          </div>
+                    <button
+                      key={v.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('Night'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🦇</span>
+                        <div>
+                          <p className="text-white font-medium">{v.vampire_name}</p>
+                          <p className="text-gray-400 text-xs">Vampire</p>
                         </div>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm(`Delete ${v.vampire_name}?`)) {
-                            await base44.entities.VampireState.delete(v.id);
-                            queryClient.invalidateQueries();
-                          }
-                        }}
-                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-300" />
-                      </button>
-                    </div>
+                      </div>
+                    </button>
                   ))}
                   {witches.map(w => (
-                    <div key={w.id} className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(createPageUrl('WitchHome'));
-                        }}
-                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">✨</span>
-                          <div>
-                            <p className="text-white font-medium">{w.name}</p>
-                            <p className="text-gray-400 text-xs">Witch</p>
-                          </div>
+                    <button
+                      key={w.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('WitchHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">✨</span>
+                        <div>
+                          <p className="text-white font-medium">{w.name}</p>
+                          <p className="text-gray-400 text-xs">Witch</p>
                         </div>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm(`Delete ${w.name}?`)) {
-                            await base44.entities.Witch.delete(w.id);
-                            queryClient.invalidateQueries();
-                          }
-                        }}
-                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-300" />
-                      </button>
-                    </div>
+                      </div>
+                    </button>
                   ))}
                   {sirens.map(s => (
-                    <div key={s.id} className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(createPageUrl('SirenHome'));
-                        }}
-                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">🌊</span>
-                          <div>
-                            <p className="text-white font-medium">{s.name}</p>
-                            <p className="text-gray-400 text-xs">Siren</p>
-                          </div>
+                    <button
+                      key={s.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('SirenHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🌊</span>
+                        <div>
+                          <p className="text-white font-medium">{s.name}</p>
+                          <p className="text-gray-400 text-xs">Siren</p>
                         </div>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm(`Delete ${s.name}?`)) {
-                            await base44.entities.Siren.delete(s.id);
-                            queryClient.invalidateQueries();
-                          }
-                        }}
-                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-300" />
-                      </button>
-                    </div>
+                      </div>
+                    </button>
                   ))}
                   {waterNymphs.map(n => (
-                    <div key={n.id} className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(createPageUrl('WaterNymphHome'));
-                        }}
-                        className="flex-1 bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">✨</span>
-                          <div>
-                            <p className="text-white font-medium">{n.name}</p>
-                            <p className="text-gray-400 text-xs">Water Nymph</p>
-                          </div>
+                    <button
+                      key={n.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('WaterNymphHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">✨</span>
+                        <div>
+                          <p className="text-white font-medium">{n.name}</p>
+                          <p className="text-gray-400 text-xs">Water Nymph</p>
                         </div>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm(`Delete ${n.name}?`)) {
-                            await base44.entities.WaterNymph.delete(n.id);
-                            queryClient.invalidateQueries();
-                          }
-                        }}
-                        className="bg-red-900/50 hover:bg-red-900/70 rounded-lg p-3 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-300" />
-                      </button>
-                    </div>
+                      </div>
+                    </button>
                   ))}
 
                 </div>
