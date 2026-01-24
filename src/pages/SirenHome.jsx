@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Waves, Music, Droplets, Users, Heart, Zap, Eye, Sparkles } from 'lucide-react';
 import SirenDating from '@/components/nightbound/SirenDating';
+import SirenPowerTree from '@/components/nightbound/SirenPowerTree';
 
 const BASE_POWERS = [
   'Hypnotic Song', 'Seductive Voice', 'Water Breathing', 'Enhanced Beauty',
@@ -59,6 +60,10 @@ export default function SirenHome() {
   const [outcome, setOutcome] = useState('');
   const [initialized, setInitialized] = useState(false);
   const [showDating, setShowDating] = useState(false);
+  const [sirenName, setSirenName] = useState('');
+  const [sirenGender, setSirenGender] = useState('woman');
+  const [sirenSexuality, setSirenSexuality] = useState('bisexual');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const { data: sirens = [] } = useQuery({
     queryKey: ['sirens'],
@@ -88,6 +93,34 @@ export default function SirenHome() {
       setInitialized(true);
     }
   }, [sirens.length]);
+
+  const handleCreateSiren = async () => {
+    if (!sirenName.trim()) {
+      alert('Please enter a name');
+      return;
+    }
+
+    try {
+      await base44.entities.Siren.create({
+        name: sirenName.trim(),
+        gender: sirenGender,
+        sexuality: sirenSexuality,
+        personality: ['seductive'],
+        voice_power: 50,
+        water_affinity: 50,
+        charm_level: 60,
+        unlocked_powers: ['Hypnotic Song']
+      });
+
+      queryClient.invalidateQueries();
+      setShowCreateModal(false);
+      setSirenName('');
+      setSirenGender('woman');
+      setSirenSexuality('bisexual');
+    } catch (e) {
+      console.error('Failed to create siren:', e);
+    }
+  };
 
   const handleSing = async () => {
     setProcessing(true);
@@ -277,7 +310,13 @@ export default function SirenHome() {
             <Waves className="w-8 h-8 text-cyan-400" />
             {siren.name}
           </h1>
-          <p className="text-cyan-300">Siren of the Deep</p>
+          <p className="text-cyan-300 mb-3">Siren of the Deep</p>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
+          >
+            + Create Another Siren
+          </button>
         </div>
 
         {/* Stats */}
@@ -380,39 +419,9 @@ export default function SirenHome() {
           </div>
         )}
 
-        {/* Powers */}
-        <div className="bg-gray-900/50 rounded-2xl p-6 mt-6">
-          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-            <Zap className="w-5 h-5 text-yellow-400" />
-            Siren Powers ({(siren.unlocked_powers || []).length}/{SIREN_POWERS.length})
-          </h3>
-          <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
-            {SIREN_POWERS.map(power => {
-              const Icon = power.icon;
-              const unlocked = (siren.unlocked_powers || []).includes(power.name);
-              const canUnlock = (siren.voice_power || 0) >= power.unlockAt && !unlocked;
-              return (
-                <div
-                  key={power.id}
-                  className={`p-3 rounded-lg border ${
-                    unlocked 
-                      ? 'bg-cyan-900/30 border-cyan-500/30' 
-                      : canUnlock
-                      ? 'bg-yellow-900/20 border-yellow-500/30'
-                      : 'bg-gray-800/30 border-gray-700/30'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 mb-1 ${unlocked ? 'text-cyan-400' : canUnlock ? 'text-yellow-400' : 'text-gray-600'}`} />
-                  <p className={`text-xs font-medium ${unlocked ? 'text-white' : canUnlock ? 'text-yellow-300' : 'text-gray-600'}`}>
-                    {power.name}
-                  </p>
-                  <p className="text-[10px] text-gray-500 mt-1">
-                    {unlocked ? '✓ Unlocked' : `Req: ${power.unlockAt}`}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+        {/* Powers Tree */}
+        <div className="mt-6">
+          <SirenPowerTree siren={siren} />
         </div>
       </motion.div>
     </div>
