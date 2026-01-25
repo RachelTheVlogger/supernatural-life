@@ -35,8 +35,9 @@ import DoppelgangerSystem from '@/components/nightbound/DoppelgangerSystem';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
 import VampireSnakeFamiliar from '@/components/nightbound/VampireSnakeFamiliar';
 import VampireHunterInteraction from '@/components/nightbound/VampireHunterInteraction';
+import VictimTrophies from '@/components/nightbound/VictimTrophies';
 
-export default function VampireHome() {
+      export default function VampireHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeAction, setActiveAction] = useState(null);
@@ -70,6 +71,7 @@ export default function VampireHome() {
   const [showDoppelgangers, setShowDoppelgangers] = useState(false);
   const [showSnakeFamiliar, setShowSnakeFamiliar] = useState(false);
   const [selectedHunter, setSelectedHunter] = useState(null);
+  const [showTrophies, setShowTrophies] = useState(false);
 
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -890,6 +892,11 @@ export default function VampireHome() {
               </button>
             )}
 
+            <button onClick={() => setShowTrophies(true)} className={`${isDaytime ? 'bg-red-100/60 border-red-400/40' : 'bg-red-900/40 border-red-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
+              <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>💀 Trophy Collection</h3>
+              <p className={`text-xs ${isDaytime ? 'text-gray-600' : 'text-gray-400'}`}>Victims' possessions</p>
+            </button>
+
             </motion.div>
 
           {/* Room sections - Interactive */}
@@ -1233,6 +1240,12 @@ export default function VampireHome() {
             vampire={vampireState}
             hunter={selectedHunter}
             onClose={() => setSelectedHunter(null)}
+          />
+        )}
+        {showTrophies && vampireState && (
+          <VictimTrophies
+            vampireState={vampireState}
+            onClose={() => setShowTrophies(false)}
           />
         )}
         {showVampireIdentity && (
