@@ -53,7 +53,11 @@ export default function HunterHome() {
 
   const { data: vampires = [] } = useQuery({
     queryKey: ['vampires'],
-    queryFn: () => base44.entities.VampireState.list()
+    queryFn: async () => {
+      const result = await base44.entities.VampireState.list();
+      console.log('Fetched vampires:', result);
+      return result;
+    }
   });
 
   const { data: notes = [] } = useQuery({
@@ -131,6 +135,7 @@ export default function HunterHome() {
           <Target className="w-5 h-5 text-red-400 mb-2" />
           <p className="text-gray-400 text-xs mb-1">Active Targets</p>
           <p className="text-white text-2xl font-bold">{hunterTargets.length}</p>
+          <p className="text-gray-500 text-[10px] mt-1">DB: {vampires.length}</p>
         </div>
         <div className="bg-black/40 border border-yellow-500/30 rounded-lg p-4">
           <Zap className="w-5 h-5 text-yellow-400 mb-2" />
