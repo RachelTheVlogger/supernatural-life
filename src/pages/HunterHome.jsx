@@ -22,6 +22,9 @@ import HunterTeamManagement from '@/components/nightbound/HunterTeamManagement';
 import TeamMissions from '@/components/nightbound/TeamMissions';
 import TeamChat from '@/components/nightbound/TeamChat';
 import HunterVampireTracking from '@/components/nightbound/HunterVampireTracking';
+import HunterMentorSystem from '@/components/nightbound/HunterMentorSystem';
+import HunterBetrayalSystem from '@/components/nightbound/HunterBetrayalSystem';
+import HunterCouncilSystem from '@/components/nightbound/HunterCouncilSystem';
 
 export default function HunterHome() {
   const navigate = useNavigate();
