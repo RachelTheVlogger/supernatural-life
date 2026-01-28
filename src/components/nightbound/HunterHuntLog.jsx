@@ -45,23 +45,16 @@ export default function HunterHuntLog({ hunter, vampires, notes }) {
 
   const handleGenerateAINotes = async () => {
     if (!selectedVampire) {
-      alert('Please select a vampire target first');
+      setNoteText('⚠️ Please select a vampire target first');
       return;
     }
     
     setGeneratingAI(true);
+    setNoteText('Generating hunt notes...');
+    
     try {
-      const prompt = `You are ${hunter.name}, a ${hunter.specialty} vampire hunter. Generate detailed hunt notes about the vampire "${selectedVampire.vampire_name}". Include:
-- Physical observations and behavior patterns
-- Known weaknesses or vulnerabilities
-- Recent sightings and activity
-- Potential strategies for tracking/confronting them
-- Any personal insights or hunches
-
-Write in first person as the hunter. Be professional but add personality. Keep it under 200 words.`;
-      
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt
+        prompt: `You are ${hunter.name}, a ${hunter.specialty} vampire hunter. Generate detailed hunt notes about the vampire "${selectedVampire.vampire_name}". Include observations, weaknesses, sightings, and strategies. Write in first person as the hunter. Keep it under 200 words.`
       });
       
       // Handle various response formats
@@ -71,13 +64,13 @@ Write in first person as the hunter. Be professional but add personality. Keep i
       } else if (result && typeof result === 'object') {
         noteContent = result.response || result.text || result.content || result.output || JSON.stringify(result);
       } else {
-        noteContent = String(result || 'Unable to generate notes');
+        noteContent = 'Unable to generate notes. Please try again.';
       }
       
       setNoteText(noteContent);
     } catch (e) {
       console.error('Failed to generate notes:', e);
-      alert('Failed to generate AI notes. Please try again. Error: ' + (e.message || 'Unknown error'));
+      setNoteText('❌ Failed to generate AI notes. Please try manual entry.');
     } finally {
       setGeneratingAI(false);
     }
@@ -119,18 +112,23 @@ Write in first person as the hunter. Be professional but add personality. Keep i
           <div>
             <label className="text-gray-400 text-sm mb-2 block">Hunt Notes</label>
             <button
-              onClick={handleGenerateAINotes}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleGenerateAINotes();
+              }}
               disabled={generatingAI || !selectedVampire}
-              className="mb-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              className="mb-2 w-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 disabled:bg-gray-700 text-white px-6 py-3 rounded-lg text-sm font-medium transition-colors touch-manipulation"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
-              {generatingAI ? 'Generating...' : '✨ AI Generate Notes'}
+              {generatingAI ? '⏳ Generating...' : '✨ AI Generate Notes'}
             </button>
             <textarea
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
               placeholder="Track habits, locations, weaknesses, patterns..."
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
-              rows={4}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 touch-manipulation"
+              rows={6}
             />
           </div>
 
