@@ -14,6 +14,7 @@ import VampireInitiatedInteractions from '@/components/nightbound/VampireInitiat
 import HunterTraits from '@/components/nightbound/HunterTraits';
 import HunterManagement from '@/components/nightbound/HunterManagement';
 import HunterProgression from '@/components/nightbound/HunterProgression';
+import SafeHouseManagement from '@/components/nightbound/SafeHouseManagement';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function HunterHome() {
   const [showTraits, setShowTraits] = useState(false);
   const [showManagement, setShowManagement] = useState(false);
   const [showProgression, setShowProgression] = useState(false);
+  const [showSafeHouse, setShowSafeHouse] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -182,18 +184,27 @@ export default function HunterHome() {
 
                     {/* Living Space */}
                     <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
-              <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                <Home className="w-5 h-5" />
-                Safe House
-              </h3>
-              <button
-                onClick={() => setShowActivities(true)}
-                className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
-              >
-                <h4 className="text-white font-bold text-lg mb-2">Enter Safe House</h4>
-                <p className="text-gray-400 text-sm">Choose your activities inside</p>
-              </button>
-              </div>
+                    <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                    <Home className="w-5 h-5" />
+                    Safe House
+                    </h3>
+                    <div className="space-y-2">
+                    <button
+                    onClick={() => setShowSafeHouse(true)}
+                    className="w-full bg-gradient-to-r from-orange-900/60 to-orange-950/60 hover:from-orange-900/80 hover:to-orange-950/80 rounded-lg p-4 text-center transition-colors border border-orange-500/30"
+                    >
+                    <h4 className="text-white font-bold text-lg mb-2">Upgrade Base</h4>
+                    <p className="text-orange-300 text-sm">Build facilities & customize</p>
+                    </button>
+                    <button
+                    onClick={() => setShowActivities(true)}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+                    >
+                    <h4 className="text-white font-bold text-lg mb-2">Daily Activities</h4>
+                    <p className="text-gray-400 text-sm">Rest, train, and prepare</p>
+                    </button>
+                    </div>
+                    </div>
 
                 {/* Current Status */}
                 {/* Hunter Progression */}
@@ -353,6 +364,10 @@ export default function HunterHome() {
 
                   {showProgression && (
                     <HunterProgression hunter={hunter} onClose={() => setShowProgression(false)} />
+                  )}
+
+                  {showSafeHouse && (
+                    <SafeHouseManagement hunter={hunter} onClose={() => setShowSafeHouse(false)} />
                   )}
 
           {activeTab === 'vamp' && (
