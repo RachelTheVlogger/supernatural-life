@@ -328,7 +328,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
          queryClient.invalidateQueries();
 
          // Handle turn actions
-         if (action.category === 'turn') {
+         if (action.category === 'eternity') {
            setTimeout(async () => {
              try {
                await base44.entities.Hunter.update(hunter.id, {
@@ -336,7 +336,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
                  vampire_stage: 1,
                  status: 'recruited'
                });
-               queryClient.invalidateQueries();
+               queryClient.invalidateQueries({ queryKey: ['hunters'] });
              } catch (e) {
                console.error('Failed to turn hunter:', e);
              }
