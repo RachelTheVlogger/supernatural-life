@@ -219,15 +219,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
             <ShoppingCart className="w-5 h-5 text-yellow-400" />
             <span className="text-white text-xs font-medium">Armory</span>
           </button>
-          {hunters.length > 0 && (
-            <button
-              onClick={() => setShowSupernaturalInteraction(true)}
-              className="col-span-2 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-3 transition-colors flex items-center justify-center gap-2"
-            >
-              <Users className="w-5 h-5 text-red-400" />
-              <span className="text-white text-xs font-medium">Hunt Supernatural</span>
-            </button>
-          )}
+
         </div>
 
         {hunters.length === 0 ? (
