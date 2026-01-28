@@ -194,8 +194,8 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
            `Straddling them gave you complete control. You could see every expression, feel every reaction. When you started moving, they lost their composure completely, hands gripping your thighs.`
          ],
          from_behind: [
-           `You took them from behind, and they gasped, pressing back against you. The angle gave you complete access, and they surrendered to it, moaning your name as you moved.`,
-           `From behind, you could see their entire body respond to you. They pushed back, taking you deeper, completely lost in the sensation. The sounds they made were absolutely wrecking you.`,
+           `You took them from behind, and they gasped, pressing back against you. The position gave you complete access, and they surrendered to it, moaning your name as you moved.`,
+           `From behind, you could see their entire body respond to you. They pressed back, pushing deeper into you, completely lost in the sensation. The sounds they made were absolutely wrecking you.`,
            `You pulled them close from behind, your body covering theirs completely. They dropped their head back against your shoulder, breathing your name as you claimed them.`
          ],
          taste: [
