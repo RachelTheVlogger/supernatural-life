@@ -130,8 +130,11 @@ export default function HunterHome() {
         className="flex items-center justify-between mb-8 max-w-4xl mx-auto"
       >
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">{hunter.name}</h1>
-          <p className="text-gray-400 capitalize">{hunter.specialty} • Skill: {hunter.skill_level}%</p>
+          <h1 className={`text-3xl font-bold mb-1 ${hasVampireRelationship ? 'text-red-100' : 'text-white'}`}>{hunter.name}</h1>
+          <p className={`capitalize ${hasVampireRelationship ? 'text-red-300' : 'text-gray-400'}`}>{hunter.specialty} • Skill: {hunter.skill_level}%</p>
+          {hasVampireRelationship && (
+            <p className="text-red-400 text-sm mt-1">🦇 Bond with {vampires[0].vampire_name}: {vampires[0].hunter_relationship}%</p>
+          )}
         </div>
         <button
           onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
