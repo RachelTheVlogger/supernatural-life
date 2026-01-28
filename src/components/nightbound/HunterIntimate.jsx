@@ -190,7 +190,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
          ],
          straddle: [
            `You straddled them, your body pressed against theirs. They reached up immediately, hands exploring your back, pulling you closer. You rocked against them slowly, deliberately, making them wait.`,
-           `You pinned them with your weight, your knees on either side of their hips. They groaned at the sensation, thrusting up slightly, trying to get closer. "Patience," you murmured, holding them in place.`,
+           `You pinned them with your weight, your knees on either side of their hips. They groaned at the sensation, pressing up slightly, trying to get closer. "Patience," you murmured, holding them in place.`,
            `Straddling them gave you complete control. You could see every expression, feel every reaction. When you started moving, they lost their composure completely, hands gripping your thighs.`
          ],
          from_behind: [
