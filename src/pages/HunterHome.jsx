@@ -451,44 +451,7 @@ export default function HunterHome() {
           )}
 
           {activeTab === 'intimate' && (
-            <motion.div
-              key="intimate"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-4"
-            >
-              <h3 className="text-white text-lg font-bold mb-4">When the Vampire Visits You</h3>
-              {vampires.length > 0 ? (
-                <div className="grid gap-3 max-h-[60vh] overflow-y-auto">
-                  {vampires.map(vampire => (
-                    <button
-                      key={vampire.id}
-                      onClick={() => {
-                        setSelectedVampire(vampire);
-                        setShowInteraction(true);
-                      }}
-                      className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-left transition-colors border border-red-500/30"
-                    >
-                      <p className="text-white font-bold">{vampire.vampire_name}</p>
-                      <p className="text-gray-400 text-sm">What do they do when they visit?</p>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-gray-800 rounded-lg p-4 text-center">
-                  <p className="text-gray-400">No vampires found</p>
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {showInteraction && selectedVampire && activeTab === 'intimate' && (
-            <VampireInitiatedInteractions 
-              vampire={selectedVampire}
-              hunter={hunter}
-              onClose={() => setShowInteraction(false)}
-            />
+            <HunterIntimate hunter={hunter} vampires={vampires} onClose={() => setActiveTab('home')} />
           )}
           </AnimatePresence>
 
