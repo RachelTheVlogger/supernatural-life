@@ -224,7 +224,13 @@ export default function HunterHomeActivities({ hunter, onClose }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {ACTIVITIES.map(activity => (
+          {ACTIVITIES.filter(activity => {
+            if (interactionChoice === 'hostile') {
+              return ['train', 'research'].includes(activity.id);
+            } else {
+              return ['clean', 'cook', 'sleep', 'meditate'].includes(activity.id);
+            }
+          }).map(activity => (
             <motion.button
               key={activity.id}
               initial={{ opacity: 0, y: 20 }}

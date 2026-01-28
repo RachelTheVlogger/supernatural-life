@@ -97,26 +97,25 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
   const hasSeductive = hunterTraits.includes('seductive');
   const hasDiplomatic = hunterTraits.includes('diplomatic');
 
-  // Available categories based on interaction choice and traits
-  const availableCategories = interactionChoice === 'hostile' 
-    ? ['hostile']
-    : ['curious', 'protective'];
-  
-  // Add trait-specific categories
-  if (hasSeductive) {
-    availableCategories.push('flirty', 'provocative');
-  }
-  if (hasEmpathic && !availableCategories.includes('curious')) {
-    availableCategories.push('curious');
-  }
-  if (hasDiplomatic && !availableCategories.includes('protective')) {
-    availableCategories.push('protective');
-  }
+  // Get all available options based on interaction choice and traits
+  const getAvailableOptions = () => {
+    let options = [];
+    
+    if (interactionChoice === 'hostile') {
+      options = [...DIALOGUE_OPTIONS.hostile];
+    } else {
+      options = [...DIALOGUE_OPTIONS.curious, ...DIALOGUE_OPTIONS.protective];
+      if (hasSeductive) {
+        options = [...options, ...DIALOGUE_OPTIONS.flirty, ...DIALOGUE_OPTIONS.provocative];
+      }
+    }
+    
+    return options;
+  };
 
   // Filter explicit content in lite mode
   const filterExplicit = vampire?.content_filter === 'lite';
-  const currentOptions = (DIALOGUE_OPTIONS[selectedCategory] || [])
-    .filter(option => !filterExplicit || !option.explicit);
+  const currentOptions = getAvailableOptions().filter(option => !filterExplicit || !option.explicit);
 
   const handleSendMessage = async (option) => {
     setLoading(true);
@@ -319,36 +318,6 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
             </div>
           </motion.div>
         )}
-
-        {/* Message Categories */}
-        <div className="grid grid-cols-3 gap-2 mb-6">
-          {availableCategories.map(category => {
-            const categoryColors = {
-              flirty: 'from-pink-600 to-red-600',
-              hostile: 'from-orange-600 to-red-600',
-              curious: 'from-blue-600 to-purple-600',
-              provocative: 'from-red-600 to-pink-600',
-              protective: 'from-green-600 to-blue-600'
-            };
-            return (
-              <button
-                key={category}
-                onClick={() => {
-                  setSelectedCategory(category);
-                  setVampireResponse(null);
-                }}
-                disabled={loading}
-                className={`rounded-lg p-2 text-xs font-medium transition-all capitalize ${
-                  selectedCategory === category
-                    ? `bg-gradient-to-r ${categoryColors[category]} text-white`
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                } disabled:opacity-50`}
-              >
-                {category}
-              </button>
-            );
-          })}
-        </div>
 
         {/* Message Options */}
         <div className="space-y-2 mb-6">
