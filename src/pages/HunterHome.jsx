@@ -25,6 +25,7 @@ import HunterVampireTracking from '@/components/nightbound/HunterVampireTracking
 import HunterMentorSystem from '@/components/nightbound/HunterMentorSystem';
 import HunterBetrayalSystem from '@/components/nightbound/HunterBetrayalSystem';
 import HunterCouncilSystem from '@/components/nightbound/HunterCouncilSystem';
+import TurnedHunterSystem from '@/components/nightbound/TurnedHunterSystem';
 
 
 export default function HunterHome() {
@@ -52,6 +53,7 @@ export default function HunterHome() {
   const [showMentor, setShowMentor] = useState(false);
   const [showBetrayal, setShowBetrayal] = useState(false);
   const [showCouncil, setShowCouncil] = useState(false);
+  const [showTurnedHunter, setShowTurnedHunter] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -212,6 +214,16 @@ export default function HunterHome() {
           <p className="text-gray-400 text-xs mb-1">Council</p>
           <p className="text-white text-lg font-bold">👑</p>
         </button>
+        {isTurnedVampire && (
+          <button
+            onClick={() => setShowTurnedHunter(true)}
+            className="bg-black/40 border border-red-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+          >
+            <Zap className="w-5 h-5 text-red-400 mb-2" />
+            <p className="text-gray-400 text-xs mb-1">Hybrid Powers</p>
+            <p className="text-white text-lg font-bold">🦇</p>
+          </button>
+        )}
         </motion.div>
 
       {/* Main Tabs */}
@@ -598,6 +610,14 @@ export default function HunterHome() {
 
           {showCouncil && (
             <HunterCouncilSystem hunter={hunter} onClose={() => setShowCouncil(false)} />
+          )}
+
+          {showTurnedHunter && isTurnedVampire && (
+            <TurnedHunterSystem hunter={hunter} onClose={() => setShowTurnedHunter(false)} />
+          )}
+
+          {showTurnedHunter && isTurnedVampire && (
+            <TurnedHunterSystem hunter={hunter} onClose={() => setShowTurnedHunter(false)} />
           )}
           </motion.div>
           </div>
