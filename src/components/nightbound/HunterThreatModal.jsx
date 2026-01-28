@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Target, Eye, Sword, MessageCircle, Heart, Skull, Footprints, ShoppingCart, Users } from 'lucide-react';
+import { X, Target, Eye, Sword, Heart, Skull, Footprints, ShoppingCart } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import HunterEncounter from './HunterEncounter';
-import HunterWeaponShop from './HunterWeaponShop';
 
 export default function HunterThreatModal({ onClose, vampireState }) {
   const queryClient = useQueryClient();
@@ -12,16 +11,14 @@ export default function HunterThreatModal({ onClose, vampireState }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [showNightWalk, setShowNightWalk] = useState(false);
-  const [showWeaponShop, setShowWeaponShop] = useState(false);
 
-  const { data: hunters = [], isLoading } = useQuery({
+  const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
     queryFn: () => base44.entities.Hunter.list('-suspicion')
   });
 
   const [huntersInitialized, setHuntersInitialized] = React.useState(false);
 
-  // Generate hunters based on exposure
   React.useEffect(() => {
     const initHunters = async () => {
       if (hunters.length === 0 && (vampireState.exposure_level || 0) > 20 && !huntersInitialized) {
@@ -156,25 +153,11 @@ export default function HunterThreatModal({ onClose, vampireState }) {
     infiltrator: Eye
   };
 
+  if (showNightWalk) {
+    return <HunterEncounter vampireState={vampireState} onClose={() => setShowNightWalk(false)} />;
+  }
+
   return (
-    <>
-      {showWeaponShop && selectedHunter && (
-        <HunterWeaponShop
-          hunter={selectedHunter}
-          onClose={() => setShowWeaponShop(false)}
-          onPurchase={(weapon) => {
-            base44.entities.NightLog.create({
-              entry: `${selectedHunter.name} purchased ${weapon.name}.`,
-              category: 'hunting',
-              intensity: 'minor'
-            });
-          }}
-        />
-      )}
-      {showNightWalk && (
-        <HunterEncounter vampireState={vampireState} onClose={() => setShowNightWalk(false)} />
-      )}
-      {!showNightWalk && !showWeaponShop && (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -190,10 +173,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
         className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative"
       >
         <button 
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }} 
+          onClick={onClose} 
           className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
         >
           <X className="w-5 h-5" />
@@ -204,7 +184,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
           Exposure: {vampireState.exposure_level || 0}% {(vampireState.exposure_level || 0) < 20 && '(Low exposure - no hunters yet)'}
         </p>
 
-        <div className="grid grid-cols-2 gap-2 mb-4">
+        <div className="grid grid-cols-2 gap-2 mb-6">
           <button
             onClick={() => setShowNightWalk(true)}
             className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-xl p-3 transition-colors flex flex-col items-center gap-1"
@@ -212,14 +192,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
             <Footprints className="w-5 h-5 text-purple-400" />
             <span className="text-white text-xs font-medium">Night Walk</span>
           </button>
-          <button
-            onClick={() => setShowWeaponShop(true)}
-            className="bg-yellow-900/40 hover:bg-yellow-900/60 border border-yellow-500/30 rounded-xl p-3 transition-colors flex flex-col items-center gap-1"
-          >
-            <ShoppingCart className="w-5 h-5 text-yellow-400" />
-            <span className="text-white text-xs font-medium">Armory</span>
-          </button>
-          </div>
+        </div>
 
         {hunters.length === 0 ? (
           <div className="text-center py-12">
@@ -331,7 +304,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
               onClick={() => handleAction('frame')}
               className="w-full bg-yellow-900/40 hover:bg-yellow-900/60 border border-yellow-500/30 rounded-xl p-4 text-left transition-colors"
             >
-              <MessageCircle className="w-5 h-5 text-yellow-400 mb-2" />
+              <Eye className="w-5 h-5 text-yellow-400 mb-2" />
               <h4 className="text-white font-medium">Frame as Insane</h4>
               <p className="text-gray-400 text-sm">Discredit them. No one will believe them.</p>
             </button>
@@ -339,20 +312,5 @@ export default function HunterThreatModal({ onClose, vampireState }) {
         )}
       </motion.div>
     </motion.div>
-      )}
-      {showWeaponShop && !selectedHunter && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90">
-          <motion.div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full">
-            <p className="text-gray-400 mb-4">Select a hunter first to equip weapons.</p>
-            <button
-              onClick={() => setShowWeaponShop(false)}
-              className="w-full bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
-            >
-              Close
-            </button>
-          </motion.div>
-        </div>
-      )}
-    </>
   );
 }
