@@ -4,22 +4,23 @@ import { X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import HunterIntimate from './HunterIntimate';
+import HunterVampireCombat from './HunterVampireCombat';
 
 export default function HunterVampireInteraction({ hunter, vampire, onClose, visitType = 'meeting' }) {
   const queryClient = useQueryClient();
   const [interactionChoice, setInteractionChoice] = useState(null); // 'hostile' or 'peaceful'
+  const [showCombat, setShowCombat] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Handle hostile choice - kill vampire
-  const handleHostileChoice = async () => {
+  // Handle hostile choice - initiate combat
+  const handleHostileChoice = () => {
+    setShowCombat(true);
+  };
+
+  const handleCombatVictory = async () => {
     setLoading(true);
     try {
       await base44.entities.VampireState.delete(vampire.id);
-      await base44.entities.NightLog.create({
-        entry: `${hunter.name} killed ${vampire.vampire_name} in combat. The threat has been eliminated.`,
-        category: 'hunting',
-        intensity: 'high'
-      });
       queryClient.invalidateQueries();
       setTimeout(() => {
         onClose();
@@ -27,6 +28,11 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
     } catch (e) {
       console.error('Failed to kill vampire:', e);
     }
+  };
+
+  const handleCombatDefeat = () => {
+    setShowCombat(false);
+    setInteractionChoice(null);
   };
 
   // Initial choice screen
@@ -68,7 +74,7 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
                 <div className="text-left flex-1">
                   <h3 className="text-white text-2xl font-bold mb-2">Hostile Intent</h3>
                   <p className="text-red-300 text-sm">
-                    Kill the vampire. End the threat permanently.
+                    Engage in combat. Fight to the death.
                   </p>
                 </div>
               </div>
@@ -104,7 +110,23 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
     );
   }
 
-  // Show loading state after hostile choice
+  // Show combat interface
+  if (showCombat) {
+    return (
+      <HunterVampireCombat
+        hunter={hunter}
+        vampire={vampire}
+        onClose={() => {
+          setShowCombat(false);
+          onClose();
+        }}
+        onVictory={handleCombatVictory}
+        onDefeat={handleCombatDefeat}
+      />
+    );
+  }
+
+  // Show loading state after victory
   if (loading) {
     return (
       <motion.div
@@ -113,8 +135,8 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
       >
         <div className="text-center">
-          <p className="text-red-400 text-2xl font-bold mb-4">Eliminating threat...</p>
-          <p className="text-gray-400">The vampire has been killed.</p>
+          <p className="text-green-400 text-2xl font-bold mb-4">Victory achieved!</p>
+          <p className="text-gray-400">The vampire has been defeated.</p>
         </div>
       </motion.div>
     );
