@@ -375,12 +375,8 @@ export default function HunterHome() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <HunterHomeActivities hunter={hunter} />
+              <HunterHomeActivities hunter={hunter} onClose={() => setActiveTab('home')} />
             </motion.div>
-          )}
-
-          {showActivities && (
-            <HunterHomeActivities hunter={hunter} onClose={() => setShowActivities(false)} />
           )}
 
           {activeTab === 'intimate' && (
@@ -416,59 +412,69 @@ export default function HunterHome() {
             </motion.div>
           )}
 
+          {showInteraction && selectedVampire && activeTab === 'intimate' && (
+            <VampireInitiatedInteractions 
+              vampire={selectedVampire}
+              hunter={hunter}
+              onClose={() => setShowInteraction(false)}
+            />
+          )}
+          </AnimatePresence>
+
           {showAbilities && (
             <HunterAbilityShop hunter={hunter} onClose={() => setShowAbilities(false)} />
           )}
 
-          {showInteraction && selectedVampire && (
-                    <HunterVampireInteraction 
-                      hunter={hunter} 
-                      vampire={selectedVampire} 
-                      onClose={() => setShowInteraction(false)} 
-                      visitType="meeting"
-                    />
-                  )}
+          {showInteraction && selectedVampire && activeTab !== 'intimate' && (
+            <HunterVampireInteraction 
+              hunter={hunter} 
+              vampire={selectedVampire} 
+              onClose={() => setShowInteraction(false)} 
+              visitType="meeting"
+            />
+          )}
 
-                  {showTraits && (
-                    <HunterTraits hunter={hunter} onClose={() => setShowTraits(false)} />
-                  )}
+          {showTraits && (
+            <HunterTraits hunter={hunter} onClose={() => setShowTraits(false)} />
+          )}
 
-                  {showManagement && (
-                    <HunterManagement onClose={() => setShowManagement(false)} />
-                  )}
+          {showManagement && (
+            <HunterManagement onClose={() => setShowManagement(false)} />
+          )}
 
-                  {showProgression && (
-                    <HunterProgression hunter={hunter} onClose={() => setShowProgression(false)} />
-                  )}
+          {showProgression && (
+            <HunterProgression hunter={hunter} onClose={() => setShowProgression(false)} />
+          )}
 
-                  {showSafeHouse && (
-                    <SafeHouseManagement hunter={hunter} onClose={() => setShowSafeHouse(false)} />
-                  )}
+          {showSafeHouse && (
+            <SafeHouseManagement hunter={hunter} onClose={() => setShowSafeHouse(false)} />
+          )}
 
-                  {showEquipment && (
-                    <HunterEquipment hunter={hunter} onClose={() => setShowEquipment(false)} />
-                  )}
+          {showEquipment && (
+            <HunterEquipment hunter={hunter} onClose={() => setShowEquipment(false)} />
+          )}
 
-                  {showContracts && (
-                    <HunterContracts hunter={hunter} onClose={() => setShowContracts(false)} />
-                  )}
+          {showContracts && (
+            <HunterContracts hunter={hunter} onClose={() => setShowContracts(false)} />
+          )}
 
-                  {showAchievements && (
-                    <HunterAchievements hunter={hunter} onClose={() => setShowAchievements(false)} />
-                  )}
+          {showAchievements && (
+            <HunterAchievements hunter={hunter} onClose={() => setShowAchievements(false)} />
+          )}
 
-                  {showTeams && (
-                    <HunterTeamManagement hunter={hunter} onClose={() => setShowTeams(false)} />
-                  )}
+          {showTeams && (
+            <HunterTeamManagement hunter={hunter} onClose={() => setShowTeams(false)} />
+          )}
 
-                  {showTeamMissions && myTeam && (
-                    <TeamMissions hunter={hunter} team={myTeam} onClose={() => setShowTeamMissions(false)} />
-                  )}
+          {showTeamMissions && myTeam && (
+            <TeamMissions hunter={hunter} team={myTeam} onClose={() => setShowTeamMissions(false)} />
+          )}
 
-                  {showTeamChat && myTeam && (
-                    <TeamChat hunter={hunter} team={myTeam} onClose={() => setShowTeamChat(false)} />
-                  )}
+          {showTeamChat && myTeam && (
+            <TeamChat hunter={hunter} team={myTeam} onClose={() => setShowTeamChat(false)} />
+          )}
 
+          <AnimatePresence mode="wait">
           {activeTab === 'vamp' && (
             <motion.div
               key="vamp"
