@@ -175,7 +175,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
       {showNightWalk && (
         <HunterEncounter vampireState={vampireState} onClose={() => setShowNightWalk(false)} />
       )}
-      {!showNightWalk && !showWeaponShop && !showSupernaturalInteraction && (
+      {!showNightWalk && !showWeaponShop && (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
