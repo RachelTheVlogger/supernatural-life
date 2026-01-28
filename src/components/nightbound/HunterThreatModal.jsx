@@ -172,19 +172,6 @@ export default function HunterThreatModal({ onClose, vampireState }) {
           }}
         />
       )}
-      {showSupernaturalInteraction && selectedHunter && (
-        <HunterSupernaturalInteraction
-          hunter={selectedHunter}
-          onClose={() => setShowSupernaturalInteraction(false)}
-          onInteraction={(data) => {
-            base44.entities.NightLog.create({
-              entry: `${selectedHunter.name}: ${data.interaction.label} vs ${data.target.type}. Success: ${data.success}`,
-              category: 'hunting',
-              intensity: 'moderate'
-            });
-          }}
-        />
-      )}
       {showNightWalk && (
         <HunterEncounter vampireState={vampireState} onClose={() => setShowNightWalk(false)} />
       )}
