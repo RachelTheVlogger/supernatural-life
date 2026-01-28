@@ -252,6 +252,10 @@ export default function HunterHome() {
             </motion.div>
           )}
 
+          {showActivities && (
+            <HunterHomeActivities hunter={hunter} onClose={() => setShowActivities(false)} />
+          )}
+
           {activeTab === 'intimate' && (
             <motion.div
               key="intimate"
