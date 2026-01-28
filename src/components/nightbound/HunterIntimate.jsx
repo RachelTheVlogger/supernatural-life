@@ -80,9 +80,14 @@ const INTIMATE_ACTIONS = {
     { id: 'mark', label: 'Mark them where everyone can see', category: 'social' }
   ],
   activity: [
-    { id: 'risk', label: 'Risk getting caught together', category: 'activity' },
-    { id: 'hunt_together', label: 'Hunt together that night', category: 'activity' },
-    { id: 'corner', label: 'Corner prey together', category: 'activity' }
+   { id: 'risk', label: 'Risk getting caught together', category: 'activity' },
+   { id: 'hunt_together', label: 'Hunt together that night', category: 'activity' },
+   { id: 'corner', label: 'Corner prey together', category: 'activity' }
+  ],
+  turn: [
+   { id: 'offer_eternity', label: 'Offer them eternity with you', category: 'turn' },
+   { id: 'bite_transform', label: 'Bite and transform them', category: 'turn' },
+   { id: 'blood_exchange', label: 'Exchange blood as a binding ritual', category: 'turn' }
   ]
 };
 
