@@ -558,19 +558,12 @@ export default function HunterHome() {
                   </div>
 
                   <div className="space-y-4">
-                    <motion.button
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      onClick={() => setShowIntimate(true)}
-                      className="w-full bg-gradient-to-r from-purple-700 to-purple-800 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 rounded-lg border-2 border-purple-500/50 transition-all"
-                    >
-                      💜 Offer to Turn
-                    </motion.button>
+                    <HunterTurnOptions hunter={hunter} vampire={vampires[0]} onClose={() => setActiveTab('home')} />
 
                     <motion.button
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 }}
+                      transition={{ delay: 0.3 }}
                       onClick={async () => {
                         if (confirm(`Let ${vampires[0].vampire_name} turn you into a vampire?`)) {
                           await base44.entities.Hunter.update(hunter.id, { 
@@ -594,7 +587,7 @@ export default function HunterHome() {
                     <motion.button
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
+                      transition={{ delay: 0.4 }}
                       onClick={() => setSelectedVampire(vampires[0])}
                       className="w-full bg-gradient-to-r from-pink-700 to-pink-800 hover:from-pink-600 hover:to-pink-700 text-white font-bold py-4 rounded-lg border-2 border-pink-500/50 transition-all"
                     >
