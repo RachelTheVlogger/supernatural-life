@@ -321,7 +321,9 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
 
         {/* Message Options */}
         <div className="space-y-2 mb-6">
-          <p className="text-gray-400 text-sm mb-3">Choose your words:</p>
+          <p className="text-gray-400 text-sm mb-3">
+            {interactionChoice === 'hostile' ? 'Choose your approach:' : 'Choose your words:'}
+          </p>
           {currentOptions.map((option, idx) => (
             <motion.button
               key={idx}
