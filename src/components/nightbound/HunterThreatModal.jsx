@@ -219,9 +219,7 @@ export default function HunterThreatModal({ onClose, vampireState }) {
             <ShoppingCart className="w-5 h-5 text-yellow-400" />
             <span className="text-white text-xs font-medium">Armory</span>
           </button>
-        </div>
-
-        </div>
+          </div>
 
         {hunters.length === 0 ? (
           <div className="text-center py-12">
