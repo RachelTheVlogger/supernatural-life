@@ -88,9 +88,9 @@ const INTIMATE_ACTIONS = {
    { id: 'corner', label: 'Corner prey together', category: 'activity' }
   ],
   turn: [
-   { id: 'offer_eternity', label: 'Offer them eternity with you', category: 'turn' },
-   { id: 'bite_transform', label: 'Bite and transform them', category: 'turn' },
-   { id: 'blood_exchange', label: 'Exchange blood as a binding ritual', category: 'turn' }
+    { id: 'offer_eternity', label: 'Offer them eternity with you', category: 'turn' },
+    { id: 'bite_transform', label: 'Bite and transform them', category: 'turn' },
+    { id: 'blood_exchange', label: 'Exchange blood as a binding ritual', category: 'turn' }
   ]
 };
 
