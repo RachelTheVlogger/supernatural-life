@@ -13,7 +13,6 @@ export default function HunterThreatModal({ onClose, vampireState }) {
   const [outcome, setOutcome] = useState('');
   const [showNightWalk, setShowNightWalk] = useState(false);
   const [showWeaponShop, setShowWeaponShop] = useState(false);
-  const [showSupernaturalInteraction, setShowSupernaturalInteraction] = useState(false);
 
   const { data: hunters = [], isLoading } = useQuery({
     queryKey: ['hunters'],
