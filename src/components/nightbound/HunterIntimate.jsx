@@ -164,10 +164,50 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
           `You linked your fingers with theirs. Just that. Just connection. And it was enough.`
         ],
         push_bed: [
-          `You pushed them back onto the bed. They landed hard, eyes wild, waiting. "Let me see that gorgeous body," you whispered, moving between their legs.`,
-          `You shoved them onto the bed and they bounced, eyes gleaming. "Your turn," they said with a smirk.`,
-          `You pushed them back and they dragged you down on top of them. This was going to be fun.`
-        ]
+           `You pushed them back onto the bed. They landed hard, eyes wild, waiting. "Let me see that gorgeous body," you whispered, moving between their legs.`,
+           `You shoved them onto the bed and they bounced, eyes gleaming. "Your turn," they said with a smirk.`,
+           `You pushed them back and they dragged you down on top of them. This was going to be fun.`
+         ],
+         grip_throat: [
+           `You wrapped your hand around their throat, not squeezing hard—just enough. Possession. Control. They gasped, their back arching, eyes going dark with need. "Mine," you growled, and they whimpered.`,
+           `Your fingers tightened around their throat and they tilted their head back, completely exposed to you. Vulnerable. Trusting. You felt them shudder as you traced your thumb along their jawline.`,
+           `You gripped their throat and pulled them close, forcing them to meet your eyes. They were breathing hard, pupils dilated, completely surrendered to you. Power had never felt so intoxicating.`
+         ],
+         knees: [
+           `You pressed them down to their knees in front of you. The submission in that position alone had them shaking. "Look at me," you commanded, and when they did, you saw the hunger in their eyes.`,
+           `You guided them to their knees, their face now level with your waist. They looked up at you with desperate eyes, waiting for your next move. The power was absolutely intoxicating.`,
+           `On their knees before you, completely vulnerable and willing. You tilted their chin up, forcing them to hold your gaze. This was what dominance looked like.`
+         ],
+         bind_control: [
+           `You tied their wrists with deliberate care, making sure they could still feel everything. The helplessness in their eyes made your blood burn. "Let me take care of you," you whispered, and they nodded, completely trusting.`,
+           `Bound and at your mercy, they tested the restraints, finding them secure. A small smile played on their lips. They wanted this. They wanted you in complete control.`,
+           `You restrained them, taking your time with each knot. When you finally stepped back, they were trembling with anticipation. "What are you going to do to me?" they asked breathlessly.`
+         ],
+         dominance: [
+           `You took control completely. Every touch, every movement was a statement: you owned them in this moment. They responded to your dominance by surrendering completely, their body responsive to every demand.`,
+           `You showed them exactly what your power looked like. Not cruel, but absolute. They broke under your control in the best way, gasping your name as you claimed them.`,
+           `You commanded the space, the moment, their body. Every word was an order they wanted to obey. The satisfaction of their complete submission was almost overwhelming.`
+         ],
+         straddle: [
+           `You straddled them, your body pressed against theirs. They reached up immediately, hands exploring your back, pulling you closer. You rocked against them slowly, deliberately, making them wait.`,
+           `You pinned them with your weight, your knees on either side of their hips. They groaned at the sensation, thrusting up slightly, trying to get closer. "Patience," you murmured, holding them in place.`,
+           `Straddling them gave you complete control. You could see every expression, feel every reaction. When you started moving, they lost their composure completely, hands gripping your thighs.`
+         ],
+         from_behind: [
+           `You took them from behind, and they gasped, pressing back against you. The angle gave you complete access, and they surrendered to it, moaning your name as you moved.`,
+           `From behind, you could see their entire body respond to you. They pushed back, taking you deeper, completely lost in the sensation. The sounds they made were absolutely wrecking you.`,
+           `You pulled them close from behind, your body covering theirs completely. They dropped their head back against your shoulder, breathing your name as you claimed them.`
+         ],
+         taste: [
+           `You tasted every inch of them, taking your time. Your mouth traveled down their body while they writhed beneath you, gasping out breathless pleas. You didn't stop. Not yet.`,
+           `You kissed your way down their torso, sucking marks into their skin as you went. By the time you reached your destination, they were already shaking, already desperate.`,
+           `You explored them with your mouth like you had all the time in the world. Every whimper, every gasp told you exactly what they wanted, and you gave it to them—slowly, deliberately.`
+         ],
+         mark: [
+           `You left marks across their body intentionally, visibly. Claiming them. Showing the world they belonged to you. They loved every second of it, moaning as you sucked marks into their skin.`,
+           `You marked them everywhere—their neck, their chest, the inside of their thighs. By the time you were done, they were covered in evidence of what you'd done. They looked absolutely destroyed in the best way.`,
+           `Purple and dark marks bloomed across their skin under your mouth. They pushed their neck toward you, wanting more, wanting to be completely covered in your marks. "Don't stop," they begged.`
+         ]
       };
 
       return outcomes;
