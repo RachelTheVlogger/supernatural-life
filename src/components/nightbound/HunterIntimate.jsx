@@ -169,7 +169,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
            `You pushed them back and they dragged you down on top of them. This was going to be fun.`
          ],
          grip_throat: [
-           `You wrapped your hand around their throat, not squeezing hard—just enough. Possession. Control. They gasped, their back arching, eyes going dark with need. "Mine," you growled, and they whimpered.`,
+           `You wrapped your hand around their throat, not squeezing hard—just enough. Possession. Control. They gasped, their body arching, eyes going dark with need. "Mine," you growled, and they whimpered.`,
            `Your fingers tightened around their throat and they tilted their head back, completely exposed to you. Vulnerable. Trusting. You felt them shudder as you traced your thumb along their jawline.`,
            `You gripped their throat and pulled them close, forcing them to meet your eyes. They were breathing hard, pupils dilated, completely surrendered to you. Power had never felt so intoxicating.`
          ],
