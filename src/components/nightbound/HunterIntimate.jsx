@@ -110,7 +110,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
     gender: v?.gender || 'custom'
   }));
 
-  const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity'];
+  const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity', 'turn'];
 
   // Filter explicit content in lite mode
   const filterExplicit = vampires[0]?.content_filter === 'lite';
