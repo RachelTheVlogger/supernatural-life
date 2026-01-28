@@ -594,7 +594,19 @@ export default function HunterHome() {
           {showActivities && (
             <HunterHomeActivities hunter={hunter} onClose={() => setShowActivities(false)} />
           )}
-      </motion.div>
-    </div>
-  );
-}
+
+          {showMentor && (
+            <HunterMentorSystem hunter={hunter} onClose={() => setShowMentor(false)} />
+          )}
+
+          {showBetrayal && (
+            <HunterBetrayalSystem hunter={hunter} vampires={vampires} onClose={() => setShowBetrayal(false)} />
+          )}
+
+          {showCouncil && (
+            <HunterCouncilSystem hunter={hunter} onClose={() => setShowCouncil(false)} />
+          )}
+          </motion.div>
+          </div>
+          );
+          }
