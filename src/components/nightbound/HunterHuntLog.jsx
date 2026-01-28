@@ -9,6 +9,7 @@ export default function HunterHuntLog({ hunter, vampires, notes }) {
   const [selectedVampire, setSelectedVampire] = useState(null);
   const [noteText, setNoteText] = useState('');
   const [adding, setAdding] = useState(false);
+  const [generatingAI, setGeneratingAI] = useState(false);
 
   const vampireNotes = notes.filter(n => n.hunter_id === hunter.id);
 
@@ -40,6 +41,33 @@ export default function HunterHuntLog({ hunter, vampires, notes }) {
     } catch (e) {
       console.error('Failed to delete note:', e);
     }
+  };
+
+  const handleGenerateAINotes = async () => {
+    if (!selectedVampire) return;
+    
+    setGeneratingAI(true);
+    try {
+      const prompt = `You are ${hunter.name}, a ${hunter.specialty} vampire hunter. Generate detailed hunt notes about the vampire "${selectedVampire.vampire_name}". Include:
+      - Physical observations and behavior patterns
+      - Known weaknesses or vulnerabilities
+      - Recent sightings and activity
+      - Potential strategies for tracking/confronting them
+      - Any personal insights or hunches
+      
+      Write in first person as the hunter. Be professional but add personality. Keep it under 200 words.`;
+      
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        add_context_from_internet: false
+      });
+      
+      setNoteText(result);
+    } catch (e) {
+      console.error('Failed to generate notes:', e);
+      setNoteText('Failed to generate notes. Write your own observations.');
+    }
+    setGeneratingAI(false);
   };
 
   return (
@@ -77,6 +105,13 @@ export default function HunterHuntLog({ hunter, vampires, notes }) {
 
           <div>
             <label className="text-gray-400 text-sm mb-2 block">Hunt Notes</label>
+            <button
+              onClick={handleGenerateAINotes}
+              disabled={generatingAI || !selectedVampire}
+              className="mb-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              {generatingAI ? 'Generating...' : '✨ AI Generate Notes'}
+            </button>
             <textarea
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
