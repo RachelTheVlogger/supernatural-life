@@ -349,6 +349,27 @@ export default function HunterHome() {
                   </div>
                 )}
 
+                {/* Living Together Systems */}
+                {hunterTargets.some(v => v.living_with_hunter) && (
+                  <div className="bg-black/40 border border-pink-700/50 rounded-2xl p-6">
+                    <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                      <Heart className="w-5 h-5" />
+                      Living Together
+                    </h3>
+                    <div className="grid grid-cols-1 gap-2">
+                      <button onClick={() => setShowDomestic(true)} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">📅 Daily Routines</button>
+                      <button onClick={() => setShowTrust(true)} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">💔 Build Trust</button>
+                      <button onClick={() => setShowMoral(true)} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">⚠️ Moral Dilemmas</button>
+                      <button onClick={() => setShowJointMissions(true)} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">⚔️ Joint Missions</button>
+                      <button onClick={() => setShowJealousy(true)} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">😠 Handle Jealousy</button>
+                      <button onClick={() => setShowHousehold(true)} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">🏠 Household Decisions</button>
+                      <button onClick={() => setShowFeeding(true)} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">🩸 Feeding Control</button>
+                      <button onClick={() => setShowIntegration(true)} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">👥 Integration</button>
+                      <button onClick={() => setShowEscape(true)} className="bg-red-900 hover:bg-red-800 text-white px-4 py-2 rounded text-sm">✈️ Escape Plan</button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
                   <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
                     <Target className="w-5 h-5" />
