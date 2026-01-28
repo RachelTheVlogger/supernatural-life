@@ -207,8 +207,63 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
            `You marked them everywhere—their neck, their shoulders, their inner thighs. Showing the world they belonged to you. By the time you were done, they were covered in evidence of what you'd done and dripping with arousal.`,
            `You sucked marks into their skin and then moved between their legs to mark their ${genitalReference} with your mouth too. They arched into you, moaning your name, their ${genitalReference} swollen and glistening. Completely wrecked.`,
            `Dark marks bloomed across their skin. You traced the bruises with your tongue, making them shudder. When you spread their legs and marked their inner thighs, they gasped. "Don't stop," they begged breathlessly.`
+         ],
+         neck_tongue: [
+           `You ran your tongue slowly along their neck, feeling their pulse quicken. They tilted their head back, exposing themselves completely to you. When you bit down gently, they gasped and grabbed you closer.`,
+           `Your tongue traced their neck and they shuddered, their hand gripping the back of your head. You could feel their pulse racing under your mouth.`,
+           `You licked a slow path up their neck and they trembled, breath catching. "More," they whispered desperately.`
+         ],
+         claim_mouth: [
+           `You claimed their mouth completely, kissing them until they couldn't tell where you ended and they began. When you finally pulled back, they were breathless and wanting.`,
+           `Your mouth dominated theirs. Deep. Consuming. They surrendered to it completely, hands gripping your shirt.`,
+           `You kissed them like you owned their mouth, and they loved every second of it. Desperate. Wanting. Completely yours.`
+         ],
+         watch: [
+           `You made them watch as you took pleasure from them. The power of having their eyes on you while you used them was intoxicating. They were transfixed, unable to look away.`,
+           `"Watch me," you commanded, and they obeyed, eyes dark and hungry. They watched every move, every touch, completely undone by the sight of you.`,
+           `You made them watch while their ${genitalReference} was completely exposed to you, glistening. The embarrassment mixed with desire in their eyes was everything.`
+         ],
+         beg: [
+           `You brought them right to the edge and stopped, making them beg for it. "Please," they gasped, completely desperate. You loved the power of making them ask for what they needed.`,
+           `You made them beg for your touch, your kiss, your {{genitalReference}}. By the time you gave it to them, they were incoherent, completely wrecked.`,
+           `"Beg for it," you demanded. They did, breathlessly, completely undone. The desperation in their voice was everything.`
+         ],
+         whisper_threats: [
+           `You whispered dark, degrading things in their ear. "You're mine," you growled, and they shivered, aroused by the possessive edge in your voice.`,
+           `Your words were filthy, explicit, degrading. They loved every second, moaning as you whispered all the things you were going to do to them.`,
+           `You whispered threats of what you'd do to their ${genitalReference}, and they trembled with anticipation, completely surrendered to you.`
+         ],
+         corner: [
+           `You cornered them against the wall, trapping them between you and the hard surface. There was nowhere to go. They were completely at your mercy.`,
+           `You backed them into a corner, your body blocking any escape. The desperation in their eyes was everything. "Please," they whispered.`,
+           `Trapped between you and the corner, they had no choice but to take what you gave them. Their ${genitalReference} pressed against your leg, desperate and needy.`
+         ],
+         wall: [
+           `You slammed them against the wall and took them hard. The desperation, the urgency, the way they gasped your name—it was all too much.`,
+           `Against the wall, you had complete control. Every thrust, every touch was deliberate. They clawed at you, completely undone.`,
+           `You fucked them against the wall, filling their ${genitalReference} completely. They came hard, legs shaking, completely wrecked against the cool surface.`
+         ],
+         surrender: [
+           `You let them take control and they did, completely overwhelming you with their touch, their kisses, their need. It was intoxicating to surrender to them.`,
+           `You gave yourself over to them completely. Their hands, their mouth, their body—everything was exactly what you needed.`,
+           `Surrendering to them felt like the most intimate thing you could do. They took their time, worshipping every inch of you.`
+         ],
+         hunt_together: [
+           `You hunted together that night, your movements perfectly synchronized. The kill was exhilarating, and the bloodlust made everything that followed explosive.`,
+           `Hunting together bonded you in a way nothing else could. The shared hunger, the shared kill, the adrenaline—it led to something wild and passionate.`,
+           `The hunt brought you together in the most primal way. By the time you were done feeding, you were desperate for each other.`
+         ],
+         risk: [
+           `The risk of getting caught made everything more intense. Every sound, every movement could give you away. The danger was intoxicating.`,
+           `You couldn't help yourselves even with the risk of being discovered. The possibility of getting caught only made it hotter.`,
+           `Risking it all for this moment with them made your heart race. The adrenaline mixed with arousal was everything.`
+         ],
+         aftercare: [
+           `You held them close and whispered reassurances. Their vulnerability was sacred, and you treated it as such. This moment mattered just as much as the intensity before.`,
+           `You cared for them after, making sure they felt safe and loved. The tenderness was its own kind of intimacy.`,
+           `You wrapped them in blankets and held them close, whispering soft things. They nuzzled against you, completely content.`
          ]
-      };
+         };
 
       return outcomes;
     };
