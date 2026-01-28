@@ -58,14 +58,17 @@ export default function HunterHuntLog({ hunter, vampires, notes }) {
       Write in first person as the hunter. Be professional but add personality. Keep it under 200 words.`;
       
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt,
+        prompt: prompt,
         add_context_from_internet: false
       });
       
-      setNoteText(result);
+      // Handle if result is an object or string
+      const noteContent = typeof result === 'string' ? result : (result.response || result.content || JSON.stringify(result));
+      setNoteText(noteContent);
     } catch (e) {
       console.error('Failed to generate notes:', e);
-      setNoteText('Failed to generate notes. Write your own observations.');
+      alert('Failed to generate AI notes. Error: ' + e.message);
+      setNoteText('');
     }
     setGeneratingAI(false);
   };
