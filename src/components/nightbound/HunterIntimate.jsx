@@ -33,7 +33,10 @@ const INTIMATE_ACTIONS = {
     { id: 'whisper_love', label: 'Whisper sweet things', category: 'sweet' },
     { id: 'forehead_kiss', label: 'Kiss their forehead', category: 'sweet' },
     { id: 'slow_dance', label: 'Dance together slowly', category: 'sweet' },
-    { id: 'fingers_intertwine', label: 'Intertwine your fingers', category: 'sweet' }
+    { id: 'fingers_intertwine', label: 'Intertwine your fingers', category: 'sweet' },
+    { id: 'offer_eternity', label: 'Offer them eternity with you', category: 'turn' },
+    { id: 'bite_transform', label: 'Bite and transform them', category: 'turn' },
+    { id: 'blood_exchange', label: 'Exchange blood as a binding ritual', category: 'turn' }
   ],
   romantic: [
    { id: 'gentle_kiss', label: 'Kiss them softly', category: 'romantic' },
