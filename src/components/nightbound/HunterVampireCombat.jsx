@@ -20,8 +20,8 @@ export default function HunterVampireCombat({ hunter, vampire, onClose, onVictor
   // Calculate combat stats
   const hunterAttack = Math.floor((hunter.skill_level || 50) * 0.8);
   const hunterDefense = Math.floor((hunter.skill_level || 50) * 0.6);
-  const vampirePower = Math.floor((vampire.power || 50) * 0.7);
-  const vampireDefense = Math.floor((vampire.blood_level || 50) * 0.5);
+  const vampirePower = Math.floor((vampire.vampire_power_level || 50) * 0.7);
+  const vampireDefense = Math.floor((vampire.vampire_power_level || 50) * 0.5);
 
   // Get hunter's equipped items and skills
   const hasStake = hunter.unlocked_skills?.includes('silver_weapons');
@@ -170,7 +170,7 @@ export default function HunterVampireCombat({ hunter, vampire, onClose, onVictor
       addLog('Victory! The vampire has been defeated!', 'victory');
       
       // Award experience
-      const expGain = Math.floor(50 + (vampire.power || 50));
+      const expGain = Math.floor(50 + (vampire.vampire_power_level || 50));
       await base44.entities.Hunter.update(hunter.id, {
         experience: (hunter.experience || 0) + expGain,
         vampires_killed: (hunter.vampires_killed || 0) + 1

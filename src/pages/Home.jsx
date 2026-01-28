@@ -120,13 +120,10 @@ export default function Home() {
      } else if (selectedType === 'hunter') {
        await base44.entities.Hunter.create({
          name: characterName.trim(),
-         gender: characterGender,
-         sexuality: characterSexuality,
-         personality: characterPersonality,
-         skill_level: 30,
-         specialty: 'combat',
+         specialty: 'combatant',
+         skill_level: 50,
          suspicion: 0,
-         status: 'active'
+         status: 'tracking'
        });
        queryClient.invalidateQueries();
        navigate(createPageUrl('HunterHome'));
