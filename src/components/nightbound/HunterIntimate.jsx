@@ -88,9 +88,9 @@ const INTIMATE_ACTIONS = {
    { id: 'corner', label: 'Corner prey together', category: 'activity' }
   ],
   turn: [
-    { id: 'offer_eternity', label: 'Offer them eternity with you', category: 'turn' },
-    { id: 'bite_transform', label: 'Bite and transform them', category: 'turn' },
-    { id: 'blood_exchange', label: 'Exchange blood as a binding ritual', category: 'turn' }
+    { id: 'ask_turn', label: 'Ask them to turn you', category: 'turn' },
+    { id: 'beg_eternity', label: 'Beg for eternity together', category: 'turn' },
+    { id: 'offer_blood', label: 'Offer your blood willingly', category: 'turn' }
   ]
 };
 
@@ -242,10 +242,20 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
            `Your bite was swift and deep. Their scream became a moan as the venom spread through their veins. When the transformation finished, they gasped for breath—but didn't need it. They were changed. Perfect. Yours.`,
            `You sank your fangs into them and held them as the change took hold. Their body convulsed with new power, new hunger, new existence. When their eyes opened, they were crimson and ancient. Reborn.`
          ],
-         blood_exchange: [
-           `You opened your wrist and let them drink from you while you drank from them. Your blood mixing, binding you forever. When you finally pulled apart, you were no longer separate—you were one. Connected. Eternal.`,
-           `Blood for blood, vein for vein. You exchanged the sacred liquid as they transformed, the ritual binding you together more powerfully than any vampire could imagine. When it was done, you were soulmates in the truest sense.`,
-           `The ritual was ancient and intimate. Your blood in their mouth, their blood on your lips. The connection was instantaneous and absolute. They were your progeny now. Your eternal companion. Forever bound to you.`
+         ask_turn: [
+           `"Please," you whispered. "Make me like you. Let me stay with you forever." Their eyes darkened with desire and something deeper. "Are you sure?" they asked. You nodded. This was what you wanted all along.`,
+           `You looked into their crimson eyes and asked the question that would change everything. "Turn me. Make me yours." Their fangs grazed your neck as they considered it. "You'd give up the sun for me?" they asked softly. "Yes," you breathed.`,
+           `"I don't want to live without you," you confessed. "Turn me. Make me eternal. Make me vampire." They pulled you close, and you felt the hunger in them respond to your plea.`
+         ],
+         beg_eternity: [
+           `You begged them to turn you, tears streaming down your face. "Please, I can't lose you. Make me like you so we can be together forever." They held you, conflicted between hunger and love.`,
+           `"Eternity with you," you whispered desperately against their chest. "That's all I want. That's all I've ever wanted." They trembled, fighting the urge to bite.`,
+           `You clutched at them, pleading. "Turn me. Bind us together. I want to spend forever with you." Your desperation was intoxicating to them.`
+         ],
+         offer_blood: [
+           `You tilted your head, exposing your neck. "Take what you need," you breathed. "I'm yours. All of me. Turn me if you want." The hunger in their eyes became overwhelming.`,
+           `You offered yourself completely, pulling your collar aside. "My blood. My life. My eternity. I'm offering it all to you willingly." They groaned at the sight of your exposed pulse.`,
+           `"Drink," you commanded softly. "Take me. Transform me. I belong to you now." Your submission was absolute, your offering complete.`
          ]
          };
 
