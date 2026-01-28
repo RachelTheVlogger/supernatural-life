@@ -122,7 +122,7 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
 
   // Show intimate interactions if peaceful was chosen
   if (interactionChoice === 'peaceful') {
-    return <HunterIntimate hunter={hunter} vampires={[vampire]} />;
+    return <HunterIntimate hunter={hunter} vampires={[vampire]} onClose={onClose} />;
   }
 
   // Initial choice screen

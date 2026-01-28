@@ -90,7 +90,7 @@ const INTIMATE_ACTIONS = {
   ]
 };
 
-export default function HunterIntimate({ hunter, vampires }) {
+export default function HunterIntimate({ hunter, vampires, onClose }) {
   const queryClient = useQueryClient();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAction, setSelectedAction] = useState(null);
@@ -305,7 +305,7 @@ export default function HunterIntimate({ hunter, vampires }) {
             </h2>
             <p className="text-gray-400">What will you do?</p>
           </div>
-          <button onClick={() => window.history.back()} className="text-gray-400 hover:text-white">
+          <button onClick={onClose || (() => window.history.back())} className="text-gray-400 hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
