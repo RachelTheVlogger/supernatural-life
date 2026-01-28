@@ -18,6 +18,9 @@ import SafeHouseManagement from '@/components/nightbound/SafeHouseManagement';
 import HunterEquipment from '@/components/nightbound/HunterEquipment';
 import HunterContracts from '@/components/nightbound/HunterContracts';
 import HunterAchievements from '@/components/nightbound/HunterAchievements';
+import HunterTeamManagement from '@/components/nightbound/HunterTeamManagement';
+import TeamMissions from '@/components/nightbound/TeamMissions';
+import TeamChat from '@/components/nightbound/TeamChat';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -36,6 +39,9 @@ export default function HunterHome() {
   const [showEquipment, setShowEquipment] = useState(false);
   const [showContracts, setShowContracts] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showTeams, setShowTeams] = useState(false);
+  const [showTeamMissions, setShowTeamMissions] = useState(false);
+  const [showTeamChat, setShowTeamChat] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -57,6 +63,19 @@ export default function HunterHome() {
       }
     }
   });
+
+  const { data: teams = [] } = useQuery({
+    queryKey: ['hunterTeams'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.HunterTeam.list();
+      } catch (e) {
+        return [];
+      }
+    }
+  });
+
+  const myTeam = teams.find(t => t.member_ids?.includes(hunter.id));
 
   if (hunters.length === 0) {
     return (
@@ -104,7 +123,7 @@ export default function HunterHome() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 max-w-4xl mx-auto"
+        className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8 max-w-4xl mx-auto"
       >
         <div className="bg-black/40 border border-red-500/30 rounded-lg p-4">
           <Target className="w-5 h-5 text-red-400 mb-2" />
@@ -126,7 +145,15 @@ export default function HunterHome() {
           <p className="text-gray-400 text-xs mb-1">Status</p>
           <p className="text-white text-2xl font-bold capitalize">{hunter.status}</p>
         </div>
-      </motion.div>
+        <button
+          onClick={() => setShowTeams(true)}
+          className="bg-black/40 border border-blue-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+        >
+          <Users className="w-5 h-5 text-blue-400 mb-2" />
+          <p className="text-gray-400 text-xs mb-1">Team</p>
+          <p className="text-white text-lg font-bold">{myTeam ? '✓' : 'None'}</p>
+        </button>
+        </motion.div>
 
       {/* Main Tabs */}
       <motion.div
@@ -262,6 +289,32 @@ export default function HunterHome() {
                     </button>
                   </div>
                 </div>
+
+                {/* Team Operations */}
+                {myTeam && (
+                  <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                    <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                      <Users className="w-5 h-5" />
+                      Team Operations
+                    </h3>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => setShowTeamMissions(true)}
+                        className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 rounded-lg p-4 text-center transition-colors border border-blue-500/30"
+                      >
+                        <h4 className="text-white font-bold text-lg mb-2">Team Missions</h4>
+                        <p className="text-blue-300 text-sm">Coordinate operations</p>
+                      </button>
+                      <button
+                        onClick={() => setShowTeamChat(true)}
+                        className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+                      >
+                        <h4 className="text-white font-bold text-lg mb-2">Team Chat</h4>
+                        <p className="text-gray-400 text-sm">Communicate with team</p>
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
                   <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
@@ -402,6 +455,18 @@ export default function HunterHome() {
 
                   {showAchievements && (
                     <HunterAchievements hunter={hunter} onClose={() => setShowAchievements(false)} />
+                  )}
+
+                  {showTeams && (
+                    <HunterTeamManagement hunter={hunter} onClose={() => setShowTeams(false)} />
+                  )}
+
+                  {showTeamMissions && myTeam && (
+                    <TeamMissions hunter={hunter} team={myTeam} onClose={() => setShowTeamMissions(false)} />
+                  )}
+
+                  {showTeamChat && myTeam && (
+                    <TeamChat hunter={hunter} team={myTeam} onClose={() => setShowTeamChat(false)} />
                   )}
 
           {activeTab === 'vamp' && (
