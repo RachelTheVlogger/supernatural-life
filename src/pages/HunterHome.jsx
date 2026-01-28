@@ -557,10 +557,10 @@ export default function HunterHome() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-2 mb-4">
+                  <div className="grid grid-cols-3 gap-3 mb-6">
                     <button
                       onClick={() => setSelectedVampire(null)}
-                      className={`rounded-lg p-3 transition-all text-sm font-medium ${
+                      className={`rounded-lg p-4 transition-all font-bold text-base ${
                         !selectedVampire ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                       }`}
                     >
@@ -568,7 +568,7 @@ export default function HunterHome() {
                     </button>
                     <button
                       onClick={() => setSelectedVampire(vampires[0])}
-                      className={`rounded-lg p-3 transition-all text-sm font-medium ${
+                      className={`rounded-lg p-4 transition-all font-bold text-base ${
                         selectedVampire === vampires[0] ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                       }`}
                     >
@@ -590,7 +590,7 @@ export default function HunterHome() {
                           queryClient.invalidateQueries(['hunters', 'vampireState']);
                         }
                       }}
-                      className="rounded-lg p-3 transition-all text-sm font-medium bg-gray-800 text-gray-400 hover:bg-gray-700"
+                      className="rounded-lg p-4 transition-all font-bold text-base bg-gray-800 text-gray-400 hover:bg-gray-700"
                     >
                       Convert
                     </button>
