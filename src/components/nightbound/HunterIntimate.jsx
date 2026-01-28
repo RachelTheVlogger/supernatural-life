@@ -34,9 +34,9 @@ const INTIMATE_ACTIONS = {
     { id: 'forehead_kiss', label: 'Kiss their forehead', category: 'sweet' },
     { id: 'slow_dance', label: 'Dance together slowly', category: 'sweet' },
     { id: 'fingers_intertwine', label: 'Intertwine your fingers', category: 'sweet' },
-    { id: 'offer_eternity', label: 'Offer them eternity with you', category: 'turn' },
-    { id: 'bite_transform', label: 'Bite and transform them', category: 'turn' },
-    { id: 'blood_exchange', label: 'Exchange blood as a binding ritual', category: 'turn' }
+    { id: 'offer_eternity', label: 'Offer them eternity with you', category: 'eternity' },
+    { id: 'bite_transform', label: 'Bite and transform them', category: 'eternity' },
+    { id: 'blood_exchange', label: 'Exchange blood as a binding ritual', category: 'eternity' }
   ],
   romantic: [
    { id: 'gentle_kiss', label: 'Kiss them softly', category: 'romantic' },
@@ -87,10 +87,10 @@ const INTIMATE_ACTIONS = {
    { id: 'hunt_together', label: 'Hunt together that night', category: 'activity' },
    { id: 'corner', label: 'Corner prey together', category: 'activity' }
   ],
-  turn: [
-    { id: 'ask_turn', label: 'Ask them to turn you', category: 'turn' },
-    { id: 'beg_eternity', label: 'Beg for eternity together', category: 'turn' },
-    { id: 'offer_blood', label: 'Offer your blood willingly', category: 'turn' }
+  eternity: [
+    { id: 'ask_turn', label: 'Ask them to turn you', category: 'eternity' },
+    { id: 'beg_eternity', label: 'Beg for eternity together', category: 'eternity' },
+    { id: 'offer_blood', label: 'Offer your blood willingly', category: 'eternity' }
   ]
 };
 
@@ -110,7 +110,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
     gender: v?.gender || 'custom'
   }));
 
-  const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity', 'turn'];
+  const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity', 'eternity'];
 
   // Filter explicit content in lite mode
   const filterExplicit = vampires[0]?.content_filter === 'lite';
