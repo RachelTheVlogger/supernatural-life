@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Sword, Heart, Brain, Zap, Eye, Target, X, Lock } from 'lucide-react';
+import { Shield, Sword, Heart, Brain, Zap, Eye, Target, X, Lock, Activity, Users, Moon, BookOpen } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -137,6 +137,68 @@ const TRAIT_LIBRARY = [
       dialogue: ['curious']
     },
     cost: 180,
+    unlocked: false
+  },
+  {
+    id: 'resilient',
+    name: 'Resilient',
+    icon: Shield,
+    color: 'from-green-600 to-teal-600',
+    description: 'Iron will and endurance. Takes reduced damage in combat.',
+    effects: {
+      damageReduction: 30,
+      activityBonus: 'train',
+      combatModifier: 0,
+      healthBonus: 25
+    },
+    cost: 120,
+    unlocked: false
+  },
+  {
+    id: 'mastermind',
+    name: 'Mastermind',
+    icon: BookOpen,
+    color: 'from-indigo-600 to-blue-600',
+    description: 'Brilliant mind. Research activities have higher success rates.',
+    effects: {
+      researchBonus: 40,
+      activityBonus: 'research',
+      combatModifier: 5,
+      exposureReduction: 25,
+      dialogue: ['curious']
+    },
+    cost: 140,
+    unlocked: false
+  },
+  {
+    id: 'charismatic',
+    name: 'Charismatic',
+    icon: Users,
+    color: 'from-yellow-600 to-orange-600',
+    description: 'Natural charm. Builds relationships faster with vampires and allies.',
+    effects: {
+      relationshipBonus: 35,
+      dialogue: ['flirty', 'curious', 'protective'],
+      combatModifier: 0,
+      allyBonus: true
+    },
+    cost: 130,
+    unlocked: false
+  },
+  {
+    id: 'nightvision',
+    name: 'Night Vision',
+    icon: Moon,
+    color: 'from-slate-600 to-gray-700',
+    description: 'Enhanced vision in darkness. Advantages during nighttime encounters.',
+    effects: {
+      stealthBonus: 35,
+      huntingBonus: 25,
+      activityBonus: 'research',
+      combatModifier: 15,
+      nightAdvantage: true
+    },
+    cost: 150,
     unlocked: false
   }
 ];
@@ -330,7 +392,7 @@ export default function HunterTraits({ hunter, onClose }) {
               
               <div className="space-y-2 mb-6 text-white/80 text-sm">
                 <p className="font-bold">Effects:</p>
-                {selectedTrait.effects.combatModifier && (
+                {selectedTrait.effects.combatModifier !== undefined && selectedTrait.effects.combatModifier !== 0 && (
                   <p>• Combat: {selectedTrait.effects.combatModifier > 0 ? '+' : ''}{selectedTrait.effects.combatModifier}%</p>
                 )}
                 {selectedTrait.effects.relationshipBonus && (
@@ -344,6 +406,24 @@ export default function HunterTraits({ hunter, onClose }) {
                 )}
                 {selectedTrait.effects.huntingBonus && (
                   <p>• Hunting: +{selectedTrait.effects.huntingBonus}%</p>
+                )}
+                {selectedTrait.effects.damageReduction && (
+                  <p>• Damage Reduction: {selectedTrait.effects.damageReduction}%</p>
+                )}
+                {selectedTrait.effects.researchBonus && (
+                  <p>• Research Success: +{selectedTrait.effects.researchBonus}%</p>
+                )}
+                {selectedTrait.effects.stealthBonus && (
+                  <p>• Stealth: +{selectedTrait.effects.stealthBonus}%</p>
+                )}
+                {selectedTrait.effects.healthBonus && (
+                  <p>• Health: +{selectedTrait.effects.healthBonus}%</p>
+                )}
+                {selectedTrait.effects.nightAdvantage && (
+                  <p>• Enhanced night combat</p>
+                )}
+                {selectedTrait.effects.allyBonus && (
+                  <p>• Faster ally relationship building</p>
                 )}
                 {selectedTrait.effects.resistancePowers && (
                   <p>• Immune to vampire powers</p>
