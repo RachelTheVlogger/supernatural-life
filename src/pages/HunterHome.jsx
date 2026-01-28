@@ -557,48 +557,12 @@ export default function HunterHome() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3 mb-6">
-                    <button
-                      onClick={() => setSelectedVampire(null)}
-                      className={`rounded-lg p-4 transition-all font-bold text-base ${
-                        !selectedVampire ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                      }`}
-                    >
-                      Turn
-                    </button>
-                    <button
-                      onClick={() => setSelectedVampire(vampires[0])}
-                      className={`rounded-lg p-4 transition-all font-bold text-base ${
-                        selectedVampire === vampires[0] ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                      }`}
-                    >
-                      Seduce
-                    </button>
-                    <button
-                      onClick={async () => {
-                        if (confirm(`Let ${vampires[0].vampire_name} turn you into a vampire?`)) {
-                          await base44.entities.Hunter.update(hunter.id, { 
-                            is_turned: true,
-                            vampire_stage: 1,
-                            status: 'recruited'
-                          });
-                          await base44.entities.NightLog.create({
-                            entry: `${hunter.name} has been turned. A new vampire joins the night.`,
-                            category: 'interaction',
-                            intensity: 'critical'
-                          });
-                          queryClient.invalidateQueries(['hunters', 'vampireState']);
-                        }
-                      }}
-                      className="rounded-lg p-4 transition-all font-bold text-base bg-gray-800 text-gray-400 hover:bg-gray-700"
-                    >
-                      Convert
-                    </button>
-                  </div>
-
-                  {!selectedVampire && (
-                    <HunterTurnOptions hunter={hunter} vampire={vampires[0]} onClose={() => setActiveTab('home')} />
-                  )}
+                  <button
+                    onClick={() => setSelectedVampire(vampires[0])}
+                    className="w-full rounded-lg p-4 transition-all font-bold text-base bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    Seduce
+                  </button>
 
                   {selectedVampire === vampires[0] && (
                     <HunterIntimate hunter={hunter} vampires={vampires} onClose={() => setSelectedVampire(null)} />
