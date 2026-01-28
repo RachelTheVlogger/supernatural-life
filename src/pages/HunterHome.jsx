@@ -45,15 +45,6 @@ export default function HunterHome() {
   const [showTeamChat, setShowTeamChat] = useState(false);
   const [showTracking, setShowTracking] = useState(false);
   const [trackingVampire, setTrackingVampire] = useState(null);
-  const [showDomestic, setShowDomestic] = useState(false);
-  const [showTrust, setShowTrust] = useState(false);
-  const [showMoral, setShowMoral] = useState(false);
-  const [showJointMissions, setShowJointMissions] = useState(false);
-  const [showJealousy, setShowJealousy] = useState(false);
-  const [showHousehold, setShowHousehold] = useState(false);
-  const [showEscape, setShowEscape] = useState(false);
-  const [showFeeding, setShowFeeding] = useState(false);
-  const [showIntegration, setShowIntegration] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
