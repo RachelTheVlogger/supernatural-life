@@ -75,7 +75,8 @@ export default function HunterHome() {
     }
   });
 
-  const myTeam = teams.find(t => t.member_ids?.includes(hunter.id));
+  const hunter = hunters[0];
+  const myTeam = teams.find(t => t.member_ids?.includes(hunter?.id));
 
   if (hunters.length === 0) {
     return (
@@ -92,8 +93,6 @@ export default function HunterHome() {
       </div>
     );
   }
-
-  const hunter = hunters[0];
   const hunterTargets = vampires.length > 0 ? vampires : [];
 
   return (

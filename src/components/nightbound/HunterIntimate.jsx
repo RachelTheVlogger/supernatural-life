@@ -90,7 +90,7 @@ const INTIMATE_ACTIONS = {
   ]
 };
 
-export default function HunterIntimate({ hunter, vampires, onClose }) {
+export default function HunterIntimate({ hunter, vampires = [], onClose }) {
   const queryClient = useQueryClient();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAction, setSelectedAction] = useState(null);
@@ -98,12 +98,12 @@ export default function HunterIntimate({ hunter, vampires, onClose }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
 
-  const validPartners = vampires.map(v => ({
-    id: v.id,
-    name: v.vampire_name,
+  const validPartners = (vampires || []).map(v => ({
+    id: v?.id,
+    name: v?.vampire_name || 'Unknown',
     type: 'vampire',
     icon: '🦇',
-    gender: v.gender
+    gender: v?.gender || 'custom'
   }));
 
   const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity'];

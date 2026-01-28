@@ -303,6 +303,8 @@ export default function SirenHome() {
     }, 2000);
   };
 
+  const navigate = useNavigate();
+
   if (!siren) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-950 to-cyan-950 p-4">

@@ -495,6 +495,8 @@ export default function WaterNymphHome() {
     }, 2000);
   };
 
+  const navigate = useNavigate();
+
   if (!nymph) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-950 to-green-950 p-4">
