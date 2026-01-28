@@ -312,10 +312,13 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
     const selectRandomOutcome = (actionId, isPerspective = 'hunter') => {
       const outcomes = isPerspective === 'vampire' ? getVampireOutcomes() : getOutcomes();
       const outcomeList = outcomes[actionId];
+      const action = INTIMATE_ACTIONS.all.find(a => a.id === actionId);
+      const isSweet = action?.category === 'sweet' || action?.category === 'romantic';
+      
       if (Array.isArray(outcomeList)) {
         return outcomeList[Math.floor(Math.random() * outcomeList.length)];
       }
-      return outcomeList || 'A moment shared.';
+      return outcomeList || (isSweet ? 'A moment shared.' : '');
     };
 
     setTimeout(async () => {
