@@ -44,33 +44,43 @@ export default function HunterHuntLog({ hunter, vampires, notes }) {
   };
 
   const handleGenerateAINotes = async () => {
-    if (!selectedVampire) return;
+    if (!selectedVampire) {
+      alert('Please select a vampire target first');
+      return;
+    }
     
     setGeneratingAI(true);
     try {
       const prompt = `You are ${hunter.name}, a ${hunter.specialty} vampire hunter. Generate detailed hunt notes about the vampire "${selectedVampire.vampire_name}". Include:
-      - Physical observations and behavior patterns
-      - Known weaknesses or vulnerabilities
-      - Recent sightings and activity
-      - Potential strategies for tracking/confronting them
-      - Any personal insights or hunches
-      
-      Write in first person as the hunter. Be professional but add personality. Keep it under 200 words.`;
+- Physical observations and behavior patterns
+- Known weaknesses or vulnerabilities
+- Recent sightings and activity
+- Potential strategies for tracking/confronting them
+- Any personal insights or hunches
+
+Write in first person as the hunter. Be professional but add personality. Keep it under 200 words.`;
       
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt,
-        add_context_from_internet: false
+        prompt: prompt
       });
       
-      // Handle if result is an object or string
-      const noteContent = typeof result === 'string' ? result : (result.response || result.content || JSON.stringify(result));
+      // Handle various response formats
+      let noteContent = '';
+      if (typeof result === 'string') {
+        noteContent = result;
+      } else if (result && typeof result === 'object') {
+        noteContent = result.response || result.text || result.content || result.output || JSON.stringify(result);
+      } else {
+        noteContent = String(result || 'Unable to generate notes');
+      }
+      
       setNoteText(noteContent);
     } catch (e) {
       console.error('Failed to generate notes:', e);
-      alert('Failed to generate AI notes. Error: ' + e.message);
-      setNoteText('');
+      alert('Failed to generate AI notes. Please try again. Error: ' + (e.message || 'Unknown error'));
+    } finally {
+      setGeneratingAI(false);
     }
-    setGeneratingAI(false);
   };
 
   return (
