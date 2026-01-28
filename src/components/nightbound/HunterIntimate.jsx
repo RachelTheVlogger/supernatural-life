@@ -303,28 +303,44 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
     };
 
     setTimeout(async () => {
-      try {
-        const hunterOutcome = selectRandomOutcome(action.id, 'hunter');
-        await base44.entities.NightLog.create({
-          entry: `${hunter.name}: ${hunterOutcome}`,
-          category: 'interaction',
-          intensity: 'high'
-        });
+       try {
+         const hunterOutcome = selectRandomOutcome(action.id, 'hunter');
+         await base44.entities.NightLog.create({
+           entry: `${hunter.name}: ${hunterOutcome}`,
+           category: 'interaction',
+           intensity: 'high'
+         });
 
-        setOutcome(hunterOutcome);
-        queryClient.invalidateQueries();
+         setOutcome(hunterOutcome);
+         queryClient.invalidateQueries();
 
-        setTimeout(() => {
-          setProcessing(false);
-          setOutcome('');
-          setSelectedAction(null);
-          setSelectedPartner(null);
-        }, 6000);
-      } catch (e) {
-        console.error('Activity failed:', e);
-        setProcessing(false);
-      }
-    }, 1500);
+         // Handle turn actions
+         if (action.category === 'turn') {
+           setTimeout(async () => {
+             try {
+               await base44.entities.Hunter.update(hunter.id, {
+                 is_turned: true,
+                 vampire_stage: 1,
+                 status: 'recruited'
+               });
+               queryClient.invalidateQueries();
+             } catch (e) {
+               console.error('Failed to turn hunter:', e);
+             }
+           }, 4000);
+         }
+
+         setTimeout(() => {
+           setProcessing(false);
+           setOutcome('');
+           setSelectedAction(null);
+           setSelectedPartner(null);
+         }, 6000);
+       } catch (e) {
+         console.error('Activity failed:', e);
+         setProcessing(false);
+       }
+     }, 1500);
   };
 
   if (processing && outcome) {
