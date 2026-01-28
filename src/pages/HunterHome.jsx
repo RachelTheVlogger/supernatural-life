@@ -21,6 +21,7 @@ import HunterAchievements from '@/components/nightbound/HunterAchievements';
 import HunterTeamManagement from '@/components/nightbound/HunterTeamManagement';
 import TeamMissions from '@/components/nightbound/TeamMissions';
 import TeamChat from '@/components/nightbound/TeamChat';
+import HunterVampireTracking from '@/components/nightbound/HunterVampireTracking';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -42,6 +43,8 @@ export default function HunterHome() {
   const [showTeams, setShowTeams] = useState(false);
   const [showTeamMissions, setShowTeamMissions] = useState(false);
   const [showTeamChat, setShowTeamChat] = useState(false);
+  const [showTracking, setShowTracking] = useState(false);
+  const [trackingVampire, setTrackingVampire] = useState(null);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -331,17 +334,39 @@ export default function HunterHome() {
                       </div>
                       <div className="space-y-2 max-h-48 overflow-y-auto">
                         {hunterTargets.map(target => (
-                          <button
-                            key={target.id}
-                            onClick={() => {
-                              setSelectedVampire(target);
-                              setShowInteraction(true);
-                            }}
-                            className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                          >
-                            <p className="text-white font-medium">{target.vampire_name}</p>
-                            <p className="text-gray-400 text-xs">Click to interact</p>
-                          </button>
+                          <div key={target.id} className="space-y-2">
+                            <div className="bg-gray-800/50 border border-gray-700/30 rounded-lg p-3">
+                              <p className="text-white font-medium mb-1">{target.vampire_name}</p>
+                              {target.living_with_hunter && (
+                                <p className="text-green-400 text-xs mb-2">💚 Living together</p>
+                              )}
+                              {target.hunter_relationship > 0 && (
+                                <p className="text-purple-400 text-xs mb-2">
+                                  Bond: {target.hunter_relationship}%
+                                </p>
+                              )}
+                              <div className="grid grid-cols-2 gap-2 mt-2">
+                                <button
+                                  onClick={() => {
+                                    setTrackingVampire(target);
+                                    setShowTracking(true);
+                                  }}
+                                  className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-xs"
+                                >
+                                  👁️ Track
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setSelectedVampire(target);
+                                    setShowInteraction(true);
+                                  }}
+                                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-xs"
+                                >
+                                  ⚔️ Confront
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -471,6 +496,17 @@ export default function HunterHome() {
 
           {showTeamChat && myTeam && (
             <TeamChat hunter={hunter} team={myTeam} onClose={() => setShowTeamChat(false)} />
+          )}
+
+          {showTracking && trackingVampire && (
+            <HunterVampireTracking
+              hunter={hunter}
+              vampire={trackingVampire}
+              onClose={() => {
+                setShowTracking(false);
+                setTrackingVampire(null);
+              }}
+            />
           )}
 
           <AnimatePresence mode="wait">
