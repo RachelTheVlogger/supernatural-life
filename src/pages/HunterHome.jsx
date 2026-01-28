@@ -51,20 +51,21 @@ export default function HunterHome() {
     queryFn: () => base44.entities.Hunter.list()
   });
 
-  const { data: vampires = [], refetch: refetchVampires } = useQuery({
-    queryKey: ['vampireState'], // Match the query key from Night page
+  const { data: vampires = [], refetch: refetchVampires, isLoading: vampiresLoading } = useQuery({
+    queryKey: ['vampireState'],
     queryFn: async () => {
       try {
         const result = await base44.entities.VampireState.list();
-        console.log('Fetched vampires:', result);
-        return result;
+        return result || [];
       } catch (e) {
         console.error('Failed to fetch vampires:', e);
         return [];
       }
     },
-    retry: 2,
-    refetchInterval: 5000 // Auto-refresh every 5 seconds
+    retry: 3,
+    staleTime: 0, // Always fetch fresh data
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
 
   const { data: notes = [] } = useQuery({
