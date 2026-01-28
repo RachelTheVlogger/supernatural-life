@@ -175,7 +175,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
          ],
          knees: [
            `You pressed them down to their knees in front of you. The submission in that position alone had them shaking. "Look at me," you commanded, and when they did, you saw the hunger in their eyes.`,
-           `You guided them to their knees, their face now level with your waist. They looked up at you with desperate eyes, waiting for your next move. The power was absolutely intoxicating.`,
+           `You guided them to their knees, their body now positioned beneath you. They looked up at you with desperate eyes, waiting for your next move. The power was absolutely intoxicating.`,
            `On their knees before you, completely vulnerable and willing. You tilted their chin up, forcing them to hold your gaze. This was what dominance looked like.`
          ],
          bind_control: [
