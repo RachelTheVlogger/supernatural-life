@@ -84,7 +84,6 @@ const VAMPIRE_RESPONSES = {
 export default function HunterVampireInteraction({ hunter, vampire, onClose, visitType = 'meeting' }) {
   const queryClient = useQueryClient();
   const [interactionChoice, setInteractionChoice] = useState(null); // 'hostile' or 'peaceful'
-  const [selectedCategory, setSelectedCategory] = useState('curious');
   const [vampireResponse, setVampireResponse] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -319,19 +318,17 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
           </motion.div>
         )}
 
-        {/* Message Options */}
+        {/* Dialogue Options */}
         <div className="space-y-2 mb-6">
-          <p className="text-gray-400 text-sm mb-3">
-            {interactionChoice === 'hostile' ? 'Choose your approach:' : 'Choose your words:'}
-          </p>
           {currentOptions.map((option, idx) => (
             <motion.button
               key={idx}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.05 }}
               onClick={() => handleSendMessage(option)}
               disabled={loading}
-              className={`w-full p-3 rounded-lg text-left transition-all ${
+              className={`w-full p-4 rounded-xl text-left transition-all ${
                 option.explicit
                   ? 'bg-gradient-to-r from-red-900/60 to-pink-900/60 hover:from-red-900/80 hover:to-pink-900/80 border-2 border-red-500/50 text-red-200'
                   : 'bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300'
