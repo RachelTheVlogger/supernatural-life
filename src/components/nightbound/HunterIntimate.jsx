@@ -52,17 +52,19 @@ const INTIMATE_ACTIONS = {
     { id: 'fingers_intertwine', label: 'Intertwine your fingers', category: 'sweet' }
   ],
   physical: [
-    { id: 'kiss_hard', label: 'Pin them and kiss them hard', category: 'physical' },
-    { id: 'trail', label: 'Trail fingers down their body', category: 'physical' },
-    { id: 'push_bed', label: 'Push them onto the bed', category: 'physical' },
-    { id: 'straddle', label: 'Straddle them', category: 'physical' },
-    { id: 'grip_throat', label: 'Grip their throat', category: 'physical' },
-    { id: 'neck_tongue', label: 'Run your tongue along their neck', category: 'physical' },
-    { id: 'from_behind', label: 'Take them from behind', category: 'physical' },
-    { id: 'taste', label: 'Taste every inch of them', category: 'physical' },
-    { id: 'wall', label: 'Take them against the wall', category: 'physical' },
-    { id: 'mark', label: 'Mark every part of them', category: 'physical' },
-    { id: 'corner', label: 'Corner them and close in', category: 'physical' }
+   { id: 'kiss_hard', label: 'Pin them and kiss them hard', category: 'physical' },
+   { id: 'trail', label: 'Trail fingers down their body', category: 'physical' },
+   { id: 'push_bed', label: 'Push them onto the bed', category: 'physical' },
+   { id: 'straddle', label: 'Straddle them', category: 'physical' },
+   { id: 'grip_throat', label: 'Grip their throat', category: 'physical' },
+   { id: 'neck_tongue', label: 'Run your tongue along their neck', category: 'physical' },
+   { id: 'from_behind', label: 'Take them from behind', category: 'physical' },
+   { id: 'taste', label: 'Taste every inch of them', category: 'physical' },
+   { id: 'wall', label: 'Take them against the wall', category: 'physical' },
+   { id: 'mark', label: 'Mark every part of them', category: 'physical' },
+   { id: 'corner', label: 'Corner them and close in', category: 'physical' },
+   { id: 'claim_mouth', label: 'Claim their mouth completely', category: 'physical' },
+   { id: 'surrender', label: 'Let them take control', category: 'physical' }
   ],
   bdsm: [
    { id: 'knees', label: 'Push them to their knees', category: 'bdsm' },
