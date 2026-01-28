@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import HunterEncounter from './HunterEncounter';
 import HunterWeaponShop from './HunterWeaponShop';
-import HunterSupernaturalInteraction from './HunterSupernatualInteraction';
+import HunterSupernaturalInteraction from './HunterSupernaturalInteraction';
 
 export default function HunterThreatModal({ onClose, vampireState }) {
   const queryClient = useQueryClient();
