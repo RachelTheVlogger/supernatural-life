@@ -117,10 +117,11 @@ export default function HunterHome() {
   const hunterTargets = vampires.length > 0 ? vampires : [];
 
   const hasVampireRelationship = vampires.length > 0 && (vampires[0].hunter_relationship || 0) > 0;
+  const isTurnedVampire = hunter?.is_turned;
 
   return (
     <div className="min-h-screen relative p-4 md:p-6 pb-24 overflow-x-hidden" style={{
-      background: hasVampireRelationship 
+      background: isTurnedVampire
         ? 'linear-gradient(to bottom, #3d0a0a 0%, #4d1a1a 50%, #3d0a14 100%)'
         : 'linear-gradient(to bottom, #1a0a0a 0%, #2d1a1a 50%, #1a0a14 100%)'
     }}>
