@@ -325,7 +325,6 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
          });
 
          setOutcome(hunterOutcome);
-         queryClient.invalidateQueries();
 
          // Handle turn actions
          if (action.category === 'eternity') {
@@ -336,11 +335,13 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
                  vampire_stage: 1,
                  status: 'recruited'
                });
-               queryClient.invalidateQueries({ queryKey: ['hunters'] });
+               await queryClient.invalidateQueries({ queryKey: ['hunters'] });
              } catch (e) {
                console.error('Failed to turn hunter:', e);
              }
-           }, 4000);
+           }, 3500);
+         } else {
+           queryClient.invalidateQueries();
          }
 
          setTimeout(() => {
@@ -348,7 +349,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
            setOutcome('');
            setSelectedAction(null);
            setSelectedPartner(null);
-         }, 6000);
+         }, 5500);
        } catch (e) {
          console.error('Activity failed:', e);
          setProcessing(false);
