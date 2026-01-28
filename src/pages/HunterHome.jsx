@@ -25,6 +25,7 @@ import HunterVampireTracking from '@/components/nightbound/HunterVampireTracking
 import HunterMentorSystem from '@/components/nightbound/HunterMentorSystem';
 import HunterBetrayalSystem from '@/components/nightbound/HunterBetrayalSystem';
 import HunterCouncilSystem from '@/components/nightbound/HunterCouncilSystem';
+import HunterTurnOptions from '@/components/nightbound/HunterTurnOptions';
 
 export default function HunterHome() {
   const navigate = useNavigate();
