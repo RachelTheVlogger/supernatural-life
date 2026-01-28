@@ -96,20 +96,33 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
   const hasSeductive = hunterTraits.includes('seductive');
   const hasDiplomatic = hunterTraits.includes('diplomatic');
 
-  // Get all available options based on interaction choice and traits
-  const getAvailableOptions = () => {
-    let options = [];
-    
-    if (interactionChoice === 'hostile') {
-      options = [...DIALOGUE_OPTIONS.hostile];
-    } else {
-      options = [...DIALOGUE_OPTIONS.curious, ...DIALOGUE_OPTIONS.protective];
-      if (hasSeductive) {
-        options = [...options, ...DIALOGUE_OPTIONS.flirty, ...DIALOGUE_OPTIONS.provocative];
-      }
+  // Handle hostile choice - kill vampire
+  const handleHostileChoice = async () => {
+    setLoading(true);
+    try {
+      await base44.entities.VampireState.delete(vampire.id);
+      await base44.entities.NightLog.create({
+        entry: `${hunter.name} killed ${vampire.vampire_name} in combat. The threat has been eliminated.`,
+        category: 'hunting',
+        intensity: 'high'
+      });
+      queryClient.invalidateQueries();
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (e) {
+      console.error('Failed to kill vampire:', e);
     }
-    
-    return options;
+  };
+
+  // Get all available options for peaceful interaction
+  const getAvailableOptions = () => {
+    return [
+      ...DIALOGUE_OPTIONS.curious,
+      ...DIALOGUE_OPTIONS.protective,
+      ...DIALOGUE_OPTIONS.flirty,
+      ...DIALOGUE_OPTIONS.provocative
+    ];
   };
 
   // Filter explicit content in lite mode
@@ -211,7 +224,7 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
-              onClick={() => setInteractionChoice('hostile')}
+              onClick={handleHostileChoice}
               className="w-full bg-gradient-to-r from-red-900/60 to-red-950/60 hover:from-red-900/80 hover:to-red-950/80 border-2 border-red-700/50 rounded-2xl p-8 transition-all"
             >
               <div className="flex items-center gap-4">
@@ -219,7 +232,7 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
                 <div className="text-left flex-1">
                   <h3 className="text-white text-2xl font-bold mb-2">Hostile Intent</h3>
                   <p className="text-red-300 text-sm">
-                    Confront them. Challenge them. Make your mission clear.
+                    Kill the vampire. End the threat permanently.
                   </p>
                 </div>
               </div>
@@ -255,6 +268,22 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
     );
   }
 
+  // Show loading state after hostile choice
+  if (loading && !interactionChoice) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+      >
+        <div className="text-center">
+          <p className="text-red-400 text-2xl font-bold mb-4">Eliminating threat...</p>
+          <p className="text-gray-400">The vampire has been killed.</p>
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -272,9 +301,7 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
         <div className="flex justify-between items-start mb-6">
           <div>
             <h2 className="text-2xl font-bold text-white mb-1">Meeting with {vampire.vampire_name}</h2>
-            <p className="text-gray-400 text-sm capitalize">
-              {interactionChoice === 'hostile' ? 'Hostile Confrontation' : 'Peaceful Discussion'}
-            </p>
+            <p className="text-gray-400 text-sm">Peaceful Discussion</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="w-5 h-5" />
