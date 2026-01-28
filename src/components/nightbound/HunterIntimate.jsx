@@ -65,13 +65,14 @@ const INTIMATE_ACTIONS = {
     { id: 'corner', label: 'Corner them and close in', category: 'physical' }
   ],
   bdsm: [
-    { id: 'knees', label: 'Push them to their knees', category: 'bdsm' },
-    { id: 'bind_control', label: 'Bind them and take control', category: 'bdsm' },
-    { id: 'beg', label: 'Make them beg for you', category: 'bdsm' },
-    { id: 'dominance', label: 'Show them your true dominance', category: 'bdsm' },
-    { id: 'grip_throat', label: 'Grip their throat', category: 'bdsm' },
-    { id: 'watch', label: 'Make them watch you', category: 'bdsm' },
-    { id: 'safeword', label: 'Establish safe words', category: 'bdsm' }
+   { id: 'knees', label: 'Push them to their knees', category: 'bdsm' },
+   { id: 'bind_control', label: 'Bind them and take control', category: 'bdsm' },
+   { id: 'beg', label: 'Make them beg for you', category: 'bdsm' },
+   { id: 'dominance', label: 'Show them your true dominance', category: 'bdsm' },
+   { id: 'grip_throat', label: 'Grip their throat', category: 'bdsm' },
+   { id: 'watch', label: 'Make them watch you', category: 'bdsm' },
+   { id: 'safeword', label: 'Establish safe words', category: 'bdsm' },
+   { id: 'whisper_threats', label: 'Whisper degrading things in their ear', category: 'bdsm' }
   ],
   social: [
     { id: 'claim_mouth', label: 'Claim their mouth publicly', category: 'social' },
