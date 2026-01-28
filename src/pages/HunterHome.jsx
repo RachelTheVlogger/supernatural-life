@@ -48,6 +48,9 @@ export default function HunterHome() {
   const [showTeamChat, setShowTeamChat] = useState(false);
   const [showTracking, setShowTracking] = useState(false);
   const [trackingVampire, setTrackingVampire] = useState(null);
+  const [showMentor, setShowMentor] = useState(false);
+  const [showBetrayal, setShowBetrayal] = useState(false);
+  const [showCouncil, setShowCouncil] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
