@@ -199,9 +199,9 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
            `You pulled them close from behind, your body covering theirs completely. They dropped their head back against your shoulder, breathing your name as you claimed them.`
          ],
          taste: [
-           `You tasted every inch of them, taking your time. Your mouth traveled down their body while they writhed beneath you, gasping out breathless pleas. You didn't stop. Not yet.`,
-           `You kissed your way down their body, sucking marks into their skin as you went. They were already shaking, already desperate for more.`,
-           `You explored them with your mouth like you had all the time in the world. Every whimper, every gasp told you exactly what they wanted, and you gave it to them—slowly, deliberately.`
+           `You tasted every inch of them, taking your time. Your mouth traveled down their body, finding their ${genitalReference} and teasing it mercilessly while they writhed beneath you, gasping out breathless pleas. You didn't stop. Not yet.`,
+           `You kissed your way down their body, sucking marks into their skin as you went. When you reached their ${genitalReference}, you worked the ${stimulation} with your tongue. They were already shaking, already desperate.`,
+           `You explored them with your mouth like you had all the time in the world. Your tongue found their ${genitalReference} and every whimper told you exactly what they wanted. You gave it to them—slowly, deliberately, until they were begging.`
          ],
          mark: [
            `You left marks across their body intentionally, visibly. Claiming them. Showing the world they belonged to you. They loved every second of it, moaning as you sucked marks into their skin.`,
