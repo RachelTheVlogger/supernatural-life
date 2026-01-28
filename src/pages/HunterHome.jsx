@@ -13,6 +13,7 @@ import HunterVampireInteraction from '@/components/nightbound/HunterVampireInter
 import VampireInitiatedInteractions from '@/components/nightbound/VampireInitiatedInteractions';
 import HunterTraits from '@/components/nightbound/HunterTraits';
 import HunterManagement from '@/components/nightbound/HunterManagement';
+import HunterProgression from '@/components/nightbound/HunterProgression';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function HunterHome() {
   const [selectedVampire, setSelectedVampire] = useState(null);
   const [showTraits, setShowTraits] = useState(false);
   const [showManagement, setShowManagement] = useState(false);
+  const [showProgression, setShowProgression] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -194,6 +196,23 @@ export default function HunterHome() {
               </div>
 
                 {/* Current Status */}
+                {/* Hunter Progression */}
+                <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                  <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                    <Zap className="w-5 h-5" />
+                    Progression
+                  </h3>
+                  <button
+                    onClick={() => setShowProgression(true)}
+                    className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 rounded-lg p-4 text-center transition-colors border border-blue-500/30"
+                  >
+                    <h4 className="text-white font-bold text-lg mb-2">Skill Trees</h4>
+                    <p className="text-blue-300 text-sm">
+                      Level {Math.floor(Math.sqrt((hunter.experience || 0) / 50)) + 1} • {hunter.experience || 0} EXP
+                    </p>
+                  </button>
+                </div>
+
                 {/* Hunter Traits */}
                 <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
                   <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
@@ -330,6 +349,10 @@ export default function HunterHome() {
 
                   {showManagement && (
                     <HunterManagement onClose={() => setShowManagement(false)} />
+                  )}
+
+                  {showProgression && (
+                    <HunterProgression hunter={hunter} onClose={() => setShowProgression(false)} />
                   )}
 
           {activeTab === 'vamp' && (
