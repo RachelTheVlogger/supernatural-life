@@ -328,6 +328,15 @@ export default function HunterHome() {
                     <Target className="w-5 h-5" />
                     Current Mission
                   </h3>
+                  
+                  {/* Debug info */}
+                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded p-2 mb-3 text-xs">
+                    <p className="text-yellow-300">Debug: {vampires.length} vampires in DB</p>
+                    {vampires.length > 0 && (
+                      <p className="text-yellow-300">Names: {vampires.map(v => v.vampire_name).join(', ')}</p>
+                    )}
+                  </div>
+
                   {hunterTargets.length > 0 ? (
                     <div className="space-y-3">
                       <p className="text-gray-400 text-sm">
