@@ -15,6 +15,9 @@ import HunterTraits from '@/components/nightbound/HunterTraits';
 import HunterManagement from '@/components/nightbound/HunterManagement';
 import HunterProgression from '@/components/nightbound/HunterProgression';
 import SafeHouseManagement from '@/components/nightbound/SafeHouseManagement';
+import HunterEquipment from '@/components/nightbound/HunterEquipment';
+import HunterContracts from '@/components/nightbound/HunterContracts';
+import HunterAchievements from '@/components/nightbound/HunterAchievements';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -30,6 +33,9 @@ export default function HunterHome() {
   const [showManagement, setShowManagement] = useState(false);
   const [showProgression, setShowProgression] = useState(false);
   const [showSafeHouse, setShowSafeHouse] = useState(false);
+  const [showEquipment, setShowEquipment] = useState(false);
+  const [showContracts, setShowContracts] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -207,21 +213,30 @@ export default function HunterHome() {
                     </div>
 
                 {/* Current Status */}
-                {/* Hunter Progression */}
+                {/* Hunter Progression & Equipment */}
                 <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
                   <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
                     <Zap className="w-5 h-5" />
                     Progression
                   </h3>
-                  <button
-                    onClick={() => setShowProgression(true)}
-                    className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 rounded-lg p-4 text-center transition-colors border border-blue-500/30"
-                  >
-                    <h4 className="text-white font-bold text-lg mb-2">Skill Trees</h4>
-                    <p className="text-blue-300 text-sm">
-                      Level {Math.floor(Math.sqrt((hunter.experience || 0) / 50)) + 1} • {hunter.experience || 0} EXP
-                    </p>
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => setShowProgression(true)}
+                      className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 rounded-lg p-4 text-center transition-colors border border-blue-500/30"
+                    >
+                      <h4 className="text-white font-bold text-lg mb-2">Skill Trees</h4>
+                      <p className="text-blue-300 text-sm">
+                        Level {Math.floor(Math.sqrt((hunter.experience || 0) / 50)) + 1} • {hunter.experience || 0} EXP
+                      </p>
+                    </button>
+                    <button
+                      onClick={() => setShowEquipment(true)}
+                      className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+                    >
+                      <h4 className="text-white font-bold text-lg mb-2">Equipment</h4>
+                      <p className="text-gray-400 text-sm">Gear & weapons</p>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Hunter Traits */}
@@ -368,6 +383,18 @@ export default function HunterHome() {
 
                   {showSafeHouse && (
                     <SafeHouseManagement hunter={hunter} onClose={() => setShowSafeHouse(false)} />
+                  )}
+
+                  {showEquipment && (
+                    <HunterEquipment hunter={hunter} onClose={() => setShowEquipment(false)} />
+                  )}
+
+                  {showContracts && (
+                    <HunterContracts hunter={hunter} onClose={() => setShowContracts(false)} />
+                  )}
+
+                  {showAchievements && (
+                    <HunterAchievements hunter={hunter} onClose={() => setShowAchievements(false)} />
                   )}
 
           {activeTab === 'vamp' && (
