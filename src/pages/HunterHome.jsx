@@ -337,23 +337,6 @@ export default function HunterHome() {
                     Current Mission
                   </h3>
                   
-                  {/* Debug info */}
-                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded p-2 mb-3 text-xs space-y-2">
-                    <p className="text-yellow-300">Debug: {vampires.length} vampires detected</p>
-                    {vampires.length > 0 ? (
-                      <p className="text-yellow-300">Names: {vampires.map(v => v.vampire_name).join(', ')}</p>
-                    ) : (
-                      <div>
-                        <p className="text-red-300">No vampires found - create one at Home</p>
-                        <button
-                          onClick={() => navigate(createPageUrl('Home'))}
-                          className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded mt-2 w-full"
-                        >
-                          Go to Home Page
-                        </button>
-                      </div>
-                    )}
-                  </div>
 
                   {hunterTargets.length > 0 ? (
                     <div className="space-y-3">
