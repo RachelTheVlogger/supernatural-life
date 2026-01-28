@@ -337,15 +337,12 @@ export default function HunterHome() {
                       <p className="text-yellow-300">Names: {vampires.map(v => v.vampire_name).join(', ')}</p>
                     ) : (
                       <div>
-                        <p className="text-red-300">No vampires found in database</p>
+                        <p className="text-red-300">No vampires found - go to Home page to create one</p>
                         <button
-                          onClick={() => {
-                            refetchVampires();
-                            queryClient.invalidateQueries(['vampireState']);
-                          }}
-                          className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded mt-2"
+                          onClick={() => navigate(createPageUrl('Home'))}
+                          className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded mt-2 w-full"
                         >
-                          Refresh Vampire List
+                          Go to Home Page
                         </button>
                       </div>
                     )}
