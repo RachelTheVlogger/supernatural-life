@@ -223,10 +223,10 @@ export default function HunterHome() {
         <div className="grid grid-cols-5 gap-2 mb-8">
             {[
               { id: 'home', label: 'Home', icon: Home },
-              { id: 'hunting', label: 'Hunt Log', icon: FileText },
+              { id: 'hunting', label: isTurnedVampire ? 'Feed' : 'Hunt Log', icon: isTurnedVampire ? Droplets : FileText },
               { id: 'activities', label: 'Activities', icon: Utensils },
               { id: 'intimate', label: 'Intimate', icon: Heart },
-              { id: 'vamp', label: 'Vamp', icon: Zap }
+              { id: 'vamp', label: isTurnedVampire ? 'Powers' : 'Vamp', icon: Zap }
             ].map(tab => {
             const Icon = tab.icon;
             return (
