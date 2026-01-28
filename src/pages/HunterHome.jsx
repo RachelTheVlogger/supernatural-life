@@ -528,25 +528,55 @@ export default function HunterHome() {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-white text-lg font-bold">Vampire's Perspective</h3>
-                <button
-                  onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
-                  disabled={vampires.length === 0}
-                  className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                >
-                  Switch to Vampire
-                </button>
-              </div>
               {vampires.length > 0 ? (
-                <VampireInitiatedInteractions 
-                  vampire={vampires[0]}
-                  hunter={hunter}
-                  onClose={() => setActiveTab('home')}
-                />
+                <>
+                  <div className="flex items-center justify-between mb-4 bg-gradient-to-r from-red-950/60 to-red-900/60 rounded-lg p-4 border border-red-500/50">
+                    <div>
+                      <h3 className="text-red-100 text-lg font-bold">{vampires[0].vampire_name}</h3>
+                      <p className="text-red-300 text-sm">Hunter's Bond: {vampires[0].hunter_relationship || 0}%</p>
+                    </div>
+                    <button
+                      onClick={() => navigate(createPageUrl(`Night?id=${vampires[0].id}`))}
+                      className="text-red-200 hover:text-red-100 transition-colors text-sm font-medium"
+                    >
+                      Switch to Vampire →
+                    </button>
+                  </div>
+
+                  {vampires[0].hunter_relationship >= 80 && (
+                    <motion.button
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      onClick={async () => {
+                        if (confirm(`Let ${vampires[0].vampire_name} turn you into a vampire?`)) {
+                          await base44.entities.Hunter.update(hunter.id, { 
+                            is_turned: true,
+                            vampire_stage: 1,
+                            status: 'recruited'
+                          });
+                          await base44.entities.NightLog.create({
+                            entry: `${hunter.name} has been turned. A new vampire joins the night.`,
+                            category: 'interaction',
+                            intensity: 'critical'
+                          });
+                          queryClient.invalidateQueries(['hunters', 'vampireState']);
+                        }
+                      }}
+                      className="w-full bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 rounded-lg border-2 border-red-500/50 transition-all"
+                    >
+                      🦇 Let Me Turn Into A Vampire (Bond 80%+)
+                    </motion.button>
+                  )}
+
+                  <VampireInitiatedInteractions 
+                    vampire={vampires[0]}
+                    hunter={hunter}
+                    onClose={() => setActiveTab('home')}
+                  />
+                </>
               ) : (
                 <div className="bg-gray-800 rounded-lg p-4 text-center">
-                  <p className="text-gray-400">No vampires found</p>
+                  <p className="text-gray-400">No vampires found. Seduce one first.</p>
                 </div>
               )}
             </motion.div>
