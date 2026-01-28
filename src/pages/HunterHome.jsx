@@ -174,6 +174,30 @@ export default function HunterHome() {
           <p className="text-gray-400 text-xs mb-1">Team</p>
           <p className="text-white text-lg font-bold">{myTeam ? '✓' : 'None'}</p>
         </button>
+        <button
+          onClick={() => setShowMentor(true)}
+          className="bg-black/40 border border-purple-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+        >
+          <Users className="w-5 h-5 text-purple-400 mb-2" />
+          <p className="text-gray-400 text-xs mb-1">Mentor</p>
+          <p className="text-white text-lg font-bold">👨‍🏫</p>
+        </button>
+        <button
+          onClick={() => setShowBetrayal(true)}
+          className="bg-black/40 border border-red-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+        >
+          <Zap className="w-5 h-5 text-red-400 mb-2" />
+          <p className="text-gray-400 text-xs mb-1">Betrayal</p>
+          <p className="text-white text-lg font-bold">⚠️</p>
+        </button>
+        <button
+          onClick={() => setShowCouncil(true)}
+          className="bg-black/40 border border-yellow-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+        >
+          <Target className="w-5 h-5 text-yellow-400 mb-2" />
+          <p className="text-gray-400 text-xs mb-1">Council</p>
+          <p className="text-white text-lg font-bold">👑</p>
+        </button>
         </motion.div>
 
       {/* Main Tabs */}
