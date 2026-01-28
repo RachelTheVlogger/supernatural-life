@@ -90,6 +90,29 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
   const [loading, setLoading] = useState(false);
   const [conversationHistory, setConversationHistory] = useState([]);
 
+  // Get hunter traits
+  const hunterTraits = hunter.traits || [];
+  const hasEmpathic = hunterTraits.includes('empathic');
+  const hasBrutal = hunterTraits.includes('brutal');
+  const hasSeductive = hunterTraits.includes('seductive');
+  const hasDiplomatic = hunterTraits.includes('diplomatic');
+
+  // Available categories based on interaction choice and traits
+  const availableCategories = interactionChoice === 'hostile' 
+    ? ['hostile']
+    : ['curious', 'protective'];
+  
+  // Add trait-specific categories
+  if (hasSeductive) {
+    availableCategories.push('flirty', 'provocative');
+  }
+  if (hasEmpathic && !availableCategories.includes('curious')) {
+    availableCategories.push('curious');
+  }
+  if (hasDiplomatic && !availableCategories.includes('protective')) {
+    availableCategories.push('protective');
+  }
+
   // Filter explicit content in lite mode
   const filterExplicit = vampire?.content_filter === 'lite';
   const currentOptions = (DIALOGUE_OPTIONS[selectedCategory] || [])
@@ -104,8 +127,20 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
       const responseTexts = VAMPIRE_RESPONSES[option.category];
       const vampireText = responseTexts[Math.floor(Math.random() * responseTexts.length)];
       
+      // Apply trait bonuses
+      let combatBonus = 0;
+      let relationshipBonus = 0;
+      
+      if (hasBrutal) combatBonus += 25;
+      if (hasEmpathic) {
+        relationshipBonus += 15;
+        combatBonus -= 10;
+      }
+      if (hasDiplomatic) relationshipBonus += 20;
+      if (hasSeductive) relationshipBonus += 25;
+
       // Determine outcome based on hunter's skill and vampire's exposure
-      const hunterSkill = hunter.skill_level || 30;
+      const hunterSkill = (hunter.skill_level || 30) + combatBonus;
       const vampireExposure = vampire.exposure_level || 0;
       const roll = Math.random() * 100;
       
@@ -286,8 +321,8 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
         )}
 
         {/* Message Categories */}
-        <div className="grid grid-cols-5 gap-2 mb-6">
-          {Object.keys(DIALOGUE_OPTIONS).map(category => {
+        <div className="grid grid-cols-3 gap-2 mb-6">
+          {availableCategories.map(category => {
             const categoryColors = {
               flirty: 'from-pink-600 to-red-600',
               hostile: 'from-orange-600 to-red-600',

@@ -11,6 +11,7 @@ import HunterIntimate from '@/components/nightbound/HunterIntimate';
 import HunterAbilityShop from '@/components/nightbound/HunterAbilityShop';
 import HunterVampireInteraction from '@/components/nightbound/HunterVampireInteraction';
 import VampireInitiatedInteractions from '@/components/nightbound/VampireInitiatedInteractions';
+import HunterTraits from '@/components/nightbound/HunterTraits';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function HunterHome() {
   const [showAbilities, setShowAbilities] = useState(false);
   const [showInteraction, setShowInteraction] = useState(false);
   const [selectedVampire, setSelectedVampire] = useState(null);
+  const [showTraits, setShowTraits] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -173,9 +175,26 @@ export default function HunterHome() {
               </div>
 
                 {/* Current Status */}
+                {/* Hunter Traits */}
                 <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
                   <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
                     <Zap className="w-5 h-5" />
+                    Hunter Traits
+                  </h3>
+                  <button
+                    onClick={() => setShowTraits(true)}
+                    className="w-full bg-gradient-to-r from-purple-900/60 to-purple-950/60 hover:from-purple-900/80 hover:to-purple-950/80 rounded-lg p-4 text-center transition-colors border border-purple-500/30"
+                  >
+                    <h4 className="text-white font-bold text-lg mb-2">Manage Traits</h4>
+                    <p className="text-purple-300 text-sm">
+                      {hunter.traits?.length || 0}/3 traits active • {hunter.experience || 0} EXP
+                    </p>
+                  </button>
+                </div>
+
+                <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                  <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                    <Target className="w-5 h-5" />
                     Current Mission
                   </h3>
                   {hunterTargets.length > 0 ? (
@@ -278,13 +297,17 @@ export default function HunterHome() {
           )}
 
           {showInteraction && selectedVampire && (
-            <HunterVampireInteraction 
-              hunter={hunter} 
-              vampire={selectedVampire} 
-              onClose={() => setShowInteraction(false)} 
-              visitType="meeting"
-            />
-          )}
+                    <HunterVampireInteraction 
+                      hunter={hunter} 
+                      vampire={selectedVampire} 
+                      onClose={() => setShowInteraction(false)} 
+                      visitType="meeting"
+                    />
+                  )}
+
+                  {showTraits && (
+                    <HunterTraits hunter={hunter} onClose={() => setShowTraits(false)} />
+                  )}
 
           {activeTab === 'vamp' && (
             <motion.div
