@@ -507,14 +507,11 @@ export default function HunterHome() {
             </motion.div>
           )}
 
-          {showInteraction && selectedVampire && activeTab === 'intimate' && (
-            <VampireInitiatedInteractions 
-              vampire={selectedVampire}
-              hunter={hunter}
-              onClose={() => setShowInteraction(false)}
-            />
-          )}
           </AnimatePresence>
+
+          {showActivities && (
+            <HunterHomeActivities hunter={hunter} onClose={() => setShowActivities(false)} />
+          )}
       </motion.div>
     </div>
   );
