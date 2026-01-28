@@ -556,30 +556,28 @@ export default function HunterHome() {
                     </button>
                   </div>
 
-                  {vampires[0].hunter_relationship >= 80 && (
-                    <motion.button
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      onClick={async () => {
-                        if (confirm(`Let ${vampires[0].vampire_name} turn you into a vampire?`)) {
-                          await base44.entities.Hunter.update(hunter.id, { 
-                            is_turned: true,
-                            vampire_stage: 1,
-                            status: 'recruited'
-                          });
-                          await base44.entities.NightLog.create({
-                            entry: `${hunter.name} has been turned. A new vampire joins the night.`,
-                            category: 'interaction',
-                            intensity: 'critical'
-                          });
-                          queryClient.invalidateQueries(['hunters', 'vampireState']);
-                        }
-                      }}
-                      className="w-full bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 rounded-lg border-2 border-red-500/50 transition-all"
-                    >
-                      🦇 Let Me Turn Into A Vampire (Bond 80%+)
-                    </motion.button>
-                  )}
+                  <motion.button
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={async () => {
+                      if (confirm(`Let ${vampires[0].vampire_name} turn you into a vampire?`)) {
+                        await base44.entities.Hunter.update(hunter.id, { 
+                          is_turned: true,
+                          vampire_stage: 1,
+                          status: 'recruited'
+                        });
+                        await base44.entities.NightLog.create({
+                          entry: `${hunter.name} has been turned. A new vampire joins the night.`,
+                          category: 'interaction',
+                          intensity: 'critical'
+                        });
+                        queryClient.invalidateQueries(['hunters', 'vampireState']);
+                      }
+                    }}
+                    className="w-full bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 rounded-lg border-2 border-red-500/50 transition-all"
+                  >
+                    🦇 Let Me Turn Into A Vampire
+                  </motion.button>
 
                   <VampireInitiatedInteractions 
                     vampire={vampires[0]}
