@@ -163,29 +163,13 @@ export default function HunterHome() {
                 <Home className="w-5 h-5" />
                 Safe House
               </h3>
-              <div className="space-y-3">
-                <button
-                  onClick={() => setShowActivities(true)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                >
-                  <h4 className="text-white font-medium">🧹 Clean & Maintain</h4>
-                  <p className="text-gray-400 text-sm">Organize weapons, clean gear, prepare for next hunt</p>
-                </button>
-                <button
-                  onClick={() => setShowActivities(true)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                >
-                  <h4 className="text-white font-medium">🍽️ Eat & Rest</h4>
-                  <p className="text-gray-400 text-sm">Recover health, regain energy, study late into night</p>
-                </button>
-                <button
-                   onClick={() => setShowActivities(true)}
-                   className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-left transition-colors"
-                 >
-                   <h4 className="text-white font-medium">📚 Research Lore</h4>
-                   <p className="text-gray-400 text-sm">Improve understanding of supernatural creatures</p>
-                 </button>
-              </div>
+              <button
+                onClick={() => setShowActivities(true)}
+                className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+              >
+                <h4 className="text-white font-bold text-lg mb-2">Enter Safe House</h4>
+                <p className="text-gray-400 text-sm">Choose your activities inside</p>
+              </button>
               </div>
 
                 {/* Current Status */}
