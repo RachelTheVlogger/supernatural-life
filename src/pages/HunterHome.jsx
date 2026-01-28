@@ -51,13 +51,14 @@ export default function HunterHome() {
     queryFn: () => base44.entities.Hunter.list()
   });
 
-  const { data: vampires = [] } = useQuery({
+  const { data: vampires = [], refetch: refetchVampires } = useQuery({
     queryKey: ['vampires'],
     queryFn: async () => {
       const result = await base44.entities.VampireState.list();
       console.log('Fetched vampires:', result);
       return result;
-    }
+    },
+    refetchInterval: 5000 // Auto-refresh every 5 seconds
   });
 
   const { data: notes = [] } = useQuery({
@@ -330,10 +331,23 @@ export default function HunterHome() {
                   </h3>
                   
                   {/* Debug info */}
-                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded p-2 mb-3 text-xs">
-                    <p className="text-yellow-300">Debug: {vampires.length} vampires in DB</p>
-                    {vampires.length > 0 && (
+                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded p-2 mb-3 text-xs space-y-2">
+                    <p className="text-yellow-300">Debug: {vampires.length} vampires detected</p>
+                    {vampires.length > 0 ? (
                       <p className="text-yellow-300">Names: {vampires.map(v => v.vampire_name).join(', ')}</p>
+                    ) : (
+                      <div>
+                        <p className="text-red-300">No vampires found in database</p>
+                        <button
+                          onClick={() => {
+                            refetchVampires();
+                            queryClient.invalidateQueries(['vampireState']);
+                          }}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded mt-2"
+                        >
+                          Refresh Vampire List
+                        </button>
+                      </div>
                     )}
                   </div>
 
