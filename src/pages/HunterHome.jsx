@@ -239,21 +239,28 @@ export default function HunterHome() {
                   </div>
                 </div>
 
-                {/* Hunter Traits */}
+                {/* Contracts & Achievements */}
                 <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
                   <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                    <Zap className="w-5 h-5" />
-                    Hunter Traits
+                    <Target className="w-5 h-5" />
+                    Missions
                   </h3>
-                  <button
-                    onClick={() => setShowTraits(true)}
-                    className="w-full bg-gradient-to-r from-purple-900/60 to-purple-950/60 hover:from-purple-900/80 hover:to-purple-950/80 rounded-lg p-4 text-center transition-colors border border-purple-500/30"
-                  >
-                    <h4 className="text-white font-bold text-lg mb-2">Manage Traits</h4>
-                    <p className="text-purple-300 text-sm">
-                      {hunter.traits?.length || 0}/3 traits active • {hunter.experience || 0} EXP
-                    </p>
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => setShowContracts(true)}
+                      className="w-full bg-gradient-to-r from-green-900/60 to-green-950/60 hover:from-green-900/80 hover:to-green-950/80 rounded-lg p-4 text-center transition-colors border border-green-500/30"
+                    >
+                      <h4 className="text-white font-bold text-lg mb-2">Contracts</h4>
+                      <p className="text-green-300 text-sm">Available missions</p>
+                    </button>
+                    <button
+                      onClick={() => setShowAchievements(true)}
+                      className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+                    >
+                      <h4 className="text-white font-bold text-lg mb-2">Achievements</h4>
+                      <p className="text-gray-400 text-sm">Track progress</p>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
