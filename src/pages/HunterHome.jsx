@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Home, FileText, Utensils, Heart, Zap, Trash2, BookOpen, Target } from 'lucide-react';
+import { ArrowLeft, Home, FileText, Utensils, Heart, Zap, Trash2, BookOpen, Target, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -12,6 +12,7 @@ import HunterAbilityShop from '@/components/nightbound/HunterAbilityShop';
 import HunterVampireInteraction from '@/components/nightbound/HunterVampireInteraction';
 import VampireInitiatedInteractions from '@/components/nightbound/VampireInitiatedInteractions';
 import HunterTraits from '@/components/nightbound/HunterTraits';
+import HunterManagement from '@/components/nightbound/HunterManagement';
 
 export default function HunterHome() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function HunterHome() {
   const [showInteraction, setShowInteraction] = useState(false);
   const [selectedVampire, setSelectedVampire] = useState(null);
   const [showTraits, setShowTraits] = useState(false);
+  const [showManagement, setShowManagement] = useState(false);
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
@@ -158,9 +160,26 @@ export default function HunterHome() {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
-              <div className="grid md:grid-cols-2 gap-4">
-              {/* Living Space */}
-              <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+              <div className="grid md:grid-cols-3 gap-4">
+                    {/* Hunter Network */}
+                    <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                      <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                        <Users className="w-5 h-5" />
+                        Hunter Network
+                      </h3>
+                      <button
+                        onClick={() => setShowManagement(true)}
+                        className="w-full bg-gradient-to-r from-red-900/60 to-red-950/60 hover:from-red-900/80 hover:to-red-950/80 rounded-lg p-4 text-center transition-colors border border-red-500/30"
+                      >
+                        <h4 className="text-white font-bold text-lg mb-2">Manage Hunters</h4>
+                        <p className="text-red-300 text-sm">
+                          {hunters.length} active hunter{hunters.length !== 1 ? 's' : ''}
+                        </p>
+                      </button>
+                    </div>
+
+                    {/* Living Space */}
+                    <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
               <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
                 <Home className="w-5 h-5" />
                 Safe House
@@ -307,6 +326,10 @@ export default function HunterHome() {
 
                   {showTraits && (
                     <HunterTraits hunter={hunter} onClose={() => setShowTraits(false)} />
+                  )}
+
+                  {showManagement && (
+                    <HunterManagement onClose={() => setShowManagement(false)} />
                   )}
 
           {activeTab === 'vamp' && (
