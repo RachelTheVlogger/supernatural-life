@@ -38,15 +38,10 @@ const INTIMATE_ACTIONS = {
     { id: 'fingers_intertwine', label: 'Intertwine your fingers', category: 'sweet' }
   ],
   romantic: [
-    { id: 'whisper_threats', label: 'Whisper degrading things in their ear', category: 'romantic' },
-    { id: 'breathe', label: 'Breathe them in like a drug', category: 'romantic' },
-    { id: 'claim_mouth', label: 'Claim their mouth completely', category: 'romantic' },
-    { id: 'neck_tongue', label: 'Run your tongue along their neck', category: 'romantic' },
-    { id: 'surrender', label: 'Let them take control', category: 'romantic' },
-    { id: 'aftercare', label: 'Aftercare and comfort', category: 'romantic' },
-    { id: 'gentle_kiss', label: 'Kiss them softly', category: 'romantic' },
-    { id: 'hold_close', label: 'Hold them close', category: 'romantic' },
-    { id: 'whisper_love', label: 'Whisper sweet things', category: 'romantic' }
+   { id: 'gentle_kiss', label: 'Kiss them softly', category: 'romantic' },
+   { id: 'hold_close', label: 'Hold them close', category: 'romantic' },
+   { id: 'whisper_love', label: 'Whisper sweet things', category: 'romantic' },
+   { id: 'aftercare', label: 'Aftercare and comfort', category: 'romantic' }
   ],
   sweet: [
     { id: 'gentle_kiss', label: 'Kiss them softly', category: 'sweet' },
