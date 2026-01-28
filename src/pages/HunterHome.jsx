@@ -344,7 +344,29 @@ export default function HunterHome() {
                       <p className="text-yellow-300">Names: {vampires.map(v => v.vampire_name).join(', ')}</p>
                     ) : (
                       <div>
-                        <p className="text-red-300">No vampires found - go to Home page to create one</p>
+                        <p className="text-red-300">No vampires found in database</p>
+                        <button
+                          onClick={async () => {
+                            await base44.entities.VampireState.create({
+                              vampire_name: 'Elena',
+                              gender: 'woman',
+                              pronouns: 'she/her',
+                              sexuality: 'bisexual',
+                              personality: ['charming', 'mysterious'],
+                              job: 'Night Shift Nurse',
+                              hunger_state: 'calm',
+                              time_of_day: 'night',
+                              vampire_stage: 1,
+                              vampire_power_level: 10,
+                              humanity: 50
+                            });
+                            queryClient.invalidateQueries(['vampireState']);
+                            refetchVampires();
+                          }}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded mt-2 w-full"
+                        >
+                          Recreate Elena
+                        </button>
                         <button
                           onClick={() => navigate(createPageUrl('Home'))}
                           className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded mt-2 w-full"
