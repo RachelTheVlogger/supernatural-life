@@ -89,7 +89,10 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
   const [loading, setLoading] = useState(false);
   const [conversationHistory, setConversationHistory] = useState([]);
 
-  const currentOptions = DIALOGUE_OPTIONS[selectedCategory] || [];
+  // Filter explicit content in lite mode
+  const filterExplicit = vampire?.content_filter === 'lite';
+  const currentOptions = (DIALOGUE_OPTIONS[selectedCategory] || [])
+    .filter(option => !filterExplicit || !option.explicit);
 
   const handleSendMessage = async (option) => {
     setLoading(true);

@@ -101,7 +101,10 @@ export default function VampireHunterInteraction({ vampire, hunter, onClose }) {
     convert: 'from-red-700 to-purple-700',
   };
 
-  const currentInteractions = INTERACTIONS[selectedCategory] || INTERACTIONS.all;
+  // Filter explicit content in lite mode
+  const filterExplicit = vampire?.content_filter === 'lite';
+  const currentInteractions = (INTERACTIONS[selectedCategory] || INTERACTIONS.all)
+    .filter(interaction => !filterExplicit || !interaction.explicit);
 
   const handleAction = async (interaction) => {
     setLoading(true);

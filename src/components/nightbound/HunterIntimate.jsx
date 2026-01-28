@@ -107,7 +107,11 @@ export default function HunterIntimate({ hunter, vampires }) {
   }));
 
   const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity'];
-  const currentActions = INTIMATE_ACTIONS[selectedCategory] || INTIMATE_ACTIONS.all;
+
+  // Filter explicit content in lite mode
+  const filterExplicit = vampires[0]?.content_filter === 'lite';
+  const currentActions = (INTIMATE_ACTIONS[selectedCategory] || INTIMATE_ACTIONS.all)
+    .filter(action => !filterExplicit || !['bdsm', 'physical'].includes(action.category));
 
   const handleAction = async (action, partner) => {
     setProcessing(true);
