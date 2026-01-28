@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, FileText, Target, Shield, Package, Clock, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tantml:react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const CONTRACT_TEMPLATES = [
   { title: 'Vampire Elimination', type: 'vampire', difficulty: 'hard', exp: 200, supplies: { stakes: 3, holy_water: 2 } },
