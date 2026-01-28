@@ -228,6 +228,21 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
            `You slammed them against the wall and took them hard. The desperation, the urgency, the way they gasped your name—it was all too much.`,
            `Against the wall, you had complete control. Every thrust was deliberate. They clawed at you, completely undone.`,
            `You fucked them against the wall, filling their ${genitalReference} completely. They came hard, legs shaking, completely wrecked.`
+         ],
+         offer_eternity: [
+           `You pulled them close, eyes meeting theirs. "Spend eternity with me," you whispered. "Let me turn you. Let us be forever." They trembled, tears streaming down their face. "Yes," they breathed. "Yes."`,
+           `You cupped their face, your voice soft but absolute. "I want you forever. Not just tonight. Forever." They kissed you desperately, surrendering completely to the promise of eternity together.`,
+           `"Become like me," you whispered against their lips. "Walk the night with me. Be mine for all of time." They looked into your eyes with complete devotion and nodded.`
+         ],
+         bite_transform: [
+           `You buried your fangs in their neck, drawing deep. The transformation began—their body arching as the vampire curse flowed through them. When it was done, they opened their eyes. Red eyes. Your eyes. "Welcome to forever," you breathed.`,
+           `Your bite was swift and deep. Their scream became a moan as the venom spread through their veins. When the transformation finished, they gasped for breath—but didn't need it. They were changed. Perfect. Yours.`,
+           `You sank your fangs into them and held them as the change took hold. Their body convulsed with new power, new hunger, new existence. When their eyes opened, they were crimson and ancient. Reborn.`
+         ],
+         blood_exchange: [
+           `You opened your wrist and let them drink from you while you drank from them. Your blood mixing, binding you forever. When you finally pulled apart, you were no longer separate—you were one. Connected. Eternal.`,
+           `Blood for blood, vein for vein. You exchanged the sacred liquid as they transformed, the ritual binding you together more powerfully than any vampire could imagine. When it was done, you were soulmates in the truest sense.`,
+           `The ritual was ancient and intimate. Your blood in their mouth, their blood on your lips. The connection was instantaneous and absolute. They were your progeny now. Your eternal companion. Forever bound to you.`
          ]
          };
 
