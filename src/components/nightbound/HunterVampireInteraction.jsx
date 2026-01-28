@@ -319,29 +319,57 @@ export default function HunterVampireInteraction({ hunter, vampire, onClose, vis
         )}
 
         {/* Dialogue Options */}
-        <div className="space-y-2 mb-6">
-          {currentOptions.map((option, idx) => (
-            <motion.button
-              key={idx}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              onClick={() => handleSendMessage(option)}
-              disabled={loading}
-              className={`w-full p-4 rounded-xl text-left transition-all ${
-                option.explicit
-                  ? 'bg-gradient-to-r from-red-900/60 to-pink-900/60 hover:from-red-900/80 hover:to-pink-900/80 border-2 border-red-500/50 text-red-200'
-                  : 'bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300'
-              } disabled:opacity-50 flex items-center justify-between`}
-            >
-              <span>{option.text}</span>
-              <div className="flex items-center gap-2">
-                {option.explicit && <Flame className="w-4 h-4 text-red-400" />}
-                <MessageCircle className="w-4 h-4 opacity-50" />
-              </div>
-            </motion.button>
-          ))}
-        </div>
+        {!vampireResponse && (
+          <div className="space-y-2 mb-6">
+            {currentOptions.map((option, idx) => (
+              <motion.button
+                key={idx}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                onClick={() => handleSendMessage(option)}
+                disabled={loading}
+                className={`w-full p-4 rounded-xl text-left transition-all ${
+                  option.explicit
+                    ? 'bg-gradient-to-r from-red-900/60 to-pink-900/60 hover:from-red-900/80 hover:to-pink-900/80 border-2 border-red-500/50 text-red-200'
+                    : 'bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300'
+                } disabled:opacity-50 flex items-center justify-between`}
+              >
+                <span>{option.text}</span>
+                <div className="flex items-center gap-2">
+                  {option.explicit && <Flame className="w-4 h-4 text-red-400" />}
+                  <MessageCircle className="w-4 h-4 opacity-50" />
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        )}
+        
+        {vampireResponse && (
+          <div className="space-y-2 mb-6">
+            {currentOptions.map((option, idx) => (
+              <motion.button
+                key={idx}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                onClick={() => handleSendMessage(option)}
+                disabled={loading}
+                className={`w-full p-4 rounded-xl text-left transition-all ${
+                  option.explicit
+                    ? 'bg-gradient-to-r from-red-900/60 to-pink-900/60 hover:from-red-900/80 hover:to-pink-900/80 border-2 border-red-500/50 text-red-200'
+                    : 'bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300'
+                } disabled:opacity-50 flex items-center justify-between`}
+              >
+                <span>{option.text}</span>
+                <div className="flex items-center gap-2">
+                  {option.explicit && <Flame className="w-4 h-4 text-red-400" />}
+                  <MessageCircle className="w-4 h-4 opacity-50" />
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex gap-3">
