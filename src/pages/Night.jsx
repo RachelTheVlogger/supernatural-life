@@ -19,7 +19,7 @@ import HospitalJob from '@/components/nightbound/HospitalJob';
 import RivalVampireModal from '@/components/nightbound/RivalVampireModal';
 import VampireCouncilModal from '@/components/nightbound/VampireCouncilModal';
 import TerritoryMap from '@/components/nightbound/TerritoryMap';
-import HunterThreatModal from '@/components/nightbound/HunterThreatModal';
+
 import BloodTypeSystem from '@/components/nightbound/BloodTypeSystem';
 import VampireWeaknessModal from '@/components/nightbound/VampireWeaknessModal';
 import HunterEncounter from '@/components/nightbound/HunterEncounter';
@@ -435,13 +435,7 @@ export default function Night() {
           <span className="text-2xl">🗺️</span>
           <p className="text-white text-xs mt-1">Territory</p>
         </button>
-        <button
-          onClick={() => setActiveModal('hunters')}
-          className="bg-orange-950/40 hover:bg-orange-950/60 border border-orange-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">🎯</span>
-          <p className="text-white text-xs mt-1">Hunters</p>
-        </button>
+
         <button
           onClick={() => setActiveModal('blood')}
           className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
@@ -729,12 +723,7 @@ export default function Night() {
             onClose={() => setActiveModal(null)}
           />
         )}
-        {activeModal === 'hunters' && (
-          <HunterThreatModal
-            vampireState={vampireState}
-            onClose={() => setActiveModal(null)}
-          />
-        )}
+
         {activeModal === 'blood' && (
           <BloodTypeSystem
             vampireState={vampireState}
