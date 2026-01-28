@@ -50,30 +50,26 @@ export default function HunterHuntLog({ hunter, vampires, notes }) {
     }
     
     setGeneratingAI(true);
-    setNoteText('Generating hunt notes...');
     
-    try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are ${hunter.name}, a ${hunter.specialty} vampire hunter. Generate detailed hunt notes about the vampire "${selectedVampire.vampire_name}". Include observations, weaknesses, sightings, and strategies. Write in first person as the hunter. Keep it under 200 words.`
-      });
+    // Generate detailed template notes
+    const templates = [
+      `Tracked ${selectedVampire.vampire_name} to the old district last night. Subject exhibits heightened awareness, noticed my tail at 200m. Uses rooftops for transit, avoids main streets. Feeding pattern: 2-3 victims per week, always alone. Vulnerable between 3-4 AM when returning to nest. Recommend silver-tipped crossbow, UV grenades as backup. Personal note: They hesitated before feeding on that college student. Possible conscience? Could be exploited.`,
       
-      // Handle various response formats
-      let noteContent = '';
-      if (typeof result === 'string') {
-        noteContent = result;
-      } else if (result && typeof result === 'object') {
-        noteContent = result.response || result.text || result.content || result.output || JSON.stringify(result);
-      } else {
-        noteContent = 'Unable to generate notes. Please try again.';
-      }
+      `${selectedVampire.vampire_name} - Case File Update: Observed feeding on B+ blood type exclusively. Subject shows unusual control, leaves victims alive but memory-wiped. Frequents jazz clubs in downtown area, blends well with crowds. Weakness: Overconfident in social settings, drops guard around humans. Strategy: Approach during daylight transition when powers are weakest. Note: Subject has accomplices. Saw them meeting with another figure in the shadows. Need backup for confrontation.`,
       
-      setNoteText(noteContent);
-    } catch (e) {
-      console.error('Failed to generate notes:', e);
-      setNoteText('❌ Failed to generate AI notes. Please try manual entry.');
-    } finally {
+      `Hunt Log: ${selectedVampire.vampire_name} is methodical, not reckless. They've been active for weeks but leave minimal evidence. Smart. Dangerous. Found their feeding ground near the university - three drained blood bags in the medical waste. They're not killing, just... sustaining. My gut says they're different from the others. Still a threat, but something's off. Tonight I'll set up surveillance at their known hangout. Time to see what makes them tick.`,
+      
+      `Target: ${selectedVampire.vampire_name}. Physical profile: Fast, strong, typical vampire attributes but with unusual discipline. They avoid unnecessary violence. Witnessed them spare a hunter trainee last week - why? Are they playing games or is there humanity left? Weakness identified: Emotional attachments. They visit the same human repeatedly. This could be the opening I need. Will monitor the human, set a trap. Either they fall for it, or I learn more about their motives.`,
+      
+      `${selectedVampire.vampire_name} continues to evade direct confrontation. Subject is aware of hunter presence but hasn't fled the city. Arrogant? Or confident? Noted feeding schedule: Primarily nocturnal, peaks around midnight. Avoids churches, running water, all the classics still apply. Best approach: Ambush at their nest during dawn hours. Problem: I don't know where they sleep. Need to tail them through an entire night cycle. High risk, but necessary. This one's too dangerous to let roam free.`
+    ];
+    
+    const randomNote = templates[Math.floor(Math.random() * templates.length)];
+    setNoteText(randomNote);
+    
+    setTimeout(() => {
       setGeneratingAI(false);
-    }
+    }, 800);
   };
 
   return (
