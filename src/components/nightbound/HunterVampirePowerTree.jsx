@@ -197,7 +197,6 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
             <div className="flex items-center justify-between mb-1">
               <h4 className="text-white font-bold">{powerData.name}</h4>
               {isUnlocked && <Check className="w-5 h-5 text-green-400" />}
-              {!isUnlocked && !canUnlock && <Lock className="w-5 h-5 text-gray-500" />}
             </div>
             <p className="text-gray-400 text-sm mb-2">{powerData.desc}</p>
             {isUnlocked && upgrades.length > 0 && (
