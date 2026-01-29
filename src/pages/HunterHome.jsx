@@ -157,6 +157,43 @@ export default function HunterHome() {
         </button>
       </motion.div>
 
+      {/* Turn into Vampire Option */}
+      {!isTurnedVampire && hasVampireRelationship && vampires[0].hunter_relationship >= 80 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-4xl mx-auto mb-6"
+        >
+          <button
+            onClick={async () => {
+              if (confirm(`Accept ${vampires[0].vampire_name}'s gift of eternal life?`)) {
+                try {
+                  await base44.entities.Hunter.update(hunter.id, {
+                    is_turned: true,
+                    vampire_stage: 1,
+                    status: 'recruited',
+                    vampire_power_level: 10
+                  });
+                  await base44.entities.NightLog.create({
+                    entry: `${hunter.name} accepted the dark gift. The transformation is complete. No longer human, no longer just a hunter. Something new.`,
+                    category: 'interaction',
+                    intensity: 'extreme'
+                  });
+                  queryClient.invalidateQueries();
+                } catch (e) {
+                  console.error('Turn failed:', e);
+                }
+              }
+            }}
+            className="w-full bg-gradient-to-r from-red-900 to-red-950 hover:from-red-800 hover:to-red-900 border-2 border-red-500 text-white rounded-xl py-6 px-6 text-center transition-all shadow-lg"
+          >
+            <div className="text-3xl mb-2">🦇</div>
+            <div className="text-xl font-bold mb-2">Accept Eternal Life</div>
+            <div className="text-sm text-red-200">Become a vampire alongside {vampires[0].vampire_name}</div>
+          </button>
+        </motion.div>
+      )}
+
       {/* Quick Stats */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
