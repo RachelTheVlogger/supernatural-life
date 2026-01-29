@@ -214,12 +214,12 @@ export default function Night() {
     initServants();
   }, [servants.length, servantsInitialized, queryClient]);
 
-  // Redirect to home if no vampire exists
+  // Redirect to home if no vampire or turned hunter exists
   useEffect(() => {
-    if (!vampireLoading && vampireStates.length === 0) {
+    if (!vampireLoading && vampireStates.length === 0 && !turnedHunter) {
       navigate(createPageUrl('Home'), { replace: true });
     }
-  }, [vampireStates, vampireLoading, navigate]);
+  }, [vampireStates, vampireLoading, turnedHunter, navigate]);
   
   if (vampireLoading) {
     return (
@@ -229,7 +229,7 @@ export default function Night() {
     );
   }
 
-  if (!vampireState) {
+  if (!vampireState && !turnedHunter) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
@@ -242,6 +242,36 @@ export default function Night() {
           </button>
         </div>
       </div>
+    );
+  }
+
+  // Show turned hunter vampire power tree
+  if (turnedHunter && turnedHunter.is_turned) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen p-4 md:p-6"
+        style={{ background: 'linear-gradient(to bottom, #4A0E0E 0%, #2D0A0A 50%, #1A0404 100%)' }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-8 max-w-4xl mx-auto"
+        >
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-rose-100">{turnedHunter.name}</h1>
+            <p className="text-rose-300 text-sm mt-1">🦇 Vampire • Stage {turnedHunter.vampire_stage} • Power: {turnedHunter.vampire_power_level || 0}%</p>
+          </div>
+          <button
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="text-rose-300 hover:text-rose-100 transition-colors text-sm font-medium"
+          >
+            Back →
+          </button>
+        </motion.div>
+        <HunterVampirePowerTree hunter={turnedHunter} onClose={() => navigate(createPageUrl('Home'))} />
+      </motion.div>
     );
   }
   
