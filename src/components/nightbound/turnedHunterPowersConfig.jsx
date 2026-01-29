@@ -29,7 +29,9 @@ export const TURNED_HUNTER_POWERS = {
     desc: 'Combat-honed vampire speed and precision',
     upgrades: [
       { id: 'tactical_blur', name: 'Tactical Blur', desc: 'Move between cover instantly', cost: 60 },
-      { id: 'counter_strike', name: 'Counter Strike', desc: 'React faster than thought', cost: 60 }
+      { id: 'counter_strike', name: 'Counter Strike', desc: 'React faster than thought', cost: 60 },
+      { id: 'supersonic_speed', name: 'Supersonic Speed', desc: 'Move faster than sound', cost: 120, tier: 2 },
+      { id: 'time_lock', name: 'Time Lock', desc: 'Appear to freeze time around you', cost: 250, tier: 3 }
     ]
   },
   lethal_strength: {
