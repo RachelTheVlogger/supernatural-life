@@ -51,6 +51,7 @@ import ThrallSystem from '@/components/nightbound/ThrallSystem';
 import MemoryAlteration from '@/components/nightbound/MemoryAlteration';
 import BloodVintageSystem from '@/components/nightbound/BloodVintageSystem';
 import SupernaturalDating from '@/components/nightbound/SupernaturalDating';
+import HunterVampirePowerTree from '@/components/nightbound/HunterVampirePowerTree';
 
 export default function Night() {
   const navigate = useNavigate();
