@@ -316,20 +316,38 @@ export default function HunterHome() {
               className="space-y-4"
             >
               {isTurnedVampire && (
-                <div className="bg-red-950/40 border border-red-500/50 rounded-xl p-6 mb-6">
-                  <h2 className="text-2xl font-bold text-red-100 mb-2">🦇 Vampire Hunter Hybrid</h2>
-                  <p className="text-red-300 mb-4">You are no longer human. Hunter training combined with vampire powers makes you unstoppable.</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-black/40 rounded-lg p-3 border border-red-500/30">
-                      <p className="text-gray-400 text-xs">Vampire Power</p>
-                      <p className="text-red-200 text-xl font-bold">{hunter.vampire_power_level || 10}%</p>
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="bg-gradient-to-br from-red-950/60 to-red-900/60 border-2 border-red-500 rounded-2xl p-8 mb-6 shadow-2xl"
+                >
+                  <div className="text-center mb-6">
+                    <div className="text-6xl mb-4">🦇</div>
+                    <h2 className="text-3xl font-bold text-red-100 mb-2">VAMPIRE HUNTER HYBRID</h2>
+                    <p className="text-red-200 text-lg mb-4">The transformation is complete</p>
+                    <p className="text-red-300">You are no longer human. Hunter training combined with vampire powers makes you unstoppable.</p>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    <div className="bg-black/60 rounded-xl p-4 border border-red-500/50 text-center">
+                      <p className="text-red-400 text-xs mb-1">Vampire Power</p>
+                      <p className="text-red-100 text-3xl font-bold">{hunter.vampire_power_level || 10}%</p>
                     </div>
-                    <div className="bg-black/40 rounded-lg p-3 border border-red-500/30">
-                      <p className="text-gray-400 text-xs">Hunter Skills</p>
-                      <p className="text-red-200 text-xl font-bold">{hunter.skill_level}%</p>
+                    <div className="bg-black/60 rounded-xl p-4 border border-red-500/50 text-center">
+                      <p className="text-red-400 text-xs mb-1">Hunter Skills</p>
+                      <p className="text-red-100 text-3xl font-bold">{hunter.skill_level}%</p>
+                    </div>
+                    <div className="bg-black/60 rounded-xl p-4 border border-red-500/50 text-center">
+                      <p className="text-red-400 text-xs mb-1">Stage</p>
+                      <p className="text-red-100 text-3xl font-bold">{hunter.vampire_stage || 1}</p>
                     </div>
                   </div>
-                </div>
+                  <button
+                    onClick={() => setShowTurnedHunter(true)}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-all"
+                  >
+                    Manage Hybrid Abilities 🔥
+                  </button>
+                </motion.div>
               )}
               <div className="grid md:grid-cols-3 gap-4">
                     {/* Hunter Network */}
