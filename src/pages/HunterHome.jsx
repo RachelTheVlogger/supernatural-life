@@ -168,20 +168,31 @@ export default function HunterHome() {
             onClick={async () => {
               if (confirm(`Accept ${vampires[0].vampire_name}'s gift of eternal life?`)) {
                 try {
-                  await base44.entities.Hunter.update(hunter.id, {
+                  console.log('Starting transformation...');
+                  const updated = await base44.entities.Hunter.update(hunter.id, {
                     is_turned: true,
                     vampire_stage: 1,
                     status: 'recruited',
                     vampire_power_level: 10
                   });
+                  console.log('Hunter updated:', updated);
+
                   await base44.entities.NightLog.create({
                     entry: `${hunter.name} accepted the dark gift. The transformation is complete. No longer human, no longer just a hunter. Something new.`,
                     category: 'interaction',
                     intensity: 'extreme'
                   });
-                  queryClient.invalidateQueries();
+
+                  console.log('Invalidating queries...');
+                  await queryClient.invalidateQueries({ queryKey: ['hunters'] });
+                  await queryClient.refetchQueries({ queryKey: ['hunters'] });
+                  console.log('Queries refreshed');
+
+                  // Force reload to ensure UI updates
+                  window.location.reload();
                 } catch (e) {
                   console.error('Turn failed:', e);
+                  alert('Transformation failed: ' + e.message);
                 }
               }
             }}
