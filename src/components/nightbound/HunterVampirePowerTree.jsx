@@ -337,16 +337,16 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
                 ← Back
               </button>
               <div className="bg-black/40 rounded-xl p-6 border border-rose-500/30 mb-4">
-                <h3 className="text-2xl font-bold text-rose-100 mb-2">{VAMPIRE_POWERS[selectedPower].name}</h3>
-                <p className="text-rose-300 mb-4">{VAMPIRE_POWERS[selectedPower].desc}</p>
-                <div className="flex gap-2">
-                  <span className="text-xs bg-rose-900/50 text-rose-300 px-3 py-1 rounded">Tier {VAMPIRE_POWERS[selectedPower].tier}</span>
-                  <span className="text-xs bg-rose-900/50 text-rose-300 px-3 py-1 rounded">Stage {VAMPIRE_POWERS[selectedPower].stage}</span>
-                </div>
-              </div>
-              <h4 className="text-rose-200 font-bold mb-3">Upgrade Paths</h4>
-              <div className="space-y-3">
-                {VAMPIRE_POWERS[selectedPower].upgrades.map(upgrade => {
+                 <h3 className="text-2xl font-bold text-rose-100 mb-2">{TURNED_HUNTER_POWERS[selectedPower].name}</h3>
+                 <p className="text-rose-300 mb-4">{TURNED_HUNTER_POWERS[selectedPower].desc}</p>
+                 <div className="flex gap-2">
+                   <span className="text-xs bg-rose-900/50 text-rose-300 px-3 py-1 rounded">{TURNED_HUNTER_CATEGORIES[TURNED_HUNTER_POWERS[selectedPower].category]?.emoji} {TURNED_HUNTER_CATEGORIES[TURNED_HUNTER_POWERS[selectedPower].category]?.name}</span>
+                   <span className="text-xs bg-rose-900/50 text-rose-300 px-3 py-1 rounded">Stage {TURNED_HUNTER_POWERS[selectedPower].stage}</span>
+                 </div>
+               </div>
+               <h4 className="text-rose-200 font-bold mb-3">Upgrade Paths</h4>
+               <div className="space-y-3">
+                 {TURNED_HUNTER_POWERS[selectedPower].upgrades.map(upgrade => {
                   const isUnlocked = powerUpgrades[selectedPower]?.includes(upgrade.id);
                   const canBuy = canUpgrade(selectedPower, upgrade);
 
