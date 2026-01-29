@@ -406,64 +406,80 @@ export default function HunterHome() {
 
               <div className="grid md:grid-cols-3 gap-4">
                     {isTurnedVampire ? (
-                      <>
-                        {/* Vampire Home Content */}
-                        <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
-                          <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
-                            <Droplets className="w-5 h-5" />
-                            Vampire Powers
-                          </h3>
-                          <div className="space-y-2">
-                            <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
-                              <h4 className="text-rose-100 font-bold text-lg mb-2">Unlocked Powers</h4>
-                              <p className="text-rose-300 text-sm">{hunter.unlocked_powers?.length || 0} abilities</p>
-                            </div>
-                          </div>
-                        </div>
+                                  <>
+                                    {/* Vampire Training Button */}
+                                    <div className="md:col-span-3">
+                                      <button
+                                        onClick={() => setShowAbilities(true)}
+                                        className="w-full bg-gradient-to-r from-rose-900/60 to-red-900/60 hover:from-rose-900/80 hover:to-red-900/80 border-2 border-rose-500/50 rounded-xl p-6 transition-colors"
+                                      >
+                                        <div className="flex items-center justify-between">
+                                          <div className="text-left">
+                                            <h3 className="text-rose-100 font-bold text-xl">⚡ Vampire Training</h3>
+                                            <p className="text-rose-300 text-sm">Unlock powers • Progress to Elder</p>
+                                          </div>
+                                          <Zap className="w-8 h-8 text-rose-400" />
+                                        </div>
+                                      </button>
+                                    </div>
 
-                        <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
-                          <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
-                            <Heart className="w-5 h-5" />
-                            Your Sire
-                          </h3>
-                          {vampires[0] && (
-                            <>
-                              <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4 mb-3">
-                                <h4 className="text-rose-100 font-bold text-lg mb-2">{vampires[0].vampire_name}</h4>
-                                <p className="text-rose-300 text-sm">Bond: {vampires[0].hunter_relationship || 0}%</p>
-                              </div>
-                              <button
-                                onClick={() => setShowInteraction(true)}
-                                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-4 rounded-lg transition-all"
-                              >
-                                🦇 Interact with Sire
-                              </button>
-                            </>
-                          )}
-                        </div>
+                                    {/* Vampire Stats Grid */}
+                                    <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
+                                      <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
+                                        <Droplets className="w-5 h-5" />
+                                        Vampire Powers
+                                      </h3>
+                                      <div className="space-y-2">
+                                        <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
+                                          <h4 className="text-rose-100 font-bold text-lg mb-2">Unlocked Powers</h4>
+                                          <p className="text-rose-300 text-sm">{hunter.unlocked_powers?.length || 0} abilities</p>
+                                        </div>
+                                      </div>
+                                    </div>
 
-                        <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
-                          <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
-                            <Zap className="w-5 h-5" />
-                            Growth
-                          </h3>
-                          <div className="space-y-2">
-                            <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
-                              <p className="text-rose-300 text-xs">Stage</p>
-                              <p className="text-rose-100 font-bold">
-                                {(hunter.vampire_stage || 1) === 1 ? '🩸 Newborn' : 
-                                 (hunter.vampire_stage || 1) === 2 ? '🌙 Fledgling' : 
-                                 (hunter.vampire_stage || 1) === 3 ? '⚡ Established' : '👑 Elder'}
-                              </p>
-                            </div>
-                            <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
-                              <p className="text-rose-300 text-xs">Nights as Vampire</p>
-                              <p className="text-rose-100 font-bold">{hunter.nights_as_vampire || 0}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
+                                    <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
+                                      <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
+                                        <Heart className="w-5 h-5" />
+                                        Your Sire
+                                      </h3>
+                                      {vampires[0] && (
+                                        <>
+                                          <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4 mb-3">
+                                            <h4 className="text-rose-100 font-bold text-lg mb-2">{vampires[0].vampire_name}</h4>
+                                            <p className="text-rose-300 text-sm">Bond: {vampires[0].hunter_relationship || 0}%</p>
+                                          </div>
+                                          <button
+                                            onClick={() => setShowInteraction(true)}
+                                            className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-4 rounded-lg transition-all"
+                                          >
+                                            🦇 Interact with Sire
+                                          </button>
+                                        </>
+                                      )}
+                                    </div>
+
+                                    <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
+                                      <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
+                                        <Zap className="w-5 h-5" />
+                                        Growth
+                                      </h3>
+                                      <div className="space-y-2">
+                                        <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
+                                          <p className="text-rose-300 text-xs">Stage</p>
+                                          <p className="text-rose-100 font-bold">
+                                            {(hunter.vampire_stage || 1) === 1 ? '🩸 Newborn' : 
+                                             (hunter.vampire_stage || 1) === 2 ? '🌙 Fledgling' : 
+                                             (hunter.vampire_stage || 1) === 3 ? '⚡ Established' : '👑 Elder'}
+                                          </p>
+                                        </div>
+                                        <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
+                                          <p className="text-rose-300 text-xs">Nights as Vampire</p>
+                                          <p className="text-rose-100 font-bold">{hunter.nights_as_vampire || 0}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </>
+                                ) : (
                       <>
                         {/* Hunter Network */}
                         <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
