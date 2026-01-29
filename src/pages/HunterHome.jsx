@@ -28,6 +28,7 @@ import HunterCouncilSystem from '@/components/nightbound/HunterCouncilSystem';
 import TurnedHunterSystem from '@/components/nightbound/TurnedHunterSystem';
 import HunterVampirePowerTree from '@/components/nightbound/HunterVampirePowerTree';
 import TurnedHunterVampireInteraction from '@/components/nightbound/TurnedHunterVampireInteraction';
+import HunterCrimsonBliss from '@/components/nightbound/HunterCrimsonBliss';
 
 
 export default function HunterHome() {
@@ -53,6 +54,7 @@ export default function HunterHome() {
   const [showMentor, setShowMentor] = useState(false);
   const [showBetrayal, setShowBetrayal] = useState(false);
   const [showCouncil, setShowCouncil] = useState(false);
+  const [showCrimsonBliss, setShowCrimsonBliss] = useState(false);
 
 
   const { data: hunters = [], refetch: refetchHunters, isLoading: huntersLoading } = useQuery({
@@ -826,6 +828,14 @@ export default function HunterHome() {
               hunter={hunter} 
               vampire={vampires[0]} 
               onClose={() => setShowInteraction(false)} 
+            />
+          )}
+
+          {showCrimsonBliss && !isTurnedVampire && (
+            <HunterCrimsonBliss 
+              hunter={hunter} 
+              vampires={hunterTargets} 
+              onClose={() => setShowCrimsonBliss(false)} 
             />
           )}
         </motion.div>
