@@ -619,21 +619,7 @@ export default function HunterHome() {
                     </div>
                   </>
                 )}
-                
-                {isTurnedVampire && (
-                  <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6 col-span-full text-center">
-                    <div className="text-4xl mb-4">🦇</div>
-                    <h3 className="text-rose-100 text-xl font-bold mb-2">You are now a vampire</h3>
-                    <p className="text-rose-300 text-sm mb-4">Your hunter life is behind you. Switch to vampire view to continue your journey.</p>
-                    <button
-                      onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
-                      className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium"
-                    >
-                      Go to Vampire View →
-                    </button>
-                  </div>
-                )}
-              </div>
+                </div>
             </motion.div>
           )}
 
