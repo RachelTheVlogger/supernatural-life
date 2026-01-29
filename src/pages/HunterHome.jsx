@@ -777,32 +777,51 @@ export default function HunterHome() {
                   <div className="flex items-center justify-between mb-4 bg-gradient-to-r from-red-950/60 to-red-900/60 rounded-lg p-4 border border-red-500/50">
                     <div>
                       <h3 className="text-red-100 text-lg font-bold">{vampires[0].vampire_name}</h3>
-                      <p className="text-red-300 text-sm">Hunter's Bond: {vampires[0].hunter_relationship || 0}%</p>
+                      <p className="text-red-300 text-sm">{isTurnedVampire ? 'Your Sire' : 'Hunter\'s Bond'}: {vampires[0].hunter_relationship || 0}%</p>
                     </div>
-                    <button
-                      onClick={() => navigate(createPageUrl(`Night?id=${vampires[0].id}`))}
-                      className="text-red-200 hover:text-red-100 transition-colors text-sm font-medium"
-                    >
-                      Switch to Vampire →
-                    </button>
+                    {!isTurnedVampire && (
+                      <button
+                        onClick={() => navigate(createPageUrl(`Night?id=${vampires[0].id}`))}
+                        className="text-red-200 hover:text-red-100 transition-colors text-sm font-medium"
+                      >
+                        Switch to Vampire →
+                      </button>
+                    )}
                   </div>
 
-                  <button
-                    onClick={() => setSelectedVampire(vampires[0])}
-                    className="w-full rounded-lg p-4 transition-all font-bold text-base bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    Seduce
-                  </button>
+                  {isTurnedVampire ? (
+                    <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
+                      <h3 className="text-rose-100 text-xl font-bold mb-4">🦇 Vampire Bonding</h3>
+                      <p className="text-rose-300 text-sm mb-4">
+                        Train with your sire, share power, and strengthen your eternal bond.
+                      </p>
+                      <button
+                        onClick={() => setShowInteraction(true)}
+                        className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-4 rounded-xl transition-all"
+                      >
+                        Interact with {vampires[0].vampire_name}
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => setSelectedVampire(vampires[0])}
+                        className="w-full rounded-lg p-4 transition-all font-bold text-base bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        Seduce
+                      </button>
 
-                  {selectedVampire === vampires[0] && (
-                    <HunterIntimate hunter={hunter} vampires={vampires} onClose={() => setSelectedVampire(null)} />
+                      {selectedVampire === vampires[0] && (
+                        <HunterIntimate hunter={hunter} vampires={vampires} onClose={() => setSelectedVampire(null)} />
+                      )}
+
+                      <VampireInitiatedInteractions 
+                        vampire={vampires[0]}
+                        hunter={hunter}
+                        onClose={() => setActiveTab('home')}
+                      />
+                    </>
                   )}
-
-                  <VampireInitiatedInteractions 
-                    vampire={vampires[0]}
-                    hunter={hunter}
-                    onClose={() => setActiveTab('home')}
-                  />
                 </>
               ) : (
                 <div className="bg-gray-800 rounded-lg p-4 text-center">
