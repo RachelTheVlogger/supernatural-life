@@ -109,7 +109,7 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
 
       const newPowers = newUnlocked.filter(p => !unlockedPowers.includes(p));
       if (newPowers.length > 0) {
-        msg += `\n\n✨ New powers: ${newPowers.map(id => VAMPIRE_POWERS[id]?.name).join(', ')}`;
+        msg += `\n\n✨ New powers: ${newPowers.map(id => TURNED_HUNTER_POWERS[id]?.name).join(', ')}`;
       }
 
       setOutcome(msg);
