@@ -29,6 +29,7 @@ import TurnedHunterSystem from '@/components/nightbound/TurnedHunterSystem';
 import HunterVampirePowerTree from '@/components/nightbound/HunterVampirePowerTree';
 import TurnedHunterVampireInteraction from '@/components/nightbound/TurnedHunterVampireInteraction';
 import HunterCrimsonBliss from '@/components/nightbound/HunterCrimsonBliss';
+import HunterTortureSystem from '@/components/nightbound/HunterTortureSystem';
 
 
 export default function HunterHome() {
