@@ -637,6 +637,15 @@ export default function HunterHome() {
                                     >
                                       ⚔️ Confront
                                     </button>
+                                    <button
+                                      onClick={() => {
+                                        setTorturableVampire(target);
+                                        setShowTorture(true);
+                                      }}
+                                      className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded text-xs col-span-2"
+                                    >
+                                      🔥 Torture
+                                    </button>
                                   </div>
                                 </div>
                               </div>
