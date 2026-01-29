@@ -135,7 +135,14 @@ export default function Home() {
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
     else if (sirens.length > 0) navigate(createPageUrl('SirenHome'));
     else if (waterNymphs.length > 0) navigate(createPageUrl('WaterNymphHome'));
-    else if (hunters.length > 0) navigate(createPageUrl('HunterHome'));
+    else if (hunters.length > 0) {
+      const firstHunter = hunters[0];
+      if (firstHunter.is_turned) {
+        navigate(createPageUrl(`Night?hunter=${firstHunter.id}`));
+      } else {
+        navigate(createPageUrl(`HunterHome?id=${firstHunter.id}`));
+      }
+    }
   };
 
   const getAllDuplicates = () => {
