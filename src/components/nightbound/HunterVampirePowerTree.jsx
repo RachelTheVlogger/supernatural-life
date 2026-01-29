@@ -387,42 +387,17 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               className="space-y-6"
-            >
-              <div>
-                <h3 className="text-rose-200 font-bold mb-3">Tier 1 - Newborn Powers</h3>
-                <div className="grid gap-3">
-                  {Object.values(VAMPIRE_POWERS).filter(p => p.tier === 1).map(p => (
-                    <PowerCard key={p.id} powerData={p} />
-                  ))}
+              >
+              {Object.entries(TURNED_HUNTER_CATEGORIES).map(([catId, catData]) => (
+                <div key={catId}>
+                  <h3 className="text-rose-200 font-bold mb-3">{catData.emoji} {catData.name} - {catData.desc}</h3>
+                  <div className="grid gap-3">
+                    {Object.values(TURNED_HUNTER_POWERS).filter(p => p.category === catId).map(p => (
+                      <PowerCard key={p.id} powerData={p} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <h3 className="text-rose-200 font-bold mb-3">Tier 2 - Fledgling Powers</h3>
-                <div className="grid gap-3">
-                  {Object.values(VAMPIRE_POWERS).filter(p => p.tier === 2).map(p => (
-                    <PowerCard key={p.id} powerData={p} />
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-rose-200 font-bold mb-3">Tier 3 - Established Powers</h3>
-                <div className="grid gap-3">
-                  {Object.values(VAMPIRE_POWERS).filter(p => p.tier === 3).map(p => (
-                    <PowerCard key={p.id} powerData={p} />
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-rose-200 font-bold mb-3">Tier 4 - Elder Powers</h3>
-                <div className="grid gap-3">
-                  {Object.values(VAMPIRE_POWERS).filter(p => p.tier === 4).map(p => (
-                    <PowerCard key={p.id} powerData={p} />
-                  ))}
-                </div>
-              </div>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
