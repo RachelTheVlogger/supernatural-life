@@ -254,7 +254,7 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
           </div>
           <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
             <p className="text-rose-400 text-xs">Power</p>
-            <p className="text-rose-100 font-bold text-lg">{power}/100</p>
+            <p className="text-rose-100 font-bold text-lg">{power}</p>
           </div>
           <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
             <p className="text-rose-400 text-xs">XP</p>
