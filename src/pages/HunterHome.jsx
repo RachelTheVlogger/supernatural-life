@@ -56,13 +56,23 @@ export default function HunterHome() {
   const [showCouncil, setShowCouncil] = useState(false);
   const [showTurnedHunter, setShowTurnedHunter] = useState(false);
 
-  const { data: hunters = [] } = useQuery({
+  const { data: hunters = [], refetch: refetchHunters } = useQuery({
     queryKey: ['hunters'],
     queryFn: () => base44.entities.Hunter.list(),
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
     staleTime: 0
   });
+
+  // Force refetch hunters data periodically when transformation is happening
+  useEffect(() => {
+    if (turningIntoVampire) {
+      const interval = setInterval(() => {
+        refetchHunters();
+      }, 500);
+      return () => clearInterval(interval);
+    }
+  }, [turningIntoVampire, refetchHunters]);
 
   const { data: vampires = [], refetch: refetchVampires, isLoading: vampiresLoading } = useQuery({
     queryKey: ['vampireState'],
@@ -129,21 +139,45 @@ export default function HunterHome() {
   return (
     <div className="min-h-screen relative p-4 md:p-6 pb-24 overflow-x-hidden" style={{
       background: isTurnedVampire
-        ? 'linear-gradient(to bottom, #3d0a0a 0%, #4d1a1a 50%, #3d0a14 100%)'
+        ? 'linear-gradient(to bottom, #4A0E0E 0%, #2D0A0A 50%, #1A0404 100%)'
         : 'linear-gradient(to bottom, #1a0a0a 0%, #2d1a1a 50%, #1a0a14 100%)'
     }}>
+      {/* Blood drop particles for turned hunters */}
+      {isTurnedVampire && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-3 bg-red-600/40 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `-5%`,
+              }}
+              animate={{
+                y: ['0vh', '110vh'],
+                opacity: [0, 0.6, 0],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+                ease: "linear"
+              }}
+            />
+          ))}
+        </div>
+      )}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between mb-8 max-w-4xl mx-auto"
+        className="flex items-center justify-between mb-8 max-w-4xl mx-auto relative z-10"
       >
         <div>
-          <h1 className={`text-3xl font-bold mb-1 ${isTurnedVampire ? 'text-red-100' : 'text-white'}`}>
+          <h1 className={`text-3xl md:text-4xl font-bold mb-1 ${isTurnedVampire ? 'text-rose-100' : 'text-white'}`}>
             {hunter.name}
-            {isTurnedVampire && <span className="text-red-400 ml-2">🦇</span>}
           </h1>
-          <p className={`capitalize ${isTurnedVampire ? 'text-red-300' : 'text-gray-400'}`}>
-            {isTurnedVampire ? 'Vampire' : hunter.specialty} • {isTurnedVampire ? `Stage ${hunter.vampire_stage}` : `Skill: ${hunter.skill_level}%`}
+          <p className={`text-sm capitalize ${isTurnedVampire ? 'text-rose-300' : 'text-gray-400'}`}>
+            {isTurnedVampire ? '🩸 Vampire Hunter Hybrid' : `${hunter.specialty} hunter`} • {isTurnedVampire ? `Stage ${hunter.vampire_stage}` : `Skill: ${hunter.skill_level}%`}
           </p>
           {hasVampireRelationship && !isTurnedVampire && (
             <p className="text-red-400 text-sm mt-1">💗 Bond with {vampires[0].vampire_name}: {vampires[0].hunter_relationship}%</p>
@@ -317,36 +351,46 @@ export default function HunterHome() {
             >
               {isTurnedVampire && (
                 <motion.div
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="bg-gradient-to-br from-red-950/60 to-red-900/60 border-2 border-red-500 rounded-2xl p-8 mb-6 shadow-2xl"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-gradient-to-br from-rose-950/60 to-red-950/60 border border-rose-500/30 rounded-xl p-4 mb-6 relative z-10"
                 >
-                  <div className="text-center mb-6">
-                    <div className="text-6xl mb-4">🦇</div>
-                    <h2 className="text-3xl font-bold text-red-100 mb-2">VAMPIRE HUNTER HYBRID</h2>
-                    <p className="text-red-200 text-lg mb-4">The transformation is complete</p>
-                    <p className="text-red-300">You are no longer human. Hunter training combined with vampire powers makes you unstoppable.</p>
-                  </div>
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="bg-black/60 rounded-xl p-4 border border-red-500/50 text-center">
-                      <p className="text-red-400 text-xs mb-1">Vampire Power</p>
-                      <p className="text-red-100 text-3xl font-bold">{hunter.vampire_power_level || 10}%</p>
-                    </div>
-                    <div className="bg-black/60 rounded-xl p-4 border border-red-500/50 text-center">
-                      <p className="text-red-400 text-xs mb-1">Hunter Skills</p>
-                      <p className="text-red-100 text-3xl font-bold">{hunter.skill_level}%</p>
-                    </div>
-                    <div className="bg-black/60 rounded-xl p-4 border border-red-500/50 text-center">
-                      <p className="text-red-400 text-xs mb-1">Stage</p>
-                      <p className="text-red-100 text-3xl font-bold">{hunter.vampire_stage || 1}</p>
-                    </div>
-                  </div>
+                  <p className="text-sm italic text-center text-rose-100 mb-4">
+                    Every sense heightened. Every skill sharpened. The hunger pulses through you like a second heartbeat. Hunter instincts merged with vampire power. You are both predator and protector.
+                  </p>
                   <button
                     onClick={() => setShowTurnedHunter(true)}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-all"
+                    className="w-full bg-gradient-to-r from-rose-900/60 to-red-900/60 hover:from-rose-900/80 hover:to-red-900/80 border-2 border-rose-500/50 rounded-xl p-4 transition-colors mb-3"
                   >
-                    Manage Hybrid Abilities 🔥
+                    <div className="flex items-center justify-between">
+                      <div className="text-left">
+                        <h3 className="text-rose-100 font-bold">⚡ Hybrid Training</h3>
+                        <p className="text-rose-300 text-xs">Unlock hybrid abilities • Master both sides</p>
+                      </div>
+                      <Zap className="w-6 h-6 text-rose-400" />
+                    </div>
                   </button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+                      <p className="text-rose-300 text-xs">Stage</p>
+                      <p className="text-rose-100 font-bold">
+                        {(hunter.vampire_stage || 1) === 1 ? '🩸 Newborn' : (hunter.vampire_stage || 1) === 2 ? '🌙 Fledgling' : (hunter.vampire_stage || 1) === 3 ? '⚡ Established' : '👑 Elder'}
+                      </p>
+                    </div>
+                    <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+                      <p className="text-rose-300 text-xs">Vampire Power</p>
+                      <p className="text-rose-100 font-bold">{hunter.vampire_power_level || 10}/100</p>
+                    </div>
+                    <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+                      <p className="text-rose-300 text-xs">Hunter Skill</p>
+                      <p className="text-rose-100 font-bold">{hunter.skill_level}/100</p>
+                    </div>
+                    <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
+                      <p className="text-rose-300 text-xs">Bond with Sire</p>
+                      <p className="text-rose-100 font-bold">{vampires[0]?.hunter_relationship || 0}%</p>
+                    </div>
+                  </div>
                 </motion.div>
               )}
               <div className="grid md:grid-cols-3 gap-4">
