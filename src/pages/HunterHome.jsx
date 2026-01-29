@@ -204,6 +204,20 @@ export default function HunterHome() {
         )}
       </motion.div>
 
+      {/* Emotional state for turned vampire */}
+      {isTurnedVampire && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="max-w-4xl mx-auto rounded-xl p-4 mb-6 bg-gradient-to-br from-rose-950/60 to-red-950/60 border border-rose-500/30"
+        >
+          <p className="text-sm italic text-center text-rose-100">
+            Every sense heightened. Every emotion deeper. The hunger pulses through you like a second heartbeat. You are vampire.
+          </p>
+        </motion.div>
+      )}
+
       {/* Turn into Vampire Option */}
       {!isTurnedVampire && vampires.length > 0 && (
         <motion.div
@@ -222,7 +236,9 @@ export default function HunterHome() {
                   is_turned: true,
                   vampire_stage: 1,
                   status: 'recruited',
-                  vampire_power_level: 10
+                  vampire_power_level: 10,
+                  nights_as_vampire: 0,
+                  unlocked_powers: ['Enhanced Senses']
                 });
 
                 console.log('Hunter updated:', updated);
@@ -259,24 +275,27 @@ export default function HunterHome() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8 max-w-4xl mx-auto"
+        className="grid grid-cols-2 gap-3 mb-8 max-w-4xl mx-auto"
       >
         {isTurnedVampire ? (
           <>
             <div className="bg-black/40 border border-red-500/30 rounded-lg p-4">
-              <Zap className="w-5 h-5 text-red-400 mb-2" />
               <p className="text-rose-400 text-xs mb-1">Vampire Stage</p>
-              <p className="text-white text-2xl font-bold">{hunter.vampire_stage || 1}</p>
+              <p className="text-white text-lg font-bold">
+                {hunter.vampire_stage === 1 ? '🩸 Newborn' : hunter.vampire_stage === 2 ? '🌙 Fledgling' : hunter.vampire_stage === 3 ? '⚡ Established' : '👑 Elder'}
+              </p>
             </div>
             <div className="bg-black/40 border border-red-500/30 rounded-lg p-4">
-              <Droplets className="w-5 h-5 text-red-400 mb-2" />
               <p className="text-rose-400 text-xs mb-1">Power Level</p>
-              <p className="text-white text-2xl font-bold">{hunter.vampire_power_level || 0}/100</p>
+              <p className="text-white text-lg font-bold">{hunter.vampire_power_level || 0}/100</p>
+            </div>
+            <div className="bg-black/40 border border-red-500/30 rounded-lg p-4">
+              <p className="text-rose-400 text-xs mb-1">Nights as Vampire</p>
+              <p className="text-white text-lg font-bold">{hunter.nights_as_vampire || 0}</p>
             </div>
             <div className="bg-black/40 border border-purple-500/30 rounded-lg p-4">
-              <Heart className="w-5 h-5 text-purple-400 mb-2" />
               <p className="text-rose-400 text-xs mb-1">Bond with Sire</p>
-              <p className="text-white text-2xl font-bold">{vampires[0]?.hunter_relationship || 0}%</p>
+              <p className="text-white text-lg font-bold">{vampires[0]?.hunter_relationship || 0}%</p>
             </div>
           </>
         ) : (
