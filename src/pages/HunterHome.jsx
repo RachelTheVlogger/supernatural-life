@@ -56,7 +56,6 @@ export default function HunterHome() {
   const [showCouncil, setShowCouncil] = useState(false);
   const [showTurnedHunter, setShowTurnedHunter] = useState(false);
   const [turningIntoVampire, setTurningIntoVampire] = useState(false);
-  const [turningIntoVampire, setTurningIntoVampire] = useState(false);
 
   const { data: hunters = [], refetch: refetchHunters, isLoading: huntersLoading } = useQuery({
     queryKey: ['hunters'],
