@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, Lock, Check, ChevronRight, Star, Droplets, Eye, Brain, Wind, Target } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
-import { VAMPIRE_POWERS } from './vampirePowersConfig';
+import { TURNED_HUNTER_POWERS, TURNED_HUNTER_CATEGORIES } from './turnedHunterPowersConfig';
 
 // Icon mapping
 const ICON_MAP = {
