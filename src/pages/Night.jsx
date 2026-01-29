@@ -128,6 +128,14 @@ export default function Night() {
 
   // Removed Hybrid entity query - entity doesn't exist
 
+  // Fetch hunters
+  const { data: hunters = [] } = useQuery({
+    queryKey: ['hunters'],
+    queryFn: () => base44.entities.Hunter.list()
+  });
+
+  const turnedHunter = hunterParam ? hunters.find(h => h.id === hunterParam) : null;
+
   // Fetch recent logs
   const { data: logs = [] } = useQuery({
     queryKey: ['logs'],
