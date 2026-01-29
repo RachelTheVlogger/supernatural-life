@@ -358,6 +358,16 @@ export default function HunterHome() {
               <p className="text-gray-400 text-xs mb-1">Council</p>
               <p className="text-white text-lg font-bold">👑</p>
             </button>
+            {!isTurnedVampire && (
+              <button
+                onClick={() => setShowCrimsonBliss(true)}
+                className="bg-black/40 border border-red-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+              >
+                <Droplets className="w-5 h-5 text-red-400 mb-2" />
+                <p className="text-gray-400 text-xs mb-1">Crimson Bliss</p>
+                <p className="text-white text-lg font-bold">🩸</p>
+              </button>
+            )}
           </>
         )}
       </motion.div>
