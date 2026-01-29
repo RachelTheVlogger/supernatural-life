@@ -55,6 +55,8 @@ export default function HunterHome() {
   const [showBetrayal, setShowBetrayal] = useState(false);
   const [showCouncil, setShowCouncil] = useState(false);
   const [showTurnedHunter, setShowTurnedHunter] = useState(false);
+  const [turningIntoVampire, setTurningIntoVampire] = useState(false);
+  const [turningIntoVampire, setTurningIntoVampire] = useState(false);
 
   const { data: hunters = [], refetch: refetchHunters, isLoading: huntersLoading } = useQuery({
     queryKey: ['hunters'],
@@ -144,13 +146,6 @@ export default function HunterHome() {
   const hasVampireRelationship = vampires.length > 0 && (vampires[0].hunter_relationship || 0) > 0;
   const isTurnedVampire = hunter?.is_turned;
 
-  // Redirect turned hunters to vampire page
-  useEffect(() => {
-    if (isTurnedVampire && vampires.length > 0) {
-      navigate(createPageUrl('Night'));
-    }
-  }, [isTurnedVampire, vampires, navigate]);
-
   return (
     <div className="min-h-screen relative p-4 md:p-6 pb-24 overflow-x-hidden" style={{
       background: isTurnedVampire
@@ -207,6 +202,37 @@ export default function HunterHome() {
         </button>
       </motion.div>
 
+      {/* Hybrid Status Banner */}
+      {isTurnedVampire && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-4xl mx-auto mb-6"
+        >
+          <div className="bg-gradient-to-r from-red-900/60 to-purple-900/60 border-2 border-red-500/50 rounded-xl p-6">
+            <div className="text-center">
+              <div className="text-3xl mb-2">🦇⚔️</div>
+              <div className="text-xl font-bold text-white mb-2">Hunter-Vampire Hybrid</div>
+              <div className="text-sm text-red-200 mb-4">You possess the skills of a hunter and the powers of a vampire</div>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="bg-black/30 rounded-lg p-3">
+                  <p className="text-red-300 text-xs">Vampire Stage</p>
+                  <p className="text-white font-bold">{hunter.vampire_stage || 1}</p>
+                </div>
+                <div className="bg-black/30 rounded-lg p-3">
+                  <p className="text-red-300 text-xs">Power Level</p>
+                  <p className="text-white font-bold">{hunter.vampire_power_level || 0}/100</p>
+                </div>
+                <div className="bg-black/30 rounded-lg p-3">
+                  <p className="text-red-300 text-xs">Hunter Skill</p>
+                  <p className="text-white font-bold">{hunter.skill_level}%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Turn into Vampire Option */}
       {!isTurnedVampire && vampires.length > 0 && (
         <motion.div
@@ -239,9 +265,6 @@ export default function HunterHome() {
                 // Force refetch
                 await refetchHunters();
                 await queryClient.invalidateQueries();
-
-                // Wait a bit for state to update
-                await new Promise(resolve => setTimeout(resolve, 1000));
 
                 setTurningIntoVampire(false);
               } catch (e) {
@@ -320,6 +343,16 @@ export default function HunterHome() {
           <p className="text-gray-400 text-xs mb-1">Council</p>
           <p className="text-white text-lg font-bold">👑</p>
         </button>
+        {isTurnedVampire && (
+          <button
+            onClick={() => setShowTurnedHunter(true)}
+            className="bg-black/40 border border-red-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+          >
+            <Zap className="w-5 h-5 text-red-400 mb-2" />
+            <p className="text-gray-400 text-xs mb-1">Hybrid</p>
+            <p className="text-white text-lg font-bold">🦇⚔️</p>
+          </button>
+        )}
         </motion.div>
 
       {/* Main Tabs */}
@@ -643,7 +676,7 @@ export default function HunterHome() {
           )}
 
           <AnimatePresence mode="wait">
-          {activeTab === 'vamp' && (
+          {activeTab === 'vamp' && !isTurnedVampire && (
             <motion.div
               key="vamp"
               initial={{ opacity: 0, y: 20 }}
@@ -707,6 +740,10 @@ export default function HunterHome() {
 
           {showCouncil && (
             <HunterCouncilSystem hunter={hunter} onClose={() => setShowCouncil(false)} />
+          )}
+
+          {showTurnedHunter && isTurnedVampire && (
+            <TurnedHunterSystem hunter={hunter} onClose={() => setShowTurnedHunter(false)} />
           )}
 
           </motion.div>
