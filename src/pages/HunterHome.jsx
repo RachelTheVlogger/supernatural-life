@@ -635,12 +635,14 @@ export default function HunterHome() {
                   <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
                     <h3 className="text-rose-100 text-xl font-bold mb-4">Vampire Powers</h3>
                     <div className="space-y-3">
-                      <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
+                      <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4 mb-4">
                         <p className="text-rose-300 text-sm mb-2">Stage {hunter.vampire_stage || 1} Vampire</p>
-                        <p className="text-rose-100 font-bold text-lg">Power Level: {hunter.vampire_power_level || 0}/100</p>
+                        <p className="text-rose-100 font-bold text-lg mb-2">Power Level: {hunter.vampire_power_level || 0}/100</p>
+                        <p className="text-rose-400 text-xs">Experience: {hunter.experience || 0} XP</p>
                       </div>
-                      {hunter.unlocked_powers && hunter.unlocked_powers.length > 0 ? (
-                        <div className="space-y-2">
+                      
+                      {hunter.unlocked_powers && hunter.unlocked_powers.length > 0 && (
+                        <div className="space-y-2 mb-4">
                           <h4 className="text-rose-100 font-bold">Unlocked Abilities:</h4>
                           {hunter.unlocked_powers.map((power, i) => (
                             <div key={i} className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
@@ -648,11 +650,46 @@ export default function HunterHome() {
                             </div>
                           ))}
                         </div>
-                      ) : (
-                        <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
-                          <p className="text-rose-300 text-sm">No powers unlocked yet. Train to unlock abilities.</p>
-                        </div>
                       )}
+
+                      <h4 className="text-rose-100 font-bold mb-2">Available Powers to Unlock:</h4>
+                      <div className="space-y-2">
+                        {[
+                          { name: 'Compulsion', cost: 50, desc: 'Force your will upon others' },
+                          { name: 'Heightened Hearing', cost: 30, desc: 'Hear whispers from miles away' },
+                          { name: 'Night Sight', cost: 40, desc: 'See perfectly in darkness' },
+                          { name: 'Heightened Speed', cost: 60, desc: 'Move faster than the eye can follow' },
+                          { name: 'Heightened Strength', cost: 60, desc: 'Possess superhuman strength' },
+                          { name: 'Blood Memory', cost: 70, desc: 'Read memories through blood' },
+                          { name: 'Dream Reach', cost: 80, desc: 'Enter and manipulate dreams' },
+                          { name: 'Shadow Patience', cost: 50, desc: 'Blend into shadows' }
+                        ].filter(p => !(hunter.unlocked_powers || []).includes(p.name)).map((power, i) => (
+                          <button
+                            key={i}
+                            onClick={async () => {
+                              if ((hunter.experience || 0) >= power.cost) {
+                                await base44.entities.Hunter.update(hunter.id, {
+                                  experience: (hunter.experience || 0) - power.cost,
+                                  unlocked_powers: [...(hunter.unlocked_powers || []), power.name],
+                                  vampire_power_level: Math.min(100, (hunter.vampire_power_level || 0) + 5)
+                                });
+                                await base44.entities.NightLog.create({
+                                  entry: `${hunter.name} unlocked ${power.name}. The vampire within grows stronger.`,
+                                  category: 'power',
+                                  intensity: 'significant'
+                                });
+                                queryClient.invalidateQueries(['hunters']);
+                              }
+                            }}
+                            disabled={(hunter.experience || 0) < power.cost}
+                            className="w-full bg-red-950/30 border border-red-500/30 rounded-lg p-3 hover:bg-red-950/50 disabled:opacity-50 disabled:cursor-not-allowed text-left transition-colors"
+                          >
+                            <p className="text-rose-100 font-medium">{power.name}</p>
+                            <p className="text-rose-300 text-xs">{power.desc}</p>
+                            <p className="text-rose-400 text-xs mt-1">Cost: {power.cost} XP</p>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
