@@ -56,7 +56,7 @@ export default function HunterHome() {
   const [showCouncil, setShowCouncil] = useState(false);
   const [showTurnedHunter, setShowTurnedHunter] = useState(false);
 
-  const { data: hunters = [], refetch: refetchHunters } = useQuery({
+  const { data: hunters = [], refetch: refetchHunters, isLoading: huntersLoading } = useQuery({
     queryKey: ['hunters'],
     queryFn: () => base44.entities.Hunter.list(),
     refetchOnMount: 'always',
@@ -116,7 +116,15 @@ export default function HunterHome() {
   const hunter = hunters[0];
   const myTeam = teams.find(t => t.member_ids?.includes(hunter?.id));
 
-  if (hunters.length === 0) {
+  if (huntersLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <p className="text-gray-400">Loading hunter data...</p>
+      </div>
+    );
+  }
+
+  if (!huntersLoading && hunters.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
