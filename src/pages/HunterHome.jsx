@@ -144,12 +144,12 @@ export default function HunterHome() {
   const hasVampireRelationship = vampires.length > 0 && (vampires[0].hunter_relationship || 0) > 0;
   const isTurnedVampire = hunter?.is_turned;
 
-  // Redirect turned hunters to vampire home
+  // Redirect turned hunters to vampire page
   useEffect(() => {
     if (isTurnedVampire && vampires.length > 0) {
-      navigate(createPageUrl(`ServantHome?id=${hunter.id}`));
+      navigate(createPageUrl('Night'));
     }
-  }, [isTurnedVampire, vampires, hunter, navigate]);
+  }, [isTurnedVampire, vampires, navigate]);
 
   return (
     <div className="min-h-screen relative p-4 md:p-6 pb-24 overflow-x-hidden" style={{
