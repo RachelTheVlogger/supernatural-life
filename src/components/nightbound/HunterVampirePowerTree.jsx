@@ -76,7 +76,7 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
       if (newPower >= 75 && stage === 3) newStage = 4;
 
       const newUnlocked = [...unlockedPowers];
-      Object.values(VAMPIRE_POWERS).forEach(p => {
+      Object.values(TURNED_HUNTER_POWERS).forEach(p => {
         if (p.power <= newPower && p.stage <= newStage && !newUnlocked.includes(p.id)) {
           newUnlocked.push(p.id);
         }
