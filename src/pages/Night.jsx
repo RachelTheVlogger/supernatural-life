@@ -339,6 +339,24 @@ export default function Night() {
   
   return (
     <div className="min-h-screen relative p-4 md:p-6 pb-24 overflow-y-auto">
+      {/* DLC Banner - Top Visibility */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="max-w-2xl mx-auto mb-6"
+      >
+        <button
+          onClick={() => setShowDLC(true)}
+          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 border-2 border-purple-400 rounded-xl py-4 px-6 shadow-lg transition-all"
+        >
+          <div className="text-center">
+            <p className="text-white font-bold text-base">🎮 FREE DLC - NEW EXPANSIONS AVAILABLE</p>
+            <p className="text-purple-200 text-xs mt-1">Unlock Fairies, Demons & More!</p>
+          </div>
+        </button>
+      </motion.div>
+
       {/* Title */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -650,13 +668,6 @@ export default function Night() {
         >
           <span className="text-2xl">💕</span>
           <p className="text-white text-xs mt-1">Supernatural Dating</p>
-        </button>
-        <button
-          onClick={() => setShowDLC(true)}
-          className="bg-indigo-950/40 hover:bg-indigo-950/60 border border-indigo-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">🎮</span>
-          <p className="text-white text-xs mt-1">Expansions</p>
         </button>
 
         {witches.length > 0 && witches[0].relationship >= 70 && !witches[0].living_with_vampire && (
