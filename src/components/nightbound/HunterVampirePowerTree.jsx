@@ -247,11 +247,11 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
         {/* Stats Bar */}
         <div className="grid grid-cols-4 gap-3 mb-6">
           <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
-            <p className="text-rose-400 text-xs">Stage</p>
-            <p className="text-rose-100 font-bold text-lg">
-              {stage === 1 ? '🩸 Newborn' : stage === 2 ? '🌙 Fledgling' : stage === 3 ? '⚡ Established' : '👑 Elder'}
-            </p>
-          </div>
+              <p className="text-rose-400 text-xs">Stage</p>
+              <p className="text-rose-100 font-bold text-lg">
+                {stage === 1 ? '🩸 Newborn' : stage === 2 ? '🌙 Fledgling' : stage === 3 ? '⚡ Established' : stage === 4 ? '👑 Elder' : stage === 5 ? '🌟 Ascendant' : stage === 6 ? '∞ Infinite' : '💀 Godlike'}
+              </p>
+            </div>
           <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
             <p className="text-rose-400 text-xs">Power</p>
             <p className="text-rose-100 font-bold text-lg">{power}</p>
