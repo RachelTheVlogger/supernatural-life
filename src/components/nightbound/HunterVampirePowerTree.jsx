@@ -143,17 +143,41 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
   };
 
   const PowerCard = ({ powerData }) => {
-    const Icon = ICON_MAP[powerData.icon];
+    const Icon = ICON_MAP[powerData.icon] || Eye;
     const isUnlocked = unlockedPowers.includes(powerData.id);
     const canUnlock = canUnlockPower(powerData);
     const upgrades = powerUpgrades[powerData.id] || [];
+
+    const bgColor = {
+      blue: 'bg-blue-950/30 border-blue-500/50',
+      cyan: 'bg-cyan-950/30 border-cyan-500/50',
+      red: 'bg-red-950/30 border-red-500/50',
+      purple: 'bg-purple-950/30 border-purple-500/50',
+      indigo: 'bg-indigo-950/30 border-indigo-500/50',
+      pink: 'bg-pink-950/30 border-pink-500/50',
+      violet: 'bg-violet-950/30 border-violet-500/50',
+      gray: 'bg-gray-950/30 border-gray-500/50',
+      yellow: 'bg-yellow-950/30 border-yellow-500/50'
+    }[powerData.color] || 'bg-purple-950/30 border-purple-500/50';
+
+    const textColor = {
+      blue: 'text-blue-400',
+      cyan: 'text-cyan-400',
+      red: 'text-red-400',
+      purple: 'text-purple-400',
+      indigo: 'text-indigo-400',
+      pink: 'text-pink-400',
+      violet: 'text-violet-400',
+      gray: 'text-gray-400',
+      yellow: 'text-yellow-400'
+    }[powerData.color] || 'text-purple-400';
 
     return (
       <motion.div
         whileHover={{ scale: 1.02 }}
         className={`border-2 rounded-xl p-4 transition-all cursor-pointer ${
           isUnlocked
-            ? `bg-${powerData.color}-950/30 border-${powerData.color}-500/50`
+            ? bgColor
             : canUnlock
             ? 'bg-purple-950/20 border-purple-500/40'
             : 'bg-gray-900/40 border-gray-700/30 opacity-60'
@@ -161,7 +185,7 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
         onClick={() => isUnlocked && setSelectedPower(powerData.id)}
       >
         <div className="flex items-start gap-3">
-          <Icon className={`w-6 h-6 text-${powerData.color}-400`} />
+          <Icon className={`w-6 h-6 ${textColor}`} />
           <div className="flex-1">
             <div className="flex items-center justify-between mb-1">
               <h4 className="text-white font-bold">{powerData.name}</h4>
