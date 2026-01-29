@@ -209,14 +209,19 @@ export default function HunterHome() {
         >
           <button
             onClick={async () => {
+              if (turningIntoVampire) return;
               setTurningIntoVampire(true);
               try {
-                await base44.entities.Hunter.update(hunter.id, {
+                console.log('Starting transformation for hunter:', hunter.id);
+
+                const updated = await base44.entities.Hunter.update(hunter.id, {
                   is_turned: true,
                   vampire_stage: 1,
                   status: 'recruited',
                   vampire_power_level: 10
                 });
+
+                console.log('Hunter updated:', updated);
 
                 await base44.entities.NightLog.create({
                   entry: `${hunter.name} accepted the dark gift. The transformation is complete. No longer human, no longer just a hunter. Something new.`,
@@ -224,11 +229,16 @@ export default function HunterHome() {
                   intensity: 'extreme'
                 });
 
+                // Force refetch
+                await refetchHunters();
                 await queryClient.invalidateQueries();
-                await queryClient.refetchQueries({ queryKey: ['hunters'] });
-                
-                setTimeout(() => window.location.reload(), 500);
+
+                // Wait a bit for state to update
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                setTurningIntoVampire(false);
               } catch (e) {
+                console.error('Transformation failed:', e);
                 alert('Failed: ' + e.message);
                 setTurningIntoVampire(false);
               }
