@@ -251,84 +251,107 @@ export default function HunterHome() {
       )}
 
       {/* Quick Stats */}
-      {!isTurnedVampire && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8 max-w-4xl mx-auto"
-        >
-          <div className="bg-black/40 border border-red-500/30 rounded-lg p-4">
-            <Target className="w-5 h-5 text-red-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Active Targets</p>
-            <p className="text-white text-2xl font-bold">{hunterTargets.length}</p>
-            <p className="text-gray-500 text-[10px] mt-1">DB: {vampires.length}</p>
-          </div>
-          <div className="bg-black/40 border border-yellow-500/30 rounded-lg p-4">
-            <Zap className="w-5 h-5 text-yellow-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Suspicion</p>
-            <p className="text-white text-2xl font-bold">{hunter.suspicion}%</p>
-          </div>
-          <div className="bg-black/40 border border-blue-500/30 rounded-lg p-4">
-            <FileText className="w-5 h-5 text-blue-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Hunt Notes</p>
-            <p className="text-white text-2xl font-bold">{notes.length}</p>
-          </div>
-          <div className="bg-black/40 border border-purple-500/30 rounded-lg p-4">
-            <Heart className="w-5 h-5 text-purple-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Status</p>
-            <p className="text-white text-2xl font-bold capitalize">{hunter.status}</p>
-          </div>
-          <button
-            onClick={() => setShowTeams(true)}
-            className="bg-black/40 border border-blue-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
-          >
-            <Users className="w-5 h-5 text-blue-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Team</p>
-            <p className="text-white text-lg font-bold">{myTeam ? '✓' : 'None'}</p>
-          </button>
-          <button
-            onClick={() => setShowMentor(true)}
-            className="bg-black/40 border border-purple-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
-          >
-            <Users className="w-5 h-5 text-purple-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Mentor</p>
-            <p className="text-white text-lg font-bold">👨‍🏫</p>
-          </button>
-          <button
-            onClick={() => setShowBetrayal(true)}
-            className="bg-black/40 border border-red-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
-          >
-            <Zap className="w-5 h-5 text-red-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Betrayal</p>
-            <p className="text-white text-lg font-bold">⚠️</p>
-          </button>
-          <button
-            onClick={() => setShowCouncil(true)}
-            className="bg-black/40 border border-yellow-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
-          >
-            <Target className="w-5 h-5 text-yellow-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Council</p>
-            <p className="text-white text-lg font-bold">👑</p>
-          </button>
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8 max-w-4xl mx-auto"
+      >
+        {isTurnedVampire ? (
+          <>
+            <div className="bg-black/40 border border-red-500/30 rounded-lg p-4">
+              <Zap className="w-5 h-5 text-red-400 mb-2" />
+              <p className="text-rose-400 text-xs mb-1">Vampire Stage</p>
+              <p className="text-white text-2xl font-bold">{hunter.vampire_stage || 1}</p>
+            </div>
+            <div className="bg-black/40 border border-red-500/30 rounded-lg p-4">
+              <Droplets className="w-5 h-5 text-red-400 mb-2" />
+              <p className="text-rose-400 text-xs mb-1">Power Level</p>
+              <p className="text-white text-2xl font-bold">{hunter.vampire_power_level || 0}/100</p>
+            </div>
+            <div className="bg-black/40 border border-purple-500/30 rounded-lg p-4">
+              <Heart className="w-5 h-5 text-purple-400 mb-2" />
+              <p className="text-rose-400 text-xs mb-1">Bond with Sire</p>
+              <p className="text-white text-2xl font-bold">{vampires[0]?.hunter_relationship || 0}%</p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="bg-black/40 border border-red-500/30 rounded-lg p-4">
+              <Target className="w-5 h-5 text-red-400 mb-2" />
+              <p className="text-gray-400 text-xs mb-1">Active Targets</p>
+              <p className="text-white text-2xl font-bold">{hunterTargets.length}</p>
+              <p className="text-gray-500 text-[10px] mt-1">DB: {vampires.length}</p>
+            </div>
+            <div className="bg-black/40 border border-yellow-500/30 rounded-lg p-4">
+              <Zap className="w-5 h-5 text-yellow-400 mb-2" />
+              <p className="text-gray-400 text-xs mb-1">Suspicion</p>
+              <p className="text-white text-2xl font-bold">{hunter.suspicion}%</p>
+            </div>
+            <div className="bg-black/40 border border-blue-500/30 rounded-lg p-4">
+              <FileText className="w-5 h-5 text-blue-400 mb-2" />
+              <p className="text-gray-400 text-xs mb-1">Hunt Notes</p>
+              <p className="text-white text-2xl font-bold">{notes.length}</p>
+            </div>
+            <div className="bg-black/40 border border-purple-500/30 rounded-lg p-4">
+              <Heart className="w-5 h-5 text-purple-400 mb-2" />
+              <p className="text-gray-400 text-xs mb-1">Status</p>
+              <p className="text-white text-2xl font-bold capitalize">{hunter.status}</p>
+            </div>
+          </>
+        )}
+        {!isTurnedVampire && (
+          <>
+            <button
+              onClick={() => setShowTeams(true)}
+              className="bg-black/40 border border-blue-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+            >
+              <Users className="w-5 h-5 text-blue-400 mb-2" />
+              <p className="text-gray-400 text-xs mb-1">Team</p>
+              <p className="text-white text-lg font-bold">{myTeam ? '✓' : 'None'}</p>
+            </button>
+            <button
+              onClick={() => setShowMentor(true)}
+              className="bg-black/40 border border-purple-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+            >
+              <Users className="w-5 h-5 text-purple-400 mb-2" />
+              <p className="text-gray-400 text-xs mb-1">Mentor</p>
+              <p className="text-white text-lg font-bold">👨‍🏫</p>
+            </button>
+            <button
+              onClick={() => setShowBetrayal(true)}
+              className="bg-black/40 border border-red-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+            >
+              <Zap className="w-5 h-5 text-red-400 mb-2" />
+              <p className="text-gray-400 text-xs mb-1">Betrayal</p>
+              <p className="text-white text-lg font-bold">⚠️</p>
+            </button>
+            <button
+              onClick={() => setShowCouncil(true)}
+              className="bg-black/40 border border-yellow-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
+            >
+              <Target className="w-5 h-5 text-yellow-400 mb-2" />
+              <p className="text-gray-400 text-xs mb-1">Council</p>
+              <p className="text-white text-lg font-bold">👑</p>
+            </button>
+          </>
+        )}
+      </motion.div>
 
       {/* Main Tabs */}
-      {!isTurnedVampire && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="max-w-4xl mx-auto"
-        >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="max-w-4xl mx-auto"
+      >
         <div className="grid grid-cols-5 gap-2 mb-8">
             {[
               { id: 'home', label: 'Home', icon: Home },
-              { id: 'hunting', label: isTurnedVampire ? 'Feed' : 'Hunt Log', icon: isTurnedVampire ? Droplets : FileText },
+              { id: 'hunting', label: isTurnedVampire ? 'Powers' : 'Hunt Log', icon: isTurnedVampire ? Zap : FileText },
               { id: 'activities', label: 'Activities', icon: Utensils },
               { id: 'intimate', label: 'Intimate', icon: Heart },
-              { id: 'vamp', label: isTurnedVampire ? 'Powers' : 'Vamp', icon: Zap }
+              { id: 'vamp', label: 'Sire', icon: Heart }
             ].map(tab => {
             const Icon = tab.icon;
             return (
@@ -359,7 +382,57 @@ export default function HunterHome() {
             >
 
               <div className="grid md:grid-cols-3 gap-4">
-                    {!isTurnedVampire && (
+                    {isTurnedVampire ? (
+                      <>
+                        {/* Vampire Home Content */}
+                        <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
+                          <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
+                            <Droplets className="w-5 h-5" />
+                            Vampire Powers
+                          </h3>
+                          <div className="space-y-2">
+                            <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
+                              <h4 className="text-rose-100 font-bold text-lg mb-2">Unlocked Powers</h4>
+                              <p className="text-rose-300 text-sm">{hunter.unlocked_powers?.length || 0} abilities</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
+                          <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
+                            <Heart className="w-5 h-5" />
+                            Your Sire
+                          </h3>
+                          {vampires[0] && (
+                            <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
+                              <h4 className="text-rose-100 font-bold text-lg mb-2">{vampires[0].vampire_name}</h4>
+                              <p className="text-rose-300 text-sm">Bond: {vampires[0].hunter_relationship || 0}%</p>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
+                          <h3 className="text-rose-100 text-lg font-bold mb-4 flex items-center gap-2">
+                            <Zap className="w-5 h-5" />
+                            Growth
+                          </h3>
+                          <div className="space-y-2">
+                            <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
+                              <p className="text-rose-300 text-xs">Stage</p>
+                              <p className="text-rose-100 font-bold">
+                                {(hunter.vampire_stage || 1) === 1 ? '🩸 Newborn' : 
+                                 (hunter.vampire_stage || 1) === 2 ? '🌙 Fledgling' : 
+                                 (hunter.vampire_stage || 1) === 3 ? '⚡ Established' : '👑 Elder'}
+                              </p>
+                            </div>
+                            <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
+                              <p className="text-rose-300 text-xs">Nights as Vampire</p>
+                              <p className="text-rose-100 font-bold">{hunter.nights_as_vampire || 0}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
                       <>
                         {/* Hunter Network */}
                         <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
@@ -588,12 +661,8 @@ export default function HunterHome() {
             <HunterIntimate hunter={hunter} vampires={vampires} onClose={() => setActiveTab('home')} />
           )}
           </AnimatePresence>
-        </motion.div>
-      )}
 
-      {!isTurnedVampire && (
-        <>
-          {showAbilities && (
+          {showAbilities && !isTurnedVampire && (
             <HunterAbilityShop hunter={hunter} onClose={() => setShowAbilities(false)} />
           )}
 
@@ -720,27 +789,10 @@ export default function HunterHome() {
             <HunterBetrayalSystem hunter={hunter} vampires={vampires} onClose={() => setShowBetrayal(false)} />
           )}
 
-          {showCouncil && (
+          {showCouncil && !isTurnedVampire && (
             <HunterCouncilSystem hunter={hunter} onClose={() => setShowCouncil(false)} />
           )}
-        </>
-      )}
-
-      {isTurnedVampire && (
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-black/40 border border-red-700/50 rounded-2xl p-8 text-center">
-            <div className="text-6xl mb-6">🦇</div>
-            <h2 className="text-rose-100 text-2xl font-bold mb-3">You are now a vampire</h2>
-            <p className="text-rose-300 text-base mb-6">Your hunter life is behind you. The transformation is complete. Switch to vampire view to continue your eternal journey.</p>
-            <button
-              onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-medium text-lg"
-            >
-              Go to Vampire View →
-            </button>
-          </div>
-        </div>
-      )}
+        </motion.div>
     </div>
           );
           }
