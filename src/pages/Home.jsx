@@ -318,15 +318,19 @@ export default function Home() {
                       key={h.id}
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(createPageUrl('HunterHome'));
+                        if (h.is_turned) {
+                          navigate(createPageUrl(`Night?hunter=${h.id}`));
+                        } else {
+                          navigate(createPageUrl(`HunterHome?id=${h.id}`));
+                        }
                       }}
                       className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-xl">🎯</span>
+                        <span className="text-xl">{h.is_turned ? '🦇' : '🎯'}</span>
                         <div>
                           <p className="text-white font-medium">{h.name}</p>
-                          <p className="text-gray-400 text-xs">Hunter</p>
+                          <p className="text-gray-400 text-xs">{h.is_turned ? 'Vampire' : 'Hunter'}</p>
                         </div>
                       </div>
                     </button>
