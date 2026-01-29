@@ -35,10 +35,7 @@ export default function HunterHome() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('home');
   const [turningIntoVampire, setTurningIntoVampire] = useState(false);
-  const [showHuntLog, setShowHuntLog] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
-  const [showIntimate, setShowIntimate] = useState(false);
-  const [showAbilities, setShowAbilities] = useState(false);
   const [showInteraction, setShowInteraction] = useState(false);
   const [selectedVampire, setSelectedVampire] = useState(null);
   const [showTraits, setShowTraits] = useState(false);
@@ -408,22 +405,6 @@ export default function HunterHome() {
               <div className="grid md:grid-cols-3 gap-4">
                   {isTurnedVampire ? (
                     <>
-                      {/* Vampire Training Button */}
-                      <div className="md:col-span-3">
-                        <button
-                          onClick={() => setShowAbilities(true)}
-                          className="w-full bg-gradient-to-r from-rose-900/60 to-red-900/60 hover:from-rose-900/80 hover:to-red-900/80 border-2 border-rose-500/50 rounded-xl p-6 transition-colors"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="text-left">
-                              <h3 className="text-rose-100 font-bold text-xl">⚡ Vampire Training</h3>
-                              <p className="text-rose-300 text-sm">Unlock powers • Progress to Elder</p>
-                            </div>
-                            <Zap className="w-8 h-8 text-rose-400" />
-                          </div>
-                        </button>
-                      </div>
-
                       {/* Vampire Stats */}
                       <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
                         <h3 className="text-rose-100 text-lg font-bold mb-4">Vampire Stats</h3>
@@ -668,59 +649,7 @@ export default function HunterHome() {
               exit={{ opacity: 0, y: -20 }}
             >
               {isTurnedVampire ? (
-                <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-rose-100 mb-2">🩸 Vampire Progression</h2>
-                  <p className="text-rose-300 text-sm mb-6">{hunter.name}'s path to power</p>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="bg-black/30 rounded-lg p-3 border border-rose-500/30">
-                      <p className="text-rose-400 text-xs">Stage</p>
-                      <p className="text-rose-100 font-bold">
-                        {hunter.vampire_stage === 1 ? '🩸 Newborn' : hunter.vampire_stage === 2 ? '🌙 Fledgling' : hunter.vampire_stage === 3 ? '⚡ Established' : '👑 Elder'}
-                      </p>
-                      {hunter.vampire_stage < 4 && (
-                        <p className="text-rose-300 text-xs mt-1">Next at {hunter.vampire_stage === 1 ? 25 : hunter.vampire_stage === 2 ? 50 : 75} power</p>
-                      )}
-                    </div>
-                    <div className="bg-black/30 rounded-lg p-3 border border-rose-500/30">
-                      <p className="text-rose-400 text-xs">Power Level</p>
-                      <p className="text-rose-100 font-bold">{hunter.vampire_power_level || 0}/100</p>
-                    </div>
-                    <div className="bg-black/30 rounded-lg p-3 border border-rose-500/30">
-                      <p className="text-rose-400 text-xs">Experience</p>
-                      <p className="text-rose-100 font-bold">{hunter.experience || 0} XP</p>
-                    </div>
-                    <div className="bg-black/30 rounded-lg p-3 border border-rose-500/30">
-                      <p className="text-rose-400 text-xs">Powers Unlocked</p>
-                      <p className="text-rose-100 font-bold">{hunter.unlocked_powers?.length || 0}</p>
-                    </div>
-                  </div>
-
-                  {/* Unlocked Powers */}
-                  {hunter.unlocked_powers && hunter.unlocked_powers.length > 0 && (
-                    <div className="mb-6">
-                      <h3 className="text-rose-200 font-bold mb-3 flex items-center gap-2">
-                        <Zap className="w-4 h-4" />
-                        Unlocked Powers
-                      </h3>
-                      <div className="grid grid-cols-2 gap-2">
-                        {hunter.unlocked_powers.map((p, i) => (
-                          <div key={i} className="bg-rose-500/20 border border-rose-400 rounded-lg p-3">
-                            <p className="text-rose-100 text-sm font-medium">⚡ {p}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => setShowAbilities(true)}
-                    className="w-full bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-700 hover:to-red-700 text-white font-bold py-4 px-6 rounded-xl transition-all"
-                  >
-                    🔮 Open Full Power Tree
-                  </button>
-                </div>
+                <HunterVampirePowerTree hunter={hunter} onClose={() => setActiveTab('home')} />
               ) : (
                 <HunterHuntLog hunter={hunter} vampires={hunterTargets} notes={notes} />
               )}
@@ -741,13 +670,7 @@ export default function HunterHome() {
 
           </AnimatePresence>
 
-          {showAbilities && (
-            isTurnedVampire ? (
-              <HunterVampirePowerTree hunter={hunter} onClose={() => setShowAbilities(false)} />
-            ) : (
-              <HunterAbilityShop hunter={hunter} onClose={() => setShowAbilities(false)} />
-            )
-          )}
+
 
           {showInteraction && selectedVampire && !isTurnedVampire && (
             <HunterVampireInteraction 
