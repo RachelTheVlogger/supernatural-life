@@ -268,6 +268,22 @@ export default function HunterHome() {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
+              {isTurnedVampire && (
+                <div className="bg-red-950/40 border border-red-500/50 rounded-xl p-6 mb-6">
+                  <h2 className="text-2xl font-bold text-red-100 mb-2">🦇 Vampire Hunter Hybrid</h2>
+                  <p className="text-red-300 mb-4">You are no longer human. Hunter training combined with vampire powers makes you unstoppable.</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-black/40 rounded-lg p-3 border border-red-500/30">
+                      <p className="text-gray-400 text-xs">Vampire Power</p>
+                      <p className="text-red-200 text-xl font-bold">{hunter.vampire_power_level || 10}%</p>
+                    </div>
+                    <div className="bg-black/40 rounded-lg p-3 border border-red-500/30">
+                      <p className="text-gray-400 text-xs">Hunter Skills</p>
+                      <p className="text-red-200 text-xl font-bold">{hunter.skill_level}%</p>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="grid md:grid-cols-3 gap-4">
                     {/* Hunter Network */}
                     <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
