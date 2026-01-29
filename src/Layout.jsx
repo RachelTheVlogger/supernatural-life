@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, Sparkles, Zap, Waves, Droplets, Dna } from 'lucide-react';
+import { Home, Moon, User, Sparkles, Zap, Waves, Droplets, Dna, Target } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -67,6 +67,19 @@ export default function Layout({ children, currentPageName }) {
     retry: 1
   });
 
+  const { data: hunters = [] } = useQuery({
+    queryKey: ['hunters'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.Hunter.list();
+      } catch (e) {
+        console.error('Failed to fetch hunters:', e);
+        return [];
+      }
+    },
+    retry: 1
+  });
+
 
   
   // Show nav on main game pages only
@@ -85,12 +98,14 @@ export default function Layout({ children, currentPageName }) {
   const urlSirenId = urlParams.get('siren');
   const firstSirenId = urlSirenId ? sirens.find(s => s.id === urlSirenId)?.id : (sirens.length > 0 ? sirens[0].id : null);
 
-
+  const urlHunterId = urlParams.get('hunter');
+  const firstHunterId = urlHunterId ? hunters.find(h => h.id === urlHunterId)?.id : (hunters.length > 0 ? hunters[0].id : null);
 
   const navItems = [
     { name: 'Night', icon: Moon, path: 'Night' },
     { name: 'Vamp', icon: Home, path: 'VampireHome' },
     { name: 'Servant', icon: User, path: `ServantHome?id=${firstServantId}`, hasSelector: servants.length > 1, disabled: servants.length === 0 },
+    { name: 'Hunter', icon: Target, path: `HunterHome?id=${firstHunterId}`, show: hunters.length > 0, hasSelector: hunters.length > 1, disabled: hunters.length === 0 },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
     { name: 'Siren', icon: Waves, path: `SirenHome?id=${firstSirenId}`, show: sirens.length > 0, hasSelector: sirens.length > 1, disabled: sirens.length === 0 },
     { name: 'Nymph', icon: Droplets, path: `WaterNymphHome?id=${firstNymphId}`, hasSelector: nymphs.length > 1, disabled: nymphs.length === 0 }
@@ -137,7 +152,7 @@ export default function Layout({ children, currentPageName }) {
 
       {showNav && (
         <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-purple-900/30 z-50">
-          <div className="flex items-center justify-around px-2 py-2 gap-1">
+          <div className="flex items-center justify-around px-1 py-2 gap-0.5 overflow-x-auto">
             {navItems.filter(item => item.show !== false).map(item => {
               const Icon = item.icon;
               const isActive = currentPageName === item.name;
@@ -153,7 +168,7 @@ export default function Layout({ children, currentPageName }) {
                     }
                   }}
                   disabled={item.disabled}
-                  className={`flex flex-col items-center gap-0.5 flex-shrink-0 px-1 py-1 relative ${
+                  className={`flex flex-col items-center gap-0.5 flex-shrink-0 px-2 py-1 relative min-w-[60px] ${
                     isActive ? 'text-purple-400' : item.disabled ? 'text-gray-700' : 'text-gray-400 active:text-purple-300'
                   }`}
                 >
@@ -204,6 +219,19 @@ export default function Layout({ children, currentPageName }) {
                   <p className="text-gray-400 text-sm capitalize">
                     {s.is_turned ? '🦇 Vampire' : `${s.variant} servant`} • Bond: {s.relationship || 0}%
                   </p>
+                </button>
+              ))}
+              {hunters.map(h => (
+                <button
+                  key={h.id}
+                  onClick={() => {
+                    navigate(createPageUrl(`HunterHome?id=${h.id}`));
+                    setShowServantSelector(false);
+                  }}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors"
+                >
+                  <h4 className="text-white font-medium">{h.name}</h4>
+                  <p className="text-gray-400 text-sm">🎯 Hunter • {h.specialty} • Skill: {h.skill_level}%</p>
                 </button>
               ))}
               {sirens.map(si => (
