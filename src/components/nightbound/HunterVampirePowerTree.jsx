@@ -32,11 +32,14 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
   const [view, setView] = useState('overview'); // 'overview', 'training', 'power'
 
   const stage = hunter.vampire_stage || 1;
-  const power = hunter.vampire_power_level || 0;
-  const xp = hunter.experience || 0;
-  const nights = hunter.nights_as_vampire || 0;
-  const unlockedPowers = hunter.unlocked_powers || [];
-  const powerUpgrades = hunter.power_upgrades || {};
+    const power = hunter.vampire_power_level || 0;
+    const xp = hunter.experience || 0;
+    const nights = hunter.nights_as_vampire || 0;
+    const unlockedPowers = hunter.unlocked_powers || [];
+    const powerUpgrades = hunter.power_upgrades || {};
+
+    // Infinite progression - no power cap
+    const maxPower = Infinity;
 
   const handleUnlockPower = async (powerData) => {
     if (unlockedPowers.includes(powerData.id)) return;
