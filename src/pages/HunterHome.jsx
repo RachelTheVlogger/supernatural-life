@@ -860,7 +860,18 @@ export default function HunterHome() {
               onClose={() => setShowCrimsonBliss(false)} 
             />
           )}
-        </motion.div>
-    </div>
+
+          {showTorture && torturableVampire && !isTurnedVampire && (
+            <HunterTortureSystem 
+              hunter={hunter} 
+              vampire={torturableVampire} 
+              onClose={() => {
+                setShowTorture(false);
+                setTorturableVampire(null);
+              }} 
+            />
+          )}
+          </motion.div>
+          </div>
           );
           }
