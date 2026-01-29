@@ -158,7 +158,7 @@ export default function HunterHome() {
       </motion.div>
 
       {/* Turn into Vampire Option */}
-      {!isTurnedVampire && hasVampireRelationship && vampires[0].hunter_relationship >= 80 && (
+      {!isTurnedVampire && vampires.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
