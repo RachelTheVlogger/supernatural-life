@@ -143,10 +143,10 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
     });
 
     await base44.entities.NightLog.create({
-      entry: `${hunter.name} upgraded ${VAMPIRE_POWERS[powerId].name} → ${upgrade.name}. Power refined.`,
-      category: 'power',
-      intensity: 'significant'
-    });
+       entry: `${hunter.name} upgraded ${TURNED_HUNTER_POWERS[powerId].name} → ${upgrade.name}. Power refined.`,
+       category: 'power',
+       intensity: 'significant'
+     });
 
     queryClient.invalidateQueries();
     setSelectedPower(null);
