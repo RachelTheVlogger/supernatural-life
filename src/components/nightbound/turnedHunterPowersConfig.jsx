@@ -46,7 +46,9 @@ export const TURNED_HUNTER_POWERS = {
     desc: 'Vampire strength weaponized for kills',
     upgrades: [
       { id: 'execution_grip', name: 'Execution Grip', desc: 'Crushing hold that paralyzes', cost: 60 },
-      { id: 'bone_break', name: 'Bone Break', desc: 'Shatter bones with touch', cost: 60 }
+      { id: 'bone_break', name: 'Bone Break', desc: 'Shatter bones with touch', cost: 60 },
+      { id: 'building_crusher', name: 'Building Crusher', desc: 'Lift and crush entire structures', cost: 150, tier: 2 },
+      { id: 'godlike_strength', name: 'Godlike Strength', desc: 'Become unstoppable force', cost: 300, tier: 3 }
     ]
   },
 
