@@ -14,12 +14,12 @@ const HUNTER_ACTIVITIES = [
 ];
 
 const VAMPIRE_ACTIVITIES = [
-  { id: 'hunt', name: 'Hunt with Sire', desc: 'Learn predator instincts', duration: 1, outcome: 'You hunted beside your sire. Their movements fluid. Yours clumsy. But improving.', type: 'vampire', power: 5 },
-  { id: 'feed', name: 'Practice Controlled Feeding', desc: 'Don\'t kill the prey', duration: 1, outcome: 'You fed but stopped before death. Control. Your sire nodded approval.', type: 'vampire', power: 3 },
-  { id: 'speed', name: 'Speed Training', desc: 'Blur through shadows', duration: 1, outcome: 'You blurred through the night. Faster than before. The world a smear.', type: 'vampire', power: 4 },
-  { id: 'strength', name: 'Test Your Strength', desc: 'Break things. Carefully.', duration: 1, outcome: 'You snapped a steel bar. Your sire raised an eyebrow. Impressed.', type: 'vampire', power: 4 },
-  { id: 'compulsion', name: 'Practice Compulsion', desc: 'Bend minds to your will', duration: 1, outcome: 'You looked into human eyes. "Forget." They did. Power absolute.', type: 'vampire', power: 6 },
-  { id: 'meditate_power', name: 'Meditate on Power', desc: 'Feel the vampire within', duration: 1, outcome: 'You felt the vampire within. Ancient. Powerful. Growing.', type: 'vampire', power: 3 },
+  { id: 'hunt', name: 'Hunt with Sire', desc: 'Learn predator instincts', duration: 1, outcome: 'You hunted beside your sire. Their movements fluid. Yours clumsy. But improving.', type: 'vampire', power: 5, xp: 15 },
+  { id: 'feed', name: 'Practice Controlled Feeding', desc: 'Don\'t kill the prey', duration: 1, outcome: 'You fed but stopped before death. Control. Your sire nodded approval.', type: 'vampire', power: 3, xp: 10 },
+  { id: 'speed', name: 'Speed Training', desc: 'Blur through shadows', duration: 1, outcome: 'You blurred through the night. Faster than before. The world a smear.', type: 'vampire', power: 4, xp: 12 },
+  { id: 'strength', name: 'Test Your Strength', desc: 'Break things. Carefully.', duration: 1, outcome: 'You snapped a steel bar. Your sire raised an eyebrow. Impressed.', type: 'vampire', power: 4, xp: 12 },
+  { id: 'compulsion', name: 'Practice Compulsion', desc: 'Bend minds to your will', duration: 1, outcome: 'You looked into human eyes. "Forget." They did. Power absolute.', type: 'vampire', power: 6, xp: 18 },
+  { id: 'meditate_power', name: 'Meditate on Power', desc: 'Feel the vampire within', duration: 1, outcome: 'You felt the vampire within. Ancient. Powerful. Growing.', type: 'vampire', power: 3, xp: 8 },
   { id: 'night_walk', name: 'Walk the Night', desc: 'Embrace the darkness', duration: 2, outcome: 'You walked through shadows. This is home now. No longer afraid.', type: 'peaceful' },
   { id: 'blood_meditation', name: 'Blood Meditation', desc: 'Connect with vampiric nature', duration: 1, outcome: 'Connected with your vampiric nature. The hunger is part of you.', type: 'peaceful' },
   { id: 'read_lore', name: 'Read Vampire Lore', desc: 'Study ancient knowledge', duration: 2, outcome: 'Learned ancient vampire history. You understand your heritage now.', type: 'peaceful' },
@@ -46,7 +46,16 @@ export default function HunterHomeActivities({ hunter, onClose }) {
         
         if (isTurnedVampire && activity.power) {
           updates.vampire_power_level = Math.min(100, (hunter.vampire_power_level || 0) + activity.power);
-          updates.experience = (hunter.experience || 0) + (activity.power * 2);
+          updates.experience = (hunter.experience || 0) + (activity.xp || activity.power * 2);
+          updates.nights_as_vampire = (hunter.nights_as_vampire || 0) + 1;
+
+          // Auto-unlock powers at thresholds
+          const newPower = updates.vampire_power_level;
+          let newStage = hunter.vampire_stage || 1;
+          if (newPower >= 25 && newStage === 1) newStage = 2;
+          if (newPower >= 50 && newStage === 2) newStage = 3;
+          if (newPower >= 75 && newStage === 3) newStage = 4;
+          updates.vampire_stage = newStage;
         }
 
         if (Object.keys(updates).length > 0) {

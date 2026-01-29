@@ -1,74 +1,215 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Zap, Lock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Zap, Lock, Check, ChevronRight, Star, Droplets, Eye, Brain, Wind, Target } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 
-const VAMPIRE_POWERS = [
-  { name: 'Enhanced Senses', stage: 1, power: 0 },
-  { name: 'Super Speed', stage: 1, power: 10 },
-  { name: 'Super Strength', stage: 1, power: 15 },
-  { name: 'Compulsion', stage: 2, power: 30 },
-  { name: 'Dream Walking', stage: 2, power: 40 },
-  { name: 'Emotion Manipulation', stage: 2, power: 50 },
-  { name: 'Mind Reading', stage: 3, power: 60 },
-  { name: 'Telekinesis', stage: 3, power: 70 },
-  { name: 'Illusion Casting', stage: 3, power: 80 },
-  { name: 'Daylight Immunity', stage: 4, power: 90 }
-];
+const VAMPIRE_POWERS = {
+  // Tier 1 - Newborn (Stage 1, Power 0-25)
+  enhanced_senses: {
+    id: 'enhanced_senses',
+    name: 'Enhanced Senses',
+    tier: 1,
+    stage: 1,
+    power: 0,
+    icon: Eye,
+    color: 'blue',
+    desc: 'See in darkness, hear heartbeats from afar',
+    upgrades: [
+      { id: 'predator_vision', name: 'Predator Vision', desc: 'Track heat signatures through walls', cost: 50 },
+      { id: 'sonic_hearing', name: 'Sonic Hearing', desc: 'Hear whispers from miles away', cost: 50 }
+    ]
+  },
+  super_speed: {
+    id: 'super_speed',
+    name: 'Super Speed',
+    tier: 1,
+    stage: 1,
+    power: 10,
+    icon: Wind,
+    color: 'cyan',
+    desc: 'Move faster than the human eye can track',
+    upgrades: [
+      { id: 'time_dilation', name: 'Time Dilation', desc: 'World slows when you move', cost: 60 },
+      { id: 'afterimage', name: 'Afterimage', desc: 'Leave copies of yourself', cost: 60 }
+    ]
+  },
+  super_strength: {
+    id: 'super_strength',
+    name: 'Super Strength',
+    tier: 1,
+    stage: 1,
+    power: 15,
+    icon: Zap,
+    color: 'red',
+    desc: 'Possess overwhelming physical power',
+    upgrades: [
+      { id: 'titanium_grip', name: 'Titanium Grip', desc: 'Crush steel with bare hands', cost: 60 },
+      { id: 'seismic_impact', name: 'Seismic Impact', desc: 'Shatter ground with strikes', cost: 60 }
+    ]
+  },
+
+  // Tier 2 - Fledgling (Stage 2, Power 25-50)
+  compulsion: {
+    id: 'compulsion',
+    name: 'Compulsion',
+    tier: 2,
+    stage: 2,
+    power: 30,
+    icon: Brain,
+    color: 'purple',
+    desc: 'Force your will upon mortal minds',
+    upgrades: [
+      { id: 'mass_compulsion', name: 'Mass Compulsion', desc: 'Control multiple minds at once', cost: 100 },
+      { id: 'memory_implant', name: 'Memory Implant', desc: 'Create false memories', cost: 100 }
+    ]
+  },
+  dream_walking: {
+    id: 'dream_walking',
+    name: 'Dream Walking',
+    tier: 2,
+    stage: 2,
+    power: 40,
+    icon: Brain,
+    color: 'indigo',
+    desc: 'Enter and manipulate dreams',
+    upgrades: [
+      { id: 'nightmare_weaver', name: 'Nightmare Weaver', desc: 'Craft terrifying dreams', cost: 100 },
+      { id: 'dream_prison', name: 'Dream Prison', desc: 'Trap consciousness in dreams', cost: 120 }
+    ]
+  },
+  emotion_manipulation: {
+    id: 'emotion_manipulation',
+    name: 'Emotion Manipulation',
+    tier: 2,
+    stage: 2,
+    power: 50,
+    icon: Brain,
+    color: 'pink',
+    desc: 'Control what others feel',
+    upgrades: [
+      { id: 'fear_aura', name: 'Fear Aura', desc: 'Radiate terror', cost: 90 },
+      { id: 'euphoria_touch', name: 'Euphoria Touch', desc: 'Make them crave you', cost: 90 }
+    ]
+  },
+
+  // Tier 3 - Established (Stage 3, Power 50-75)
+  mind_reading: {
+    id: 'mind_reading',
+    name: 'Mind Reading',
+    tier: 3,
+    stage: 3,
+    power: 60,
+    icon: Brain,
+    color: 'violet',
+    desc: 'Hear thoughts like whispers',
+    upgrades: [
+      { id: 'thought_extraction', name: 'Thought Extraction', desc: 'Steal memories and knowledge', cost: 150 },
+      { id: 'mental_link', name: 'Mental Link', desc: 'Create telepathic bonds', cost: 150 }
+    ]
+  },
+  telekinesis: {
+    id: 'telekinesis',
+    name: 'Telekinesis',
+    tier: 3,
+    stage: 3,
+    power: 70,
+    icon: Zap,
+    color: 'purple',
+    desc: 'Move objects with your mind',
+    upgrades: [
+      { id: 'blood_control', name: 'Blood Control', desc: 'Manipulate blood itself', cost: 180 },
+      { id: 'force_barrier', name: 'Force Barrier', desc: 'Create invisible shields', cost: 180 }
+    ]
+  },
+  illusion_casting: {
+    id: 'illusion_casting',
+    name: 'Illusion Casting',
+    tier: 3,
+    stage: 3,
+    power: 80,
+    icon: Eye,
+    color: 'pink',
+    desc: 'Make others see what isn\'t there',
+    upgrades: [
+      { id: 'perfect_disguise', name: 'Perfect Disguise', desc: 'Become anyone', cost: 160 },
+      { id: 'mass_hallucination', name: 'Mass Hallucination', desc: 'Bend reality for crowds', cost: 200 }
+    ]
+  },
+
+  // Tier 4 - Elder (Stage 4, Power 75-100)
+  daylight_immunity: {
+    id: 'daylight_immunity',
+    name: 'Daylight Immunity',
+    tier: 4,
+    stage: 4,
+    power: 90,
+    icon: Star,
+    color: 'yellow',
+    desc: 'Walk freely in sunlight',
+    special: 'Requires sire bond 90%',
+    upgrades: [
+      { id: 'solar_absorption', name: 'Solar Absorption', desc: 'Gain power from sun', cost: 250 },
+      { id: 'radiant_form', name: 'Radiant Form', desc: 'Glow with inner light', cost: 250 }
+    ]
+  }
+};
 
 const TRAINING_ACTIONS = [
-  { id: 'hunt', label: 'Hunt with Sire', power: 5, nights: 1, desc: 'Learn predator instincts' },
-  { id: 'feed', label: 'Practice Controlled Feeding', power: 3, nights: 1, desc: 'Don\'t kill the prey' },
-  { id: 'speed', label: 'Speed Training', power: 4, nights: 1, desc: 'Blur through shadows' },
-  { id: 'strength', label: 'Test Your Strength', power: 4, nights: 1, desc: 'Break things. Carefully.' },
-  { id: 'compulsion', label: 'Practice Compulsion', power: 6, nights: 1, desc: 'Bend minds to your will' },
-  { id: 'meditate', label: 'Meditate on Power', power: 3, nights: 1, desc: 'Feel the vampire within' }
+  { id: 'hunt', label: 'Hunt with Sire', power: 5, xp: 15, desc: 'Learn predator instincts' },
+  { id: 'feed', label: 'Controlled Feeding', power: 3, xp: 10, desc: 'Don\'t kill the prey' },
+  { id: 'speed', label: 'Speed Training', power: 4, xp: 12, desc: 'Blur through shadows' },
+  { id: 'strength', label: 'Strength Training', power: 4, xp: 12, desc: 'Break steel bars' },
+  { id: 'compulsion', label: 'Practice Compulsion', power: 6, xp: 18, desc: 'Bend human minds' },
+  { id: 'meditate', label: 'Meditate on Power', power: 3, xp: 8, desc: 'Connect with vampire nature' },
+  { id: 'spar', label: 'Spar with Sire', power: 7, xp: 20, desc: 'Combat training', special: 'Bond required: 50%' }
 ];
 
 export default function HunterVampirePowerTree({ hunter, onClose }) {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const [selectedPower, setSelectedPower] = useState(null);
   const [training, setTraining] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [view, setView] = useState('overview'); // 'overview', 'training', 'power'
 
   const stage = hunter.vampire_stage || 1;
   const power = hunter.vampire_power_level || 0;
+  const xp = hunter.experience || 0;
   const nights = hunter.nights_as_vampire || 0;
   const unlockedPowers = hunter.unlocked_powers || [];
+  const powerUpgrades = hunter.power_upgrades || {};
 
-  const availablePowers = VAMPIRE_POWERS.filter(p => p.stage <= stage && p.power <= power);
-  const lockedPowers = VAMPIRE_POWERS.filter(p => p.stage > stage || p.power > power);
-
-  const getStageProgress = () => {
-    if (stage === 1) return { next: 'Fledgling', required: 25 };
-    if (stage === 2) return { next: 'Established', required: 50 };
-    if (stage === 3) return { next: 'Elder', required: 75 };
-    return { next: 'Max', required: 100 };
+  const canUnlockPower = (powerData) => {
+    if (unlockedPowers.includes(powerData.id)) return false;
+    if (stage < powerData.stage) return false;
+    if (power < powerData.power) return false;
+    return true;
   };
 
-  const { next, required } = getStageProgress();
+  const canUpgrade = (powerId, upgrade) => {
+    if (!unlockedPowers.includes(powerId)) return false;
+    if (powerUpgrades[powerId]?.includes(upgrade.id)) return false;
+    if (xp < upgrade.cost) return false;
+    return true;
+  };
 
   const handleTrain = async (action) => {
     setTraining(true);
 
     setTimeout(async () => {
       const newPower = Math.min(power + action.power, 100);
-      const newNights = nights + action.nights;
+      const newXp = xp + action.xp;
+      const newNights = nights + 1;
 
-      // Check for stage advancement
       let newStage = stage;
       if (newPower >= 25 && stage === 1) newStage = 2;
       if (newPower >= 50 && stage === 2) newStage = 3;
       if (newPower >= 75 && stage === 3) newStage = 4;
 
-      // Auto-unlock powers at thresholds
       const newUnlocked = [...unlockedPowers];
-      VAMPIRE_POWERS.forEach(p => {
-        if (p.power <= newPower && p.stage <= newStage && !newUnlocked.includes(p.name)) {
-          newUnlocked.push(p.name);
+      Object.values(VAMPIRE_POWERS).forEach(p => {
+        if (p.power <= newPower && p.stage <= newStage && !newUnlocked.includes(p.id)) {
+          newUnlocked.push(p.id);
         }
       });
 
@@ -76,59 +217,38 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
         vampire_power_level: newPower,
         vampire_stage: newStage,
         nights_as_vampire: newNights,
+        experience: newXp,
         unlocked_powers: newUnlocked
       });
 
       const messages = {
-        hunt: [
-          'You hunted beside your sire. Their movements fluid. Yours clumsy. But improving.',
-          'The hunt came naturally. Predator instincts awakening. You felt alive.',
-          'Blood on your lips. The prey escaped. Your sire smiled. "You\'re learning."'
-        ],
-        feed: [
-          'You fed but stopped before death. Control. Your sire nodded approval.',
-          'The human walked away dazed. Alive. You\'re getting better at this.',
-          'Controlled feeding. No bodies. No evidence. Your sire is proud.'
-        ],
-        speed: [
-          'You blurred through the night. Faster than before. The world a smear.',
-          'Your sire raced you. You lost. But you were close. So close.',
-          'Speed is becoming natural. You move like shadow. Like death.'
-        ],
-        strength: [
-          'You snapped a steel bar. Your sire raised an eyebrow. Impressed.',
-          'Strength surging. You lifted a car. Barely strained. Power intoxicates.',
-          'You broke the dummy. And the wall behind it. Oops.'
-        ],
-        compulsion: [
-          'You looked into human eyes. "Forget." They did. Power absolute.',
-          'Compulsion works now. Their minds open. Malleable. Yours to command.',
-          'You made them dance. Made them sing. Made them forget. Perfect.'
-        ],
-        meditate: [
-          'You felt the vampire within. Ancient. Powerful. Growing.',
-          'Meditation deepened your connection. The beast and the mind becoming one.',
-          'You understand now. You\'re not cursed. You\'re evolved.'
-        ]
+        hunt: ['Blood on your lips. The prey escaped. Control improving.', 'You moved like shadow. Like death. Natural predator.', 'The hunt sang in your veins. You are vampire.'],
+        feed: ['Stopped before death. Control absolute. Your sire proud.', 'The human lives. Dazed. You grow stronger.', 'Perfect control. No deaths. No witnesses.'],
+        speed: ['You blurred. Faster than sight. World a smear of color.', 'Speed beyond human. The night your playground.', 'Moved between heartbeats. Impossible speed.'],
+        strength: ['Steel bent. Concrete cracked. Power incarnate.', 'Strength beyond mortal limits. Unstoppable.', 'You lifted the impossible. Crushed the unbreakable.'],
+        compulsion: ['Their eyes glazed. "Yes." Complete obedience.', 'Mind bent. Will broken. Power absolute.', 'They obeyed without question. Puppet strings invisible.'],
+        meditate: ['Connected to ancient power. Vampire within awakening.', 'Felt the centuries of power flowing through you.', 'The vampire inside growing. Merging. One.'],
+        spar: ['Your sire tested you. You held your own. Pride in their eyes.', 'Combat like dance. Deadly. Beautiful. Learning fast.', 'Blood and bruises. Both smiling. This is training.']
       };
 
       let msg = messages[action.id][Math.floor(Math.random() * messages[action.id].length)];
 
       if (newStage > stage) {
-        msg += `\n\n🎉 You advanced to ${next}!`;
+        const stageName = newStage === 2 ? 'Fledgling' : newStage === 3 ? 'Established' : 'Elder';
+        msg += `\n\n🎉 Evolved to ${stageName}!`;
       }
 
-      if (newUnlocked.length > unlockedPowers.length) {
-        const newPower = newUnlocked.find(p => !unlockedPowers.includes(p));
-        msg += `\n\n✨ New power unlocked: ${newPower}!`;
+      const newPowers = newUnlocked.filter(p => !unlockedPowers.includes(p));
+      if (newPowers.length > 0) {
+        msg += `\n\n✨ New powers: ${newPowers.map(id => VAMPIRE_POWERS[id]?.name).join(', ')}`;
       }
 
       setOutcome(msg);
 
       await base44.entities.NightLog.create({
-        entry: `${hunter.name} trained: ${msg}`,
+        entry: `${hunter.name}: ${msg}`,
         category: 'power',
-        intensity: 'moderate'
+        intensity: newStage > stage ? 'extreme' : 'significant'
       });
 
       queryClient.invalidateQueries();
@@ -136,8 +256,83 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
       setTimeout(() => {
         setTraining(false);
         setOutcome('');
+        setView('overview');
       }, 4000);
     }, 2000);
+  };
+
+  const handleUpgrade = async (powerId, upgrade) => {
+    if (!canUpgrade(powerId, upgrade)) return;
+
+    const newUpgrades = { ...powerUpgrades };
+    if (!newUpgrades[powerId]) newUpgrades[powerId] = [];
+    newUpgrades[powerId].push(upgrade.id);
+
+    await base44.entities.Hunter.update(hunter.id, {
+      experience: xp - upgrade.cost,
+      power_upgrades: newUpgrades
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${hunter.name} upgraded ${VAMPIRE_POWERS[powerId].name} → ${upgrade.name}. Power refined.`,
+      category: 'power',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
+    setSelectedPower(null);
+  };
+
+  const PowerCard = ({ powerData }) => {
+    const Icon = powerData.icon;
+    const isUnlocked = unlockedPowers.includes(powerData.id);
+    const canUnlock = canUnlockPower(powerData);
+    const upgrades = powerUpgrades[powerData.id] || [];
+
+    return (
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        className={`border-2 rounded-xl p-4 transition-all cursor-pointer ${
+          isUnlocked
+            ? `bg-${powerData.color}-950/30 border-${powerData.color}-500/50`
+            : canUnlock
+            ? 'bg-purple-950/20 border-purple-500/40'
+            : 'bg-gray-900/40 border-gray-700/30 opacity-60'
+        }`}
+        onClick={() => isUnlocked && setSelectedPower(powerData.id)}
+      >
+        <div className="flex items-start gap-3">
+          <Icon className={`w-6 h-6 text-${powerData.color}-400`} />
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-1">
+              <h4 className="text-white font-bold">{powerData.name}</h4>
+              {isUnlocked && <Check className="w-5 h-5 text-green-400" />}
+              {!isUnlocked && !canUnlock && <Lock className="w-5 h-5 text-gray-500" />}
+            </div>
+            <p className="text-gray-400 text-sm mb-2">{powerData.desc}</p>
+            {isUnlocked && upgrades.length > 0 && (
+              <div className="flex gap-1">
+                {upgrades.map(uid => (
+                  <span key={uid} className="text-xs bg-green-900/50 text-green-300 px-2 py-0.5 rounded">
+                    {powerData.upgrades.find(u => u.id === uid)?.name}
+                  </span>
+                ))}
+              </div>
+            )}
+            {!isUnlocked && (
+              <div className="flex gap-2 text-xs">
+                <span className={`px-2 py-1 rounded ${stage >= powerData.stage ? 'bg-green-900/50 text-green-300' : 'bg-gray-800 text-gray-400'}`}>
+                  Stage {powerData.stage}
+                </span>
+                <span className={`px-2 py-1 rounded ${power >= powerData.power ? 'bg-green-900/50 text-green-300' : 'bg-gray-800 text-gray-400'}`}>
+                  {powerData.power} Power
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    );
   };
 
   return (
@@ -152,120 +347,203 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gradient-to-br from-rose-950 to-red-950 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative border-2 border-rose-500/50"
+        className="bg-gradient-to-br from-rose-950 to-red-950 rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-rose-500/50"
       >
         <button onClick={onClose} className="absolute top-4 right-4 text-rose-300 hover:text-white">
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-rose-100 mb-2">🩸 Vampire Progression</h2>
+        <h2 className="text-3xl font-bold text-rose-100 mb-2">🩸 Vampire Evolution</h2>
         <p className="text-rose-300 text-sm mb-6">{hunter.name}'s path to power</p>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-black/30 rounded-lg p-3 border border-rose-500/30">
+        {/* Stats Bar */}
+        <div className="grid grid-cols-4 gap-3 mb-6">
+          <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
             <p className="text-rose-400 text-xs">Stage</p>
-            <p className="text-rose-100 font-bold">
+            <p className="text-rose-100 font-bold text-lg">
               {stage === 1 ? '🩸 Newborn' : stage === 2 ? '🌙 Fledgling' : stage === 3 ? '⚡ Established' : '👑 Elder'}
             </p>
-            {stage < 4 && <p className="text-rose-300 text-xs mt-1">Next: {next} at {required} power</p>}
           </div>
-          <div className="bg-black/30 rounded-lg p-3 border border-rose-500/30">
-            <p className="text-rose-400 text-xs">Power Level</p>
-            <p className="text-rose-100 font-bold">{power}/100</p>
+          <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
+            <p className="text-rose-400 text-xs">Power</p>
+            <p className="text-rose-100 font-bold text-lg">{power}/100</p>
           </div>
-          <div className="bg-black/30 rounded-lg p-3 border border-rose-500/30">
-            <p className="text-rose-400 text-xs">Nights as Vampire</p>
-            <p className="text-rose-100 font-bold">{nights}</p>
+          <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
+            <p className="text-rose-400 text-xs">XP</p>
+            <p className="text-rose-100 font-bold text-lg">{xp}</p>
           </div>
-          <div className="bg-black/30 rounded-lg p-3 border border-rose-500/30">
-            <p className="text-rose-400 text-xs">Powers Unlocked</p>
-            <p className="text-rose-100 font-bold">{unlockedPowers.length}/{VAMPIRE_POWERS.length}</p>
+          <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
+            <p className="text-rose-400 text-xs">Nights</p>
+            <p className="text-rose-100 font-bold text-lg">{nights}</p>
           </div>
         </div>
 
-        {outcome ? (
-          <div className="bg-black/40 rounded-xl p-6 border border-rose-500/30 mb-6">
-            <p className="text-rose-100 text-base leading-relaxed whitespace-pre-line">{outcome}</p>
-          </div>
-        ) : training ? (
-          <div className="text-center py-8">
-            <motion.p
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="text-rose-300"
+        {/* View Tabs */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setView('overview')}
+            className={`px-4 py-2 rounded-lg transition-all ${view === 'overview' ? 'bg-rose-600 text-white' : 'bg-black/40 text-rose-300 hover:bg-black/60'}`}
+          >
+            Powers
+          </button>
+          <button
+            onClick={() => setView('training')}
+            className={`px-4 py-2 rounded-lg transition-all ${view === 'training' ? 'bg-rose-600 text-white' : 'bg-black/40 text-rose-300 hover:bg-black/60'}`}
+          >
+            Training
+          </button>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {outcome ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-black/60 rounded-xl p-8 text-center border border-rose-500/30"
             >
-              Training...
-            </motion.p>
-          </div>
-        ) : (
-          <>
-            {/* Training Actions */}
-            <div className="mb-6">
-              <h3 className="text-rose-200 font-bold mb-3">Training</h3>
-              <div className="grid grid-cols-2 gap-2">
+              <p className="text-rose-100 text-lg leading-relaxed whitespace-pre-line">{outcome}</p>
+            </motion.div>
+          ) : training ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <motion.div
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <Droplets className="w-12 h-12 text-rose-400 mx-auto" />
+              </motion.div>
+              <p className="text-rose-300 mt-4">Training...</p>
+            </motion.div>
+          ) : view === 'training' ? (
+            <motion.div
+              key="training"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <div className="grid grid-cols-2 gap-3">
                 {TRAINING_ACTIONS.map(action => (
                   <button
                     key={action.id}
                     onClick={() => handleTrain(action)}
-                    className="bg-rose-900/40 hover:bg-rose-900/60 border border-rose-500/30 rounded-lg p-3 text-left transition-colors"
+                    className="bg-rose-900/40 hover:bg-rose-900/60 border border-rose-500/30 rounded-xl p-4 text-left transition-all"
                   >
-                    <p className="text-rose-100 font-medium text-sm">{action.label}</p>
-                    <p className="text-rose-300 text-xs mt-1">{action.desc}</p>
-                    <p className="text-rose-400 text-xs mt-1">+{action.power} power</p>
+                    <h4 className="text-rose-100 font-bold mb-1">{action.label}</h4>
+                    <p className="text-rose-300 text-xs mb-2">{action.desc}</p>
+                    <div className="flex gap-2 text-xs">
+                      <span className="text-rose-400">+{action.power} Power</span>
+                      <span className="text-purple-400">+{action.xp} XP</span>
+                    </div>
                   </button>
                 ))}
               </div>
-            </div>
+            </motion.div>
+          ) : selectedPower ? (
+            <motion.div
+              key="upgrade"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+            >
+              <button
+                onClick={() => setSelectedPower(null)}
+                className="text-rose-300 hover:text-rose-100 mb-4 text-sm"
+              >
+                ← Back
+              </button>
+              <div className="bg-black/40 rounded-xl p-6 border border-rose-500/30 mb-4">
+                <h3 className="text-2xl font-bold text-rose-100 mb-2">{VAMPIRE_POWERS[selectedPower].name}</h3>
+                <p className="text-rose-300 mb-4">{VAMPIRE_POWERS[selectedPower].desc}</p>
+                <div className="flex gap-2">
+                  <span className="text-xs bg-rose-900/50 text-rose-300 px-3 py-1 rounded">Tier {VAMPIRE_POWERS[selectedPower].tier}</span>
+                  <span className="text-xs bg-rose-900/50 text-rose-300 px-3 py-1 rounded">Stage {VAMPIRE_POWERS[selectedPower].stage}</span>
+                </div>
+              </div>
+              <h4 className="text-rose-200 font-bold mb-3">Upgrade Paths</h4>
+              <div className="space-y-3">
+                {VAMPIRE_POWERS[selectedPower].upgrades.map(upgrade => {
+                  const isUnlocked = powerUpgrades[selectedPower]?.includes(upgrade.id);
+                  const canBuy = canUpgrade(selectedPower, upgrade);
 
-            {/* Unlocked Powers */}
-            {availablePowers.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-rose-200 font-bold mb-3 flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
-                  Unlocked Powers
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {availablePowers.map(p => (
+                  return (
                     <div
-                      key={p.name}
-                      className={`rounded-lg p-3 border ${
-                        unlockedPowers.includes(p.name)
-                          ? 'bg-rose-500/20 border-rose-400'
-                          : 'bg-black/20 border-rose-500/20'
+                      key={upgrade.id}
+                      className={`border-2 rounded-xl p-4 ${
+                        isUnlocked
+                          ? 'bg-green-950/30 border-green-500/50'
+                          : canBuy
+                          ? 'bg-purple-950/20 border-purple-500/40 cursor-pointer hover:bg-purple-950/30'
+                          : 'bg-gray-900/40 border-gray-700/30 opacity-60'
                       }`}
+                      onClick={() => canBuy && handleUpgrade(selectedPower, upgrade)}
                     >
-                      <p className="text-rose-100 text-sm font-medium">⚡ {p.name}</p>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h5 className="text-white font-bold mb-1">{upgrade.name}</h5>
+                          <p className="text-gray-400 text-sm">{upgrade.desc}</p>
+                        </div>
+                        {isUnlocked ? (
+                          <Check className="w-6 h-6 text-green-400" />
+                        ) : (
+                          <span className={`text-sm px-3 py-1 rounded ${xp >= upgrade.cost ? 'bg-purple-900/50 text-purple-300' : 'bg-gray-800 text-gray-400'}`}>
+                            {upgrade.cost} XP
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
-
-            {/* Locked Powers */}
-            {lockedPowers.length > 0 && (
+            </motion.div>
+          ) : (
+            <motion.div
+              key="overview"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="space-y-6"
+            >
               <div>
-                <h3 className="text-rose-200 font-bold mb-3 flex items-center gap-2">
-                  <Lock className="w-4 h-4" />
-                  Locked Powers
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {lockedPowers.map(p => (
-                    <div
-                      key={p.name}
-                      className="bg-black/40 border border-rose-900/30 rounded-lg p-3 opacity-50"
-                    >
-                      <p className="text-rose-300 text-sm font-medium">{p.name}</p>
-                      <p className="text-rose-400 text-xs">
-                        Requires: Stage {p.stage}, {p.power} power
-                      </p>
-                    </div>
+                <h3 className="text-rose-200 font-bold mb-3">Tier 1 - Newborn Powers</h3>
+                <div className="grid gap-3">
+                  {Object.values(VAMPIRE_POWERS).filter(p => p.tier === 1).map(p => (
+                    <PowerCard key={p.id} powerData={p} />
                   ))}
                 </div>
               </div>
-            )}
-          </>
-        )}
+
+              <div>
+                <h3 className="text-rose-200 font-bold mb-3">Tier 2 - Fledgling Powers</h3>
+                <div className="grid gap-3">
+                  {Object.values(VAMPIRE_POWERS).filter(p => p.tier === 2).map(p => (
+                    <PowerCard key={p.id} powerData={p} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-rose-200 font-bold mb-3">Tier 3 - Established Powers</h3>
+                <div className="grid gap-3">
+                  {Object.values(VAMPIRE_POWERS).filter(p => p.tier === 3).map(p => (
+                    <PowerCard key={p.id} powerData={p} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-rose-200 font-bold mb-3">Tier 4 - Elder Powers</h3>
+                <div className="grid gap-3">
+                  {Object.values(VAMPIRE_POWERS).filter(p => p.tier === 4).map(p => (
+                    <PowerCard key={p.id} powerData={p} />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </motion.div>
   );
