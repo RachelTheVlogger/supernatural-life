@@ -163,12 +163,7 @@ export default function ServantHome() {
   const servantId = urlParams.get('id');
   const powerParam = urlParams.get('power');
 
-  // Auto-open power usage if power param exists
-  useEffect(() => {
-    if (powerParam && servant && !selectedPower) {
-      setSelectedPower(decodeURIComponent(powerParam));
-    }
-  }, [powerParam, servant, selectedPower]);
+
   
   const { data: career = [] } = useQuery({
     queryKey: ['career', servantId],
@@ -204,6 +199,13 @@ export default function ServantHome() {
     retry: 1,
     refetchOnMount: true
   });
+  
+  // Auto-open power usage if power param exists
+  useEffect(() => {
+    if (powerParam && servant && !selectedPower) {
+      setSelectedPower(decodeURIComponent(powerParam));
+    }
+  }, [powerParam, servant, selectedPower]);
 
   const { data: allServants = [] } = useQuery({
     queryKey: ['servants'],
