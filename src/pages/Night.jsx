@@ -55,6 +55,8 @@ import SupernaturalDating from '@/components/nightbound/SupernaturalDating';
 export default function Night() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const urlParams = new URLSearchParams(window.location.search);
+  const hunterParam = urlParams.get('hunter');
   const [activeModal, setActiveModal] = useState(null);
   const [selectedServant, setSelectedServant] = useState(null);
   const [showDaylightRings, setShowDaylightRings] = useState(false);
