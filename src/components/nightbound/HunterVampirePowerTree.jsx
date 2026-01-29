@@ -69,7 +69,7 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
     setTraining(true);
 
     setTimeout(async () => {
-      const newPower = Math.min(power + action.power, 100);
+      const newPower = power + action.power; // Infinite power progression
       const newXp = xp + action.xp;
       const newNights = nights + 1;
 
