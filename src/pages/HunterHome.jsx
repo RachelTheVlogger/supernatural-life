@@ -115,7 +115,9 @@ export default function HunterHome() {
     }
   });
 
-  const hunter = hunters[0];
+  const urlParams = new URLSearchParams(window.location.search);
+  const hunterId = urlParams.get('id');
+  const hunter = hunterId ? hunters.find(h => h.id === hunterId) : hunters[0];
   const myTeam = teams.find(t => t.member_ids?.includes(hunter?.id));
 
   if (huntersLoading) {
