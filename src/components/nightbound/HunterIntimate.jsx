@@ -339,8 +339,12 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
                  vampire_power_level: 10
                });
                
-               // Invalidate and close
-               queryClient.invalidateQueries({ queryKey: ['hunters'] });
+               // Force refetch and wait for it
+               await queryClient.refetchQueries({ queryKey: ['hunters'] });
+               
+               // Small delay to ensure UI updates
+               await new Promise(resolve => setTimeout(resolve, 300));
+               
                setProcessing(false);
                setOutcome('');
                if (onClose) onClose();
