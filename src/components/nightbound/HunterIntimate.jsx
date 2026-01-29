@@ -328,38 +328,40 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
 
          // Handle turn actions
          if (action.category === 'eternity') {
-           // Show outcome for 4 seconds
-           setTimeout(async () => {
-             try {
-               // Update hunter to vampire
-               await base44.entities.Hunter.update(hunter.id, {
-                 is_turned: true,
-                 vampire_stage: 1,
-                 status: 'recruited',
-                 vampire_power_level: 10
-               });
-               
-               // Force refetch and wait for it
-               await queryClient.refetchQueries({ queryKey: ['hunters'] });
-               
-               // Small delay to ensure UI updates
-               await new Promise(resolve => setTimeout(resolve, 300));
-               
-               setProcessing(false);
-               setOutcome('');
-               if (onClose) onClose();
-             } catch (e) {
-               console.error('Failed to turn hunter:', e);
-               setProcessing(false);
-             }
-           }, 4000);
-         } else {
-           // Regular action - show for 5 seconds then close
-           setTimeout(() => {
+           // Show outcome for 3 seconds, then update
+           await new Promise(resolve => setTimeout(resolve, 3000));
+           
+           try {
+             console.log('Turning hunter:', hunter.id);
+             // Update hunter to vampire
+             const updated = await base44.entities.Hunter.update(hunter.id, {
+               is_turned: true,
+               vampire_stage: 1,
+               status: 'recruited',
+               vampire_power_level: 10
+             });
+             console.log('Hunter updated:', updated);
+             
+             // Force refetch and wait
+             await queryClient.refetchQueries({ queryKey: ['hunters'] });
+             console.log('Queries refetched');
+             
+             // Wait for UI to update
+             await new Promise(resolve => setTimeout(resolve, 500));
+             
              setProcessing(false);
              setOutcome('');
-             queryClient.invalidateQueries();
-           }, 5000);
+             if (onClose) onClose();
+           } catch (e) {
+             console.error('Failed to turn hunter:', e);
+             setProcessing(false);
+           }
+         } else {
+           // Regular action - show for 5 seconds then close
+           await new Promise(resolve => setTimeout(resolve, 4000));
+           setProcessing(false);
+           setOutcome('');
+           queryClient.invalidateQueries();
          }
        } catch (e) {
          console.error('Activity failed:', e);
