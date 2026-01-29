@@ -32,6 +32,7 @@ export default function HunterHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('home');
+  const [turningIntoVampire, setTurningIntoVampire] = useState(false);
   const [showHuntLog, setShowHuntLog] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
   const [showIntimate, setShowIntimate] = useState(false);
@@ -166,41 +167,36 @@ export default function HunterHome() {
         >
           <button
             onClick={async () => {
-              if (confirm(`Accept ${vampires[0].vampire_name}'s gift of eternal life?`)) {
-                try {
-                  console.log('Starting transformation...');
-                  const updated = await base44.entities.Hunter.update(hunter.id, {
-                    is_turned: true,
-                    vampire_stage: 1,
-                    status: 'recruited',
-                    vampire_power_level: 10
-                  });
-                  console.log('Hunter updated:', updated);
+              setTurningIntoVampire(true);
+              try {
+                await base44.entities.Hunter.update(hunter.id, {
+                  is_turned: true,
+                  vampire_stage: 1,
+                  status: 'recruited',
+                  vampire_power_level: 10
+                });
 
-                  await base44.entities.NightLog.create({
-                    entry: `${hunter.name} accepted the dark gift. The transformation is complete. No longer human, no longer just a hunter. Something new.`,
-                    category: 'interaction',
-                    intensity: 'extreme'
-                  });
+                await base44.entities.NightLog.create({
+                  entry: `${hunter.name} accepted the dark gift. The transformation is complete. No longer human, no longer just a hunter. Something new.`,
+                  category: 'interaction',
+                  intensity: 'extreme'
+                });
 
-                  console.log('Invalidating queries...');
-                  await queryClient.invalidateQueries({ queryKey: ['hunters'] });
-                  await queryClient.refetchQueries({ queryKey: ['hunters'] });
-                  console.log('Queries refreshed');
-
-                  // Force reload to ensure UI updates
-                  window.location.reload();
-                } catch (e) {
-                  console.error('Turn failed:', e);
-                  alert('Transformation failed: ' + e.message);
-                }
+                await queryClient.invalidateQueries();
+                await queryClient.refetchQueries({ queryKey: ['hunters'] });
+                
+                setTimeout(() => window.location.reload(), 500);
+              } catch (e) {
+                alert('Failed: ' + e.message);
+                setTurningIntoVampire(false);
               }
             }}
-            className="w-full bg-gradient-to-r from-red-900 to-red-950 hover:from-red-800 hover:to-red-900 border-2 border-red-500 text-white rounded-xl py-6 px-6 text-center transition-all shadow-lg"
+            disabled={turningIntoVampire}
+            className="w-full bg-gradient-to-r from-red-900 to-red-950 hover:from-red-800 hover:to-red-900 border-2 border-red-500 text-white rounded-xl py-6 px-6 text-center transition-all shadow-lg disabled:opacity-50"
           >
             <div className="text-3xl mb-2">🦇</div>
-            <div className="text-xl font-bold mb-2">Accept Eternal Life</div>
-            <div className="text-sm text-red-200">Become a vampire alongside {vampires[0].vampire_name}</div>
+            <div className="text-xl font-bold mb-2">{turningIntoVampire ? 'Transforming...' : 'Accept Eternal Life'}</div>
+            <div className="text-sm text-red-200">{turningIntoVampire ? 'The dark gift flows through you...' : `Become a vampire alongside ${vampires[0].vampire_name}`}</div>
           </button>
         </motion.div>
       )}
