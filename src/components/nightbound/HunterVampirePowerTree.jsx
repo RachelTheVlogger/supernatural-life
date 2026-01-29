@@ -38,11 +38,21 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
   const unlockedPowers = hunter.unlocked_powers || [];
   const powerUpgrades = hunter.power_upgrades || {};
 
-  const canUnlockPower = (powerData) => {
-    if (unlockedPowers.includes(powerData.id)) return false;
-    if (stage < powerData.stage) return false;
-    if (power < powerData.power) return false;
-    return true;
+  const handleUnlockPower = async (powerData) => {
+    if (unlockedPowers.includes(powerData.id)) return;
+    
+    const newUnlocked = [...unlockedPowers, powerData.id];
+    await base44.entities.Hunter.update(hunter.id, {
+      unlocked_powers: newUnlocked
+    });
+
+    await base44.entities.NightLog.create({
+      entry: `${hunter.name} unlocked ${powerData.name}. The power flows through you.`,
+      category: 'power',
+      intensity: 'significant'
+    });
+
+    queryClient.invalidateQueries();
   };
 
   const canUpgrade = (powerId, upgrade) => {
@@ -145,7 +155,6 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
   const PowerCard = ({ powerData }) => {
     const Icon = ICON_MAP[powerData.icon] || Eye;
     const isUnlocked = unlockedPowers.includes(powerData.id);
-    const canUnlock = canUnlockPower(powerData);
     const upgrades = powerUpgrades[powerData.id] || [];
 
     const bgColor = {
@@ -178,11 +187,9 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
         className={`border-2 rounded-xl p-4 transition-all cursor-pointer ${
           isUnlocked
             ? bgColor
-            : canUnlock
-            ? 'bg-purple-950/20 border-purple-500/40'
-            : 'bg-gray-900/40 border-gray-700/30 opacity-60'
+            : 'bg-purple-950/20 border-purple-500/40'
         }`}
-        onClick={() => isUnlocked && setSelectedPower(powerData.id)}
+        onClick={() => !isUnlocked ? handleUnlockPower(powerData) : setSelectedPower(powerData.id)}
       >
         <div className="flex items-start gap-3">
           <Icon className={`w-6 h-6 ${textColor}`} />
@@ -203,14 +210,7 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
               </div>
             )}
             {!isUnlocked && (
-              <div className="flex gap-2 text-xs">
-                <span className={`px-2 py-1 rounded ${stage >= powerData.stage ? 'bg-green-900/50 text-green-300' : 'bg-gray-800 text-gray-400'}`}>
-                  Stage {powerData.stage}
-                </span>
-                <span className={`px-2 py-1 rounded ${power >= powerData.power ? 'bg-green-900/50 text-green-300' : 'bg-gray-800 text-gray-400'}`}>
-                  {powerData.power} Power
-                </span>
-              </div>
+              <span className="text-xs text-purple-300 font-medium">Click to unlock</span>
             )}
           </div>
         </div>
