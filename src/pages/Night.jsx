@@ -52,6 +52,7 @@ import MemoryAlteration from '@/components/nightbound/MemoryAlteration';
 import BloodVintageSystem from '@/components/nightbound/BloodVintageSystem';
 import SupernaturalDating from '@/components/nightbound/SupernaturalDating';
 import HunterVampirePowerTree from '@/components/nightbound/HunterVampirePowerTree';
+import DLCStore from '@/components/nightbound/DLCStore';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -86,6 +87,7 @@ export default function Night() {
   const [showSupernaturalDating, setShowSupernaturalDating] = useState(false);
   const [showHunterWalk, setShowHunterWalk] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
+  const [showDLC, setShowDLC] = useState(false);
 
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
@@ -649,6 +651,13 @@ export default function Night() {
           <span className="text-2xl">💕</span>
           <p className="text-white text-xs mt-1">Supernatural Dating</p>
         </button>
+        <button
+          onClick={() => setShowDLC(true)}
+          className="bg-indigo-950/40 hover:bg-indigo-950/60 border border-indigo-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🎮</span>
+          <p className="text-white text-xs mt-1">Expansions</p>
+        </button>
 
         {witches.length > 0 && witches[0].relationship >= 70 && !witches[0].living_with_vampire && (
           <button
@@ -856,6 +865,10 @@ export default function Night() {
         )}
         {showSupernaturalDating && vampireState && (
           <SupernaturalDating vampireState={vampireState} onClose={() => setShowSupernaturalDating(false)} />
+        )}
+
+        {showDLC && (
+          <DLCStore onClose={() => setShowDLC(false)} />
         )}
 
         </AnimatePresence>
