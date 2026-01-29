@@ -77,6 +77,9 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
       if (newPower >= 25 && stage === 1) newStage = 2;
       if (newPower >= 50 && stage === 2) newStage = 3;
       if (newPower >= 75 && stage === 3) newStage = 4;
+      if (newPower >= 150 && stage === 4) newStage = 5; // Infinite tier progression
+      if (newPower >= 300 && stage === 5) newStage = 6;
+      if (newPower >= 500 && stage === 6) newStage = 7;
 
       const newUnlocked = [...unlockedPowers];
       Object.values(TURNED_HUNTER_POWERS).forEach(p => {
