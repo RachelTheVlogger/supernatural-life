@@ -356,187 +356,205 @@ export default function HunterHome() {
             >
 
               <div className="grid md:grid-cols-3 gap-4">
-                    {/* Hunter Network */}
+                    {!isTurnedVampire && (
+                      <>
+                        {/* Hunter Network */}
+                        <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                          <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                            <Users className="w-5 h-5" />
+                            Hunter Network
+                          </h3>
+                          <button
+                            onClick={() => setShowManagement(true)}
+                            className="w-full bg-gradient-to-r from-red-900/60 to-red-950/60 hover:from-red-900/80 hover:to-red-950/80 rounded-lg p-4 text-center transition-colors border border-red-500/30"
+                          >
+                            <h4 className="text-white font-bold text-lg mb-2">Manage Hunters</h4>
+                            <p className="text-red-300 text-sm">
+                              {hunters.length} active hunter{hunters.length !== 1 ? 's' : ''}
+                            </p>
+                          </button>
+                        </div>
+
+                        {/* Living Space */}
+                        <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                        <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                        <Home className="w-5 h-5" />
+                        Safe House
+                        </h3>
+                        <div className="space-y-2">
+                        <button
+                        onClick={() => setShowSafeHouse(true)}
+                        className="w-full bg-gradient-to-r from-orange-900/60 to-orange-950/60 hover:from-orange-900/80 hover:to-orange-950/80 rounded-lg p-4 text-center transition-colors border border-orange-500/30"
+                        >
+                        <h4 className="text-white font-bold text-lg mb-2">Upgrade Base</h4>
+                        <p className="text-orange-300 text-sm">Build facilities & customize</p>
+                        </button>
+                        <button
+                        onClick={() => setShowActivities(true)}
+                        className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+                        >
+                        <h4 className="text-white font-bold text-lg mb-2">Daily Activities</h4>
+                        <p className="text-gray-400 text-sm">Rest, train, and prepare</p>
+                        </button>
+                        </div>
+                        </div>
+
+                    {/* Current Status */}
+                    {/* Hunter Progression & Equipment */}
                     <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
                       <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                        <Users className="w-5 h-5" />
-                        Hunter Network
+                        <Zap className="w-5 h-5" />
+                        Progression
                       </h3>
-                      <button
-                        onClick={() => setShowManagement(true)}
-                        className="w-full bg-gradient-to-r from-red-900/60 to-red-950/60 hover:from-red-900/80 hover:to-red-950/80 rounded-lg p-4 text-center transition-colors border border-red-500/30"
-                      >
-                        <h4 className="text-white font-bold text-lg mb-2">Manage Hunters</h4>
-                        <p className="text-red-300 text-sm">
-                          {hunters.length} active hunter{hunters.length !== 1 ? 's' : ''}
-                        </p>
-                      </button>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => setShowProgression(true)}
+                          className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 rounded-lg p-4 text-center transition-colors border border-blue-500/30"
+                        >
+                          <h4 className="text-white font-bold text-lg mb-2">Skill Trees</h4>
+                          <p className="text-blue-300 text-sm">
+                            Level {Math.floor(Math.sqrt((hunter.experience || 0) / 50)) + 1} • {hunter.experience || 0} EXP
+                          </p>
+                        </button>
+                        <button
+                          onClick={() => setShowEquipment(true)}
+                          className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+                        >
+                          <h4 className="text-white font-bold text-lg mb-2">Equipment</h4>
+                          <p className="text-gray-400 text-sm">Gear & weapons</p>
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Living Space */}
+                    {/* Contracts & Achievements */}
                     <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
-                    <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                    <Home className="w-5 h-5" />
-                    Safe House
-                    </h3>
-                    <div className="space-y-2">
-                    <button
-                    onClick={() => setShowSafeHouse(true)}
-                    className="w-full bg-gradient-to-r from-orange-900/60 to-orange-950/60 hover:from-orange-900/80 hover:to-orange-950/80 rounded-lg p-4 text-center transition-colors border border-orange-500/30"
-                    >
-                    <h4 className="text-white font-bold text-lg mb-2">Upgrade Base</h4>
-                    <p className="text-orange-300 text-sm">Build facilities & customize</p>
-                    </button>
-                    <button
-                    onClick={() => setShowActivities(true)}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
-                    >
-                    <h4 className="text-white font-bold text-lg mb-2">Daily Activities</h4>
-                    <p className="text-gray-400 text-sm">Rest, train, and prepare</p>
-                    </button>
-                    </div>
+                      <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                        <Target className="w-5 h-5" />
+                        Missions
+                      </h3>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => setShowContracts(true)}
+                          className="w-full bg-gradient-to-r from-green-900/60 to-green-950/60 hover:from-green-900/80 hover:to-green-950/80 rounded-lg p-4 text-center transition-colors border border-green-500/30"
+                        >
+                          <h4 className="text-white font-bold text-lg mb-2">Contracts</h4>
+                          <p className="text-green-300 text-sm">Available missions</p>
+                        </button>
+                        <button
+                          onClick={() => setShowAchievements(true)}
+                          className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+                        >
+                          <h4 className="text-white font-bold text-lg mb-2">Achievements</h4>
+                          <p className="text-gray-400 text-sm">Track progress</p>
+                        </button>
+                      </div>
                     </div>
 
-                {/* Current Status */}
-                {/* Hunter Progression & Equipment */}
-                <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
-                  <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                    <Zap className="w-5 h-5" />
-                    Progression
-                  </h3>
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => setShowProgression(true)}
-                      className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 rounded-lg p-4 text-center transition-colors border border-blue-500/30"
-                    >
-                      <h4 className="text-white font-bold text-lg mb-2">Skill Trees</h4>
-                      <p className="text-blue-300 text-sm">
-                        Level {Math.floor(Math.sqrt((hunter.experience || 0) / 50)) + 1} • {hunter.experience || 0} EXP
-                      </p>
-                    </button>
-                    <button
-                      onClick={() => setShowEquipment(true)}
-                      className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
-                    >
-                      <h4 className="text-white font-bold text-lg mb-2">Equipment</h4>
-                      <p className="text-gray-400 text-sm">Gear & weapons</p>
-                    </button>
-                  </div>
-                </div>
+                    {/* Team Operations */}
+                    {myTeam && (
+                      <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                        <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                          <Users className="w-5 h-5" />
+                          Team Operations
+                        </h3>
+                        <div className="space-y-2">
+                          <button
+                            onClick={() => setShowTeamMissions(true)}
+                            className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 rounded-lg p-4 text-center transition-colors border border-blue-500/30"
+                          >
+                            <h4 className="text-white font-bold text-lg mb-2">Team Missions</h4>
+                            <p className="text-blue-300 text-sm">Coordinate operations</p>
+                          </button>
+                          <button
+                            onClick={() => setShowTeamChat(true)}
+                            className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
+                          >
+                            <h4 className="text-white font-bold text-lg mb-2">Team Chat</h4>
+                            <p className="text-gray-400 text-sm">Communicate with team</p>
+                          </button>
+                        </div>
+                      </div>
+                    )}
 
-                {/* Contracts & Achievements */}
-                <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
-                  <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                    <Target className="w-5 h-5" />
-                    Missions
-                  </h3>
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => setShowContracts(true)}
-                      className="w-full bg-gradient-to-r from-green-900/60 to-green-950/60 hover:from-green-900/80 hover:to-green-950/80 rounded-lg p-4 text-center transition-colors border border-green-500/30"
-                    >
-                      <h4 className="text-white font-bold text-lg mb-2">Contracts</h4>
-                      <p className="text-green-300 text-sm">Available missions</p>
-                    </button>
-                    <button
-                      onClick={() => setShowAchievements(true)}
-                      className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
-                    >
-                      <h4 className="text-white font-bold text-lg mb-2">Achievements</h4>
-                      <p className="text-gray-400 text-sm">Track progress</p>
-                    </button>
-                  </div>
-                </div>
 
-                {/* Team Operations */}
-                {myTeam && (
-                  <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
-                    <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                      <Users className="w-5 h-5" />
-                      Team Operations
-                    </h3>
-                    <div className="space-y-2">
-                      <button
-                        onClick={() => setShowTeamMissions(true)}
-                        className="w-full bg-gradient-to-r from-blue-900/60 to-blue-950/60 hover:from-blue-900/80 hover:to-blue-950/80 rounded-lg p-4 text-center transition-colors border border-blue-500/30"
-                      >
-                        <h4 className="text-white font-bold text-lg mb-2">Team Missions</h4>
-                        <p className="text-blue-300 text-sm">Coordinate operations</p>
-                      </button>
-                      <button
-                        onClick={() => setShowTeamChat(true)}
-                        className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors"
-                      >
-                        <h4 className="text-white font-bold text-lg mb-2">Team Chat</h4>
-                        <p className="text-gray-400 text-sm">Communicate with team</p>
-                      </button>
+
+                    <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                      <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
+                        <Target className="w-5 h-5" />
+                        Current Mission
+                      </h3>
+                      
+
+                      {hunterTargets.length > 0 ? (
+                        <div className="space-y-3">
+                          <p className="text-gray-400 text-sm">
+                            {hunterTargets.length} known vampire threat{hunterTargets.length !== 1 ? 's' : ''} active in area
+                          </p>
+                          <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3 mb-3">
+                            <p className="text-red-300 text-sm font-medium">Status: HUNTING</p>
+                            <p className="text-gray-400 text-xs mt-1">Stay alert. They're out there.</p>
+                          </div>
+                          <div className="space-y-2 max-h-48 overflow-y-auto">
+                            {hunterTargets.map(target => (
+                              <div key={target.id} className="space-y-2">
+                                <div className="bg-gray-800/50 border border-gray-700/30 rounded-lg p-3">
+                                  <p className="text-white font-medium mb-1">{target.vampire_name}</p>
+                                  {target.living_with_hunter && (
+                                    <p className="text-green-400 text-xs mb-2">💚 Living together</p>
+                                  )}
+                                  {target.hunter_relationship > 0 && (
+                                    <p className="text-purple-400 text-xs mb-2">
+                                      Bond: {target.hunter_relationship}%
+                                    </p>
+                                  )}
+                                  <div className="grid grid-cols-2 gap-2 mt-2">
+                                    <button
+                                      onClick={() => {
+                                        setTrackingVampire(target);
+                                        setShowTracking(true);
+                                      }}
+                                      className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-xs"
+                                    >
+                                      👁️ Track
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setSelectedVampire(target);
+                                        setShowInteraction(true);
+                                      }}
+                                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-xs"
+                                    >
+                                      ⚔️ Confront
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-green-950/30 border border-green-500/30 rounded-lg p-3">
+                          <p className="text-green-300 text-sm font-medium">No Active Threats</p>
+                          <p className="text-gray-400 text-xs mt-1">The city is clear. For now.</p>
+                        </div>
+                      )}
                     </div>
+                  </>
+                )}
+                
+                {isTurnedVampire && (
+                  <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6 col-span-full text-center">
+                    <div className="text-4xl mb-4">🦇</div>
+                    <h3 className="text-rose-100 text-xl font-bold mb-2">You are now a vampire</h3>
+                    <p className="text-rose-300 text-sm mb-4">Your hunter life is behind you. Switch to vampire view to continue your journey.</p>
+                    <button
+                      onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
+                      className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium"
+                    >
+                      Go to Vampire View →
+                    </button>
                   </div>
                 )}
-
-
-
-                <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
-                  <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                    <Target className="w-5 h-5" />
-                    Current Mission
-                  </h3>
-                  
-
-                  {hunterTargets.length > 0 ? (
-                    <div className="space-y-3">
-                      <p className="text-gray-400 text-sm">
-                        {hunterTargets.length} known vampire threat{hunterTargets.length !== 1 ? 's' : ''} active in area
-                      </p>
-                      <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-3 mb-3">
-                        <p className="text-red-300 text-sm font-medium">Status: HUNTING</p>
-                        <p className="text-gray-400 text-xs mt-1">Stay alert. They're out there.</p>
-                      </div>
-                      <div className="space-y-2 max-h-48 overflow-y-auto">
-                        {hunterTargets.map(target => (
-                          <div key={target.id} className="space-y-2">
-                            <div className="bg-gray-800/50 border border-gray-700/30 rounded-lg p-3">
-                              <p className="text-white font-medium mb-1">{target.vampire_name}</p>
-                              {target.living_with_hunter && (
-                                <p className="text-green-400 text-xs mb-2">💚 Living together</p>
-                              )}
-                              {target.hunter_relationship > 0 && (
-                                <p className="text-purple-400 text-xs mb-2">
-                                  Bond: {target.hunter_relationship}%
-                                </p>
-                              )}
-                              <div className="grid grid-cols-2 gap-2 mt-2">
-                                <button
-                                  onClick={() => {
-                                    setTrackingVampire(target);
-                                    setShowTracking(true);
-                                  }}
-                                  className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-xs"
-                                >
-                                  👁️ Track
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setSelectedVampire(target);
-                                    setShowInteraction(true);
-                                  }}
-                                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-xs"
-                                >
-                                  ⚔️ Confront
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-green-950/30 border border-green-500/30 rounded-lg p-3">
-                      <p className="text-green-300 text-sm font-medium">No Active Threats</p>
-                      <p className="text-gray-400 text-xs mt-1">The city is clear. For now.</p>
-                    </div>
-                  )}
-                </div>
               </div>
             </motion.div>
           )}
