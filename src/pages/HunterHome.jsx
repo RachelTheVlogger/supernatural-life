@@ -191,13 +191,15 @@ export default function HunterHome() {
             <p className="text-red-400 text-sm mt-1">💗 Bond with {vampires[0].vampire_name}: {vampires[0].hunter_relationship}%</p>
           )}
         </div>
-        <button
-          onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
-          disabled={vampires.length === 0}
-          className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center gap-1"
-        >
-          Switch to Vampire <ArrowLeft className="w-4 h-4 rotate-180" />
-        </button>
+        {!isTurnedVampire && (
+          <button
+            onClick={() => vampires.length > 0 ? navigate(createPageUrl(`Night?id=${vampires[0].id}`)) : null}
+            disabled={vampires.length === 0}
+            className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center gap-1"
+          >
+            Switch to Vampire <ArrowLeft className="w-4 h-4 rotate-180" />
+          </button>
+        )}
       </motion.div>
 
       {/* Turn into Vampire Option */}
@@ -642,7 +644,35 @@ export default function HunterHome() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <HunterHuntLog hunter={hunter} vampires={hunterTargets} notes={notes} />
+              {isTurnedVampire ? (
+                <div className="space-y-4">
+                  <div className="bg-black/40 border border-red-700/50 rounded-2xl p-6">
+                    <h3 className="text-rose-100 text-xl font-bold mb-4">Vampire Powers</h3>
+                    <div className="space-y-3">
+                      <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
+                        <p className="text-rose-300 text-sm mb-2">Stage {hunter.vampire_stage || 1} Vampire</p>
+                        <p className="text-rose-100 font-bold text-lg">Power Level: {hunter.vampire_power_level || 0}/100</p>
+                      </div>
+                      {hunter.unlocked_powers && hunter.unlocked_powers.length > 0 ? (
+                        <div className="space-y-2">
+                          <h4 className="text-rose-100 font-bold">Unlocked Abilities:</h4>
+                          {hunter.unlocked_powers.map((power, i) => (
+                            <div key={i} className="bg-red-950/30 border border-red-500/30 rounded-lg p-3">
+                              <p className="text-rose-100 font-medium">{power}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
+                          <p className="text-rose-300 text-sm">No powers unlocked yet. Train to unlock abilities.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <HunterHuntLog hunter={hunter} vampires={hunterTargets} notes={notes} />
+              )}
             </motion.div>
           )}
 
