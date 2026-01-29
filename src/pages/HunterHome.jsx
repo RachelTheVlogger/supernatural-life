@@ -57,7 +57,10 @@ export default function HunterHome() {
 
   const { data: hunters = [] } = useQuery({
     queryKey: ['hunters'],
-    queryFn: () => base44.entities.Hunter.list()
+    queryFn: () => base44.entities.Hunter.list(),
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    staleTime: 0
   });
 
   const { data: vampires = [], refetch: refetchVampires, isLoading: vampiresLoading } = useQuery({
