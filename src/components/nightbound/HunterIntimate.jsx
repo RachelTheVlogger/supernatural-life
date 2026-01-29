@@ -342,12 +342,11 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
              });
              console.log('Hunter updated:', updated);
              
-             // Force refetch and wait
-             await queryClient.refetchQueries({ queryKey: ['hunters'] });
-             console.log('Queries refetched');
+             // Invalidate ALL queries to force refresh
+             await queryClient.invalidateQueries();
              
-             // Wait for UI to update
-             await new Promise(resolve => setTimeout(resolve, 500));
+             // Wait longer for UI to catch up
+             await new Promise(resolve => setTimeout(resolve, 1500));
              
              setProcessing(false);
              setOutcome('');
@@ -357,7 +356,7 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
              setProcessing(false);
            }
          } else {
-           // Regular action - show for 5 seconds then close
+           // Regular action - show for 4 seconds then close
            await new Promise(resolve => setTimeout(resolve, 4000));
            setProcessing(false);
            setOutcome('');
