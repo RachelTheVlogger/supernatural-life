@@ -27,6 +27,7 @@ import HunterBetrayalSystem from '@/components/nightbound/HunterBetrayalSystem';
 import HunterCouncilSystem from '@/components/nightbound/HunterCouncilSystem';
 import TurnedHunterSystem from '@/components/nightbound/TurnedHunterSystem';
 import HunterVampirePowerTree from '@/components/nightbound/HunterVampirePowerTree';
+import TurnedHunterVampireInteraction from '@/components/nightbound/TurnedHunterVampireInteraction';
 
 
 export default function HunterHome() {
@@ -755,7 +756,7 @@ export default function HunterHome() {
           )}
 
           <AnimatePresence mode="wait">
-          {activeTab === 'vamp' && !isTurnedVampire && (
+          {activeTab === 'vamp' && (
             <motion.div
               key="vamp"
               initial={{ opacity: 0, y: 20 }}
@@ -819,6 +820,14 @@ export default function HunterHome() {
 
           {showCouncil && !isTurnedVampire && (
             <HunterCouncilSystem hunter={hunter} onClose={() => setShowCouncil(false)} />
+          )}
+
+          {showInteraction && isTurnedVampire && vampires[0] && (
+            <TurnedHunterVampireInteraction 
+              hunter={hunter} 
+              vampire={vampires[0]} 
+              onClose={() => setShowInteraction(false)} 
+            />
           )}
         </motion.div>
     </div>
