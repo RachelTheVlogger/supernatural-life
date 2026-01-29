@@ -1,45 +1,59 @@
 export const VAMPIRE_POWERS = {
   // Tier 1 - Newborn (Stage 1, Power 0-25)
-  enhanced_senses: {
-    id: 'enhanced_senses',
-    name: 'Enhanced Senses',
+  heightened_hearing: {
+    id: 'heightened_hearing',
+    name: 'Heightened Hearing',
     tier: 1,
     stage: 1,
     power: 0,
     icon: 'Eye',
     color: 'blue',
-    desc: 'See in darkness, hear heartbeats from afar',
+    desc: 'Hear heartbeats and whispers from afar',
     upgrades: [
-      { id: 'predator_vision', name: 'Predator Vision', desc: 'Track heat signatures through walls', cost: 50 },
-      { id: 'sonic_hearing', name: 'Sonic Hearing', desc: 'Hear whispers from miles away', cost: 50 }
+      { id: 'scent_reading', name: 'Scent Reading', desc: 'Track prey by blood scent', cost: 50 },
+      { id: 'threshold_sense', name: 'Threshold Sense', desc: 'Sense when wards break', cost: 50 }
     ]
   },
-  super_speed: {
-    id: 'super_speed',
-    name: 'Super Speed',
+  heightened_speed: {
+    id: 'heightened_speed',
+    name: 'Heightened Speed',
     tier: 1,
     stage: 1,
     power: 10,
     icon: 'Wind',
     color: 'cyan',
-    desc: 'Move faster than the human eye can track',
+    desc: 'Move faster than mortals can perceive',
     upgrades: [
-      { id: 'time_dilation', name: 'Time Dilation', desc: 'World slows when you move', cost: 60 },
-      { id: 'afterimage', name: 'Afterimage', desc: 'Leave copies of yourself', cost: 60 }
+      { id: 'echo_step', name: 'Echo Step', desc: 'Leave afterimages', cost: 60 },
+      { id: 'shadow_patience', name: 'Shadow Patience', desc: 'Wait unseen for hours', cost: 60 }
     ]
   },
-  super_strength: {
-    id: 'super_strength',
-    name: 'Super Strength',
+  heightened_strength: {
+    id: 'heightened_strength',
+    name: 'Heightened Strength',
     tier: 1,
     stage: 1,
     power: 15,
     icon: 'Zap',
     color: 'red',
-    desc: 'Possess overwhelming physical power',
+    desc: 'Possess supernatural physical power',
     upgrades: [
-      { id: 'titanium_grip', name: 'Titanium Grip', desc: 'Crush steel with bare hands', cost: 60 },
-      { id: 'seismic_impact', name: 'Seismic Impact', desc: 'Shatter ground with strikes', cost: 60 }
+      { id: 'hunger_suppression', name: 'Hunger Suppression', desc: 'Go longer without feeding', cost: 60 },
+      { id: 'presence_weight', name: 'Presence Weight', desc: 'Make your presence felt', cost: 60 }
+    ]
+  },
+  night_sight: {
+    id: 'night_sight',
+    name: 'Night Sight',
+    tier: 1,
+    stage: 1,
+    power: 5,
+    icon: 'Eye',
+    color: 'purple',
+    desc: 'Perfect vision in complete darkness',
+    upgrades: [
+      { id: 'lingering_presence', name: 'Lingering Presence', desc: 'Victims remember you', cost: 45 },
+      { id: 'stillness', name: 'Stillness', desc: 'Become invisible when still', cost: 45 }
     ]
   },
 
@@ -54,97 +68,97 @@ export const VAMPIRE_POWERS = {
     color: 'purple',
     desc: 'Force your will upon mortal minds',
     upgrades: [
-      { id: 'mass_compulsion', name: 'Mass Compulsion', desc: 'Control multiple minds at once', cost: 100 },
-      { id: 'memory_implant', name: 'Memory Implant', desc: 'Create false memories', cost: 100 }
+      { id: 'veiled_voice', name: 'Veiled Voice', desc: 'Commands sound like suggestions', cost: 100 },
+      { id: 'binding_gaze', name: 'Binding Gaze', desc: 'Paralyze with a look', cost: 100 }
     ]
   },
-  dream_walking: {
-    id: 'dream_walking',
-    name: 'Dream Walking',
+  dream_reach: {
+    id: 'dream_reach',
+    name: 'Dream Reach',
     tier: 2,
     stage: 2,
     power: 40,
-    icon: 'Brain',
+    icon: 'Moon',
     color: 'indigo',
-    desc: 'Enter and manipulate dreams',
+    desc: 'Enter and influence sleeping minds',
     upgrades: [
-      { id: 'nightmare_weaver', name: 'Nightmare Weaver', desc: 'Craft terrifying dreams', cost: 100 },
-      { id: 'dream_prison', name: 'Dream Prison', desc: 'Trap consciousness in dreams', cost: 120 }
+      { id: 'mutual_awareness', name: 'Mutual Awareness', desc: 'Share dreams with chosen ones', cost: 100 },
+      { id: 'silent_invitation', name: 'Silent Invitation', desc: 'Summon through dreams', cost: 120 }
     ]
   },
-  emotion_manipulation: {
-    id: 'emotion_manipulation',
-    name: 'Emotion Manipulation',
+  emotional_imprint: {
+    id: 'emotional_imprint',
+    name: 'Emotional Imprint',
     tier: 2,
     stage: 2,
     power: 50,
-    icon: 'Brain',
+    icon: 'Target',
     color: 'pink',
-    desc: 'Control what others feel',
+    desc: 'Leave emotional marks on mortals',
     upgrades: [
-      { id: 'fear_aura', name: 'Fear Aura', desc: 'Radiate terror', cost: 90 },
-      { id: 'euphoria_touch', name: 'Euphoria Touch', desc: 'Make them crave you', cost: 90 }
+      { id: 'blood_memory', name: 'Blood Memory', desc: 'Victims\' memories in their blood', cost: 90 },
+      { id: 'night_calm', name: 'Night Calm', desc: 'Soothe all unease', cost: 90 }
     ]
   },
 
   // Tier 3 - Established (Stage 3, Power 50-75)
-  mind_reading: {
-    id: 'mind_reading',
-    name: 'Mind Reading',
+  time_dilation: {
+    id: 'time_dilation',
+    name: 'Time Dilation',
     tier: 3,
     stage: 3,
     power: 60,
-    icon: 'Brain',
+    icon: 'Moon',
     color: 'violet',
-    desc: 'Hear thoughts like whispers',
+    desc: 'Make seconds stretch like hours',
     upgrades: [
-      { id: 'thought_extraction', name: 'Thought Extraction', desc: 'Steal memories and knowledge', cost: 150 },
-      { id: 'mental_link', name: 'Mental Link', desc: 'Create telepathic bonds', cost: 150 }
+      { id: 'moment_stretch', name: 'Moment Stretch', desc: 'Slow time around you', cost: 150 },
+      { id: 'temporal_echo', name: 'Temporal Echo', desc: 'See multiple timelines', cost: 150 }
     ]
   },
-  telekinesis: {
-    id: 'telekinesis',
-    name: 'Telekinesis',
+  blood_memory: {
+    id: 'blood_memory_master',
+    name: 'Blood Memory Master',
     tier: 3,
     stage: 3,
     power: 70,
-    icon: 'Zap',
-    color: 'purple',
-    desc: 'Move objects with your mind',
+    icon: 'Brain',
+    color: 'red',
+    desc: 'Read the memories within blood',
     upgrades: [
-      { id: 'blood_control', name: 'Blood Control', desc: 'Manipulate blood itself', cost: 180 },
-      { id: 'force_barrier', name: 'Force Barrier', desc: 'Create invisible shields', cost: 180 }
+      { id: 'genetic_memory', name: 'Genetic Memory', desc: 'Access ancestral knowledge', cost: 180 },
+      { id: 'blood_prophecy', name: 'Blood Prophecy', desc: 'See futures in blood', cost: 180 }
     ]
   },
-  illusion_casting: {
-    id: 'illusion_casting',
-    name: 'Illusion Casting',
+  presence_mastery: {
+    id: 'presence_mastery',
+    name: 'Presence Mastery',
     tier: 3,
     stage: 3,
     power: 80,
-    icon: 'Eye',
-    color: 'pink',
-    desc: 'Make others see what isn\'t there',
+    icon: 'Wind',
+    color: 'gray',
+    desc: 'Master how mortals perceive you',
     upgrades: [
-      { id: 'perfect_disguise', name: 'Perfect Disguise', desc: 'Become anyone', cost: 160 },
-      { id: 'mass_hallucination', name: 'Mass Hallucination', desc: 'Bend reality for crowds', cost: 200 }
+      { id: 'perfect_anonymity', name: 'Perfect Anonymity', desc: 'Be instantly forgotten', cost: 160 },
+      { id: 'fear_embodiment', name: 'Fear Embodiment', desc: 'Embody their nightmares', cost: 200 }
     ]
   },
 
   // Tier 4 - Elder (Stage 4, Power 75-100)
-  daylight_immunity: {
-    id: 'daylight_immunity',
-    name: 'Daylight Immunity',
+  time_mastery: {
+    id: 'time_mastery',
+    name: 'Time Mastery',
     tier: 4,
     stage: 4,
     power: 90,
-    icon: 'Star',
+    icon: 'Moon',
     color: 'yellow',
-    desc: 'Walk freely in sunlight',
-    special: 'Requires sire bond 90%',
+    desc: 'Bend time to your will',
+    special: 'Requires bond 90%',
     upgrades: [
-      { id: 'solar_absorption', name: 'Solar Absorption', desc: 'Gain power from sun', cost: 250 },
-      { id: 'radiant_form', name: 'Radiant Form', desc: 'Glow with inner light', cost: 250 }
+      { id: 'temporal_anchor', name: 'Temporal Anchor', desc: 'Create fixed points in time', cost: 250 },
+      { id: 'age_reversal', name: 'Age Reversal', desc: 'Turn back time on objects', cost: 250 }
     ]
   }
 };
