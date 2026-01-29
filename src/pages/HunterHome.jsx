@@ -408,10 +408,18 @@ export default function HunterHome() {
                             Your Sire
                           </h3>
                           {vampires[0] && (
-                            <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
-                              <h4 className="text-rose-100 font-bold text-lg mb-2">{vampires[0].vampire_name}</h4>
-                              <p className="text-rose-300 text-sm">Bond: {vampires[0].hunter_relationship || 0}%</p>
-                            </div>
+                            <>
+                              <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4 mb-3">
+                                <h4 className="text-rose-100 font-bold text-lg mb-2">{vampires[0].vampire_name}</h4>
+                                <p className="text-rose-300 text-sm">Bond: {vampires[0].hunter_relationship || 0}%</p>
+                              </div>
+                              <button
+                                onClick={() => setShowInteraction(true)}
+                                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-4 rounded-lg transition-all"
+                              >
+                                🦇 Interact with Sire
+                              </button>
+                            </>
                           )}
                         </div>
 
