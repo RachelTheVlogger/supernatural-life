@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, Eye, Brain, Wind, Droplets, Star } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
-import { POWER_EFFECTS } from '@/constants/vampirePowers';
+import { POWER_EFFECTS } from './vampirePowersConfig';
 
 export default function VampirePowerUsage({ hunter, power, onClose }) {
   const queryClient = useQueryClient();
