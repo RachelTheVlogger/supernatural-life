@@ -12,7 +12,9 @@ export const TURNED_HUNTER_POWERS = {
     desc: 'Track prey with supernatural accuracy',
     upgrades: [
       { id: 'scent_tracking', name: 'Scent Tracking', desc: 'Follow blood trails miles away', cost: 50 },
-      { id: 'kill_sense', name: 'Kill Sense', desc: 'Sense weaknesses in prey', cost: 50 }
+      { id: 'kill_sense', name: 'Kill Sense', desc: 'Sense weaknesses in prey', cost: 50 },
+      { id: 'prey_resonance', name: 'Prey Resonance', desc: 'Feel heartbeats across the city', cost: 100, tier: 2 },
+      { id: 'predator_perfection', name: 'Predator Perfection', desc: 'Track anything, anywhere, always', cost: 200, tier: 3 }
     ]
   },
   hunter_reflexes: {
