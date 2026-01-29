@@ -3,156 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, Lock, Check, ChevronRight, Star, Droplets, Eye, Brain, Wind, Target } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import { VAMPIRE_POWERS } from '@/constants/vampirePowers';
 
-const VAMPIRE_POWERS = {
-  // Tier 1 - Newborn (Stage 1, Power 0-25)
-  enhanced_senses: {
-    id: 'enhanced_senses',
-    name: 'Enhanced Senses',
-    tier: 1,
-    stage: 1,
-    power: 0,
-    icon: Eye,
-    color: 'blue',
-    desc: 'See in darkness, hear heartbeats from afar',
-    upgrades: [
-      { id: 'predator_vision', name: 'Predator Vision', desc: 'Track heat signatures through walls', cost: 50 },
-      { id: 'sonic_hearing', name: 'Sonic Hearing', desc: 'Hear whispers from miles away', cost: 50 }
-    ]
-  },
-  super_speed: {
-    id: 'super_speed',
-    name: 'Super Speed',
-    tier: 1,
-    stage: 1,
-    power: 10,
-    icon: Wind,
-    color: 'cyan',
-    desc: 'Move faster than the human eye can track',
-    upgrades: [
-      { id: 'time_dilation', name: 'Time Dilation', desc: 'World slows when you move', cost: 60 },
-      { id: 'afterimage', name: 'Afterimage', desc: 'Leave copies of yourself', cost: 60 }
-    ]
-  },
-  super_strength: {
-    id: 'super_strength',
-    name: 'Super Strength',
-    tier: 1,
-    stage: 1,
-    power: 15,
-    icon: Zap,
-    color: 'red',
-    desc: 'Possess overwhelming physical power',
-    upgrades: [
-      { id: 'titanium_grip', name: 'Titanium Grip', desc: 'Crush steel with bare hands', cost: 60 },
-      { id: 'seismic_impact', name: 'Seismic Impact', desc: 'Shatter ground with strikes', cost: 60 }
-    ]
-  },
-
-  // Tier 2 - Fledgling (Stage 2, Power 25-50)
-  compulsion: {
-    id: 'compulsion',
-    name: 'Compulsion',
-    tier: 2,
-    stage: 2,
-    power: 30,
-    icon: Brain,
-    color: 'purple',
-    desc: 'Force your will upon mortal minds',
-    upgrades: [
-      { id: 'mass_compulsion', name: 'Mass Compulsion', desc: 'Control multiple minds at once', cost: 100 },
-      { id: 'memory_implant', name: 'Memory Implant', desc: 'Create false memories', cost: 100 }
-    ]
-  },
-  dream_walking: {
-    id: 'dream_walking',
-    name: 'Dream Walking',
-    tier: 2,
-    stage: 2,
-    power: 40,
-    icon: Brain,
-    color: 'indigo',
-    desc: 'Enter and manipulate dreams',
-    upgrades: [
-      { id: 'nightmare_weaver', name: 'Nightmare Weaver', desc: 'Craft terrifying dreams', cost: 100 },
-      { id: 'dream_prison', name: 'Dream Prison', desc: 'Trap consciousness in dreams', cost: 120 }
-    ]
-  },
-  emotion_manipulation: {
-    id: 'emotion_manipulation',
-    name: 'Emotion Manipulation',
-    tier: 2,
-    stage: 2,
-    power: 50,
-    icon: Brain,
-    color: 'pink',
-    desc: 'Control what others feel',
-    upgrades: [
-      { id: 'fear_aura', name: 'Fear Aura', desc: 'Radiate terror', cost: 90 },
-      { id: 'euphoria_touch', name: 'Euphoria Touch', desc: 'Make them crave you', cost: 90 }
-    ]
-  },
-
-  // Tier 3 - Established (Stage 3, Power 50-75)
-  mind_reading: {
-    id: 'mind_reading',
-    name: 'Mind Reading',
-    tier: 3,
-    stage: 3,
-    power: 60,
-    icon: Brain,
-    color: 'violet',
-    desc: 'Hear thoughts like whispers',
-    upgrades: [
-      { id: 'thought_extraction', name: 'Thought Extraction', desc: 'Steal memories and knowledge', cost: 150 },
-      { id: 'mental_link', name: 'Mental Link', desc: 'Create telepathic bonds', cost: 150 }
-    ]
-  },
-  telekinesis: {
-    id: 'telekinesis',
-    name: 'Telekinesis',
-    tier: 3,
-    stage: 3,
-    power: 70,
-    icon: Zap,
-    color: 'purple',
-    desc: 'Move objects with your mind',
-    upgrades: [
-      { id: 'blood_control', name: 'Blood Control', desc: 'Manipulate blood itself', cost: 180 },
-      { id: 'force_barrier', name: 'Force Barrier', desc: 'Create invisible shields', cost: 180 }
-    ]
-  },
-  illusion_casting: {
-    id: 'illusion_casting',
-    name: 'Illusion Casting',
-    tier: 3,
-    stage: 3,
-    power: 80,
-    icon: Eye,
-    color: 'pink',
-    desc: 'Make others see what isn\'t there',
-    upgrades: [
-      { id: 'perfect_disguise', name: 'Perfect Disguise', desc: 'Become anyone', cost: 160 },
-      { id: 'mass_hallucination', name: 'Mass Hallucination', desc: 'Bend reality for crowds', cost: 200 }
-    ]
-  },
-
-  // Tier 4 - Elder (Stage 4, Power 75-100)
-  daylight_immunity: {
-    id: 'daylight_immunity',
-    name: 'Daylight Immunity',
-    tier: 4,
-    stage: 4,
-    power: 90,
-    icon: Star,
-    color: 'yellow',
-    desc: 'Walk freely in sunlight',
-    special: 'Requires sire bond 90%',
-    upgrades: [
-      { id: 'solar_absorption', name: 'Solar Absorption', desc: 'Gain power from sun', cost: 250 },
-      { id: 'radiant_form', name: 'Radiant Form', desc: 'Glow with inner light', cost: 250 }
-    ]
-  }
+// Icon mapping
+const ICON_MAP = {
+  Eye,
+  Wind,
+  Zap,
+  Brain,
+  Star
 };
 
 const TRAINING_ACTIONS = [
@@ -284,7 +143,7 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
   };
 
   const PowerCard = ({ powerData }) => {
-    const Icon = powerData.icon;
+    const Icon = ICON_MAP[powerData.icon];
     const isUnlocked = unlockedPowers.includes(powerData.id);
     const canUnlock = canUnlockPower(powerData);
     const upgrades = powerUpgrades[powerData.id] || [];
