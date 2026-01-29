@@ -313,16 +313,6 @@ export default function HunterHome() {
           <p className="text-gray-400 text-xs mb-1">Council</p>
           <p className="text-white text-lg font-bold">👑</p>
         </button>
-        {isTurnedVampire && (
-          <button
-            onClick={() => setShowTurnedHunter(true)}
-            className="bg-black/40 border border-red-500/30 rounded-lg p-4 hover:bg-black/60 transition-colors"
-          >
-            <Zap className="w-5 h-5 text-red-400 mb-2" />
-            <p className="text-gray-400 text-xs mb-1">Hybrid Powers</p>
-            <p className="text-white text-lg font-bold">🦇</p>
-          </button>
-        )}
         </motion.div>
 
       {/* Main Tabs */}
@@ -367,50 +357,7 @@ export default function HunterHome() {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
-              {isTurnedVampire && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="bg-gradient-to-br from-rose-950/60 to-red-950/60 border border-rose-500/30 rounded-xl p-4 mb-6 relative z-10"
-                >
-                  <p className="text-sm italic text-center text-rose-100 mb-4">
-                    Every sense heightened. Every skill sharpened. The hunger pulses through you like a second heartbeat. Hunter instincts merged with vampire power. You are both predator and protector.
-                  </p>
-                  <button
-                    onClick={() => setShowTurnedHunter(true)}
-                    className="w-full bg-gradient-to-r from-rose-900/60 to-red-900/60 hover:from-rose-900/80 hover:to-red-900/80 border-2 border-rose-500/50 rounded-xl p-4 transition-colors mb-3"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="text-left">
-                        <h3 className="text-rose-100 font-bold">⚡ Hybrid Training</h3>
-                        <p className="text-rose-300 text-xs">Unlock hybrid abilities • Master both sides</p>
-                      </div>
-                      <Zap className="w-6 h-6 text-rose-400" />
-                    </div>
-                  </button>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
-                      <p className="text-rose-300 text-xs">Stage</p>
-                      <p className="text-rose-100 font-bold">
-                        {(hunter.vampire_stage || 1) === 1 ? '🩸 Newborn' : (hunter.vampire_stage || 1) === 2 ? '🌙 Fledgling' : (hunter.vampire_stage || 1) === 3 ? '⚡ Established' : '👑 Elder'}
-                      </p>
-                    </div>
-                    <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
-                      <p className="text-rose-300 text-xs">Vampire Power</p>
-                      <p className="text-rose-100 font-bold">{hunter.vampire_power_level || 10}/100</p>
-                    </div>
-                    <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
-                      <p className="text-rose-300 text-xs">Hunter Skill</p>
-                      <p className="text-rose-100 font-bold">{hunter.skill_level}/100</p>
-                    </div>
-                    <div className="bg-black/30 rounded-lg p-2 border border-rose-500/20">
-                      <p className="text-rose-300 text-xs">Bond with Sire</p>
-                      <p className="text-rose-100 font-bold">{vampires[0]?.hunter_relationship || 0}%</p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+
               <div className="grid md:grid-cols-3 gap-4">
                     {/* Hunter Network */}
                     <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
@@ -755,13 +702,6 @@ export default function HunterHome() {
             <HunterCouncilSystem hunter={hunter} onClose={() => setShowCouncil(false)} />
           )}
 
-          {showTurnedHunter && isTurnedVampire && (
-            <TurnedHunterSystem hunter={hunter} onClose={() => setShowTurnedHunter(false)} />
-          )}
-
-          {showTurnedHunter && isTurnedVampire && (
-            <TurnedHunterSystem hunter={hunter} onClose={() => setShowTurnedHunter(false)} />
-          )}
           </motion.div>
           </div>
           );
