@@ -109,8 +109,15 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
       let msg = messages[action.id][Math.floor(Math.random() * messages[action.id].length)];
 
       if (newStage > stage) {
-        const stageName = newStage === 2 ? 'Fledgling' : newStage === 3 ? 'Established' : 'Elder';
-        msg += `\n\n🎉 Evolved to ${stageName}!`;
+        const stageNames = {
+          2: 'Fledgling',
+          3: 'Established',
+          4: 'Elder',
+          5: 'Ascendant',
+          6: 'Infinite',
+          7: 'Godlike'
+        };
+        msg += `\n\n🎉 Evolved to ${stageNames[newStage]}!`;
       }
 
       const newPowers = newUnlocked.filter(p => !unlockedPowers.includes(p));
