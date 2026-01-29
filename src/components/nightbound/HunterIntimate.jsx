@@ -328,28 +328,30 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
 
          // Handle turn actions
          if (action.category === 'eternity') {
-           setTimeout(async () => {
-             try {
-               await base44.entities.Hunter.update(hunter.id, {
-                 is_turned: true,
-                 vampire_stage: 1,
-                 status: 'recruited'
-               });
-               await queryClient.invalidateQueries({ queryKey: ['hunters'] });
-             } catch (e) {
-               console.error('Failed to turn hunter:', e);
-             }
-           }, 3500);
+           // Wait 3.5s then update hunter
+           await new Promise(resolve => setTimeout(resolve, 3500));
+           try {
+             await base44.entities.Hunter.update(hunter.id, {
+               is_turned: true,
+               vampire_stage: 1,
+               status: 'recruited'
+             });
+             await queryClient.invalidateQueries({ queryKey: ['hunters'] });
+             // Wait another 0.5s for queries to update
+             await new Promise(resolve => setTimeout(resolve, 500));
+           } catch (e) {
+             console.error('Failed to turn hunter:', e);
+           }
          } else {
+           await new Promise(resolve => setTimeout(resolve, 4000));
            queryClient.invalidateQueries();
          }
 
-         setTimeout(() => {
-           setProcessing(false);
-           setOutcome('');
-           setSelectedAction(null);
-           setSelectedPartner(null);
-         }, 5500);
+         setProcessing(false);
+         setOutcome('');
+         setSelectedAction(null);
+         setSelectedPartner(null);
+         if (onClose) onClose();
        } catch (e) {
          console.error('Activity failed:', e);
          setProcessing(false);
