@@ -118,13 +118,14 @@ export default function Layout({ children, currentPageName }) {
       <style>{`
         * {
           -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
         }
-        
+
         body {
           background: #000000;
           overflow-x: hidden;
         }
-        
+
         .bitlife-btn {
           background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
           border: none;
@@ -132,16 +133,22 @@ export default function Layout({ children, currentPageName }) {
           font-weight: 500;
           transition: all 300ms ease;
         }
-        
+
         .bitlife-btn:hover {
           background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
           transform: translateY(-1px);
         }
-        
+
         .bitlife-btn:active {
           transform: translateY(0);
         }
-        
+
+        /* Instant close button response */
+        button:active {
+          opacity: 0.7;
+          transform: scale(0.98);
+        }
+
         /* Smooth transitions */
         .transition-slow {
           transition: all 500ms cubic-bezier(0.4, 0.0, 0.2, 1);
