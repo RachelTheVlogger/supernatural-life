@@ -380,12 +380,12 @@ export default function HunterManagement({ onClose }) {
 
                   <div>
                     <label className="text-gray-400 text-sm mb-2 block">Specialty</label>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {HUNTER_SPECIALTIES.map(spec => (
                         <button
                           key={spec}
                           onClick={() => setRecruitData({...recruitData, specialty: spec})}
-                          className={`p-4 rounded-lg border-2 transition-all capitalize ${
+                          className={`p-4 rounded-lg border-2 transition-all capitalize text-sm ${
                             recruitData.specialty === spec
                               ? 'bg-red-900/50 border-red-500 text-white'
                               : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
