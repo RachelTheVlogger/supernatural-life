@@ -53,6 +53,15 @@ import BloodVintageSystem from '@/components/nightbound/BloodVintageSystem';
 import SupernaturalDating from '@/components/nightbound/SupernaturalDating';
 import HunterVampirePowerTree from '@/components/nightbound/HunterVampirePowerTree';
 import DLCStore from '@/components/nightbound/DLCStore';
+import SoulTradingSystem from '@/components/nightbound/SoulTradingSystem';
+import BlackMarketSystem from '@/components/nightbound/BlackMarketSystem';
+import ProphecySystem from '@/components/nightbound/ProphecySystem';
+import WorldEventsSystem from '@/components/nightbound/WorldEventsSystem';
+import MemoryPalaceSystem from '@/components/nightbound/MemoryPalaceSystem';
+import RitualMagicSystem from '@/components/nightbound/RitualMagicSystem';
+import DreamRealmExplorer from '@/components/nightbound/DreamRealmExplorer';
+import PrestigeSystem from '@/components/nightbound/PrestigeSystem';
+import PhotoModeSystem from '@/components/nightbound/PhotoModeSystem';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -88,6 +97,15 @@ export default function Night() {
   const [showHunterWalk, setShowHunterWalk] = useState(false);
   const [servantsInitialized, setServantsInitialized] = useState(false);
   const [showDLC, setShowDLC] = useState(false);
+  const [showSoulTrading, setShowSoulTrading] = useState(false);
+  const [showBlackMarket, setShowBlackMarket] = useState(false);
+  const [showProphecy, setShowProphecy] = useState(false);
+  const [showWorldEvents, setShowWorldEvents] = useState(false);
+  const [showMemoryPalace, setShowMemoryPalace] = useState(false);
+  const [showRituals, setShowRituals] = useState(false);
+  const [showDreamRealm, setShowDreamRealm] = useState(false);
+  const [showPrestige, setShowPrestige] = useState(false);
+  const [showPhotoMode, setShowPhotoMode] = useState(false);
 
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
@@ -613,6 +631,69 @@ export default function Night() {
           <p className="text-white text-xs mt-1">Future Predictor</p>
         </button>
         <button
+          onClick={() => setShowSoulTrading(true)}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">👁️</span>
+          <p className="text-white text-xs mt-1">Soul Trading</p>
+        </button>
+        <button
+          onClick={() => setShowBlackMarket(true)}
+          className="bg-gray-950/40 hover:bg-gray-950/60 border border-gray-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🛒</span>
+          <p className="text-white text-xs mt-1">Black Market</p>
+        </button>
+        <button
+          onClick={() => setShowProphecy(true)}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🔮</span>
+          <p className="text-white text-xs mt-1">Prophecies</p>
+        </button>
+        <button
+          onClick={() => setShowWorldEvents(true)}
+          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🌍</span>
+          <p className="text-white text-xs mt-1">World Events</p>
+        </button>
+        <button
+          onClick={() => setShowMemoryPalace(true)}
+          className="bg-blue-950/40 hover:bg-blue-950/60 border border-blue-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🏛️</span>
+          <p className="text-white text-xs mt-1">Memory Palace</p>
+        </button>
+        <button
+          onClick={() => setShowRituals(true)}
+          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🔥</span>
+          <p className="text-white text-xs mt-1">Rituals</p>
+        </button>
+        <button
+          onClick={() => setShowDreamRealm(true)}
+          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">🌌</span>
+          <p className="text-white text-xs mt-1">Dream Realms</p>
+        </button>
+        <button
+          onClick={() => setShowPrestige(true)}
+          className="bg-yellow-950/40 hover:bg-yellow-950/60 border border-yellow-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">⭐</span>
+          <p className="text-white text-xs mt-1">Prestige</p>
+        </button>
+        <button
+          onClick={() => setShowPhotoMode(true)}
+          className="bg-pink-950/40 hover:bg-pink-950/60 border border-pink-500/30 rounded-lg p-3 text-center transition-colors"
+        >
+          <span className="text-2xl">📸</span>
+          <p className="text-white text-xs mt-1">Photo Mode</p>
+        </button>
+        <button
           onClick={() => setShowAddiction(true)}
           className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
         >
@@ -879,6 +960,33 @@ export default function Night() {
 
         {showDLC && (
           <DLCStore onClose={() => setShowDLC(false)} />
+        )}
+        {showSoulTrading && vampireState && (
+          <SoulTradingSystem vampireState={vampireState} onClose={() => setShowSoulTrading(false)} />
+        )}
+        {showBlackMarket && vampireState && (
+          <BlackMarketSystem vampireState={vampireState} onClose={() => setShowBlackMarket(false)} />
+        )}
+        {showProphecy && vampireState && (
+          <ProphecySystem vampireState={vampireState} onClose={() => setShowProphecy(false)} />
+        )}
+        {showWorldEvents && vampireState && (
+          <WorldEventsSystem vampireState={vampireState} onClose={() => setShowWorldEvents(false)} />
+        )}
+        {showMemoryPalace && vampireState && (
+          <MemoryPalaceSystem entity={vampireState} onClose={() => setShowMemoryPalace(false)} />
+        )}
+        {showRituals && vampireState && (
+          <RitualMagicSystem vampireState={vampireState} onClose={() => setShowRituals(false)} />
+        )}
+        {showDreamRealm && vampireState && (
+          <DreamRealmExplorer vampireState={vampireState} onClose={() => setShowDreamRealm(false)} />
+        )}
+        {showPrestige && vampireState && (
+          <PrestigeSystem vampireState={vampireState} onClose={() => setShowPrestige(false)} />
+        )}
+        {showPhotoMode && (
+          <PhotoModeSystem onClose={() => setShowPhotoMode(false)} />
         )}
 
         </AnimatePresence>

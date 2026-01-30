@@ -52,9 +52,39 @@ export default function Home() {
     queryFn: () => base44.entities.Hunter.list()
   });
 
+  const { data: werewolves = [] } = useQuery({
+    queryKey: ['werewolves'],
+    queryFn: () => base44.entities.Werewolf.list()
+  });
+
+  const { data: demons = [] } = useQuery({
+    queryKey: ['demons'],
+    queryFn: () => base44.entities.Demon.list()
+  });
+
+  const { data: angels = [] } = useQuery({
+    queryKey: ['angels'],
+    queryFn: () => base44.entities.Angel.list()
+  });
+
+  const { data: ghosts = [] } = useQuery({
+    queryKey: ['ghosts'],
+    queryFn: () => base44.entities.Ghost.list()
+  });
+
+  const { data: necromancers = [] } = useQuery({
+    queryKey: ['necromancers'],
+    queryFn: () => base44.entities.Necromancer.list()
+  });
+
+  const { data: shapeshifters = [] } = useQuery({
+    queryKey: ['shapeshifters'],
+    queryFn: () => base44.entities.Shapeshifter.list()
+  });
+
 
   
-  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || hunters.length > 0;
+  const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || hunters.length > 0 || werewolves.length > 0 || demons.length > 0 || angels.length > 0 || ghosts.length > 0 || necromancers.length > 0 || shapeshifters.length > 0;
   
   const startNewGame = async () => {
     if (!characterName.trim()) {
@@ -118,23 +148,82 @@ export default function Home() {
        queryClient.invalidateQueries();
        navigate(createPageUrl('WaterNymphHome'));
      } else if (selectedType === 'hunter') {
-       await base44.entities.Hunter.create({
-         name: characterName.trim(),
-         specialty: 'combatant',
-         skill_level: 50,
-         suspicion: 0,
-         status: 'tracking'
-       });
-       queryClient.invalidateQueries();
-       navigate(createPageUrl('HunterHome'));
-     }
-      };
+        await base44.entities.Hunter.create({
+          name: characterName.trim(),
+          specialty: 'combatant',
+          skill_level: 50,
+          suspicion: 0,
+          status: 'tracking'
+        });
+        queryClient.invalidateQueries();
+        navigate(createPageUrl('HunterHome'));
+      } else if (selectedType === 'werewolf') {
+        await base44.entities.Werewolf.create({
+          name: characterName.trim(),
+          gender: characterGender,
+          moon_phase: 'waxing',
+          pack_rank: 'omega',
+          transformation_control: 30
+        });
+        queryClient.invalidateQueries();
+        navigate(createPageUrl('WerewolfHome'));
+      } else if (selectedType === 'demon') {
+        await base44.entities.Demon.create({
+          name: characterName.trim(),
+          demon_type: 'lesser_demon',
+          corruption_level: 50,
+          souls_collected: 0
+        });
+        queryClient.invalidateQueries();
+        navigate(createPageUrl('DemonHome'));
+      } else if (selectedType === 'angel') {
+        await base44.entities.Angel.create({
+          name: characterName.trim(),
+          angel_type: 'guardian',
+          grace: 100,
+          divine_power: 50
+        });
+        queryClient.invalidateQueries();
+        navigate(createPageUrl('AngelHome'));
+      } else if (selectedType === 'ghost') {
+        await base44.entities.Ghost.create({
+          name: characterName.trim(),
+          unfinished_business: 'Unknown',
+          manifestation_strength: 30
+        });
+        queryClient.invalidateQueries();
+        navigate(createPageUrl('GhostHome'));
+      } else if (selectedType === 'necromancer') {
+        await base44.entities.Necromancer.create({
+          name: characterName.trim(),
+          gender: characterGender,
+          death_magic_level: 30,
+          undead_army_size: 0
+        });
+        queryClient.invalidateQueries();
+        navigate(createPageUrl('NecromancerHome'));
+      } else if (selectedType === 'shapeshifter') {
+        await base44.entities.Shapeshifter.create({
+          true_name: characterName.trim(),
+          transformation_speed: 30,
+          identity_stability: 80
+        });
+        queryClient.invalidateQueries();
+        navigate(createPageUrl('ShapeshifterHome'));
+      }
+       };
   
   const handleContinue = () => {
     if (vampireStates.length > 0) navigate(createPageUrl('Night'));
     else if (witches.length > 0) navigate(createPageUrl('WitchHome'));
     else if (sirens.length > 0) navigate(createPageUrl('SirenHome'));
     else if (waterNymphs.length > 0) navigate(createPageUrl('WaterNymphHome'));
+    else if (werewolves.length > 0) navigate(createPageUrl('WerewolfHome'));
+    else if (demons.length > 0) navigate(createPageUrl('DemonHome'));
+    else if (angels.length > 0) navigate(createPageUrl('AngelHome'));
+    else if (ghosts.length > 0) navigate(createPageUrl('GhostHome'));
+    else if (necromancers.length > 0) navigate(createPageUrl('NecromancerHome'));
+    else if (shapeshifters.length > 0) navigate(createPageUrl('ShapeshifterHome'));
     else if (hunters.length > 0) {
       const firstHunter = hunters[0];
       if (firstHunter.is_turned) {
@@ -335,6 +424,114 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
+                  {werewolves.map(w => (
+                    <button
+                      key={w.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('WerewolfHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🐺</span>
+                        <div>
+                          <p className="text-white font-medium">{w.name}</p>
+                          <p className="text-gray-400 text-xs">Werewolf</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {demons.map(d => (
+                    <button
+                      key={d.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('DemonHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">😈</span>
+                        <div>
+                          <p className="text-white font-medium">{d.name}</p>
+                          <p className="text-gray-400 text-xs">Demon</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {angels.map(a => (
+                    <button
+                      key={a.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('AngelHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{a.is_fallen ? '😈' : '😇'}</span>
+                        <div>
+                          <p className="text-white font-medium">{a.name}</p>
+                          <p className="text-gray-400 text-xs">{a.is_fallen ? 'Fallen Angel' : 'Angel'}</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {ghosts.map(g => (
+                    <button
+                      key={g.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('GhostHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">👻</span>
+                        <div>
+                          <p className="text-white font-medium">{g.name}</p>
+                          <p className="text-gray-400 text-xs">Ghost</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {necromancers.map(n => (
+                    <button
+                      key={n.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('NecromancerHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">💀</span>
+                        <div>
+                          <p className="text-white font-medium">{n.name}</p>
+                          <p className="text-gray-400 text-xs">Necromancer</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {shapeshifters.map(s => (
+                    <button
+                      key={s.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('ShapeshifterHome'));
+                      }}
+                      className="w-full bg-gray-800/50 hover:bg-gray-700 rounded-lg p-3 text-left transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🦎</span>
+                        <div>
+                          <p className="text-white font-medium">{s.true_name}</p>
+                          <p className="text-gray-400 text-xs">Shapeshifter</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
 
                   </div>
                   </div>
@@ -472,6 +669,78 @@ export default function Home() {
                       <div>
                         <span className="font-medium text-white block">Hunter</span>
                         <p className="text-sm text-gray-400">Combat, tracking, weapons</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('werewolf'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🐺</span>
+                      <div>
+                        <span className="font-medium text-white block">Werewolf</span>
+                        <p className="text-sm text-gray-400">Moon, transformation, primal rage</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('demon'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">😈</span>
+                      <div>
+                        <span className="font-medium text-white block">Demon</span>
+                        <p className="text-sm text-gray-400">Souls, contracts, corruption</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('angel'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">😇</span>
+                      <div>
+                        <span className="font-medium text-white block">Angel</span>
+                        <p className="text-sm text-gray-400">Divine, healing, grace</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('ghost'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">👻</span>
+                      <div>
+                        <span className="font-medium text-white block">Ghost</span>
+                        <p className="text-sm text-gray-400">Haunt, possess, unfinished business</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('necromancer'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">💀</span>
+                      <div>
+                        <span className="font-medium text-white block">Necromancer</span>
+                        <p className="text-sm text-gray-400">Undead, death magic, souls</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('shapeshifter'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🦎</span>
+                      <div>
+                        <span className="font-medium text-white block">Shapeshifter</span>
+                        <p className="text-sm text-gray-400">Identity, infiltration, transformation</p>
                       </div>
                     </div>
                   </button>
@@ -681,25 +950,46 @@ export default function Home() {
                 )}
 
                 {introStep === 4 && selectedType === 'hunter' && (
-              <>
-                <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
-                <p className="text-orange-300 text-sm mb-6">Your hunt for the supernatural begins.</p>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setIntroStep(3)}
-                    className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={startNewGame}
-                    className="flex-1 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 rounded-lg py-3 text-white font-medium transition-all"
-                  >
-                    Begin
-                  </button>
-                </div>
-              </>
-            )}
+                  <>
+                    <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
+                    <p className="text-orange-300 text-sm mb-6">Your hunt for the supernatural begins.</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setIntroStep(3)}
+                        className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                      >
+                        Back
+                      </button>
+                      <button
+                        onClick={startNewGame}
+                        className="flex-1 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 rounded-lg py-3 text-white font-medium transition-all"
+                      >
+                        Begin
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {introStep === 3 && ['werewolf', 'demon', 'angel', 'ghost', 'necromancer', 'shapeshifter'].includes(selectedType) && (
+                  <>
+                    <h2 className="text-2xl font-bold text-white mb-4">Ready to begin?</h2>
+                    <p className="text-purple-300 text-sm mb-6">Your supernatural journey awaits.</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setIntroStep(2)}
+                        className="flex-1 bg-gray-800 hover:bg-gray-700 rounded-lg py-3 text-white transition-all"
+                      >
+                        Back
+                      </button>
+                      <button
+                        onClick={startNewGame}
+                        className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg py-3 text-white font-medium transition-all"
+                      >
+                        Begin
+                      </button>
+                    </div>
+                  </>
+                )}
 
             {selectedType === 'nymph' && introStep === 3 && (
                     <>
