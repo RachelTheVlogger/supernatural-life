@@ -34,7 +34,7 @@ export default function DLCStore({ onClose }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gradient-to-br from-purple-950 to-gray-950 rounded-2xl p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border-2 border-purple-500/50"
+        className="bg-gradient-to-br from-purple-950 to-gray-950 rounded-2xl p-4 sm:p-6 md:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border-2 border-purple-500/50"
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-white">Free DLC</h2>
@@ -65,21 +65,21 @@ export default function DLCStore({ onClose }) {
                     : 'bg-purple-950/40 border-purple-500/30 hover:border-purple-500/60'
                 }`}
               >
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-4xl">{dlc.icon}</span>
+                      <span className="text-3xl sm:text-4xl">{dlc.icon}</span>
                       <div>
-                        <h3 className="text-white font-bold text-lg">{dlc.name}</h3>
+                        <h3 className="text-white font-bold text-base sm:text-lg">{dlc.name}</h3>
                         <p className="text-gray-400 text-xs capitalize">{dlc.category}</p>
                       </div>
                     </div>
-                    <p className="text-gray-300 text-sm">{dlc.description}</p>
+                    <p className="text-gray-300 text-xs sm:text-sm">{dlc.description}</p>
                   </div>
                   <button
                     onClick={() => !dlc.unlocked && handleUnlock(dlc)}
                     disabled={dlc.unlocked}
-                    className={`px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 whitespace-nowrap ml-4 ${
+                    className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap text-sm sm:text-base ${
                       dlc.unlocked
                         ? 'bg-green-600 text-white cursor-default'
                         : 'bg-purple-600 hover:bg-purple-700 text-white'

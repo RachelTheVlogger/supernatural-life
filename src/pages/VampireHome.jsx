@@ -432,7 +432,7 @@ import VictimTrophies from '@/components/nightbound/VictimTrophies';
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8"
           >
             <div className={`${isDaytime ? 'bg-white/70' : 'bg-black/40'} backdrop-blur-sm rounded-xl p-4 border ${isDaytime ? 'border-orange-300/50' : 'border-purple-900/30'}`}>
               <Moon className="w-6 h-6 text-purple-400 mb-2" />
@@ -836,7 +836,7 @@ import VictimTrophies from '@/components/nightbound/VictimTrophies';
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.26 }}
-            className="mb-8 grid md:grid-cols-3 gap-3"
+            className="mb-6 sm:mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3"
           >
             <button onClick={() => setShowWitchEncounter(true)} className={`${isDaytime ? 'bg-orange-100/60 border-orange-400/40' : 'bg-purple-900/40 border-purple-500/30'} border rounded-xl p-4 text-left hover:opacity-80 transition-opacity`}>
               <h3 className={`font-medium mb-1 ${isDaytime ? 'text-gray-800' : 'text-white'}`}>✨ Encounter Witch</h3>
@@ -900,7 +900,7 @@ import VictimTrophies from '@/components/nightbound/VictimTrophies';
             </motion.div>
 
           {/* Room sections - Interactive */}
-          <div className="grid md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-h-[60vh] overflow-y-auto">
             {/* Main chamber */}
             <motion.button
               initial={{ opacity: 0, x: -20 }}
@@ -979,7 +979,7 @@ import VictimTrophies from '@/components/nightbound/VictimTrophies';
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="grid md:grid-cols-2 gap-6 mb-8"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8"
           >
             {/* Morality Display */}
             <MoralityDisplay vampireState={vampireState} />

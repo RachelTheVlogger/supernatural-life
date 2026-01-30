@@ -270,7 +270,7 @@ export default function HunterHome() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-2 gap-3 mb-8 max-w-4xl mx-auto"
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8 max-w-4xl mx-auto"
       >
         {isTurnedVampire ? (
           <>
@@ -369,7 +369,7 @@ export default function HunterHome() {
         transition={{ delay: 0.2 }}
         className="max-w-4xl mx-auto"
       >
-        <div className="grid grid-cols-4 gap-2 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 sm:mb-8">
             {[
               { id: 'home', label: 'Home', icon: Home },
               { id: 'hunting', label: 'Powers', icon: Zap },
@@ -404,7 +404,7 @@ export default function HunterHome() {
               className="space-y-4"
             >
 
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                   {isTurnedVampire ? (
                     <>
                       {/* Vampire Stats */}

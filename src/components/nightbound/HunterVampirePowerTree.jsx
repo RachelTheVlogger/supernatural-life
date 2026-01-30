@@ -242,48 +242,48 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gradient-to-br from-rose-950 to-red-950 rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-rose-500/50"
+        className="bg-gradient-to-br from-rose-950 to-red-950 rounded-2xl p-4 sm:p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-rose-500/50"
       >
         <button onClick={onClose} className="absolute top-4 right-4 text-rose-300 hover:text-white">
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-3xl font-bold text-rose-100 mb-2">🩸 Vampire Evolution</h2>
-        <p className="text-rose-300 text-sm mb-6">{hunter.name}'s path to power</p>
+        <h2 className="text-2xl sm:text-3xl font-bold text-rose-100 mb-2">🩸 Vampire Evolution</h2>
+        <p className="text-rose-300 text-xs sm:text-sm mb-4 sm:mb-6">{hunter.name}'s path to power</p>
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
-          <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
-              <p className="text-rose-400 text-xs">Stage</p>
-              <p className="text-rose-100 font-bold text-lg">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="bg-black/40 rounded-lg p-2 sm:p-3 border border-rose-500/30">
+              <p className="text-rose-400 text-[10px] sm:text-xs">Stage</p>
+              <p className="text-rose-100 font-bold text-sm sm:text-lg">
                 {stage === 1 ? '🩸 Newborn' : stage === 2 ? '🌙 Fledgling' : stage === 3 ? '⚡ Established' : stage === 4 ? '👑 Elder' : stage === 5 ? '🌟 Ascendant' : stage === 6 ? '∞ Infinite' : '💀 Godlike'}
               </p>
             </div>
-          <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
-            <p className="text-rose-400 text-xs">Power</p>
-            <p className="text-rose-100 font-bold text-lg">{power}</p>
+          <div className="bg-black/40 rounded-lg p-2 sm:p-3 border border-rose-500/30">
+            <p className="text-rose-400 text-[10px] sm:text-xs">Power</p>
+            <p className="text-rose-100 font-bold text-sm sm:text-lg">{power}</p>
           </div>
-          <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
-            <p className="text-rose-400 text-xs">XP</p>
-            <p className="text-rose-100 font-bold text-lg">{xp}</p>
+          <div className="bg-black/40 rounded-lg p-2 sm:p-3 border border-rose-500/30">
+            <p className="text-rose-400 text-[10px] sm:text-xs">XP</p>
+            <p className="text-rose-100 font-bold text-sm sm:text-lg">{xp}</p>
           </div>
-          <div className="bg-black/40 rounded-lg p-3 border border-rose-500/30">
-            <p className="text-rose-400 text-xs">Nights</p>
-            <p className="text-rose-100 font-bold text-lg">{nights}</p>
+          <div className="bg-black/40 rounded-lg p-2 sm:p-3 border border-rose-500/30">
+            <p className="text-rose-400 text-[10px] sm:text-xs">Nights</p>
+            <p className="text-rose-100 font-bold text-sm sm:text-lg">{nights}</p>
           </div>
         </div>
 
         {/* View Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-4 sm:mb-6">
           <button
             onClick={() => setView('overview')}
-            className={`px-4 py-2 rounded-lg transition-all ${view === 'overview' ? 'bg-rose-600 text-white' : 'bg-black/40 text-rose-300 hover:bg-black/60'}`}
+            className={`flex-1 px-3 sm:px-4 py-2 rounded-lg transition-all text-sm sm:text-base ${view === 'overview' ? 'bg-rose-600 text-white' : 'bg-black/40 text-rose-300 hover:bg-black/60'}`}
           >
             Powers
           </button>
           <button
             onClick={() => setView('training')}
-            className={`px-4 py-2 rounded-lg transition-all ${view === 'training' ? 'bg-rose-600 text-white' : 'bg-black/40 text-rose-300 hover:bg-black/60'}`}
+            className={`flex-1 px-3 sm:px-4 py-2 rounded-lg transition-all text-sm sm:text-base ${view === 'training' ? 'bg-rose-600 text-white' : 'bg-black/40 text-rose-300 hover:bg-black/60'}`}
           >
             Training
           </button>
@@ -319,16 +319,16 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {TRAINING_ACTIONS.map(action => (
                   <button
                     key={action.id}
                     onClick={() => handleTrain(action)}
-                    className="bg-rose-900/40 hover:bg-rose-900/60 border border-rose-500/30 rounded-xl p-4 text-left transition-all"
+                    className="bg-rose-900/40 hover:bg-rose-900/60 border border-rose-500/30 rounded-xl p-3 sm:p-4 text-left transition-all"
                   >
-                    <h4 className="text-rose-100 font-bold mb-1">{action.label}</h4>
-                    <p className="text-rose-300 text-xs mb-2">{action.desc}</p>
-                    <div className="flex gap-2 text-xs">
+                    <h4 className="text-rose-100 font-bold mb-1 text-sm sm:text-base">{action.label}</h4>
+                    <p className="text-rose-300 text-[10px] sm:text-xs mb-2">{action.desc}</p>
+                    <div className="flex gap-2 text-[10px] sm:text-xs">
                       <span className="text-rose-400">+{action.power} Power</span>
                       <span className="text-purple-400">+{action.xp} XP</span>
                     </div>
