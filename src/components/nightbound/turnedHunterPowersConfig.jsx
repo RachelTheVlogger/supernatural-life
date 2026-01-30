@@ -1,3 +1,6 @@
+
+import { Zap, Brain, Eye, Shield, Heart, Droplets, Sun, Moon } from 'lucide-react';
+
 export const TURNED_HUNTER_POWERS = {
   // Predator Powers - Enhanced hunting abilities
   predatory_instinct: {
@@ -280,5 +283,310 @@ export const TURNED_HUNTER_CATEGORIES = {
     name: 'Supernatural',
     desc: 'Reality-bending and transcendent powers',
     emoji: '✨'
+  }
+};
+
+export const TURNED_HUNTER_POWER_PATHS = {
+  persuasion: {
+    name: 'Path of Persuasion',
+    icon: Brain,
+    color: 'purple',
+    description: 'Master the minds of mortals',
+    powers: [
+      {
+        name: 'Enhanced Senses',
+        description: 'Perceive heartbeats from across a room',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Subtle Influence',
+        description: 'Plant thoughts that feel like their own',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Feral Rage',
+        description: 'Unleash primal vampire fury',
+        requirements: { prerequisite: 'Enhanced Senses' },
+        tier: 1
+      },
+      {
+        name: 'Dream Walking',
+        description: 'Enter and control their dreams',
+        requirements: { prerequisite: 'Enhanced Senses' },
+        tier: 1
+      },
+      {
+        name: 'Soul Gaze',
+        description: 'See into their very essence',
+        requirements: { prerequisite: 'Enhanced Senses' },
+        tier: 2
+      },
+      {
+        name: 'Commanding Presence',
+        description: 'Your words carry unnatural weight',
+        requirements: { prerequisite: 'Subtle Influence' },
+        tier: 2
+      },
+      {
+        name: 'Time Dilation',
+        description: 'Slow their perception of time',
+        requirements: { prerequisite: 'Dream Walking' },
+        tier: 2
+      },
+      {
+        name: 'Mass Compulsion',
+        description: 'Bend multiple minds at once',
+        requirements: { prerequisite: 'Commanding Presence' },
+        tier: 3
+      },
+      {
+        name: 'Perfect Thrall',
+        description: 'Create servants who cannot disobey',
+        requirements: { prerequisite: 'Mass Compulsion' },
+        tier: 4
+      }
+    ]
+  },
+  stealth: {
+    name: 'Path of Shadow',
+    icon: Eye,
+    color: 'blue',
+    description: 'Become invisible to mortal eyes',
+    powers: [
+      {
+        name: 'Mist Form',
+        description: 'Dissolve into fog',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Silent Movement',
+        description: 'Your footsteps make no sound',
+        requirements: { prerequisite: 'Mist Form' },
+        tier: 2
+      },
+      {
+        name: 'Veil of Darkness',
+        description: 'Bend shadows around yourself',
+        requirements: { prerequisite: 'Silent Movement' },
+        tier: 3
+      },
+      {
+        name: 'Phantom Walk',
+        description: 'Phase through solid matter',
+        requirements: { prerequisite: 'Veil of Darkness' },
+        tier: 4
+      }
+    ]
+  },
+  control: {
+    name: 'Path of Domination',
+    icon: Shield,
+    color: 'red',
+    description: 'Command absolute obedience',
+    powers: [
+      {
+        name: 'Blood Bond',
+        description: 'Create unbreakable loyalty through feeding',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Servant Network',
+        description: 'Your servants can sense each other',
+        requirements: { prerequisite: 'Blood Bond' },
+        tier: 2
+      },
+      {
+        name: 'Shared Senses',
+        description: 'See through your servants\' eyes',
+        requirements: { prerequisite: 'Servant Network' },
+        tier: 3
+      },
+      {
+        name: 'Hive Mind',
+        description: 'All your servants act as one',
+        requirements: { prerequisite: 'Shared Senses' },
+        tier: 4
+      }
+    ]
+  },
+  power: {
+    name: 'Path of Might',
+    icon: Zap,
+    color: 'yellow',
+    description: 'Transcend mortal limitations',
+    powers: [
+      {
+        name: 'Heightened Reflexes',
+        description: 'Move faster than mortal eyes can follow',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Supernatural Strength',
+        description: 'Bend steel with your hands',
+        requirements: { prerequisite: 'Heightened Reflexes' },
+        tier: 2
+      },
+      {
+        name: 'Regeneration',
+        description: 'Wounds close in moments',
+        requirements: { prerequisite: 'Supernatural Strength' },
+        tier: 3
+      },
+      {
+        name: 'Ancient Form',
+        description: 'Transform into a creature of nightmare',
+        requirements: { prerequisite: 'Regeneration' },
+        tier: 4
+      },
+      {
+        name: 'Predator\'s Instinct',
+        description: 'Sense prey from miles away',
+        requirements: { prerequisite: 'Heightened Reflexes' },
+        tier: 2
+      },
+      {
+        name: 'Blood Rush',
+        description: 'Superhuman speed bursts',
+        requirements: { prerequisite: 'Predator\'s Instinct' },
+        tier: 3
+      }
+    ]
+  },
+  seduction: {
+    name: 'Path of Seduction',
+    icon: Heart,
+    color: 'pink',
+    description: 'Master desire and pleasure',
+    powers: [
+      {
+        name: 'Intoxicating Presence',
+        description: 'Your scent becomes irresistible',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Euphoric Touch',
+        description: 'Your touch brings overwhelming pleasure',
+        requirements: { prerequisite: 'Intoxicating Presence' },
+        tier: 2
+      },
+      {
+        name: 'Vampiric Glamour',
+        description: 'Appear as their deepest fantasy',
+        requirements: { prerequisite: 'Euphoric Touch' },
+        tier: 3
+      },
+      {
+        name: 'Ecstasy Bond',
+        description: 'Link pleasure directly to obedience',
+        requirements: { prerequisite: 'Vampiric Glamour' },
+        tier: 4
+      },
+      {
+        name: 'Sensual Thrall',
+        description: 'Make them addicted to your presence',
+        requirements: { prerequisite: 'Intoxicating Presence' },
+        tier: 2
+      },
+      {
+        name: 'Desire Manipulation',
+        description: 'Control what they crave',
+        requirements: { prerequisite: 'Sensual Thrall' },
+        tier: 3
+      }
+    ]
+  },
+  blood: {
+    name: 'Path of Blood',
+    icon: Droplets,
+    color: 'crimson',
+    description: 'Master blood magic and rituals',
+    powers: [
+      {
+        name: 'Blood Scrying',
+        description: 'See through blood connections',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Crimson Chains',
+        description: 'Create binding contracts in blood',
+        requirements: { prerequisite: 'Blood Scrying' },
+        tier: 2
+      },
+      {
+        name: 'Blood Puppetry',
+        description: 'Control bodies through their blood',
+        requirements: { prerequisite: 'Crimson Chains' },
+        tier: 3
+      },
+      {
+        name: 'Hemomancy',
+        description: 'Shape blood into weapons',
+        requirements: { prerequisite: 'Blood Puppetry' },
+        tier: 4
+      },
+      {
+        name: 'Blood Memory',
+        description: 'Extract memories from blood',
+        requirements: { prerequisite: 'Blood Scrying' },
+        tier: 2
+      },
+      {
+        name: 'Sanguine Restoration',
+        description: 'Heal using consumed blood',
+        requirements: { prerequisite: 'Blood Memory' },
+        tier: 3
+      }
+    ]
+  },
+  immortal: {
+    name: 'Path of Eternity',
+    icon: Sun,
+    color: 'gold',
+    description: 'Transcend vampire limitations',
+    powers: [
+      {
+        name: 'Twilight Resistance',
+        description: 'Endure dawn and dusk',
+        requirements: {},
+        tier: 1
+      },
+      {
+        name: 'Daywalker',
+        description: 'Move freely in sunlight',
+        requirements: { prerequisite: 'Twilight Resistance' },
+        tier: 2
+      },
+      {
+        name: 'Ageless',
+        description: 'Time cannot touch you',
+        requirements: { prerequisite: 'Daywalker' },
+        tier: 3
+      },
+      {
+        name: 'Immortal Ascension',
+        description: 'Become truly deathless',
+        requirements: { prerequisite: 'Ageless' },
+        tier: 4
+      },
+      {
+        name: 'Elder\'s Wisdom',
+        description: 'Access ancient knowledge',
+        requirements: { prerequisite: 'Twilight Resistance' },
+        tier: 2
+      },
+      {
+        name: 'Reality Anchoring',
+        description: 'Cannot be erased from existence',
+        requirements: { prerequisite: 'Elder\'s Wisdom' },
+        tier: 3
+      }
+    ]
   }
 };

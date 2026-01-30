@@ -3,16 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, Lock, Check, ChevronRight, Star, Droplets, Eye, Brain, Wind, Target } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
-import { TURNED_HUNTER_POWERS, TURNED_HUNTER_CATEGORIES } from './turnedHunterPowersConfig';
-
-// Icon mapping
-const ICON_MAP = {
-  Eye,
-  Wind,
-  Zap,
-  Brain,
-  Star
-};
+import { TURNED_HUNTER_POWER_PATHS } from './turnedHunterPowersConfig';
 
 const TRAINING_ACTIONS = [
   { id: 'hunt', label: 'Hunt with Sire', power: 5, xp: 15, desc: 'Learn predator instincts' },
@@ -41,35 +32,46 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
     // Infinite progression - no power cap
     const maxPower = Infinity;
 
-  const handleUnlockPower = async (powerData) => {
-    if (unlockedPowers.includes(powerData.id)) return;
+  const canUnlock = (powerItem) => {
+    if (unlockedPowers.includes(powerItem.name)) return false;
     
-    const newUnlocked = [...unlockedPowers, powerData.id];
-    await base44.entities.Hunter.update(hunter.id, {
-      unlocked_powers: newUnlocked
-    });
-
-    await base44.entities.NightLog.create({
-      entry: `${hunter.name} unlocked ${powerData.name}. The power flows through you.`,
-      category: 'power',
-      intensity: 'significant'
-    });
-
-    queryClient.invalidateQueries();
+    const reqs = powerItem.requirements;
+    if (reqs.prerequisite && !unlockedPowers.includes(reqs.prerequisite)) return false;
+    
+    return true;
   };
 
-  const canUpgrade = (powerId, upgrade) => {
-    if (!unlockedPowers.includes(powerId)) return false;
-    if (powerUpgrades[powerId]?.includes(upgrade.id)) return false;
-    if (xp < upgrade.cost) return false;
-    return true;
+  const handleUnlock = async (powerItem) => {
+    if (!canUnlock(powerItem)) return;
+    
+    setUnlocking(powerItem.name);
+    setTimeout(async () => {
+      try {
+        const updatedPowers = [...unlockedPowers, powerItem.name];
+        await base44.entities.Hunter.update(hunter.id, {
+          unlocked_powers: updatedPowers
+        });
+        
+        await base44.entities.NightLog.create({
+          entry: `${hunter.name} awakened: ${powerItem.name}. ${powerItem.description}`,
+          category: 'power',
+          intensity: 'significant'
+        });
+        
+        queryClient.invalidateQueries();
+      } catch (e) {
+        console.error('Power unlock failed:', e);
+      } finally {
+        setUnlocking(null);
+      }
+    }, 2000);
   };
 
   const handleTrain = async (action) => {
     setTraining(true);
 
     setTimeout(async () => {
-      const newPower = power + action.power; // Infinite power progression
+      const newPower = power + action.power;
       const newXp = xp + action.xp;
       const newNights = nights + 1;
 
@@ -77,23 +79,12 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
       if (newPower >= 25 && stage === 1) newStage = 2;
       if (newPower >= 50 && stage === 2) newStage = 3;
       if (newPower >= 75 && stage === 3) newStage = 4;
-      if (newPower >= 150 && stage === 4) newStage = 5; // Infinite tier progression
-      if (newPower >= 300 && stage === 5) newStage = 6;
-      if (newPower >= 500 && stage === 6) newStage = 7;
-
-      const newUnlocked = [...unlockedPowers];
-      Object.values(TURNED_HUNTER_POWERS).forEach(p => {
-        if (p.power <= newPower && p.stage <= newStage && !newUnlocked.includes(p.id)) {
-          newUnlocked.push(p.id);
-        }
-      });
 
       await base44.entities.Hunter.update(hunter.id, {
         vampire_power_level: newPower,
         vampire_stage: newStage,
         nights_as_vampire: newNights,
-        experience: newXp,
-        unlocked_powers: newUnlocked
+        experience: newXp
       });
 
       const messages = {
@@ -112,17 +103,9 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
         const stageNames = {
           2: 'Fledgling',
           3: 'Established',
-          4: 'Elder',
-          5: 'Ascendant',
-          6: 'Infinite',
-          7: 'Godlike'
+          4: 'Elder'
         };
         msg += `\n\n🎉 Evolved to ${stageNames[newStage]}!`;
-      }
-
-      const newPowers = newUnlocked.filter(p => !unlockedPowers.includes(p));
-      if (newPowers.length > 0) {
-        msg += `\n\n✨ New powers: ${newPowers.map(id => TURNED_HUNTER_POWERS[id]?.name).join(', ')}`;
       }
 
       setOutcome(msg);
@@ -143,91 +126,9 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
     }, 2000);
   };
 
-  const handleUpgrade = async (powerId, upgrade) => {
-    if (!canUpgrade(powerId, upgrade)) return;
-
-    const newUpgrades = { ...powerUpgrades };
-    if (!newUpgrades[powerId]) newUpgrades[powerId] = [];
-    newUpgrades[powerId].push(upgrade.id);
-
-    await base44.entities.Hunter.update(hunter.id, {
-      experience: xp - upgrade.cost,
-      power_upgrades: newUpgrades
-    });
-
-    await base44.entities.NightLog.create({
-       entry: `${hunter.name} upgraded ${TURNED_HUNTER_POWERS[powerId].name} → ${upgrade.name}. Power refined.`,
-       category: 'power',
-       intensity: 'significant'
-     });
-
-    queryClient.invalidateQueries();
-    setSelectedPower(null);
-  };
-
-  const PowerCard = ({ powerData }) => {
-    const Icon = ICON_MAP[powerData.icon] || Eye;
-    const isUnlocked = unlockedPowers.includes(powerData.id);
-    const upgrades = powerUpgrades[powerData.id] || [];
-
-    const bgColor = {
-      blue: 'bg-blue-950/30 border-blue-500/50',
-      cyan: 'bg-cyan-950/30 border-cyan-500/50',
-      red: 'bg-red-950/30 border-red-500/50',
-      purple: 'bg-purple-950/30 border-purple-500/50',
-      indigo: 'bg-indigo-950/30 border-indigo-500/50',
-      pink: 'bg-pink-950/30 border-pink-500/50',
-      violet: 'bg-violet-950/30 border-violet-500/50',
-      gray: 'bg-gray-950/30 border-gray-500/50',
-      yellow: 'bg-yellow-950/30 border-yellow-500/50'
-    }[powerData.color] || 'bg-purple-950/30 border-purple-500/50';
-
-    const textColor = {
-      blue: 'text-blue-400',
-      cyan: 'text-cyan-400',
-      red: 'text-red-400',
-      purple: 'text-purple-400',
-      indigo: 'text-indigo-400',
-      pink: 'text-pink-400',
-      violet: 'text-violet-400',
-      gray: 'text-gray-400',
-      yellow: 'text-yellow-400'
-    }[powerData.color] || 'text-purple-400';
-
-    return (
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        className={`border-2 rounded-xl p-4 transition-all cursor-pointer ${
-          isUnlocked
-            ? bgColor
-            : 'bg-purple-950/20 border-purple-500/40'
-        }`}
-        onClick={() => !isUnlocked ? handleUnlockPower(powerData) : setSelectedPower(powerData.id)}
-      >
-        <div className="flex items-start gap-3">
-          <Icon className={`w-6 h-6 ${textColor}`} />
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-1">
-              <h4 className="text-white font-bold">{powerData.name}</h4>
-              {isUnlocked && <Check className="w-5 h-5 text-green-400" />}
-            </div>
-            <p className="text-gray-400 text-sm mb-2">{powerData.desc}</p>
-            {isUnlocked && upgrades.length > 0 && (
-              <div className="flex gap-1">
-                {upgrades.map(uid => (
-                  <span key={uid} className="text-xs bg-green-900/50 text-green-300 px-2 py-0.5 rounded">
-                    {powerData.upgrades.find(u => u.id === uid)?.name}
-                  </span>
-                ))}
-              </div>
-            )}
-            {!isUnlocked && (
-              <span className="text-xs text-purple-300 font-medium">Click to unlock</span>
-            )}
-          </div>
-        </div>
-      </motion.div>
-    );
+  const getTierColor = (tier) => {
+    const colors = ['text-gray-400', 'text-green-400', 'text-blue-400', 'text-purple-400', 'text-red-400'];
+    return colors[tier] || colors[0];
   };
 
   return (
@@ -336,81 +237,130 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
                 ))}
               </div>
             </motion.div>
-          ) : selectedPower ? (
+          ) : !selectedPath ? (
             <motion.div
-              key="upgrade"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-            >
-              <button
-                onClick={() => setSelectedPower(null)}
-                className="text-rose-300 hover:text-rose-100 mb-4 text-sm"
-              >
-                ← Back
-              </button>
-              <div className="bg-black/40 rounded-xl p-6 border border-rose-500/30 mb-4">
-                 <h3 className="text-2xl font-bold text-rose-100 mb-2">{TURNED_HUNTER_POWERS[selectedPower].name}</h3>
-                 <p className="text-rose-300 mb-4">{TURNED_HUNTER_POWERS[selectedPower].desc}</p>
-                 <div className="flex gap-2">
-                   <span className="text-xs bg-rose-900/50 text-rose-300 px-3 py-1 rounded">{TURNED_HUNTER_CATEGORIES[TURNED_HUNTER_POWERS[selectedPower].category]?.emoji} {TURNED_HUNTER_CATEGORIES[TURNED_HUNTER_POWERS[selectedPower].category]?.name}</span>
-                   <span className="text-xs bg-rose-900/50 text-rose-300 px-3 py-1 rounded">Stage {TURNED_HUNTER_POWERS[selectedPower].stage}</span>
-                 </div>
-               </div>
-               <h4 className="text-rose-200 font-bold mb-3">Upgrade Paths</h4>
-               <div className="space-y-3">
-                 {TURNED_HUNTER_POWERS[selectedPower].upgrades.map(upgrade => {
-                  const isUnlocked = powerUpgrades[selectedPower]?.includes(upgrade.id);
-                  const canBuy = canUpgrade(selectedPower, upgrade);
-
-                  return (
-                    <div
-                      key={upgrade.id}
-                      className={`border-2 rounded-xl p-4 ${
-                        isUnlocked
-                          ? 'bg-green-950/30 border-green-500/50'
-                          : canBuy
-                          ? 'bg-purple-950/20 border-purple-500/40 cursor-pointer hover:bg-purple-950/30'
-                          : 'bg-gray-900/40 border-gray-700/30 opacity-60'
-                      }`}
-                      onClick={() => canBuy && handleUpgrade(selectedPower, upgrade)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h5 className="text-white font-bold mb-1">{upgrade.name}</h5>
-                          <p className="text-gray-400 text-sm">{upgrade.desc}</p>
-                        </div>
-                        {isUnlocked ? (
-                          <Check className="w-6 h-6 text-green-400" />
-                        ) : (
-                          <span className={`text-sm px-3 py-1 rounded ${xp >= upgrade.cost ? 'bg-purple-900/50 text-purple-300' : 'bg-gray-800 text-gray-400'}`}>
-                            {upgrade.cost} XP
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="overview"
+              key="paths"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="space-y-6"
+              className="grid md:grid-cols-3 gap-4"
+            >
+              {Object.entries(TURNED_HUNTER_POWER_PATHS).map(([key, path]) => {
+                const Icon = path.icon;
+                const pathPowers = path.powers.filter(p => unlockedPowers.includes(p.name));
+                const progress = (pathPowers.length / path.powers.length) * 100;
+
+                return (
+                  <motion.button
+                    key={key}
+                    whileHover={{ scale: 1.02 }}
+                    onClick={() => setSelectedPath(key)}
+                    className={`bg-${path.color}-950/20 border border-${path.color}-800/50 rounded-xl p-6 text-left transition-all hover:bg-${path.color}-950/30`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <Icon className={`w-8 h-8 text-${path.color}-400`} />
+                      <div className="flex-1">
+                        <h3 className="text-white font-bold text-lg mb-1">{path.name}</h3>
+                        <p className="text-gray-400 text-sm mb-3">{path.description}</p>
+
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="flex-1 bg-gray-800 rounded-full h-2">
+                            <div
+                              style={{ width: `${progress}%` }}
+                              className={`h-2 rounded-full bg-${path.color}-500`}
+                            />
+                          </div>
+                          <span className="text-xs text-gray-400">{pathPowers.length}/{path.powers.length}</span>
+                        </div>
+
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <ChevronRight className="w-3 h-3" />
+                          <span>View Tree</span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="tree"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <button
+                onClick={() => setSelectedPath(null)}
+                className="text-rose-300 hover:text-rose-100 text-sm mb-4"
               >
-              {Object.entries(TURNED_HUNTER_CATEGORIES).map(([catId, catData]) => (
-                <div key={catId}>
-                  <h3 className="text-rose-200 font-bold mb-3">{catData.emoji} {catData.name} - {catData.desc}</h3>
-                  <div className="grid gap-3">
-                    {Object.values(TURNED_HUNTER_POWERS).filter(p => p.category === catId).map(p => (
-                      <PowerCard key={p.id} powerData={p} />
-                    ))}
-                  </div>
-                </div>
-              ))}
+                ← Back to Paths
+              </button>
+
+              <div className="space-y-3">
+                {TURNED_HUNTER_POWER_PATHS[selectedPath].powers.map((powerItem, i) => {
+                  const isUnlocked = unlockedPowers.includes(powerItem.name);
+                  const canBeUnlocked = canUnlock(powerItem);
+                  const isUnlockingThis = unlocking === powerItem.name;
+                  const Icon = TURNED_HUNTER_POWER_PATHS[selectedPath].icon;
+
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className={`border rounded-xl p-4 ${
+                        isUnlocked 
+                          ? 'bg-green-950/20 border-green-800/50' 
+                          : canBeUnlocked 
+                          ? 'bg-purple-950/20 border-purple-800/50 cursor-pointer hover:bg-purple-950/30' 
+                          : 'bg-gray-800/20 border-gray-700/50 opacity-60'
+                      }`}
+                      onClick={() => canBeUnlocked && !isUnlocked && handleUnlock(powerItem)}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="mt-1">
+                          {isUnlocked ? (
+                            <Check className="w-6 h-6 text-green-400" />
+                          ) : canBeUnlocked ? (
+                            <Icon className="w-6 h-6 text-purple-400" />
+                          ) : (
+                            <Lock className="w-6 h-6 text-gray-500" />
+                          )}
+                        </div>
+
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className={`font-bold ${getTierColor(powerItem.tier)}`}>
+                              {powerItem.name}
+                            </h4>
+                            <span className="text-xs text-gray-500">Tier {powerItem.tier}</span>
+                          </div>
+
+                          <p className="text-gray-400 text-sm mb-3">{powerItem.description}</p>
+
+                          {!isUnlocked && powerItem.requirements.prerequisite && (
+                            <div className="flex flex-wrap gap-2">
+                              <span className={`text-xs px-2 py-1 rounded ${
+                                unlockedPowers.includes(powerItem.requirements.prerequisite) 
+                                  ? 'bg-green-900/50 text-green-300' 
+                                  : 'bg-gray-800 text-gray-400'
+                              }`}>
+                                Requires: {powerItem.requirements.prerequisite}
+                              </span>
+                            </div>
+                          )}
+
+                          {isUnlockingThis && (
+                            <p className="text-purple-400 text-sm mt-2">Awakening power...</p>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
