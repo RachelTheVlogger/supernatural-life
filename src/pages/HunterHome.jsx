@@ -659,7 +659,28 @@ export default function HunterHome() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <HunterVampirePowerTree hunter={hunter} onClose={() => setActiveTab('home')} />
+              {isTurnedVampire ? (
+                <HunterVampirePowerTree hunter={hunter} onClose={() => setActiveTab('home')} />
+              ) : (
+                <div className="bg-black/40 border border-gray-700/50 rounded-2xl p-6">
+                  <h3 className="text-white text-xl font-bold mb-4">Hunter Abilities</h3>
+                  <p className="text-gray-400 mb-6">Access your hunter skills and progression</p>
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setShowProgression(true)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl transition-colors"
+                    >
+                      Skill Trees
+                    </button>
+                    <button
+                      onClick={() => setShowTraits(true)}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 rounded-xl transition-colors"
+                    >
+                      Hunter Traits
+                    </button>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
 
