@@ -265,6 +265,35 @@ export default function HunterHome() {
         </motion.div>
       )}
 
+      {/* Sacrifice Yourself - Turned Vampire */}
+      {isTurnedVampire && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-4xl mx-auto mb-6"
+        >
+          <button
+            onClick={async () => {
+              if (confirm(`Sacrifice ${hunter.name}? This will permanently delete them from the game. This cannot be undone.`)) {
+                await base44.entities.Hunter.delete(hunter.id);
+                await base44.entities.NightLog.create({
+                  entry: `${hunter.name} sacrificed themselves. Gone from this world. The eternal night claims another soul.`,
+                  category: 'interaction',
+                  intensity: 'extreme'
+                });
+                queryClient.invalidateQueries();
+                navigate(createPageUrl('Home'));
+              }
+            }}
+            className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 border-2 border-gray-600 text-gray-300 rounded-xl py-4 px-6 text-center transition-all shadow-lg"
+          >
+            <div className="text-2xl mb-2">💀</div>
+            <div className="text-lg font-bold mb-1">Sacrifice Yourself</div>
+            <div className="text-xs text-gray-400">End your eternal existence permanently</div>
+          </button>
+        </motion.div>
+      )}
+
       {/* Quick Stats */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

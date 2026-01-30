@@ -756,8 +756,6 @@ export default function WaterNymphHome() {
               </div>
             </button>
 
-
-
             <button
               onClick={() => setShowDating(true)}
               className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
@@ -766,6 +764,28 @@ export default function WaterNymphHome() {
               <div className="flex-1 text-left">
                 <h3 className="text-white font-medium">Love & Romance</h3>
                 <p className="text-pink-300 text-sm">Find your kindred spirit.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={async () => {
+                if (confirm(`End ${nymph.name}'s story? This will permanently delete them from the game. This cannot be undone.`)) {
+                  await base44.entities.WaterNymph.delete(nymph.id);
+                  await base44.entities.NightLog.create({
+                    entry: `${nymph.name} dissolved into mist. Returned to nature. Gone forever.`,
+                    category: 'interaction',
+                    intensity: 'extreme'
+                  });
+                  queryClient.invalidateQueries();
+                  navigate(createPageUrl('Home'));
+                }
+              }}
+              className="w-full bg-gradient-to-r from-gray-900/60 to-black/60 hover:from-gray-900/80 hover:to-black/80 border-2 border-gray-600/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <div className="text-2xl">💀</div>
+              <div className="flex-1 text-left">
+                <h3 className="text-gray-400 font-medium">Sacrifice Yourself</h3>
+                <p className="text-gray-500 text-sm">Return to nature. Forever.</p>
               </div>
             </button>
             </div>

@@ -830,6 +830,41 @@ import VictimTrophies from '@/components/nightbound/VictimTrophies';
               </div>
             </button>
           </motion.div>
+
+          {/* Sacrifice Yourself */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.26 }}
+            className="mb-8"
+          >
+            <button
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (confirm(`End ${vampireState.vampire_name}'s existence? This will permanently delete them from the game. This cannot be undone.`)) {
+                  await base44.entities.VampireState.delete(vampireState.id);
+                  await base44.entities.NightLog.create({
+                    entry: `${vampireState.vampire_name} chose to end their eternal existence. Ashes to ashes. Dust to dust.`,
+                    category: 'interaction',
+                    intensity: 'extreme'
+                  });
+                  queryClient.invalidateQueries();
+                  navigate(createPageUrl('Home'));
+                }
+              }}
+              className="w-full bg-gradient-to-r from-gray-950/40 to-black/40 hover:from-gray-950/60 hover:to-black/60 border-2 border-gray-600/50 rounded-2xl p-6 transition-all touch-manipulation"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-4xl">💀</div>
+                  <div className="text-left">
+                    <h3 className="text-gray-400 text-xl font-bold mb-1">Sacrifice Yourself</h3>
+                    <p className="text-gray-500 text-sm">End your eternal night. Permanently.</p>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </motion.div>
           
           {/* Supernatural & Systems Grid */}
           <motion.div

@@ -547,6 +547,24 @@ export default function ServantHome() {
           >
             <span className="text-white font-medium">❤️ Hobbies & Time Together</span>
           </button>
+
+          <button
+            onClick={async () => {
+              if (confirm(`End ${entity.name}'s story? This will permanently delete them from the game. This cannot be undone.`)) {
+                await base44.entities.Servant.delete(entity.id);
+                await base44.entities.NightLog.create({
+                  entry: `${entity.name} ${entity.is_turned ? 'chose to end their eternal existence' : 'left forever'}. Gone from this world.`,
+                  category: 'interaction',
+                  intensity: 'extreme'
+                });
+                queryClient.invalidateQueries();
+                navigate(createPageUrl('Night'));
+              }
+            }}
+            className="w-full bg-gradient-to-r from-gray-900/40 to-black/40 hover:from-gray-900/60 hover:to-black/60 border-2 border-gray-600/50 rounded-xl p-3 transition-all"
+          >
+            <span className="text-gray-400 font-medium">💀 Sacrifice Yourself</span>
+          </button>
           
           <div className="grid grid-cols-1 gap-2">
             {entity.is_turned && (
