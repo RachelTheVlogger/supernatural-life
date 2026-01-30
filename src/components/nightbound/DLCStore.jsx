@@ -4,18 +4,49 @@ import { X, Lock, Unlock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+const DLC_CATALOG = [
+  { name: 'Werewolf', entity_type: 'Werewolf', icon: '🐺', category: 'creature', description: 'Moon-cursed shapeshifter with primal rage' },
+  { name: 'Demon', entity_type: 'Demon', icon: '😈', category: 'creature', description: 'Soul collector from hell' },
+  { name: 'Angel', entity_type: 'Angel', icon: '😇', category: 'creature', description: 'Divine celestial being with grace' },
+  { name: 'Ghost', entity_type: 'Ghost', icon: '👻', category: 'creature', description: 'Restless spirit with unfinished business' },
+  { name: 'Necromancer', entity_type: 'Necromancer', icon: '💀', category: 'creature', description: 'Master of death magic and undead armies' },
+  { name: 'Shapeshifter', entity_type: 'Shapeshifter', icon: '🦎', category: 'creature', description: 'Identity thief with perfect mimicry' }
+];
+
 export default function DLCStore({ onClose }) {
   const queryClient = useQueryClient();
 
   const { data: dlcs = [] } = useQuery({
     queryKey: ['dlcs'],
-    queryFn: () => base44.entities.DLC.list(),
+    queryFn: async () => {
+      const existing = await base44.entities.DLC.list();
+      if (existing.length === 0) {
+        // Initialize DLCs
+        await Promise.all(DLC_CATALOG.map(dlc => 
+          base44.entities.DLC.create({
+            name: dlc.name,
+            entity_type: dlc.entity_type,
+            icon: dlc.icon,
+            category: dlc.category,
+            description: dlc.description,
+            unlocked: false
+          })
+        ));
+        return await base44.entities.DLC.list();
+      }
+      return existing;
+    },
     staleTime: 0
   });
 
   const handleUnlock = async (dlc) => {
     try {
       await base44.entities.DLC.update(dlc.id, { unlocked: true });
+      await base44.entities.NightLog.create({
+        entry: `DLC unlocked: ${dlc.name}. New creature available!`,
+        category: 'milestone',
+        intensity: 'significant'
+      });
       await queryClient.invalidateQueries(['dlcs']);
     } catch (e) {
       console.error('Failed to unlock DLC:', e);
@@ -37,75 +68,64 @@ export default function DLCStore({ onClose }) {
         className="bg-gradient-to-br from-purple-950 to-gray-950 rounded-2xl p-4 sm:p-6 md:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border-2 border-purple-500/50"
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-white">Free DLC</h2>
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">🎮 Free DLC</h2>
+            <p className="text-purple-300 text-xs sm:text-sm mt-1">Unlock more supernatural creatures</p>
+          </div>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <p className="text-gray-400 text-sm mb-6">
-          Unlock new content and features - completely free!
-        </p>
-
-        <div className="space-y-4">
-          {dlcs.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-400">No DLC available yet.</p>
-              <p className="text-gray-500 text-sm mt-2">Check back soon for fairies, demons, and more!</p>
-            </div>
-          ) : (
-            dlcs.map(dlc => (
-              <motion.div
-                key={dlc.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`rounded-xl p-6 border-2 transition-all ${
-                  dlc.unlocked
-                    ? 'bg-green-950/40 border-green-500/50'
-                    : 'bg-purple-950/40 border-purple-500/30 hover:border-purple-500/60'
-                }`}
-              >
-                <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-3xl sm:text-4xl">{dlc.icon}</span>
-                      <div>
-                        <h3 className="text-white font-bold text-base sm:text-lg">{dlc.name}</h3>
-                        <p className="text-gray-400 text-xs capitalize">{dlc.category}</p>
-                      </div>
-                    </div>
-                    <p className="text-gray-300 text-xs sm:text-sm">{dlc.description}</p>
+        <div className="space-y-3">
+          {dlcs.map(dlc => (
+            <motion.div
+              key={dlc.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`rounded-xl p-4 border-2 transition-all ${
+                dlc.unlocked
+                  ? 'bg-green-950/40 border-green-500/50'
+                  : 'bg-purple-950/40 border-purple-500/30 hover:border-purple-500/60'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 flex-1">
+                  <span className="text-3xl">{dlc.icon}</span>
+                  <div>
+                    <h3 className="text-white font-bold text-base">{dlc.name}</h3>
+                    <p className="text-gray-400 text-xs">{dlc.description}</p>
                   </div>
-                  <button
-                    onClick={() => !dlc.unlocked && handleUnlock(dlc)}
-                    disabled={dlc.unlocked}
-                    className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap text-sm sm:text-base ${
-                      dlc.unlocked
-                        ? 'bg-green-600 text-white cursor-default'
-                        : 'bg-purple-600 hover:bg-purple-700 text-white'
-                    }`}
-                  >
-                    {dlc.unlocked ? (
-                      <>
-                        <Unlock className="w-4 h-4" />
-                        Unlocked
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="w-4 h-4" />
-                        Unlock Free
-                      </>
-                    )}
-                  </button>
                 </div>
-              </motion.div>
-            ))
-          )}
+                <button
+                  onClick={() => !dlc.unlocked && handleUnlock(dlc)}
+                  disabled={dlc.unlocked}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 whitespace-nowrap text-sm ${
+                    dlc.unlocked
+                      ? 'bg-green-600 text-white cursor-default'
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                  }`}
+                >
+                  {dlc.unlocked ? (
+                    <>
+                      <Unlock className="w-4 h-4" />
+                      Unlocked
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      Unlock
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         <button
           onClick={onClose}
-          className="w-full mt-8 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition-colors"
+          className="w-full mt-6 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition-colors"
         >
           Close
         </button>

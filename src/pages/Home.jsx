@@ -84,6 +84,16 @@ export default function Home() {
     queryFn: () => base44.entities.Shapeshifter.list()
   });
 
+  const { data: dlcs = [] } = useQuery({
+    queryKey: ['dlcs'],
+    queryFn: () => base44.entities.DLC.list()
+  });
+
+  const isDLCUnlocked = (entityType) => {
+    const dlc = dlcs.find(d => d.entity_type === entityType);
+    return dlc?.unlocked || false;
+  };
+
 
   
   const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || hunters.length > 0 || werewolves.length > 0 || demons.length > 0 || angels.length > 0 || ghosts.length > 0 || necromancers.length > 0 || shapeshifters.length > 0;
@@ -92,6 +102,24 @@ export default function Home() {
     if (!characterName.trim()) {
       alert('Please enter a name');
       return;
+    }
+
+    // Check DLC for new creatures
+    const dlcCreatures = ['werewolf', 'demon', 'angel', 'ghost', 'necromancer', 'shapeshifter'];
+    if (dlcCreatures.includes(selectedType)) {
+      const entityTypeMap = {
+        werewolf: 'Werewolf',
+        demon: 'Demon',
+        angel: 'Angel',
+        ghost: 'Ghost',
+        necromancer: 'Necromancer',
+        shapeshifter: 'Shapeshifter'
+      };
+      if (!isDLCUnlocked(entityTypeMap[selectedType])) {
+        alert('This creature requires DLC unlock. Check the DLC store!');
+        setShowDLC(true);
+        return;
+      }
     }
     
     if (selectedType === 'vampire') {
