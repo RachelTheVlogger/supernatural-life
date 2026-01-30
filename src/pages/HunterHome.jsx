@@ -95,16 +95,7 @@ export default function HunterHome() {
     refetchOnWindowFocus: true
   });
 
-  const { data: notes = [] } = useQuery({
-    queryKey: ['hunterNotes'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.HunterNote.list();
-      } catch (e) {
-        return [];
-      }
-    }
-  });
+
 
   const { data: teams = [] } = useQuery({
     queryKey: ['hunterTeams'],
@@ -315,11 +306,7 @@ export default function HunterHome() {
               <p className="text-gray-400 text-xs mb-1">Suspicion</p>
               <p className="text-white text-2xl font-bold">{hunter.suspicion}%</p>
             </div>
-            <div className="bg-black/40 border border-blue-500/30 rounded-lg p-4">
-              <FileText className="w-5 h-5 text-blue-400 mb-2" />
-              <p className="text-gray-400 text-xs mb-1">Hunt Notes</p>
-              <p className="text-white text-2xl font-bold">{notes.length}</p>
-            </div>
+
             <div className="bg-black/40 border border-purple-500/30 rounded-lg p-4">
               <Heart className="w-5 h-5 text-purple-400 mb-2" />
               <p className="text-gray-400 text-xs mb-1">Status</p>
