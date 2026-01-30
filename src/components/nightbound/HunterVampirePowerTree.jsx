@@ -17,20 +17,17 @@ const TRAINING_ACTIONS = [
 
 export default function HunterVampirePowerTree({ hunter, onClose }) {
   const queryClient = useQueryClient();
-  const [selectedPower, setSelectedPower] = useState(null);
+  const [selectedPath, setSelectedPath] = useState(null);
+  const [unlocking, setUnlocking] = useState(null);
+  const [view, setView] = useState('overview'); // 'overview', 'training'
   const [training, setTraining] = useState(false);
   const [outcome, setOutcome] = useState('');
-  const [view, setView] = useState('overview'); // 'overview', 'training', 'power'
 
   const stage = hunter.vampire_stage || 1;
-    const power = hunter.vampire_power_level || 0;
-    const xp = hunter.experience || 0;
-    const nights = hunter.nights_as_vampire || 0;
-    const unlockedPowers = hunter.unlocked_powers || [];
-    const powerUpgrades = hunter.power_upgrades || {};
-
-    // Infinite progression - no power cap
-    const maxPower = Infinity;
+  const power = hunter.vampire_power_level || 0;
+  const xp = hunter.experience || 0;
+  const nights = hunter.nights_as_vampire || 0;
+  const unlockedPowers = hunter.unlocked_powers || [];
 
   const canUnlock = (powerItem) => {
     if (unlockedPowers.includes(powerItem.name)) return false;
