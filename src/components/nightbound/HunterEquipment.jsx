@@ -101,6 +101,60 @@ export default function HunterEquipment({ hunter, onClose }) {
     }
   };
 
+  const handleMaintain = async (item) => {
+    if (item.durability >= 100) {
+      alert('Already at max durability');
+      return;
+    }
+
+    setCrafting(true);
+    try {
+      await base44.entities.HunterEquipment.update(item.id, {
+        durability: 100
+      });
+      await base44.entities.Hunter.update(hunter.id, {
+        experience: (hunter.experience || 0) + 5
+      });
+      await base44.entities.NightLog.create({
+        entry: `${hunter.name} maintained their ${item.name}. Restored to perfect condition. +5 XP`,
+        category: 'training',
+        intensity: 'mild'
+      });
+      queryClient.invalidateQueries();
+    } catch (e) {
+      console.error('Failed to maintain:', e);
+    }
+    setCrafting(false);
+  };
+
+  const handlePractice = async (item) => {
+    if (item.type !== 'weapon') {
+      alert('Can only practice with weapons');
+      return;
+    }
+
+    setCrafting(true);
+    try {
+      const xpGain = 10 + Math.floor(item.power / 10);
+      await base44.entities.Hunter.update(hunter.id, {
+        experience: (hunter.experience || 0) + xpGain,
+        skill_level: Math.min(100, (hunter.skill_level || 50) + 1)
+      });
+      await base44.entities.HunterEquipment.update(item.id, {
+        durability: Math.max(0, (item.durability || 100) - 5)
+      });
+      await base44.entities.NightLog.create({
+        entry: `${hunter.name} practiced with their ${item.name}. Skills improving. +${xpGain} XP, +1 Skill`,
+        category: 'training',
+        intensity: 'moderate'
+      });
+      queryClient.invalidateQueries();
+    } catch (e) {
+      console.error('Failed to practice:', e);
+    }
+    setCrafting(false);
+  };
+
   const weapons = equipment.filter(e => e.type === 'weapon');
   const armor = equipment.filter(e => e.type === 'armor');
   const gadgets = equipment.filter(e => e.type === 'gadget');
@@ -149,18 +203,35 @@ export default function HunterEquipment({ hunter, onClose }) {
               <h3 className="text-white font-bold mb-3 flex items-center gap-2">
                 <Sword className="w-5 h-5" /> Weapons
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {weapons.map(item => (
                   <div key={item.id} className={`bg-${RARITY_COLORS[item.rarity]}-950/50 border border-${RARITY_COLORS[item.rarity]}-500/50 rounded-lg p-4`}>
                     <p className="text-white font-bold mb-1">{item.name}</p>
                     <p className="text-gray-400 text-sm">Power: {item.power}</p>
+                    <p className="text-gray-400 text-sm">Durability: {item.durability || 100}%</p>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <button
+                        onClick={() => handleEquip(item)}
+                        className={`py-1 rounded text-xs ${
+                          hunter.equipped_weapon === item.id ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300'
+                        }`}
+                      >
+                        {hunter.equipped_weapon === item.id ? 'Equipped' : 'Equip'}
+                      </button>
+                      <button
+                        onClick={() => handlePractice(item)}
+                        disabled={crafting}
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-1 rounded text-xs disabled:opacity-50"
+                      >
+                        Practice
+                      </button>
+                    </div>
                     <button
-                      onClick={() => handleEquip(item)}
-                      className={`mt-2 w-full py-1 rounded text-sm ${
-                        hunter.equipped_weapon === item.id ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300'
-                      }`}
+                      onClick={() => handleMaintain(item)}
+                      disabled={crafting || item.durability >= 100}
+                      className="mt-2 w-full bg-orange-600 hover:bg-orange-700 text-white py-1 rounded text-xs disabled:opacity-50"
                     >
-                      {hunter.equipped_weapon === item.id ? 'Equipped' : 'Equip'}
+                      Maintain
                     </button>
                   </div>
                 ))}
@@ -171,19 +242,29 @@ export default function HunterEquipment({ hunter, onClose }) {
               <h3 className="text-white font-bold mb-3 flex items-center gap-2">
                 <Shield className="w-5 h-5" /> Armor
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {armor.map(item => (
                   <div key={item.id} className={`bg-${RARITY_COLORS[item.rarity]}-950/50 border border-${RARITY_COLORS[item.rarity]}-500/50 rounded-lg p-4`}>
                     <p className="text-white font-bold mb-1">{item.name}</p>
                     <p className="text-gray-400 text-sm">Defense: {item.defense}</p>
-                    <button
-                      onClick={() => handleEquip(item)}
-                      className={`mt-2 w-full py-1 rounded text-sm ${
-                        hunter.equipped_armor === item.id ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300'
-                      }`}
-                    >
-                      {hunter.equipped_armor === item.id ? 'Equipped' : 'Equip'}
-                    </button>
+                    <p className="text-gray-400 text-sm">Durability: {item.durability || 100}%</p>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <button
+                        onClick={() => handleEquip(item)}
+                        className={`py-1 rounded text-xs ${
+                          hunter.equipped_armor === item.id ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300'
+                        }`}
+                      >
+                        {hunter.equipped_armor === item.id ? 'Equipped' : 'Equip'}
+                      </button>
+                      <button
+                        onClick={() => handleMaintain(item)}
+                        disabled={crafting || item.durability >= 100}
+                        className="bg-orange-600 hover:bg-orange-700 text-white py-1 rounded text-xs disabled:opacity-50"
+                      >
+                        Maintain
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
