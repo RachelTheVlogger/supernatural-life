@@ -37,20 +37,20 @@ export default function DLCStore({ onClose }) {
         className="bg-gradient-to-br from-purple-950 to-gray-950 rounded-2xl p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border-2 border-purple-500/50"
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-white">Expansions</h2>
+          <h2 className="text-3xl font-bold text-white">Free DLC</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="w-6 h-6" />
           </button>
         </div>
 
         <p className="text-gray-400 text-sm mb-6">
-          Unlock new entities and experiences (all free!)
+          Unlock new content and features - completely free!
         </p>
 
         <div className="space-y-4">
           {dlcs.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-400">No expansions available yet.</p>
+              <p className="text-gray-400">No DLC available yet.</p>
               <p className="text-gray-500 text-sm mt-2">Check back soon for fairies, demons, and more!</p>
             </div>
           ) : (
