@@ -325,7 +325,7 @@ import VictimTrophies from '@/components/nightbound/VictimTrophies';
         ))}
       </div>
       
-      <div className="relative z-10 p-6 overflow-y-auto pb-24">
+      <div className="relative z-10 p-6 overflow-y-auto pb-32">
         <div className="flex justify-between items-center mb-8">
           <button
             onClick={(e) => {
