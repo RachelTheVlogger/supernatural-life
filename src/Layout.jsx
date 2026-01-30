@@ -143,10 +143,17 @@ export default function Layout({ children, currentPageName }) {
           transform: translateY(0);
         }
 
-        /* Instant close button response */
-        button:active {
-          opacity: 0.7;
-          transform: scale(0.98);
+        /* Instant response for all inputs - mobile, tablet, PC */
+        button, a, input, select, textarea {
+          touch-action: manipulation;
+          -webkit-user-select: none;
+          user-select: none;
+        }
+
+        button:active, a:active {
+          opacity: 0.7 !important;
+          transform: scale(0.98) !important;
+          transition: all 0.05s ease !important;
         }
 
         /* Smooth transitions */
