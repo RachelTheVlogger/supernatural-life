@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import HunterHuntLog from '@/components/nightbound/HunterHuntLog';
+
 import HunterHomeActivities from '@/components/nightbound/HunterHomeActivities';
 import HunterIntimate from '@/components/nightbound/HunterIntimate';
 import HunterAbilityShop from '@/components/nightbound/HunterAbilityShop';
@@ -372,7 +372,7 @@ export default function HunterHome() {
         <div className="grid grid-cols-4 gap-2 mb-8">
             {[
               { id: 'home', label: 'Home', icon: Home },
-              { id: 'hunting', label: isTurnedVampire ? 'Powers' : 'Hunt Log', icon: isTurnedVampire ? Zap : FileText },
+              { id: 'hunting', label: 'Powers', icon: Zap },
               { id: 'activities', label: 'Activities', icon: Utensils },
               { id: 'vamp', label: 'Sire', icon: Heart, show: vampires.length > 0 }
             ].filter(tab => tab.show !== false).map(tab => {
@@ -659,11 +659,7 @@ export default function HunterHome() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              {isTurnedVampire ? (
-                <HunterVampirePowerTree hunter={hunter} onClose={() => setActiveTab('home')} />
-              ) : (
-                <HunterHuntLog hunter={hunter} vampires={hunterTargets} notes={notes} />
-              )}
+              <HunterVampirePowerTree hunter={hunter} onClose={() => setActiveTab('home')} />
             </motion.div>
           )}
 
