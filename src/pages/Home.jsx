@@ -6,6 +6,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
+import DLCStore from '@/components/nightbound/DLCStore';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function Home() {
   const [introStep, setIntroStep] = useState(0);
   const [selectedType, setSelectedType] = useState(null);
   const [showCleanup, setShowCleanup] = useState(false);
+  const [showDLC, setShowDLC] = useState(false);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -673,76 +675,11 @@ export default function Home() {
                     </div>
                   </button>
                   <button
-                    onClick={() => { setSelectedType('werewolf'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                    onClick={() => setShowDLC(true)}
+                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg py-4 px-4 text-center transition-all border-2 border-purple-400"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">🐺</span>
-                      <div>
-                        <span className="font-medium text-white block">Werewolf</span>
-                        <p className="text-sm text-gray-400">Moon, transformation, primal rage</p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedType('demon'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">😈</span>
-                      <div>
-                        <span className="font-medium text-white block">Demon</span>
-                        <p className="text-sm text-gray-400">Souls, contracts, corruption</p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedType('angel'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">😇</span>
-                      <div>
-                        <span className="font-medium text-white block">Angel</span>
-                        <p className="text-sm text-gray-400">Divine, healing, grace</p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedType('ghost'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">👻</span>
-                      <div>
-                        <span className="font-medium text-white block">Ghost</span>
-                        <p className="text-sm text-gray-400">Haunt, possess, unfinished business</p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedType('necromancer'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">💀</span>
-                      <div>
-                        <span className="font-medium text-white block">Necromancer</span>
-                        <p className="text-sm text-gray-400">Undead, death magic, souls</p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedType('shapeshifter'); setIntroStep(1); }}
-                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">🦎</span>
-                      <div>
-                        <span className="font-medium text-white block">Shapeshifter</span>
-                        <p className="text-sm text-gray-400">Identity, infiltration, transformation</p>
-                      </div>
-                    </div>
+                    <p className="font-bold text-white text-lg mb-1">🎮 Free DLC</p>
+                    <p className="text-sm text-purple-200">Unlock Werewolf, Demon, Angel, Ghost, Necromancer & Shapeshifter</p>
                   </button>
 
                   </div>
@@ -1088,6 +1025,11 @@ export default function Home() {
                 </button>
                 </motion.div>
                 </motion.div>
+                )}
+
+                {/* DLC Modal */}
+                {showDLC && (
+                  <DLCStore onClose={() => setShowDLC(false)} />
                 )}
                 </div>
                 );
