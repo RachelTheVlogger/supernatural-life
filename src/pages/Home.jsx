@@ -454,7 +454,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {werewolves.map(w => (
+                  {isDLCUnlocked('Werewolf') && werewolves.map(w => (
                     <button
                       key={w.id}
                       onClick={(e) => {
@@ -472,7 +472,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {demons.map(d => (
+                  {isDLCUnlocked('Demon') && demons.map(d => (
                     <button
                       key={d.id}
                       onClick={(e) => {
@@ -490,7 +490,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {angels.map(a => (
+                  {isDLCUnlocked('Angel') && angels.map(a => (
                     <button
                       key={a.id}
                       onClick={(e) => {
@@ -508,7 +508,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {ghosts.map(g => (
+                  {isDLCUnlocked('Ghost') && ghosts.map(g => (
                     <button
                       key={g.id}
                       onClick={(e) => {
@@ -526,7 +526,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {necromancers.map(n => (
+                  {isDLCUnlocked('Necromancer') && necromancers.map(n => (
                     <button
                       key={n.id}
                       onClick={(e) => {
@@ -544,7 +544,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {shapeshifters.map(s => (
+                  {isDLCUnlocked('Shapeshifter') && shapeshifters.map(s => (
                     <button
                       key={s.id}
                       onClick={(e) => {
