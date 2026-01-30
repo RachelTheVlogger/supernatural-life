@@ -67,6 +67,12 @@ import VampireHome from './pages/VampireHome';
 import WaterNymphHome from './pages/WaterNymphHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
+import WerewolfHome from './pages/WerewolfHome';
+import DemonHome from './pages/DemonHome';
+import AngelHome from './pages/AngelHome';
+import GhostHome from './pages/GhostHome';
+import NecromancerHome from './pages/NecromancerHome';
+import ShapeshifterHome from './pages/ShapeshifterHome';
 import __Layout from './Layout.jsx';
 
 
@@ -91,6 +97,12 @@ export const PAGES = {
     "WaterNymphHome": WaterNymphHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
+    "WerewolfHome": WerewolfHome,
+    "DemonHome": DemonHome,
+    "AngelHome": AngelHome,
+    "GhostHome": GhostHome,
+    "NecromancerHome": NecromancerHome,
+    "ShapeshifterHome": ShapeshifterHome,
 }
 
 export const pagesConfig = {
