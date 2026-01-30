@@ -114,7 +114,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <ErrorBoundary>
     <AutoErrorRecovery>
-    <div className="min-h-screen bg-black relative pb-20 overflow-x-hidden">
+    <div className="min-h-screen bg-black relative pb-28 overflow-x-hidden">
       <style>{`
         * {
           -webkit-tap-highlight-color: transparent;
