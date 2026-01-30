@@ -351,8 +351,7 @@ export default function Night() {
           className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 border-2 border-purple-400 rounded-xl py-3 sm:py-4 px-4 sm:px-6 shadow-lg transition-all"
           >
           <div className="text-center">
-            <p className="text-white font-bold text-sm sm:text-base">🎮 FREE DLC AVAILABLE</p>
-            <p className="text-purple-200 text-[10px] sm:text-xs mt-1">Unlock Fairies, Demons & More!</p>
+            <p className="text-white font-bold text-sm sm:text-base">🎮 FREE DLC</p>
           </div>
         </button>
       </motion.div>
