@@ -31,7 +31,16 @@ export default function WerewolfHome() {
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['werewolves'],
-    queryFn: () => base44.entities.Werewolf.list()
+    queryFn: async () => {
+      const all = await base44.entities.Werewolf.list();
+      // Clean up if more than 1 exists (keep most recent)
+      if (all.length > 1) {
+        const toDelete = all.slice(1);
+        await Promise.all(toDelete.map(w => base44.entities.Werewolf.delete(w.id)));
+        return [all[0]];
+      }
+      return all;
+    }
   });
 
   const { data: packs = [] } = useQuery({
