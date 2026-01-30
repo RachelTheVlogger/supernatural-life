@@ -6,7 +6,6 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import PersonalitySelector from '@/components/nightbound/PersonalitySelector';
-import DLCStore from '@/components/nightbound/DLCStore';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -19,7 +18,6 @@ export default function Home() {
   const [introStep, setIntroStep] = useState(0);
   const [selectedType, setSelectedType] = useState(null);
   const [showCleanup, setShowCleanup] = useState(false);
-  const [showDLC, setShowDLC] = useState(false);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -84,16 +82,6 @@ export default function Home() {
     queryFn: () => base44.entities.Shapeshifter.list()
   });
 
-  const { data: dlcs = [] } = useQuery({
-    queryKey: ['dlcs'],
-    queryFn: () => base44.entities.DLC.list()
-  });
-
-  const isDLCUnlocked = (entityType) => {
-    const dlc = dlcs.find(d => d.entity_type === entityType);
-    return dlc?.unlocked || false;
-  };
-
 
   
   const existingGame = vampireStates.length > 0 || witches.length > 0 || sirens.length > 0 || waterNymphs.length > 0 || hunters.length > 0 || werewolves.length > 0 || demons.length > 0 || angels.length > 0 || ghosts.length > 0 || necromancers.length > 0 || shapeshifters.length > 0;
@@ -102,24 +90,6 @@ export default function Home() {
     if (!characterName.trim()) {
       alert('Please enter a name');
       return;
-    }
-
-    // Check DLC for new creatures
-    const dlcCreatures = ['werewolf', 'demon', 'angel', 'ghost', 'necromancer', 'shapeshifter'];
-    if (dlcCreatures.includes(selectedType)) {
-      const entityTypeMap = {
-        werewolf: 'Werewolf',
-        demon: 'Demon',
-        angel: 'Angel',
-        ghost: 'Ghost',
-        necromancer: 'Necromancer',
-        shapeshifter: 'Shapeshifter'
-      };
-      if (!isDLCUnlocked(entityTypeMap[selectedType])) {
-        alert('This creature requires DLC unlock. Check the DLC store!');
-        setShowDLC(true);
-        return;
-      }
     }
     
     if (selectedType === 'vampire') {
@@ -454,7 +424,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {isDLCUnlocked('Werewolf') && werewolves.map(w => (
+                  {werewolves.map(w => (
                     <button
                       key={w.id}
                       onClick={(e) => {
@@ -472,7 +442,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {isDLCUnlocked('Demon') && demons.map(d => (
+                  {demons.map(d => (
                     <button
                       key={d.id}
                       onClick={(e) => {
@@ -490,7 +460,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {isDLCUnlocked('Angel') && angels.map(a => (
+                  {angels.map(a => (
                     <button
                       key={a.id}
                       onClick={(e) => {
@@ -508,7 +478,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {isDLCUnlocked('Ghost') && ghosts.map(g => (
+                  {ghosts.map(g => (
                     <button
                       key={g.id}
                       onClick={(e) => {
@@ -526,7 +496,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {isDLCUnlocked('Necromancer') && necromancers.map(n => (
+                  {necromancers.map(n => (
                     <button
                       key={n.id}
                       onClick={(e) => {
@@ -544,7 +514,7 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
-                  {isDLCUnlocked('Shapeshifter') && shapeshifters.map(s => (
+                  {shapeshifters.map(s => (
                     <button
                       key={s.id}
                       onClick={(e) => {
@@ -702,12 +672,80 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
+                  <div className="w-full bg-gray-900/80 border-2 border-purple-500/50 rounded-lg py-3 px-4 my-4">
+                    <p className="text-purple-400 text-center text-sm font-bold">🎮 DLC Creatures (Free)</p>
+                  </div>
                   <button
-                    onClick={() => setShowDLC(true)}
-                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg py-4 px-4 text-center transition-all border-2 border-purple-400"
+                    onClick={() => { setSelectedType('werewolf'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
                   >
-                    <p className="font-bold text-white text-lg mb-1">🎮 Free DLC</p>
-                    <p className="text-sm text-purple-200">Unlock Werewolf, Demon, Angel, Ghost, Necromancer & Shapeshifter</p>
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🐺</span>
+                      <div>
+                        <span className="font-medium text-white block">Werewolf</span>
+                        <p className="text-sm text-gray-400">Moon, transformation, primal rage</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('demon'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">😈</span>
+                      <div>
+                        <span className="font-medium text-white block">Demon</span>
+                        <p className="text-sm text-gray-400">Souls, contracts, corruption</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('angel'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">😇</span>
+                      <div>
+                        <span className="font-medium text-white block">Angel</span>
+                        <p className="text-sm text-gray-400">Divine, healing, grace</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('ghost'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">👻</span>
+                      <div>
+                        <span className="font-medium text-white block">Ghost</span>
+                        <p className="text-sm text-gray-400">Haunt, possess, unfinished business</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('necromancer'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">💀</span>
+                      <div>
+                        <span className="font-medium text-white block">Necromancer</span>
+                        <p className="text-sm text-gray-400">Undead, death magic, souls</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedType('shapeshifter'); setIntroStep(1); }}
+                    className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg py-4 px-4 text-left transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🦎</span>
+                      <div>
+                        <span className="font-medium text-white block">Shapeshifter</span>
+                        <p className="text-sm text-gray-400">Identity, infiltration, transformation</p>
+                      </div>
+                    </div>
                   </button>
 
                   </div>
@@ -1053,11 +1091,6 @@ export default function Home() {
                 </button>
                 </motion.div>
                 </motion.div>
-                )}
-
-                {/* DLC Modal */}
-                {showDLC && (
-                  <DLCStore onClose={() => setShowDLC(false)} />
                 )}
                 </div>
                 );

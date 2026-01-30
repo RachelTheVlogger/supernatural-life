@@ -61,7 +61,6 @@ import MemoryPalaceSystem from '@/components/nightbound/MemoryPalaceSystem';
 import RitualMagicSystem from '@/components/nightbound/RitualMagicSystem';
 import DreamRealmExplorer from '@/components/nightbound/DreamRealmExplorer';
 import PrestigeSystem from '@/components/nightbound/PrestigeSystem';
-import PhotoModeSystem from '@/components/nightbound/PhotoModeSystem';
 
 export default function Night() {
   const navigate = useNavigate();
@@ -105,7 +104,6 @@ export default function Night() {
   const [showRituals, setShowRituals] = useState(false);
   const [showDreamRealm, setShowDreamRealm] = useState(false);
   const [showPrestige, setShowPrestige] = useState(false);
-  const [showPhotoMode, setShowPhotoMode] = useState(false);
 
   // Fetch vampire state
   const { data: vampireStates = [], isLoading: vampireLoading } = useQuery({
@@ -687,13 +685,6 @@ export default function Night() {
           <p className="text-white text-xs mt-1">Prestige</p>
         </button>
         <button
-          onClick={() => setShowPhotoMode(true)}
-          className="bg-pink-950/40 hover:bg-pink-950/60 border border-pink-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">📸</span>
-          <p className="text-white text-xs mt-1">Photo Mode</p>
-        </button>
-        <button
           onClick={() => setShowAddiction(true)}
           className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
         >
@@ -984,9 +975,6 @@ export default function Night() {
         )}
         {showPrestige && vampireState && (
           <PrestigeSystem vampireState={vampireState} onClose={() => setShowPrestige(false)} />
-        )}
-        {showPhotoMode && (
-          <PhotoModeSystem onClose={() => setShowPhotoMode(false)} />
         )}
 
         </AnimatePresence>
