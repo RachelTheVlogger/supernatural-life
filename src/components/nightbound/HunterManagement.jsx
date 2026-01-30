@@ -27,16 +27,7 @@ export default function HunterManagement({ onClose }) {
     queryFn: () => base44.entities.Hunter.list()
   });
 
-  const { data: notes = [] } = useQuery({
-    queryKey: ['hunterNotes'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.HunterNote.list();
-      } catch (e) {
-        return [];
-      }
-    }
-  });
+
 
   const handleRecruitHunter = async () => {
     if (!recruitData.name.trim()) {
@@ -112,7 +103,7 @@ export default function HunterManagement({ onClose }) {
     setProcessing(false);
   };
 
-  const hunterNotes = selectedHunter ? notes.filter(n => n.hunter_id === selectedHunter.id) : [];
+
 
   return (
     <motion.div
@@ -348,34 +339,7 @@ export default function HunterManagement({ onClose }) {
                 </div>
               </div>
 
-              {/* Hunt Notes */}
-              <div className="bg-black/40 border border-gray-700 rounded-2xl p-6">
-                <h4 className="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                  <Eye className="w-5 h-5" />
-                  Hunt Notes ({hunterNotes.length})
-                </h4>
-                {hunterNotes.length === 0 ? (
-                  <p className="text-gray-500 text-sm">No notes recorded yet</p>
-                ) : (
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {hunterNotes.map(note => (
-                      <div key={note.id} className="bg-gray-900/50 rounded-lg p-4">
-                        {note.vampire_name && (
-                          <p className="text-red-400 font-bold mb-2">Target: {note.vampire_name}</p>
-                        )}
-                        <p className="text-gray-300 text-sm">{note.content}</p>
-                        <span className={`inline-block mt-2 px-2 py-1 text-xs rounded ${
-                          note.priority === 'critical' ? 'bg-red-900/50 text-red-300' :
-                          note.priority === 'high' ? 'bg-orange-900/50 text-orange-300' :
-                          'bg-gray-700 text-gray-400'
-                        }`}>
-                          {note.priority || 'normal'} priority
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+
             </motion.div>
           )}
 
