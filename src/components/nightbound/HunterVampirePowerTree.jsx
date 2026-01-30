@@ -242,7 +242,7 @@ export default function HunterVampirePowerTree({ hunter, onClose }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gradient-to-br from-rose-950 to-red-950 rounded-2xl p-4 sm:p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-rose-500/50"
+        className="bg-gradient-to-br from-rose-950 to-red-950 rounded-2xl p-4 sm:p-6 pb-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-rose-500/50"
       >
         <button onClick={onClose} className="absolute top-4 right-4 text-rose-300 hover:text-white">
           <X className="w-5 h-5" />

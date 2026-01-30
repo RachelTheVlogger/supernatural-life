@@ -142,7 +142,7 @@ export default function HunterHome() {
   const isTurnedVampire = hunter?.is_turned;
 
   return (
-    <div className="min-h-screen relative p-4 md:p-6 pb-24 overflow-x-hidden" style={{
+    <div className="min-h-screen relative p-4 md:p-6 pb-32 overflow-x-hidden" style={{
       background: isTurnedVampire
         ? 'linear-gradient(to bottom, #4A0E0E 0%, #2D0A0A 50%, #1A0404 100%)'
         : 'linear-gradient(to bottom, #1a0a0a 0%, #2d1a1a 50%, #1a0a14 100%)'
