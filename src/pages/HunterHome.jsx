@@ -372,9 +372,9 @@ export default function HunterHome() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 sm:mb-8">
             {[
               { id: 'home', label: 'Home', icon: Home },
-              { id: 'hunting', label: 'Powers', icon: Zap },
+              { id: 'hunting', label: isTurnedVampire ? 'Powers' : 'Skills', icon: Zap },
               { id: 'activities', label: 'Activities', icon: Utensils },
-              { id: 'vamp', label: 'Sire', icon: Heart, show: vampires.length > 0 }
+              { id: 'vamp', label: 'Sire', icon: Heart, show: isTurnedVampire && vampires.length > 0 }
             ].filter(tab => tab.show !== false).map(tab => {
             const Icon = tab.icon;
             return (
