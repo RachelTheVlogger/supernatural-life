@@ -112,7 +112,7 @@ export default function WerewolfHome() {
     );
   }
 
-  const currentPhase = MOON_PHASES.find(p => p.name === werewolf.moon_phase);
+  const currentPhase = MOON_PHASES.find(p => p.name === werewolf.moon_phase) || MOON_PHASES[1];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-orange-950 to-black p-6 pb-32">
