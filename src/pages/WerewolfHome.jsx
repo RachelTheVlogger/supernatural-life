@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import WerewolfAbilities from '@/components/nightbound/WerewolfAbilities';
 
 const MOON_PHASES = [
   { name: 'new', emoji: '🌑', power: 0.5, control: 1.2 },
@@ -28,6 +29,7 @@ export default function WerewolfHome() {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [showMoonPhase, setShowMoonPhase] = useState(false);
+  const [showAbilities, setShowAbilities] = useState(false);
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['werewolves'],
@@ -167,6 +169,15 @@ export default function WerewolfHome() {
           </div>
         </div>
 
+        {/* Abilities Button */}
+        <button
+          onClick={() => setShowAbilities(true)}
+          className="w-full bg-gradient-to-r from-purple-900/60 to-orange-900/60 hover:from-purple-900/80 hover:to-orange-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-3 mb-6"
+        >
+          <Zap className="w-5 h-5 text-purple-300" />
+          <span className="text-white font-bold text-lg">Werewolf Abilities</span>
+        </button>
+
         {/* Actions */}
         <AnimatePresence mode="wait">
           {outcome ? (
@@ -217,6 +228,11 @@ export default function WerewolfHome() {
           )}
         </AnimatePresence>
       </motion.div>
+
+      {/* Abilities Modal */}
+      {showAbilities && (
+        <WerewolfAbilities werewolf={werewolf} onClose={() => setShowAbilities(false)} />
+      )}
 
       {/* Moon Phase Selector */}
       {showMoonPhase && (
