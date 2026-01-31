@@ -48,8 +48,11 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import AdminCleanup from './pages/AdminCleanup';
+import AngelHome from './pages/AngelHome';
 import Codex from './pages/Codex';
+import DemonHome from './pages/DemonHome';
 import DoppelgangerHome from './pages/DoppelgangerHome';
+import GhostHome from './pages/GhostHome';
 import Home from './pages/Home';
 import HumanHome from './pages/HumanHome';
 import HunterHome from './pages/HunterHome';
@@ -57,29 +60,29 @@ import IncubusHome from './pages/IncubusHome';
 import Index from './pages/Index';
 import Messages from './pages/Messages';
 import NateLilithHome from './pages/NateLilithHome';
+import NecromancerHome from './pages/NecromancerHome';
 import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
 import ServantSnake from './pages/ServantSnake';
+import ShapeshifterHome from './pages/ShapeshifterHome';
 import SirenHome from './pages/SirenHome';
 import StandaloneManga from './pages/StandaloneManga';
 import SuccubusHome from './pages/SuccubusHome';
 import VampireHome from './pages/VampireHome';
 import WaterNymphHome from './pages/WaterNymphHome';
+import WerewolfHome from './pages/WerewolfHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
-import WerewolfHome from './pages/WerewolfHome';
-import DemonHome from './pages/DemonHome';
-import AngelHome from './pages/AngelHome';
-import GhostHome from './pages/GhostHome';
-import NecromancerHome from './pages/NecromancerHome';
-import ShapeshifterHome from './pages/ShapeshifterHome';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AdminCleanup": AdminCleanup,
+    "AngelHome": AngelHome,
     "Codex": Codex,
+    "DemonHome": DemonHome,
     "DoppelgangerHome": DoppelgangerHome,
+    "GhostHome": GhostHome,
     "Home": Home,
     "HumanHome": HumanHome,
     "HunterHome": HunterHome,
@@ -87,22 +90,19 @@ export const PAGES = {
     "Index": Index,
     "Messages": Messages,
     "NateLilithHome": NateLilithHome,
+    "NecromancerHome": NecromancerHome,
     "Night": Night,
     "ServantHome": ServantHome,
     "ServantSnake": ServantSnake,
+    "ShapeshifterHome": ShapeshifterHome,
     "SirenHome": SirenHome,
     "StandaloneManga": StandaloneManga,
     "SuccubusHome": SuccubusHome,
     "VampireHome": VampireHome,
     "WaterNymphHome": WaterNymphHome,
+    "WerewolfHome": WerewolfHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
-    "WerewolfHome": WerewolfHome,
-    "DemonHome": DemonHome,
-    "AngelHome": AngelHome,
-    "GhostHome": GhostHome,
-    "NecromancerHome": NecromancerHome,
-    "ShapeshifterHome": ShapeshifterHome,
 }
 
 export const pagesConfig = {
