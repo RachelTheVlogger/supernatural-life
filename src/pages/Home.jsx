@@ -483,51 +483,14 @@ export default function Home() {
 
           {/* DLC Creatures Section */}
           <div className="bg-gray-900/60 border border-purple-500/30 rounded-xl p-4 mt-4">
-            <p className="text-purple-400 text-center text-sm font-bold mb-3">🎮 DLC Creatures (Free)</p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => { setSelectedType('werewolf'); setIntroStep(1); setShowIntro(true); }}
-                className="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-center transition-all"
-              >
-                <span className="text-2xl block mb-1">🐺</span>
-                <p className="text-white text-xs font-medium">Werewolf</p>
-              </button>
-              <button
-                onClick={() => { setSelectedType('demon'); setIntroStep(1); setShowIntro(true); }}
-                className="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-center transition-all"
-              >
-                <span className="text-2xl block mb-1">😈</span>
-                <p className="text-white text-xs font-medium">Demon</p>
-              </button>
-              <button
-                onClick={() => { setSelectedType('angel'); setIntroStep(1); setShowIntro(true); }}
-                className="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-center transition-all"
-              >
-                <span className="text-2xl block mb-1">😇</span>
-                <p className="text-white text-xs font-medium">Angel</p>
-              </button>
-              <button
-                onClick={() => { setSelectedType('ghost'); setIntroStep(1); setShowIntro(true); }}
-                className="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-center transition-all"
-              >
-                <span className="text-2xl block mb-1">👻</span>
-                <p className="text-white text-xs font-medium">Ghost</p>
-              </button>
-              <button
-                onClick={() => { setSelectedType('necromancer'); setIntroStep(1); setShowIntro(true); }}
-                className="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-center transition-all"
-              >
-                <span className="text-2xl block mb-1">💀</span>
-                <p className="text-white text-xs font-medium">Necromancer</p>
-              </button>
-              <button
-                onClick={() => { setSelectedType('shapeshifter'); setIntroStep(1); setShowIntro(true); }}
-                className="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-center transition-all"
-              >
-                <span className="text-2xl block mb-1">🦎</span>
-                <p className="text-white text-xs font-medium">Shapeshifter</p>
-              </button>
-            </div>
+            <p className="text-purple-400 text-center text-sm font-bold mb-3">🎮 DLC Creature (Free)</p>
+            <button
+              onClick={() => { setSelectedType('werewolf'); setIntroStep(1); setShowIntro(true); }}
+              className="w-full bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-center transition-all"
+            >
+              <span className="text-2xl block mb-1">🐺</span>
+              <p className="text-white text-xs font-medium">Werewolf</p>
+            </button>
           </div>
 
         </motion.div>
