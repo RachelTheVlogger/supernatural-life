@@ -55,7 +55,7 @@ export default function WerewolfHome() {
     if (!werewolf) return;
     setProcessing(true);
 
-    const currentPhase = MOON_PHASES.find(p => p.name === werewolf.moon_phase);
+    const currentPhase = MOON_PHASES.find(p => p.name === werewolf.moon_phase) || MOON_PHASES[1];
     const powerGain = Math.round(action.power * currentPhase.power);
     const rageChange = Math.round(action.rage * currentPhase.control);
 
