@@ -58,6 +58,7 @@ export default function HunterHome() {
   const [showCrimsonBliss, setShowCrimsonBliss] = useState(false);
   const [showTorture, setShowTorture] = useState(false);
   const [torturableVampire, setTorturableVampire] = useState(null);
+  const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
 
 
   const { data: hunters = [], refetch: refetchHunters, isLoading: huntersLoading } = useQuery({
@@ -142,6 +143,7 @@ export default function HunterHome() {
   const isTurnedVampire = hunter?.is_turned;
 
   return (
+    <>
     <div className="min-h-screen relative p-4 md:p-6 pb-32 overflow-x-hidden" style={{
       background: isTurnedVampire
         ? 'linear-gradient(to bottom, #4A0E0E 0%, #2D0A0A 50%, #1A0404 100%)'
@@ -224,8 +226,13 @@ export default function HunterHome() {
             onClick={async () => {
               if (turningIntoVampire) return;
               setTurningIntoVampire(true);
+              setShowTransitionOverlay(true);
+              
               try {
                 console.log('Starting transformation for hunter:', hunter.id);
+
+                // Wait for dramatic effect
+                await new Promise(resolve => setTimeout(resolve, 2000));
 
                 const updated = await base44.entities.Hunter.update(hunter.id, {
                   is_turned: true,
@@ -248,11 +255,16 @@ export default function HunterHome() {
                 await refetchHunters();
                 await queryClient.invalidateQueries();
 
+                // Keep overlay for smooth transition
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
                 setTurningIntoVampire(false);
+                setShowTransitionOverlay(false);
               } catch (e) {
                 console.error('Transformation failed:', e);
                 alert('Failed: ' + e.message);
                 setTurningIntoVampire(false);
+                setShowTransitionOverlay(false);
               }
             }}
             disabled={turningIntoVampire}
@@ -905,6 +917,83 @@ export default function HunterHome() {
             />
           )}
           </motion.div>
+    </div>
+
+    {/* Transformation Overlay */}
+    <AnimatePresence>
+      {showTransitionOverlay && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+        >
+          <div className="text-center">
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="mb-8"
+            >
+              <motion.div
+                animate={{ 
+                  rotate: 360,
+                  scale: [1, 1.2, 1]
+                }}
+                transition={{ 
+                  rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+                  scale: { duration: 1.5, repeat: Infinity }
+                }}
+                className="text-8xl mb-4"
+              >
+                🦇
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h2 className="text-4xl font-bold text-red-400 mb-4">
+                The Dark Gift
+              </h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-red-200 text-lg"
+              >
+                Your blood burns... your heart slows... you are reborn
+              </motion.p>
+            </motion.div>
+
+            {/* Blood particles */}
+            <div className="absolute inset-0 pointer-events-none">
+              {[...Array(30)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 bg-red-600 rounded-full"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  animate={{
+                    scale: [0, 1, 0],
+                    opacity: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: 2,
+                    delay: Math.random() * 2,
+                    repeat: Infinity,
+                  }}
+                />
+              ))}
+            </div>
           </div>
-          );
-          }
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
+    );
+    }
