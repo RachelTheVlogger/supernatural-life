@@ -5,12 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const DLC_CATALOG = [
-  { name: 'Werewolf', entity_type: 'Werewolf', icon: '🐺', category: 'creature', description: 'Moon-cursed shapeshifter with primal rage' },
-  { name: 'Demon', entity_type: 'Demon', icon: '😈', category: 'creature', description: 'Soul collector from hell' },
-  { name: 'Angel', entity_type: 'Angel', icon: '😇', category: 'creature', description: 'Divine celestial being with grace' },
-  { name: 'Ghost', entity_type: 'Ghost', icon: '👻', category: 'creature', description: 'Restless spirit with unfinished business' },
-  { name: 'Necromancer', entity_type: 'Necromancer', icon: '💀', category: 'creature', description: 'Master of death magic and undead armies' },
-  { name: 'Shapeshifter', entity_type: 'Shapeshifter', icon: '🦎', category: 'creature', description: 'Identity thief with perfect mimicry' }
+  { name: 'Werewolf', entity_type: 'Werewolf', icon: '🐺', category: 'creature', description: 'Moon-cursed shapeshifter with primal rage' }
 ];
 
 export default function DLCStore({ onClose }) {
