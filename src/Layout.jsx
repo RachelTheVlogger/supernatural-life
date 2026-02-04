@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Moon, User, Sparkles, Zap, Waves, Droplets, Dna, Target } from 'lucide-react';
+import { Home, Moon, User, Sparkles, Zap, Waves, Droplets, Target } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -83,7 +83,7 @@ export default function Layout({ children, currentPageName }) {
 
   
   // Show nav on main game pages only
-  const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome', 'SirenHome', 'WaterNymphHome', 'MutantHome', 'HereticHome'].includes(currentPageName);
+  const showNav = ['Night', 'VampireHome', 'ServantHome', 'WitchHome', 'WerewolfHome', 'SirenHome', 'WaterNymphHome', 'MutantHome', 'HereticHome', 'Settings'].includes(currentPageName);
   
   // Get current servant from URL or default to first
   const urlParams = new URLSearchParams(location.search);
@@ -108,7 +108,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Hunter', icon: Target, path: `HunterHome?id=${firstHunterId}`, show: hunters.length > 0, hasSelector: hunters.length > 1, disabled: hunters.length === 0 },
     { name: 'Witch', icon: Sparkles, path: 'WitchHome', show: witches.length > 0 },
     { name: 'Siren', icon: Waves, path: `SirenHome?id=${firstSirenId}`, show: sirens.length > 0, hasSelector: sirens.length > 1, disabled: sirens.length === 0 },
-    { name: 'Nymph', icon: Droplets, path: `WaterNymphHome?id=${firstNymphId}`, hasSelector: nymphs.length > 1, disabled: nymphs.length === 0 }
+    { name: 'Nymph', icon: Droplets, path: `WaterNymphHome?id=${firstNymphId}`, hasSelector: nymphs.length > 1, disabled: nymphs.length === 0 },
+    { name: 'Settings', icon: Zap, path: 'Settings' }
   ];
   
   return (

@@ -73,6 +73,7 @@ import WaterNymphHome from './pages/WaterNymphHome';
 import WerewolfHome from './pages/WerewolfHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
+import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
@@ -103,6 +104,7 @@ export const PAGES = {
     "WerewolfHome": WerewolfHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
+    "Settings": Settings,
 }
 
 export const pagesConfig = {

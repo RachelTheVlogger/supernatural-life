@@ -2517,34 +2517,6 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           They're here with you. What will you do?
         </p>
 
-        {/* Lite Mode Toggle */}
-        <div className="mb-4 flex items-center justify-between bg-gray-800/50 rounded-lg p-3">
-          <div>
-            <p className="text-white text-sm font-medium">Lite Mode</p>
-            <p className="text-gray-400 text-xs">Less explicit interactions</p>
-          </div>
-          <button
-            onClick={async () => {
-              try {
-                const newMode = liteMode ? 'full' : 'lite';
-                await base44.entities.VampireState.update(vampireState.id, {
-                  content_filter: newMode
-                });
-                queryClient.invalidateQueries(['vampireState']);
-              } catch (e) {
-                console.error('Failed to toggle lite mode:', e);
-              }
-            }}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              liteMode 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-700 text-gray-300'
-            }`}
-          >
-            {liteMode ? 'ON' : 'OFF'}
-          </button>
-        </div>
-        
         {/* Category filter */}
         {!outcome && !processing && (
           <div className="mb-4">

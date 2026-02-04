@@ -428,7 +428,7 @@ export default function Home() {
                   </div>
                   </div>
 
-              {/* Cleanup & Lite Mode */}
+              {/* Cleanup */}
               {duplicateGroups.length > 0 && (
                 <button
                   onClick={() => setShowCleanup(true)}
@@ -437,34 +437,6 @@ export default function Home() {
                   <Trash2 className="w-4 h-4" />
                   Delete Duplicates ({duplicateGroups.length} groups)
                 </button>
-              )}
-
-              {vampireStates.length > 0 && (
-                <div className="bg-gray-900/60 border border-blue-500/30 rounded-xl p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white text-sm font-medium">Lite Mode</p>
-                      <p className="text-gray-400 text-xs">Less explicit content</p>
-                    </div>
-                    <button
-                      onClick={async () => {
-                        const currentMode = vampireStates[0].content_filter;
-                        const newMode = currentMode === 'lite' ? 'full' : 'lite';
-                        await base44.entities.VampireState.update(vampireStates[0].id, {
-                          content_filter: newMode
-                        });
-                        queryClient.invalidateQueries(['vampireState']);
-                      }}
-                      className={`px-4 py-2 rounded-lg transition-colors ${
-                        vampireStates[0]?.content_filter === 'lite'
-                          ? 'bg-blue-600 text-white' 
-                          : 'bg-gray-700 text-gray-300'
-                      }`}
-                    >
-                      {vampireStates[0]?.content_filter === 'lite' ? 'ON' : 'OFF'}
-                    </button>
-                  </div>
-                </div>
               )}
             </>
           ) : null}
