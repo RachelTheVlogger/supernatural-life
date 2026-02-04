@@ -4,11 +4,15 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Droplets, Sparkles, Heart, Waves, Eye, Zap, Shield, Moon, Flower, Fish, Gem, Home, Users, Wind, CloudRain, Edit2 } from 'lucide-react';
+import { Droplets, Sparkles, Heart, Waves, Eye, Zap, Shield, Moon, Flower, Fish, Gem, Home, Users, Wind, CloudRain, Edit2, TreePine } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import NymphDating from '@/components/nightbound/NymphDating';
 import NymphPowerTree from '@/components/nightbound/NymphPowerTree';
 import NymphProgression from '@/components/nightbound/NymphProgression';
+import NymphSanctuary from '@/components/nightbound/NymphSanctuary';
+import NymphHealing from '@/components/nightbound/NymphHealing';
+import WaterFamiliars from '@/components/nightbound/WaterFamiliars';
+import SirenNymphInteraction from '@/components/nightbound/SirenNymphInteraction';
 
 const BASE_POWERS = [
   'Water Breathing', 'Nature Bond', 'Healing Touch', 'Plant Growth',
@@ -67,6 +71,10 @@ export default function WaterNymphHome() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [newName, setNewName] = useState('');
+  const [showSanctuary, setShowSanctuary] = useState(false);
+  const [showHealing, setShowHealing] = useState(false);
+  const [showFamiliars, setShowFamiliars] = useState(false);
+  const [showSirenInteraction, setShowSirenInteraction] = useState(false);
 
   const { data: nymphs = [] } = useQuery({
     queryKey: ['waterNymphs'],
@@ -757,6 +765,50 @@ export default function WaterNymphHome() {
             </button>
 
             <button
+              onClick={() => setShowSanctuary(true)}
+              className="w-full bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-2 border-green-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <TreePine className="w-5 h-5 text-green-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Nature Sanctuaries</h3>
+                <p className="text-green-300 text-sm">Build sacred grounds.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowHealing(true)}
+              className="w-full bg-gradient-to-r from-blue-900/60 to-cyan-900/60 hover:from-blue-900/80 hover:to-cyan-900/80 border-2 border-blue-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Heart className="w-5 h-5 text-blue-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Healing Services</h3>
+                <p className="text-blue-300 text-sm">Heal supernaturals.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowFamiliars(true)}
+              className="w-full bg-gradient-to-r from-cyan-900/60 to-blue-900/60 hover:from-cyan-900/80 hover:to-blue-900/80 border-2 border-cyan-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Fish className="w-5 h-5 text-cyan-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Water Familiars</h3>
+                <p className="text-cyan-300 text-sm">Bond with aquatic creatures.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowSirenInteraction(true)}
+              className="w-full bg-gradient-to-r from-purple-900/60 to-cyan-900/60 hover:from-purple-900/80 hover:to-cyan-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Waves className="w-5 h-5 text-purple-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Meet Sirens</h3>
+                <p className="text-purple-300 text-sm">Ally or compete with sirens.</p>
+              </div>
+            </button>
+
+            <button
               onClick={() => setShowDating(true)}
               className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
             >
@@ -788,8 +840,8 @@ export default function WaterNymphHome() {
                 <p className="text-gray-500 text-sm">Return to nature. Forever.</p>
               </div>
             </button>
-            </div>
-            )}
+          </div>
+        )}
 
             {/* Powers Modal */}
             {/* Powers Tree - Moved here instead of modal */}
@@ -799,9 +851,23 @@ export default function WaterNymphHome() {
               <NymphProgression nymph={nymph} />
             </div>
 
-            {showDating && nymph && (
-              <NymphDating nymph={nymph} onClose={() => setShowDating(false)} />
-            )}
+            <AnimatePresence>
+              {showDating && nymph && (
+                <NymphDating nymph={nymph} onClose={() => setShowDating(false)} />
+              )}
+              {showSanctuary && nymph && (
+                <NymphSanctuary nymph={nymph} onClose={() => setShowSanctuary(false)} />
+              )}
+              {showHealing && nymph && (
+                <NymphHealing nymph={nymph} onClose={() => setShowHealing(false)} />
+              )}
+              {showFamiliars && nymph && (
+                <WaterFamiliars nymph={nymph} onClose={() => setShowFamiliars(false)} />
+              )}
+              {showSirenInteraction && nymph && (
+                <SirenNymphInteraction siren={{ id: 'temp', name: nymph.name, isNymph: true }} onClose={() => setShowSirenInteraction(false)} />
+              )}
+            </AnimatePresence>
 
             {/* Rename Nymph Modal */}
             {showRenameModal && (

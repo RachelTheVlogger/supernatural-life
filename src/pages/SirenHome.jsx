@@ -4,10 +4,15 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Waves, Music, Droplets, Users, Heart, Zap, Eye, Sparkles, Edit2 } from 'lucide-react';
+import { Waves, Music, Droplets, Users, Heart, Zap, Eye, Sparkles, Edit2, Map, Anchor, Shield, MessageCircle } from 'lucide-react';
 import SirenDating from '@/components/nightbound/SirenDating';
 import SirenPowerTree from '@/components/nightbound/SirenPowerTree';
 import SirenProgression from '@/components/nightbound/SirenProgression';
+import SirenTerritory from '@/components/nightbound/SirenTerritory';
+import SirenSociety from '@/components/nightbound/SirenSociety';
+import SirenUnderwater from '@/components/nightbound/SirenUnderwater';
+import SirenVictims from '@/components/nightbound/SirenVictims';
+import SirenNymphInteraction from '@/components/nightbound/SirenNymphInteraction';
 
 const BASE_POWERS = [
   'Hypnotic Song', 'Seductive Voice', 'Water Breathing', 'Enhanced Beauty',
@@ -67,6 +72,11 @@ export default function SirenHome() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [newName, setNewName] = useState('');
+  const [showTerritory, setShowTerritory] = useState(false);
+  const [showSociety, setShowSociety] = useState(false);
+  const [showUnderwater, setShowUnderwater] = useState(false);
+  const [showVictims, setShowVictims] = useState(false);
+  const [showNymphInteraction, setShowNymphInteraction] = useState(false);
 
   const { data: sirens = [] } = useQuery({
     queryKey: ['sirens'],
@@ -448,6 +458,72 @@ export default function SirenHome() {
                 </div>
               </button>
             )}
+
+            <button
+              onClick={() => setShowTerritory(true)}
+              className="w-full bg-gradient-to-r from-yellow-900/60 to-amber-900/60 hover:from-yellow-900/80 hover:to-amber-900/80 border-2 border-yellow-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Map className="w-5 h-5 text-yellow-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Ocean Territories</h3>
+                <p className="text-yellow-300 text-sm">Claim your domain.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowSociety(true)}
+              className="w-full bg-gradient-to-r from-indigo-900/60 to-purple-900/60 hover:from-indigo-900/80 hover:to-purple-900/80 border-2 border-indigo-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Users className="w-5 h-5 text-indigo-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Siren Society</h3>
+                <p className="text-indigo-300 text-sm">Join pods. Form alliances.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowUnderwater(true)}
+              className="w-full bg-gradient-to-r from-blue-900/60 to-indigo-900/60 hover:from-blue-900/80 hover:to-indigo-900/80 border-2 border-blue-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Anchor className="w-5 h-5 text-blue-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Underwater Exploration</h3>
+                <p className="text-blue-300 text-sm">Find shipwrecks, temples, treasures.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowVictims(true)}
+              className="w-full bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Heart className="w-5 h-5 text-pink-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Devoted Followers</h3>
+                <p className="text-pink-300 text-sm">Manage enchanted humans.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowNymphInteraction(true)}
+              className="w-full bg-gradient-to-r from-teal-900/60 to-green-900/60 hover:from-teal-900/80 hover:to-green-900/80 border-2 border-teal-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Droplets className="w-5 h-5 text-teal-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Interact with Nymphs</h3>
+                <p className="text-teal-300 text-sm">Alliance or rivalry.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowDating(true)}
+              className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Heart className="w-5 h-5 text-pink-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Romance & Dating</h3>
+                <p className="text-pink-300 text-sm">Find love in the deep.</p>
+              </div>
+            </button>
           </div>
         )}
 
@@ -456,9 +532,26 @@ export default function SirenHome() {
           <SirenProgression siren={siren} />
         </div>
 
-        {showDating && siren && (
-          <SirenDating siren={siren} onClose={() => setShowDating(false)} />
-        )}
+        <AnimatePresence>
+          {showDating && siren && (
+            <SirenDating siren={siren} onClose={() => setShowDating(false)} />
+          )}
+          {showTerritory && siren && (
+            <SirenTerritory siren={siren} onClose={() => setShowTerritory(false)} />
+          )}
+          {showSociety && siren && (
+            <SirenSociety siren={siren} onClose={() => setShowSociety(false)} />
+          )}
+          {showUnderwater && siren && (
+            <SirenUnderwater siren={siren} onClose={() => setShowUnderwater(false)} />
+          )}
+          {showVictims && siren && (
+            <SirenVictims siren={siren} onClose={() => setShowVictims(false)} />
+          )}
+          {showNymphInteraction && siren && (
+            <SirenNymphInteraction siren={siren} onClose={() => setShowNymphInteraction(false)} />
+          )}
+        </AnimatePresence>
 
         {/* Rename Siren Modal */}
         {showRenameModal && (
