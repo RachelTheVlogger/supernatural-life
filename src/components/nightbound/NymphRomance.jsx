@@ -200,9 +200,11 @@ export default function NymphRomance({ nymph, onClose }) {
     setProcessing(true);
 
     setTimeout(async () => {
+      const titleStr = selectedTitle ? `${selectedTitle.dominant}/${selectedTitle.submissive}` : '';
       const updates = {
         boundaries_discussed: true,
         bdsm_preferences: selectedPreference ? [selectedPreference] : [],
+        intimacy_dynamic: selectedTitle ? selectedTitle.id : null,
         trust: Math.min(100, (trust || 0) + 10),
         intimacy_level: Math.min(100, intimacy + 5)
       };
@@ -210,7 +212,7 @@ export default function NymphRomance({ nymph, onClose }) {
       await base44.entities.WaterNymph.update(nymph.id, updates);
 
       await base44.entities.NightLog.create({
-        entry: `You discussed boundaries and desires with ${nymph.name}. ${selectedPreference || 'Pure connection.'}`,
+        entry: `You discussed boundaries with ${nymph.name}. ${selectedPreference || 'Pure'} ${titleStr}`,
         category: 'interaction',
         intensity: 'significant'
       });
@@ -222,6 +224,8 @@ export default function NymphRomance({ nymph, onClose }) {
         setProcessing(false);
         setShowBoundaries(false);
         setOutcome('');
+        setSelectedPreference(null);
+        setSelectedTitle(null);
       }, 2000);
     }, 2000);
   };
