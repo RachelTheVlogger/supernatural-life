@@ -623,7 +623,7 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
                     } else if (action.id === 'gift_magic') {
                       handleMagicalGift();
                     } else if (action.id === 'boundaries') {
-                      handleBoundariesTalk();
+                      setShowBDSMModal(true);
                     } else if (action.id === 'intimate_explore') {
                       handleIntimateExploration();
                     }
