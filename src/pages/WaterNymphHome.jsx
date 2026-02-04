@@ -543,6 +543,15 @@ export default function WaterNymphHome() {
             </button>
           </h1>
           <p className="text-teal-300 mb-3">Water Nymph</p>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <span className={`text-xs px-3 py-1 rounded-full ${
+              nymph.mist_form 
+                ? 'bg-gray-700/60 text-gray-300 border border-gray-500/50' 
+                : 'bg-green-900/60 text-green-300 border border-green-500/50'
+            }`}>
+              {nymph.mist_form ? '💨 Mist Form' : '🌸 Solid Form'}
+            </span>
+          </div>
           <button
             onClick={() => setShowCreateModal(true)}
             className="text-teal-400 hover:text-teal-300 text-sm font-medium transition-colors"
@@ -787,35 +796,13 @@ export default function WaterNymphHome() {
             </button>
 
             <button
-              onClick={() => setShowFamiliars(true)}
-              className="w-full bg-gradient-to-r from-cyan-900/60 to-blue-900/60 hover:from-cyan-900/80 hover:to-blue-900/80 border-2 border-cyan-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
-            >
-              <Fish className="w-5 h-5 text-cyan-400" />
-              <div className="flex-1 text-left">
-                <h3 className="text-white font-medium">Water Familiars</h3>
-                <p className="text-cyan-300 text-sm">Bond with aquatic creatures.</p>
-              </div>
-            </button>
-
-            <button
               onClick={() => setShowSirenInteraction(true)}
               className="w-full bg-gradient-to-r from-purple-900/60 to-cyan-900/60 hover:from-purple-900/80 hover:to-cyan-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
             >
               <Waves className="w-5 h-5 text-purple-400" />
               <div className="flex-1 text-left">
                 <h3 className="text-white font-medium">Meet Sirens</h3>
-                <p className="text-purple-300 text-sm">Ally or compete with sirens.</p>
-              </div>
-            </button>
-
-            <button
-              onClick={() => setShowDating(true)}
-              className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
-            >
-              <Heart className="w-5 h-5 text-pink-400" />
-              <div className="flex-1 text-left">
-                <h3 className="text-white font-medium">Love & Romance</h3>
-                <p className="text-pink-300 text-sm">Find your kindred spirit.</p>
+                <p className="text-purple-300 text-sm">Ally or compete.</p>
               </div>
             </button>
 

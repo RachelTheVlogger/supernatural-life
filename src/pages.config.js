@@ -64,6 +64,7 @@ import NecromancerHome from './pages/NecromancerHome';
 import Night from './pages/Night';
 import ServantHome from './pages/ServantHome';
 import ServantSnake from './pages/ServantSnake';
+import Settings from './pages/Settings';
 import ShapeshifterHome from './pages/ShapeshifterHome';
 import SirenHome from './pages/SirenHome';
 import StandaloneManga from './pages/StandaloneManga';
@@ -73,7 +74,6 @@ import WaterNymphHome from './pages/WaterNymphHome';
 import WerewolfHome from './pages/WerewolfHome';
 import WitchHome from './pages/WitchHome';
 import YandereCoupleHome from './pages/YandereCoupleHome';
-import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +95,7 @@ export const PAGES = {
     "Night": Night,
     "ServantHome": ServantHome,
     "ServantSnake": ServantSnake,
+    "Settings": Settings,
     "ShapeshifterHome": ShapeshifterHome,
     "SirenHome": SirenHome,
     "StandaloneManga": StandaloneManga,
@@ -104,7 +105,6 @@ export const PAGES = {
     "WerewolfHome": WerewolfHome,
     "WitchHome": WitchHome,
     "YandereCoupleHome": YandereCoupleHome,
-    "Settings": Settings,
 }
 
 export const pagesConfig = {
