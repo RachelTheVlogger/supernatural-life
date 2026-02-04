@@ -1762,6 +1762,14 @@ const INTERACTIONS = {
     special: true,
     gains: [0, 0]
   },
+
+  discussPreferences: {
+    icon: Heart,
+    label: 'Discuss preferences',
+    category: 'social',
+    special: true,
+    gains: [0, 0]
+  },
   
   // Dark/Vampire options
   turn: {
@@ -1797,6 +1805,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [showBoundaries, setShowBoundaries] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedPreference, setSelectedPreference] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState(null);
   
   // Always call hooks in the same order - never conditionally
   const { data: interactionProgress = [] } = useQuery({
@@ -1864,6 +1874,11 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
 
     if (type === 'setIdentity') {
       setShowIdentity(true);
+      return;
+    }
+
+    if (type === 'discussPreferences') {
+      setShowBDSMModal(true);
       return;
     }
     
@@ -2476,6 +2491,71 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                   Done
                 </button>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+        {showBDSMModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowBDSMModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gradient-to-br from-purple-950 to-pink-950 rounded-2xl p-6 max-w-md w-full border-2 border-purple-500/50"
+            >
+              <h3 className="text-2xl font-bold text-white mb-2">Discuss Preferences</h3>
+              <p className="text-purple-300 text-sm mb-6">What brings you both pleasure?</p>
+              
+              <div className="space-y-2 mb-6">
+                {BDSM_PREFERENCES.map(pref => (
+                  <button
+                    key={pref.id}
+                    onClick={async () => {
+                      setProcessing(true);
+                      setTimeout(async () => {
+                        const text = `You and ${servant.name} had a deep conversation about desires and boundaries. "${pref.label}," you said. They nodded, understanding. Trust deepened as you explored preferences together.`;
+                        setOutcome(text);
+                        
+                        await base44.entities.Servant.update(servant.id, {
+                          bdsm_preferences: [...new Set([...(servant.bdsm_preferences || []), pref.id])],
+                          relationship: Math.min(100, (servant.relationship || 0) + 15)
+                        });
+                        
+                        await base44.entities.NightLog.create({
+                          entry: text,
+                          category: 'interaction',
+                          intensity: 'significant'
+                        });
+                        
+                        queryClient.invalidateQueries();
+                        
+                        setTimeout(() => {
+                          setProcessing(false);
+                          setOutcome('');
+                          setShowBDSMModal(false);
+                        }, 4000);
+                      }, 2000);
+                    }}
+                    className="w-full bg-black/40 hover:bg-black/60 rounded-lg p-3 text-left border border-purple-500/30 transition-all"
+                  >
+                    <span className={`text-lg ${pref.color} mr-3`}>{pref.icon}</span>
+                    <span className="text-white font-medium">{pref.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setShowBDSMModal(false)}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
             </motion.div>
           </motion.div>
         )}
