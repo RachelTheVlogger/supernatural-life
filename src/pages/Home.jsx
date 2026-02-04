@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Moon, Play, Trash2 } from 'lucide-react';
+import { Moon, Play, Trash2, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -451,6 +451,17 @@ export default function Home() {
           >
             <Moon className="w-5 h-5" />
             New Game
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(createPageUrl('Settings'));
+            }}
+            className="w-full bg-gradient-to-r from-gray-900/60 to-gray-800/60 hover:from-gray-900/80 hover:to-gray-800/80 border-2 border-gray-600/50 rounded-xl py-4 text-white font-medium text-lg transition-all flex items-center justify-center gap-3"
+          >
+            <Settings className="w-5 h-5" />
+            Settings
           </button>
 
           {/* DLC Creature Section */}
