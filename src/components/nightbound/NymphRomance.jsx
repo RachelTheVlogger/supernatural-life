@@ -94,6 +94,7 @@ export default function NymphRomance({ nymph, onClose }) {
   const [outcome, setOutcome] = useState('');
   const [showBoundaries, setShowBoundaries] = useState(false);
   const [selectedPreference, setSelectedPreference] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState(null);
 
   const alignment = nymph.alignment || 'balanced';
   const trust = nymph.trust || 60;
