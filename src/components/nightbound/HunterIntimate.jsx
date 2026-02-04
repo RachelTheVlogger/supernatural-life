@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import TitleSelector from '@/components/nightbound/TitleSelector';
 
 const INTIMATE_ACTIONS = {
   all: [
@@ -101,6 +102,8 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [selectedPreference, setSelectedPreference] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState(null);
 
   const validPartners = (vampires || []).map(v => ({
     id: v?.id,
@@ -113,14 +116,11 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
   const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity', 'eternity'];
 
   const BDSM_PREFERENCES = [
-    { id: 'bondage', label: 'Bondage', icon: '🔗', color: 'text-purple-400' },
-    { id: 'discipline', label: 'Discipline', icon: '⚡', color: 'text-red-400' },
-    { id: 'dominance', label: 'Dominance', icon: '👑', color: 'text-amber-400' },
-    { id: 'submission', label: 'Submission', icon: '🙏', color: 'text-blue-400' },
-    { id: 'sadism', label: 'Sadism', icon: '🔥', color: 'text-orange-400' },
-    { id: 'masochism', label: 'Masochism', icon: '💔', color: 'text-pink-400' },
-    { id: 'sensory_play', label: 'Sensory Play', icon: '👁️', color: 'text-cyan-400' },
-    { id: 'roleplay', label: 'Roleplay', icon: '🎭', color: 'text-violet-400' }
+    { label: 'Vanilla (Tender)', value: 'vanilla', color: 'pink' },
+    { label: 'Submissive', value: 'submissive', color: 'blue' },
+    { label: 'Dominant', value: 'dominant', color: 'purple' },
+    { label: 'Switch', value: 'switch', color: 'emerald' },
+    { label: 'Hunter/Prey', value: 'hunter_prey', color: 'red' }
   ];
 
   const [showBDSMModal, setShowBDSMModal] = useState(false);
@@ -499,28 +499,124 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
                  onClick={(e) => e.stopPropagation()}
                  className="bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl p-6 max-w-md w-full border-2 border-pink-500/50"
                >
-                 <h3 className="text-2xl font-bold text-white mb-2">Discuss Preferences</h3>
-                 <p className="text-gray-300 text-sm mb-6">What brings you both pleasure?</p>
+                 <h3 className="text-2xl font-bold text-white mb-2">Intimacy Preferences</h3>
+                 <p className="text-gray-300 text-sm mb-4">Explore desires together:</p>
 
-                 <div className="space-y-2 mb-6">
-                   {BDSM_PREFERENCES.map(pref => (
-                     <button
-                       key={pref.id}
-                       onClick={() => setShowBDSMModal(false)}
-                       className="w-full bg-black/40 hover:bg-black/60 rounded-lg p-3 text-left border border-pink-500/30 transition-all"
-                     >
-                       <span className={`text-lg ${pref.color} mr-3`}>{pref.icon}</span>
-                       <span className="text-white font-medium">{pref.label}</span>
-                     </button>
-                   ))}
-                 </div>
-
-                 <button
-                   onClick={() => setShowBDSMModal(false)}
-                   className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors"
-                 >
-                   Close
-                 </button>
+                 {!selectedPreference ? (
+                   <>
+                     <div className="space-y-2 mb-6">
+                       {BDSM_PREFERENCES.map(pref => (
+                         <button
+                           key={pref.value}
+                           onClick={() => setSelectedPreference(pref.value)}
+                           className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${
+                             selectedPreference === pref.value
+                               ? `bg-${pref.color}-900/60 border-${pref.color}-500`
+                               : 'bg-gray-800 border-gray-600 hover:border-gray-500'
+                           }`}
+                         >
+                           <p className="text-white font-medium">{pref.label}</p>
+                         </button>
+                       ))}
+                     </div>
+                     <div className="flex gap-3">
+                       <button
+                         onClick={() => setShowBDSMModal(false)}
+                         className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
+                       >
+                         Cancel
+                       </button>
+                       <button
+                         onClick={async () => {
+                           setProcessing(true);
+                           setTimeout(async () => {
+                             const text = `You and ${validPartners[0]?.name} discussed desires. "${selectedPreference || 'Vanilla'}" Trust deepened.`;
+                             setOutcome(text);
+                             
+                             await base44.entities.Hunter.update(hunter.id, {
+                               bdsm_preferences: selectedPreference ? [selectedPreference] : [],
+                               intimacy_dynamic: selectedTitle ? selectedTitle.id : null,
+                               boundaries_discussed: true
+                             });
+                             
+                             await base44.entities.NightLog.create({
+                               entry: text,
+                               category: 'interaction',
+                               intensity: 'significant'
+                             });
+                             
+                             queryClient.invalidateQueries();
+                             
+                             setTimeout(() => {
+                               setProcessing(false);
+                               setOutcome('');
+                               setShowBDSMModal(false);
+                               setSelectedPreference(null);
+                               setSelectedTitle(null);
+                             }, 3000);
+                           }, 2000);
+                         }}
+                         disabled={!selectedPreference}
+                         className="flex-1 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium disabled:opacity-50"
+                       >
+                         Discuss
+                       </button>
+                     </div>
+                   </>
+                 ) : (
+                   <>
+                     <TitleSelector 
+                       dominantGender={validPartners[0]?.gender || 'custom'}
+                       submissiveGender="custom"
+                       onSelect={setSelectedTitle}
+                       selectedTitle={selectedTitle}
+                     />
+                     <div className="flex gap-3 mt-6">
+                       <button
+                         onClick={() => setShowBDSMModal(false)}
+                         className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
+                       >
+                         Cancel
+                       </button>
+                       <button
+                         onClick={async () => {
+                           setProcessing(true);
+                           setTimeout(async () => {
+                             const titleStr = selectedTitle ? `${selectedTitle.dominant}/${selectedTitle.submissive}` : '';
+                             const text = `You and ${validPartners[0]?.name} discussed desires. "${selectedPreference || 'Vanilla'}" ${titleStr}. Trust deepened.`;
+                             setOutcome(text);
+                             
+                             await base44.entities.Hunter.update(hunter.id, {
+                               bdsm_preferences: selectedPreference ? [selectedPreference] : [],
+                               intimacy_dynamic: selectedTitle ? selectedTitle.id : null,
+                               boundaries_discussed: true
+                             });
+                             
+                             await base44.entities.NightLog.create({
+                               entry: text,
+                               category: 'interaction',
+                               intensity: 'significant'
+                             });
+                             
+                             queryClient.invalidateQueries();
+                             
+                             setTimeout(() => {
+                               setProcessing(false);
+                               setOutcome('');
+                               setShowBDSMModal(false);
+                               setSelectedPreference(null);
+                               setSelectedTitle(null);
+                             }, 3000);
+                           }, 2000);
+                         }}
+                         disabled={!selectedTitle}
+                         className="flex-1 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium disabled:opacity-50"
+                       >
+                         Discuss
+                       </button>
+                     </div>
+                   </>
+                 )}
                </motion.div>
              </motion.div>
            )}

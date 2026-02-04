@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Heart, Zap, Moon, Gift, BookOpen, Wand2, Home, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import TitleSelector from '@/components/nightbound/TitleSelector';
 
 export default function WitchDeepInteractions({ witch, vampireState, onClose }) {
   const queryClient = useQueryClient();
@@ -21,17 +22,16 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
   const p = getPronouns();
 
   const BDSM_PREFERENCES = [
-    { id: 'bondage', label: 'Bondage', icon: '🔗', color: 'text-purple-400' },
-    { id: 'discipline', label: 'Discipline', icon: '⚡', color: 'text-red-400' },
-    { id: 'dominance', label: 'Dominance', icon: '👑', color: 'text-amber-400' },
-    { id: 'submission', label: 'Submission', icon: '🙏', color: 'text-blue-400' },
-    { id: 'sadism', label: 'Sadism', icon: '🔥', color: 'text-orange-400' },
-    { id: 'masochism', label: 'Masochism', icon: '💔', color: 'text-pink-400' },
-    { id: 'sensory_play', label: 'Sensory Play', icon: '👁️', color: 'text-cyan-400' },
-    { id: 'roleplay', label: 'Roleplay', icon: '🎭', color: 'text-violet-400' }
+    { id: 'vanilla', label: 'Vanilla (Tender)', value: 'vanilla', color: 'pink' },
+    { id: 'submissive', label: 'Submissive', value: 'submissive', color: 'blue' },
+    { id: 'dominant', label: 'Dominant', value: 'dominant', color: 'purple' },
+    { id: 'switch', label: 'Switch', value: 'switch', color: 'emerald' },
+    { id: 'bondage', label: 'Bondage', value: 'bondage', color: 'indigo' }
   ];
 
   const [showBDSMModal, setShowBDSMModal] = React.useState(false);
+  const [selectedPreference, setSelectedPreference] = React.useState(null);
+  const [selectedTitle, setSelectedTitle] = React.useState(null);
 
   const handleMagicalService = () => {
     setShowServiceMenu(true);
@@ -168,19 +168,21 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
     }, 2000);
   };
 
-  const handleDiscussBDSM = async () => {
+  const handleBoundariesDiscussion = async () => {
     setProcessing(true);
     
     setTimeout(async () => {
-      const preferences = BDSM_PREFERENCES.slice(0, 3).map(p => p.id);
-      const text = `You and ${witch.name} have a deep conversation about desires and boundaries. "There's no shame in what we like," ${p.subject} says thoughtfully. You discuss fantasies. Fears. Limits. Trust deepens as you explore preferences together.`;
+      const titleStr = selectedTitle ? `${selectedTitle.dominant}/${selectedTitle.submissive}` : '';
+      const text = `You and ${witch.name} have a deep conversation about desires and boundaries. "${selectedPreference || 'Vanilla'}," you said. ${p.subject} nodded, understanding. ${titleStr ? `"${titleStr}," ${p.subject} whispered. ` : ''}Trust deepened as you explored preferences together.`;
       
       setOutcome(text);
       
       await base44.entities.Witch.update(witch.id, {
-        bdsm_preferences: [...new Set([...(witch.bdsm_preferences || []), ...preferences])],
-        trust: Math.min(100, (witch.trust || 30) + 25),
-        relationship: Math.min(100, (witch.relationship || 0) + 20)
+        bdsm_preferences: selectedPreference ? [selectedPreference] : [],
+        intimacy_dynamic: selectedTitle ? selectedTitle.id : null,
+        boundaries_discussed: true,
+        trust: Math.min(100, (witch.trust || 30) + 20),
+        relationship: Math.min(100, (witch.relationship || 0) + 15)
       });
       
       await base44.entities.NightLog.create({
@@ -195,7 +197,9 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
         setProcessing(false);
         setOutcome('');
         setShowBDSMModal(false);
-      }, 5000);
+        setSelectedPreference(null);
+        setSelectedTitle(null);
+      }, 4000);
     }, 2000);
   };
 
@@ -855,28 +859,67 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
               onClick={(e) => e.stopPropagation()}
               className="bg-gradient-to-br from-purple-950 to-pink-950 rounded-2xl p-6 max-w-md w-full border-2 border-purple-500/50"
             >
-              <h3 className="text-2xl font-bold text-white mb-2">Discuss Preferences</h3>
-              <p className="text-purple-300 text-sm mb-6">What brings you pleasure?</p>
+              <h3 className="text-2xl font-bold text-white mb-2">Intimacy Preferences</h3>
+              <p className="text-purple-300 text-sm mb-4">Explore desires together:</p>
               
-              <div className="space-y-2 mb-6">
-                {BDSM_PREFERENCES.map(pref => (
-                  <button
-                    key={pref.id}
-                    onClick={() => handleDiscussBDSM()}
-                    className="w-full bg-black/40 hover:bg-black/60 rounded-lg p-3 text-left border border-purple-500/30 transition-all"
-                  >
-                    <span className={`text-lg ${pref.color} mr-3`}>{pref.icon}</span>
-                    <span className="text-white font-medium">{pref.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              <button
-                onClick={() => setShowBDSMModal(false)}
-                className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
+              {!selectedPreference ? (
+                <>
+                  <div className="space-y-2 mb-6">
+                    {BDSM_PREFERENCES.map(pref => (
+                      <button
+                        key={pref.id}
+                        onClick={() => setSelectedPreference(pref.value)}
+                        className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${
+                          selectedPreference === pref.value
+                            ? `bg-${pref.color}-900/60 border-${pref.color}-500`
+                            : 'bg-gray-800 border-gray-600 hover:border-gray-500'
+                        }`}
+                      >
+                        <p className="text-white font-medium">{pref.label}</p>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowBDSMModal(false)}
+                      className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleBoundariesDiscussion}
+                      disabled={!selectedPreference}
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium disabled:opacity-50"
+                    >
+                      Discuss
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <TitleSelector 
+                    dominantGender={vampireState.gender}
+                    submissiveGender={witch.gender}
+                    onSelect={setSelectedTitle}
+                    selectedTitle={selectedTitle}
+                  />
+                  <div className="flex gap-3 mt-6">
+                    <button
+                      onClick={() => setShowBDSMModal(false)}
+                      className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleBoundariesDiscussion}
+                      disabled={!selectedTitle}
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium disabled:opacity-50"
+                    >
+                      Discuss
+                    </button>
+                  </div>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}
