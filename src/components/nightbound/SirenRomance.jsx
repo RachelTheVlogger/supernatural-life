@@ -529,9 +529,19 @@ export default function SirenRomance({ siren, onClose }) {
                       <p className="text-white font-medium">{pref.label}</p>
                     </button>
                   ))}
-                </div>
+                  </div>
+                  ) : (
+                  <div>
+                  <TitleSelector 
+                    dominantGender={siren.gender}
+                    submissiveGender="custom"
+                    onSelect={setSelectedTitle}
+                    selectedTitle={selectedTitle}
+                  />
+                  </div>
+                  )}
 
-                <div className="flex gap-3">
+                  <div className="flex gap-3 mt-6">
                   <button
                     onClick={() => setShowBoundaries(false)}
                     className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
