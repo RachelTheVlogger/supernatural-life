@@ -920,6 +920,17 @@ export default function WaterNymphHome() {
             </button>
 
             <button
+              onClick={() => setShowRomance(true)}
+              className="w-full bg-gradient-to-r from-green-900/60 to-emerald-900/60 hover:from-green-900/80 hover:to-emerald-900/80 border-2 border-green-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Heart className="w-5 h-5 text-green-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Deep Romance</h3>
+                <p className="text-green-300 text-sm">Intimate progression.</p>
+              </div>
+            </button>
+
+            <button
               onClick={async () => {
                 if (confirm(`End ${nymph.name}'s story? This will permanently delete them from the game. This cannot be undone.`)) {
                   await base44.entities.WaterNymph.delete(nymph.id);
