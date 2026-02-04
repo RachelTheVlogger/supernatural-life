@@ -33,6 +33,7 @@ export default function WerewolfHome() {
   const [showMoonPhase, setShowMoonPhase] = useState(false);
   const [showAbilities, setShowAbilities] = useState(false);
   const [showPack, setShowPack] = useState(false);
+  const [showRomance, setShowRomance] = useState(false);
 
   const { data: werewolves = [] } = useQuery({
     queryKey: ['werewolves'],
