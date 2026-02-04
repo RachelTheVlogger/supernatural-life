@@ -22,6 +22,24 @@ const FEEDING_OUTCOMES = {
   ]
 };
 
+const FEEDING_OUTCOMES_LITE = {
+  ethical: [
+    { state: 'sated', log: 'you fed carefully from a willing donor. Control maintained.', humanity: 2 },
+    { state: 'sated', log: 'you took only what you needed. They consented.', humanity: 3 },
+    { state: 'calm', log: 'you fed responsibly. They will recover.', humanity: 1 }
+  ],
+  neutral: [
+    { state: 'sated', log: 'you fed from a blood bag. Efficient.', humanity: 0 },
+    { state: 'calm', log: 'feeding complete. Done.', humanity: 0 },
+    { state: 'lingering', log: 'you fed quickly from a donor.', humanity: -1 }
+  ],
+  brutal: [
+    { state: 'sated', log: 'you fed more than needed. Lost control briefly.', humanity: -4 },
+    { state: 'calm', log: 'you took too much. Regret sets in.', humanity: -3 },
+    { state: 'lingering', log: 'feeding went too far. Guilt lingers.', humanity: -2 }
+  ]
+};
+
 export default function FeedingModal({ onClose, vampireState }) {
   const [feeding, setFeeding] = useState(false);
   const [selectingMethod, setSelectingMethod] = useState(true);
@@ -48,7 +66,8 @@ export default function FeedingModal({ onClose, vampireState }) {
       }
 
       try {
-        const outcomes = FEEDING_OUTCOMES[method];
+        const isLiteMode = vampireState?.content_filter === 'lite';
+        const outcomes = isLiteMode ? FEEDING_OUTCOMES_LITE[method] : FEEDING_OUTCOMES[method];
         let randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
         
         // Modify based on blood type
@@ -249,18 +268,20 @@ export default function FeedingModal({ onClose, vampireState }) {
               </div>
             </button>
             
-            <button
-              onClick={() => handleFeedingChoice('brutal')}
-              className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/30 transition-slow border border-red-500/20 touch-manipulation"
-            >
-              <div className="flex items-start gap-3">
-                <Flame className="w-5 h-5 text-red-400 mt-1" />
-                <div>
-                  <p className="text-white font-medium mb-1">Feed Brutally</p>
-                  <p className="text-gray-400 text-sm">Take everything. The beast demands satisfaction. <span className="text-red-400">-Humanity</span></p>
+            {vampireState?.content_filter !== 'lite' && (
+              <button
+                onClick={() => handleFeedingChoice('brutal')}
+                className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/30 transition-slow border border-red-500/20 touch-manipulation"
+              >
+                <div className="flex items-start gap-3">
+                  <Flame className="w-5 h-5 text-red-400 mt-1" />
+                  <div>
+                    <p className="text-white font-medium mb-1">Feed Brutally</p>
+                    <p className="text-gray-400 text-sm">Take everything. The beast demands satisfaction. <span className="text-red-400">-Humanity</span></p>
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            )}
             
             <button
               onClick={() => {

@@ -11,6 +11,8 @@ export default function ServantInteractions({ servants, vampireState, currentSer
   const [outcome, setOutcome] = useState('');
 
   const getInteractions = (pair, vState) => {
+    const isLiteMode = vState?.content_filter === 'lite';
+    
     // Get pronoun helpers
     const getPronouns = () => {
       if (!vState) return { subject: 'they', object: 'them', possessive: 'their' };
@@ -19,7 +21,8 @@ export default function ServantInteractions({ servants, vampireState, currentSer
       return { subject: 'he', object: 'him', possessive: 'his' };
     };
     const p = getPronouns();
-    return [
+    
+    const baseInteractions = [
     { 
       id: 'vampire-talk',
       icon: Sparkles,
@@ -217,6 +220,11 @@ export default function ServantInteractions({ servants, vampireState, currentSer
       }
     },
   ];
+  
+    // Filter explicit interactions in lite mode
+    return isLiteMode 
+      ? baseInteractions.filter(i => !['together', 'heart-to-heart'].includes(i.id))
+      : baseInteractions;
   };
 
   const handleInteraction = async (interactionId) => {

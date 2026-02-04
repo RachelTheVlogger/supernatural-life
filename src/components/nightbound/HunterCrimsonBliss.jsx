@@ -36,6 +36,9 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [breedingOutcome, setBreedingOutcome] = useState('');
   const [showCustomerManagement, setShowCustomerManagement] = useState(false);
+  
+  // Check if any vampire has lite mode enabled
+  const isLiteMode = vampires.some(v => v.content_filter === 'lite');
 
   const { data: bloodDrugs = [] } = useQuery({
     queryKey: ['bloodDrugs'],
@@ -500,9 +503,18 @@ Create a hybrid strain with:
           </button>
         </div>
 
+        {/* Lite Mode Warning */}
+        {isLiteMode && (
+          <div className="bg-yellow-900/40 border border-yellow-500/30 rounded-lg p-4 mb-4">
+            <p className="text-yellow-200 text-sm">
+              ⚠️ Drug content disabled in Lite Mode
+            </p>
+          </div>
+        )}
+
         {/* Tab Content */}
         <AnimatePresence mode="wait">
-          {tab === 'extract' && !extracting && !outcome && (
+          {tab === 'extract' && !extracting && !outcome && !isLiteMode && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -534,7 +546,7 @@ Create a hybrid strain with:
             </motion.div>
           )}
 
-          {tab === 'formulas' && !selling && (
+          {tab === 'formulas' && !selling && !isLiteMode && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -613,7 +625,7 @@ Create a hybrid strain with:
             </motion.div>
           )}
 
-          {tab === 'customers' && (
+          {tab === 'customers' && !isLiteMode && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -633,7 +645,7 @@ Create a hybrid strain with:
             </motion.div>
           )}
 
-          {tab === 'plants' && (
+          {tab === 'plants' && !isLiteMode && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
