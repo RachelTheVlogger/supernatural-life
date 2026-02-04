@@ -521,8 +521,8 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
                               await base44.entities.BloodPlant.create({
                                 plant_type: plant.type,
                                 growth_stage: 1,
-                                health: 100,
-                                potency: 50,
+                                health: 60,
+                                potency: 30,
                                 planted_date: new Date().toISOString(),
                                 last_watered: new Date().toISOString()
                               });
