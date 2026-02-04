@@ -302,7 +302,7 @@ export default function CustomerManagement({ hunter, onClose }) {
                     <div className="grid grid-cols-4 gap-2 text-xs mb-2">
                       <div className="bg-black/40 rounded p-2">
                         <p className="text-gray-400">Addiction</p>
-                        <p className="text-red-300 font-bold">{customer.addiction_level || 0}%</p>
+                        <p className="text-red-300 font-bold">{Math.round(customer.addiction_level || 0)}%</p>
                       </div>
                       <div className="bg-black/40 rounded p-2">
                         <p className="text-gray-400">Withdrawal</p>
@@ -310,11 +310,11 @@ export default function CustomerManagement({ hunter, onClose }) {
                       </div>
                       <div className="bg-black/40 rounded p-2">
                         <p className="text-gray-400">OD Risk</p>
-                        <p className="text-red-300 font-bold">{customer.overdose_risk || 0}%</p>
+                        <p className="text-red-300 font-bold">{Math.round(customer.overdose_risk || 0)}%</p>
                       </div>
                       <div className="bg-black/40 rounded p-2">
                         <p className="text-gray-400">Loyalty</p>
-                        <p className="text-purple-300 font-bold">{customer.loyalty_points || 0}</p>
+                        <p className="text-purple-300 font-bold">{Math.round(customer.loyalty_points || 0)}</p>
                       </div>
                     </div>
 
@@ -373,15 +373,15 @@ export default function CustomerManagement({ hunter, onClose }) {
                 </div>
                 <div className="bg-gray-800 rounded-lg p-3">
                   <p className="text-gray-400 text-xs">Addiction Level</p>
-                  <p className="text-red-400 font-bold text-lg">{selectedCustomer.addiction_level || 0}%</p>
+                  <p className="text-red-400 font-bold text-lg">{Math.round(selectedCustomer.addiction_level || 0)}%</p>
                 </div>
                 <div className="bg-gray-800 rounded-lg p-3">
                   <p className="text-gray-400 text-xs">Overdose Risk</p>
-                  <p className="text-red-400 font-bold text-lg">{selectedCustomer.overdose_risk || 0}%</p>
+                  <p className="text-red-400 font-bold text-lg">{Math.round(selectedCustomer.overdose_risk || 0)}%</p>
                 </div>
                 <div className="bg-gray-800 rounded-lg p-3">
                   <p className="text-gray-400 text-xs">Days Clean</p>
-                  <p className="text-blue-400 font-bold text-lg">{selectedCustomer.days_clean || 0}</p>
+                  <p className="text-blue-400 font-bold text-lg">{Math.round(selectedCustomer.days_clean || 0)}</p>
                 </div>
               </div>
 
