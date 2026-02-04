@@ -9,6 +9,8 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [activeAction, setActiveAction] = useState(null);
+  const [showServiceMenu, setShowServiceMenu] = useState(false);
+  const [showAlignmentChoice, setShowAlignmentChoice] = useState(false);
 
   const getPronouns = () => {
     return vampireState.gender === 'woman' ? { subject: 'she', object: 'her', possessive: 'her' } 
@@ -18,6 +20,177 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
 
   const p = getPronouns();
 
+  const handleMagicalService = () => {
+    setShowServiceMenu(true);
+  };
+
+  const handleAlignmentTalk = () => {
+    setShowAlignmentChoice(true);
+  };
+
+  const handleMagicalGift = async () => {
+    setProcessing(true);
+    
+    setTimeout(async () => {
+      const alignment = witch.alignment || 'grey';
+      const outcomes = getAlignmentDialogue().gift_magic;
+      const result = outcomes[Math.floor(Math.random() * outcomes.length)];
+      
+      setOutcome(result);
+      
+      await base44.entities.Witch.update(witch.id, {
+        relationship: Math.min(100, (witch.relationship || 0) + 12),
+        items_crafted: [...(witch.items_crafted || []), `Gift (${alignment})`]
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: result,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+      }, 5000);
+    }, 2000);
+  };
+
+  const performMagicalService = async (service) => {
+    setShowServiceMenu(false);
+    setProcessing(true);
+    
+    setTimeout(async () => {
+      const result = service.outcome;
+      setOutcome(result);
+      
+      await base44.entities.Witch.update(witch.id, {
+        magical_favors_owed: Math.max(0, (witch.magical_favors_owed || 0) - 1),
+        items_crafted: [...(witch.items_crafted || []), service.item]
+      });
+      
+      if (service.vampireEffect && vampireState?.id) {
+        await base44.entities.VampireState.update(vampireState.id, service.vampireEffect);
+      }
+      
+      await base44.entities.NightLog.create({
+        entry: result,
+        category: 'interaction',
+        intensity: 'moderate'
+      });
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+      }, 5000);
+    }, 3000);
+  };
+
+  const changeAlignment = async (newAlignment) => {
+    setShowAlignmentChoice(false);
+    setProcessing(true);
+    
+    setTimeout(async () => {
+      const alignmentText = {
+        light: `${witch.name} chooses the path of light. "No more darkness. I'll use magic to heal, protect, nurture." ${p.possessive} eyes glow with pure energy. You feel... hopeful. Maybe you can be better too.`,
+        grey: `${witch.name} chooses balance. "Light and dark. Both have their place." ${p.subject} understands nuance. Complexity. Neither saint nor demon. Just... witch. Perfect.`,
+        dark: `${witch.name} embraces darkness. "Power at any cost," ${p.subject} whispers. ${p.possessive} eyes turn black for a moment. You feel the corruption. It's intoxicating. Dangerous. You love it.`
+      };
+      
+      setOutcome(alignmentText[newAlignment]);
+      
+      const corruptionChange = newAlignment === 'dark' ? 30 : newAlignment === 'light' ? -30 : 0;
+      
+      await base44.entities.Witch.update(witch.id, {
+        alignment: newAlignment,
+        corruption_level: Math.max(0, Math.min(100, (witch.corruption_level || 0) + corruptionChange)),
+        relationship: Math.min(100, (witch.relationship || 0) + 8)
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: alignmentText[newAlignment],
+        category: 'power',
+        intensity: 'significant'
+      });
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+      }, 5000);
+    }, 2000);
+  };
+
+  const getAlignmentDialogue = () => {
+    const alignment = witch.alignment || 'grey';
+    
+    if (alignment === 'light') {
+      return {
+        deep_talk: [
+          `You and ${witch.name} talk for hours. ${p.subject} speaks of redemption. "Even vampires can choose light," ${p.subject} says. You're not sure you believe it. But ${p.subject} does. That matters.`,
+          `${witch.name} tells you about healing magic. How it saved ${p.possessive} soul. "You could learn too," ${p.subject} offers. "Balance the darkness with light." You consider it.`,
+          `"Magic is a gift," ${witch.name} says. "It should heal, protect, nurture." You think about blood. Death. "Can darkness and light coexist?" ${p.subject} takes your hand. "We're trying, aren't we?"`,
+          `${witch.name} confesses: "My coven thinks vampires are evil. But you're not. You're trying." ${p.subject} sees the good in you. Even when you don't.`
+        ],
+        gift_magic: [
+          `${witch.name} offers you a blessed amulet. "Protection from your own darkness," ${p.subject} explains. Light magic hums against your skin. Strange. But comforting.`,
+          `"I made you something," ${witch.name} says shyly. A potion. "It'll make feeding... less violent. More humane." ${p.subject} cares about your humanity. Your soul.`,
+          `${witch.name} enchants your home with peace wards. "You deserve tranquility," ${p.subject} says. The darkness in your apartment feels... lighter. Because of ${p.object}.`
+        ],
+        romance: [
+          `${witch.name} creates flowers with magic. They bloom in your hands. "Beauty for someone beautiful," ${p.subject} whispers. You kiss ${p.object} softly. Pure. Innocent. Perfect.`,
+          `"I'm falling for you," ${witch.name} confesses. "Even knowing what you are. Maybe because of it." You hold ${p.object} close. "I don't deserve you." "${p.subject} gets to decide that," ${p.subject} smiles.`,
+          `Gentle magic surrounds you. ${witch.name}'s love made visible. Light and shadow dancing together. ${p.subject} makes you believe you can be better. For ${p.object}.`
+        ]
+      };
+    } else if (alignment === 'dark') {
+      return {
+        deep_talk: [
+          `${witch.name} talks about forbidden magic. Expression. Dark rituals. "We could be gods together," ${p.subject} whispers. The temptation is real. Dangerous. Thrilling.`,
+          `"Light witches are weak," ${witch.name} spits. "Power requires sacrifice. Blood. Death. You understand that." You do. Too well.`,
+          `${witch.name} confesses: "I've killed with magic. Dozens. Does that scare you?" You laugh. "I'm a vampire. I've killed hundreds." ${p.subject} grins. "We're perfect for each other."`,
+          `Dark magic discussion. ${witch.name} shows you forbidden spells. "We could reshape reality," ${p.subject} breathes. "Take what we want. Rule this world." The darkness calls.`
+        ],
+        gift_magic: [
+          `${witch.name} gives you a cursed dagger. "Kills anything. Even immortals." ${p.subject}'s eyes gleam. "Use it well." The darkness in ${p.object} matches yours.`,
+          `"Blood magic requires blood," ${witch.name} says. Hands you a vial. "Demon blood. Makes you... stronger. Darker." You drink it. Power surges. ${p.subject} watches hungrily.`,
+          `${witch.name} places a hex on your enemies. "They'll suffer for hurting you," ${p.subject} promises. Dark magic. Protective. Possessive. Perfect.`
+        ],
+        romance: [
+          `${witch.name} kisses you violently. Magic crackling. "I want to consume you," ${p.subject} gasps. "And be consumed." You oblige. Dark. Intense. Overwhelming.`,
+          `"We're monsters," ${witch.name} whispers while undressing you. "Might as well enjoy it." No pretense of goodness. Just raw desire. Darkness. Truth.`,
+          `Blood magic ritual during sex. ${witch.name} cuts ${p.possessive} palm. You cut yours. Hands clasped. Blood mixing. Magic and lust spiraling. You both come screaming incantations.`
+        ]
+      };
+    } else { // grey
+      return {
+        deep_talk: [
+          `You and ${witch.name} talk for hours. About mortality. Immortality. Magic. ${p.subject} tells you about ${p.possessive} childhood. The first spell. The awakening. You share your human memories. The night you died. The night you were reborn. Understanding deepens between you.`,
+          `"Do you ever regret it?" ${witch.name} asks. You think. "Becoming a vampire? Sometimes." ${p.subject} nods. "Magic cursed me too. But I'd choose it again." You hold ${p.possessive} hand. "Me too." Silence. Comfortable. Complete.`,
+          `${witch.name} confesses fears. "What if my coven finds out about us?" You pull ${p.object} close. "Let them try to take you." ${p.subject} relaxes. Safe in your arms. You'd burn the world for ${p.object}.`,
+          `Late night philosophy. ${witch.name}: "You drink blood to live. I drain life for power. Are we so different?" You kiss ${p.possessive} forehead. "We're monsters together. That's all that matters."`
+        ],
+        gift_magic: [
+          `${witch.name} offers you an enchanted ring. "It'll hide your vampire aura from hunters," ${p.subject} explains. Practical. Thoughtful. You kiss ${p.object} in thanks.`,
+          `"I brewed something for you," ${witch.name} says. A potion. "Controls the hunger. A bit." ${p.subject} cares. Wants to help. You're grateful.`,
+          `${witch.name} enchants your windows. "The sun won't hurt you inside now," ${p.subject} says. Small gift. Huge impact. Freedom.`
+        ],
+        romance: [
+          `${witch.name} lights candles with magic. Rose petals appear. "Romantic enough?" ${p.subject} teases. You pull ${p.object} into a kiss. Slow. Deep. Perfect.`,
+          `You and ${witch.name} under the moon. Magic and darkness entwined. ${p.subject} whispers "I love you" between kisses. You say it back. Mean it.`,
+          `Intimacy with ${witch.name}. Magic tingles on your skin. ${p.subject} knows exactly how to touch you. Supernatural connection. Perfect understanding.`
+        ]
+      };
+    }
+  };
+
+  const alignmentDialogue = getAlignmentDialogue();
+
   const deepActions = [
     {
       id: 'deep_talk',
@@ -26,12 +199,7 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
       color: 'from-blue-900/60 to-cyan-900/60',
       borderColor: 'border-blue-500/30',
       relGain: [8, 15],
-      outcomes: [
-        `You and ${witch.name} talk for hours. About mortality. Immortality. Magic. ${p.subject} tells you about ${p.possessive} childhood. The first spell. The awakening. You share your human memories. The night you died. The night you were reborn. Understanding deepens between you.`,
-        `"Do you ever regret it?" ${witch.name} asks. You think. "Becoming a vampire? Sometimes." ${p.subject} nods. "Magic cursed me too. But I'd choose it again." You hold ${p.possessive} hand. "Me too." Silence. Comfortable. Complete.`,
-        `${witch.name} confesses fears. "What if my coven finds out about us?" You pull ${p.object} close. "Let them try to take you." ${p.subject} relaxes. Safe in your arms. You'd burn the world for ${p.object}.`,
-        `Late night philosophy. ${witch.name}: "You drink blood to live. I drain life for power. Are we so different?" You kiss ${p.possessive} forehead. "We're monsters together. That's all that matters."`
-      ]
+      outcomes: alignmentDialogue.deep_talk
     },
     {
       id: 'romance',
@@ -40,12 +208,16 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
       color: 'from-pink-900/60 to-red-900/60',
       borderColor: 'border-pink-500/30',
       relGain: [10, 20],
-      outcomes: [
-        `${witch.name} lights candles with magic. Rose petals appear. "Romantic enough?" ${p.subject} teases. You pull ${p.object} into a kiss. Slow. Deep. Perfect. Clothes fall away. Magic tingles on your skin. You make love surrounded by floating petals.`,
-        `You surprise ${witch.name} with blood wine. ${p.subject} surprises you with enchanted chocolate. You feed each other. Giggling. Flirting. It escalates. Always does. You take ${p.object} right there. Kitchen counter. Passionate. Wild.`,
-        `Moonlit bath together. ${witch.name} enchants the water. Glowing. Warm. You wash ${p.possessive} hair. ${p.subject} washes yours. Intimate. Tender. Then ${p.subject} straddles you in the water. Need in ${p.possessive} eyes. You give ${p.object} everything.`,
-        `${witch.name} creates an illusion. Your human life. Your first meeting. "I wish I knew you then," ${p.subject} says. You kiss ${p.object}. "You know me now. That's enough." ${p.subject} smiles. Pulls you to bed. Shows you how much that means.`
-      ]
+      outcomes: alignmentDialogue.romance
+    },
+    {
+      id: 'alignment_talk',
+      icon: Moon,
+      label: 'Discuss Magic Path',
+      color: 'from-indigo-900/60 to-violet-900/60',
+      borderColor: 'border-indigo-500/30',
+      relGain: [6, 12],
+      special: true
     },
     {
       id: 'magic_practice',
@@ -76,6 +248,15 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
       ]
     },
     {
+      id: 'request_service',
+      icon: Zap,
+      label: 'Request Magical Service',
+      color: 'from-emerald-900/60 to-teal-900/60',
+      borderColor: 'border-emerald-500/30',
+      relGain: [5, 10],
+      special: true
+    },
+    {
       id: 'gift',
       icon: Gift,
       label: 'Exchange Gifts',
@@ -88,6 +269,16 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
         `Surprise exchange. You made ${witch.name} jewelry from vampire bones. ${p.subject} made you a talisman from witch herbs. Both beautiful. Both meaningful. You wear them always.`,
         `${witch.name} enchants your coffin. "Sweet dreams guaranteed," ${p.subject} promises. You pull ${p.object} into the coffin. "Stay." ${p.subject} does. You don't sleep. You don't need to.`
       ]
+    },
+    {
+      id: 'gift_magic',
+      icon: Wand2,
+      label: 'Receive Magical Gift',
+      color: 'from-purple-900/60 to-pink-900/60',
+      borderColor: 'border-purple-500/30',
+      relGain: [10, 18],
+      outcomes: alignmentDialogue.gift_magic,
+      special: true
     },
     {
       id: 'domestic',
@@ -164,6 +355,17 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
               <button
                 key={action.id}
                 onClick={async () => {
+                  if (action.special) {
+                    if (action.id === 'request_service') {
+                      handleMagicalService();
+                    } else if (action.id === 'alignment_talk') {
+                      handleAlignmentTalk();
+                    } else if (action.id === 'gift_magic') {
+                      handleMagicalGift();
+                    }
+                    return;
+                  }
+                  
                   setProcessing(true);
                   setActiveAction(action.id);
                   
@@ -199,7 +401,9 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
                   <action.icon className="w-6 h-6 text-white flex-shrink-0" />
                   <div>
                     <h4 className="text-white font-bold text-sm mb-1">{action.label}</h4>
-                    <p className="text-gray-300 text-xs">+{action.relGain[0]}-{action.relGain[1]} relationship</p>
+                    <p className="text-gray-300 text-xs">
+                      {action.special ? (action.id === 'alignment_talk' ? `Current: ${witch.alignment || 'grey'}` : 'Special interaction') : `+${action.relGain[0]}-${action.relGain[1]} relationship`}
+                    </p>
                   </div>
                 </div>
               </button>
@@ -214,6 +418,141 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
           Back
         </button>
       </motion.div>
+
+      {/* Magical Services Menu */}
+      <AnimatePresence>
+        {showServiceMenu && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowServiceMenu(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto"
+            >
+              <h3 className="text-xl font-bold text-white mb-4">Request Magical Service</h3>
+              <p className="text-gray-400 text-sm mb-6">
+                {witch.name} can craft magical items or perform services for you.
+              </p>
+
+              {[
+                { 
+                  item: 'Daylight Ring', 
+                  icon: '☀️', 
+                  outcome: `${witch.name} spends hours enchanting a ring. Lapis lazuli glowing with magic. "This will let you walk in sunlight," ${p.subject} says. You slip it on. Freedom.`,
+                  vampireEffect: { can_walk_in_daylight: true }
+                },
+                {
+                  item: 'Blood Suppression Charm',
+                  icon: '🩸',
+                  outcome: `${witch.name} creates a charm. "Wear this. It'll reduce your bloodlust." Magic pulses. The hunger... quieter. Not gone, but manageable. "Thank you," you whisper.`,
+                  vampireEffect: { hunger_state: 'calm' }
+                },
+                {
+                  item: 'Vampire Detection Ward',
+                  icon: '🔮',
+                  outcome: `${witch.name} casts a detection ward around your home. "You'll know if hunters approach," ${p.subject} explains. Protection. ${p.subject} keeps you safe.`,
+                  vampireEffect: { exposure_level: Math.max(0, vampireState.exposure_level - 15) }
+                },
+                {
+                  item: 'Memory Modification Spell',
+                  icon: '🌫️',
+                  outcome: `${witch.name} performs memory magic on a witness. "They won't remember seeing you feed," ${p.subject} assures. Tracks covered. Crisis averted.`,
+                  vampireEffect: { exposure_level: Math.max(0, vampireState.exposure_level - 20) }
+                },
+                {
+                  item: 'Power Amplification Ritual',
+                  icon: '⚡',
+                  outcome: `${witch.name} channels magic into you. Witch power flowing into vampire veins. Your abilities surge. Temporary boost. Incredible. "Use it well," ${p.subject} says, exhausted.`,
+                  vampireEffect: { vampire_power_level: Math.min(100, (vampireState.vampire_power_level || 0) + 15) }
+                },
+                {
+                  item: 'Healing Potion',
+                  icon: '💚',
+                  outcome: `${witch.name} brews a healing potion. "For when you're hurt," ${p.subject} says. You drink. Warmth spreads. Wounds closing. ${p.subject} cares so much.`,
+                  vampireEffect: { humanity: Math.min(100, (vampireState.humanity || 50) + 10) }
+                }
+              ].map(service => (
+                <button
+                  key={service.item}
+                  onClick={() => performMagicalService(service)}
+                  className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl p-4 text-left transition-colors mb-3"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="text-3xl">{service.icon}</span>
+                    <div>
+                      <h4 className="text-white font-medium mb-1">{service.item}</h4>
+                      <p className="text-gray-400 text-xs">Magical service</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </motion.div>
+          </motion.div>
+        )}
+
+        {showAlignmentChoice && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowAlignmentChoice(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-6 max-w-md w-full"
+            >
+              <h3 className="text-xl font-bold text-white mb-4">Discuss {witch.name}'s Path</h3>
+              <p className="text-gray-400 text-sm mb-6">
+                Current alignment: <span className="text-purple-400 capitalize">{witch.alignment || 'grey'}</span>
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => changeAlignment('light')}
+                  className="w-full bg-gradient-to-r from-blue-900/60 to-cyan-900/60 hover:from-blue-900/80 hover:to-cyan-900/80 border border-blue-500/30 rounded-xl p-4 text-left transition-all"
+                >
+                  <h4 className="text-white font-bold mb-1">✨ Path of Light</h4>
+                  <p className="text-gray-400 text-xs">Healing, protection, redemption. Pure magic.</p>
+                </button>
+
+                <button
+                  onClick={() => changeAlignment('grey')}
+                  className="w-full bg-gradient-to-r from-purple-900/60 to-indigo-900/60 hover:from-purple-900/80 hover:to-indigo-900/80 border border-purple-500/30 rounded-xl p-4 text-left transition-all"
+                >
+                  <h4 className="text-white font-bold mb-1">🌙 Path of Balance</h4>
+                  <p className="text-gray-400 text-xs">Light and dark. Both necessary. Neutral magic.</p>
+                </button>
+
+                <button
+                  onClick={() => changeAlignment('dark')}
+                  className="w-full bg-gradient-to-r from-red-900/60 to-black/60 hover:from-red-900/80 hover:to-black/80 border border-red-500/30 rounded-xl p-4 text-left transition-all"
+                >
+                  <h4 className="text-white font-bold mb-1">🔥 Path of Darkness</h4>
+                  <p className="text-gray-400 text-xs">Curses, blood magic, power at any cost. Forbidden magic.</p>
+                </button>
+              </div>
+
+              <button
+                onClick={() => setShowAlignmentChoice(false)}
+                className="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors text-sm"
+              >
+                Cancel
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
