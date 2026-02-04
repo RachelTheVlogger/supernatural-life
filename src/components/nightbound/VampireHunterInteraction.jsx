@@ -115,7 +115,7 @@ export default function VampireHunterInteraction({ vampire, hunter, onClose }) {
       const hunterText = responseTexts[Math.floor(Math.random() * responseTexts.length)];
       
       setResponse({
-        text: hunterText,
+        hunterText: hunterText,
         action: interaction.text,
       });
 
