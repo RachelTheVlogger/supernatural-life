@@ -4,6 +4,7 @@ import { Heart, X, Sparkles, Droplets, Flower } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import NymphRomanceExpanded from '@/components/nightbound/NymphRomanceExpanded';
+import TitleSelector from '@/components/nightbound/TitleSelector';
 
 const DIALOGUE_TREES = {
   pure: {
