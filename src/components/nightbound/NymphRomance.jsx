@@ -16,10 +16,16 @@ const DIALOGUE_TREES = {
       { text: 'You\'ve changed me. Made me want to be better.', trust: 18, desire: 15 },
       { text: 'This connection... it\'s healing something in me.', trust: 16, desire: 18 }
     ],
+    trust60: [
+      { text: 'You\'ve become everything to me. My whole world.', trust: 22, desire: 20 },
+      { text: 'I want to spend forever with you. Building something sacred.', trust: 25, desire: 18 },
+      { text: 'You don\'t realize how much you\'ve transformed me.', trust: 28, desire: 22 }
+    ],
     intimacy: [
       { text: 'Take me gently. I trust you completely.', bdsm: 'vanilla', desire: 25 },
       { text: 'Make love to me like I\'m sacred to you.', bdsm: 'vanilla', desire: 28 },
-      { text: 'I want to feel you. All of you. Tenderly.', bdsm: 'vanilla', desire: 30 }
+      { text: 'I want to feel you. All of you. Tenderly.', bdsm: 'vanilla', desire: 30 },
+      { text: 'Teach me. I want to learn how to love you with my whole being.', bdsm: 'vanilla', desire: 32 }
     ]
   },
   balanced: {
@@ -33,10 +39,16 @@ const DIALOGUE_TREES = {
       { text: 'You balance my nature perfectly. Light and shadow.', trust: 12, desire: 18 },
       { text: 'This is what I\'ve been searching for.', trust: 18, desire: 20 }
     ],
+    trust60: [
+      { text: 'I feel complete with you. Like I\'ve found my other half.', trust: 20, desire: 25 },
+      { text: 'Stay. Promise me you\'ll always stay.', trust: 25, desire: 22 },
+      { text: 'I\'m ready to give you all of me. Everything I am.', trust: 28, desire: 28 }
+    ],
     intimacy: [
       { text: 'Kiss me. Show me what you\'ve been holding back.', bdsm: 'switch', desire: 28 },
       { text: 'I want to explore this with you. No limits.', bdsm: 'switch', desire: 30 },
-      { text: 'Take me somewhere between gentle and wild.', bdsm: 'switch', desire: 32 }
+      { text: 'Take me somewhere between gentle and wild.', bdsm: 'switch', desire: 32 },
+      { text: 'I want to discover every way you can make me feel alive.', bdsm: 'switch', desire: 35 }
     ]
   },
   corrupted: {
@@ -50,10 +62,16 @@ const DIALOGUE_TREES = {
       { text: 'Corruption is just another form of truth.', trust: 5, desire: 28 },
       { text: 'Take me deeper. I want to lose myself in you.', trust: 10, desire: 30 }
     ],
+    trust60: [
+      { text: 'I\'m losing myself in your darkness and I don\'t want to be found.', trust: 12, desire: 35 },
+      { text: 'Transform me completely. I want to become like you.', trust: 15, desire: 38 },
+      { text: 'We\'re going to burn everything down together.', trust: 18, desire: 40 }
+    ],
     intimacy: [
       { text: 'I surrender to your darkness. Use me.', bdsm: 'submissive', desire: 35 },
       { text: 'Make me feel the power of your corruption.', bdsm: 'submissive', desire: 32 },
-      { text: 'Drown me in your desires. I beg you.', bdsm: 'submissive', desire: 38 }
+      { text: 'Drown me in your desires. I beg you.', bdsm: 'submissive', desire: 38 },
+      { text: 'Break me. Remake me into what you want me to be.', bdsm: 'submissive', desire: 42 }
     ]
   }
 };
@@ -85,6 +103,8 @@ export default function NymphRomance({ nymph, onClose }) {
     
     if (intimacy >= 75) {
       return tree.intimacy;
+    } else if (trust >= 60) {
+      return tree.trust60;
     } else if (trust >= 30) {
       return tree.trust30;
     } else {
@@ -211,38 +231,49 @@ export default function NymphRomance({ nymph, onClose }) {
       const vampireState = vampireStates[0];
       const isLiteMode = vampireState?.content_filter === 'lite';
 
-      const outcomes = {
-        pure: isLiteMode ? [
-          'Sacred union beneath starlight. Two becoming one. Perfect.',
-          'Gentle. Reverent. This is love made manifest.',
-          'You make love to her soul. Tender. True. Forever.'
-        ] : [
-          'She gasps as you enter her tenderly. Sacred. Holy.',
-          'Slow movements. Deep kisses. Complete vulnerability.',
-          'Water and soul entwined. She cries your name in ecstasy.'
-        ],
-        balanced: isLiteMode ? [
-          'Wild and tender. You match her perfectly. Passionate.',
-          'Bodies moving together like water finding its course.',
-          'She shudders against you. Both of you lost in sensation.'
-        ] : [
-          'Passionate and deliberate. She wraps around you completely.',
-          'Your bodies move together in perfect rhythm.',
-          'She moans your name as pleasure builds between you.'
-        ],
-        corrupted: isLiteMode ? [
-          'Dark passion. Dangerous. Addictive.',
-          'You consume each other in shadow and desire.',
-          'Lost in depravity together. Perfect monsters.'
-        ] : [
-          'Rough. Hungry. She claws at you, desperate.',
-          'You take her hard, and she meets every thrust.',
-          'She screams as you push her toward ecstasy.'
-        ]
+      const scenarios = {
+        pure: {
+          locations: ['in sacred waters', 'beneath the moonlight', 'in the grove'],
+          intense: isLiteMode ? [
+            'Sacred union beneath starlight. Two becoming one. Perfect.',
+            'Gentle. Reverent. This is love made manifest.',
+            'You make love to her soul. Tender. True. Forever.'
+          ] : [
+            'She gasps as you enter her tenderly. Sacred. Holy.',
+            'Slow movements. Deep kisses. Complete vulnerability.',
+            'Water and soul entwined. She cries your name in ecstasy.'
+          ]
+        },
+        balanced: {
+          locations: ['where waters meet', 'on soft moss', 'beneath ancient trees'],
+          intense: isLiteMode ? [
+            'Wild and tender. You match her perfectly. Passionate.',
+            'Bodies moving together like water finding its course.',
+            'She shudders against you. Both of you lost in sensation.'
+          ] : [
+            'Passionate and deliberate. She wraps around you completely.',
+            'Your bodies move together in perfect rhythm.',
+            'She moans your name as pleasure builds between you.'
+          ]
+        },
+        corrupted: {
+          locations: ['in dark waters', 'where shadows pool', 'in the abyss together'],
+          intense: isLiteMode ? [
+            'Dark passion. Dangerous. Addictive.',
+            'You consume each other in shadow and desire.',
+            'Lost in depravity together. Perfect monsters.'
+          ] : [
+            'Rough. Hungry. She claws at you, desperate.',
+            'You take her hard, and she meets every thrust.',
+            'She screams as you push her toward ecstasy.'
+          ]
+        }
       };
 
-      const outcomeList = outcomes[alignment] || outcomes.balanced;
-      const text = outcomeList[Math.floor(Math.random() * outcomeList.length)];
+      const config = scenarios[alignment] || scenarios.balanced;
+      const location = config.locations[Math.floor(Math.random() * config.locations.length)];
+      const baseText = config.intense[Math.floor(Math.random() * config.intense.length)];
+      const text = `${baseText} (${location})`;
 
       setOutcome(text);
 
@@ -253,6 +284,17 @@ export default function NymphRomance({ nymph, onClose }) {
         relationship_status: 'serious',
         healing_services_performed: (nymph.healing_services_performed || 0) + 1
       };
+
+      // Create memory of this intimate moment
+      await base44.entities.InteractionMemory.create({
+        entity_1_id: nymph.id,
+        entity_1_type: 'nymph',
+        entity_2_id: 'player',
+        entity_2_type: 'player',
+        interaction_type: 'romance',
+        description: text,
+        relationship_impact: 30
+      });
 
       await base44.entities.WaterNymph.update(nymph.id, updates);
 
