@@ -414,18 +414,16 @@ export default function SirenRomance({ siren, onClose }) {
               </div>
             </button>
 
-            {!siren.boundaries_discussed && (
-              <button
-                onClick={() => setShowBoundaries(true)}
-                className="w-full bg-gradient-to-r from-blue-900/60 to-purple-900/60 hover:from-blue-900/80 hover:to-purple-900/80 border-2 border-blue-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
-              >
-                <Heart className="w-5 h-5 text-blue-400" />
-                <div className="flex-1 text-left">
-                  <h3 className="text-white font-medium">Discuss Boundaries</h3>
-                  <p className="text-blue-300 text-sm">Talk about consent & desires.</p>
-                </div>
-              </button>
-            )}
+            <button
+              onClick={() => setShowBoundaries(true)}
+              className="w-full bg-gradient-to-r from-blue-900/60 to-purple-900/60 hover:from-blue-900/80 hover:to-purple-900/80 border-2 border-blue-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Heart className="w-5 h-5 text-blue-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Discuss Boundaries</h3>
+                <p className="text-blue-300 text-sm">{siren.boundaries_discussed ? 'Already discussed' : 'Talk about consent & desires.'}</p>
+              </div>
+            </button>
 
             {intimacy >= 75 && siren.boundaries_discussed && (
               <button

@@ -410,18 +410,16 @@ export default function NymphRomance({ nymph, onClose }) {
               </div>
             </button>
 
-            {!nymph.boundaries_discussed && (
-              <button
-                onClick={() => setShowBoundaries(true)}
-                className="w-full bg-gradient-to-r from-cyan-900/60 to-teal-900/60 hover:from-cyan-900/80 hover:to-teal-900/80 border-2 border-cyan-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
-              >
-                <Heart className="w-5 h-5 text-cyan-400" />
-                <div className="flex-1 text-left">
-                  <h3 className="text-white font-medium">Discuss Boundaries</h3>
-                  <p className="text-cyan-300 text-sm">Talk about consent & desires.</p>
-                </div>
-              </button>
-            )}
+            <button
+              onClick={() => setShowBoundaries(true)}
+              className="w-full bg-gradient-to-r from-cyan-900/60 to-teal-900/60 hover:from-cyan-900/80 hover:to-teal-900/80 border-2 border-cyan-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Heart className="w-5 h-5 text-cyan-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Discuss Boundaries</h3>
+                <p className="text-cyan-300 text-sm">{nymph.boundaries_discussed ? 'Already discussed' : 'Talk about consent & desires.'}</p>
+              </div>
+            </button>
 
             {intimacy >= 75 && nymph.boundaries_discussed && (
               <button
