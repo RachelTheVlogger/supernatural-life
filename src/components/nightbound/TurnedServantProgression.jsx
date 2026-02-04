@@ -103,8 +103,6 @@ export default function TurnedServantProgression({ servant, onClose }) {
           size: 'small',
           unlocked_abilities: []
         });
-
-        msg += `\n\n🐍 A snake familiar appears! ${randomName} is now yours.`;
       }
 
       const messages = {
@@ -141,6 +139,19 @@ export default function TurnedServantProgression({ servant, onClose }) {
       };
 
       let msg = messages[action.id][Math.floor(Math.random() * messages[action.id].length)];
+
+      if (nights === 0) {
+        const snakeTypes = ['shadow', 'venom', 'blood', 'nightmare'];
+        const randomType = snakeTypes[Math.floor(Math.random() * snakeTypes.length)];
+        const snakeNames = {
+          shadow: ['Eclipse', 'Umbra', 'Nox', 'Shade'],
+          venom: ['Viper', 'Toxin', 'Fang', 'Poison'],
+          blood: ['Crimson', 'Ruby', 'Scarlet', 'Sanguis'],
+          nightmare: ['Phantom', 'Terror', 'Dread', 'Fear']
+        };
+        const randomName = snakeNames[randomType][Math.floor(Math.random() * snakeNames[randomType].length)];
+        msg += `\n\n🐍 A snake familiar appears! ${randomName} is now yours.`;
+      }
 
       if (newStage > stage) {
         msg += `\n\n🎉 You advanced to ${next}!`;
