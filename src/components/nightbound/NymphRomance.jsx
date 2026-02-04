@@ -516,47 +516,63 @@ export default function NymphRomance({ nymph, onClose }) {
                 <p className="text-gray-400 text-sm mb-4">Explore desires together:</p>
 
                 {!selectedPreference ? (
-                  <div className="space-y-2 mb-6">
-                  {BDSM_PREFERENCES.map(pref => (
-                    <button
-                      key={pref.value}
-                      onClick={() => setSelectedPreference(pref.value)}
-                      className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${
-                        selectedPreference === pref.value
-                          ? `bg-${pref.color}-900/60 border-${pref.color}-500`
-                          : 'bg-gray-800 border-gray-600 hover:border-gray-500'
-                      }`}
-                    >
-                      <p className="text-white font-medium">{pref.label}</p>
-                    </button>
-                  ))}
-                  </div>
-                  ) : (
-                  <div>
-                  <TitleSelector 
-                    dominantGender={nymph.gender}
-                    submissiveGender="custom"
-                    onSelect={setSelectedTitle}
-                    selectedTitle={selectedTitle}
-                  />
-                  </div>
-                  )}
-
-                  <div className="flex gap-3 mt-6">
-                  <button
-                    onClick={() => setShowBoundaries(false)}
-                    className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleBoundariesDiscussion}
-                    disabled={!selectedPreference}
-                    className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium disabled:opacity-50"
-                  >
-                    Discuss
-                  </button>
-                </div>
+                  <>
+                    <div className="space-y-2 mb-6">
+                      {BDSM_PREFERENCES.map(pref => (
+                        <button
+                          key={pref.value}
+                          onClick={() => setSelectedPreference(pref.value)}
+                          className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${
+                            selectedPreference === pref.value
+                              ? `bg-${pref.color}-900/60 border-${pref.color}-500`
+                              : 'bg-gray-800 border-gray-600 hover:border-gray-500'
+                          }`}
+                        >
+                          <p className="text-white font-medium">{pref.label}</p>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowBoundaries(false)}
+                        className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleBoundariesDiscussion}
+                        disabled={!selectedPreference}
+                        className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium disabled:opacity-50"
+                      >
+                        Discuss
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <TitleSelector 
+                      dominantGender={nymph.gender}
+                      submissiveGender="custom"
+                      onSelect={setSelectedTitle}
+                      selectedTitle={selectedTitle}
+                    />
+                    <div className="flex gap-3 mt-6">
+                      <button
+                        onClick={() => setShowBoundaries(false)}
+                        className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-lg"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleBoundariesDiscussion}
+                        disabled={!selectedTitle}
+                        className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium disabled:opacity-50"
+                      >
+                        Discuss
+                      </button>
+                    </div>
+                  </>
+                )}
               </motion.div>
             </motion.div>
           )}
