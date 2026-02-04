@@ -387,7 +387,7 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
 
         {/* Tab Content */}
         <AnimatePresence mode="wait">
-          {tab === 'extract' && (
+          {tab === 'extract' && !extracting && !outcome && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -419,7 +419,7 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
             </motion.div>
           )}
 
-          {tab === 'formulas' && (
+          {tab === 'formulas' && !selling && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -486,241 +486,253 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
             </motion.div>
           )}
 
-          {tab === 'plants' && !plantBreeding && !breedingOutcome && (
+          {tab === 'plants' && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-white font-bold">Blood Plant Garden 🌿</h3>
-                {bloodPlants.length >= 2 && (
-                  <button 
-                    onClick={() => setPlantBreeding(true)}
-                    className="text-pink-400 text-xs px-3 py-1 bg-pink-900/40 rounded-lg"
-                  >
-                    Cross-Breed
-                  </button>
-                )}
-              </div>
-              
-              {bloodPlants.length === 0 ? (
-                <div className="space-y-3">
-                  <p className="text-gray-400 text-sm mb-4">Grow blood plants to create organic strains</p>
-                  {BLOOD_PLANTS.map(plant => (
-                    <button
-                      key={plant.type}
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        await base44.entities.BloodPlant.create({
-                          plant_type: plant.type,
-                          growth_stage: 1,
-                          health: 100,
-                          potency: 50,
-                          planted_date: new Date().toISOString(),
-                          last_watered: new Date().toISOString()
-                        });
-                        await base44.entities.NightLog.create({
-                          entry: `${hunter.name} planted ${plant.name}. Let it grow.`,
-                          category: 'dark_deed',
-                          intensity: 'moderate'
-                        });
-                        queryClient.invalidateQueries();
-                      }}
-                      className="w-full bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 rounded-xl p-4 text-left"
-                    >
-                      <h4 className="text-white font-bold mb-1">{plant.name}</h4>
-                      <p className="text-gray-400 text-sm mb-2">{plant.description}</p>
-                      <div className="flex gap-3 text-xs text-gray-500">
-                        <span>Grow time: {plant.growTime} days</span>
-                        <span>Yield: {plant.baseYield} doses</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                bloodPlants.map(plant => {
-                  const plantInfo = BLOOD_PLANTS.find(p => p.type === plant.plant_type);
-                  const displayName = plant.hybrid_name || plantInfo?.name || 'Unknown Plant';
-                  return (
-                    <div key={plant.id} className="bg-gray-800 rounded-xl p-4 mb-3">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <h4 className="text-white font-bold mb-1">{displayName} 🌱</h4>
-                          {plant.hybrid_description && (
-                            <p className="text-pink-400 text-xs mb-1">{plant.hybrid_description}</p>
-                          )}
-                          {plant.special_trait && (
-                            <p className="text-purple-400 text-xs mb-1">✨ {plant.special_trait}</p>
-                          )}
-                          <p className="text-gray-400 text-sm mb-2">Stage {plant.growth_stage}/5</p>
-                          <div className="flex gap-3 text-xs mb-3">
-                            <span className={`${plant.health > 70 ? 'text-green-400' : plant.health > 40 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              Health: {plant.health}%
-                            </span>
-                            <span className="text-purple-400">Potency: {plant.potency}%</span>
-                            {plant.mutation_level > 0 && <span className="text-pink-400">Mutated: {plant.mutation_level}%</span>}
-                          </div>
-                          <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
-                            <div 
-                              style={{ width: `${(plant.growth_stage / 5) * 100}%` }}
-                              className="h-2 bg-gradient-to-r from-green-500 to-purple-500 rounded-full"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
+              {!plantBreeding && !breedingOutcome ? (
+                <>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-white font-bold">Blood Plant Garden 🌿</h3>
+                    {bloodPlants.length >= 2 && (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPlantBreeding(true);
+                        }}
+                        className="text-pink-400 text-xs px-3 py-1 bg-pink-900/40 rounded-lg hover:bg-pink-900/60"
+                      >
+                        Cross-Breed
+                      </button>
+                    )}
+                  </div>
+                  
+                  {bloodPlants.length === 0 ? (
+                    <div className="space-y-3">
+                      <p className="text-gray-400 text-sm mb-4">Grow blood plants to create organic strains</p>
+                      {BLOOD_PLANTS.map(plant => (
                         <button
+                          key={plant.type}
                           onClick={async (e) => {
                             e.stopPropagation();
-                            await base44.entities.BloodPlant.update(plant.id, {
-                              health: Math.min(100, plant.health + 20),
-                              last_watered: new Date().toISOString()
-                            });
-                            queryClient.invalidateQueries();
-                          }}
-                          className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm"
-                        >
-                          Water
-                        </button>
-                        <button
-                          onClick={async (e) => {
-                            e.stopPropagation();
-                            await base44.entities.BloodPlant.update(plant.id, {
-                              health: Math.min(100, plant.health + 30),
-                              potency: Math.min(100, plant.potency + 15),
-                              needs_blood: false
-                            });
-                            queryClient.invalidateQueries();
-                          }}
-                          className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm"
-                        >
-                          Feed Blood
-                        </button>
-                        {plant.growth_stage < 5 && (
-                          <button
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              await base44.entities.BloodPlant.update(plant.id, {
-                                growth_stage: plant.growth_stage + 1,
-                                harvest_ready: plant.growth_stage + 1 === 5
+                            try {
+                              await base44.entities.BloodPlant.create({
+                                plant_type: plant.type,
+                                growth_stage: 1,
+                                health: 100,
+                                potency: 50,
+                                planted_date: new Date().toISOString(),
+                                last_watered: new Date().toISOString()
                               });
-                              queryClient.invalidateQueries();
-                            }}
-                            className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm"
-                          >
-                            Advance Growth
-                          </button>
-                        )}
-                        {plant.harvest_ready && (
-                          <button
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              const baseYield = plantInfo?.baseYield || 5;
-                              const yield_ = Math.floor(Math.random() * 3) + baseYield;
-                              const strainName = plant.hybrid_name ? `${plant.hybrid_name} Extract` : `${plantInfo.name} Extract`;
-
-                              const newFormula = {
-                                id: `plant_${Date.now()}`,
-                                strain_name: strainName,
-                                potency: Math.floor(plant.potency / 10) * 10,
-                                quantity: yield_,
-                                price_per_dose: 150 + (plant.potency * 2),
-                                effects: plant.hybrid_description || `organic ${plantInfo.name.toLowerCase()} strain. Natural. Pure. ${plant.mutation_level > 0 ? 'Mutated properties.' : ''}`,
-                                addictiveness: 40 + plant.potency / 2
-                              };
-
-                              setFormulas([...formulas, newFormula]);
-
-                              await base44.entities.BloodPlant.delete(plant.id);
-
                               await base44.entities.NightLog.create({
-                                entry: `${hunter.name} harvested ${displayName}. Got ${yield_} doses of ${strainName}.`,
+                                entry: `${hunter.name} planted ${plant.name}. Let it grow.`,
                                 category: 'dark_deed',
                                 intensity: 'moderate'
                               });
-
-                              queryClient.invalidateQueries();
-                            }}
-                            className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm col-span-2"
-                          >
-                            🌿 Harvest
-                          </button>
-                        )}
-                      </div>
+                              queryClient.invalidateQueries(['bloodPlants']);
+                            } catch (err) {
+                              console.error('Plant creation failed:', err);
+                            }
+                          }}
+                          className="w-full bg-green-900/40 hover:bg-green-900/60 border border-green-500/30 rounded-xl p-4 text-left"
+                        >
+                          <h4 className="text-white font-bold mb-1">{plant.name}</h4>
+                          <p className="text-gray-400 text-sm mb-2">{plant.description}</p>
+                          <div className="flex gap-3 text-xs text-gray-500">
+                            <span>Grow time: {plant.growTime} days</span>
+                            <span>Yield: {plant.baseYield} doses</span>
+                          </div>
+                        </button>
+                      ))}
                     </div>
-                  );
-                })
-              )}
-            </motion.div>
-          )}
+                  ) : (
+                    <div className="space-y-3">
+                      {bloodPlants.map(plant => {
+                        const plantInfo = BLOOD_PLANTS.find(p => p.type === plant.plant_type);
+                        const displayName = plant.hybrid_name || plantInfo?.name || 'Unknown Plant';
+                        return (
+                          <div key={plant.id} className="bg-gray-800 rounded-xl p-4">
+                            <h4 className="text-white font-bold mb-1">{displayName} 🌱</h4>
+                            {plant.hybrid_description && (
+                              <p className="text-pink-400 text-xs mb-1">{plant.hybrid_description}</p>
+                            )}
+                            {plant.special_trait && (
+                              <p className="text-purple-400 text-xs mb-1">✨ {plant.special_trait}</p>
+                            )}
+                            <p className="text-gray-400 text-sm mb-2">Stage {plant.growth_stage}/5</p>
+                            <div className="flex gap-3 text-xs mb-3">
+                              <span className={`${plant.health > 70 ? 'text-green-400' : plant.health > 40 ? 'text-yellow-400' : 'text-red-400'}`}>
+                                Health: {plant.health}%
+                              </span>
+                              <span className="text-purple-400">Potency: {plant.potency}%</span>
+                              {plant.mutation_level > 0 && <span className="text-pink-400">Mutated: {plant.mutation_level}%</span>}
+                            </div>
+                            <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
+                              <div 
+                                style={{ width: `${(plant.growth_stage / 5) * 100}%` }}
+                                className="h-2 bg-gradient-to-r from-green-500 to-purple-500 rounded-full"
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <button
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  try {
+                                    await base44.entities.BloodPlant.update(plant.id, {
+                                      health: Math.min(100, plant.health + 20),
+                                      last_watered: new Date().toISOString()
+                                    });
+                                    queryClient.invalidateQueries(['bloodPlants']);
+                                  } catch (err) {
+                                    console.error('Water failed:', err);
+                                  }
+                                }}
+                                className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm"
+                              >
+                                💧 Water
+                              </button>
+                              <button
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  try {
+                                    await base44.entities.BloodPlant.update(plant.id, {
+                                      health: Math.min(100, plant.health + 30),
+                                      potency: Math.min(100, plant.potency + 15)
+                                    });
+                                    queryClient.invalidateQueries(['bloodPlants']);
+                                  } catch (err) {
+                                    console.error('Feed failed:', err);
+                                  }
+                                }}
+                                className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm"
+                              >
+                                🩸 Feed Blood
+                              </button>
+                              {plant.growth_stage < 5 && (
+                                <button
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    try {
+                                      await base44.entities.BloodPlant.update(plant.id, {
+                                        growth_stage: plant.growth_stage + 1,
+                                        harvest_ready: plant.growth_stage + 1 === 5
+                                      });
+                                      queryClient.invalidateQueries(['bloodPlants']);
+                                    } catch (err) {
+                                      console.error('Growth failed:', err);
+                                    }
+                                  }}
+                                  className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm"
+                                >
+                                  🌱 Grow
+                                </button>
+                              )}
+                              {plant.harvest_ready && (
+                                <button
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    try {
+                                      const baseYield = plantInfo?.baseYield || 5;
+                                      const yield_ = Math.floor(Math.random() * 3) + baseYield;
+                                      const strainName = plant.hybrid_name ? `${plant.hybrid_name} Extract` : `${plantInfo.name} Extract`;
 
-          {plantBreeding && !breedingOutcome && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-            >
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-white font-bold">Cross-Breed Plants</h3>
-                <button 
-                  onClick={() => { setPlantBreeding(false); setSelectedPlants([]); }}
-                  className="text-gray-400 text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">Select 2 plants to cross-breed and create a hybrid with unique properties</p>
-              
-              {bloodPlants.map(plant => {
-                const plantInfo = BLOOD_PLANTS.find(p => p.type === plant.plant_type);
-                const displayName = plant.hybrid_name || plantInfo?.name || 'Unknown Plant';
-                return (
-                  <div 
-                    key={plant.id} 
-                    className={`bg-gray-800 rounded-xl p-4 border-2 mb-2 ${
-                      selectedPlants.includes(plant.id) ? 'border-pink-500' : 'border-transparent'
-                    }`}
-                  >
-                    <button
+                                      const newFormula = {
+                                        id: `plant_${Date.now()}`,
+                                        strain_name: strainName,
+                                        potency: Math.floor(plant.potency / 10) * 10,
+                                        quantity: yield_,
+                                        price_per_dose: 150 + (plant.potency * 2),
+                                        effects: plant.hybrid_description || `organic ${plantInfo.name.toLowerCase()} strain. Natural. Pure.`,
+                                        addictiveness: 40 + plant.potency / 2
+                                      };
+
+                                      setFormulas([...formulas, newFormula]);
+
+                                      await base44.entities.BloodPlant.delete(plant.id);
+                                      await base44.entities.NightLog.create({
+                                        entry: `${hunter.name} harvested ${displayName}. Got ${yield_} doses of ${strainName}.`,
+                                        category: 'dark_deed',
+                                        intensity: 'moderate'
+                                      });
+                                      queryClient.invalidateQueries(['bloodPlants']);
+                                    } catch (err) {
+                                      console.error('Harvest failed:', err);
+                                    }
+                                  }}
+                                  className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm col-span-2"
+                                >
+                                  🌿 Harvest
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : plantBreeding && !breedingOutcome ? (
+                <>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-white font-bold">Cross-Breed Plants</h3>
+                    <button 
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (selectedPlants.includes(plant.id)) {
-                          setSelectedPlants(selectedPlants.filter(id => id !== plant.id));
-                        } else if (selectedPlants.length < 2) {
-                          setSelectedPlants([...selectedPlants, plant.id]);
-                        }
+                        setPlantBreeding(false);
+                        setSelectedPlants([]);
                       }}
-                      className="w-full text-left"
+                      className="text-gray-400 text-sm hover:text-white"
                     >
-                      <h4 className="text-white font-bold mb-1">{displayName}</h4>
-                      <p className="text-gray-400 text-xs">Potency: {plant.potency}% | Stage: {plant.growth_stage}/5</p>
+                      Cancel
                     </button>
                   </div>
-                );
-              })}
+                  <p className="text-gray-400 text-sm mb-4">Select 2 plants to cross-breed</p>
+                  
+                  <div className="space-y-2">
+                    {bloodPlants.map(plant => {
+                      const plantInfo = BLOOD_PLANTS.find(p => p.type === plant.plant_type);
+                      const displayName = plant.hybrid_name || plantInfo?.name || 'Unknown Plant';
+                      return (
+                        <button
+                          key={plant.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (selectedPlants.includes(plant.id)) {
+                              setSelectedPlants(selectedPlants.filter(id => id !== plant.id));
+                            } else if (selectedPlants.length < 2) {
+                              setSelectedPlants([...selectedPlants, plant.id]);
+                            }
+                          }}
+                          className={`w-full bg-gray-800 rounded-xl p-4 border-2 text-left transition-all ${
+                            selectedPlants.includes(plant.id) ? 'border-pink-500 bg-pink-900/20' : 'border-transparent hover:bg-gray-700'
+                          }`}
+                        >
+                          <h4 className="text-white font-bold mb-1">{displayName}</h4>
+                          <p className="text-gray-400 text-xs">Potency: {plant.potency}% | Stage: {plant.growth_stage}/5</p>
+                        </button>
+                      );
+                    })}
+                  </div>
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePlantCrossBreed();
-                }}
-                disabled={selectedPlants.length !== 2}
-                className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-3 rounded-lg transition-colors disabled:opacity-50 mt-4"
-              >
-                Cross-Breed ({selectedPlants.length}/2 selected)
-              </button>
-            </motion.div>
-          )}
-
-          {(plantBreeding || breedingOutcome) && breedingOutcome && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12"
-            >
-              <div className="text-6xl mb-4">🌿✨</div>
-              <p className="text-pink-300 text-lg whitespace-pre-line px-4">{breedingOutcome}</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePlantCrossBreed();
+                    }}
+                    disabled={selectedPlants.length !== 2}
+                    className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-gray-700 text-white py-3 rounded-lg transition-colors disabled:opacity-50 mt-4"
+                  >
+                    🧬 Cross-Breed ({selectedPlants.length}/2)
+                  </button>
+                </>
+              ) : breedingOutcome ? (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">🌿✨</div>
+                  <p className="text-pink-300 text-lg whitespace-pre-line px-4">{breedingOutcome}</p>
+                </div>
+              ) : null}
             </motion.div>
           )}
         </AnimatePresence>
