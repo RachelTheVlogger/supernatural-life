@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, X, Sparkles, Droplets, Flower } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import NymphRomanceExpanded from '@/components/nightbound/NymphRomanceExpanded';
 
 const DIALOGUE_TREES = {
   pure: {
@@ -435,6 +436,19 @@ export default function NymphRomance({ nymph, onClose }) {
               </button>
             )}
 
+            {nymph.boundaries_discussed && (
+              <button
+                onClick={() => setStage('expanded')}
+                className="w-full bg-gradient-to-r from-cyan-900/60 to-teal-900/60 hover:from-cyan-900/80 hover:to-teal-900/80 border-2 border-cyan-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+              >
+                <Heart className="w-5 h-5 text-cyan-400" />
+                <div className="flex-1 text-left">
+                  <h3 className="text-white font-medium">Romance Interactions</h3>
+                  <p className="text-cyan-300 text-sm">Deepen your connection (dates, gifts, more).</p>
+                </div>
+              </button>
+            )}
+
             <button
               onClick={onClose}
               className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl py-3 transition-colors text-gray-300"
@@ -476,6 +490,8 @@ export default function NymphRomance({ nymph, onClose }) {
               <p className="text-teal-300 text-sm">Sacred connection awaits.</p>
             </button>
           </div>
+        ) : stage === 'expanded' ? (
+          <NymphRomanceExpanded nymph={nymph} onClose={() => setStage('menu')} />
         ) : null}
 
         {/* Boundaries Modal */}
