@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Waves, Heart, Swords, Handshake, Music, Droplets, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Waves, Heart, Swords, Handshake, Music, Droplets, X, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import SirenNymphAdvanced from '@/components/nightbound/SirenNymphAdvanced';
 
 export default function SirenNymphInteraction({ siren, onClose }) {
   const queryClient = useQueryClient();
@@ -219,12 +220,22 @@ export default function SirenNymphInteraction({ siren, onClose }) {
         )}
 
         <button
-          onClick={onClose}
-          className="w-full mt-6 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition-colors"
-        >
-          Close
-        </button>
-      </motion.div>
-    </motion.div>
-  );
-}
+           onClick={onClose}
+           className="w-full mt-6 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition-colors"
+         >
+           Close
+         </button>
+
+        <AnimatePresence>
+          {showAdvanced && selectedNymph && (
+            <SirenNymphAdvanced 
+              siren={siren} 
+              nymph={selectedNymph} 
+              onClose={() => setShowAdvanced(false)} 
+            />
+          )}
+        </AnimatePresence>
+        </motion.div>
+        </motion.div>
+        );
+        }
