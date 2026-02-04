@@ -286,7 +286,6 @@ export default function NymphRomance({ nymph, onClose }) {
         healing_services_performed: (nymph.healing_services_performed || 0) + 1
       };
 
-      // Create memory of this intimate moment
       await base44.entities.InteractionMemory.create({
         entity_1_id: nymph.id,
         entity_1_type: 'nymph',

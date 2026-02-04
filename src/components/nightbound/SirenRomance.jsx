@@ -168,7 +168,6 @@ export default function SirenRomance({ siren, onClose }) {
         desire: Math.min(100, (desire || 0) + (option.desire || 0))
       };
 
-      // Add intimacy for intimate dialogue
       if (intimacy >= 75 && option.desire) {
         updates.intimacy_level = Math.min(100, intimacy + 15);
       }
@@ -290,7 +289,6 @@ export default function SirenRomance({ siren, onClose }) {
         updates.alignment = 'benevolent';
       }
 
-      // Create memory of this intimate moment
       await base44.entities.InteractionMemory.create({
         entity_1_id: siren.id,
         entity_1_type: 'siren',
@@ -477,24 +475,24 @@ export default function SirenRomance({ siren, onClose }) {
             ))}
           </div>
         ) : stage === 'intimate' ? (
-           <div className="space-y-3">
-             <button
-               onClick={() => setStage('menu')}
-               className="text-pink-400 hover:text-pink-300 text-sm mb-3"
-             >
-               ← Back
-             </button>
-             <button
-               onClick={() => handleIntimate('tender')}
-               className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 transition-all"
-             >
-               <p className="text-white font-medium">Be With Her</p>
-               <p className="text-pink-300 text-sm">Passion awaits.</p>
-             </button>
-           </div>
-         ) : stage === 'expanded' ? (
-           <SirenRomanceExpanded siren={siren} onClose={() => setStage('menu')} />
-         ) : null}
+          <div className="space-y-3">
+            <button
+              onClick={() => setStage('menu')}
+              className="text-pink-400 hover:text-pink-300 text-sm mb-3"
+            >
+              ← Back
+            </button>
+            <button
+              onClick={() => handleIntimate('tender')}
+              className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 transition-all"
+            >
+              <p className="text-white font-medium">Be With Her</p>
+              <p className="text-pink-300 text-sm">Passion awaits.</p>
+            </button>
+          </div>
+        ) : stage === 'expanded' ? (
+          <SirenRomanceExpanded siren={siren} onClose={() => setStage('menu')} />
+        ) : null}
 
         {/* Boundaries Modal */}
         <AnimatePresence>
