@@ -329,7 +329,7 @@ export default function ServantInteractions({ servants, vampireState, currentSer
         setInteracting(false);
         setOutcome('');
         setSelectedPair(null);
-      }, 4000);
+      }, 3000);
     }, 2500);
   };
 

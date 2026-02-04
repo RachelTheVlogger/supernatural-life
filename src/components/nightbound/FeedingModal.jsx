@@ -76,7 +76,7 @@ export default function FeedingModal({ onClose, vampireState }) {
           animal: { humanity: 1, text: ' (Animal blood. It sustains, but barely.)' },
           human: { humanity: 0, text: '' }
         };
-        const mod = bloodTypeMods[bloodType];
+        const mod = bloodTypeMods[bloodType] || { humanity: 0, text: '' };
         randomOutcome = {
           ...randomOutcome,
           humanity: randomOutcome.humanity + mod.humanity,

@@ -250,10 +250,8 @@ Create a hybrid strain with:
   };
 
   const handleCreateHybrid = async (formula1, formula2) => {
-    setProcessing(true);
     const hybrid = await generateHybridStrain(formula1, formula2);
     setFormulas([...formulas, hybrid]);
-    setProcessing(false);
 
     await base44.entities.NightLog.create({
       entry: `${hunter.name} created hybrid strain: ${hybrid.strain_name}. Experimental compound ready for distribution.`,
