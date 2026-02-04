@@ -126,6 +126,88 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
     }, 2000);
   };
 
+  const handleBoundariesTalk = () => {
+    setProcessing(true);
+    
+    setTimeout(async () => {
+      const text = `You and ${witch.name} sit down for a serious conversation. "Before we go further," you say, "we need to talk about boundaries. Consent. What we're both comfortable with." ${p.subject} nods, appreciating your care. You discuss limits, desires, safe words. "I feel safe with you," ${p.subject} says. Trust deepened.`;
+      
+      setOutcome(text);
+      
+      await base44.entities.Witch.update(witch.id, {
+        boundaries_discussed: true,
+        trust: Math.min(100, (witch.trust || 30) + 20),
+        relationship: Math.min(100, (witch.relationship || 0) + 15)
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: text,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+      }, 5000);
+    }, 2000);
+  };
+
+  const handleIntimateExploration = () => {
+    setProcessing(true);
+    
+    setTimeout(async () => {
+      const alignment = witch.alignment || 'grey';
+      
+      const explorations = {
+        light: [
+          `${witch.name} guides you gently. "Tell me if anything's too much," ${p.subject} whispers. Soft restraints. Feathers. Ice. Pleasure building slowly. Safe. Consensual. Perfect. You both explore boundaries with care and love.`,
+          `"I want to try something," ${witch.name} says shyly. ${p.subject} shows you ${p.possessive} fantasies. Gentle dominance. You take control with tenderness. "Yes," ${p.subject} gasps. "Just like that." Trust makes it beautiful.`,
+          `Sensory magic. ${witch.name} heightens every nerve ending. Blindfold. You can only feel. Every touch electric. "Do you trust me?" ${p.subject} asks. "Completely," you breathe. Surrender. Bliss.`
+        ],
+        grey: [
+          `${witch.name} suggests trying power exchange. Sometimes ${p.subject} leads. Sometimes you do. The dance of dominance and submission. Both enjoying the intensity. "We're good together," ${p.subject} pants. You agree completely.`,
+          `Experimentation. ${witch.name} uses magic to enhance sensations. Light bondage. Teasing. Edge play. Safe words established. You push boundaries together, carefully. Trust and desire spiraling higher.`,
+          `"I want you to take control," ${witch.name} whispers. Or sometimes, "Let me dominate you tonight." The versatility thrilling. Both enjoying different dynamics. Perfect balance.`
+        ],
+        dark: [
+          `${witch.name}'s darker desires emerge. "I want you to hurt me," ${p.subject} breathes. "Just enough." Pain and pleasure mixing. Careful boundaries. Safe words. But pushing limits. Dark. Intense. Raw.`,
+          `Blood magic during sex. ${witch.name} cuts ${p.possessive} palm. You drink. The intimacy extreme. Pain. Pleasure. Magic. All one. "More," ${p.subject} demands. You oblige.`,
+          `Complete surrender. ${witch.name} gives you total control. Or takes it. Rough. Demanding. Marks left behind. "Mine," ${p.subject} growls. Possessive. Intense. Perfect for you both.`
+        ]
+      };
+      
+      const outcomes = explorations[alignment];
+      const text = outcomes[Math.floor(Math.random() * outcomes.length)];
+      
+      setOutcome(text);
+      
+      const preferences = ['power_exchange', 'sensory_play', 'light_bondage', alignment === 'dark' ? 'blood_play' : null].filter(Boolean);
+      
+      await base44.entities.Witch.update(witch.id, {
+        intimacy_level: Math.min(100, (witch.intimacy_level || 0) + 20),
+        desire: Math.min(100, (witch.desire || 20) + 15),
+        relationship: Math.min(100, (witch.relationship || 0) + 18),
+        bdsm_preferences: [...new Set([...(witch.bdsm_preferences || []), preferences[Math.floor(Math.random() * preferences.length)]])]
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: text,
+        category: 'interaction',
+        intensity: 'extreme'
+      });
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+      }, 6000);
+    }, 2000);
+  };
+
   const getAlignmentDialogue = () => {
     const alignment = witch.alignment || 'grey';
     
@@ -191,16 +273,121 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
 
   const alignmentDialogue = getAlignmentDialogue();
 
-  const deepActions = [
-    {
-      id: 'deep_talk',
-      icon: MessageCircle,
-      label: 'Deep Conversation',
-      color: 'from-blue-900/60 to-cyan-900/60',
-      borderColor: 'border-blue-500/30',
-      relGain: [8, 15],
-      outcomes: alignmentDialogue.deep_talk
-    },
+  const getAvailableActions = () => {
+    const trust = witch.trust || 30;
+    const fear = witch.fear || 40;
+    const desire = witch.desire || 20;
+    const intimacy = witch.intimacy_level || 0;
+    const isLiteMode = vampireState?.content_filter === 'lite';
+
+    const actions = [
+      {
+        id: 'deep_talk',
+        icon: MessageCircle,
+        label: 'Deep Conversation',
+        color: 'from-blue-900/60 to-cyan-900/60',
+        borderColor: 'border-blue-500/30',
+        relGain: [8, 15],
+        statChanges: { trust: [5, 10], fear: [-3, -1] },
+        outcomes: alignmentDialogue.deep_talk
+      },
+      {
+        id: 'reassure',
+        icon: Heart,
+        label: 'Reassure Them',
+        color: 'from-green-900/60 to-emerald-900/60',
+        borderColor: 'border-green-500/30',
+        relGain: [6, 12],
+        statChanges: { trust: [8, 15], fear: [-8, -3] },
+        outcomes: [
+          `You hold ${witch.name} close. "I won't hurt you. I promise." ${p.subject} relaxes. "I believe you," ${p.subject} whispers. Trust growing.`,
+          `${witch.name} looks scared. You cup ${p.possessive} face. "You're safe with me. Always." ${p.subject} exhales. Relief. Trust.`,
+          `"I know what I am," you say softly. "But I choose to be better. For you." ${witch.name} kisses you. "I trust you."`
+        ]
+      }
+    ];
+
+    // Unlock vulnerable moment if fear is low and trust is high
+    if (trust >= 50 && fear <= 30) {
+      actions.push({
+        id: 'vulnerable',
+        icon: Heart,
+        label: 'Share Vulnerability',
+        color: 'from-indigo-900/60 to-purple-900/60',
+        borderColor: 'border-indigo-500/30',
+        relGain: [10, 18],
+        statChanges: { trust: [12, 20], desire: [5, 10] },
+        outcomes: [
+          `You tell ${witch.name} your deepest fears. Death. Loneliness. Losing ${p.object}. ${p.subject} listens. Holds you. "I'm here," ${p.subject} promises. Connection deepens.`,
+          `${witch.name} shares ${p.possessive} trauma. Magic that went wrong. People ${p.subject} hurt. You don't judge. You understand. Both broken. Both trying.`,
+          `Raw honesty. You show ${witch.name} the monster inside. The hunger. The darkness. ${p.subject} doesn't run. "I see you. All of you. And I'm staying."`
+        ]
+      });
+    }
+
+    // Flirting and desire actions
+    if (trust >= 30) {
+      actions.push({
+        id: 'flirt',
+        icon: Sparkles,
+        label: 'Flirt Playfully',
+        color: 'from-pink-900/60 to-rose-900/60',
+        borderColor: 'border-pink-500/30',
+        relGain: [5, 10],
+        statChanges: { desire: [8, 15] },
+        outcomes: [
+          `You tease ${witch.name} with words. ${p.subject} blushes. Laughs. The tension delicious. "You're trouble," ${p.subject} says. But ${p.subject} loves it.`,
+          `Magic and flirtation. ${witch.name} makes sparks dance between you. You catch one. "Playing with fire?" You grin. "Always."`,
+          `Heated glances. Double meanings. ${witch.name}'s breath catches. "Stop it," ${p.subject} whispers, not meaning it. The desire palpable.`
+        ]
+      });
+    }
+
+    // Boundaries discussion - unlocks intimate options
+    if (trust >= 60 && desire >= 50 && !witch.boundaries_discussed) {
+      actions.push({
+        id: 'boundaries',
+        icon: MessageCircle,
+        label: 'Discuss Boundaries',
+        color: 'from-blue-900/60 to-purple-900/60',
+        borderColor: 'border-blue-500/30',
+        relGain: [8, 12],
+        statChanges: { trust: [15, 25] },
+        special: true
+      });
+    }
+
+    // Intimate options - only if boundaries discussed
+    if (witch.boundaries_discussed && trust >= 70 && desire >= 60) {
+      if (!isLiteMode) {
+        actions.push({
+          id: 'intimate_explore',
+          icon: Heart,
+          label: 'Explore Together',
+          color: 'from-red-900/60 to-pink-900/60',
+          borderColor: 'border-red-500/30',
+          relGain: [12, 20],
+          statChanges: { desire: [10, 20], intimacy: [15, 25] },
+          special: true
+        });
+      } else {
+        actions.push({
+          id: 'romance',
+          icon: Heart,
+          label: 'Romantic Moment',
+          color: 'from-pink-900/60 to-red-900/60',
+          borderColor: 'border-pink-500/30',
+          relGain: [10, 20],
+          statChanges: { desire: [8, 15], intimacy: [10, 15] },
+          outcomes: alignmentDialogue.romance
+        });
+      }
+    }
+
+    return actions;
+  };
+
+  const deepActions = getAvailableActions();
     {
       id: 'romance',
       icon: Heart,
@@ -326,7 +513,38 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
         className="bg-gradient-to-br from-purple-950 to-pink-950 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative border-2 border-purple-500/50"
       >
         <h2 className="text-2xl font-bold text-white mb-2">Living with {witch.name}</h2>
-        <p className="text-purple-300 text-sm mb-4">Deep interactions • Relationship: {witch.relationship || 0}%</p>
+        <p className="text-purple-300 text-sm mb-2">Relationship: {witch.relationship || 0}% • {witch.alignment || 'grey'} witch</p>
+        
+        {/* Relationship Stats */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="bg-black/40 rounded-lg p-2 border border-blue-500/20">
+            <p className="text-blue-400 text-xs">Trust</p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-gray-700 rounded-full h-1.5">
+                <div style={{ width: `${witch.trust || 30}%` }} className="h-1.5 bg-blue-500 rounded-full" />
+              </div>
+              <span className="text-white text-xs w-8">{witch.trust || 30}</span>
+            </div>
+          </div>
+          <div className="bg-black/40 rounded-lg p-2 border border-red-500/20">
+            <p className="text-red-400 text-xs">Fear</p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-gray-700 rounded-full h-1.5">
+                <div style={{ width: `${witch.fear || 40}%` }} className="h-1.5 bg-red-500 rounded-full" />
+              </div>
+              <span className="text-white text-xs w-8">{witch.fear || 40}</span>
+            </div>
+          </div>
+          <div className="bg-black/40 rounded-lg p-2 border border-pink-500/20">
+            <p className="text-pink-400 text-xs">Desire</p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-gray-700 rounded-full h-1.5">
+                <div style={{ width: `${witch.desire || 20}%` }} className="h-1.5 bg-pink-500 rounded-full" />
+              </div>
+              <span className="text-white text-xs w-8">{witch.desire || 20}</span>
+            </div>
+          </div>
+        </div>
 
         {outcome ? (
           <div className="py-8 px-4">
@@ -362,6 +580,10 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
                       handleAlignmentTalk();
                     } else if (action.id === 'gift_magic') {
                       handleMagicalGift();
+                    } else if (action.id === 'boundaries') {
+                      handleBoundariesTalk();
+                    } else if (action.id === 'intimate_explore') {
+                      handleIntimateExploration();
                     }
                     return;
                   }
@@ -374,10 +596,33 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
                     setOutcome(result);
                     
                     const relGain = Math.floor(Math.random() * (action.relGain[1] - action.relGain[0] + 1)) + action.relGain[0];
-                    await base44.entities.Witch.update(witch.id, {
+                    
+                    const updates = {
                       relationship: Math.min(100, (witch.relationship || 0) + relGain),
                       last_encounter: new Date().toISOString()
-                    });
+                    };
+                    
+                    // Apply stat changes
+                    if (action.statChanges) {
+                      if (action.statChanges.trust) {
+                        const trustChange = Math.floor(Math.random() * (action.statChanges.trust[1] - action.statChanges.trust[0] + 1)) + action.statChanges.trust[0];
+                        updates.trust = Math.max(0, Math.min(100, (witch.trust || 30) + trustChange));
+                      }
+                      if (action.statChanges.fear) {
+                        const fearChange = Math.floor(Math.random() * (action.statChanges.fear[1] - action.statChanges.fear[0] + 1)) + action.statChanges.fear[0];
+                        updates.fear = Math.max(0, Math.min(100, (witch.fear || 40) + fearChange));
+                      }
+                      if (action.statChanges.desire) {
+                        const desireChange = Math.floor(Math.random() * (action.statChanges.desire[1] - action.statChanges.desire[0] + 1)) + action.statChanges.desire[0];
+                        updates.desire = Math.max(0, Math.min(100, (witch.desire || 20) + desireChange));
+                      }
+                      if (action.statChanges.intimacy) {
+                        const intimacyChange = Math.floor(Math.random() * (action.statChanges.intimacy[1] - action.statChanges.intimacy[0] + 1)) + action.statChanges.intimacy[0];
+                        updates.intimacy_level = Math.max(0, Math.min(100, (witch.intimacy_level || 0) + intimacyChange));
+                      }
+                    }
+                    
+                    await base44.entities.Witch.update(witch.id, updates);
 
                     await base44.entities.NightLog.create({
                       entry: result,
