@@ -13,6 +13,7 @@ import NymphSanctuary from '@/components/nightbound/NymphSanctuary';
 import NymphHealing from '@/components/nightbound/NymphHealing';
 import WaterFamiliars from '@/components/nightbound/WaterFamiliars';
 import SirenNymphInteraction from '@/components/nightbound/SirenNymphInteraction';
+import NymphElementalBonds from '@/components/nightbound/NymphElementalBonds';
 
 const BASE_POWERS = [
   'Water Breathing', 'Nature Bond', 'Healing Touch', 'Plant Growth',
@@ -75,6 +76,7 @@ export default function WaterNymphHome() {
   const [showHealing, setShowHealing] = useState(false);
   const [showFamiliars, setShowFamiliars] = useState(false);
   const [showSirenInteraction, setShowSirenInteraction] = useState(false);
+  const [showElementalBonds, setShowElementalBonds] = useState(false);
 
   const { data: nymphs = [] } = useQuery({
     queryKey: ['waterNymphs'],
@@ -665,6 +667,41 @@ export default function WaterNymphHome() {
                 <p className="text-white text-2xl font-bold">{nymph.springs_created || 0}</p>
               </div>
             </div>
+
+            {/* Elemental Bonds Display */}
+            {nymph.elemental_bonds && nymph.elemental_bonds.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-teal-500/20">
+                <p className="text-teal-300 text-xs mb-2">Elemental Bonds ({nymph.elemental_bonds.length})</p>
+                <div className="flex flex-wrap gap-2">
+                  {nymph.elemental_bonds.slice(0, 3).map((bondId, i) => {
+                    const bondNames = {
+                      poseidon: '🔱 Poseidon',
+                      nereid: '💚 Nereid',
+                      undine: '💧 Undine',
+                      selkie: '🦭 Selkie',
+                      naiad: '🌊 Naiad',
+                      kelpie: '🐴 Kelpie',
+                      leviathan: '🐉 Leviathan',
+                      rusalka: '👻 Rusalka',
+                      aegir: '⚡ Aegir',
+                      mami_wata: '👑 Mami Wata',
+                      sedna: '❄️ Sedna',
+                      yemoja: '💙 Yemoja'
+                    };
+                    return (
+                      <span key={i} className="px-2 py-1 bg-indigo-900/60 text-indigo-300 text-xs rounded-full border border-indigo-500/30">
+                        {bondNames[bondId] || bondId}
+                      </span>
+                    );
+                  })}
+                  {nymph.elemental_bonds.length > 3 && (
+                    <span className="px-2 py-1 bg-gray-800/60 text-gray-300 text-xs rounded-full">
+                      +{nymph.elemental_bonds.length - 3} more
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -870,6 +907,17 @@ export default function WaterNymphHome() {
             </button>
 
             <button
+              onClick={() => setShowElementalBonds(true)}
+              className="w-full bg-gradient-to-r from-indigo-900/60 to-purple-900/60 hover:from-indigo-900/80 hover:to-purple-900/80 border-2 border-indigo-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Zap className="w-5 h-5 text-indigo-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Elemental Bonds</h3>
+                <p className="text-indigo-300 text-sm">Connect with water deities.</p>
+              </div>
+            </button>
+
+            <button
               onClick={async () => {
                 if (confirm(`End ${nymph.name}'s story? This will permanently delete them from the game. This cannot be undone.`)) {
                   await base44.entities.WaterNymph.delete(nymph.id);
@@ -916,6 +964,9 @@ export default function WaterNymphHome() {
               )}
               {showSirenInteraction && nymph && (
                 <SirenNymphInteraction siren={{ id: 'temp', name: nymph.name, isNymph: true }} onClose={() => setShowSirenInteraction(false)} />
+              )}
+              {showElementalBonds && nymph && (
+                <NymphElementalBonds nymph={nymph} onClose={() => setShowElementalBonds(false)} />
               )}
             </AnimatePresence>
 
