@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import WerewolfAbilities from '@/components/nightbound/WerewolfAbilities';
 import WerewolfPackManagement from '@/components/nightbound/WerewolfPackManagement';
+import WerewolfRomance from '@/components/nightbound/WerewolfRomance';
 
 const MOON_PHASES = [
   { name: 'new', emoji: '🌑', power: 0.5, control: 1.2 },
