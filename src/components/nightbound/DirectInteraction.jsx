@@ -1797,7 +1797,6 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
   const [showBoundaries, setShowBoundaries] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [liteMode, setLiteMode] = useState(vampireState?.content_filter === 'lite');
   
   // Always call hooks in the same order - never conditionally
   const { data: interactionProgress = [] } = useQuery({
@@ -1810,6 +1809,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     return null;
   }
 
+  const liteMode = vampireState?.content_filter === 'lite';
   const isVampFemale = vampireState.gender === 'woman';
   
   const getRelationshipTier = (rel) => {
@@ -1921,9 +1921,14 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     const baseOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
     
     // Add title if set
-    let outcome = addTitleToOutcome(baseOutcome);
+    let finalOutcome = addTitleToOutcome(baseOutcome);
     
-    setOutcome(outcome);
+    // Add variant flavor
+    const variantTier = rel >= 60 ? 'high' : rel >= 30 ? 'mid' : 'low';
+    const flavor = getVariantFlavor(servant.variant, variantTier, servant.obsession_stage);
+    finalOutcome += flavor;
+    
+    setOutcome(finalOutcome);
     
     setTimeout(async () => {
       // Bourbon as a coping mechanism. Rarely works. Often fails. Temptation wins.
@@ -1938,11 +1943,11 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             await base44.entities.VampireState.update(vampireState.id, {
               hunger_state: hungerStates[currentIndex + 1]
             });
-            setOutcome(outcome + ' The bourbon helped. For now. It won\'t last.');
+            setOutcome(finalOutcome + ' The bourbon helped. For now. It won\'t last.');
           }
         } else if (effectiveness > 0.45) {
           // Does nothing - just delaying the inevitable
-          setOutcome(outcome + ' The bourbon did nothing. The hunger remains. You\'re fooling yourself.');
+          setOutcome(finalOutcome + ' The bourbon did nothing. The hunger remains. You\'re fooling yourself.');
         } else {
           // Usually makes it worse - temptation intensifies
           const hungerStates = ['sated', 'calm', 'lingering', 'heightened', 'restless'];
@@ -1951,7 +1956,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
             await base44.entities.VampireState.update(vampireState.id, {
               hunger_state: hungerStates[currentIndex + 1]
             });
-            setOutcome(outcome + ' The bourbon backfired. The hunger intensified. You\'re losing control.');
+            setOutcome(finalOutcome + ' The bourbon backfired. The hunger intensified. You\'re losing control.');
           }
         }
       }
@@ -2018,7 +2023,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
       }
       
       await base44.entities.NightLog.create({
-        entry: `With ${servant.name}: ${outcome}`,
+        entry: `With ${servant.name}: ${finalOutcome}`,
         category: 'interaction',
         intensity: ['intimate', 'makeout', 'bite'].includes(type) ? 'significant' : 'moderate'
       });
@@ -2521,10 +2526,9 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           <button
             onClick={async () => {
               try {
-                const newMode = !liteMode;
-                setLiteMode(newMode);
+                const newMode = liteMode ? 'full' : 'lite';
                 await base44.entities.VampireState.update(vampireState.id, {
-                  content_filter: newMode ? 'lite' : 'full'
+                  content_filter: newMode
                 });
                 queryClient.invalidateQueries(['vampireState']);
               } catch (e) {
