@@ -174,22 +174,29 @@ export default function WerewolfHome() {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-          <button
-            onClick={() => setShowAbilities(true)}
-            className="bg-gradient-to-r from-purple-900/60 to-orange-900/60 hover:from-purple-900/80 hover:to-orange-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-3"
-          >
-            <Zap className="w-5 h-5 text-purple-300" />
-            <span className="text-white font-bold">Abilities</span>
-          </button>
-          <button
-            onClick={() => setShowPack(true)}
-            className="bg-gradient-to-r from-orange-900/60 to-red-900/60 hover:from-orange-900/80 hover:to-red-900/80 border-2 border-orange-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-3"
-          >
-            <Users className="w-5 h-5 text-orange-300" />
-            <span className="text-white font-bold">Pack Management</span>
-          </button>
-        </div>
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+           <button
+             onClick={() => setShowAbilities(true)}
+             className="bg-gradient-to-r from-purple-900/60 to-orange-900/60 hover:from-purple-900/80 hover:to-orange-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-3"
+           >
+             <Zap className="w-5 h-5 text-purple-300" />
+             <span className="text-white font-bold">Abilities</span>
+           </button>
+           <button
+             onClick={() => setShowRomance(true)}
+             className="bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-3"
+           >
+             <Heart className="w-5 h-5 text-pink-300" />
+             <span className="text-white font-bold">Romance</span>
+           </button>
+           <button
+             onClick={() => setShowPack(true)}
+             className="bg-gradient-to-r from-orange-900/60 to-red-900/60 hover:from-orange-900/80 hover:to-red-900/80 border-2 border-orange-500/50 rounded-xl py-4 px-6 flex items-center justify-center gap-3"
+           >
+             <Users className="w-5 h-5 text-orange-300" />
+             <span className="text-white font-bold">Pack</span>
+           </button>
+         </div>
 
         {/* Actions */}
         <AnimatePresence mode="wait">
