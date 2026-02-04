@@ -131,7 +131,17 @@ export default function SirenDating({ siren, onClose }) {
     setDating(true);
 
     setTimeout(async () => {
-      const outcomes = [
+      // Fetch vampire state to check lite mode
+      const vampireStates = await base44.entities.VampireState.list();
+      const vampireState = vampireStates[0];
+      const isLiteMode = vampireState?.content_filter === 'lite';
+
+      const outcomes = isLiteMode ? [
+        `Intimate moment with ${selectedDate.date_name}. Underwater embrace. Pure connection.`,
+        `${selectedDate.date_name} trusts you completely. Your bond deepening beneath the waves.`,
+        `Closeness with ${selectedDate.date_name}. Water surrounding you. Beautiful moment.`,
+        `${selectedDate.date_name} held close. The ocean's blessing on your love. Perfect.`
+      ] : [
         `Underwater embrace with ${selectedDate.date_name}. Bodies entwined. Water churning around you. Pure ocean magic.`,
         `${selectedDate.date_name} surrendered to you completely. Your voice, your touch. They're lost in the depths of desire.`,
         `Intimate with ${selectedDate.date_name} beneath the waves. Transcendent. Perfect. They're yours forever.`,

@@ -131,7 +131,17 @@ export default function NymphDating({ nymph, onClose }) {
     setDating(true);
 
     setTimeout(async () => {
-      const outcomes = [
+      // Fetch vampire state to check lite mode
+      const vampireStates = await base44.entities.VampireState.list();
+      const vampireState = vampireStates[0];
+      const isLiteMode = vampireState?.content_filter === 'lite';
+
+      const outcomes = isLiteMode ? [
+        `Intimate moment with ${selectedDate.date_name}. Nature's blessing surrounds you. Pure connection.`,
+        `${selectedDate.date_name} in your arms beneath the stars. Sacred bond deepening.`,
+        `Closeness with ${selectedDate.date_name}. Earth, water, sky. All elements blessing your bond.`,
+        `${selectedDate.date_name} trusts you completely. Nymph and lover united. Beautiful.`
+      ] : [
         `Sacred union with ${selectedDate.date_name}. Bodies moving like wind through leaves. Nature's witness. Pure magic.`,
         `${selectedDate.date_name} in your arms beneath the stars. Water reflecting moonlight. Transcendent connection.`,
         `Intimacy with ${selectedDate.date_name}. Earth, water, sky. All elements blessing your bond. Perfect.`,
