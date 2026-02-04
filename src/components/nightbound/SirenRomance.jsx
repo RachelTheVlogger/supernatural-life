@@ -4,6 +4,7 @@ import { Heart, X, Zap, Music, Waves } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import SirenRomanceExpanded from '@/components/nightbound/SirenRomanceExpanded';
+import TitleSelector from '@/components/nightbound/TitleSelector';
 
 const DIALOGUE_TREES = {
   predatory: {
