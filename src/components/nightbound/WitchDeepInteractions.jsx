@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { MessageCircle, Heart, Zap, Moon, Gift, BookOpen, Wand2, Home } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MessageCircle, Heart, Zap, Moon, Gift, BookOpen, Wand2, Home, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -384,118 +384,116 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
       }
     }
 
+    // Always available actions
+    actions.push(
+      {
+        id: 'alignment_talk',
+        icon: Moon,
+        label: 'Discuss Magic Path',
+        color: 'from-indigo-900/60 to-violet-900/60',
+        borderColor: 'border-indigo-500/30',
+        relGain: [6, 12],
+        special: true
+      },
+      {
+        id: 'magic_practice',
+        icon: Wand2,
+        label: 'Practice Magic Together',
+        color: 'from-purple-900/60 to-violet-900/60',
+        borderColor: 'border-purple-500/30',
+        relGain: [5, 12],
+        statChanges: { trust: [3, 8], desire: [2, 5] },
+        outcomes: [
+          `${witch.name} teaches you protective charms. You're surprisingly good. "Natural talent," ${p.subject} says. "Or good teacher," you counter. ${p.subject} blushes. Adorable.`,
+          `Spell practice. You channel vampire power. ${witch.name} channels witch magic. Combined, you create something NEW. Neither vampire nor witch magic. Something unique to you two. Bonded power.`,
+          `${witch.name} shows you scrying. "Think of someone," ${p.subject} instructs. You think of ${p.object}. The water shows ${witch.name} smiling. "Sap," ${p.subject} teases. But ${p.subject}'s smiling too.`,
+          `Advanced magic lesson. ${witch.name} summons elemental fire. You control it with your mind. Together, you're unstoppable. ${p.subject} looks at you with awe. "We're powerful together." Yes. You are.`
+        ]
+      },
+      {
+        id: 'hunt_together',
+        icon: Moon,
+        label: 'Hunt Together',
+        color: 'from-red-900/60 to-rose-900/60',
+        borderColor: 'border-red-500/30',
+        relGain: [6, 14],
+        statChanges: { trust: [5, 10], fear: [-5, -2] },
+        outcomes: [
+          `You hunt as a team. ${witch.name} uses magic to track prey. You use vampire speed to catch them. Perfect coordination. You feed. ${p.subject} watches. "Beautiful," ${p.subject} whispers. ${p.subject} understands you completely.`,
+          `Hunting at midnight. ${witch.name} casts confusion on your target. They don't resist. Don't scream. Just... accept. You drink deeply. ${p.subject} holds you after. "My predator," ${p.subject} murmurs. Pride. Love. Acceptance.`,
+          `Double hunt. You take a human. ${witch.name} drains someone's life force for magic. Side by side. Feeding. Living. When done, you kiss. Tasting death on each other's lips. Perfect.`,
+          `${witch.name} uses location spell. Finds someone alone. Vulnerable. You go together. Make it quick. Merciful. On the way home, ${p.subject} holds your hand. "We take care of each other." Always.`
+        ]
+      },
+      {
+        id: 'request_service',
+        icon: Zap,
+        label: 'Request Magical Service',
+        color: 'from-emerald-900/60 to-teal-900/60',
+        borderColor: 'border-emerald-500/30',
+        relGain: [5, 10],
+        special: true
+      },
+      {
+        id: 'gift',
+        icon: Gift,
+        label: 'Exchange Gifts',
+        color: 'from-yellow-900/60 to-amber-900/60',
+        borderColor: 'border-yellow-500/30',
+        relGain: [7, 16],
+        statChanges: { trust: [5, 10], desire: [3, 7] },
+        outcomes: [
+          `You gift ${witch.name} an ancient grimoire. Found in a vampire vault. ${p.possessive} eyes light up. "This is... priceless." ${p.subject} throws arms around you. "Thank you. Thank you." Worth every risk.`,
+          `${witch.name} gives you a blood crystal. "It stores blood for emergencies," ${p.subject} explains. Practical. Thoughtful. Perfect. You kiss ${p.object}. "You always think of me." "${p.subject === 'they' ? 'They always think' : p.subject === 'she' ? 'She always thinks' : 'He always thinks'} of you," ${p.subject} corrects.`,
+          `Surprise exchange. You made ${witch.name} jewelry from vampire bones. ${p.subject} made you a talisman from witch herbs. Both beautiful. Both meaningful. You wear them always.`,
+          `${witch.name} enchants your coffin. "Sweet dreams guaranteed," ${p.subject} promises. You pull ${p.object} into the coffin. "Stay." ${p.subject} does. You don't sleep. You don't need to.`
+        ]
+      },
+      {
+        id: 'gift_magic',
+        icon: Wand2,
+        label: 'Receive Magical Gift',
+        color: 'from-purple-900/60 to-pink-900/60',
+        borderColor: 'border-purple-500/30',
+        relGain: [10, 18],
+        special: true
+      },
+      {
+        id: 'domestic',
+        icon: Home,
+        label: 'Domestic Life',
+        color: 'from-green-900/60 to-emerald-900/60',
+        borderColor: 'border-green-500/30',
+        relGain: [4, 10],
+        statChanges: { trust: [3, 6], desire: [2, 5] },
+        outcomes: [
+          `Cleaning day. ${witch.name} uses magic. You use vampire speed. Done in minutes. Then you collapse on the couch together. Laughing. This is... domestic bliss. Supernatural edition.`,
+          `${witch.name} cooks dinner for ${p.object}self. Blood for you. You sit together. Talking about nothing. Everything. Normal couple things. Except you're not normal. You're perfect.`,
+          `Decorating the house. ${witch.name} wants mystical aesthetic. You want gothic. Compromise: mystical gothic. It works. Everything works with ${p.object}.`,
+          `Quiet evening. ${witch.name} reads grimoires. You read vampire history. Feet touching under the blanket. Comfortable silence. This is home now.`
+        ]
+      },
+      {
+        id: 'teach_witch',
+        icon: BookOpen,
+        label: 'Share Vampire Knowledge',
+        color: 'from-red-900/60 to-purple-900/60',
+        borderColor: 'border-red-500/30',
+        relGain: [8, 14],
+        statChanges: { trust: [8, 15], fear: [-5, -2] },
+        outcomes: [
+          `You teach ${witch.name} about vampire weaknesses. How to protect you. ${p.subject} listens intently. Takes notes. "I'll keep you safe," ${p.subject} vows. You believe ${p.object}.`,
+          `Vampire history lesson. You tell ${witch.name} about the ancient ones. The first vampires. ${p.subject}'s fascinated. "You're part of something eternal," ${p.subject} breathes. ${p.subject} gets it.`,
+          `Blood magic. You show ${witch.name} how vampires use blood differently than witches. ${p.subject} experiments. Creates new hybrid spells. "We're making history," ${p.subject} says. You are.`,
+          `You share your sire's teachings with ${witch.name}. Secret knowledge. Forbidden to outsiders. But ${p.subject}'s not an outsider. ${p.subject}'s yours. ${p.subject} treasures every word.`
+        ]
+      }
+    );
+
     return actions;
   };
 
   const deepActions = getAvailableActions();
-    {
-      id: 'romance',
-      icon: Heart,
-      label: 'Romantic Moment',
-      color: 'from-pink-900/60 to-red-900/60',
-      borderColor: 'border-pink-500/30',
-      relGain: [10, 20],
-      outcomes: alignmentDialogue.romance
-    },
-    {
-      id: 'alignment_talk',
-      icon: Moon,
-      label: 'Discuss Magic Path',
-      color: 'from-indigo-900/60 to-violet-900/60',
-      borderColor: 'border-indigo-500/30',
-      relGain: [6, 12],
-      special: true
-    },
-    {
-      id: 'magic_practice',
-      icon: Wand2,
-      label: 'Practice Magic Together',
-      color: 'from-purple-900/60 to-violet-900/60',
-      borderColor: 'border-purple-500/30',
-      relGain: [5, 12],
-      outcomes: [
-        `${witch.name} teaches you protective charms. You're surprisingly good. "Natural talent," ${p.subject} says. "Or good teacher," you counter. ${p.subject} blushes. Adorable.`,
-        `Spell practice. You channel vampire power. ${witch.name} channels witch magic. Combined, you create something NEW. Neither vampire nor witch magic. Something unique to you two. Bonded power.`,
-        `${witch.name} shows you scrying. "Think of someone," ${p.subject} instructs. You think of ${p.object}. The water shows ${witch.name} smiling. "Sap," ${p.subject} teases. But ${p.subject}'s smiling too.`,
-        `Advanced magic lesson. ${witch.name} summons elemental fire. You control it with your mind. Together, you're unstoppable. ${p.subject} looks at you with awe. "We're powerful together." Yes. You are.`
-      ]
-    },
-    {
-      id: 'hunt_together',
-      icon: Moon,
-      label: 'Hunt Together',
-      color: 'from-red-900/60 to-rose-900/60',
-      borderColor: 'border-red-500/30',
-      relGain: [6, 14],
-      outcomes: [
-        `You hunt as a team. ${witch.name} uses magic to track prey. You use vampire speed to catch them. Perfect coordination. You feed. ${p.subject} watches. "Beautiful," ${p.subject} whispers. ${p.subject} understands you completely.`,
-        `Hunting at midnight. ${witch.name} casts confusion on your target. They don't resist. Don't scream. Just... accept. You drink deeply. ${p.subject} holds you after. "My predator," ${p.subject} murmurs. Pride. Love. Acceptance.`,
-        `Double hunt. You take a human. ${witch.name} drains someone's life force for magic. Side by side. Feeding. Living. When done, you kiss. Tasting death on each other's lips. Perfect.`,
-        `${witch.name} uses location spell. Finds someone alone. Vulnerable. You go together. Make it quick. Merciful. On the way home, ${p.subject} holds your hand. "We take care of each other." Always.`
-      ]
-    },
-    {
-      id: 'request_service',
-      icon: Zap,
-      label: 'Request Magical Service',
-      color: 'from-emerald-900/60 to-teal-900/60',
-      borderColor: 'border-emerald-500/30',
-      relGain: [5, 10],
-      special: true
-    },
-    {
-      id: 'gift',
-      icon: Gift,
-      label: 'Exchange Gifts',
-      color: 'from-yellow-900/60 to-amber-900/60',
-      borderColor: 'border-yellow-500/30',
-      relGain: [7, 16],
-      outcomes: [
-        `You gift ${witch.name} an ancient grimoire. Found in a vampire vault. ${p.possessive} eyes light up. "This is... priceless." ${p.subject} throws arms around you. "Thank you. Thank you." Worth every risk.`,
-        `${witch.name} gives you a blood crystal. "It stores blood for emergencies," ${p.subject} explains. Practical. Thoughtful. Perfect. You kiss ${p.object}. "You always think of me." "${p.subject === 'they' ? 'They always think' : p.subject === 'she' ? 'She always thinks' : 'He always thinks'} of you," ${p.subject} corrects.`,
-        `Surprise exchange. You made ${witch.name} jewelry from vampire bones. ${p.subject} made you a talisman from witch herbs. Both beautiful. Both meaningful. You wear them always.`,
-        `${witch.name} enchants your coffin. "Sweet dreams guaranteed," ${p.subject} promises. You pull ${p.object} into the coffin. "Stay." ${p.subject} does. You don't sleep. You don't need to.`
-      ]
-    },
-    {
-      id: 'gift_magic',
-      icon: Wand2,
-      label: 'Receive Magical Gift',
-      color: 'from-purple-900/60 to-pink-900/60',
-      borderColor: 'border-purple-500/30',
-      relGain: [10, 18],
-      outcomes: alignmentDialogue.gift_magic,
-      special: true
-    },
-    {
-      id: 'domestic',
-      icon: Home,
-      label: 'Domestic Life',
-      color: 'from-green-900/60 to-emerald-900/60',
-      borderColor: 'border-green-500/30',
-      relGain: [4, 10],
-      outcomes: [
-        `Cleaning day. ${witch.name} uses magic. You use vampire speed. Done in minutes. Then you collapse on the couch together. Laughing. This is... domestic bliss. Supernatural edition.`,
-        `${witch.name} cooks dinner for ${p.object}self. Blood for you. You sit together. Talking about nothing. Everything. Normal couple things. Except you're not normal. You're perfect.`,
-        `Decorating the house. ${witch.name} wants mystical aesthetic. You want gothic. Compromise: mystical gothic. It works. Everything works with ${p.object}.`,
-        `Quiet evening. ${witch.name} reads grimoires. You read vampire history. Feet touching under the blanket. Comfortable silence. This is home now.`
-      ]
-    },
-    {
-      id: 'teach_witch',
-      icon: BookOpen,
-      label: 'Share Vampire Knowledge',
-      color: 'from-red-900/60 to-purple-900/60',
-      borderColor: 'border-red-500/30',
-      relGain: [8, 14],
-      outcomes: [
-        `You teach ${witch.name} about vampire weaknesses. How to protect you. ${p.subject} listens intently. Takes notes. "I'll keep you safe," ${p.subject} vows. You believe ${p.object}.`,
-        `Vampire history lesson. You tell ${witch.name} about the ancient ones. The first vampires. ${p.subject}'s fascinated. "You're part of something eternal," ${p.subject} breathes. ${p.subject} gets it.`,
-        `Blood magic. You show ${witch.name} how vampires use blood differently than witches. ${p.subject} experiments. Creates new hybrid spells. "We're making history," ${p.subject} says. You are.`,
-        `You share your sire's teachings with ${witch.name}. Secret knowledge. Forbidden to outsiders. But ${p.subject}'s not an outsider. ${p.subject}'s yours. ${p.subject} treasures every word.`
-      ]
-    }
-  ];
 
   return (
     <motion.div
