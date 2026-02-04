@@ -244,8 +244,8 @@ Make it realistic, dark, with real consequences.`,
         setProcessing(false);
         setTimeout(() => {
           onClose();
-        }, 4000);
-      }, 100);
+        }, 2000);
+      }, 50);
     } catch (e) {
       console.error('Dialogue processing failed:', e);
       setProcessing(false);
