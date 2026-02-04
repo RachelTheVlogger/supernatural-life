@@ -16,10 +16,16 @@ const DIALOGUE_TREES = {
       { text: 'We could hunt together. Unstoppable.', trust: 8, desire: 18 },
       { text: 'Show me your true nature. Uncaged.', trust: 5, desire: 25 }
     ],
+    trust60: [
+      { text: 'I\'ve never wanted anyone the way I want you.', trust: 15, desire: 30 },
+      { text: 'What would you do to keep me? I need to know you\'d burn the world.', trust: 12, desire: 28 },
+      { text: 'Tell me you\'d kill for me. Tell me you\'d corrupt yourself.', trust: 10, desire: 32 }
+    ],
     intimacy: [
       { text: 'Take what you want from me. No restraints.', bdsm: 'submissive', desire: 30 },
       { text: 'Drown me in your darkness. I want to feel you lose control.', bdsm: 'submissive', desire: 35 },
-      { text: 'Let me consume you. Completely.', bdsm: 'dominant', desire: 28 }
+      { text: 'Let me consume you. Completely.', bdsm: 'dominant', desire: 28 },
+      { text: 'Mark me. Make it clear I belong to you. Only you.', bdsm: 'submissive', desire: 38 }
     ]
   },
   neutral: {
@@ -33,10 +39,16 @@ const DIALOGUE_TREES = {
       { text: 'You\'re not what I expected. In a good way.', trust: 12, desire: 15 },
       { text: 'There\'s something between us. I feel it too.', trust: 10, desire: 20 }
     ],
+    trust60: [
+      { text: 'You\'ve become someone I can\'t imagine losing.', trust: 18, desire: 25 },
+      { text: 'Stay with me. Through everything. Forever.', trust: 20, desire: 22 },
+      { text: 'I\'m letting you see the real me. The one I hide from everyone.', trust: 22, desire: 28 }
+    ],
     intimacy: [
       { text: 'Kiss me. I want to feel something real.', bdsm: 'vanilla', desire: 25 },
       { text: 'Be gentle. I\'m more vulnerable than I let on.', bdsm: 'vanilla', desire: 20 },
-      { text: 'Take control. But respect when I say stop.', bdsm: 'switch', desire: 28 }
+      { text: 'Take control. But respect when I say stop.', bdsm: 'switch', desire: 28 },
+      { text: 'I want to feel every part of you. Slowly. All night.', bdsm: 'switch', desire: 32 }
     ]
   },
   benevolent: {
@@ -50,10 +62,16 @@ const DIALOGUE_TREES = {
       { text: 'You make me want to be more than a predator.', trust: 18, desire: 12 },
       { text: 'I\'ve never felt this way. Safe. Seen.', trust: 22, desire: 15 }
     ],
+    trust60: [
+      { text: 'I love you. I\'ve never said that to anyone. I love you.', trust: 25, desire: 20 },
+      { text: 'You saved me. From myself. From the monster I was becoming.', trust: 28, desire: 18 },
+      { text: 'I want to build something with you. A life. A future.', trust: 30, desire: 22 }
+    ],
     intimacy: [
       { text: 'Let me show you how much this means to me. Slowly. Tenderly.', bdsm: 'vanilla', desire: 22 },
       { text: 'I want to make love to you. Really love you.', bdsm: 'vanilla', desire: 25 },
-      { text: 'I trust you completely. Do with me what you will.', bdsm: 'submissive', desire: 28 }
+      { text: 'I trust you completely. Do with me what you will.', bdsm: 'submissive', desire: 28 },
+      { text: 'Make me feel your love in every touch. I\'m yours. Completely.', bdsm: 'vanilla', desire: 30 }
     ]
   }
 };
@@ -85,6 +103,8 @@ export default function SirenRomance({ siren, onClose }) {
     
     if (intimacy >= 75) {
       return tree.intimacy;
+    } else if (trust >= 60) {
+      return tree.trust60;
     } else if (trust >= 30) {
       return tree.trust30;
     } else {
@@ -212,38 +232,49 @@ export default function SirenRomance({ siren, onClose }) {
       const vampireState = vampireStates[0];
       const isLiteMode = vampireState?.content_filter === 'lite';
 
-      const outcomes = {
-        predatory: isLiteMode ? [
-          'Passion consumes you both. Claws. Fangs. Power. Dangerous. Exhilarating.',
-          'You take her with predatory intensity. She matches your darkness perfectly.',
-          'Raw. Primal. You lose yourself in her completely.'
-        ] : [
-          'Her nails rake your back as you claim her. She moans your name. Rough. Perfect.',
-          'She pins you down, dominates you completely. You surrender. She controls it all.',
-          'Tangled together, bodies moving in urgent rhythm. You both gasp as passion peaks.'
-        ],
-        neutral: isLiteMode ? [
-          'Tender. Connected. Bodies aligned. Breathing synchronized. Perfect.',
-          'Gentle touches turn passionate. She whispers your name.',
-          'Slow. Meaningful. Every touch feels like a promise.'
-        ] : [
-          'She gasps as you enter her. Slow at first, then building intensity.',
-          'Wrapped together, moving in perfect rhythm. She cries out your name.',
-          'Intimate. Real. You feel everything with her.'
-        ],
-        benevolent: isLiteMode ? [
-          'Love made manifest. Sacred union. Two becoming one.',
-          'Gentle. Reverent. This is more than physical.',
-          'You make love to her soul, not just her body.'
-        ] : [
-          'You make love to her slowly, reverently. Every moment sacred.',
-          'She trembles beneath you as you kiss her tenderly. Passion builds slowly.',
-          'Intimate. Vulnerable. You pour everything you feel into her.'
-        ]
+      const scenarios = {
+        predatory: {
+          locations: ['in the moonlit ocean', 'against the rocks', 'in the depths of her waters'],
+          intense: isLiteMode ? [
+            'Passion consumes you both. Claws. Fangs. Power. Dangerous. Exhilarating.',
+            'You take her with predatory intensity. She matches your darkness perfectly.',
+            'Raw. Primal. You lose yourself in her completely.'
+          ] : [
+            'Her nails rake your back as you claim her. She moans your name. Rough. Perfect.',
+            'She pins you down, dominates you completely. You surrender. She controls it all.',
+            'Tangled together, bodies moving in urgent rhythm. You both gasp as passion peaks.'
+          ]
+        },
+        neutral: {
+          locations: ['beneath starlight', 'on soft shore', 'where the waves meet sand'],
+          intense: isLiteMode ? [
+            'Tender. Connected. Bodies aligned. Breathing synchronized. Perfect.',
+            'Gentle touches turn passionate. She whispers your name.',
+            'Slow. Meaningful. Every touch feels like a promise.'
+          ] : [
+            'She gasps as you enter her. Slow at first, then building intensity.',
+            'Wrapped together, moving in perfect rhythm. She cries out your name.',
+            'Intimate. Real. You feel everything with her.'
+          ]
+        },
+        benevolent: {
+          locations: ['in sacred waters', 'under moonlight', 'in your sanctuary together'],
+          intense: isLiteMode ? [
+            'Love made manifest. Sacred union. Two becoming one.',
+            'Gentle. Reverent. This is more than physical.',
+            'You make love to her soul, not just her body.'
+          ] : [
+            'You make love to her slowly, reverently. Every moment sacred.',
+            'She trembles beneath you as you kiss her tenderly. Passion builds slowly.',
+            'Intimate. Vulnerable. You pour everything you feel into her.'
+          ]
+        }
       };
 
-      const outcomeList = outcomes[alignment] || outcomes.neutral;
-      const text = outcomeList[Math.floor(Math.random() * outcomeList.length)];
+      const config = scenarios[alignment] || scenarios.neutral;
+      const location = config.locations[Math.floor(Math.random() * config.locations.length)];
+      const baseText = config.intense[Math.floor(Math.random() * config.intense.length)];
+      const text = `${baseText} (${location})`;
 
       setOutcome(text);
 
@@ -257,6 +288,17 @@ export default function SirenRomance({ siren, onClose }) {
       if (alignment === 'benevolent') {
         updates.alignment = 'benevolent';
       }
+
+      // Create memory of this intimate moment
+      await base44.entities.InteractionMemory.create({
+        entity_1_id: siren.id,
+        entity_1_type: 'siren',
+        entity_2_id: 'player',
+        entity_2_type: 'player',
+        interaction_type: 'romance',
+        description: text,
+        relationship_impact: 30
+      });
 
       await base44.entities.Siren.update(siren.id, updates);
 
