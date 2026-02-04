@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Star, TrendingUp, AlertTriangle, Heart, Skull, DollarSign } from 'lucide-react';
+import { X, Star, TrendingUp, AlertTriangle, Heart, Skull, DollarSign, MessageSquare } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import CustomerDialogue from './CustomerDialogue';
 
 const LOYALTY_TIERS = {
   bronze: { name: 'Bronze', color: 'orange', minSpent: 0, benefits: 'Standard pricing', icon: '🥉' },
@@ -25,6 +26,7 @@ export default function CustomerManagement({ hunter, onClose }) {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
+  const [showDialogue, setShowDialogue] = useState(false);
 
   const { data: customers = [] } = useQuery({
     queryKey: ['drugCustomers'],
@@ -397,6 +399,19 @@ export default function CustomerManagement({ hunter, onClose }) {
               <h4 className="text-white font-bold mb-3">Actions</h4>
 
               <button
+                onClick={() => setShowDialogue(true)}
+                className="w-full bg-gradient-to-r from-purple-900/60 to-purple-950/60 hover:from-purple-900/80 hover:to-purple-950/80 border border-purple-500/30 rounded-lg p-4 text-left transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h5 className="text-white font-bold mb-1">💬 Start Conversation</h5>
+                    <p className="text-purple-300 text-xs">Talk with them. Negotiate, manipulate, or build trust.</p>
+                  </div>
+                  <MessageSquare className="w-5 h-5 text-purple-400" />
+                </div>
+              </button>
+
+              <button
                 onClick={() => handleIntervention(selectedCustomer, 'rehab')}
                 className="w-full bg-gradient-to-r from-green-900/60 to-green-950/60 hover:from-green-900/80 hover:to-green-950/80 border border-green-500/30 rounded-lg p-4 text-left transition-all"
               >
@@ -465,6 +480,18 @@ export default function CustomerManagement({ hunter, onClose }) {
               )}
             </div>
           </motion.div>
+        )}
+
+        {showDialogue && selectedCustomer && (
+          <CustomerDialogue 
+            customer={selectedCustomer}
+            hunter={hunter}
+            onClose={() => {
+              setShowDialogue(false);
+              setSelectedCustomer(null);
+              queryClient.invalidateQueries(['drugCustomers']);
+            }}
+          />
         )}
       </motion.div>
     </motion.div>
