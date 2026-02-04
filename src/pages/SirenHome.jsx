@@ -13,6 +13,7 @@ import SirenSociety from '@/components/nightbound/SirenSociety';
 import SirenUnderwater from '@/components/nightbound/SirenUnderwater';
 import SirenVictims from '@/components/nightbound/SirenVictims';
 import SirenNymphInteraction from '@/components/nightbound/SirenNymphInteraction';
+import SirenRomance from '@/components/nightbound/SirenRomance';
 
 const BASE_POWERS = [
   'Hypnotic Song', 'Seductive Voice', 'Water Breathing', 'Enhanced Beauty',
@@ -77,6 +78,7 @@ export default function SirenHome() {
   const [showUnderwater, setShowUnderwater] = useState(false);
   const [showVictims, setShowVictims] = useState(false);
   const [showNymphInteraction, setShowNymphInteraction] = useState(false);
+  const [showRomance, setShowRomance] = useState(false);
 
   const { data: sirens = [] } = useQuery({
     queryKey: ['sirens'],
@@ -516,6 +518,17 @@ export default function SirenHome() {
             {!siren.aquatic_form && (
               <>
                 <button
+                  onClick={() => setShowRomance(true)}
+                  className="w-full bg-gradient-to-r from-red-900/60 to-pink-900/60 hover:from-red-900/80 hover:to-pink-900/80 border-2 border-red-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+                >
+                  <Heart className="w-5 h-5 text-red-400" />
+                  <div className="flex-1 text-left">
+                    <h3 className="text-white font-medium">Deep Romance</h3>
+                    <p className="text-pink-300 text-sm">Intimate connection and intimacy.</p>
+                  </div>
+                </button>
+
+                <button
                   onClick={handleLure}
                   className="w-full bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
                 >
@@ -700,7 +713,10 @@ export default function SirenHome() {
           {showNymphInteraction && siren && (
             <SirenNymphInteraction siren={siren} onClose={() => setShowNymphInteraction(false)} />
           )}
-        </AnimatePresence>
+          {showRomance && siren && (
+            <SirenRomance siren={siren} onClose={() => setShowRomance(false)} />
+          )}
+          </AnimatePresence>
 
         {/* Rename Siren Modal */}
         {showRenameModal && (

@@ -14,6 +14,7 @@ import NymphHealing from '@/components/nightbound/NymphHealing';
 import WaterFamiliars from '@/components/nightbound/WaterFamiliars';
 import SirenNymphInteraction from '@/components/nightbound/SirenNymphInteraction';
 import NymphElementalBonds from '@/components/nightbound/NymphElementalBonds';
+import NymphRomance from '@/components/nightbound/NymphRomance';
 
 const BASE_POWERS = [
   'Water Breathing', 'Nature Bond', 'Healing Touch', 'Plant Growth',
@@ -77,6 +78,7 @@ export default function WaterNymphHome() {
   const [showFamiliars, setShowFamiliars] = useState(false);
   const [showSirenInteraction, setShowSirenInteraction] = useState(false);
   const [showElementalBonds, setShowElementalBonds] = useState(false);
+  const [showRomance, setShowRomance] = useState(false);
 
   const { data: nymphs = [] } = useQuery({
     queryKey: ['waterNymphs'],
@@ -967,6 +969,9 @@ export default function WaterNymphHome() {
               )}
               {showElementalBonds && nymph && (
                 <NymphElementalBonds nymph={nymph} onClose={() => setShowElementalBonds(false)} />
+              )}
+              {showRomance && nymph && (
+                <NymphRomance nymph={nymph} onClose={() => setShowRomance(false)} />
               )}
             </AnimatePresence>
 
