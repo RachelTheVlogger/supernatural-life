@@ -387,7 +387,7 @@ export default function CustomerManagement({ hunter, onClose }) {
                 </div>
               </div>
 
-              {selectedCustomer.withdrawal_stage !== 'none' && (
+              {selectedCustomer.withdrawal_stage && selectedCustomer.withdrawal_stage !== 'none' && WITHDRAWAL_STAGES[selectedCustomer.withdrawal_stage] && (
                 <div className="bg-yellow-900/30 border border-yellow-500/30 rounded-lg p-3 mb-4">
                   <p className="text-yellow-300 text-sm font-bold mb-1">⚠️ Withdrawal: {WITHDRAWAL_STAGES[selectedCustomer.withdrawal_stage].name}</p>
                   <p className="text-yellow-200 text-xs">{WITHDRAWAL_STAGES[selectedCustomer.withdrawal_stage].description}</p>
