@@ -462,20 +462,70 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
         </div>
 
         {/* Actions Grid */}
-        <div className="space-y-2 max-h-[50vh] overflow-y-auto">
-          {currentActions.map(action => (
-            <motion.button
-              key={action.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={() => handleAction(action, validPartners[0] || { name: 'them' })}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl py-3 px-5 font-medium transition-all text-sm"
-            >
-              {action.label}
-            </motion.button>
-          ))}
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
+         <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+           <button
+             onClick={() => setShowBDSMModal(true)}
+             className="w-full bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700 text-white rounded-xl py-3 px-5 font-medium transition-all text-sm mb-4 border border-pink-500/50"
+           >
+             🔗 Discuss Preferences
+           </button>
+           {currentActions.map(action => (
+             <motion.button
+               key={action.id}
+               initial={{ opacity: 0, y: 10 }}
+               animate={{ opacity: 1, y: 0 }}
+               onClick={() => handleAction(action, validPartners[0] || { name: 'them' })}
+               className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl py-3 px-5 font-medium transition-all text-sm"
+             >
+               {action.label}
+             </motion.button>
+           ))}
+         </div>
+
+         {/* BDSM Preferences Modal */}
+         <AnimatePresence>
+           {showBDSMModal && (
+             <motion.div
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               exit={{ opacity: 0 }}
+               className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90"
+               onClick={() => setShowBDSMModal(false)}
+             >
+               <motion.div
+                 initial={{ scale: 0.95, opacity: 0 }}
+                 animate={{ scale: 1, opacity: 1 }}
+                 exit={{ scale: 0.95, opacity: 0 }}
+                 onClick={(e) => e.stopPropagation()}
+                 className="bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl p-6 max-w-md w-full border-2 border-pink-500/50"
+               >
+                 <h3 className="text-2xl font-bold text-white mb-2">Discuss Preferences</h3>
+                 <p className="text-gray-300 text-sm mb-6">What brings you both pleasure?</p>
+
+                 <div className="space-y-2 mb-6">
+                   {BDSM_PREFERENCES.map(pref => (
+                     <button
+                       key={pref.id}
+                       onClick={() => setShowBDSMModal(false)}
+                       className="w-full bg-black/40 hover:bg-black/60 rounded-lg p-3 text-left border border-pink-500/30 transition-all"
+                     >
+                       <span className={`text-lg ${pref.color} mr-3`}>{pref.icon}</span>
+                       <span className="text-white font-medium">{pref.label}</span>
+                     </button>
+                   ))}
+                 </div>
+
+                 <button
+                   onClick={() => setShowBDSMModal(false)}
+                   className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors"
+                 >
+                   Close
+                 </button>
+               </motion.div>
+             </motion.div>
+           )}
+         </AnimatePresence>
+        </motion.div>
+        </motion.div>
+        );
+        }
