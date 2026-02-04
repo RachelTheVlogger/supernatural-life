@@ -112,6 +112,19 @@ export default function HunterIntimate({ hunter, vampires = [], onClose }) {
 
   const categories = ['all', 'romantic', 'sweet', 'physical', 'bdsm', 'social', 'activity', 'eternity'];
 
+  const BDSM_PREFERENCES = [
+    { id: 'bondage', label: 'Bondage', icon: '🔗', color: 'text-purple-400' },
+    { id: 'discipline', label: 'Discipline', icon: '⚡', color: 'text-red-400' },
+    { id: 'dominance', label: 'Dominance', icon: '👑', color: 'text-amber-400' },
+    { id: 'submission', label: 'Submission', icon: '🙏', color: 'text-blue-400' },
+    { id: 'sadism', label: 'Sadism', icon: '🔥', color: 'text-orange-400' },
+    { id: 'masochism', label: 'Masochism', icon: '💔', color: 'text-pink-400' },
+    { id: 'sensory_play', label: 'Sensory Play', icon: '👁️', color: 'text-cyan-400' },
+    { id: 'roleplay', label: 'Roleplay', icon: '🎭', color: 'text-violet-400' }
+  ];
+
+  const [showBDSMModal, setShowBDSMModal] = useState(false);
+
   // Filter explicit content in lite mode
   const filterExplicit = vampires[0]?.content_filter === 'lite';
   const currentActions = (INTIMATE_ACTIONS[selectedCategory] || INTIMATE_ACTIONS.all)
