@@ -191,6 +191,30 @@ export default function WitchLivingTogether({ witch, vampireState, onClose }) {
                 </div>
               </button>
             ))}
+
+            <button
+              onClick={async () => {
+                if (confirm(`Ask ${witch.name} to move out? This will end your cohabitation.`)) {
+                  await base44.entities.Witch.update(witch.id, { living_with_vampire: false });
+                  await base44.entities.NightLog.create({
+                    entry: `${witch.name} moved out. The apartment feels emptier now. A chapter closed.`,
+                    category: 'interaction',
+                    intensity: 'significant'
+                  });
+                  queryClient.invalidateQueries();
+                  onClose();
+                }
+              }}
+              className="w-full bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 rounded-xl p-4 text-left transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <X className="w-5 h-5 text-red-400" />
+                <div>
+                  <h4 className="text-white font-medium">Ask {witch.name} to Move Out</h4>
+                  <p className="text-gray-400 text-xs">End cohabitation</p>
+                </div>
+              </div>
+            </button>
           </div>
         )}
 
