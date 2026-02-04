@@ -514,19 +514,22 @@ export default function SirenHome() {
               </button>
             )}
 
+            {/* Deep Romance - Always Available */}
+            <button
+              onClick={() => setShowRomance(true)}
+              className="w-full bg-gradient-to-r from-red-900/60 to-pink-900/60 hover:from-red-900/80 hover:to-pink-900/80 border-2 border-red-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+            >
+              <Heart className="w-5 h-5 text-red-400" />
+              <div className="flex-1 text-left">
+                <h3 className="text-white font-medium">Deep Romance</h3>
+                <p className="text-pink-300 text-sm">Boundaries, conversation, intimacy.</p>
+              </div>
+            </button>
+
             {/* Human Form Only - Can interact on land */}
             {!siren.aquatic_form && (
               <>
-                <button
-                  onClick={() => setShowRomance(true)}
-                  className="w-full bg-gradient-to-r from-red-900/60 to-pink-900/60 hover:from-red-900/80 hover:to-pink-900/80 border-2 border-red-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
-                >
-                  <Heart className="w-5 h-5 text-red-400" />
-                  <div className="flex-1 text-left">
-                    <h3 className="text-white font-medium">Deep Romance</h3>
-                    <p className="text-pink-300 text-sm">Intimate connection and intimacy.</p>
-                  </div>
-                </button>
+
 
                 <button
                   onClick={handleLure}
