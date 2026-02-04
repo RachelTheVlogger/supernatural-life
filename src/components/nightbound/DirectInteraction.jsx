@@ -2696,7 +2696,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
                   disabled={isBlocked}
                   className={`w-full rounded-xl py-3 flex items-center gap-3 text-sm touch-manipulation ${
                     isBlocked 
-                      ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed opacity-50' 
+                      ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed opacity-50 blur-sm' 
                       : 'bitlife-btn'
                   }`}
                 >
