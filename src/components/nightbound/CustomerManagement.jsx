@@ -27,9 +27,6 @@ export default function CustomerManagement({ hunter, onClose }) {
   const [processing, setProcessing] = useState(false);
   const [outcome, setOutcome] = useState('');
   const [showDialogue, setShowDialogue] = useState(false);
-  
-  // Lite mode disabled - this is a drug management system
-  const isLiteMode = true; // Always disable this in production
 
   const { data: customers = [] } = useQuery({
     queryKey: ['drugCustomers'],

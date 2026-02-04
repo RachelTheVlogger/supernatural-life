@@ -268,20 +268,18 @@ export default function FeedingModal({ onClose, vampireState }) {
               </div>
             </button>
             
-            {vampireState?.content_filter !== 'lite' && (
-              <button
-                onClick={() => handleFeedingChoice('brutal')}
-                className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/30 transition-slow border border-red-500/20 touch-manipulation"
-              >
-                <div className="flex items-start gap-3">
-                  <Flame className="w-5 h-5 text-red-400 mt-1" />
-                  <div>
-                    <p className="text-white font-medium mb-1">Feed Brutally</p>
-                    <p className="text-gray-400 text-sm">Take everything. The beast demands satisfaction. <span className="text-red-400">-Humanity</span></p>
-                  </div>
+            <button
+              onClick={() => handleFeedingChoice('brutal')}
+              className="w-full glass rounded-xl p-4 text-left hover:bg-red-950/30 transition-slow border border-red-500/20 touch-manipulation"
+            >
+              <div className="flex items-start gap-3">
+                <Flame className="w-5 h-5 text-red-400 mt-1" />
+                <div>
+                  <p className="text-white font-medium mb-1">Feed Brutally</p>
+                  <p className="text-gray-400 text-sm">Take everything. The beast demands satisfaction. <span className="text-red-400">-Humanity</span></p>
                 </div>
-              </button>
-            )}
+              </div>
+            </button>
             
             <button
               onClick={() => {

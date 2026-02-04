@@ -221,10 +221,8 @@ export default function ServantInteractions({ servants, vampireState, currentSer
     },
   ];
   
-    // Filter explicit interactions in lite mode
-    return isLiteMode 
-      ? baseInteractions.filter(i => !['together', 'heart-to-heart'].includes(i.id))
-      : baseInteractions;
+    // Keep all interactions - lite mode only affects outcome text tone
+    return baseInteractions;
   };
 
   const handleInteraction = async (interactionId) => {
