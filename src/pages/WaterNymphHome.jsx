@@ -435,13 +435,20 @@ export default function WaterNymphHome() {
     setTimeout(async () => {
       const isMist = !nymph.mist_form;
       const result = isMist 
-        ? 'Your body dissolved. Became mist. Weightless. Formless. Free.'
-        : 'Mist solidified. Body reformed. Physical again. Grounded.';
+        ? 'Your body tingled. Cells separating. Becoming vapor. You dissolved into mist. No weight. No form. Just essence. Pure water vapor. Consciousness without flesh. You drifted. Free. Formless. Ethereal. Perfect.'
+        : 'You concentrated. Mist particles drawn together. Coalescing. Solidifying. Flesh reformed. Bones materialized. BODY. You were solid again. Physical. Grounded. Real. But you remember being formless. Miss it already.';
       
       setOutcome(result);
 
       await base44.entities.WaterNymph.update(nymph.id, {
-        mist_form: isMist
+        mist_form: isMist,
+        nature_bond: (nymph.nature_bond || 50) + 3
+      });
+
+      await base44.entities.NightLog.create({
+        entry: result,
+        category: 'transformation',
+        intensity: 'significant'
       });
 
       queryClient.invalidateQueries();
@@ -449,8 +456,8 @@ export default function WaterNymphHome() {
       setTimeout(() => {
         setProcessing(false);
         setOutcome('');
-      }, 3000);
-    }, 2000);
+      }, 4000);
+    }, 3000);
   };
 
   const handleMeetNymph = async () => {
@@ -522,11 +529,67 @@ export default function WaterNymphHome() {
     }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-950 to-green-950 p-4 pb-24">
+    <div className={`min-h-screen p-4 pb-24 transition-all duration-1000 ${
+      nymph.mist_form 
+        ? 'bg-gradient-to-b from-slate-900 via-gray-900 to-slate-950' 
+        : 'bg-gradient-to-b from-teal-950 to-green-950'
+    }`}>
+      {/* Particle effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {nymph.mist_form ? (
+          // Mist/fog particles
+          [...Array(25)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute bg-gray-400/20 rounded-full blur-xl"
+              style={{
+                width: `${30 + Math.random() * 60}px`,
+                height: `${30 + Math.random() * 60}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                x: [0, Math.random() * 100 - 50],
+                y: [0, Math.random() * 100 - 50],
+                opacity: [0.1, 0.3, 0.1]
+              }}
+              transition={{
+                duration: 6 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 3,
+                ease: "easeInOut"
+              }}
+            />
+          ))
+        ) : (
+          // Nature sparkles for solid form
+          [...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-green-400/40 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                opacity: [0, 0.8, 0],
+                scale: [0, 1.5, 0],
+                rotate: [0, 180, 360]
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2
+              }}
+            />
+          ))
+        )}
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-2xl mx-auto"
+        className="max-w-2xl mx-auto relative z-10"
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-2">

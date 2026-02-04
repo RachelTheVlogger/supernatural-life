@@ -236,19 +236,20 @@ export default function SirenHome() {
     setTimeout(async () => {
       const isAquatic = !siren.aquatic_form;
       const result = isAquatic 
-        ? 'You dove into the water. Legs merged. Tail formed. Aquatic form embraced.'
-        : 'You emerged from the water. Tail split. Legs returned. Human form restored.';
+        ? 'You dove into the water. Pain. Pleasure. Your legs fused together. Bones reshaping. Scales erupting. TAIL. You flicked it. Power surged. Aquatic form complete. You belong to the ocean now.'
+        : 'You crawled onto shore. Your tail tingled. Split. Agony. Ecstasy. Scales receded. LEGS. You stood. Wobbly. Human form restored. You can walk among them again.';
       
       setOutcome(result);
 
       await base44.entities.Siren.update(siren.id, {
-        aquatic_form: isAquatic
+        aquatic_form: isAquatic,
+        transformation_mastery: Math.min(100, (siren.transformation_mastery || 30) + 5)
       });
 
       await base44.entities.NightLog.create({
         entry: result,
         category: 'transformation',
-        intensity: 'moderate'
+        intensity: 'significant'
       });
 
       queryClient.invalidateQueries();
@@ -257,8 +258,8 @@ export default function SirenHome() {
         setProcessing(false);
         setOutcome('');
         setShowAction(null);
-      }, 3000);
-    }, 2000);
+      }, 4000);
+    }, 3000);
   };
 
   const handleRenameSiren = async () => {
@@ -332,11 +333,64 @@ export default function SirenHome() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-950 to-cyan-950 p-4 pb-24">
+    <div className={`min-h-screen p-4 pb-24 transition-all duration-1000 ${
+      siren.aquatic_form 
+        ? 'bg-gradient-to-b from-indigo-950 via-blue-950 to-cyan-950' 
+        : 'bg-gradient-to-b from-blue-950 to-cyan-950'
+    }`}>
+      {/* Particle effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {siren.aquatic_form ? (
+          // Bubble particles for aquatic form
+          [...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-3 h-3 bg-cyan-400/30 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                bottom: `-5%`,
+              }}
+              animate={{
+                y: [0, -window.innerHeight * 1.1],
+                opacity: [0, 0.6, 0],
+                scale: [0.5, 1.2, 0.8]
+              }}
+              transition={{
+                duration: 4 + Math.random() * 3,
+                repeat: Infinity,
+                delay: Math.random() * 3,
+                ease: "easeInOut"
+              }}
+            />
+          ))
+        ) : (
+          // Sparkle particles for human form
+          [...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-pink-400/40 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                opacity: [0, 0.8, 0],
+                scale: [0, 1.5, 0]
+              }}
+              transition={{
+                duration: 2 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2
+              }}
+            />
+          ))
+        )}
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-2xl mx-auto"
+        className="max-w-2xl mx-auto relative z-10"
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-2">
