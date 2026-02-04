@@ -628,20 +628,24 @@ export default function Night() {
           <span className="text-2xl">🔮</span>
           <p className="text-white text-xs mt-1">Future Predictor</p>
         </button>
-        <button
-          onClick={() => setShowSoulTrading(true)}
-          className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">👁️</span>
-          <p className="text-white text-xs mt-1">Soul Trading</p>
-        </button>
-        <button
-          onClick={() => setShowBlackMarket(true)}
-          className="bg-gray-950/40 hover:bg-gray-950/60 border border-gray-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">🛒</span>
-          <p className="text-white text-xs mt-1">Black Market</p>
-        </button>
+        {vampireState?.content_filter !== 'lite' && (
+          <>
+            <button
+              onClick={() => setShowSoulTrading(true)}
+              className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
+            >
+              <span className="text-2xl">👁️</span>
+              <p className="text-white text-xs mt-1">Soul Trading</p>
+            </button>
+            <button
+              onClick={() => setShowBlackMarket(true)}
+              className="bg-gray-950/40 hover:bg-gray-950/60 border border-gray-500/30 rounded-lg p-3 text-center transition-colors"
+            >
+              <span className="text-2xl">🛒</span>
+              <p className="text-white text-xs mt-1">Black Market</p>
+            </button>
+          </>
+        )}
         <button
           onClick={() => setShowProphecy(true)}
           className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
@@ -663,13 +667,15 @@ export default function Night() {
           <span className="text-2xl">🏛️</span>
           <p className="text-white text-xs mt-1">Memory Palace</p>
         </button>
-        <button
-          onClick={() => setShowRituals(true)}
-          className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
-        >
-          <span className="text-2xl">🔥</span>
-          <p className="text-white text-xs mt-1">Rituals</p>
-        </button>
+        {vampireState?.content_filter !== 'lite' && (
+          <button
+            onClick={() => setShowRituals(true)}
+            className="bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 rounded-lg p-3 text-center transition-colors"
+          >
+            <span className="text-2xl">🔥</span>
+            <p className="text-white text-xs mt-1">Rituals</p>
+          </button>
+        )}
         <button
           onClick={() => setShowDreamRealm(true)}
           className="bg-purple-950/40 hover:bg-purple-950/60 border border-purple-500/30 rounded-lg p-3 text-center transition-colors"
