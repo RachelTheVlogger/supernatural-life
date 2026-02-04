@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Droplets, Zap, TrendingUp, Users } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
+import CustomerManagement from './CustomerManagement';
 
 const STRAIN_NAMES = [
   'Crimson Ecstasy', 'Bloodlust Prime', 'Nocturne', 'Scarlet Rush', 'Venom Kiss',
@@ -34,6 +35,7 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
   const [plantBreeding, setPlantBreeding] = useState(false);
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [breedingOutcome, setBreedingOutcome] = useState('');
+  const [showCustomerManagement, setShowCustomerManagement] = useState(false);
 
   const { data: bloodDrugs = [] } = useQuery({
     queryKey: ['bloodDrugs'],
@@ -383,6 +385,12 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
           >
             🌿 Plants
           </button>
+          <button 
+            onClick={() => setTab('customers')} 
+            className={`px-4 py-2 rounded-lg whitespace-nowrap ${tab === 'customers' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400'}`}
+          >
+            👥 Customers
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -483,6 +491,26 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
                   ))}
                 </div>
               )}
+            </motion.div>
+          )}
+
+          {tab === 'customers' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <div className="text-center py-12">
+                <span className="text-6xl mb-4 block">👥</span>
+                <h3 className="text-2xl font-bold text-purple-200 mb-4">Customer Management</h3>
+                <p className="text-gray-400 mb-6">Manage loyalty programs, addiction levels, and interventions</p>
+                <button
+                  onClick={() => setShowCustomerManagement(true)}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-medium"
+                >
+                  Open Customer Panel
+                </button>
+              </div>
             </motion.div>
           )}
 
@@ -752,6 +780,10 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
               </div>
             </div>
           </div>
+        )}
+
+        {showCustomerManagement && (
+          <CustomerManagement hunter={hunter} onClose={() => setShowCustomerManagement(false)} />
         )}
       </motion.div>
     </motion.div>
