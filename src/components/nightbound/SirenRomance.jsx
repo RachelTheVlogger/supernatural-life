@@ -94,6 +94,7 @@ export default function SirenRomance({ siren, onClose }) {
   const [outcome, setOutcome] = useState('');
   const [showBoundaries, setShowBoundaries] = useState(false);
   const [selectedPreference, setSelectedPreference] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState(null);
 
   const alignment = siren.alignment || 'neutral';
   const trust = siren.trust || 30;
