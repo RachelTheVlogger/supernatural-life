@@ -70,36 +70,141 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
     }
   });
 
-  const generateStrain = () => {
-    const baseName = STRAIN_NAMES[Math.floor(Math.random() * STRAIN_NAMES.length)];
-    const effect = EFFECTS[Math.floor(Math.random() * EFFECTS.length)];
+  const generateStrain = async () => {
     const potency = Math.floor(Math.random() * 40) + 60; // 60-100
     const addictiveness = Math.floor(Math.random() * 30) + 70; // 70-100
-    const pricePerDose = Math.floor(Math.random() * 150) + 100; // 100-250
 
-    return {
-      id: `strain_${Date.now()}_${Math.random()}`,
-      strain_name: baseName,
-      potency,
-      addictiveness,
-      quantity: 0,
-      price_per_dose: pricePerDose,
-      effects: effect,
-      quality: 'premium',
-      is_hybrid: false
-    };
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Generate a blood-based drug strain for vampires with these properties:
+- Potency: ${potency}/100 (how strong the high)
+- Addictiveness: ${addictiveness}/100 (how addictive)
+
+Create:
+1. strain_name: A unique, dark, evocative 2-3 word name (like "Crimson Ecstasy", "Bloodlust Prime", "Nocturne")
+2. effects: Primary effect in 2-4 words (euphoric rush, heightened senses, etc)
+3. description: 1-2 sentence description of the experience
+4. side_effects: 2-3 potential negative effects (comma separated)
+5. user_experience: One sentence from a user's perspective
+6. price_per_dose: Suggested price ($100-$400 range, higher for more potent/addictive)
+7. marketing_angle: One sentence marketing pitch
+
+Make it dark, edgy, and vampire-themed.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            strain_name: { type: 'string' },
+            effects: { type: 'string' },
+            description: { type: 'string' },
+            side_effects: { type: 'string' },
+            user_experience: { type: 'string' },
+            price_per_dose: { type: 'number' },
+            marketing_angle: { type: 'string' }
+          }
+        }
+      });
+
+      return {
+        id: `strain_${Date.now()}_${Math.random()}`,
+        strain_name: response.strain_name,
+        potency,
+        addictiveness,
+        quantity: 0,
+        price_per_dose: response.price_per_dose,
+        effects: response.effects,
+        description: response.description,
+        side_effects: response.side_effects,
+        user_experience: response.user_experience,
+        marketing_angle: response.marketing_angle,
+        quality: 'premium',
+        is_hybrid: false
+      };
+    } catch (e) {
+      console.error('AI generation failed, using fallback:', e);
+      // Fallback to original method
+      const baseName = STRAIN_NAMES[Math.floor(Math.random() * STRAIN_NAMES.length)];
+      const effect = EFFECTS[Math.floor(Math.random() * EFFECTS.length)];
+      const pricePerDose = Math.floor(Math.random() * 150) + 100;
+
+      return {
+        id: `strain_${Date.now()}_${Math.random()}`,
+        strain_name: baseName,
+        potency,
+        addictiveness,
+        quantity: 0,
+        price_per_dose: pricePerDose,
+        effects: effect,
+        quality: 'premium',
+        is_hybrid: false
+      };
+    }
   };
 
-  const generateHybridStrain = (formula1, formula2) => {
-    const hybrid = {
-      ...generateStrain(),
-      is_hybrid: true,
-      strain_name: `${formula1.strain_name} × ${formula2.strain_name}`,
-      potency: Math.min(100, formula1.potency + formula2.potency) / 2 + Math.floor(Math.random() * 20),
-      addictiveness: (formula1.addictiveness + formula2.addictiveness) / 2,
-      price_per_dose: formula1.price_per_dose + formula2.price_per_dose
-    };
-    return hybrid;
+  const generateHybridStrain = async (formula1, formula2) => {
+    const avgPotency = Math.floor((formula1.potency + formula2.potency) / 2) + Math.floor(Math.random() * 20);
+    const avgAddictiveness = Math.floor((formula1.addictiveness + formula2.addictiveness) / 2);
+
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Two drug strains are being combined:
+Strain 1: ${formula1.strain_name} (${formula1.effects})
+Strain 2: ${formula2.strain_name} (${formula2.effects})
+
+Combined properties:
+- Potency: ${avgPotency}/100
+- Addictiveness: ${avgAddictiveness}/100
+
+Create a hybrid strain with:
+1. strain_name: A unique name that hints at both parents (2-3 words)
+2. effects: Combined/enhanced effects (2-4 words)
+3. description: What makes this hybrid special (1-2 sentences)
+4. side_effects: Unique hybrid side effects (comma separated)
+5. user_experience: One powerful sentence from user perspective
+6. price_per_dose: Premium hybrid pricing ($${Math.floor(formula1.price_per_dose + formula2.price_per_dose)}-$${Math.floor((formula1.price_per_dose + formula2.price_per_dose) * 1.5)} range)
+7. marketing_angle: Why this hybrid is worth the price`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            strain_name: { type: 'string' },
+            effects: { type: 'string' },
+            description: { type: 'string' },
+            side_effects: { type: 'string' },
+            user_experience: { type: 'string' },
+            price_per_dose: { type: 'number' },
+            marketing_angle: { type: 'string' }
+          }
+        }
+      });
+
+      return {
+        id: `strain_${Date.now()}_${Math.random()}`,
+        strain_name: response.strain_name,
+        potency: avgPotency,
+        addictiveness: avgAddictiveness,
+        quantity: 0,
+        price_per_dose: response.price_per_dose,
+        effects: response.effects,
+        description: response.description,
+        side_effects: response.side_effects,
+        user_experience: response.user_experience,
+        marketing_angle: response.marketing_angle,
+        quality: 'premium',
+        is_hybrid: true
+      };
+    } catch (e) {
+      console.error('AI hybrid generation failed, using fallback:', e);
+      return {
+        id: `strain_${Date.now()}_${Math.random()}`,
+        is_hybrid: true,
+        strain_name: `${formula1.strain_name} × ${formula2.strain_name}`,
+        potency: avgPotency,
+        addictiveness: avgAddictiveness,
+        quantity: 0,
+        price_per_dose: Math.floor(formula1.price_per_dose + formula2.price_per_dose),
+        effects: `${formula1.effects}, ${formula2.effects}`,
+        quality: 'premium'
+      };
+    }
   };
 
   const handleExtract = async (vampire) => {
@@ -107,7 +212,7 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
 
     setTimeout(async () => {
       try {
-        const newFormula = generateStrain();
+        const newFormula = await generateStrain();
         newFormula.quantity = Math.floor(Math.random() * 10) + 15; // 15-25 doses
         newFormula.base_servant_id = vampire.id;
 
@@ -142,8 +247,10 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
   };
 
   const handleCreateHybrid = async (formula1, formula2) => {
-    const hybrid = generateHybridStrain(formula1, formula2);
+    setProcessing(true);
+    const hybrid = await generateHybridStrain(formula1, formula2);
     setFormulas([...formulas, hybrid]);
+    setProcessing(false);
 
     await base44.entities.NightLog.create({
       entry: `${hunter.name} created hybrid strain: ${hybrid.strain_name}. Experimental compound ready for distribution.`,
@@ -446,11 +553,23 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
                       className="bg-red-950/20 border border-red-500/30 rounded-lg p-4"
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <div>
+                        <div className="flex-1">
                           <h4 className="text-red-100 font-bold">{formula.strain_name}</h4>
-                          <p className="text-gray-400 text-sm">{formula.effects}</p>
+                          <p className="text-gray-400 text-sm mb-1">{formula.effects}</p>
+                          {formula.description && (
+                            <p className="text-gray-500 text-xs italic mb-1">{formula.description}</p>
+                          )}
+                          {formula.side_effects && (
+                            <p className="text-yellow-400 text-xs">⚠️ {formula.side_effects}</p>
+                          )}
+                          {formula.user_experience && (
+                            <p className="text-purple-300 text-xs mt-1">💬 "{formula.user_experience}"</p>
+                          )}
+                          {formula.marketing_angle && (
+                            <p className="text-cyan-300 text-xs mt-1">📢 {formula.marketing_angle}</p>
+                          )}
                         </div>
-                        <div className="text-right">
+                        <div className="text-right ml-3">
                           <p className="text-green-400 font-bold text-lg">${formula.price_per_dose}/dose</p>
                           <p className="text-gray-400 text-xs">{formula.quantity} doses</p>
                         </div>
