@@ -302,14 +302,7 @@ export default function SirenDating({ siren, onClose }) {
             </div>
 
             <h4 className="text-white text-sm font-medium mb-2">Date Activities</h4>
-            <button
-              onClick={() => setCurrentScenario(SIREN_DATE_SCENARIOS[Math.floor(Math.random() * SIREN_DATE_SCENARIOS.length)])}
-              className="w-full bg-gradient-to-r from-cyan-900/60 to-teal-900/60 hover:from-cyan-900/80 hover:to-teal-900/80 border-2 border-cyan-500/50 rounded-xl py-4 px-4 transition-colors text-white font-medium mb-3"
-            >
-              🌊 Interactive Date Scenario
-            </button>
-
-            <p className="text-gray-400 text-xs mb-2">Or select a quick activity:</p>
+            <p className="text-gray-400 text-xs mb-2">Select an activity:</p>
             {DATE_ACTIVITIES.map((activity, i) => (
               <button
                 key={i}
