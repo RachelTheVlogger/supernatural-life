@@ -254,12 +254,17 @@ export default function WerewolfHome() {
         <WerewolfAbilities werewolf={werewolf} onClose={() => setShowAbilities(false)} />
       )}
 
-      {/* Pack Management Modal */}
-      {showPack && (
-        <WerewolfPackManagement werewolf={werewolf} onClose={() => setShowPack(false)} />
-      )}
+      {/* Romance Modal */}
+       {showRomance && (
+         <WerewolfRomance werewolf={werewolf} onClose={() => setShowRomance(false)} />
+       )}
 
-      {/* Moon Phase Selector */}
+      {/* Pack Management Modal */}
+       {showPack && (
+         <WerewolfPackManagement werewolf={werewolf} onClose={() => setShowPack(false)} />
+       )}
+
+       {/* Moon Phase Selector */}
       {showMoonPhase && (
         <motion.div
           initial={{ opacity: 0 }}
