@@ -168,6 +168,37 @@ export default function WitchDeepInteractions({ witch, vampireState, onClose }) 
     }, 2000);
   };
 
+  const handleDiscussBDSM = async () => {
+    setProcessing(true);
+    
+    setTimeout(async () => {
+      const preferences = BDSM_PREFERENCES.slice(0, 3).map(p => p.id);
+      const text = `You and ${witch.name} have a deep conversation about desires and boundaries. "There's no shame in what we like," ${p.subject} says thoughtfully. You discuss fantasies. Fears. Limits. Trust deepens as you explore preferences together.`;
+      
+      setOutcome(text);
+      
+      await base44.entities.Witch.update(witch.id, {
+        bdsm_preferences: [...new Set([...(witch.bdsm_preferences || []), ...preferences])],
+        trust: Math.min(100, (witch.trust || 30) + 25),
+        relationship: Math.min(100, (witch.relationship || 0) + 20)
+      });
+      
+      await base44.entities.NightLog.create({
+        entry: text,
+        category: 'interaction',
+        intensity: 'significant'
+      });
+      
+      queryClient.invalidateQueries();
+      
+      setTimeout(() => {
+        setProcessing(false);
+        setOutcome('');
+        setShowBDSMModal(false);
+      }, 5000);
+    }, 2000);
+  };
+
   const handleIntimateExploration = () => {
     setProcessing(true);
     
