@@ -9,6 +9,7 @@ export default function SirenNymphInteraction({ siren, onClose }) {
   const [action, setAction] = useState(null);
   const [outcome, setOutcome] = useState('');
   const [selectedNymph, setSelectedNymph] = useState(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const { data: nymphs = [] } = useQuery({
     queryKey: ['waterNymphs'],
@@ -145,6 +146,15 @@ export default function SirenNymphInteraction({ siren, onClose }) {
             </div>
 
             <div className="space-y-3">
+              <button
+                onClick={() => setShowAdvanced(true)}
+                disabled={!!action}
+                className="w-full bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-indigo-500/30 rounded-xl py-3 px-4 flex items-center gap-3 disabled:opacity-50"
+              >
+                <Sparkles className="w-5 h-5 text-indigo-400" />
+                <span className="text-white">Advanced Interaction</span>
+              </button>
+
               <button
                 onClick={() => handleInteract(selectedNymph, 'harmonize')}
                 disabled={!!action}
