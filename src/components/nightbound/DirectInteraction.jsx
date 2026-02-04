@@ -2186,8 +2186,8 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     : INTERACTIONS;
 
   const categories = servant.is_turned 
-    ? ['all', 'romantic', 'vampire', 'physical', 'bdsm', 'social', 'activity', 'power']
-    : ['all', 'romantic', 'physical', 'bdsm', 'social', 'activity', 'power'];
+    ? (liteMode ? ['all', 'romantic', 'vampire', 'physical', 'social', 'activity', 'power'] : ['all', 'romantic', 'vampire', 'physical', 'bdsm', 'social', 'activity', 'power'])
+    : (liteMode ? ['all', 'romantic', 'physical', 'social', 'activity', 'power'] : ['all', 'romantic', 'physical', 'bdsm', 'social', 'activity', 'power']);
 
   // Explicit interactions to hide in lite mode
   const explicitInteractions = [
@@ -2206,15 +2206,10 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     'sexting'
   ];
 
-  // Filter by category and lite mode
+  // Filter by category only (show all interactions, disabled ones will be greyed out)
   const filteredInteractions = Object.entries(allInteractions).filter(([key, interaction]) => {
     // Category filter
     if (selectedCategory !== 'all' && interaction.category !== selectedCategory) {
-      return false;
-    }
-
-    // Lite mode filter - hide explicit interactions
-    if (liteMode && explicitInteractions.includes(key)) {
       return false;
     }
 
@@ -2686,18 +2681,28 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
           <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-2">
             {filteredInteractions.map(([key, interaction]) => {
               const Icon = interaction.icon;
+              const isExplicit = explicitInteractions.includes(key);
+              const isBlocked = liteMode && isExplicit;
 
               return (
                 <button
                   key={key}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleInteraction(key);
+                    if (!isBlocked) {
+                      handleInteraction(key);
+                    }
                   }}
-                  className="bitlife-btn w-full rounded-xl py-3 flex items-center gap-3 text-sm touch-manipulation"
+                  disabled={isBlocked}
+                  className={`w-full rounded-xl py-3 flex items-center gap-3 text-sm touch-manipulation ${
+                    isBlocked 
+                      ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed opacity-50' 
+                      : 'bitlife-btn'
+                  }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{interaction.label}</span>
+                  {isBlocked && <Lock className="w-3 h-3 ml-auto" />}
                 </button>
               );
             })}
