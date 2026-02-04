@@ -2203,7 +2203,7 @@ export default function DirectInteraction({ servant, vampireState, onClose }) {
     'feedOnEachOther', 'vampireHunt', 'vampireBiteDuringsex', 'vampireRace',
     'vampireSpar', 'vampireTelekinesis', 'vampireCompulsion', 'vampireDaylight',
     'vampireEternity', 'vampireNest', 'vampireBond', 'vampireTeach', 'videocall',
-    'sexting'
+    'sexting', 'setBoundaries'
   ];
 
   // Filter by category only (show all interactions, disabled ones will be greyed out)
