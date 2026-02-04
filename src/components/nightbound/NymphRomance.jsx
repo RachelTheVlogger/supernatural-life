@@ -509,9 +509,10 @@ export default function NymphRomance({ nymph, onClose }) {
                 className="bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 max-w-md w-full"
               >
                 <h3 className="text-xl font-bold text-white mb-4">Intimacy Preferences</h3>
-                <p className="text-gray-400 text-sm mb-4">What does {nymph.name} desire?</p>
+                <p className="text-gray-400 text-sm mb-4">Explore desires together:</p>
 
-                <div className="space-y-2 mb-6">
+                {!selectedPreference ? (
+                  <div className="space-y-2 mb-6">
                   {BDSM_PREFERENCES.map(pref => (
                     <button
                       key={pref.value}
