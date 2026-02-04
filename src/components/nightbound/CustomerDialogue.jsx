@@ -206,7 +206,9 @@ Make it realistic, dark, with real consequences.`,
         updates.threat_level = Math.min(100, (customer.threat_level || 0) + 30);
       }
 
-      await base44.entities.DrugCustomer.update(customer.id, updates);
+      if (customer.id) {
+        await base44.entities.DrugCustomer.update(customer.id, updates);
+      }
 
       // Check for betrayal event
       if (updates.betrayal_potential > 80 && Math.random() < 0.3) {
@@ -252,6 +254,8 @@ Make it realistic, dark, with real consequences.`,
   };
 
   const triggerBetrayalEvent = async (customer, dialogueResponse) => {
+    if (!customer?.id) return;
+    
     const betrayalTypes = ['police_informant', 'rival_dealer', 'blackmail', 'robbery'];
     const betrayalType = betrayalTypes[Math.floor(Math.random() * betrayalTypes.length)];
 
