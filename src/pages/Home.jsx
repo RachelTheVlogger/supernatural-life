@@ -18,8 +18,6 @@ export default function Home() {
   const [introStep, setIntroStep] = useState(0);
   const [selectedType, setSelectedType] = useState(null);
   const [showCleanup, setShowCleanup] = useState(false);
-  const [ageVerified, setAgeVerified] = useState(false);
-  const [showWarning, setShowWarning] = useState(true);
   
   const { data: vampireStates = [] } = useQuery({
     queryKey: ['vampireState'],
@@ -271,53 +269,6 @@ export default function Home() {
   };
 
   const duplicateGroups = getAllDuplicates();
-
-  // Age gate
-  if (!ageVerified) {
-    return (
-      <div className="min-h-screen relative overflow-hidden flex items-center justify-center"
-           style={{ background: 'linear-gradient(to bottom, #0a0a14 0%, #1a0a1a 50%, #0a0014 100%)' }}>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-gray-900/90 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full mx-4 border-2 border-red-500/50"
-        >
-          <div className="text-center mb-6">
-            <span className="text-6xl mb-4 block">⚠️</span>
-            <h2 className="text-2xl font-bold text-red-100 mb-2">Age Verification Required</h2>
-            <p className="text-red-300 text-sm">You must be 18+ to access this content</p>
-          </div>
-
-          <div className="bg-black/40 rounded-lg p-4 mb-6 text-left">
-            <p className="text-yellow-300 text-xs font-bold mb-2">⚠️ CONTENT WARNING</p>
-            <p className="text-gray-300 text-xs leading-relaxed">
-              This game contains mature themes including: violence, blood, drug use, addiction, 
-              sexual content, and dark psychological themes. All content is fictional.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <button
-              onClick={() => setAgeVerified(true)}
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold transition-all"
-            >
-              I am 18 or older - Enter
-            </button>
-            <button
-              onClick={() => window.location.href = 'https://www.google.com'}
-              className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-medium transition-all"
-            >
-              I am under 18 - Exit
-            </button>
-          </div>
-
-          <p className="text-gray-500 text-xs text-center mt-4">
-            By entering, you confirm you are of legal age and understand this is fictional entertainment.
-          </p>
-        </motion.div>
-      </div>
-    );
-  }
   
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center"
