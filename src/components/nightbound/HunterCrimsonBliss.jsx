@@ -37,8 +37,14 @@ export default function HunterCrimsonBliss({ hunter, vampires = [], onClose }) {
   const [breedingOutcome, setBreedingOutcome] = useState('');
   const [showCustomerManagement, setShowCustomerManagement] = useState(false);
   
-  // Check if any vampire has lite mode enabled
-  const isLiteMode = vampires.some(v => v.content_filter === 'lite');
+  // Fetch vampire state to check lite mode
+  const { data: vampireStates = [] } = useQuery({
+    queryKey: ['vampireState'],
+    queryFn: () => base44.entities.VampireState.list()
+  });
+  
+  const vampireState = vampireStates[0];
+  const isLiteMode = vampireState?.content_filter === 'lite';
 
   const { data: bloodDrugs = [] } = useQuery({
     queryKey: ['bloodDrugs'],
