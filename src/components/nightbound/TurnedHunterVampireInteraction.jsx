@@ -219,9 +219,13 @@ export default function TurnedHunterVampireInteraction({ hunter, vampire, onClos
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const categories = ['all', 'bonding', 'intimate', 'training', 'romantic', 'sweet', 'physical', 'bdsm', 'activity'];
-  const currentActions = selectedCategory === 'all' 
+  
+  // Filter explicit content in lite mode
+  const filterExplicit = vampire?.content_filter === 'lite';
+  const currentActions = (selectedCategory === 'all' 
     ? VAMPIRE_INTERACTIONS 
-    : VAMPIRE_INTERACTIONS.filter(a => a.category === selectedCategory);
+    : VAMPIRE_INTERACTIONS.filter(a => a.category === selectedCategory))
+    .filter(action => !filterExplicit || !['bdsm', 'physical'].includes(action.category));
 
   const handleAction = async (action) => {
     setProcessing(true);
