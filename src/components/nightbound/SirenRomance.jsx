@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, X, Zap, Music, Waves } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import SirenRomanceExpanded from '@/components/nightbound/SirenRomanceExpanded';
 
 const DIALOGUE_TREES = {
   predatory: {
@@ -439,6 +440,19 @@ export default function SirenRomance({ siren, onClose }) {
               </button>
             )}
 
+            {siren.boundaries_discussed && (
+              <button
+                onClick={() => setStage('expanded')}
+                className="w-full bg-gradient-to-r from-purple-900/60 to-pink-900/60 hover:from-purple-900/80 hover:to-pink-900/80 border-2 border-purple-500/50 rounded-xl py-4 px-6 flex items-center gap-3 transition-all"
+              >
+                <Heart className="w-5 h-5 text-purple-400" />
+                <div className="flex-1 text-left">
+                  <h3 className="text-white font-medium">Romance Interactions</h3>
+                  <p className="text-purple-300 text-sm">Deepen your connection (dates, gifts, more).</p>
+                </div>
+              </button>
+            )}
+
             <button
               onClick={onClose}
               className="w-full bg-gray-800 hover:bg-gray-700 rounded-xl py-3 transition-colors text-gray-300"
@@ -465,22 +479,24 @@ export default function SirenRomance({ siren, onClose }) {
             ))}
           </div>
         ) : stage === 'intimate' ? (
-          <div className="space-y-3">
-            <button
-              onClick={() => setStage('menu')}
-              className="text-pink-400 hover:text-pink-300 text-sm mb-3"
-            >
-              ← Back
-            </button>
-            <button
-              onClick={() => handleIntimate('tender')}
-              className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 transition-all"
-            >
-              <p className="text-white font-medium">Be With Her</p>
-              <p className="text-pink-300 text-sm">Passion awaits.</p>
-            </button>
-          </div>
-        ) : null}
+           <div className="space-y-3">
+             <button
+               onClick={() => setStage('menu')}
+               className="text-pink-400 hover:text-pink-300 text-sm mb-3"
+             >
+               ← Back
+             </button>
+             <button
+               onClick={() => handleIntimate('tender')}
+               className="w-full bg-gradient-to-r from-pink-900/60 to-red-900/60 hover:from-pink-900/80 hover:to-red-900/80 border-2 border-pink-500/50 rounded-xl py-4 px-6 transition-all"
+             >
+               <p className="text-white font-medium">Be With Her</p>
+               <p className="text-pink-300 text-sm">Passion awaits.</p>
+             </button>
+           </div>
+         ) : stage === 'expanded' ? (
+           <SirenRomanceExpanded siren={siren} onClose={() => setStage('menu')} />
+         ) : null}
 
         {/* Boundaries Modal */}
         <AnimatePresence>
