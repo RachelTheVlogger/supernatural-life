@@ -1,0 +1,69 @@
+{
+  "name": "DrugOperation",
+  "type": "object",
+  "properties": {
+    "reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "Underground reputation (0-100)"
+    },
+    "heat_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Police/hunter attention (0-100)"
+    },
+    "territory_control": {
+      "type": "number",
+      "default": 50,
+      "description": "Territory dominance (0-100)"
+    },
+    "rival_threat": {
+      "type": "number",
+      "default": 0,
+      "description": "Rival dealer threat level (0-100)"
+    },
+    "automation_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How automated operation is (0-100)"
+    },
+    "servant_distributor_id": {
+      "type": "string",
+      "description": "Servant handling distribution"
+    },
+    "lab_tier": {
+      "type": "number",
+      "default": 1,
+      "description": "Lab quality tier (1-5)"
+    },
+    "research_points": {
+      "type": "number",
+      "default": 0,
+      "description": "Research progress for new techniques"
+    },
+    "underworld_connections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Network of contacts"
+    },
+    "moral_compass": {
+      "type": "number",
+      "default": 50,
+      "description": "How ethical your operation is (0=ruthless, 100=ethical)"
+    },
+    "casualties": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of deaths caused"
+    },
+    "lives_ruined": {
+      "type": "number",
+      "default": 0,
+      "description": "People whose lives were destroyed"
+    }
+  },
+  "required": []
+}

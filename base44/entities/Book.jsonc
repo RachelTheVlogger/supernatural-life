@@ -1,0 +1,105 @@
+{
+  "name": "Book",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant wrote this book"
+    },
+    "title": {
+      "type": "string",
+      "description": "Book title"
+    },
+    "genre": {
+      "type": "string",
+      "enum": [
+        "dark_romance",
+        "paranormal",
+        "gothic_horror",
+        "urban_fantasy",
+        "erotic_romance",
+        "thriller",
+        "fantasy",
+        "ya_paranormal"
+      ],
+      "description": "Book genre"
+    },
+    "word_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Current word count"
+    },
+    "target_words": {
+      "type": "number",
+      "default": 80000,
+      "description": "Target word count"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "drafting",
+        "rewriting",
+        "editing",
+        "proofreading",
+        "ready",
+        "published"
+      ],
+      "default": "drafting",
+      "description": "Current stage"
+    },
+    "quality": {
+      "type": "number",
+      "default": 50,
+      "description": "Writing quality 0-100"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "amazon",
+        "traditional",
+        "indie",
+        "serialized"
+      ],
+      "description": "Publishing platform"
+    },
+    "price": {
+      "type": "number",
+      "description": "Book price"
+    },
+    "copies_sold": {
+      "type": "number",
+      "default": 0,
+      "description": "Total copies sold"
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Total revenue"
+    },
+    "rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average reader rating"
+    },
+    "has_audiobook": {
+      "type": "boolean",
+      "default": false,
+      "description": "Audio version available"
+    },
+    "audiobook_sales": {
+      "type": "number",
+      "default": 0,
+      "description": "Audiobook copies sold"
+    },
+    "social_buzz": {
+      "type": "number",
+      "default": 0,
+      "description": "Social media engagement"
+    }
+  },
+  "required": [
+    "servant_id",
+    "title",
+    "genre"
+  ]
+}

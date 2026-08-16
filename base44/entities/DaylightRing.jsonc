@@ -1,0 +1,48 @@
+{
+  "name": "DaylightRing",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "Who owns this ring (servant or vampire ID)"
+    },
+    "ring_type": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "enhanced",
+        "eternal"
+      ],
+      "default": "basic",
+      "description": "Quality of the ring"
+    },
+    "charges_remaining": {
+      "type": "number",
+      "default": 10,
+      "description": "How many days of sunlight protection left"
+    },
+    "crafted_by_witch": {
+      "type": "string",
+      "description": "Witch who enchanted it"
+    },
+    "stone_type": {
+      "type": "string",
+      "enum": [
+        "lapis_lazuli",
+        "moonstone",
+        "sunstone",
+        "bloodstone"
+      ],
+      "description": "Gemstone used"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Currently providing protection"
+    }
+  },
+  "required": [
+    "owner_id",
+    "stone_type"
+  ]
+}

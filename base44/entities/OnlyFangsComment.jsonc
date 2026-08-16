@@ -1,0 +1,36 @@
+{
+  "name": "OnlyFangsComment",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant's content this is on"
+    },
+    "video_id": {
+      "type": "string",
+      "description": "Video this comment is on (if video)"
+    },
+    "post_id": {
+      "type": "string",
+      "description": "Post this comment is on (if post)"
+    },
+    "username": {
+      "type": "string",
+      "description": "Commenter username"
+    },
+    "comment": {
+      "type": "string",
+      "description": "Comment text"
+    },
+    "tip": {
+      "type": "number",
+      "default": 0,
+      "description": "Tip amount with comment"
+    }
+  },
+  "required": [
+    "servant_id",
+    "username",
+    "comment"
+  ]
+}

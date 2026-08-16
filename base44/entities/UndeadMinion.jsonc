@@ -1,0 +1,59 @@
+{
+  "name": "UndeadMinion",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Minion name"
+    },
+    "undead_type": {
+      "type": "string",
+      "enum": [
+        "zombie",
+        "skeleton",
+        "ghoul",
+        "wight",
+        "death_knight"
+      ],
+      "default": "zombie"
+    },
+    "master_id": {
+      "type": "string",
+      "description": "Necromancer who raised them"
+    },
+    "combat_power": {
+      "type": "number",
+      "default": 20,
+      "description": "Fighting ability (0-100)"
+    },
+    "decay_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How decomposed (0-100)"
+    },
+    "intelligence": {
+      "type": "number",
+      "default": 10,
+      "description": "Retained intelligence (0-100)"
+    },
+    "loyalty": {
+      "type": "number",
+      "default": 100,
+      "description": "Obedience to master (0-100)"
+    },
+    "can_speak": {
+      "type": "boolean",
+      "default": false,
+      "description": "Retained speech"
+    },
+    "kills": {
+      "type": "number",
+      "default": 0,
+      "description": "Enemies killed"
+    }
+  },
+  "required": [
+    "name",
+    "master_id"
+  ]
+}

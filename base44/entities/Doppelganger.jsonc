@@ -1,0 +1,127 @@
+{
+  "name": "Doppelganger",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Doppelganger's name"
+    },
+    "personality": {
+      "type": "string",
+      "enum": [
+        "sweet",
+        "bratty",
+        "bitchy",
+        "submissive",
+        "dominant",
+        "sarcastic",
+        "clingy",
+        "independent",
+        "manipulative",
+        "naive",
+        "ambitious",
+        "lazy",
+        "jealous",
+        "loyal",
+        "chaotic",
+        "cold",
+        "warm",
+        "tsundere",
+        "paranoid",
+        "reckless",
+        "unstable",
+        "obsessive"
+      ],
+      "description": "Core personality trait"
+    },
+    "original_person_id": {
+      "type": "string",
+      "description": "ID of the person they're a doppelganger of (servant/human)"
+    },
+    "is_vampire": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they've been turned into a vampire"
+    },
+    "is_aware": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they know they're a doppelganger"
+    },
+    "bloodline": {
+      "type": "string",
+      "description": "Which ancient bloodline they're from"
+    },
+    "power_level": {
+      "type": "number",
+      "default": 100,
+      "description": "Strength of their doppelganger blood (100 = pure)"
+    },
+    "times_bled": {
+      "type": "number",
+      "default": 0,
+      "description": "How many times their blood has been used"
+    },
+    "relationship_vampire": {
+      "type": "number",
+      "default": 0,
+      "description": "Relationship with the vampire"
+    },
+    "location": {
+      "type": "string",
+      "default": "unknown",
+      "description": "Where they are"
+    },
+    "protected_by": {
+      "type": "string",
+      "description": "Who's protecting them"
+    },
+    "hunted_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of entities hunting them"
+    },
+    "destiny_fulfilled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether their doppelganger destiny has been fulfilled"
+    },
+    "awakening_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Level of supernatural awakening (0-10)"
+    },
+    "is_evolved": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they have completed an evolution path"
+    },
+    "evolution_path": {
+      "type": "string",
+      "enum": [
+        "guardian",
+        "shadow",
+        "weapon",
+        "sovereign",
+        "chaos",
+        "ascended"
+      ],
+      "description": "Which evolution path they took"
+    },
+    "unlocked_abilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of special abilities they've unlocked"
+    }
+  },
+  "required": [
+    "name",
+    "bloodline"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "name": "HunterTeam",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Team name"
+    },
+    "leader_id": {
+      "type": "string",
+      "description": "ID of the team leader hunter"
+    },
+    "member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "IDs of all team members including leader"
+    },
+    "specialization": {
+      "type": "string",
+      "enum": [
+        "assault",
+        "stealth",
+        "research",
+        "tactical"
+      ],
+      "default": "tactical",
+      "description": "Team's primary focus"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "Team reputation score"
+    },
+    "missions_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Total missions completed as a team"
+    },
+    "team_funds": {
+      "type": "number",
+      "default": 0,
+      "description": "Shared team resources"
+    },
+    "formation_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the team was formed"
+    }
+  },
+  "required": [
+    "name",
+    "leader_id"
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "name": "Servant",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Servant's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "custom",
+      "description": "Servant's gender"
+    },
+    "pronouns": {
+      "type": "string",
+      "enum": [
+        "he/him",
+        "she/her",
+        "they/them",
+        "any"
+      ],
+      "default": "they/them",
+      "description": "Preferred pronouns"
+    },
+    "sexuality": {
+      "type": "string",
+      "enum": [
+        "straight",
+        "gay",
+        "lesbian",
+        "bisexual",
+        "pansexual",
+        "asexual",
+        "questioning"
+      ],
+      "default": "bisexual",
+      "description": "Servant's sexuality"
+    },
+    "personality": {
+      "type": "string",
+      "enum": [
+        "sweet",
+        "bratty",
+        "bitchy",
+        "submissive",
+        "dominant",
+        "sarcastic",
+        "clingy",
+        "independent",
+        "manipulative",
+        "naive",
+        "ambitious",
+        "lazy",
+        "jealous",
+        "loyal",
+        "chaotic",
+        "cold",
+        "warm",
+        "tsundere"
+      ],
+      "description": "Core personality trait"
+    },
+    "identity_revealed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they've told you about their identity"
+    },
+    "job": {
+      "type": "string",
+      "description": "Their day job"
+    },
+    "variant": {
+      "type": "string",
+      "enum": [
+        "devoted",
+        "defiant",
+        "dreamer"
+      ],
+      "description": "Personality variant"
+    },
+    "obsession_stage": {
+      "type": "number",
+      "default": 1,
+      "description": "1=Curious, 2=Devoted, 3=Dependent, 4=Reverent, 5=Bound"
+    },
+    "relationship": {
+      "type": "number",
+      "default": 0,
+      "description": "Relationship level: 0-100. Affects dialogue and events"
+    },
+    "last_interaction": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time interacted"
+    },
+    "is_turned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they've been turned into a vampire"
+    },
+    "pre_turn_relationship": {
+      "type": "number",
+      "description": "Relationship level before being turned (determines sire bond strength)"
+    },
+    "vampire_stage": {
+      "type": "number",
+      "default": 1,
+      "description": "Vampire growth stage: 1=Newborn, 2=Fledgling, 3=Established, 4=Elder"
+    },
+    "vampire_power_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Overall vampire power level (0-100)"
+    },
+    "nights_as_vampire": {
+      "type": "number",
+      "default": 0,
+      "description": "How many nights since being turned"
+    },
+    "teaching_progress": {
+      "type": "number",
+      "default": 0,
+      "description": "Progress in teaching them"
+    },
+    "emotional_state": {
+      "type": "string",
+      "description": "Current emotional tone"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Powers unlocked when turned into vampire"
+    },
+    "training_specialization": {
+      "type": "string",
+      "enum": [
+        "none",
+        "seduction",
+        "combat",
+        "business",
+        "espionage"
+      ],
+      "default": "none",
+      "description": "What they're being trained in"
+    },
+    "jealousy_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Jealousy towards other servants (0-100)"
+    },
+    "blood_type": {
+      "type": "string",
+      "enum": [
+        "O-",
+        "O+",
+        "A-",
+        "A+",
+        "B-",
+        "B+",
+        "AB-",
+        "AB+"
+      ],
+      "description": "Their blood type (affects feeding quality)"
+    },
+    "boundaries": {
+      "type": "string",
+      "enum": [
+        "exclusive",
+        "open",
+        "no-strings"
+      ],
+      "description": "Relationship boundaries"
+    }
+  },
+  "required": [
+    "name",
+    "variant"
+  ]
+}

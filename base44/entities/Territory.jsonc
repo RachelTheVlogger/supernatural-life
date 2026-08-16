@@ -1,0 +1,36 @@
+{
+  "name": "Territory",
+  "type": "object",
+  "properties": {
+    "area_name": {
+      "type": "string",
+      "description": "Name of the territory"
+    },
+    "control_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Your influence (0-100)"
+    },
+    "controlled_by": {
+      "type": "string",
+      "description": "Who currently controls it (you, rival, neutral)"
+    },
+    "feeding_quality": {
+      "type": "string",
+      "enum": [
+        "poor",
+        "average",
+        "excellent"
+      ],
+      "description": "Quality of feeding grounds"
+    },
+    "heat_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Hunter attention (0-100)"
+    }
+  },
+  "required": [
+    "area_name"
+  ]
+}

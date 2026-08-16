@@ -1,0 +1,43 @@
+{
+  "name": "BusinessStats",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant this belongs to"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "Overall reputation score (0-100)"
+    },
+    "total_sales": {
+      "type": "number",
+      "default": 0,
+      "description": "Lifetime sales count"
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Total revenue earned"
+    },
+    "average_rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average customer rating"
+    },
+    "passive_income_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Passive income per hour"
+    },
+    "last_passive_collection": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time passive income was collected"
+    }
+  },
+  "required": [
+    "servant_id"
+  ]
+}

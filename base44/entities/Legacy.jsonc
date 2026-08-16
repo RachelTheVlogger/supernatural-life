@@ -1,0 +1,29 @@
+{
+  "name": "Legacy",
+  "type": "object",
+  "properties": {
+    "legacy_type": {
+      "type": "string",
+      "enum": [
+        "servants_turned",
+        "territory_dominated",
+        "rivals_defeated",
+        "wealth_accumulated",
+        "power_mastered"
+      ],
+      "description": "Type of legacy"
+    },
+    "value": {
+      "type": "number",
+      "default": 0,
+      "description": "Current progress"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this legacy represents"
+    }
+  },
+  "required": [
+    "legacy_type"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "name": "DrugPlant",
+  "type": "object",
+  "properties": {
+    "hunter_id": {
+      "type": "string",
+      "description": "Which hunter owns this plant"
+    },
+    "plant_type": {
+      "type": "string",
+      "enum": [
+        "cannabis",
+        "psilocybin",
+        "opium_poppy",
+        "coca",
+        "ergot"
+      ],
+      "description": "Type of drug plant"
+    },
+    "appearance": {
+      "type": "string",
+      "enum": [
+        "realistic",
+        "hidden",
+        "potted",
+        "herb_garden"
+      ],
+      "default": "hidden",
+      "description": "How the plant appears visually"
+    },
+    "growth_stage": {
+      "type": "number",
+      "default": 1,
+      "description": "Growth stage (1-5)"
+    },
+    "potency": {
+      "type": "number",
+      "default": 30,
+      "description": "Potency level (0-100)"
+    },
+    "health": {
+      "type": "number",
+      "default": 100,
+      "description": "Plant health (0-100)"
+    },
+    "last_watered": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time plant was watered"
+    },
+    "days_growing": {
+      "type": "number",
+      "default": 0,
+      "description": "How many days plant has been growing"
+    },
+    "yield": {
+      "type": "number",
+      "default": 0,
+      "description": "Amount of product available"
+    },
+    "ready_to_harvest": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ready to harvest"
+    }
+  },
+  "required": [
+    "hunter_id",
+    "plant_type"
+  ]
+}

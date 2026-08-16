@@ -1,0 +1,204 @@
+{
+  "name": "Siren",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Siren's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "woman"
+    },
+    "sexuality": {
+      "type": "string",
+      "enum": [
+        "straight",
+        "gay",
+        "lesbian",
+        "bisexual",
+        "pansexual",
+        "asexual",
+        "questioning"
+      ],
+      "default": "bisexual"
+    },
+    "personality": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "seductive"
+      ],
+      "description": "Core personality traits (up to 3)"
+    },
+    "voice_power": {
+      "type": "number",
+      "default": 50,
+      "description": "Hypnotic voice strength (0-100)"
+    },
+    "water_affinity": {
+      "type": "number",
+      "default": 50,
+      "description": "Connection to water/ocean (0-100)"
+    },
+    "charm_level": {
+      "type": "number",
+      "default": 60,
+      "description": "Natural charm and seduction ability"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Hypnotic Song"
+      ],
+      "description": "List of unlocked siren abilities"
+    },
+    "victims_lured": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of people lured"
+    },
+    "songs_sung": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of songs performed"
+    },
+    "aquatic_form": {
+      "type": "boolean",
+      "default": false,
+      "description": "Currently in tail form"
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "People under their influence"
+    },
+    "alignment": {
+      "type": "string",
+      "enum": [
+        "benevolent",
+        "neutral",
+        "predatory"
+      ],
+      "default": "neutral",
+      "description": "Moral alignment affecting interactions"
+    },
+    "trust": {
+      "type": "number",
+      "default": 30,
+      "description": "How much they trust others (0-100)"
+    },
+    "fear_of_discovery": {
+      "type": "number",
+      "default": 50,
+      "description": "Fear of being exposed (0-100)"
+    },
+    "desire": {
+      "type": "number",
+      "default": 40,
+      "description": "Romantic/sexual desire level (0-100)"
+    },
+    "intimacy_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Physical intimacy progression (0-100)"
+    },
+    "boundaries_discussed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether boundaries have been established"
+    },
+    "territories_claimed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Ocean territories controlled"
+    },
+    "pod_id": {
+      "type": "string",
+      "description": "Siren pod/group ID"
+    },
+    "pod_rank": {
+      "type": "string",
+      "enum": [
+        "leader",
+        "elder",
+        "singer",
+        "hunter",
+        "lone"
+      ],
+      "default": "lone",
+      "description": "Rank in siren pod"
+    },
+    "underwater_discoveries": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Shipwrecks, temples, treasures found"
+    },
+    "devoted_followers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Humans fully enchanted and devoted"
+    },
+    "song_types_mastered": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Lullaby"
+      ],
+      "description": "Different song types learned"
+    },
+    "ocean_allies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Sea creatures bonded with"
+    },
+    "rival_sirens": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Competing siren IDs"
+    },
+    "transformation_mastery": {
+      "type": "number",
+      "default": 30,
+      "description": "Control over form shifting (0-100)"
+    },
+    "mass_charm_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Times charmed multiple people at once"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

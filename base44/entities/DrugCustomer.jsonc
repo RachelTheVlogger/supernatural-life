@@ -1,0 +1,257 @@
+{
+  "name": "DrugCustomer",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Customer's name"
+    },
+    "customer_type": {
+      "type": "string",
+      "enum": [
+        "vampire",
+        "human"
+      ],
+      "description": "Type of customer"
+    },
+    "addiction_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How addicted (0-100)"
+    },
+    "preferred_strain": {
+      "type": "string",
+      "description": "Their favorite strain"
+    },
+    "total_spent": {
+      "type": "number",
+      "default": 0,
+      "description": "Total money spent"
+    },
+    "last_purchase": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time they bought"
+    },
+    "friendship": {
+      "type": "number",
+      "default": 0,
+      "description": "Friendship level with dealer (0-100)"
+    },
+    "is_vip": {
+      "type": "boolean",
+      "default": false,
+      "description": "VIP status unlocks features"
+    },
+    "referred_by": {
+      "type": "string",
+      "description": "ID of customer who referred them"
+    },
+    "custom_order": {
+      "type": "string",
+      "description": "Special request for custom strain"
+    },
+    "overdose_risk": {
+      "type": "number",
+      "default": 0,
+      "description": "Risk of overdose (0-100)"
+    },
+    "violence_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How violent in withdrawal (0-100)"
+    },
+    "relationship_type": {
+      "type": "string",
+      "enum": [
+        "business",
+        "friend",
+        "lover",
+        "dependent",
+        "enemy"
+      ],
+      "default": "business",
+      "description": "Type of relationship with dealer"
+    },
+    "backstory": {
+      "type": "string",
+      "description": "Their personal story and why they use"
+    },
+    "life_status": {
+      "type": "string",
+      "enum": [
+        "stable",
+        "declining",
+        "rock_bottom",
+        "recovering"
+      ],
+      "default": "stable",
+      "description": "Current life situation"
+    },
+    "days_clean": {
+      "type": "number",
+      "default": 0,
+      "description": "Days since last use"
+    },
+    "intervention_attempted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether someone tried to help them quit"
+    },
+    "psychological_profile": {
+      "type": "string",
+      "description": "Their mental state and motivations"
+    },
+    "loyalty_tier": {
+      "type": "string",
+      "enum": [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum",
+        "diamond"
+      ],
+      "default": "bronze",
+      "description": "Customer loyalty program tier"
+    },
+    "loyalty_points": {
+      "type": "number",
+      "default": 0,
+      "description": "Loyalty points earned"
+    },
+    "purchase_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total number of purchases"
+    },
+    "withdrawal_stage": {
+      "type": "string",
+      "enum": [
+        "none",
+        "early",
+        "peak",
+        "late",
+        "recovered"
+      ],
+      "default": "none",
+      "description": "Current withdrawal stage"
+    },
+    "withdrawal_severity": {
+      "type": "number",
+      "default": 0,
+      "description": "Severity of withdrawal symptoms (0-100)"
+    },
+    "last_withdrawal": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time they experienced withdrawal"
+    },
+    "overdose_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of overdoses survived"
+    },
+    "in_rehab": {
+      "type": "boolean",
+      "default": false,
+      "description": "Currently in rehabilitation"
+    },
+    "rehab_attempts": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of rehab attempts"
+    },
+    "rehab_success_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Success rate of staying clean (0-100)"
+    },
+    "dealer_manipulation": {
+      "type": "number",
+      "default": 0,
+      "description": "Level of dealer's psychological control (0-100)"
+    },
+    "debt_owed": {
+      "type": "number",
+      "default": 0,
+      "description": "Money owed to dealer"
+    },
+    "threat_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How dangerous they are (0-100)"
+    },
+    "family_concern": {
+      "type": "number",
+      "default": 0,
+      "description": "How worried their family is (0-100)"
+    },
+    "trust_level": {
+      "type": "number",
+      "default": 50,
+      "description": "How much they trust dealer (0-100)"
+    },
+    "betrayal_potential": {
+      "type": "number",
+      "default": 0,
+      "description": "Likelihood of betraying dealer (0-100)"
+    },
+    "negotiation_skill": {
+      "type": "number",
+      "default": 30,
+      "description": "How good at haggling (0-100)"
+    },
+    "referral_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of people they've referred"
+    },
+    "last_conversation": {
+      "type": "string",
+      "description": "Summary of last dialogue"
+    },
+    "dialogue_history": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Past conversation records"
+    },
+    "personality_traits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Character traits affecting dialogue"
+    },
+    "current_mood": {
+      "type": "string",
+      "enum": [
+        "desperate",
+        "calm",
+        "angry",
+        "grateful",
+        "suspicious",
+        "friendly"
+      ],
+      "default": "calm",
+      "description": "Current emotional state"
+    },
+    "knows_dealer_secret": {
+      "type": "boolean",
+      "default": false,
+      "description": "Has compromising info on dealer"
+    },
+    "police_informant": {
+      "type": "boolean",
+      "default": false,
+      "description": "Working with police"
+    }
+  },
+  "required": [
+    "name",
+    "customer_type"
+  ]
+}

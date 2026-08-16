@@ -1,0 +1,23 @@
+{
+  "name": "Tutorial",
+  "type": "object",
+  "properties": {
+    "tutorial_id": {
+      "type": "string",
+      "description": "Unique identifier for the tutorial"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the tutorial has been completed"
+    },
+    "skipped": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the player skipped this tutorial"
+    }
+  },
+  "required": [
+    "tutorial_id"
+  ]
+}

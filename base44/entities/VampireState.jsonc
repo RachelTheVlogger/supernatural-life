@@ -1,0 +1,230 @@
+{
+  "name": "VampireState",
+  "type": "object",
+  "properties": {
+    "vampire_name": {
+      "type": "string",
+      "description": "The vampire's chosen name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "man",
+      "description": "Vampire's gender identity"
+    },
+    "pronouns": {
+      "type": "string",
+      "enum": [
+        "he/him",
+        "she/her",
+        "they/them",
+        "any"
+      ],
+      "default": "they/them",
+      "description": "Preferred pronouns"
+    },
+    "sexuality": {
+      "type": "string",
+      "enum": [
+        "straight",
+        "gay",
+        "lesbian",
+        "bisexual",
+        "pansexual",
+        "asexual",
+        "questioning"
+      ],
+      "default": "bisexual",
+      "description": "Vampire's sexuality"
+    },
+    "personality": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "charming"
+      ],
+      "description": "Core personality traits (up to 3)"
+    },
+    "job": {
+      "type": "string",
+      "default": "Night Shift Nurse",
+      "description": "Vampire's job - works at hospital surrounded by blood"
+    },
+    "hunger_state": {
+      "type": "string",
+      "enum": [
+        "sated",
+        "calm",
+        "lingering",
+        "heightened",
+        "restless"
+      ],
+      "default": "calm",
+      "description": "Current hunger state (narrative only)"
+    },
+    "emotional_mode": {
+      "type": "string",
+      "enum": [
+        "feeling",
+        "ruthless"
+      ],
+      "default": "feeling",
+      "description": "Whether emotions are on or off"
+    },
+    "time_of_day": {
+      "type": "string",
+      "enum": [
+        "day",
+        "night"
+      ],
+      "default": "night",
+      "description": "Current time of day"
+    },
+    "vampire_stage": {
+      "type": "number",
+      "default": 1,
+      "description": "Vampire growth stage: 1=Newborn, 2=Fledgling, 3=Established, 4=Elder"
+    },
+    "vampire_power_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Overall vampire power level (0-100)"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of unlocked power names"
+    },
+    "nights_passed": {
+      "type": "number",
+      "default": 0,
+      "description": "Count of nights"
+    },
+    "current_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Current in-game date"
+    },
+    "last_feed": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last feeding time"
+    },
+    "humanity": {
+      "type": "number",
+      "default": 50,
+      "description": "Humanity score: 0-100. High = compassionate, Low = monstrous"
+    },
+    "moral_path": {
+      "type": "string",
+      "enum": [
+        "humane",
+        "balanced",
+        "ruthless",
+        "monster"
+      ],
+      "default": "balanced",
+      "description": "Current moral alignment"
+    },
+    "preferred_title": {
+      "type": "string",
+      "description": "How servants should address the vampire (Sir, Master, Daddy, Mistress, etc)"
+    },
+    "ripper_kills": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of kills made in ripper mode"
+    },
+    "blood_type_preference": {
+      "type": "string",
+      "enum": [
+        "O-",
+        "O+",
+        "A-",
+        "A+",
+        "B-",
+        "B+",
+        "AB-",
+        "AB+"
+      ],
+      "description": "Preferred blood type for power boost"
+    },
+    "exposure_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How exposed you are (0-100) - higher = more danger"
+    },
+    "territory_influence": {
+      "type": "number",
+      "default": 0,
+      "description": "Total territory control (0-100)"
+    },
+    "weakness_resistance": {
+      "type": "number",
+      "default": 0,
+      "description": "Resistance to weaknesses (0-100)"
+    },
+    "family_bloodline": {
+      "type": "string",
+      "description": "Which vampire family you belong to"
+    },
+    "coven_size": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of vampires in your coven"
+    },
+    "years_survived": {
+      "type": "number",
+      "default": 0,
+      "description": "Years as a vampire (for milestones)"
+    },
+    "content_filter": {
+      "type": "string",
+      "enum": [
+        "full",
+        "lite"
+      ],
+      "default": "full",
+      "description": "Content filter setting - lite mode hides explicit interactions"
+    },
+    "addiction_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Blood addiction level (0-100)"
+    },
+    "addicted_to_person": {
+      "type": "string",
+      "description": "ID of person they're addicted to"
+    },
+    "withdrawal_severity": {
+      "type": "number",
+      "default": 0,
+      "description": "Withdrawal symptoms severity (0-100)"
+    },
+    "days_since_last_fix": {
+      "type": "number",
+      "default": 0,
+      "description": "Days since feeding from addiction target"
+    },
+    "hunter_relationship": {
+      "type": "number",
+      "default": 0,
+      "description": "Relationship with hunter (0-100)"
+    },
+    "living_with_hunter": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether vampire lives with a hunter"
+    }
+  },
+  "required": []
+}

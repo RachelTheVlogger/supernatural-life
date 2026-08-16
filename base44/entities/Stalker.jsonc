@@ -1,0 +1,79 @@
+{
+  "name": "Stalker",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant is being stalked"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "onlyfangs",
+        "youtube",
+        "snapchat",
+        "instagram",
+        "tiktok"
+      ],
+      "description": "Where they found the servant"
+    },
+    "username": {
+      "type": "string",
+      "description": "Stalker's username"
+    },
+    "real_name": {
+      "type": "string",
+      "description": "Stalker's real name (if discovered)"
+    },
+    "obsession_level": {
+      "type": "number",
+      "default": 20,
+      "description": "How obsessed they are (0-100)"
+    },
+    "danger_level": {
+      "type": "string",
+      "enum": [
+        "harmless",
+        "concerning",
+        "threatening",
+        "dangerous",
+        "critical"
+      ],
+      "default": "harmless",
+      "description": "Threat level"
+    },
+    "behavior_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Stalking behaviors observed"
+    },
+    "last_contact": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time they contacted/appeared"
+    },
+    "has_address": {
+      "type": "boolean",
+      "default": false,
+      "description": "Have they found the servant's address"
+    },
+    "restraining_order": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is there a restraining order"
+    },
+    "blocked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Blocked on platform"
+    }
+  },
+  "required": [
+    "servant_id",
+    "platform",
+    "username"
+  ]
+}

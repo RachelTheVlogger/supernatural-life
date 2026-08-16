@@ -1,0 +1,117 @@
+{
+  "name": "Werewolf",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Werewolf's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "man"
+    },
+    "moon_phase": {
+      "type": "string",
+      "enum": [
+        "new",
+        "waxing",
+        "full",
+        "waning"
+      ],
+      "default": "waxing",
+      "description": "Current moon phase affecting power"
+    },
+    "pack_rank": {
+      "type": "string",
+      "enum": [
+        "alpha",
+        "beta",
+        "omega",
+        "lone_wolf"
+      ],
+      "default": "omega",
+      "description": "Rank in pack hierarchy"
+    },
+    "transformation_control": {
+      "type": "number",
+      "default": 30,
+      "description": "Control over transformations (0-100)"
+    },
+    "beast_rage": {
+      "type": "number",
+      "default": 50,
+      "description": "Current rage level (0-100)"
+    },
+    "pack_id": {
+      "type": "string",
+      "description": "ID of pack they belong to"
+    },
+    "territory_size": {
+      "type": "number",
+      "default": 0,
+      "description": "Territory controlled in sq miles"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Enhanced Senses",
+        "Claws"
+      ],
+      "description": "Werewolf abilities unlocked"
+    },
+    "nights_as_wolf": {
+      "type": "number",
+      "default": 0,
+      "description": "Nights spent transformed"
+    },
+    "kills_in_wolf_form": {
+      "type": "number",
+      "default": 0,
+      "description": "Kills while transformed"
+    },
+    "humanity": {
+      "type": "number",
+      "default": 60,
+      "description": "How much humanity remains"
+    },
+    "vampire_rivalry": {
+      "type": "number",
+      "default": 50,
+      "description": "Hatred of vampires (0-100)"
+    },
+    "is_cursed": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether lycanthropy is a curse or gift"
+    },
+    "ability_cooldowns": {
+      "type": "object",
+      "default": {},
+      "description": "Cooldowns for active abilities"
+    },
+    "loyalty": {
+      "type": "number",
+      "default": 60,
+      "description": "Loyalty to pack (0-100)"
+    },
+    "assigned_role": {
+      "type": "string",
+      "description": "Role within pack"
+    },
+    "assigned_territory": {
+      "type": "string",
+      "description": "Territory assignment"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

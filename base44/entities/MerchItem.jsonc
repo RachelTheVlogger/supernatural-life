@@ -1,0 +1,48 @@
+{
+  "name": "MerchItem",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant's merch this is"
+    },
+    "item_name": {
+      "type": "string",
+      "description": "Name of merch item"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "poster",
+        "tshirt",
+        "mug",
+        "sticker",
+        "calendar",
+        "polaroid",
+        "underwear",
+        "custom"
+      ],
+      "description": "Type of merchandise"
+    },
+    "price": {
+      "type": "number",
+      "description": "Selling price"
+    },
+    "sales": {
+      "type": "number",
+      "default": 0,
+      "description": "Units sold"
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Total revenue from this item"
+    }
+  },
+  "required": [
+    "servant_id",
+    "item_name",
+    "item_type",
+    "price"
+  ]
+}

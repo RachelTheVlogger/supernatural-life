@@ -1,0 +1,54 @@
+{
+  "name": "DatingMatch",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant matched with them"
+    },
+    "match_name": {
+      "type": "string",
+      "description": "Name of the match"
+    },
+    "match_type": {
+      "type": "string",
+      "enum": [
+        "potential_servant",
+        "feeding_target",
+        "normal_human",
+        "hunter",
+        "witch"
+      ],
+      "description": "What this person could become"
+    },
+    "interest_level": {
+      "type": "number",
+      "default": 50,
+      "description": "How interested they are 0-100"
+    },
+    "chat_messages": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of messages exchanged"
+    },
+    "met_in_person": {
+      "type": "boolean",
+      "default": false,
+      "description": "Have they met up yet"
+    },
+    "brought_home": {
+      "type": "boolean",
+      "default": false,
+      "description": "Have they been brought to vampire's home"
+    },
+    "outcome": {
+      "type": "string",
+      "description": "What happened after meeting"
+    }
+  },
+  "required": [
+    "servant_id",
+    "match_name",
+    "match_type"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "name": "Necromancer",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Necromancer's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "death_magic_level": {
+      "type": "number",
+      "default": 30,
+      "description": "Mastery of necromancy (0-100)"
+    },
+    "undead_army_size": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of undead under control"
+    },
+    "souls_bound": {
+      "type": "number",
+      "default": 0,
+      "description": "Souls captured and bound"
+    },
+    "unlocked_spells": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Raise Dead",
+        "Soul Drain"
+      ],
+      "description": "Necromantic spells"
+    },
+    "phylactery": {
+      "type": "string",
+      "description": "Soul vessel for immortality"
+    },
+    "is_lich": {
+      "type": "boolean",
+      "default": false,
+      "description": "Transformed into undead"
+    },
+    "graveyard_territory": {
+      "type": "string",
+      "description": "Graveyard under control"
+    },
+    "life_force": {
+      "type": "number",
+      "default": 100,
+      "description": "Remaining life energy"
+    },
+    "corruption": {
+      "type": "number",
+      "default": 40,
+      "description": "Death magic corruption (0-100)"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

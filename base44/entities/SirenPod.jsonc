@@ -1,0 +1,56 @@
+{
+  "name": "SirenPod",
+  "type": "object",
+  "properties": {
+    "pod_name": {
+      "type": "string",
+      "description": "Name of the siren pod"
+    },
+    "leader_id": {
+      "type": "string",
+      "description": "Siren ID of pod leader"
+    },
+    "member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "All pod members"
+    },
+    "territory": {
+      "type": "string",
+      "description": "Ocean territory claimed"
+    },
+    "pod_power": {
+      "type": "number",
+      "default": 50,
+      "description": "Combined pod strength (0-100)"
+    },
+    "rival_pods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Enemy pod IDs"
+    },
+    "alliances": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Allied pod IDs"
+    },
+    "territorial_disputes": {
+      "type": "number",
+      "default": 0,
+      "description": "Active conflicts"
+    }
+  },
+  "required": [
+    "pod_name",
+    "leader_id"
+  ]
+}

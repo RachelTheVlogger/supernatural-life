@@ -1,0 +1,54 @@
+{
+  "name": "VampireClub",
+  "type": "object",
+  "properties": {
+    "club_name": {
+      "type": "string",
+      "description": "Name of the club"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where it's located"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "Your reputation at this club (0-100)"
+    },
+    "vip_access": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do you have VIP access"
+    },
+    "club_type": {
+      "type": "string",
+      "enum": [
+        "feeding_den",
+        "blood_bar",
+        "dance_club",
+        "underground_fight",
+        "auction_house"
+      ],
+      "description": "Type of vampire establishment"
+    },
+    "owner_name": {
+      "type": "string",
+      "description": "Who runs it"
+    },
+    "times_visited": {
+      "type": "number",
+      "default": 0,
+      "description": "Visit count"
+    },
+    "banned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Are you banned"
+    }
+  },
+  "required": [
+    "club_name",
+    "location",
+    "club_type"
+  ]
+}

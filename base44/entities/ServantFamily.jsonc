@@ -1,0 +1,55 @@
+{
+  "name": "ServantFamily",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant this family member belongs to"
+    },
+    "member_name": {
+      "type": "string",
+      "description": "Family member's name"
+    },
+    "relationship_type": {
+      "type": "string",
+      "enum": [
+        "parent",
+        "sibling",
+        "child",
+        "spouse",
+        "ex"
+      ],
+      "description": "How they're related"
+    },
+    "knows_secret": {
+      "type": "boolean",
+      "default": false,
+      "description": "Know about the vampire"
+    },
+    "concern_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How worried they are (0-100)"
+    },
+    "intervention_attempted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Have they tried to intervene"
+    },
+    "relationship_with_vampire": {
+      "type": "number",
+      "default": -50,
+      "description": "Their opinion of you (-100 to 100)"
+    },
+    "last_contact": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time they contacted servant"
+    }
+  },
+  "required": [
+    "servant_id",
+    "member_name",
+    "relationship_type"
+  ]
+}

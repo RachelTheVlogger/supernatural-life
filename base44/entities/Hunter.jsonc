@@ -1,0 +1,163 @@
+{
+  "name": "Hunter",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Hunter's name"
+    },
+    "skill_level": {
+      "type": "number",
+      "default": 50,
+      "description": "How dangerous they are (0-100)"
+    },
+    "suspicion": {
+      "type": "number",
+      "default": 0,
+      "description": "How much they suspect you (0-100)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "tracking",
+        "investigating",
+        "attacking",
+        "dead",
+        "recruited"
+      ],
+      "default": "tracking",
+      "description": "Current status"
+    },
+    "specialty": {
+      "type": "string",
+      "enum": [
+        "tracker",
+        "researcher",
+        "combatant",
+        "infiltrator"
+      ],
+      "description": "What they're good at"
+    },
+    "last_encounter": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last encounter"
+    },
+    "traits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Active hunter traits (empathic, brutal, tactical, etc.)"
+    },
+    "experience": {
+      "type": "number",
+      "default": 0,
+      "description": "Experience points for unlocking traits"
+    },
+    "unlocked_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of unlocked skill IDs from skill trees"
+    },
+    "morale": {
+      "type": "number",
+      "default": 100,
+      "description": "Hunter morale affects effectiveness (0-100)"
+    },
+    "injuries": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Current injuries with severity and recovery time"
+    },
+    "equipped_weapon": {
+      "type": "string",
+      "description": "ID of currently equipped weapon"
+    },
+    "equipped_armor": {
+      "type": "string",
+      "description": "ID of currently equipped armor"
+    },
+    "mentor_id": {
+      "type": "string",
+      "description": "ID of mentor hunter training them"
+    },
+    "is_betrayed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they've been corrupted/betrayed"
+    },
+    "relationship_hunters": {
+      "type": "object",
+      "default": {},
+      "description": "Relationship scores with other hunters {hunter_id: score}"
+    },
+    "missions_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Total missions completed"
+    },
+    "vampires_killed": {
+      "type": "number",
+      "default": 0,
+      "description": "Total vampires killed"
+    },
+    "team_id": {
+      "type": "string",
+      "description": "ID of team they belong to"
+    },
+    "team_role": {
+      "type": "string",
+      "enum": [
+        "leader",
+        "member",
+        "specialist"
+      ],
+      "description": "Role within the team"
+    },
+    "is_turned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they've been turned into a vampire"
+    },
+    "vampire_stage": {
+      "type": "number",
+      "default": 1,
+      "description": "Vampire growth stage: 1=Newborn, 2=Fledgling, 3=Established, 4=Elder"
+    },
+    "vampire_power_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Overall vampire power level (0-100)"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Powers unlocked when turned into vampire"
+    },
+    "nights_as_vampire": {
+      "type": "number",
+      "default": 0,
+      "description": "How many nights since being turned"
+    },
+    "power_upgrades": {
+      "type": "object",
+      "default": {},
+      "description": "Upgrades purchased for each power {power_id: [upgrade_ids]}"
+    }
+  },
+  "required": [
+    "name",
+    "specialty"
+  ]
+}

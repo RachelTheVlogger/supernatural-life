@@ -1,0 +1,67 @@
+{
+  "name": "Incubus",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Incubus's name"
+    },
+    "gender": {
+      "type": "string",
+      "default": "man",
+      "description": "Gender presentation"
+    },
+    "sexuality": {
+      "type": "string",
+      "enum": [
+        "straight",
+        "gay",
+        "lesbian",
+        "bisexual",
+        "pansexual",
+        "asexual",
+        "questioning"
+      ],
+      "default": "bisexual"
+    },
+    "personality": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "menacing"
+      ],
+      "description": "Core personality traits (up to 3)"
+    },
+    "terror_level": {
+      "type": "number",
+      "default": 40,
+      "description": "Terror power (0-100)"
+    },
+    "nightmare_power": {
+      "type": "number",
+      "default": 25,
+      "description": "Nightmare manipulation ability"
+    },
+    "unlocked_abilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of unlocked abilities"
+    },
+    "victims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "People haunted by nightmares"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

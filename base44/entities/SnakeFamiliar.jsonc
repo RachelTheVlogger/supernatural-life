@@ -1,0 +1,205 @@
+{
+  "name": "SnakeFamiliar",
+  "type": "object",
+  "properties": {
+    "vampire_id": {
+      "type": "string",
+      "description": "Which vampire owns this snake"
+    },
+    "custom_name": {
+      "type": "string",
+      "description": "Snake's custom name given by vampire"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "male",
+        "female"
+      ],
+      "default": "male",
+      "description": "Snake's gender"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "shadow",
+        "venom",
+        "blood",
+        "nightmare"
+      ],
+      "description": "Type of vampire snake"
+    },
+    "pattern": {
+      "type": "string",
+      "enum": [
+        "solid",
+        "striped",
+        "spotted",
+        "iridescent",
+        "scales_of_night"
+      ],
+      "default": "solid",
+      "description": "Visual scale pattern"
+    },
+    "eye_color": {
+      "type": "string",
+      "enum": [
+        "red",
+        "gold",
+        "green",
+        "purple",
+        "blue",
+        "silver"
+      ],
+      "default": "red",
+      "description": "Eye glow color"
+    },
+    "bond_level": {
+      "type": "number",
+      "default": 10,
+      "description": "Bond with vampire (0-100)"
+    },
+    "power_level": {
+      "type": "number",
+      "default": 20,
+      "description": "Snake's power (0-100)"
+    },
+    "loyalty": {
+      "type": "number",
+      "default": 50,
+      "description": "Loyalty to vampire (0-100)"
+    },
+    "hunger": {
+      "type": "number",
+      "default": 30,
+      "description": "Snake's hunger level (0-100)"
+    },
+    "happiness": {
+      "type": "number",
+      "default": 50,
+      "description": "Snake's happiness (0-100)"
+    },
+    "health": {
+      "type": "number",
+      "default": 100,
+      "description": "Snake's health (0-100)"
+    },
+    "mood": {
+      "type": "string",
+      "enum": [
+        "content",
+        "playful",
+        "aggressive",
+        "sleepy",
+        "affectionate",
+        "curious"
+      ],
+      "default": "content",
+      "description": "Current mood"
+    },
+    "position": {
+      "type": "string",
+      "enum": [
+        "coiled",
+        "stretched",
+        "wrapped",
+        "hiding",
+        "sleeping"
+      ],
+      "default": "coiled",
+      "description": "Current position/posture"
+    },
+    "missions_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of missions completed"
+    },
+    "unlocked_abilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Special abilities unlocked"
+    },
+    "size": {
+      "type": "string",
+      "enum": [
+        "small",
+        "medium",
+        "large",
+        "massive"
+      ],
+      "default": "small",
+      "description": "Snake's current size"
+    },
+    "age_days": {
+      "type": "number",
+      "default": 0,
+      "description": "Age in days"
+    },
+    "favorite_spot": {
+      "type": "string",
+      "enum": [
+        "rock",
+        "water_bowl",
+        "heated_stone",
+        "nest",
+        "perch"
+      ],
+      "default": "rock",
+      "description": "Favorite spot in den"
+    },
+    "accessories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Equipped accessories (crown, collar, jewelry)"
+    },
+    "scars": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Battle scars from missions"
+    },
+    "last_fed": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last feeding time"
+    },
+    "last_played": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last playtime"
+    },
+    "breeding_ready": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ready to breed"
+    },
+    "parent_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Parent snake IDs (if bred)"
+    },
+    "personality_traits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Personality traits (shy, brave, playful)"
+    }
+  },
+  "required": [
+    "vampire_id",
+    "type"
+  ]
+}

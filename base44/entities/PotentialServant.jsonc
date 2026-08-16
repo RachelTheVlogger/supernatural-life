@@ -1,0 +1,71 @@
+{
+  "name": "PotentialServant",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Their name"
+    },
+    "personality": {
+      "type": "string",
+      "enum": [
+        "cautious",
+        "curious",
+        "thrill-seeking",
+        "lonely",
+        "sweet",
+        "bratty",
+        "bitchy",
+        "submissive",
+        "dominant",
+        "sarcastic",
+        "clingy",
+        "independent",
+        "manipulative",
+        "naive",
+        "ambitious",
+        "lazy",
+        "jealous",
+        "loyal",
+        "chaotic",
+        "cold",
+        "warm"
+      ],
+      "description": "Their personality type"
+    },
+    "met_through_servant_id": {
+      "type": "string",
+      "description": "Which servant introduced them"
+    },
+    "curiosity_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How interested they are in becoming a servant (0-100)"
+    },
+    "friendship_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Friendship with the introducing servant (0-100)"
+    },
+    "relationship_vampire": {
+      "type": "number",
+      "default": 0,
+      "description": "Direct relationship with the vampire (0-100)"
+    },
+    "knows_about_vampires": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they know the truth"
+    },
+    "last_conversation": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time they talked with servant"
+    }
+  },
+  "required": [
+    "name",
+    "met_through_servant_id",
+    "personality"
+  ]
+}

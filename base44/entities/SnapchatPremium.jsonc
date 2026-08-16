@@ -1,0 +1,43 @@
+{
+  "name": "SnapchatPremium",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant owns this premium Snapchat"
+    },
+    "username": {
+      "type": "string",
+      "description": "Snapchat username"
+    },
+    "subscriber_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of premium subscribers"
+    },
+    "monthly_price": {
+      "type": "number",
+      "default": 20,
+      "description": "Monthly subscription price"
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Total revenue"
+    },
+    "snap_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total snaps sent"
+    },
+    "story_views": {
+      "type": "number",
+      "default": 0,
+      "description": "Total story views"
+    }
+  },
+  "required": [
+    "servant_id",
+    "username"
+  ]
+}

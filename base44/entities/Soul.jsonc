@@ -1,0 +1,59 @@
+{
+  "name": "Soul",
+  "type": "object",
+  "properties": {
+    "original_owner": {
+      "type": "string",
+      "description": "Who this soul belonged to"
+    },
+    "current_owner": {
+      "type": "string",
+      "description": "Who possesses this soul"
+    },
+    "quality": {
+      "type": "string",
+      "enum": [
+        "pure",
+        "tainted",
+        "corrupted",
+        "damned",
+        "enlightened"
+      ],
+      "default": "pure"
+    },
+    "power_level": {
+      "type": "number",
+      "default": 50,
+      "description": "Strength of the soul (0-100)"
+    },
+    "memories_contained": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Memories within the soul"
+    },
+    "market_value": {
+      "type": "number",
+      "description": "Worth on black market"
+    },
+    "can_be_returned": {
+      "type": "boolean",
+      "default": true,
+      "description": "Can soul return to body"
+    },
+    "extraction_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When soul was taken"
+    },
+    "bound_to_object": {
+      "type": "string",
+      "description": "Object containing soul"
+    }
+  },
+  "required": [
+    "original_owner"
+  ]
+}

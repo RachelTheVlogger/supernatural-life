@@ -1,0 +1,78 @@
+{
+  "name": "Angel",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Angel's celestial name"
+    },
+    "angel_type": {
+      "type": "string",
+      "enum": [
+        "guardian",
+        "warrior",
+        "seraph",
+        "fallen",
+        "nephilim"
+      ],
+      "default": "guardian"
+    },
+    "grace": {
+      "type": "number",
+      "default": 100,
+      "description": "Divine grace remaining (0-100)"
+    },
+    "divine_power": {
+      "type": "number",
+      "default": 50,
+      "description": "Holy power level (0-100)"
+    },
+    "wings_visible": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether wings are manifested"
+    },
+    "mission": {
+      "type": "string",
+      "description": "Divine mission or purpose"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Healing Touch",
+        "Divine Light"
+      ],
+      "description": "Angelic abilities"
+    },
+    "fall_progress": {
+      "type": "number",
+      "default": 0,
+      "description": "Progress toward falling (0-100)"
+    },
+    "is_fallen": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they've fallen from grace"
+    },
+    "demons_vanquished": {
+      "type": "number",
+      "default": 0,
+      "description": "Demons defeated"
+    },
+    "mortals_saved": {
+      "type": "number",
+      "default": 0,
+      "description": "Humans saved"
+    },
+    "forbidden_love": {
+      "type": "string",
+      "description": "ID of forbidden relationship"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

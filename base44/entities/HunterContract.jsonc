@@ -1,0 +1,69 @@
+{
+  "name": "HunterContract",
+  "type": "object",
+  "properties": {
+    "hunter_id": {
+      "type": "string",
+      "description": "Hunter assigned to this contract"
+    },
+    "title": {
+      "type": "string",
+      "description": "Contract title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Contract details"
+    },
+    "target_type": {
+      "type": "string",
+      "enum": [
+        "vampire",
+        "investigation",
+        "protection",
+        "retrieval"
+      ],
+      "description": "Type of contract"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme"
+      ],
+      "default": "medium",
+      "description": "Contract difficulty"
+    },
+    "reward_exp": {
+      "type": "number",
+      "description": "Experience reward"
+    },
+    "reward_supplies": {
+      "type": "object",
+      "default": {},
+      "description": "Supply rewards {item: quantity}"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "active",
+        "completed",
+        "failed"
+      ],
+      "default": "available",
+      "description": "Contract status"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Contract deadline"
+    }
+  },
+  "required": [
+    "title",
+    "target_type",
+    "reward_exp"
+  ]
+}

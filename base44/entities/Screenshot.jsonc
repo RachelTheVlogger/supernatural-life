@@ -1,0 +1,38 @@
+{
+  "name": "Screenshot",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Screenshot caption"
+    },
+    "scene_description": {
+      "type": "string",
+      "description": "What's in the screenshot"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Generated image URL"
+    },
+    "characters_involved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Who's in the scene"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where scene takes place"
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "scene_description"
+  ]
+}

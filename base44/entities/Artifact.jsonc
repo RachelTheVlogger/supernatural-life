@@ -1,0 +1,61 @@
+{
+  "name": "Artifact",
+  "type": "object",
+  "properties": {
+    "artifact_name": {
+      "type": "string",
+      "description": "Name of the artifact"
+    },
+    "artifact_type": {
+      "type": "string",
+      "enum": [
+        "weapon",
+        "jewelry",
+        "book",
+        "relic",
+        "cursed_object"
+      ],
+      "description": "Type of artifact"
+    },
+    "power_description": {
+      "type": "string",
+      "description": "What power it grants"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "legendary",
+        "mythic"
+      ],
+      "default": "common",
+      "description": "How rare it is"
+    },
+    "curse_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How cursed/dangerous (0-100)"
+    },
+    "owner_id": {
+      "type": "string",
+      "description": "Current owner"
+    },
+    "times_used": {
+      "type": "number",
+      "default": 0,
+      "description": "Usage count"
+    },
+    "is_equipped": {
+      "type": "boolean",
+      "default": false,
+      "description": "Currently equipped/active"
+    }
+  },
+  "required": [
+    "artifact_name",
+    "artifact_type",
+    "power_description"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "HerbCustomer",
+  "type": "object",
+  "properties": {
+    "witch_id": {
+      "type": "string",
+      "description": "Which witch they buy from"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Customer name"
+    },
+    "customer_type": {
+      "type": "string",
+      "enum": [
+        "witch",
+        "hippie",
+        "spiritual",
+        "healer",
+        "occultist"
+      ],
+      "description": "Type of customer"
+    },
+    "favorite_herb": {
+      "type": "string",
+      "description": "Their preferred herb"
+    },
+    "loyalty": {
+      "type": "number",
+      "default": 50,
+      "description": "Customer loyalty 0-100"
+    },
+    "total_spent": {
+      "type": "number",
+      "default": 0,
+      "description": "Total money spent"
+    }
+  },
+  "required": [
+    "witch_id",
+    "customer_name",
+    "customer_type"
+  ]
+}

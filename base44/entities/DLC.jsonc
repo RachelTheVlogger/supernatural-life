@@ -1,0 +1,42 @@
+{
+  "name": "DLC",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "DLC name (e.g., 'Fairy Realm', 'Demon Pact')"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this DLC adds"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Entity it unlocks (e.g., 'FairyHome', 'DemonHome')"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Emoji or icon identifier"
+    },
+    "unlocked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether player has unlocked this DLC"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "creature",
+        "system",
+        "location"
+      ],
+      "default": "creature",
+      "description": "Type of DLC"
+    }
+  },
+  "required": [
+    "name",
+    "entity_type",
+    "icon"
+  ]
+}

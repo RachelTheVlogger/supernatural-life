@@ -1,0 +1,43 @@
+{
+  "name": "Inventory",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant this inventory belongs to"
+    },
+    "material": {
+      "type": "string",
+      "enum": [
+        "silver",
+        "gold",
+        "platinum",
+        "moonstone",
+        "onyx",
+        "obsidian",
+        "garnet",
+        "amethyst",
+        "ruby",
+        "sapphire",
+        "bloodstone",
+        "chain",
+        "wire",
+        "leather",
+        "velvet",
+        "bone",
+        "feather",
+        "crystal"
+      ],
+      "description": "Type of material"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 0,
+      "description": "How much of this material is available"
+    }
+  },
+  "required": [
+    "servant_id",
+    "material"
+  ]
+}

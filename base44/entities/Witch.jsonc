@@ -1,0 +1,190 @@
+{
+  "name": "Witch",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Witch's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "woman"
+    },
+    "sexuality": {
+      "type": "string",
+      "enum": [
+        "straight",
+        "gay",
+        "lesbian",
+        "bisexual",
+        "pansexual",
+        "asexual",
+        "questioning"
+      ],
+      "default": "bisexual"
+    },
+    "personality": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "mysterious"
+      ],
+      "description": "Core personality traits (up to 3)"
+    },
+    "power_level": {
+      "type": "number",
+      "default": 80,
+      "description": "Magic power 0-100"
+    },
+    "specialty": {
+      "type": "string",
+      "enum": [
+        "elemental",
+        "psychic",
+        "necromancy",
+        "healing",
+        "dark_magic"
+      ],
+      "description": "Their magical specialty"
+    },
+    "alignment": {
+      "type": "string",
+      "enum": [
+        "light",
+        "grey",
+        "dark"
+      ],
+      "default": "grey",
+      "description": "Magical alignment - affects spells and dialogue"
+    },
+    "corruption_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How corrupted by dark magic (0-100)"
+    },
+    "relationship": {
+      "type": "number",
+      "default": 0,
+      "description": "Relationship with vampire -100 to 100"
+    },
+    "trust": {
+      "type": "number",
+      "default": 30,
+      "description": "Trust in vampire (0-100)"
+    },
+    "fear": {
+      "type": "number",
+      "default": 40,
+      "description": "Fear of vampire's nature (0-100)"
+    },
+    "desire": {
+      "type": "number",
+      "default": 20,
+      "description": "Romantic/sexual desire (0-100)"
+    },
+    "knows_vampire_secret": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they know about the vampire"
+    },
+    "disposition": {
+      "type": "string",
+      "enum": [
+        "hostile",
+        "wary",
+        "neutral",
+        "curious",
+        "allied",
+        "in_love"
+      ],
+      "default": "wary",
+      "description": "How they feel about vampires"
+    },
+    "can_suppress_vampire": {
+      "type": "boolean",
+      "default": true,
+      "description": "Can they suppress vampire powers"
+    },
+    "intimacy_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Physical intimacy progression (0-100)"
+    },
+    "bdsm_preferences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Discovered BDSM preferences"
+    },
+    "boundaries_discussed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether boundaries have been established"
+    },
+    "last_encounter": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time encountered"
+    },
+    "coven_size": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of witches in the coven"
+    },
+    "moon_phase": {
+      "type": "string",
+      "enum": [
+        "new",
+        "waxing",
+        "full",
+        "waning"
+      ],
+      "default": "waxing",
+      "description": "Current moon phase affecting power"
+    },
+    "magic_level": {
+      "type": "number",
+      "default": 50,
+      "description": "Overall magical proficiency"
+    },
+    "unlocked_spells": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Spells the witch has mastered"
+    },
+    "living_with_vampire": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether witch has moved in with vampire"
+    },
+    "magical_favors_owed": {
+      "type": "number",
+      "default": 0,
+      "description": "Magical favors vampire owes witch"
+    },
+    "items_crafted": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Magical items created for vampire"
+    }
+  },
+  "required": [
+    "name",
+    "specialty"
+  ]
+}

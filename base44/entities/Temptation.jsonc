@@ -1,0 +1,44 @@
+{
+  "name": "Temptation",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "feed_recklessly",
+        "turn_impulsively",
+        "break_bond",
+        "abandon_control",
+        "seduce_stranger",
+        "hunt_dangerously"
+      ],
+      "description": "Type of temptation"
+    },
+    "description": {
+      "type": "string",
+      "description": "What the temptation offers"
+    },
+    "cost": {
+      "type": "string",
+      "description": "What you risk"
+    },
+    "accepted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the temptation was accepted"
+    },
+    "outcome": {
+      "type": "string",
+      "description": "What happened when accepted or rejected"
+    },
+    "servant_id": {
+      "type": "string",
+      "description": "Servant involved, if any"
+    }
+  },
+  "required": [
+    "type",
+    "description",
+    "cost"
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "name": "Donor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Donor's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "personality": {
+      "type": "string",
+      "enum": [
+        "sweet",
+        "bratty",
+        "bitchy",
+        "submissive",
+        "dominant",
+        "sarcastic",
+        "clingy",
+        "independent",
+        "manipulative",
+        "naive",
+        "ambitious",
+        "lazy",
+        "jealous",
+        "loyal",
+        "chaotic",
+        "cold",
+        "warm",
+        "tsundere",
+        "needy",
+        "professional",
+        "thrill-seeking"
+      ],
+      "description": "Core personality trait"
+    },
+    "blood_type": {
+      "type": "string",
+      "enum": [
+        "O-",
+        "O+",
+        "A-",
+        "A+",
+        "B-",
+        "B+",
+        "AB-",
+        "AB+"
+      ],
+      "description": "Their blood type"
+    },
+    "health": {
+      "type": "number",
+      "default": 100,
+      "description": "Physical health (0-100)"
+    },
+    "willingness": {
+      "type": "number",
+      "default": 50,
+      "description": "How willing they are to donate (0-100)"
+    },
+    "attachment": {
+      "type": "number",
+      "default": 0,
+      "description": "Emotional attachment to vampire (0-100)"
+    },
+    "trust": {
+      "type": "number",
+      "default": 30,
+      "description": "Trust level (0-100)"
+    },
+    "days_since_donation": {
+      "type": "number",
+      "default": 0,
+      "description": "Days since last feeding"
+    },
+    "total_donations": {
+      "type": "number",
+      "default": 0,
+      "description": "Total times they've donated"
+    },
+    "arrangement": {
+      "type": "string",
+      "enum": [
+        "financial",
+        "protection",
+        "thrill-seeker",
+        "devoted",
+        "addicted"
+      ],
+      "default": "financial",
+      "description": "Why they donate"
+    },
+    "frequency": {
+      "type": "string",
+      "enum": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "as-needed"
+      ],
+      "default": "weekly",
+      "description": "How often they donate"
+    },
+    "boundaries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "no-pain",
+        "public-only"
+      ],
+      "description": "Their limits"
+    },
+    "last_interaction": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time they donated"
+    },
+    "knows_truth": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether they know you're a vampire"
+    },
+    "wants_to_be_turned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they want to become a vampire"
+    }
+  },
+  "required": [
+    "name",
+    "blood_type",
+    "arrangement"
+  ]
+}

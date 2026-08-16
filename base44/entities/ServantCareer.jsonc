@@ -1,0 +1,349 @@
+{
+  "name": "ServantCareer",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant this career belongs to"
+    },
+    "jewelry_business_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is jewelry business active"
+    },
+    "tattoo_business_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is tattoo studio active"
+    },
+    "author_career_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is author career active"
+    },
+    "manga_career_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is manga career active"
+    },
+    "nail_wraps_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is nail wraps career active"
+    },
+    "nail_wrap_reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "Nail wrap business reputation (0-100)"
+    },
+    "nail_wrap_customers": {
+      "type": "number",
+      "default": 0,
+      "description": "Total customers/orders fulfilled"
+    },
+    "nail_wrap_revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Total revenue from nail wraps"
+    },
+    "nail_wrap_inventory": {
+      "type": "object",
+      "default": {},
+      "description": "Stock inventory from wholesale suppliers"
+    },
+    "nail_wrap_custom_designs": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Custom nail wrap designs created"
+    },
+    "nail_wrap_followers": {
+      "type": "number",
+      "default": 0,
+      "description": "Social media followers for marketing"
+    },
+    "onlyfangs_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is OnlyFangs account active"
+    },
+    "arc_team_size": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of ARC readers"
+    },
+    "street_team_size": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of street team members"
+    },
+    "newsletter_subscribers": {
+      "type": "number",
+      "default": 0,
+      "description": "Email newsletter subscribers"
+    },
+    "writing_streak": {
+      "type": "number",
+      "default": 0,
+      "description": "Days written in a row"
+    },
+    "series_name": {
+      "type": "string",
+      "description": "Name of manga series"
+    },
+    "current_genre": {
+      "type": "string",
+      "description": "Current manga genre"
+    },
+    "chapters_released": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of chapters released"
+    },
+    "fans": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of manga fans"
+    },
+    "income": {
+      "type": "number",
+      "default": 0,
+      "description": "Total income from manga"
+    },
+    "manga_chapters": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "List of published manga chapters with full content"
+    },
+    "art_style": {
+      "type": "string",
+      "default": "classic",
+      "description": "Art style for manga generation"
+    },
+    "style_reference_image": {
+      "type": "string",
+      "description": "Reference image URL for style transfer"
+    },
+    "cover_art": {
+      "type": "string",
+      "description": "Generated cover art URL for the manga series"
+    },
+    "story_summary": {
+      "type": "string",
+      "description": "Ongoing story summary for continuity"
+    },
+    "manga_bookmarks": {
+      "type": "object",
+      "default": {},
+      "description": "Saved reading progress for each chapter"
+    },
+    "manga_series": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "All manga series created by this person"
+    },
+    "active_series_id": {
+      "type": "string",
+      "description": "Currently active manga series ID"
+    },
+    "manga_characters": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Recurring characters with reference images for consistency"
+    },
+    "story_branches": {
+      "type": "object",
+      "default": {},
+      "description": "Story branching data and player choices"
+    },
+    "collaborators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "IDs of servants/humans collaborating on this series"
+    },
+    "story_arcs": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Multi-chapter story arcs"
+    },
+    "serialization_schedule": {
+      "type": "string",
+      "enum": [
+        "weekly",
+        "biweekly",
+        "monthly"
+      ],
+      "default": "weekly",
+      "description": "Release schedule"
+    },
+    "merchandise": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Merchandise items sold"
+    },
+    "special_editions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Special bonus chapters and omakes"
+    },
+    "collaborations_list": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Crossover collaborations with other series"
+    },
+    "overall_rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average rating across all chapters"
+    },
+    "purchased_manga": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Manga series purchased from the store"
+    },
+    "fan_art": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "AI-generated fan art from readers"
+    },
+    "reader_polls": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Reader polls for story decisions"
+    },
+    "rival_artists": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Rival manga artists competing for rankings"
+    },
+    "current_ranking": {
+      "type": "number",
+      "default": 100,
+      "description": "Current ranking position (1-100)"
+    },
+    "awards_won": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Awards and recognitions won"
+    },
+    "anime_offers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Anime adaptation offers from studios"
+    },
+    "has_anime": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether series has been adapted to anime"
+    },
+    "assistants": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Hired assistants to help with production"
+    },
+    "translations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "International translations"
+    },
+    "physical_volumes": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of physical volumes published"
+    },
+    "limited_editions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Limited edition releases"
+    },
+    "burnout": {
+      "type": "number",
+      "default": 0,
+      "description": "Creator burnout level (0-100)"
+    },
+    "editor_interactions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "History of editor feedback"
+    },
+    "total_tips": {
+      "type": "number",
+      "default": 0,
+      "description": "Total tips received from fans"
+    },
+    "premium_sales_total": {
+      "type": "number",
+      "default": 0,
+      "description": "Total revenue from premium chapters"
+    },
+    "subscriber_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of active subscribers for premium content"
+    },
+    "subscription_revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Monthly subscription revenue"
+    }
+  },
+  "required": [
+    "servant_id"
+  ]
+}

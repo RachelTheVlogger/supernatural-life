@@ -1,0 +1,141 @@
+{
+  "name": "Thrall",
+  "type": "object",
+  "properties": {
+    "vampire_id": {
+      "type": "string",
+      "description": "Which vampire controls them"
+    },
+    "name": {
+      "type": "string",
+      "description": "Thrall's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "control_level": {
+      "type": "number",
+      "default": 100,
+      "description": "Level of mind control (0-100)"
+    },
+    "previous_occupation": {
+      "type": "string",
+      "description": "What they did before"
+    },
+    "assigned_mission": {
+      "type": "string",
+      "enum": [
+        "none",
+        "spy",
+        "infiltrate",
+        "guard",
+        "messenger",
+        "assassinate"
+      ],
+      "default": "none",
+      "description": "Current mission"
+    },
+    "mission_progress": {
+      "type": "number",
+      "default": 0,
+      "description": "Progress on current mission (0-100)"
+    },
+    "loyalty": {
+      "type": "number",
+      "default": 0,
+      "description": "Loyalty to master (0-100)"
+    },
+    "rebellion": {
+      "type": "number",
+      "default": 0,
+      "description": "Desire to rebel (0-100)"
+    },
+    "experience": {
+      "type": "number",
+      "default": 0,
+      "description": "Experience points"
+    },
+    "level": {
+      "type": "number",
+      "default": 1,
+      "description": "Thrall skill level (1-10)"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "none",
+        "spy",
+        "assassin",
+        "guard",
+        "seducer",
+        "messenger",
+        "saboteur"
+      ],
+      "default": "none",
+      "description": "Thrall's specialized role"
+    },
+    "skills": {
+      "type": "object",
+      "default": {},
+      "description": "Role-specific skills with levels (e.g., stealth: 5)"
+    },
+    "betrayal_risk": {
+      "type": "number",
+      "default": 0,
+      "description": "Chance of betrayal (0-100)"
+    },
+    "has_betrayed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they've betrayed you"
+    },
+    "loyalty_decay": {
+      "type": "number",
+      "default": 0,
+      "description": "How much control has decayed (0-100)"
+    },
+    "breaking_point": {
+      "type": "number",
+      "default": 0,
+      "description": "How close to breaking free (0-100)"
+    },
+    "times_used": {
+      "type": "number",
+      "default": 0,
+      "description": "How many missions completed"
+    },
+    "useful_connections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "People/places they have access to"
+    },
+    "last_mission": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time they completed a mission"
+    },
+    "mission_successes": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of successful missions"
+    },
+    "mission_failures": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of failed missions"
+    }
+  },
+  "required": [
+    "vampire_id",
+    "name"
+  ]
+}

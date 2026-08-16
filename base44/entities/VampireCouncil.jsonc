@@ -1,0 +1,39 @@
+{
+  "name": "VampireCouncil",
+  "type": "object",
+  "properties": {
+    "council_member_name": {
+      "type": "string",
+      "description": "Name of council member"
+    },
+    "position": {
+      "type": "string",
+      "enum": [
+        "elder",
+        "enforcer",
+        "diplomat",
+        "archivist"
+      ],
+      "description": "Their role in the council"
+    },
+    "favor": {
+      "type": "number",
+      "default": 50,
+      "description": "How much they favor you (0-100)"
+    },
+    "can_grant_boons": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether they can grant you favors"
+    },
+    "last_contacted": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last interaction"
+    }
+  },
+  "required": [
+    "council_member_name",
+    "position"
+  ]
+}

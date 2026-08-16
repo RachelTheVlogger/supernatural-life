@@ -1,0 +1,72 @@
+{
+  "name": "BloodPlant",
+  "type": "object",
+  "properties": {
+    "plant_type": {
+      "type": "string",
+      "enum": [
+        "crimson_bloom",
+        "shadow_vine",
+        "midnight_lotus",
+        "bloodroot",
+        "vampweed"
+      ],
+      "description": "Type of blood plant"
+    },
+    "growth_stage": {
+      "type": "number",
+      "default": 1,
+      "description": "Growth stage (1-5)"
+    },
+    "health": {
+      "type": "number",
+      "default": 100,
+      "description": "Plant health (0-100)"
+    },
+    "potency": {
+      "type": "number",
+      "default": 50,
+      "description": "Blood potency when harvested"
+    },
+    "planted_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it was planted"
+    },
+    "last_watered": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last watering time"
+    },
+    "needs_blood": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether it needs blood feeding"
+    },
+    "mutation_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Mutation from experimentation (0-100)"
+    },
+    "harvest_ready": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ready to harvest"
+    },
+    "hybrid_name": {
+      "type": "string",
+      "description": "Name of hybrid plant (if cross-bred)"
+    },
+    "hybrid_description": {
+      "type": "string",
+      "description": "Description of hybrid plant traits"
+    },
+    "special_trait": {
+      "type": "string",
+      "description": "Special mutation or enhancement"
+    }
+  },
+  "required": [
+    "plant_type"
+  ]
+}

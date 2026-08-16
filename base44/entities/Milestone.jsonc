@@ -1,0 +1,38 @@
+{
+  "name": "Milestone",
+  "type": "object",
+  "properties": {
+    "milestone_type": {
+      "type": "string",
+      "enum": [
+        "years_10",
+        "years_50",
+        "years_100",
+        "years_500",
+        "first_kill",
+        "first_servant",
+        "first_coven",
+        "territory_control",
+        "council_seat"
+      ],
+      "description": "Type of milestone"
+    },
+    "achieved": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether achieved"
+    },
+    "reward": {
+      "type": "string",
+      "description": "What was unlocked"
+    },
+    "achievement_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When achieved"
+    }
+  },
+  "required": [
+    "milestone_type"
+  ]
+}

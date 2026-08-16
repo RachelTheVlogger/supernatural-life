@@ -1,0 +1,72 @@
+{
+  "name": "TeamMission",
+  "type": "object",
+  "properties": {
+    "team_id": {
+      "type": "string",
+      "description": "ID of the team taking the mission"
+    },
+    "title": {
+      "type": "string",
+      "description": "Mission title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Mission details"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "extreme"
+      ],
+      "default": "medium",
+      "description": "Mission difficulty"
+    },
+    "required_hunters": {
+      "type": "number",
+      "default": 2,
+      "description": "Minimum hunters needed"
+    },
+    "assigned_hunters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Hunter IDs assigned to this mission"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "active",
+        "completed",
+        "failed"
+      ],
+      "default": "planning",
+      "description": "Current mission status"
+    },
+    "rewards": {
+      "type": "object",
+      "default": {},
+      "description": "Rewards for completion (exp, funds, items)"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Mission deadline"
+    },
+    "progress": {
+      "type": "number",
+      "default": 0,
+      "description": "Mission completion progress (0-100)"
+    }
+  },
+  "required": [
+    "team_id",
+    "title"
+  ]
+}

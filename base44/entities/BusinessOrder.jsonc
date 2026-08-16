@@ -1,0 +1,59 @@
+{
+  "name": "BusinessOrder",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string",
+      "description": "Customer's name"
+    },
+    "item": {
+      "type": "string",
+      "description": "What they ordered"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "legendary"
+      ],
+      "default": "common",
+      "description": "Item rarity level"
+    },
+    "price": {
+      "type": "number",
+      "description": "Order price"
+    },
+    "crafting_time": {
+      "type": "number",
+      "default": 3000,
+      "description": "Time to craft in milliseconds"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "crafting",
+        "completed",
+        "shipped"
+      ],
+      "default": "pending",
+      "description": "Order status"
+    },
+    "message": {
+      "type": "string",
+      "description": "Customer's message with the order"
+    },
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant this belongs to"
+    }
+  },
+  "required": [
+    "customer_name",
+    "item",
+    "price",
+    "servant_id"
+  ]
+}

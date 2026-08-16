@@ -1,0 +1,102 @@
+{
+  "name": "SupernaturalDate",
+  "type": "object",
+  "properties": {
+    "vampire_id": {
+      "type": "string",
+      "description": "Your vampire"
+    },
+    "date_name": {
+      "type": "string",
+      "description": "Who you're dating"
+    },
+    "date_type": {
+      "type": "string",
+      "enum": [
+        "vampire",
+        "witch",
+        "hunter",
+        "werewolf",
+        "demon",
+        "angel"
+      ],
+      "description": "What they are"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "personality": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Their personality traits"
+    },
+    "relationship_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Romance level (0-100)"
+    },
+    "tension_level": {
+      "type": "number",
+      "default": 50,
+      "description": "Conflict vs harmony (0=war, 100=peace)"
+    },
+    "dates_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of dates"
+    },
+    "intimacy_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Physical intimacy (0-100)"
+    },
+    "shared_secrets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Secrets you've told each other"
+    },
+    "relationship_status": {
+      "type": "string",
+      "enum": [
+        "casual",
+        "serious",
+        "forbidden",
+        "secret",
+        "public",
+        "complicated"
+      ],
+      "default": "casual"
+    },
+    "last_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time you met"
+    },
+    "special_ability": {
+      "type": "string",
+      "description": "Their unique power/skill"
+    },
+    "dangerous_attraction": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is this relationship forbidden/dangerous?"
+    }
+  },
+  "required": [
+    "vampire_id",
+    "date_name",
+    "date_type"
+  ]
+}

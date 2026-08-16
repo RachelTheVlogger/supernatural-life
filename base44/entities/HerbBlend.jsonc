@@ -1,0 +1,44 @@
+{
+  "name": "HerbBlend",
+  "type": "object",
+  "properties": {
+    "witch_id": {
+      "type": "string",
+      "description": "Which witch created this"
+    },
+    "blend_name": {
+      "type": "string",
+      "description": "Name of the custom blend"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of herbs used"
+    },
+    "effect": {
+      "type": "string",
+      "description": "What this blend does"
+    },
+    "potency": {
+      "type": "number",
+      "default": 1,
+      "description": "How strong it is (1-10)"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1,
+      "description": "How many batches"
+    },
+    "market_price": {
+      "type": "number",
+      "description": "Suggested selling price"
+    }
+  },
+  "required": [
+    "witch_id",
+    "blend_name",
+    "ingredients"
+  ]
+}

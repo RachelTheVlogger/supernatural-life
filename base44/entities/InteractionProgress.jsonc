@@ -1,0 +1,23 @@
+{
+  "name": "InteractionProgress",
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "description": "Interaction category (physical, social, activity, power)"
+    },
+    "times_used": {
+      "type": "number",
+      "default": 0,
+      "description": "Total times this category has been used"
+    },
+    "unlocked_tier": {
+      "type": "number",
+      "default": 1,
+      "description": "Current unlocked tier"
+    }
+  },
+  "required": [
+    "category"
+  ]
+}

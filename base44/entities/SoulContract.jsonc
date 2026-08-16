@@ -1,0 +1,45 @@
+{
+  "name": "SoulContract",
+  "type": "object",
+  "properties": {
+    "demon_id": {
+      "type": "string",
+      "description": "Demon offering contract"
+    },
+    "mortal_name": {
+      "type": "string",
+      "description": "Person signing contract"
+    },
+    "wish_granted": {
+      "type": "string",
+      "description": "What they asked for"
+    },
+    "price": {
+      "type": "string",
+      "description": "What they must give"
+    },
+    "contract_terms": {
+      "type": "string",
+      "description": "Full contract text"
+    },
+    "years_until_due": {
+      "type": "number",
+      "default": 10,
+      "description": "Years before soul is collected"
+    },
+    "is_fulfilled": {
+      "type": "boolean",
+      "default": false
+    },
+    "loophole_exists": {
+      "type": "boolean",
+      "default": true,
+      "description": "Can contract be broken"
+    }
+  },
+  "required": [
+    "demon_id",
+    "mortal_name",
+    "wish_granted"
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "name": "StalkTarget",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Target's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "personality": {
+      "type": "string",
+      "enum": [
+        "sweet",
+        "bratty",
+        "bitchy",
+        "submissive",
+        "dominant",
+        "sarcastic",
+        "clingy",
+        "independent",
+        "manipulative",
+        "naive",
+        "ambitious",
+        "lazy",
+        "jealous",
+        "loyal",
+        "chaotic",
+        "cold",
+        "warm",
+        "tsundere",
+        "paranoid",
+        "exhibitionist",
+        "attention-seeking",
+        "obsessive"
+      ],
+      "description": "Core personality trait"
+    },
+    "vampire_id": {
+      "type": "string",
+      "description": "Which vampire is stalking them"
+    },
+    "awareness": {
+      "type": "number",
+      "default": 0,
+      "description": "How aware they are of being watched (0-100)"
+    },
+    "enjoyment": {
+      "type": "number",
+      "default": 0,
+      "description": "How much they enjoy it (0-100)"
+    },
+    "obsession": {
+      "type": "number",
+      "default": 0,
+      "description": "Their obsession with their stalker (0-100)"
+    },
+    "fear_vs_thrill": {
+      "type": "number",
+      "default": 50,
+      "description": "Balance between fear and thrill (0=terrified, 100=thrilled)"
+    },
+    "times_watched": {
+      "type": "number",
+      "default": 0,
+      "description": "How many times you've stalked them"
+    },
+    "last_stalk_location": {
+      "type": "string",
+      "description": "Where you last watched them"
+    },
+    "knows_its_you": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they know WHO is stalking them"
+    },
+    "wants_to_meet": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they want to finally meet you"
+    }
+  },
+  "required": [
+    "name",
+    "vampire_id"
+  ]
+}

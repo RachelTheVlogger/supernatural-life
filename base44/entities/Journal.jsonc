@@ -1,0 +1,55 @@
+{
+  "name": "Journal",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "ID of the servant this entry belongs to (if servant journal)"
+    },
+    "vampire_id": {
+      "type": "string",
+      "description": "ID of the vampire this entry belongs to (if vampire journal)"
+    },
+    "entry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the journal entry"
+    },
+    "title": {
+      "type": "string",
+      "description": "Optional title for the entry"
+    },
+    "content": {
+      "type": "string",
+      "description": "The journal entry content"
+    },
+    "mood": {
+      "type": "string",
+      "enum": [
+        "happy",
+        "sad",
+        "anxious",
+        "excited",
+        "confused",
+        "content",
+        "angry",
+        "peaceful",
+        "obsessed",
+        "hungry"
+      ],
+      "description": "Mood when writing this entry"
+    },
+    "is_turned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this was written as a vampire"
+    },
+    "ai_summary": {
+      "type": "string",
+      "description": "AI-generated summary of the entry"
+    }
+  },
+  "required": [
+    "content"
+  ]
+}

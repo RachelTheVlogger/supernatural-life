@@ -1,0 +1,49 @@
+{
+  "name": "SnakeDen",
+  "type": "object",
+  "properties": {
+    "vampire_id": {
+      "type": "string",
+      "description": "Which vampire owns this den"
+    },
+    "den_level": {
+      "type": "number",
+      "default": 1,
+      "description": "Den upgrade level (1-5)"
+    },
+    "upgrades": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Purchased upgrades (heated_rock, water_feature, nest, perch)"
+    },
+    "decorations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Decorative items placed in den"
+    },
+    "temperature": {
+      "type": "number",
+      "default": 75,
+      "description": "Den temperature (affects snake comfort)"
+    },
+    "cleanliness": {
+      "type": "number",
+      "default": 100,
+      "description": "How clean the den is (0-100)"
+    },
+    "last_cleaned": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time den was cleaned"
+    }
+  },
+  "required": [
+    "vampire_id"
+  ]
+}

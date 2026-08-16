@@ -1,0 +1,53 @@
+{
+  "name": "VampireElection",
+  "type": "object",
+  "properties": {
+    "election_type": {
+      "type": "string",
+      "enum": [
+        "elder_seat",
+        "territory_control",
+        "council_position"
+      ],
+      "description": "What's being voted on"
+    },
+    "candidate_name": {
+      "type": "string",
+      "description": "Candidate's name"
+    },
+    "votes": {
+      "type": "number",
+      "default": 0,
+      "description": "Current vote count"
+    },
+    "campaign_funds": {
+      "type": "number",
+      "default": 0,
+      "description": "Money spent on campaign"
+    },
+    "scandal_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Scandal surrounding candidate (0-100)"
+    },
+    "is_player": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is this the player's campaign"
+    },
+    "election_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "won",
+        "lost"
+      ],
+      "default": "active",
+      "description": "Current status"
+    }
+  },
+  "required": [
+    "election_type",
+    "candidate_name"
+  ]
+}

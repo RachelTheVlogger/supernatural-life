@@ -1,0 +1,69 @@
+{
+  "name": "YouTubeVideo",
+  "type": "object",
+  "properties": {
+    "channel_id": {
+      "type": "string",
+      "description": "Which channel this belongs to"
+    },
+    "title": {
+      "type": "string",
+      "description": "Video title"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "gaming",
+        "vlog",
+        "lifestyle",
+        "paranormal",
+        "mystery",
+        "challenge",
+        "collab",
+        "asmr",
+        "storytime",
+        "dark_content"
+      ],
+      "description": "Video category"
+    },
+    "content_description": {
+      "type": "string",
+      "description": "What happens in the video"
+    },
+    "views": {
+      "type": "number",
+      "default": 0,
+      "description": "View count"
+    },
+    "likes": {
+      "type": "number",
+      "default": 0,
+      "description": "Like count"
+    },
+    "earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Money earned from this video"
+    },
+    "is_viral": {
+      "type": "boolean",
+      "default": false,
+      "description": "Did it go viral"
+    },
+    "controversy_score": {
+      "type": "number",
+      "default": 0,
+      "description": "How controversial this video is"
+    },
+    "featured_vampire": {
+      "type": "boolean",
+      "default": false,
+      "description": "Does vampire appear in video"
+    }
+  },
+  "required": [
+    "channel_id",
+    "title",
+    "category"
+  ]
+}

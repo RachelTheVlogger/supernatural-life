@@ -1,0 +1,80 @@
+{
+  "name": "InteractionMemory",
+  "type": "object",
+  "properties": {
+    "entity_1_id": {
+      "type": "string",
+      "description": "First character involved"
+    },
+    "entity_1_type": {
+      "type": "string",
+      "enum": [
+        "siren",
+        "nymph",
+        "witch",
+        "werewolf"
+      ],
+      "description": "Type of first character"
+    },
+    "entity_2_id": {
+      "type": "string",
+      "description": "Second character involved"
+    },
+    "entity_2_type": {
+      "type": "string",
+      "enum": [
+        "siren",
+        "nymph",
+        "witch",
+        "werewolf"
+      ],
+      "description": "Type of second character"
+    },
+    "interaction_type": {
+      "type": "string",
+      "enum": [
+        "harmonize",
+        "ally",
+        "romance",
+        "rival",
+        "collaborate",
+        "betray",
+        "save",
+        "corrupt"
+      ],
+      "description": "Type of interaction"
+    },
+    "description": {
+      "type": "string",
+      "description": "What happened"
+    },
+    "relationship_impact": {
+      "type": "number",
+      "default": 0,
+      "description": "How much this affected their relationship (-50 to 50)"
+    },
+    "entity_1_alignment_before": {
+      "type": "string",
+      "description": "Entity 1's alignment before interaction"
+    },
+    "entity_1_alignment_after": {
+      "type": "string",
+      "description": "Entity 1's alignment after interaction"
+    },
+    "entity_2_alignment_before": {
+      "type": "string",
+      "description": "Entity 2's alignment before interaction"
+    },
+    "entity_2_alignment_after": {
+      "type": "string",
+      "description": "Entity 2's alignment after interaction"
+    }
+  },
+  "required": [
+    "entity_1_id",
+    "entity_1_type",
+    "entity_2_id",
+    "entity_2_type",
+    "interaction_type"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "name": "PatreonAccount",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant owns this Patreon"
+    },
+    "account_name": {
+      "type": "string",
+      "description": "Patreon account name"
+    },
+    "patron_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total number of patrons"
+    },
+    "monthly_revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Monthly recurring revenue"
+    },
+    "total_earned": {
+      "type": "number",
+      "default": 0,
+      "description": "Total lifetime earnings"
+    },
+    "tier_1_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of $5 tier patrons"
+    },
+    "tier_2_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of $15 tier patrons"
+    },
+    "tier_3_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of $50 tier patrons"
+    }
+  },
+  "required": [
+    "servant_id",
+    "account_name"
+  ]
+}

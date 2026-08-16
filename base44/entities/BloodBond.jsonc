@@ -1,0 +1,45 @@
+{
+  "name": "BloodBond",
+  "type": "object",
+  "properties": {
+    "sire_id": {
+      "type": "string",
+      "description": "Who turned them"
+    },
+    "progeny_id": {
+      "type": "string",
+      "description": "Who was turned"
+    },
+    "bond_strength": {
+      "type": "number",
+      "default": 100,
+      "description": "Strength of sire bond (0-100)"
+    },
+    "bloodline": {
+      "type": "string",
+      "description": "Name of the bloodline"
+    },
+    "shared_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Powers passed down the line"
+    },
+    "can_compel": {
+      "type": "boolean",
+      "default": true,
+      "description": "Can sire compel progeny"
+    },
+    "turns_made": {
+      "type": "number",
+      "default": 0,
+      "description": "How many have they turned"
+    }
+  },
+  "required": [
+    "sire_id",
+    "progeny_id"
+  ]
+}

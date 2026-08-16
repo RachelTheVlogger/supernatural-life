@@ -1,0 +1,53 @@
+{
+  "name": "ServantAutomation",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "ID of the servant this automation belongs to"
+    },
+    "auto_craft": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically craft jewelry when materials are available"
+    },
+    "auto_restock": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically buy materials when low"
+    },
+    "auto_ship": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically ship completed orders"
+    },
+    "auto_message_respond": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically respond to messages"
+    },
+    "min_relationship_for_auto": {
+      "type": "number",
+      "default": 50,
+      "description": "Minimum relationship level for auto actions"
+    },
+    "autonomy_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "low",
+      "description": "How much freedom the servant has: low=player controlled, medium=suggests actions, high=acts independently"
+    },
+    "last_auto_action": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time an automated action was performed"
+    }
+  },
+  "required": [
+    "servant_id"
+  ]
+}

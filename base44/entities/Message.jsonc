@@ -1,0 +1,32 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "ID of the servant this message is with"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "sender": {
+      "type": "string",
+      "enum": [
+        "vampire",
+        "servant"
+      ],
+      "description": "Who sent the message"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether message has been read"
+    }
+  },
+  "required": [
+    "servant_id",
+    "content",
+    "sender"
+  ]
+}

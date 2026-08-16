@@ -1,0 +1,66 @@
+{
+  "name": "HunterEquipment",
+  "type": "object",
+  "properties": {
+    "hunter_id": {
+      "type": "string",
+      "description": "Which hunter owns this equipment"
+    },
+    "name": {
+      "type": "string",
+      "description": "Equipment name"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "weapon",
+        "armor",
+        "gadget"
+      ],
+      "description": "Equipment type"
+    },
+    "subtype": {
+      "type": "string",
+      "description": "Specific type (stake, crossbow, UV_grenade, etc)"
+    },
+    "power": {
+      "type": "number",
+      "default": 0,
+      "description": "Combat power bonus"
+    },
+    "defense": {
+      "type": "number",
+      "default": 0,
+      "description": "Defense bonus"
+    },
+    "special_effects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Special abilities (vampiric_weakness, night_vision, etc)"
+    },
+    "durability": {
+      "type": "number",
+      "default": 100,
+      "description": "Current durability (0-100)"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "legendary"
+      ],
+      "default": "common",
+      "description": "Equipment rarity"
+    }
+  },
+  "required": [
+    "hunter_id",
+    "name",
+    "type"
+  ]
+}

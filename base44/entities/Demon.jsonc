@@ -1,0 +1,76 @@
+{
+  "name": "Demon",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Demon's true name"
+    },
+    "demon_type": {
+      "type": "string",
+      "enum": [
+        "succubus",
+        "incubus",
+        "archdemon",
+        "lesser_demon",
+        "demon_lord"
+      ],
+      "default": "lesser_demon"
+    },
+    "corruption_level": {
+      "type": "number",
+      "default": 50,
+      "description": "How corrupted/evil (0-100)"
+    },
+    "souls_collected": {
+      "type": "number",
+      "default": 0,
+      "description": "Souls harvested"
+    },
+    "active_contracts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "IDs of active soul contracts"
+    },
+    "hellfire_power": {
+      "type": "number",
+      "default": 30,
+      "description": "Control over hellfire (0-100)"
+    },
+    "human_disguise": {
+      "type": "string",
+      "description": "Human form name/appearance"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Temptation",
+        "Hellfire"
+      ],
+      "description": "Demonic abilities"
+    },
+    "summoned_by": {
+      "type": "string",
+      "description": "Who summoned them"
+    },
+    "bound_to_summoner": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether bound by contract"
+    },
+    "redemption_path": {
+      "type": "number",
+      "default": 0,
+      "description": "Progress toward redemption (0-100)"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

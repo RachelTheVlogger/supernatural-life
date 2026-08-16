@@ -1,0 +1,49 @@
+{
+  "name": "OnlyFangsCollab",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Your servant's ID"
+    },
+    "creator_name": {
+      "type": "string",
+      "description": "Name of collaborating creator"
+    },
+    "creator_followers": {
+      "type": "number",
+      "description": "Their follower count"
+    },
+    "collab_type": {
+      "type": "string",
+      "enum": [
+        "video",
+        "livestream",
+        "photoshoot",
+        "tour"
+      ],
+      "description": "Type of collaboration"
+    },
+    "earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Money earned"
+    },
+    "new_subs": {
+      "type": "number",
+      "default": 0,
+      "description": "Subscribers gained"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether completed"
+    }
+  },
+  "required": [
+    "servant_id",
+    "creator_name",
+    "creator_followers",
+    "collab_type"
+  ]
+}

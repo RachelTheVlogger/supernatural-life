@@ -1,0 +1,66 @@
+{
+  "name": "WerewolfPack",
+  "type": "object",
+  "properties": {
+    "pack_name": {
+      "type": "string",
+      "description": "Pack identifier"
+    },
+    "alpha_id": {
+      "type": "string",
+      "description": "Pack alpha werewolf ID"
+    },
+    "member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "All pack members"
+    },
+    "territory": {
+      "type": "string",
+      "description": "Territory claimed"
+    },
+    "pack_strength": {
+      "type": "number",
+      "default": 50,
+      "description": "Overall pack power (0-100)"
+    },
+    "pack_resources": {
+      "type": "number",
+      "default": 100,
+      "description": "Pack resources for recruitment, defense"
+    },
+    "pack_defense": {
+      "type": "number",
+      "default": 30,
+      "description": "Territory defense level"
+    },
+    "rival_packs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Enemy pack IDs"
+    },
+    "vampire_conflicts": {
+      "type": "number",
+      "default": 0,
+      "description": "Battles with vampires"
+    },
+    "active_quests": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Currently active pack quests"
+    }
+  },
+  "required": [
+    "pack_name",
+    "alpha_id"
+  ]
+}

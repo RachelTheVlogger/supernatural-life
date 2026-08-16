@@ -1,0 +1,32 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant's business this is for"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Name of the reviewer"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Star rating 1-5"
+    },
+    "comment": {
+      "type": "string",
+      "description": "Review text"
+    },
+    "order_id": {
+      "type": "string",
+      "description": "Related order if any"
+    }
+  },
+  "required": [
+    "servant_id",
+    "customer_name",
+    "rating",
+    "comment"
+  ]
+}

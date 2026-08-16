@@ -1,0 +1,42 @@
+{
+  "name": "Quest",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "ID of the servant this quest belongs to"
+    },
+    "quest_key": {
+      "type": "string",
+      "description": "Unique identifier for the quest type"
+    },
+    "stage": {
+      "type": "number",
+      "default": 0,
+      "description": "Current stage of the quest (0 = not started)"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the quest is completed"
+    },
+    "progress": {
+      "type": "object",
+      "description": "Tracks progress within current stage",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "choices_made": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Record of narrative choices made"
+    }
+  },
+  "required": [
+    "servant_id",
+    "quest_key"
+  ]
+}

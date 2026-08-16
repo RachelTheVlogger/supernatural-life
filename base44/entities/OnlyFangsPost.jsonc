@@ -1,0 +1,43 @@
+{
+  "name": "OnlyFangsPost",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant this belongs to"
+    },
+    "caption": {
+      "type": "string",
+      "description": "Post caption"
+    },
+    "content": {
+      "type": "string",
+      "description": "What the picture shows"
+    },
+    "is_ppv": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is pay-per-view locked content"
+    },
+    "price": {
+      "type": "number",
+      "default": 0,
+      "description": "Price to unlock if PPV"
+    },
+    "likes": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of likes"
+    },
+    "earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Money earned from this post"
+    }
+  },
+  "required": [
+    "servant_id",
+    "caption",
+    "content"
+  ]
+}

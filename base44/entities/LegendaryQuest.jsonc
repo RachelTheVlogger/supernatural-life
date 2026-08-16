@@ -1,0 +1,52 @@
+{
+  "name": "LegendaryQuest",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Quest name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Quest story"
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Quest stages with objectives"
+    },
+    "current_stage": {
+      "type": "number",
+      "default": 0,
+      "description": "Current quest stage"
+    },
+    "reward_artifact": {
+      "type": "string",
+      "description": "Legendary artifact reward"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "hard",
+        "extreme",
+        "legendary",
+        "impossible"
+      ],
+      "default": "extreme"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": false
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

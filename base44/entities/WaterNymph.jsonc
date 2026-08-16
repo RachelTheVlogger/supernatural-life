@@ -1,0 +1,213 @@
+{
+  "name": "WaterNymph",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nymph's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "woman"
+    },
+    "sexuality": {
+      "type": "string",
+      "enum": [
+        "straight",
+        "gay",
+        "lesbian",
+        "bisexual",
+        "pansexual",
+        "asexual",
+        "questioning"
+      ],
+      "default": "bisexual"
+    },
+    "nature_bond": {
+      "type": "number",
+      "default": 50,
+      "description": "Connection to nature"
+    },
+    "water_purity": {
+      "type": "number",
+      "default": 100,
+      "description": "Purity of their waters"
+    },
+    "creatures_befriended": {
+      "type": "number",
+      "default": 0,
+      "description": "Animals bonded with"
+    },
+    "territory_protected": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is their territory safe"
+    },
+    "moonlight_dances": {
+      "type": "number",
+      "default": 0,
+      "description": "Dances performed"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Water Breathing"
+      ],
+      "description": "Unlocked nymph abilities"
+    },
+    "humans_saved": {
+      "type": "number",
+      "default": 0,
+      "description": "Humans rescued from drowning"
+    },
+    "treasures_found": {
+      "type": "number",
+      "default": 0,
+      "description": "Underwater treasures discovered"
+    },
+    "underwater_gardens": {
+      "type": "number",
+      "default": 0,
+      "description": "Gardens created beneath water"
+    },
+    "springs_created": {
+      "type": "number",
+      "default": 0,
+      "description": "Sacred springs birthed"
+    },
+    "nymphs_met": {
+      "type": "number",
+      "default": 0,
+      "description": "Other nymphs befriended"
+    },
+    "mist_form": {
+      "type": "boolean",
+      "default": false,
+      "description": "Currently in mist form"
+    },
+    "companions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Other nymphs and creatures bonded with"
+    },
+    "alignment": {
+      "type": "string",
+      "enum": [
+        "pure",
+        "balanced",
+        "corrupted"
+      ],
+      "default": "pure",
+      "description": "Moral alignment - affects powers and dialogue"
+    },
+    "purity": {
+      "type": "number",
+      "default": 100,
+      "description": "Spiritual purity level (0-100)"
+    },
+    "corruption": {
+      "type": "number",
+      "default": 0,
+      "description": "Corruption from dark magic/pollution (0-100)"
+    },
+    "connection": {
+      "type": "number",
+      "default": 50,
+      "description": "Connection to the natural world (0-100)"
+    },
+    "trust": {
+      "type": "number",
+      "default": 60,
+      "description": "Trust in others (0-100)"
+    },
+    "fear": {
+      "type": "number",
+      "default": 20,
+      "description": "Fear level (0-100)"
+    },
+    "desire": {
+      "type": "number",
+      "default": 30,
+      "description": "Romantic/sexual desire (0-100)"
+    },
+    "intimacy_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Physical intimacy progression (0-100)"
+    },
+    "boundaries_discussed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether boundaries have been established"
+    },
+    "sanctuaries": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Protected natural areas"
+    },
+    "water_familiars": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Aquatic creatures bonded with"
+    },
+    "pollution_fights": {
+      "type": "number",
+      "default": 0,
+      "description": "Environmental battles won"
+    },
+    "elemental_bonds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Water spirits and gods connected with"
+    },
+    "seasonal_power_modifier": {
+      "type": "number",
+      "default": 0,
+      "description": "Current seasonal power boost/penalty"
+    },
+    "current_season": {
+      "type": "string",
+      "enum": [
+        "spring",
+        "summer",
+        "autumn",
+        "winter"
+      ],
+      "default": "spring",
+      "description": "Current season affecting powers"
+    },
+    "healing_services_performed": {
+      "type": "number",
+      "default": 0,
+      "description": "Healing rituals performed for others"
+    },
+    "hybrid_magic_unlocked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Can combine powers with other supernaturals"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

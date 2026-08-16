@@ -1,0 +1,55 @@
+{
+  "name": "Prophecy",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Prophecy name"
+    },
+    "text": {
+      "type": "string",
+      "description": "The prophecy itself"
+    },
+    "subject_id": {
+      "type": "string",
+      "description": "Who the prophecy is about"
+    },
+    "completion_progress": {
+      "type": "number",
+      "default": 0,
+      "description": "How much has come true (0-100)"
+    },
+    "stages_completed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Which parts have occurred"
+    },
+    "is_fulfilled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Prophecy complete"
+    },
+    "can_be_prevented": {
+      "type": "boolean",
+      "default": true,
+      "description": "Can fate be changed"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "minor",
+        "significant",
+        "catastrophic",
+        "apocalyptic"
+      ],
+      "default": "significant"
+    }
+  },
+  "required": [
+    "title",
+    "text"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "name": "YouTubeChannel",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant owns this channel"
+    },
+    "channel_name": {
+      "type": "string",
+      "description": "YouTube channel name"
+    },
+    "niche": {
+      "type": "string",
+      "enum": [
+        "gaming",
+        "vlog",
+        "lifestyle",
+        "dark_aesthetic",
+        "paranormal",
+        "mystery",
+        "asmr",
+        "art"
+      ],
+      "description": "Channel niche"
+    },
+    "subscriber_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total subscribers"
+    },
+    "total_views": {
+      "type": "number",
+      "default": 0,
+      "description": "Total channel views"
+    },
+    "watch_hours": {
+      "type": "number",
+      "default": 0,
+      "description": "Total watch hours for monetization"
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Total earnings"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "Channel reputation 0-100"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Verified checkmark"
+    },
+    "controversy_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How controversial 0-100"
+    },
+    "monetized": {
+      "type": "boolean",
+      "default": false,
+      "description": "YouTube Partner Program approved"
+    },
+    "applied_for_monetization": {
+      "type": "boolean",
+      "default": false,
+      "description": "Applied for YPP"
+    }
+  },
+  "required": [
+    "servant_id",
+    "channel_name",
+    "niche"
+  ]
+}

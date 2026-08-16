@@ -1,0 +1,84 @@
+{
+  "name": "BloodVintage",
+  "type": "object",
+  "properties": {
+    "vampire_id": {
+      "type": "string",
+      "description": "Which vampire owns this vintage"
+    },
+    "blood_type": {
+      "type": "string",
+      "enum": [
+        "O-",
+        "O+",
+        "A-",
+        "A+",
+        "B-",
+        "B+",
+        "AB-",
+        "AB+"
+      ],
+      "description": "Type of blood"
+    },
+    "source_name": {
+      "type": "string",
+      "description": "Who the blood came from"
+    },
+    "age_days": {
+      "type": "number",
+      "default": 0,
+      "description": "How many days it's been aging"
+    },
+    "quality": {
+      "type": "string",
+      "enum": [
+        "fresh",
+        "aged",
+        "vintage",
+        "ancient",
+        "spoiled"
+      ],
+      "default": "fresh",
+      "description": "Current quality level"
+    },
+    "potency": {
+      "type": "number",
+      "default": 50,
+      "description": "Power level (0-100)"
+    },
+    "preservation_method": {
+      "type": "string",
+      "enum": [
+        "crystal_vial",
+        "silver_flask",
+        "enchanted_bottle",
+        "stone_urn"
+      ],
+      "default": "crystal_vial",
+      "description": "How it's being stored"
+    },
+    "special_properties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Unique effects from aging"
+    },
+    "volume_remaining": {
+      "type": "number",
+      "default": 100,
+      "description": "How much blood left (0-100)"
+    },
+    "bottled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it was collected"
+    }
+  },
+  "required": [
+    "vampire_id",
+    "blood_type",
+    "source_name"
+  ]
+}

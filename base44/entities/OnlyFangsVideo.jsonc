@@ -1,0 +1,72 @@
+{
+  "name": "OnlyFangsVideo",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant created this"
+    },
+    "title": {
+      "type": "string",
+      "description": "Video title"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "solo",
+        "pov",
+        "roleplay",
+        "teasing",
+        "intimate",
+        "dominant",
+        "submissive",
+        "cosplay",
+        "shower",
+        "bedroom",
+        "public",
+        "fetish",
+        "artistic"
+      ],
+      "description": "Video category"
+    },
+    "content_type": {
+      "type": "string",
+      "description": "Specific content description"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price to unlock (0 = free)"
+    },
+    "views": {
+      "type": "number",
+      "default": 0,
+      "description": "Total views"
+    },
+    "earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Earnings from this video"
+    },
+    "rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average rating 1-5"
+    },
+    "discount_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Discount end date"
+    },
+    "discounted_price": {
+      "type": "number",
+      "description": "Discounted price if active"
+    }
+  },
+  "required": [
+    "servant_id",
+    "title",
+    "category",
+    "content_type",
+    "price"
+  ]
+}

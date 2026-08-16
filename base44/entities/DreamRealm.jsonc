@@ -1,0 +1,63 @@
+{
+  "name": "DreamRealm",
+  "type": "object",
+  "properties": {
+    "realm_name": {
+      "type": "string",
+      "description": "Name of dream location"
+    },
+    "owner_id": {
+      "type": "string",
+      "description": "Whose dream this is"
+    },
+    "realm_type": {
+      "type": "string",
+      "enum": [
+        "nightmare",
+        "paradise",
+        "memory",
+        "void",
+        "lucid"
+      ],
+      "default": "lucid"
+    },
+    "stability": {
+      "type": "number",
+      "default": 50,
+      "description": "How stable the realm is (0-100)"
+    },
+    "inhabitants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Entities currently inside"
+    },
+    "dream_constructs": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Objects/beings created in dream"
+    },
+    "secrets_hidden": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Hidden knowledge in realm"
+    },
+    "can_trap_visitors": {
+      "type": "boolean",
+      "default": false,
+      "description": "Visitors can be trapped"
+    }
+  },
+  "required": [
+    "realm_name",
+    "owner_id"
+  ]
+}

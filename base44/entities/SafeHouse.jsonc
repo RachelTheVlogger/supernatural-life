@@ -1,0 +1,68 @@
+{
+  "name": "SafeHouse",
+  "type": "object",
+  "properties": {
+    "hunter_id": {
+      "type": "string",
+      "description": "Which hunter owns this safe house"
+    },
+    "armory_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Armory upgrade level (0-5)"
+    },
+    "research_lab_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Research lab level (0-5)"
+    },
+    "training_room_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Training room level (0-5)"
+    },
+    "medical_bay_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Medical bay level (0-5)"
+    },
+    "defense_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Defense systems level (0-5)"
+    },
+    "surveillance_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Surveillance equipment level (0-5)"
+    },
+    "aesthetic": {
+      "type": "string",
+      "enum": [
+        "military",
+        "modern",
+        "gothic",
+        "industrial",
+        "minimalist"
+      ],
+      "default": "military",
+      "description": "Visual style of the safe house"
+    },
+    "decorations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of decorative items placed"
+    },
+    "total_investment": {
+      "type": "number",
+      "default": 0,
+      "description": "Total resources invested"
+    }
+  },
+  "required": [
+    "hunter_id"
+  ]
+}

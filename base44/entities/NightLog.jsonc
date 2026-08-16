@@ -1,0 +1,35 @@
+{
+  "name": "NightLog",
+  "type": "object",
+  "properties": {
+    "entry": {
+      "type": "string",
+      "description": "Log entry text"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "feeding",
+        "power",
+        "interaction",
+        "hunting",
+        "teaching",
+        "observation"
+      ],
+      "description": "Type of log entry"
+    },
+    "intensity": {
+      "type": "string",
+      "enum": [
+        "subtle",
+        "moderate",
+        "significant"
+      ],
+      "default": "moderate"
+    }
+  },
+  "required": [
+    "entry",
+    "category"
+  ]
+}

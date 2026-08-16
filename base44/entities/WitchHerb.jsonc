@@ -1,0 +1,23 @@
+{
+  "name": "WitchHerb",
+  "type": "object",
+  "properties": {
+    "witch_id": {
+      "type": "string",
+      "description": "Which witch owns this herb"
+    },
+    "herb_name": {
+      "type": "string",
+      "description": "Name of the herb"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 0,
+      "description": "How many you have"
+    }
+  },
+  "required": [
+    "witch_id",
+    "herb_name"
+  ]
+}

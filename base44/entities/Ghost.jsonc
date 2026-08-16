@@ -1,0 +1,66 @@
+{
+  "name": "Ghost",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name in life"
+    },
+    "death_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When they died"
+    },
+    "unfinished_business": {
+      "type": "string",
+      "description": "What keeps them here"
+    },
+    "haunting_location": {
+      "type": "string",
+      "description": "Where they haunt"
+    },
+    "manifestation_strength": {
+      "type": "number",
+      "default": 30,
+      "description": "Ability to affect physical world (0-100)"
+    },
+    "spectral_power": {
+      "type": "number",
+      "default": 20,
+      "description": "Ghostly abilities (0-100)"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Possession",
+        "Poltergeist"
+      ],
+      "description": "Ghost abilities"
+    },
+    "anchor_object": {
+      "type": "string",
+      "description": "Object tying them to world"
+    },
+    "ready_to_move_on": {
+      "type": "boolean",
+      "default": false,
+      "description": "Business resolved"
+    },
+    "vengeful": {
+      "type": "boolean",
+      "default": false,
+      "description": "Seeking revenge"
+    },
+    "possession_attempts": {
+      "type": "number",
+      "default": 0,
+      "description": "Times possessed someone"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

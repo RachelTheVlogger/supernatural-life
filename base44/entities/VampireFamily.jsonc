@@ -1,0 +1,33 @@
+{
+  "name": "VampireFamily",
+  "type": "object",
+  "properties": {
+    "family_name": {
+      "type": "string",
+      "description": "Bloodline family name"
+    },
+    "founder": {
+      "type": "string",
+      "description": "Original vampire who started this line"
+    },
+    "unique_trait": {
+      "type": "string",
+      "description": "Special ability of this bloodline"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 50,
+      "description": "Family standing (0-100)"
+    },
+    "allied": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether allied with player"
+    }
+  },
+  "required": [
+    "family_name",
+    "founder",
+    "unique_trait"
+  ]
+}

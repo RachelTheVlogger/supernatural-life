@@ -1,0 +1,46 @@
+{
+  "name": "PrestigeData",
+  "type": "object",
+  "properties": {
+    "prestige_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How many times prestiged"
+    },
+    "total_lifetimes": {
+      "type": "number",
+      "default": 1,
+      "description": "Playthroughs completed"
+    },
+    "permanent_bonuses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Bonuses carried over"
+    },
+    "ancestral_knowledge": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Powers remembered from past lives"
+    },
+    "legacy_points": {
+      "type": "number",
+      "default": 0,
+      "description": "Currency for prestige shop"
+    },
+    "legendary_achievements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Cross-playthrough achievements"
+    }
+  },
+  "required": []
+}

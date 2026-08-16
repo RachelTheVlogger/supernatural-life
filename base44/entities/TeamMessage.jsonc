@@ -1,0 +1,39 @@
+{
+  "name": "TeamMessage",
+  "type": "object",
+  "properties": {
+    "team_id": {
+      "type": "string",
+      "description": "Team this message belongs to"
+    },
+    "sender_id": {
+      "type": "string",
+      "description": "Hunter who sent the message"
+    },
+    "sender_name": {
+      "type": "string",
+      "description": "Name of sender for display"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "mission_update",
+        "alert",
+        "system"
+      ],
+      "default": "text",
+      "description": "Type of message"
+    }
+  },
+  "required": [
+    "team_id",
+    "sender_id",
+    "sender_name",
+    "content"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "name": "CodexEntry",
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "enum": [
+        "lore",
+        "mechanics",
+        "characters",
+        "powers",
+        "business"
+      ],
+      "description": "Category of the entry"
+    },
+    "title": {
+      "type": "string",
+      "description": "Entry title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Entry content"
+    },
+    "unlocked": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this entry is unlocked"
+    },
+    "discovery_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this was discovered"
+    }
+  },
+  "required": [
+    "category",
+    "title",
+    "content"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "name": "BloodDrug",
+  "type": "object",
+  "properties": {
+    "strain_name": {
+      "type": "string",
+      "description": "Name of the blood drug strain"
+    },
+    "potency": {
+      "type": "number",
+      "default": 1,
+      "description": "How strong it is (1-10)"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 0,
+      "description": "How many doses available"
+    },
+    "price_per_dose": {
+      "type": "number",
+      "description": "Selling price per dose"
+    },
+    "effects": {
+      "type": "string",
+      "description": "Visual/sensory effects description"
+    },
+    "addictiveness": {
+      "type": "number",
+      "default": 50,
+      "description": "How addictive (0-100)"
+    },
+    "quality": {
+      "type": "string",
+      "enum": [
+        "poor",
+        "standard",
+        "premium",
+        "legendary"
+      ],
+      "default": "standard",
+      "description": "Batch quality"
+    },
+    "is_hybrid": {
+      "type": "boolean",
+      "default": false,
+      "description": "Created by combining strains"
+    },
+    "base_servant_id": {
+      "type": "string",
+      "description": "If made from servant blood"
+    },
+    "parent_strains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Strains used to create hybrid"
+    }
+  },
+  "required": [
+    "strain_name",
+    "price_per_dose"
+  ]
+}

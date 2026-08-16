@@ -1,0 +1,56 @@
+{
+  "name": "WorldEvent",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Event name"
+    },
+    "description": {
+      "type": "string",
+      "description": "What's happening"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "crisis",
+        "seasonal",
+        "random",
+        "apocalyptic"
+      ],
+      "default": "random"
+    },
+    "severity": {
+      "type": "number",
+      "default": 50,
+      "description": "How serious (0-100)"
+    },
+    "duration_nights": {
+      "type": "number",
+      "description": "How long event lasts"
+    },
+    "effects": {
+      "type": "object",
+      "default": {},
+      "description": "Game effects during event"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Event currently happening"
+    },
+    "can_be_stopped": {
+      "type": "boolean",
+      "default": true,
+      "description": "Players can end event"
+    },
+    "resolution": {
+      "type": "string",
+      "description": "How event was resolved"
+    }
+  },
+  "required": [
+    "title",
+    "description"
+  ]
+}

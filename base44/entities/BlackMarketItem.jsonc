@@ -1,0 +1,58 @@
+{
+  "name": "BlackMarketItem",
+  "type": "object",
+  "properties": {
+    "item_name": {
+      "type": "string",
+      "description": "Item for sale"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "artifact",
+        "soul",
+        "spell",
+        "weapon",
+        "forbidden_knowledge",
+        "potion"
+      ],
+      "description": "Type of item"
+    },
+    "description": {
+      "type": "string",
+      "description": "Item details"
+    },
+    "price": {
+      "type": "number",
+      "description": "Cost in souls/currency"
+    },
+    "seller": {
+      "type": "string",
+      "description": "Who's selling"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "rare",
+        "legendary",
+        "mythical"
+      ],
+      "default": "rare"
+    },
+    "is_cursed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Item has curse"
+    },
+    "available": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "item_name",
+    "item_type",
+    "price"
+  ]
+}

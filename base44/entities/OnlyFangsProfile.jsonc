@@ -1,0 +1,46 @@
+{
+  "name": "OnlyFangsProfile",
+  "type": "object",
+  "properties": {
+    "servant_id": {
+      "type": "string",
+      "description": "Which servant this profile belongs to"
+    },
+    "username": {
+      "type": "string",
+      "description": "Profile username"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Profile bio"
+    },
+    "profile_pic": {
+      "type": "string",
+      "description": "Emoji for profile picture"
+    },
+    "is_couple_account": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this is a vampire+servant couple account"
+    },
+    "subscriber_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total subscribers"
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Total revenue earned"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "Content creator reputation (0-100)"
+    }
+  },
+  "required": [
+    "servant_id",
+    "username"
+  ]
+}

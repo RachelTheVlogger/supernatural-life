@@ -1,0 +1,41 @@
+{
+  "name": "HunterAchievement",
+  "type": "object",
+  "properties": {
+    "hunter_id": {
+      "type": "string",
+      "description": "Hunter who earned this"
+    },
+    "achievement_id": {
+      "type": "string",
+      "description": "Achievement identifier"
+    },
+    "title": {
+      "type": "string",
+      "description": "Achievement title"
+    },
+    "description": {
+      "type": "string",
+      "description": "What was accomplished"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "rare",
+        "legendary"
+      ],
+      "default": "common",
+      "description": "Achievement rarity"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Achievement icon/emoji"
+    }
+  },
+  "required": [
+    "hunter_id",
+    "achievement_id",
+    "title"
+  ]
+}

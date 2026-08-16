@@ -1,0 +1,54 @@
+{
+  "name": "RivalVampire",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Rival vampire's name"
+    },
+    "age": {
+      "type": "number",
+      "description": "Years as a vampire"
+    },
+    "power_level": {
+      "type": "number",
+      "default": 50,
+      "description": "How powerful they are (0-100)"
+    },
+    "relationship": {
+      "type": "number",
+      "default": 0,
+      "description": "Relationship with player (-100 to 100)"
+    },
+    "personality": {
+      "type": "string",
+      "enum": [
+        "aggressive",
+        "diplomatic",
+        "seductive",
+        "ruthless",
+        "ancient"
+      ],
+      "description": "Their approach to rivalry"
+    },
+    "territory_claimed": {
+      "type": "string",
+      "description": "Which territory they control"
+    },
+    "servants_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many servants they have"
+    },
+    "last_encounter": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time you encountered them"
+    }
+  },
+  "required": [
+    "name",
+    "age",
+    "personality"
+  ]
+}

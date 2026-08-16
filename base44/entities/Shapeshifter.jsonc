@@ -1,0 +1,61 @@
+{
+  "name": "Shapeshifter",
+  "type": "object",
+  "properties": {
+    "true_name": {
+      "type": "string",
+      "description": "Their real name"
+    },
+    "current_form": {
+      "type": "string",
+      "description": "Who they're currently impersonating"
+    },
+    "forms_memorized": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "People they can transform into"
+    },
+    "transformation_speed": {
+      "type": "number",
+      "default": 30,
+      "description": "Speed of shifting (0-100)"
+    },
+    "memory_absorption": {
+      "type": "number",
+      "default": 20,
+      "description": "Can steal memories from forms (0-100)"
+    },
+    "unlocked_powers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Basic Shift",
+        "Voice Mimicry"
+      ],
+      "description": "Shapeshifting abilities"
+    },
+    "identity_stability": {
+      "type": "number",
+      "default": 80,
+      "description": "Remembering true self (0-100)"
+    },
+    "infiltrations_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Successful infiltrations"
+    },
+    "exposed_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Times discovered"
+    }
+  },
+  "required": [
+    "true_name"
+  ]
+}

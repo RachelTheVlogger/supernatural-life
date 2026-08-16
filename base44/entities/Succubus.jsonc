@@ -1,0 +1,75 @@
+{
+  "name": "Succubus",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Succubus's name"
+    },
+    "gender": {
+      "type": "string",
+      "default": "woman",
+      "description": "Gender presentation"
+    },
+    "sexuality": {
+      "type": "string",
+      "enum": [
+        "straight",
+        "gay",
+        "lesbian",
+        "bisexual",
+        "pansexual",
+        "asexual",
+        "questioning"
+      ],
+      "default": "bisexual"
+    },
+    "personality": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "seductive"
+      ],
+      "description": "Core personality traits (up to 3)"
+    },
+    "energy_level": {
+      "type": "number",
+      "default": 50,
+      "description": "Energy from feeding on desire (0-100)"
+    },
+    "charm_power": {
+      "type": "number",
+      "default": 30,
+      "description": "Charm and seduction ability"
+    },
+    "unlocked_abilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of unlocked abilities"
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Humans and vampires they're feeding from"
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": [],
+      "description": "Romantic/obsessive relationships"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

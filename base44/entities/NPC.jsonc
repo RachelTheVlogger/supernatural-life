@@ -1,0 +1,77 @@
+{
+  "name": "NPC",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "NPC's name"
+    },
+    "personality": {
+      "type": "string",
+      "enum": [
+        "friendly",
+        "suspicious",
+        "curious",
+        "neutral",
+        "hostile",
+        "sweet",
+        "bratty",
+        "bitchy",
+        "submissive",
+        "dominant",
+        "sarcastic",
+        "clingy",
+        "independent",
+        "manipulative",
+        "naive",
+        "ambitious",
+        "lazy",
+        "jealous",
+        "loyal",
+        "chaotic",
+        "cold",
+        "warm",
+        "flirty",
+        "gossipy"
+      ],
+      "description": "Their general disposition"
+    },
+    "relationship_vampire": {
+      "type": "number",
+      "default": 50,
+      "description": "Relationship with vampire (0-100)"
+    },
+    "relationship_servant": {
+      "type": "number",
+      "default": 50,
+      "description": "Relationship with servant (0-100)"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where they can be found"
+    },
+    "occupation": {
+      "type": "string",
+      "description": "What they do"
+    },
+    "knows_vampire_secret": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they know about vampires"
+    },
+    "last_interaction_vampire": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time vampire interacted with them"
+    },
+    "last_interaction_servant": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time servant interacted with them"
+    }
+  },
+  "required": [
+    "name",
+    "personality"
+  ]
+}

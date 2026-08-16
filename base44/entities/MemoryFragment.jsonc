@@ -1,0 +1,57 @@
+{
+  "name": "MemoryFragment",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "Whose memory this is"
+    },
+    "title": {
+      "type": "string",
+      "description": "Memory name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Full memory text"
+    },
+    "memory_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When memory occurred"
+    },
+    "emotional_weight": {
+      "type": "string",
+      "enum": [
+        "joyful",
+        "painful",
+        "traumatic",
+        "bittersweet",
+        "neutral"
+      ],
+      "default": "neutral"
+    },
+    "is_edited": {
+      "type": "boolean",
+      "default": false,
+      "description": "Memory has been altered"
+    },
+    "can_revisit": {
+      "type": "boolean",
+      "default": true,
+      "description": "Can relive this memory"
+    },
+    "people_involved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Who was there"
+    }
+  },
+  "required": [
+    "owner_id",
+    "title",
+    "description"
+  ]
+}

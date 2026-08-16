@@ -1,0 +1,88 @@
+{
+  "name": "Human",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human's name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "man",
+        "woman",
+        "custom"
+      ],
+      "default": "woman"
+    },
+    "sexuality": {
+      "type": "string",
+      "enum": [
+        "straight",
+        "gay",
+        "lesbian",
+        "bisexual",
+        "pansexual",
+        "asexual",
+        "questioning"
+      ],
+      "default": "bisexual"
+    },
+    "personality": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "cautious"
+      ],
+      "description": "Core personality traits"
+    },
+    "job": {
+      "type": "string",
+      "default": "Student",
+      "description": "Human's occupation"
+    },
+    "awareness_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How much they know about the supernatural (0-100)"
+    },
+    "danger_level": {
+      "type": "number",
+      "default": 0,
+      "description": "How much danger they're in (0-100)"
+    },
+    "obsession_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Sexual obsession with vampires (0-100)"
+    },
+    "vampire_encounters": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times encountered vampires"
+    },
+    "wants_to_be_turned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they want to become a vampire"
+    },
+    "has_been_compelled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether they've been compelled to forget"
+    },
+    "protected_by": {
+      "type": "string",
+      "description": "ID of vampire protecting them"
+    },
+    "romance_with_vampire": {
+      "type": "string",
+      "description": "ID of vampire they're in a relationship with"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

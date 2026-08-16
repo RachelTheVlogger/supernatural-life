@@ -1,0 +1,64 @@
+{
+  "name": "Ritual",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Ritual name"
+    },
+    "description": {
+      "type": "string",
+      "description": "What the ritual does"
+    },
+    "ritual_type": {
+      "type": "string",
+      "enum": [
+        "summoning",
+        "binding",
+        "transformation",
+        "curse",
+        "blessing"
+      ],
+      "default": "summoning"
+    },
+    "required_ingredients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Materials needed"
+    },
+    "power_cost": {
+      "type": "number",
+      "description": "Power required to perform"
+    },
+    "sacrifice_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Requires blood sacrifice"
+    },
+    "moon_phase_required": {
+      "type": "string",
+      "enum": [
+        "any",
+        "new",
+        "full",
+        "eclipse"
+      ],
+      "default": "any"
+    },
+    "success_rate": {
+      "type": "number",
+      "default": 70,
+      "description": "Chance of success (0-100)"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

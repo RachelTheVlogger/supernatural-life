@@ -1,0 +1,33 @@
+{
+  "name": "YouTubeComment",
+  "type": "object",
+  "properties": {
+    "video_id": {
+      "type": "string",
+      "description": "Which video this comment is on"
+    },
+    "username": {
+      "type": "string",
+      "description": "Commenter username"
+    },
+    "comment": {
+      "type": "string",
+      "description": "Comment text"
+    },
+    "is_hate": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is this a hate comment"
+    },
+    "is_suspicious": {
+      "type": "boolean",
+      "default": false,
+      "description": "Did they notice something vampire-related"
+    }
+  },
+  "required": [
+    "video_id",
+    "username",
+    "comment"
+  ]
+}
